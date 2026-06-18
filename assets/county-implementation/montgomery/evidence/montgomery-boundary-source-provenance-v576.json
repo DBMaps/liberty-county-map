@@ -1,0 +1,26 @@
+{
+  "provenanceVersion": "V576",
+  "sourceOwner": "U.S. Census Bureau",
+  "sourceDataset": "2025 TIGER/Line County Boundaries",
+  "sourceYear": "2025",
+  "sourceFileNames": [
+    "tl_2025_us_county.shp",
+    "tl_2025_us_county.shx",
+    "tl_2025_us_county.dbf",
+    "tl_2025_us_county.prj",
+    "tl_2025_us_county.cpg",
+    "tl_2025_us_county.shp.iso.xml",
+    "tl_2025_us_county.shp.ea.iso.xml"
+  ],
+  "sourcePath": "assets/county-sources/montgomery/census-tiger-2025/",
+  "selectedGEOID": "48339",
+  "selectedSTATEFP": "48",
+  "selectedCOUNTYFP": "339",
+  "selectedNAME": "Montgomery",
+  "selectedNAMELSAD": "Montgomery County",
+  "extractionDate": "2026-06-18T20:04:41Z",
+  "extractionMethod": "Filtered national 2025 TIGER/Line county shapefile to GEOID=48339 and serialized selected feature to GeoJSON FeatureCollection.",
+  "coordinateReferenceNote": "Source shapefile .prj declares geographic coordinates; output GeoJSON coordinates are longitude/latitude.",
+  "licensingPublicDomainPosture": "U.S. Census Bureau TIGER/Line data is generally public data; verify source documentation during repository acceptance.",
+  "generatedGeoJsonSha256": "1dddce09b70d80bb5734734a0107baa74d4a32f6895bd70f5a2d21270c9baf71"
+}

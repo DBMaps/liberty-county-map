@@ -1,0 +1,2229 @@
+{
+  "manifest": "Gridly Audit/Test Manifest Foundation",
+  "milestone": "V575D",
+  "version": "V575D-expanded-item-level-inventory",
+  "createdUtc": "2026-06-18",
+  "scope": "Documentation/manifest-only inventory of authoritative audits, debug helpers, tests, documentation validation checks, legacy candidates, and unknown review items. No cleanup or runtime changes are authorized by this manifest.",
+  "statusValues": [
+    "authoritative",
+    "keep",
+    "keep-register",
+    "duplicate",
+    "legacy",
+    "candidate-retirement",
+    "unknown"
+  ],
+  "categories": [
+    "Runtime Audit Helpers",
+    "Browser Console Debug Helpers",
+    "Unit Tests",
+    "Integration Tests",
+    "Documentation-Only Validation Checks",
+    "Legacy / Candidate Retirement Items",
+    "Unknown / Needs Review"
+  ],
+  "entries": [
+    {
+      "name": "Route Watch geometry runtime shadow audit helper",
+      "filePath": "js/gridlyRouteWatchGeometryRuntimeShadowAudit.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "authoritative"
+    },
+    {
+      "name": "Route Watch geometry shadow scoring helper",
+      "filePath": "js/gridlyRouteWatchGeometryShadowScoring.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "keep"
+    },
+    {
+      "name": "TxDOT geometry retention prototype helper",
+      "filePath": "js/gridlyTxdotGeometryRetentionPrototype.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Route Watch / TxDOT geometry",
+      "status": "legacy"
+    },
+    {
+      "name": "History capture flags module",
+      "filePath": "js/history-capture/historyCaptureFlags.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture envelope module",
+      "filePath": "js/history-capture/historyCaptureEnvelope.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture idempotency module",
+      "filePath": "js/history-capture/historyCaptureIdempotency.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture writer module",
+      "filePath": "js/history-capture/historyCaptureWriter.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture / Supabase sync boundary",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture monitoring module",
+      "filePath": "js/history-capture/historyCaptureMonitoring.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture monitoring",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture Phase 1A sidecar module",
+      "filePath": "js/history-capture/historyCapturePhase1A.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical capture Phase 1A",
+      "status": "authoritative"
+    },
+    {
+      "name": "History awareness adapter module",
+      "filePath": "js/history-capture/historyAwarenessAdapter.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Awareness filtering / Historical awareness",
+      "status": "authoritative"
+    },
+    {
+      "name": "History intelligence engine module",
+      "filePath": "js/history-capture/historyIntelligenceEngine.js",
+      "category": "Runtime Audit Helpers",
+      "systemDomain": "Historical systems",
+      "status": "keep"
+    },
+    {
+      "name": "Browser-exposed history awareness adapter audit globals",
+      "filePath": "js/history-capture/historyAwarenessAdapter.js",
+      "category": "Browser Console Debug Helpers",
+      "systemDomain": "Awareness filtering / Historical awareness",
+      "status": "keep"
+    },
+    {
+      "name": "Browser-exposed Route Watch geometry runtime shadow audit global",
+      "filePath": "js/gridlyRouteWatchGeometryRuntimeShadowAudit.js",
+      "category": "Browser Console Debug Helpers",
+      "systemDomain": "Route Watch",
+      "status": "keep-register"
+    },
+    {
+      "name": "History capture flags test",
+      "filePath": "tests/history-capture/historyCaptureFlags.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture envelope test",
+      "filePath": "tests/history-capture/historyCaptureEnvelope.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture idempotency test",
+      "filePath": "tests/history-capture/historyCaptureIdempotency.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture writer test",
+      "filePath": "tests/history-capture/historyCaptureWriter.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture / Supabase sync boundary",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture monitoring test",
+      "filePath": "tests/history-capture/historyCaptureMonitoring.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture monitoring",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture rollback test",
+      "filePath": "tests/history-capture/historyCaptureRollback.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture / Supabase rollback boundary",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture canary controls static test",
+      "filePath": "tests/history-capture/historyCaptureCanaryControlsStatic.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical capture canary controls",
+      "status": "authoritative"
+    },
+    {
+      "name": "History awareness language V454 test",
+      "filePath": "tests/history-capture/historyAwarenessLanguageV454.test.js",
+      "category": "Unit Tests",
+      "systemDomain": "Historical awareness language safety",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture Phase 1A test",
+      "filePath": "tests/history-capture/historyCapturePhase1A.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Historical capture Phase 1A",
+      "status": "authoritative"
+    },
+    {
+      "name": "History capture schema exposure test",
+      "filePath": "tests/history-capture/historyCaptureSchemaExposure.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Historical capture / Supabase schema exposure",
+      "status": "authoritative"
+    },
+    {
+      "name": "History awareness adapter runtime validation test",
+      "filePath": "tests/history-capture/historyAwarenessAdapterRuntimeValidation.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Awareness filtering / Historical awareness",
+      "status": "authoritative"
+    },
+    {
+      "name": "History visible awareness output audit test",
+      "filePath": "tests/history-capture/historyVisibleAwarenessOutputAudit.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Awareness filtering / Historical awareness",
+      "status": "authoritative"
+    },
+    {
+      "name": "History community pulse audit test",
+      "filePath": "tests/history-capture/historyCommunityPulseAudit.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Awareness filtering / Community Pulse",
+      "status": "authoritative"
+    },
+    {
+      "name": "History alert context audit test",
+      "filePath": "tests/history-capture/historyAlertContextAudit.test.js",
+      "category": "Integration Tests",
+      "systemDomain": "Alert generation / Historical awareness",
+      "status": "authoritative"
+    },
+    {
+      "name": "Marker PNG dimensions audit",
+      "filePath": "scripts/audit-marker-png-dimensions.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Assets / marker readability",
+      "status": "keep-register"
+    },
+    {
+      "name": "Road name regression audit",
+      "filePath": "scripts/v311-road-name-regression-audit.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Liberty road data",
+      "status": "keep-register"
+    },
+    {
+      "name": "Route Watch geometry shadow scoring fixtures",
+      "filePath": "scripts/v294-route-watch-geometry-shadow-scoring-fixtures.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Route Watch / Liberty geometry fixtures",
+      "status": "keep-register"
+    },
+    {
+      "name": "Route Watch geometry runtime shadow audit",
+      "filePath": "scripts/v296-route-watch-geometry-runtime-shadow-audit.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Route Watch",
+      "status": "keep-register"
+    },
+    {
+      "name": "Historical intelligence audit",
+      "filePath": "scripts/history-capture/v430-historical-intelligence-audit.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Historical intelligence",
+      "status": "keep-register"
+    },
+    {
+      "name": "Historical intelligence runtime validation",
+      "filePath": "scripts/history-capture/v431-historical-intelligence-runtime-validation.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Historical intelligence runtime validation",
+      "status": "keep-register"
+    },
+    {
+      "name": "Historical awareness integration audit",
+      "filePath": "scripts/history-capture/v432-historical-awareness-integration-audit.mjs",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Awareness filtering / Historical awareness",
+      "status": "keep-register"
+    },
+    {
+      "name": "V575A audit and test cleanup assessment",
+      "filePath": "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit/test governance",
+      "status": "authoritative"
+    },
+    {
+      "name": "Route Watch geometry prototype script",
+      "filePath": "scripts/v291-route-watch-geometry-prototype.mjs",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / TxDOT geometry",
+      "status": "legacy"
+    },
+    {
+      "name": "Route Watch geometry validation script",
+      "filePath": "scripts/v292-route-watch-geometry-validation.mjs",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / TxDOT geometry",
+      "status": "legacy"
+    },
+    {
+      "name": "Route Watch geometry fixture expansion alias",
+      "filePath": "scripts/v295-route-watch-geometry-fixture-expansion.mjs",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Liberty geometry fixtures",
+      "status": "duplicate"
+    },
+    {
+      "name": "Active hazard inventory helper",
+      "filePath": "scripts/active-hazard-inventory.mjs",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Hazard lifecycle / Supabase read-only inventory",
+      "status": "unknown"
+    },
+    {
+      "name": "GRIDLY V290 TxDOT Geometry Retention Prototype",
+      "filePath": "docs/GRIDLY_V290_TXDOT_GEOMETRY_RETENTION_PROTOTYPE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V291 Route Watch Geometry Prototype",
+      "filePath": "docs/GRIDLY_V291_ROUTE_WATCH_GEOMETRY_PROTOTYPE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V292 Route Watch Geometry Validation",
+      "filePath": "docs/GRIDLY_V292_ROUTE_WATCH_GEOMETRY_VALIDATION.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V293 Route Watch Relevance Architecture",
+      "filePath": "docs/GRIDLY_V293_ROUTE_WATCH_RELEVANCE_ARCHITECTURE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V294 Route Watch Geometry Shadow Scoring Fixtures",
+      "filePath": "docs/GRIDLY_V294_ROUTE_WATCH_GEOMETRY_SHADOW_SCORING_FIXTURES.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V295 Route Watch Geometry Fixture Expansion",
+      "filePath": "docs/GRIDLY_V295_ROUTE_WATCH_GEOMETRY_FIXTURE_EXPANSION.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V296 Route Watch Geometry Runtime Shadow Audit",
+      "filePath": "docs/GRIDLY_V296_ROUTE_WATCH_GEOMETRY_RUNTIME_SHADOW_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+        "GRIDLY-SYSTEM-STATE-AUDIT-V1.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V297 Destination Route Vs Route Watch Geometry Observation Audit",
+      "filePath": "docs/GRIDLY_V297_DESTINATION_ROUTE_VS_ROUTE_WATCH_GEOMETRY_OBSERVATION_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V298 Route Watch Functional Readiness Audit",
+      "filePath": "docs/GRIDLY_V298_ROUTE_WATCH_FUNCTIONAL_READINESS_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+        "GRIDLY-SYSTEM-STATE-AUDIT-V1.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V299 Route Watch Activation Fix",
+      "filePath": "docs/GRIDLY_V299_ROUTE_WATCH_ACTIVATION_FIX.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Route Watch / Transportation geometry",
+      "status": "legacy",
+      "expansionOf": "Route Watch geometry documentation family V289-V300",
+      "ownership": "Route Watch / Transportation geometry",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Additive Historical Schema Migration Draft V371",
+      "filePath": "GRIDLY-ADDITIVE-HISTORICAL-SCHEMA-MIGRATION-DRAFT-V371.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-CHECKLIST-REVIEW-V374.md",
+        "GRIDLY-HISTORICAL-SCHEMA-MIGRATION-REVIEW-AND-SQL-SAFETY-AUDIT-V372.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-DESIGN-V382.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Incident Schema Design Additive Only V369",
+      "filePath": "GRIDLY-HISTORICAL-INCIDENT-SCHEMA-DESIGN-ADDITIVE-ONLY-V369.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-HISTORICAL-SCHEMA-MIGRATION-REVIEW-AND-SQL-SAFETY-AUDIT-V372.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Projection Merge Baseline And Handoff V368",
+      "filePath": "GRIDLY-HISTORICAL-PROJECTION-MERGE-BASELINE-AND-HANDOFF-V368.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Projection Shadow Enablement Test V367",
+      "filePath": "GRIDLY-HISTORICAL-PROJECTION-SHADOW-ENABLEMENT-TEST-V367.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Projection Validation And Fixture Parity V365",
+      "filePath": "GRIDLY-HISTORICAL-PROJECTION-VALIDATION-AND-FIXTURE-PARITY-V365.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Schema Dry Run Checklist Review V374",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-CHECKLIST-REVIEW-V374.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-EXECUTION-READINESS-GATE-V375.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Schema Dry Run Execution Readiness Gate V375",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-EXECUTION-READINESS-GATE-V375.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Schema Dry Run Governance Decision V376",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-GOVERNANCE-DECISION-V376.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Schema Dry Run Plan V373",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-PLAN-V373.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-CHECKLIST-REVIEW-V374.md",
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-EXECUTION-READINESS-GATE-V375.md",
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-PLAN-V373.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Schema Implementation Readiness Gate V370",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-IMPLEMENTATION-READINESS-GATE-V370.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Schema Migration Review And Sql Safety Audit V372",
+      "filePath": "GRIDLY-HISTORICAL-SCHEMA-MIGRATION-REVIEW-AND-SQL-SAFETY-AUDIT-V372.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-CHECKLIST-REVIEW-V374.md",
+        "GRIDLY-HISTORICAL-SCHEMA-DRY-RUN-EXECUTION-READINESS-GATE-V375.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-DESIGN-V382.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Live History Implementation Readiness Gate V363",
+      "filePath": "GRIDLY-LIVE-HISTORY-IMPLEMENTATION-READINESS-GATE-V363.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY Minimal Historical Activation Strategy V378",
+      "filePath": "GRIDLY-MINIMAL-HISTORICAL-ACTIVATION-STRATEGY-V378.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Architecture V380",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-ARCHITECTURE-V380.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-DESIGN-V382.md",
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Execution Readiness Gate V379",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-EXECUTION-READINESS-GATE-V379.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture File Boundary Ratification And Implementation Authorization Decision V386",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-FILE-BOUNDARY-RATIFICATION-AND-IMPLEMENTATION-AUTHORIZATION-DECISION-V386.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Implementation Design V382",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-DESIGN-V382.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Implementation Plan And Acceptance Criteria V384",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-PLAN-AND-ACCEPTANCE-CRITERIA-V384.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Implementation Readiness Plan V381",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-READINESS-PLAN-V381.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-DESIGN-V382.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Implementation Scope V383",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-SCOPE-V383.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Passive Historical Capture Implementation Workplan And File Boundary Approval V385",
+      "filePath": "GRIDLY-PASSIVE-HISTORICAL-CAPTURE-IMPLEMENTATION-WORKPLAN-AND-FILE-BOUNDARY-APPROVAL-V385.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Shadow Historical Pipeline Foundation V364",
+      "filePath": "GRIDLY-SHADOW-HISTORICAL-PIPELINE-FOUNDATION-V364.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Shadow Historical Projection Runtime Hardening V366",
+      "filePath": "GRIDLY-SHADOW-HISTORICAL-PROJECTION-RUNTIME-HARDENING-V366.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical capture",
+      "status": "legacy",
+      "expansionOf": "Historical capture planning and readiness documentation family V363-V386",
+      "ownership": "Historical capture",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Awareness Language Field Validation V455",
+      "filePath": "GRIDLY-HISTORICAL-AWARENESS-LANGUAGE-FIELD-VALIDATION-V455.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Language Audit Prototype V447",
+      "filePath": "GRIDLY-HISTORICAL-LANGUAGE-AUDIT-PROTOTYPE-V447.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "GRIDLY-HISTORICAL-LANGUAGE-AUDIT-PROTOTYPE-V447.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Language Execution Authorization Review V453",
+      "filePath": "GRIDLY-HISTORICAL-LANGUAGE-EXECUTION-AUTHORIZATION-REVIEW-V453.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Historical Language Implementation Readiness Review V450",
+      "filePath": "GRIDLY-HISTORICAL-LANGUAGE-IMPLEMENTATION-READINESS-REVIEW-V450.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Language Integration Package V452",
+      "filePath": "GRIDLY-HISTORICAL-LANGUAGE-INTEGRATION-PACKAGE-V452.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Language Integration Plan V451",
+      "filePath": "GRIDLY-HISTORICAL-LANGUAGE-INTEGRATION-PLAN-V451.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Phrase Translation Prototype V448",
+      "filePath": "GRIDLY-HISTORICAL-PHRASE-TRANSLATION-PROTOTYPE-V448.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Historical Translation Safety Audit V449",
+      "filePath": "GRIDLY-HISTORICAL-TRANSLATION-SAFETY-AUDIT-V449.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Historical awareness language safety",
+      "status": "candidate-retirement",
+      "expansionOf": "Historical language safety documentation family V447-V455",
+      "ownership": "Historical awareness language safety",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V141 5C Route Audit Helper Exposure",
+      "filePath": "docs/audits/GRIDLY_V141_5C_ROUTE_AUDIT_HELPER_EXPOSURE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY V142 0 Reflow Audit",
+      "filePath": "docs/audits/GRIDLY_V142_0_REFLOW_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 1 Reflow Low Risk Patch",
+      "filePath": "docs/audits/GRIDLY_V142_1_REFLOW_LOW_RISK_PATCH.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 2 Post Submit Refresh Audit",
+      "filePath": "docs/audits/GRIDLY_V142_2_POST_SUBMIT_REFRESH_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 3 Report Submit Dedupe",
+      "filePath": "docs/audits/GRIDLY_V142_3_REPORT_SUBMIT_DEDUPE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 4 Portrait Batching",
+      "filePath": "docs/audits/GRIDLY_V142_4_PORTRAIT_BATCHING.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 5 Reflow Timing Trace",
+      "filePath": "docs/audits/GRIDLY_V142_5_REFLOW_TIMING_TRACE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 6 Refresh Render Breakdown Audit",
+      "filePath": "docs/audits/GRIDLY_V142_6_REFRESH_RENDER_BREAKDOWN_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 7 Portrait Intelligence Breakdown Audit",
+      "filePath": "docs/audits/GRIDLY_V142_7_PORTRAIT_INTELLIGENCE_BREAKDOWN_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 8B Intelligence Cache Key Fix",
+      "filePath": "docs/audits/GRIDLY_V142_8B_INTELLIGENCE_CACHE_KEY_FIX.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 8 Shared Intelligence Cache",
+      "filePath": "docs/audits/GRIDLY_V142_8_SHARED_INTELLIGENCE_CACHE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V142 9 Commute Intelligence Breakdown",
+      "filePath": "docs/audits/GRIDLY_V142_9_COMMUTE_INTELLIGENCE_BREAKDOWN.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 0B Route Relevance Helper Exposure",
+      "filePath": "docs/audits/GRIDLY_V143_0B_ROUTE_RELEVANCE_HELPER_EXPOSURE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 0 Route Relevance Audit",
+      "filePath": "docs/audits/GRIDLY_V143_0_ROUTE_RELEVANCE_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 1 Commute Timing Mismatch Audit",
+      "filePath": "docs/audits/GRIDLY_V143_1_COMMUTE_TIMING_MISMATCH_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 2 Commute Timing Boundary Correction",
+      "filePath": "docs/audits/GRIDLY_V143_2_COMMUTE_TIMING_BOUNDARY_CORRECTION.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 3 Commute Model Build Audit",
+      "filePath": "docs/audits/GRIDLY_V143_3_COMMUTE_MODEL_BUILD_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 4 Title Label Generation Audit",
+      "filePath": "docs/audits/GRIDLY_V143_4_TITLE_LABEL_GENERATION_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 5B Commute Audit Helper Exposure",
+      "filePath": "docs/audits/GRIDLY_V143_5B_COMMUTE_AUDIT_HELPER_EXPOSURE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 5 Label Helper Internal Audit",
+      "filePath": "docs/audits/GRIDLY_V143_5_LABEL_HELPER_INTERNAL_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 6B Road Name Cache Key Unification",
+      "filePath": "docs/audits/GRIDLY_V143_6B_ROAD_NAME_CACHE_KEY_UNIFICATION.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 6 Road Name Lookup Cache",
+      "filePath": "docs/audits/GRIDLY_V143_6_ROAD_NAME_LOOKUP_CACHE.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 7B Commute Helper Exposure Fix",
+      "filePath": "docs/audits/GRIDLY_V143_7B_COMMUTE_HELPER_EXPOSURE_FIX.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 7 Localized Label Lookup Audit",
+      "filePath": "docs/audits/GRIDLY_V143_7_LOCALIZED_LABEL_LOOKUP_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 8B Audit Helper Exposure Registry",
+      "filePath": "docs/audits/GRIDLY_V143_8B_AUDIT_HELPER_EXPOSURE_REGISTRY.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 8 Shared Cache Retrieval Audit",
+      "filePath": "docs/audits/GRIDLY_V143_8_SHARED_CACHE_RETRIEVAL_AUDIT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 9B Commute Audit State Consistency",
+      "filePath": "docs/audits/GRIDLY_V143_9B_COMMUTE_AUDIT_STATE_CONSISTENCY.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 9C Audit Registry Enforcement",
+      "filePath": "docs/audits/GRIDLY_V143_9C_AUDIT_REGISTRY_ENFORCEMENT.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V143 9 Payload Shaping Breakdown",
+      "filePath": "docs/audits/GRIDLY_V143_9_PAYLOAD_SHAPING_BREAKDOWN.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V144 0 Strict Audit Cycle Isolation",
+      "filePath": "docs/audits/GRIDLY_V144_0_STRICT_AUDIT_CYCLE_ISOLATION.md",
+      "category": "Legacy / Candidate Retirement Items",
+      "systemDomain": "Legacy audit helper exposure / commute audit helpers",
+      "status": "candidate-retirement",
+      "expansionOf": "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "ownership": "Legacy audit helper exposure / commute audit helpers",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-AND-TEST-CLEANUP-ASSESSMENT-V575A.md",
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY App Icon Strategy",
+      "filePath": "docs/BRANDING/GRIDLY-APP-ICON-STRATEGY.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-STORE-ASSET-PRODUCTION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Asset Folder Structure",
+      "filePath": "docs/BRANDING/GRIDLY-ASSET-FOLDER-STRUCTURE.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Splash Screen Strategy",
+      "filePath": "docs/BRANDING/GRIDLY-SPLASH-SCREEN-STRATEGY.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-STORE-ASSET-PRODUCTION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V275 2 PWA Install Ux",
+      "filePath": "docs/GRIDLY_V275_2_PWA_INSTALL_UX.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V275 PWA Foundation Implementation",
+      "filePath": "docs/GRIDLY_V275_PWA_FOUNDATION_IMPLEMENTATION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-AUDIT-TEST-MANIFEST-VALIDATION-V575C.md",
+        "docs/audit-test-manifest.json"
+      ]
+    },
+    {
+      "name": "GRIDLY V276 1 Capacitor Foundation",
+      "filePath": "docs/GRIDLY_V276_1_CAPACITOR_FOUNDATION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 2 Native Build Validation",
+      "filePath": "docs/GRIDLY_V276_2_NATIVE_BUILD_VALIDATION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 3 External Native Build Validation",
+      "filePath": "docs/GRIDLY_V276_3_EXTERNAL_NATIVE_BUILD_VALIDATION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4B Android Capacitor Shell Completeness",
+      "filePath": "docs/GRIDLY_V276_4B_ANDROID_CAPACITOR_SHELL_COMPLETENESS.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4D Android Public Assets Placeholder",
+      "filePath": "docs/GRIDLY_V276_4D_ANDROID_PUBLIC_ASSETS_PLACEHOLDER.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4E Copy Web Assets Before Capacitor Doctor",
+      "filePath": "docs/GRIDLY_V276_4E_COPY_WEB_ASSETS_BEFORE_CAPACITOR_DOCTOR.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4F Capacitor Webdir Fix",
+      "filePath": "docs/GRIDLY_V276_4F_CAPACITOR_WEBDIR_FIX.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4G Recreated Capacitor Validation Fixes",
+      "filePath": "docs/GRIDLY_V276_4G_RECREATED_CAPACITOR_VALIDATION_FIXES.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 4 Github Actions Capacitor Validation",
+      "filePath": "docs/GRIDLY_V276_4_GITHUB_ACTIONS_CAPACITOR_VALIDATION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V276 Capacitor Readiness Audit",
+      "filePath": "docs/GRIDLY_V276_CAPACITOR_READINESS_AUDIT.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY App Screenshot Captions",
+      "filePath": "docs/STORE/GRIDLY-APP-SCREENSHOT-CAPTIONS.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-ASSET-INVENTORY.md",
+        "docs/STORE/GRIDLY-ASSET-VALIDATION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY App Store Description",
+      "filePath": "docs/STORE/GRIDLY-APP-STORE-DESCRIPTION.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-STORE-ASSET-PRODUCTION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Apple Asset Checklist",
+      "filePath": "docs/STORE/GRIDLY-APPLE-ASSET-CHECKLIST.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Asset Creation Checklist",
+      "filePath": "docs/STORE/GRIDLY-ASSET-CREATION-CHECKLIST.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-ASSET-VALIDATION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Asset Inventory",
+      "filePath": "docs/STORE/GRIDLY-ASSET-INVENTORY.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-ASSET-VALIDATION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Asset Naming Standard",
+      "filePath": "docs/STORE/GRIDLY-ASSET-NAMING-STANDARD.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "assets/store/manifest/README.md",
+        "docs/STORE/GRIDLY-ASSET-VALIDATION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Asset Validation Plan",
+      "filePath": "docs/STORE/GRIDLY-ASSET-VALIDATION-PLAN.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Google Closed Testing Checklist",
+      "filePath": "docs/STORE/GRIDLY-GOOGLE-CLOSED-TESTING-CHECKLIST.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Google Play Asset Checklist",
+      "filePath": "docs/STORE/GRIDLY-GOOGLE-PLAY-ASSET-CHECKLIST.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Metadata Package",
+      "filePath": "docs/STORE/GRIDLY-METADATA-PACKAGE.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-APPLE-ASSET-CHECKLIST.md",
+        "docs/STORE/GRIDLY-ASSET-INVENTORY.md",
+        "docs/STORE/GRIDLY-GOOGLE-PLAY-ASSET-CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Screenshot Capture Workflow",
+      "filePath": "docs/STORE/GRIDLY-SCREENSHOT-CAPTURE-WORKFLOW.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Screenshot Plan",
+      "filePath": "docs/STORE/GRIDLY-SCREENSHOT-PLAN.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/STORE/GRIDLY-STORE-ASSET-PRODUCTION-PLAN.md"
+      ]
+    },
+    {
+      "name": "GRIDLY Store Asset Production Plan",
+      "filePath": "docs/STORE/GRIDLY-STORE-ASSET-PRODUCTION-PLAN.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Testflight Launch Checklist",
+      "filePath": "docs/STORE/GRIDLY-TESTFLIGHT-LAUNCH-CHECKLIST.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "Desktop Mobile Coupling Audit V63",
+      "filePath": "docs/audits/DESKTOP_MOBILE_COUPLING_AUDIT_V63.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V275 PWA Infrastructure Audit",
+      "filePath": "docs/audits/GRIDLY_V275_PWA_INFRASTRUCTURE_AUDIT.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V275_PWA_INFRASTRUCTURE_AUDIT.md"
+      ]
+    },
+    {
+      "name": "Mobile Alerts Center Audit V67",
+      "filePath": "docs/audits/MOBILE_ALERTS_CENTER_AUDIT_V67.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "V74 Mobile Shell Device Consistency Audit",
+      "filePath": "docs/audits/V74_MOBILE_SHELL_DEVICE_CONSISTENCY_AUDIT.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "Release readiness / mobile shell / PWA / branding",
+      "status": "candidate-retirement",
+      "expansionOf": "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "ownership": "Release readiness / mobile shell / PWA / branding",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Architecture Plan V459",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-ARCHITECTURE-PLAN-V459.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Decision Simulation Framework V474",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-DECISION-SIMULATION-FRAMEWORK-V474.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Dry Run Review Framework V467",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-DRY-RUN-REVIEW-FRAMEWORK-V467.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Governance Approval Framework V466",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-GOVERNANCE-APPROVAL-FRAMEWORK-V466.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Readiness Audit Framework V465",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-READINESS-AUDIT-FRAMEWORK-V465.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Activation Readiness Program Consolidation Review V475",
+      "filePath": "GRIDLY-COUNTY-ACTIVATION-READINESS-PROGRAM-CONSOLIDATION-REVIEW-V475.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Dry Run Review Execution Framework V473",
+      "filePath": "GRIDLY-COUNTY-DRY-RUN-REVIEW-EXECUTION-FRAMEWORK-V473.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Governance Review Execution Framework V472",
+      "filePath": "GRIDLY-COUNTY-GOVERNANCE-REVIEW-EXECUTION-FRAMEWORK-V472.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Implementation Fast Track Framework V571",
+      "filePath": "GRIDLY-COUNTY-IMPLEMENTATION-FAST-TRACK-FRAMEWORK-V571.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Implementation Program V552",
+      "filePath": "GRIDLY-COUNTY-IMPLEMENTATION-PROGRAM-V552.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Package Evidence Collection Framework V468",
+      "filePath": "GRIDLY-COUNTY-PACKAGE-EVIDENCE-COLLECTION-FRAMEWORK-V468.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Package Fixture Standard V464",
+      "filePath": "GRIDLY-COUNTY-PACKAGE-FIXTURE-STANDARD-V464.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Platform Readiness Audit V458",
+      "filePath": "GRIDLY-COUNTY-PLATFORM-READINESS-AUDIT-V458.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-COUNTY-PLATFORM-READINESS-AUDIT-V458.md"
+      ]
+    },
+    {
+      "name": "GRIDLY County Platform Roadmap Review V457",
+      "filePath": "GRIDLY-COUNTY-PLATFORM-ROADMAP-REVIEW-V457.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Program Status And Future Execution Recommendation V572",
+      "filePath": "GRIDLY-COUNTY-PROGRAM-STATUS-AND-FUTURE-EXECUTION-RECOMMENDATION-V572.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Readiness Evidence Validation Framework V469",
+      "filePath": "GRIDLY-COUNTY-READINESS-EVIDENCE-VALIDATION-FRAMEWORK-V469.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Readiness Fast Track Adoption Standard V551",
+      "filePath": "GRIDLY-COUNTY-READINESS-FAST-TRACK-ADOPTION-STANDARD-V551.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Readiness Fast Track Framework V550",
+      "filePath": "GRIDLY-COUNTY-READINESS-FAST-TRACK-FRAMEWORK-V550.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Readiness Review Evidence Acceptance Framework V470",
+      "filePath": "GRIDLY-COUNTY-READINESS-REVIEW-EVIDENCE-ACCEPTANCE-FRAMEWORK-V470.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Readiness Review Execution Framework V471",
+      "filePath": "GRIDLY-COUNTY-READINESS-REVIEW-EXECUTION-FRAMEWORK-V471.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY County Registry Contract Validation Plan V461",
+      "filePath": "GRIDLY-COUNTY-REGISTRY-CONTRACT-VALIDATION-PLAN-V461.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY San Jacinto County Readiness Fast Track Assessment V700",
+      "filePath": "GRIDLY-SAN-JACINTO-COUNTY-READINESS-FAST-TRACK-ASSESSMENT-V700.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY San Jacinto Implementation Fast Track Assessment V701",
+      "filePath": "GRIDLY-SAN-JACINTO-IMPLEMENTATION-FAST-TRACK-ASSESSMENT-V701.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Polk County Readiness Fast Track Assessment V800",
+      "filePath": "GRIDLY-POLK-COUNTY-READINESS-FAST-TRACK-ASSESSMENT-V800.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Polk Implementation Fast Track Assessment V801",
+      "filePath": "GRIDLY-POLK-IMPLEMENTATION-FAST-TRACK-ASSESSMENT-V801.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Jefferson County Readiness Fast Track Assessment V900",
+      "filePath": "GRIDLY-JEFFERSON-COUNTY-READINESS-FAST-TRACK-ASSESSMENT-V900.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Jefferson Implementation Fast Track Assessment V901",
+      "filePath": "GRIDLY-JEFFERSON-IMPLEMENTATION-FAST-TRACK-ASSESSMENT-V901.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Chambers Implementation Fast Track Assessment V573",
+      "filePath": "GRIDLY-CHAMBERS-IMPLEMENTATION-FAST-TRACK-ASSESSMENT-V573.md",
+      "category": "Unknown / Needs Review",
+      "systemDomain": "County activation / future-county readiness",
+      "status": "unknown",
+      "expansionOf": "County activation and future-county fast-track documentation",
+      "ownership": "County activation / future-county readiness",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY Active Hazard Inventory 2026 06 16",
+      "filePath": "docs/audits/GRIDLY_ACTIVE_HAZARD_INVENTORY_2026_06_16.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "GRIDLY-SYSTEM-STATE-AUDIT-V1.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V140 1 Unified Incident Source Audit",
+      "filePath": "docs/audits/GRIDLY_V140_1_UNIFIED_INCIDENT_SOURCE_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V140 2 Refresh Stabilization",
+      "filePath": "docs/audits/GRIDLY_V140_2_REFRESH_STABILIZATION.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V140 3 Source Cleanup",
+      "filePath": "docs/audits/GRIDLY_V140_3_SOURCE_CLEANUP.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V140 4 Active Incident Audit",
+      "filePath": "docs/audits/GRIDLY_V140_4_ACTIVE_INCIDENT_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V140 5 Geolocation Fix",
+      "filePath": "docs/audits/GRIDLY_V140_5_GEOLOCATION_FIX.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 1 Clean Core Audit",
+      "filePath": "docs/audits/GRIDLY_V141_1_CLEAN_CORE_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 2B Route Watch Click Hotfix",
+      "filePath": "docs/audits/GRIDLY_V141_2B_ROUTE_WATCH_CLICK_HOTFIX.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 2C Route Watch Rollback",
+      "filePath": "docs/audits/GRIDLY_V141_2C_ROUTE_WATCH_ROLLBACK.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 2 Safe Debug Removal",
+      "filePath": "docs/audits/GRIDLY_V141_2_SAFE_DEBUG_REMOVAL.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 3 Route Setup Button Wiring",
+      "filePath": "docs/audits/GRIDLY_V141_3_ROUTE_SETUP_BUTTON_WIRING.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 5 Route Readiness Fix",
+      "filePath": "docs/audits/GRIDLY_V141_5_ROUTE_READINESS_FIX.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 6 Portrait V2 Backdrop Fix",
+      "filePath": "docs/audits/GRIDLY_V141_6_PORTRAIT_V2_BACKDROP_FIX.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V141 7 Stabilization Handoff",
+      "filePath": "docs/audits/GRIDLY_V141_7_STABILIZATION_HANDOFF.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V200 Beta Readiness Review",
+      "filePath": "docs/audits/GRIDLY_V200_BETA_READINESS_REVIEW.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V249 0 Settings List Experience Audit",
+      "filePath": "docs/audits/GRIDLY_V249_0_SETTINGS_LIST_EXPERIENCE_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V260 1 Direct Feedback Submission Design",
+      "filePath": "docs/audits/GRIDLY_V260_1_DIRECT_FEEDBACK_SUBMISSION_DESIGN.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V260_1_DIRECT_FEEDBACK_SUBMISSION_DESIGN.md",
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V260 Direct Feedback Submission Audit",
+      "filePath": "docs/audits/GRIDLY_V260_DIRECT_FEEDBACK_SUBMISSION_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V261 Beta Readiness Review Audit",
+      "filePath": "docs/audits/GRIDLY_V261_BETA_READINESS_REVIEW_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V262_3_ROUTE_WATCH_SEPARATION_PLAN.md",
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V262 3 Route Watch Separation Plan",
+      "filePath": "docs/audits/GRIDLY_V262_3_ROUTE_WATCH_SEPARATION_PLAN.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V262 4 Route Watch Naming Entry Point Audit",
+      "filePath": "docs/audits/GRIDLY_V262_4_ROUTE_WATCH_NAMING_ENTRY_POINT_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V263 Bottom Dock Simplification Audit",
+      "filePath": "docs/audits/GRIDLY_V263_BOTTOM_DOCK_SIMPLIFICATION_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V264 1 Route Watch Display Blocker Audit",
+      "filePath": "docs/audits/GRIDLY_V264_1_ROUTE_WATCH_DISPLAY_BLOCKER_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V269 Marker Png Dimension Next Steps",
+      "filePath": "docs/audits/GRIDLY_V269_MARKER_PNG_DIMENSION_NEXT_STEPS.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V270 Production Marker Readability Audit",
+      "filePath": "docs/audits/GRIDLY_V270_PRODUCTION_MARKER_READABILITY_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V270 Road Closed Marker Dom Audit",
+      "filePath": "docs/audits/GRIDLY_V270_ROAD_CLOSED_MARKER_DOM_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V272 Notification Reality Audit",
+      "filePath": "docs/audits/GRIDLY_V272_NOTIFICATION_REALITY_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V272_NOTIFICATION_REALITY_AUDIT.md",
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V273 Beta Data Hygiene Review",
+      "filePath": "docs/audits/GRIDLY_V273_BETA_DATA_HYGIENE_REVIEW.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_DATA_HYGIENE_REVIEW.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V273 Beta Launch Checklist",
+      "filePath": "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V284 Directional Validation Strategy",
+      "filePath": "docs/audits/GRIDLY_V284_DIRECTIONAL_VALIDATION_STRATEGY.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V287 Live TxDOT Direction Coverage Measurement Audit",
+      "filePath": "docs/audits/GRIDLY_V287_LIVE_TXDOT_DIRECTION_COVERAGE_MEASUREMENT_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V288_TXDOT_EXTENDED_FEED_CAPABILITY_ASSESSMENT.md"
+      ]
+    },
+    {
+      "name": "GRIDLY V288 TxDOT Extended Feed Capability Assessment",
+      "filePath": "docs/audits/GRIDLY_V288_TXDOT_EXTENDED_FEED_CAPABILITY_ASSESSMENT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V310 3 Duplicate Blocked Crossing Marker Audit",
+      "filePath": "docs/audits/GRIDLY_V310_3_DUPLICATE_BLOCKED_CROSSING_MARKER_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V311 1 Reference Road Evidence Diagnostics",
+      "filePath": "docs/audits/GRIDLY_V311_1_REFERENCE_ROAD_EVIDENCE_DIAGNOSTICS.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V311 Road Name Regression Reference Quality Audit",
+      "filePath": "docs/audits/GRIDLY_V311_ROAD_NAME_REGRESSION_REFERENCE_QUALITY_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "GRIDLY V438 Historical Community Pulse Field Validation",
+      "filePath": "docs/audits/GRIDLY_V438_HISTORICAL_COMMUNITY_PULSE_FIELD_VALIDATION.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "Reporting Audit V34 2",
+      "filePath": "docs/audits/REPORTING_AUDIT_V34_2.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "Reporting Audit V50",
+      "filePath": "docs/audits/REPORTING_AUDIT_V50.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    },
+    {
+      "name": "V114 Portrait Mode Button Audit",
+      "filePath": "docs/audits/V114_PORTRAIT_MODE_BUTTON_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "unreferenced-by-path-search"
+    },
+    {
+      "name": "V271 Crossing Visibility Refinement Audit",
+      "filePath": "docs/audits/V271_CROSSING_VISIBILITY_REFINEMENT_AUDIT.md",
+      "category": "Documentation-Only Validation Checks",
+      "systemDomain": "Audit documentation / coverage gap inventory",
+      "status": "unknown",
+      "expansionOf": "Coverage gap expansion: docs/audits inventory",
+      "ownership": "Audit documentation / coverage gap inventory",
+      "referenced": "referenced",
+      "referencedBy": [
+        "docs/audits/GRIDLY_V273_BETA_LAUNCH_CHECKLIST.md"
+      ]
+    }
+  ],
+  "protectedSystemsVerification": {
+    "Shared Reports": "not changed",
+    "Route Watch": "not changed; manifest only references existing helpers and scripts",
+    "Awareness Filtering": "not changed; manifest only references existing tests/helpers",
+    "Hazard Lifecycle": "not changed",
+    "Alert Generation": "not changed",
+    "Supabase Sync": "not changed",
+    "Liberty boundary data": "not changed",
+    "Montgomery source data": "not changed",
+    "Historical systems": "not changed; manifest only references existing tests/helpers/docs",
+    "DriveTexas": "not changed",
+    "Transportation Intelligence": "not changed"
+  },
+  "expandedFrom": {
+    "milestone": "V575B/V575C",
+    "entriesBeforeExpansion": 45,
+    "groupedEntriesExpanded": [
+      "App store, Capacitor, PWA, branding, and mobile shell audit docs",
+      "County activation and future-county fast-track documentation",
+      "Historical capture planning and readiness documentation family V363-V386",
+      "Historical language safety documentation family V447-V454",
+      "Legacy audit helper exposure documentation family V141.5C-V144.0",
+      "Route Watch geometry documentation family V289-V300"
+    ]
+  },
+  "manifestStatistics": {
+    "totalEntriesBeforeExpansion": 45,
+    "totalEntriesAfterExpansion": 211,
+    "remainingGroupedEntries": 0,
+    "remainingUnknownEntries": 69
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "validationVersion": "V576",
+  "artifactExists": true,
+  "featureCount": 1,
+  "expectedFeatureCount": 1,
+  "selectedGEOID": "48339",
+  "geoidMatch": true,
+  "statefpMatch": true,
+  "countyfpMatch": true,
+  "nameMatch": true,
+  "namelsadMatch": true,
+  "geometryType": "Polygon",
+  "geometryPresent": true,
+  "coordinateArraysPresent": true,
+  "pointCount": 6828,
+  "partCount": 1,
+  "boundingBox": {
+    "minLon": -95.83024,
+    "minLat": 30.027748,
+    "maxLon": -95.096708,
+    "maxLat": 30.630284
+  },
+  "representativePoint": {
+    "lat": 30.2988009,
+    "lon": -95.50295
+  },
+  "coordinateRangeSanityCheck": true,
+  "sourcePathUsed": "assets/county-sources/montgomery/census-tiger-2025/tl_2025_us_county.shp",
+  "outputPath": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+  "outputSha256": "1dddce09b70d80bb5734734a0107baa74d4a32f6895bd70f5a2d21270c9baf71",
+  "validationStatus": "pass"
+}
