@@ -1,0 +1,95 @@
+{
+  "artifactVersion": "V578",
+  "artifactType": "montgomery-containment-fixture-suite",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "purpose": "Document expected containment outcomes for Montgomery package validation without executing runtime code.",
+  "runtimeExecution": "not_performed",
+  "sourceReferences": {
+    "boundary": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "registry": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "packageManifest": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json"
+  },
+  "fixtures": [
+    {
+      "id": "V578-FX-001",
+      "scenario": "Montgomery-only asset",
+      "description": "Asset metadata identifies Montgomery County and GEOID 48339 only.",
+      "expectedOutcome": "owned_by_montgomery_package_only",
+      "expectedContainment": "allowed within Montgomery implementation package; not visible to Liberty package or runtime activation paths."
+    },
+    {
+      "id": "V578-FX-002",
+      "scenario": "Liberty-only asset",
+      "description": "Asset metadata identifies Liberty County and a non-Montgomery GEOID only.",
+      "expectedOutcome": "excluded_from_montgomery_package",
+      "expectedContainment": "Montgomery validation must not claim or mutate Liberty assets."
+    },
+    {
+      "id": "V578-FX-003",
+      "scenario": "Montgomery-to-Liberty edge case",
+      "description": "Asset coordinates or metadata approach the Montgomery/Liberty county interface but retain Montgomery ownership metadata.",
+      "expectedOutcome": "requires_boundary_based_montgomery_assignment",
+      "expectedContainment": "accepted only when the protected Montgomery boundary reference supports Montgomery containment; Liberty remains isolated."
+    },
+    {
+      "id": "V578-FX-004",
+      "scenario": "Shared boundary edge case",
+      "description": "Asset lies on or near a shared county boundary where ownership could be ambiguous.",
+      "expectedOutcome": "fail_closed_until_unambiguous_county_ownership",
+      "expectedContainment": "no cross-county write or activation is allowed from an ambiguous shared-boundary condition."
+    },
+    {
+      "id": "V578-FX-005",
+      "scenario": "Unknown county asset",
+      "description": "Asset omits county identifiers or contains county metadata outside the known package registry references.",
+      "expectedOutcome": "fail_closed_unknown_county",
+      "expectedContainment": "asset is excluded from Montgomery and Liberty packages pending explicit county assignment."
+    },
+    {
+      "id": "V578-FX-006",
+      "scenario": "Out-of-county asset",
+      "description": "Asset is explicitly outside Montgomery County and not assigned to Liberty County.",
+      "expectedOutcome": "excluded_from_montgomery_package",
+      "expectedContainment": "no Montgomery ownership, no Liberty mutation, and no runtime activation."
+    },
+    {
+      "id": "V578-FX-007",
+      "scenario": "County package ownership scenario",
+      "description": "Package inventory references Montgomery County implementation artifacts only.",
+      "expectedOutcome": "package_ownership_montgomery_only",
+      "expectedContainment": "package ownership is documentary and does not create runtime or production registry records."
+    },
+    {
+      "id": "V578-FX-008",
+      "scenario": "County registry ownership scenario",
+      "description": "Registry artifact reference describes Montgomery County ownership in package scope only.",
+      "expectedOutcome": "registry_ownership_montgomery_package_scope_only",
+      "expectedContainment": "registry evidence remains non-production and does not onboard or activate Montgomery."
+    },
+    {
+      "id": "V578-FX-009",
+      "scenario": "Read containment scenario",
+      "description": "A read request is evaluated against documentary Montgomery package scope.",
+      "expectedOutcome": "read_scope_limited_to_montgomery_artifacts",
+      "expectedContainment": "read expectations do not alter application runtime behavior or expose Liberty-only artifacts as Montgomery."
+    },
+    {
+      "id": "V578-FX-010",
+      "scenario": "Write containment scenario",
+      "description": "A write request is evaluated against documentary Montgomery package scope.",
+      "expectedOutcome": "writes_not_performed_by_this_package",
+      "expectedContainment": "no runtime write path, Supabase write, registry production write, or boundary mutation is authorized."
+    },
+    {
+      "id": "V578-FX-011",
+      "scenario": "Awareness containment scenario",
+      "description": "Awareness/intelligence behavior references are reviewed only as protected systems.",
+      "expectedOutcome": "awareness_systems_remain_disabled_unchanged",
+      "expectedContainment": "no historical systems, DriveTexas, Transportation Intelligence, awareness filtering, hazards, alerts, or sync behavior is enabled."
+    }
+  ]
+}
