@@ -1106,38 +1106,17 @@
           <p class="eyebrow">Awareness Area</p>
           <h2>Choose Your County</h2>
           <p>Start with your county, then choose the home area Gridly should watch first.</p>
-          <div class="gridly-welcome-town-grid" role="group" aria-label="Choose your county">
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-county="liberty-tx">Liberty County</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-county="montgomery-tx">Montgomery County</button>
-          </div>
-          <h3 class="gridly-welcome-subtitle">Choose Your Home Area</h3>
-          <div class="gridly-welcome-town-grid" data-gridly-home-area-group="liberty-tx" role="group" aria-label="Choose your Liberty County home area">
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Dayton" data-gridly-area-county="liberty-tx">Dayton</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Liberty" data-gridly-area-county="liberty-tx">Liberty</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Cleveland" data-gridly-area-county="liberty-tx">Cleveland</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Ames" data-gridly-area-county="liberty-tx">Ames</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Hardin" data-gridly-area-county="liberty-tx">Hardin</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Devers" data-gridly-area-county="liberty-tx">Devers</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Hull" data-gridly-area-county="liberty-tx">Hull</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Daisetta" data-gridly-area-county="liberty-tx">Daisetta</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Moss Hill" data-gridly-area-county="liberty-tx">Moss Hill</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Raywood" data-gridly-area-county="liberty-tx">Raywood</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Kenefick" data-gridly-area-county="liberty-tx">Kenefick</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Tarkington" data-gridly-area-county="liberty-tx">Tarkington</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Entire Liberty County" data-gridly-area-county="liberty-tx">Entire Liberty County</button>
-          </div>
-          <div class="gridly-welcome-town-grid" data-gridly-home-area-group="montgomery-tx" role="group" aria-label="Choose your Montgomery County home area" hidden>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Montgomery County" data-gridly-area-county="montgomery-tx">Montgomery County</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Conroe" data-gridly-area-county="montgomery-tx">Conroe</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="The Woodlands" data-gridly-area-county="montgomery-tx">The Woodlands</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Magnolia" data-gridly-area-county="montgomery-tx">Magnolia</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Willis" data-gridly-area-county="montgomery-tx">Willis</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Montgomery" data-gridly-area-county="montgomery-tx">Montgomery</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="New Caney" data-gridly-area-county="montgomery-tx">New Caney</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Porter" data-gridly-area-county="montgomery-tx">Porter</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Splendora" data-gridly-area-county="montgomery-tx">Splendora</button>
-            <button class="gridly-welcome-town-btn" type="button" data-gridly-town="Other" data-gridly-area-county="montgomery-tx">Other</button>
-          </div>
+          <label class="gridly-welcome-select-label">
+            Select County
+            <select id="gridlyWelcomeCountySelect" data-gridly-county-select aria-label="Select County">
+              <option value="liberty-tx">Liberty County</option>
+              <option value="montgomery-tx">Montgomery County</option>
+            </select>
+          </label>
+          <label class="gridly-welcome-select-label">
+            <span class="gridly-welcome-subtitle">Choose Your Home Area</span>
+            <select id="gridlyWelcomeHomeAreaSelect" data-gridly-home-area-select aria-label="Select Home Area"></select>
+          </label>
           <p class="gridly-welcome-status" id="gridlyWelcomeTownStatus" aria-live="polite"></p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>

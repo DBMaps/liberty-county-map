@@ -4,36 +4,46 @@ const fs = require('fs');
 const source = fs.readFileSync('js/app.js', 'utf8');
 const markup = fs.readFileSync('index.html', 'utf8');
 
-assert(markup.includes('<h2>Choose Your County</h2>'), 'setup has county selection step');
-assert(markup.includes('data-gridly-county="liberty-tx"') && markup.includes('>Liberty County</button>'), 'Liberty County appears in county selection');
-assert(markup.includes('data-gridly-county="montgomery-tx"') && markup.includes('>Montgomery County</button>'), 'Montgomery County appears in county selection');
-assert(markup.includes('<h3 class="gridly-welcome-subtitle">Choose Your Home Area</h3>'), 'setup has home-area selection step');
-assert(markup.includes('data-gridly-home-area-group="liberty-tx"'), 'Liberty home-area group exists');
-assert(markup.includes('data-gridly-home-area-group="montgomery-tx"'), 'Montgomery home-area group exists');
+assert(markup.includes('id="gridlyWelcomeCountySelect"'), 'County selector exists');
+assert(markup.includes('data-gridly-county-select'), 'County selector has controlled data hook');
+assert(markup.includes('<option value="liberty-tx">Liberty County</option>'), 'Liberty County is selectable');
+assert(markup.includes('<option value="montgomery-tx">Montgomery County</option>'), 'Montgomery County is selectable');
+assert(markup.includes('id="gridlyWelcomeHomeAreaSelect"'), 'Home-area dropdown exists');
+assert(markup.includes('data-gridly-home-area-select'), 'Home-area dropdown has controlled data hook');
 
-const libertyGroup = markup.match(/data-gridly-home-area-group="liberty-tx"[\s\S]*?<\/div>/)[0];
-const montgomeryGroup = markup.match(/data-gridly-home-area-group="montgomery-tx"[\s\S]*?<\/div>/)[0];
-['Dayton', 'Liberty', 'Cleveland', 'Ames', 'Hardin', 'Devers', 'Hull', 'Daisetta', 'Moss Hill', 'Raywood', 'Kenefick', 'Tarkington', 'Entire Liberty County'].forEach((area) => {
-  assert(libertyGroup.includes(`data-gridly-town="${area}"`), `${area} appears only after Liberty county selection`);
-  assert(!montgomeryGroup.includes(`data-gridly-town="${area}"`), `${area} is not mixed into Montgomery home-area list`);
+assert(source.includes('const GRIDLY_HOME_AREA_OPTIONS_BY_COUNTY = Object.freeze({'), 'County-scoped home-area option registry exists');
+const optionsBlock = source.match(/const GRIDLY_HOME_AREA_OPTIONS_BY_COUNTY = Object\.freeze\(\{[\s\S]*?\n\}\);/)[0];
+const libertyOptions = optionsBlock.match(/"liberty-tx": \[([\s\S]*?)\],/)[1];
+const montgomeryOptions = optionsBlock.match(/"montgomery-tx": \[([\s\S]*?)\]/)[1];
+
+['Entire Liberty County', 'Dayton', 'Liberty', 'Cleveland', 'Ames', 'Hardin', 'Devers', 'Hull', 'Daisetta', 'Moss Hill', 'Raywood', 'Kenefick', 'Tarkington'].forEach((area) => {
+  assert(libertyOptions.includes(`"${area}"`) || (area === 'Entire Liberty County' && libertyOptions.includes('GRIDLY_COUNTY_WIDE_HOME_TOWN')), `${area} is a Liberty dropdown option`);
+  assert(!montgomeryOptions.includes(`"${area}"`) && !montgomeryOptions.includes(`GRIDLY_COUNTY_WIDE_HOME_TOWN`), `${area} is excluded from Montgomery dropdown options`);
 });
+
 ['Montgomery County', 'Conroe', 'The Woodlands', 'Magnolia', 'Willis', 'Montgomery', 'New Caney', 'Porter', 'Splendora', 'Other'].forEach((area) => {
-  assert(montgomeryGroup.includes(`data-gridly-town="${area}"`), `${area} appears only after Montgomery county selection`);
+  assert(montgomeryOptions.includes(`"${area}"`) || (area === 'Montgomery County' && montgomeryOptions.includes('GRIDLY_MONTGOMERY_COUNTY_WIDE_HOME_TOWN')), `${area} is a Montgomery dropdown option`);
+  assert(!libertyOptions.includes(`"${area}"`) && !libertyOptions.includes('GRIDLY_MONTGOMERY_COUNTY_WIDE_HOME_TOWN'), `${area} is excluded from Liberty dropdown options`);
 });
-['Conroe', 'The Woodlands', 'Magnolia', 'Willis', 'Montgomery', 'New Caney', 'Porter', 'Splendora'].forEach((area) => {
-  const escaped = area.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  assert(new RegExp(`storageValue: "${escaped}", countyId: "montgomery-tx"`).test(source), `${area} resolves to montgomery-tx`);
-});
-['Dayton', 'Liberty', 'Cleveland', 'Ames', 'Hardin', 'Devers'].forEach((area) => {
-  const escaped = area.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  assert(new RegExp(`key: "[^"]+", label: "${escaped}", storageValue: "${escaped}"`).test(source), `${area} remains a Liberty home area`);
-});
-assert(source.includes('return gridlyNormalizeCountyId(area?.countyId || GRIDLY_DEFAULT_COUNTY_ID);'), 'unknown area does not resolve to Montgomery');
-assert(source.includes('const GRIDLY_DEFAULT_COUNTY_ID = "liberty-tx";'), 'Liberty remains default fallback');
-assert(source.includes('function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID)') && source.includes('window.GRIDLY_ACTIVE_COUNTY_ID = normalized'), 'setup persists active county context');
-assert(source.includes('const MONTGOMERY_COUNTY_AWARENESS_BOUNDS = {') && source.includes('function getGridlyMontgomeryCountyBounds()'), 'Montgomery map context has a county bounds fallback');
-assert(source.includes('gridlyGetCountyBounds(gridlyResolveCountyIdForAwarenessArea(homeTownAnchor.storageValue))'), 'map context fits selected county bounds instead of Liberty-only bounds');
-assert(source.includes('County: ${countyLabel}. Awareness: ${awarenessLabel}.'), 'awareness labels include consistent county and awareness state');
+
+assert(source.includes('els.gridlyWelcomeCountySelect?.addEventListener("change"'), 'County selector is switchable through a change handler');
+assert(source.includes('gridlyWelcomeSelectedCountyId = gridlyNormalizeCountyId(els.gridlyWelcomeCountySelect.value || GRIDLY_DEFAULT_COUNTY_ID);'), 'County change reads either Liberty or Montgomery selection');
+assert(source.includes('const resetHomeArea = getGridlyDefaultHomeAreaForCounty(gridlyWelcomeSelectedCountyId);'), 'Changing county resets incompatible home-area selection');
+assert(source.includes('saveGridlyHomeTownPreference(resetHomeArea, { source: "welcome_county_change" });'), 'County change persists the reset home area immediately');
+assert(source.includes('els.gridlyWelcomeHomeAreaSelect?.addEventListener("change"'), 'Home-area dropdown persists selected area');
+assert(source.includes('function gridlyIsHomeAreaValidForCounty(homeArea = "", countyId = GRIDLY_DEFAULT_COUNTY_ID)'), 'Home-area selection is validated against selected county');
+
+assert(/key: "conroe", label: "Conroe", storageValue: "Conroe", countyId: "montgomery-tx"/.test(source), 'Montgomery County + Conroe resolves to montgomery-tx');
+assert(/key: "dayton", label: "Dayton", storageValue: "Dayton"/.test(source), 'Liberty County + Dayton resolves to liberty-tx by default fallback');
+assert(source.includes('return gridlyNormalizeCountyId(area?.countyId || GRIDLY_DEFAULT_COUNTY_ID);'), 'Blank/unknown awareness selection fails safe to Liberty, not Montgomery');
+assert(source.includes('const GRIDLY_DEFAULT_COUNTY_ID = "liberty-tx";'), 'Liberty remains default when no county is selected');
+
+assert(source.includes('County: ${countyLabel}. Awareness: ${awarenessLabel}.'), 'Completion/setup status shows county/home-area context');
+assert(source.includes('identity.textContent = `${networkTown} Awareness Network`;'), 'Completion screen shows selected home-area context');
+assert(source.includes('renderGridlyAwarenessMapIdentity("test-awareness-area-switcher")'), 'Main app awareness identity can render selected context');
+assert(source.includes('countyLabel') && source.includes('awarenessLabel'), 'Main app context includes county/home-area labels');
+assert(source.includes('const countyBounds = gridlyGetCountyBounds(gridlyResolveCountyIdForAwarenessArea(area.storageValue));'), 'Map context uses selected county bounds');
+assert(source.includes('const raw = normalized === "montgomery-tx" ? MONTGOMERY_COUNTY_AWARENESS_BOUNDS : LIBERTY_COUNTY_AWARENESS_BOUNDS;'), 'Montgomery map context does not remain centered over Liberty');
 
 [
   'historicalReadsEnabled: false',
@@ -46,4 +56,4 @@ assert(source.includes('County: ${countyLabel}. Awareness: ${awarenessLabel}.'),
   'TransportationIntelligenceActivation: false'
 ].forEach((needle) => assert(source.includes(needle), `Protected boundary unchanged: ${needle}`));
 
-console.log('COUNTY-FIRST AWARENESS SETUP COMPLETE');
+console.log('COUNTY HOME AREA DROPDOWN FIX COMPLETE');

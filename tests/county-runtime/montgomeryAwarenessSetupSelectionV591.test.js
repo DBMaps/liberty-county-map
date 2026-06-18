@@ -4,10 +4,12 @@ const fs = require('fs');
 const source = fs.readFileSync('js/app.js', 'utf8');
 const markup = fs.readFileSync('index.html', 'utf8');
 
-const optionButton = (name) => `data-gridly-town="${name}"`;
+assert(markup.includes('id="gridlyWelcomeCountySelect"'), 'County selector appears in onboarding Awareness Area setup');
+assert(markup.includes('id="gridlyWelcomeHomeAreaSelect"'), 'Home-area dropdown appears in onboarding Awareness Area setup');
+const homeAreaOptionsBlock = source.match(/const GRIDLY_HOME_AREA_OPTIONS_BY_COUNTY = Object\.freeze\(\{[\s\S]*?\n\}\);/)[0];
 const requiredOnboardingOptions = ['Entire Liberty County', 'Dayton', 'Montgomery County', 'Conroe', 'The Woodlands', 'Magnolia', 'Willis', 'Montgomery', 'New Caney', 'Porter', 'Splendora'];
 requiredOnboardingOptions.forEach((option) => {
-  assert(markup.includes(optionButton(option)), `${option} appears in onboarding Awareness Area setup`);
+  assert(homeAreaOptionsBlock.includes(`"${option}"`) || (option === 'Entire Liberty County' && homeAreaOptionsBlock.includes('GRIDLY_COUNTY_WIDE_HOME_TOWN')) || (option === 'Montgomery County' && homeAreaOptionsBlock.includes('GRIDLY_MONTGOMERY_COUNTY_WIDE_HOME_TOWN')), `${option} appears in controlled onboarding Awareness Area setup`);
 });
 
 assert(source.includes('const GRIDLY_AWARENESS_AREA_DEFINITIONS = ['), 'Awareness setup options are runtime awareness-area definitions');
