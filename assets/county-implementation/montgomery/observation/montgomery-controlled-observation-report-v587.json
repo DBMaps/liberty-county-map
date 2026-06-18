@@ -1,0 +1,82 @@
+{
+  "artifactVersion": "V587",
+  "countyId": "montgomery-tx",
+  "milestone": "Montgomery Controlled Observation Execution",
+  "objective": "Execute the controlled observation process defined by V586 and collect launch-decision evidence without activating Montgomery.",
+  "activationAuthorized": false,
+  "runtimeRequirements": {
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false
+  },
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "reviewedInputs": [
+    "V584 Runtime Registry Integration",
+    "V585 Staged Runtime Validation",
+    "V586 Controlled Observation Preparation"
+  ],
+  "executionAreas": [
+    {
+      "area": "Registry Recognition",
+      "status": "PASS",
+      "evidence": [
+        "Montgomery registry entry exists in GRIDLY_COUNTY_REGISTRY.",
+        "Runtime status helper recognizes montgomery-tx as known.",
+        "Montgomery remains operational=false, productionEnabled=false, selectable=false."
+      ]
+    },
+    {
+      "area": "Runtime Gate Enforcement",
+      "status": "PASS",
+      "evidence": [
+        "GRIDLY_MONTGOMERY_RUNTIME_GATE exists and remains false.",
+        "Montgomery runtimeGateEnabled is bound to the false gate.",
+        "Normalization and active-county override attempts resolve back to Liberty while Montgomery is disabled.",
+        "No bypass path was identified in V587 validation coverage."
+      ]
+    },
+    {
+      "area": "County Containment",
+      "status": "PASS",
+      "evidence": [
+        "Liberty rows are allowed in Liberty context.",
+        "Montgomery rows are blocked from Liberty context.",
+        "Montgomery self-context remains blocked while non-operational.",
+        "Unknown county rows fail closed."
+      ]
+    },
+    {
+      "area": "Liberty Baseline Preservation",
+      "status": "PASS",
+      "evidence": [
+        "Liberty remains the default active county.",
+        "Liberty remains operational, production enabled, and selectable.",
+        "Liberty runtime paths remain data/-owned."
+      ]
+    },
+    {
+      "area": "Protected-System Preservation",
+      "status": "PASS",
+      "evidence": [
+        "No Supabase changes are part of V587.",
+        "No migrations are part of V587.",
+        "Historical systems remain disabled.",
+        "DriveTexas remains paused.",
+        "Transportation Intelligence remains disabled."
+      ]
+    }
+  ],
+  "finalDetermination": "OBSERVATION COMPLETE WITH OBSERVATIONS",
+  "canProceedToV588LaunchDecisionPackage": true,
+  "requiredFinalStatement": "Can Montgomery proceed to V588 Launch Decision Package? YES"
+}

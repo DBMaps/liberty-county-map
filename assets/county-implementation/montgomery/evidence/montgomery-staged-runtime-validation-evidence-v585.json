@@ -1,0 +1,51 @@
+{
+  "artifactVersion": "V585",
+  "artifactType": "montgomery-staged-runtime-validation-evidence",
+  "evidenceDate": "2026-06-18",
+  "runtimeRegistryEvidence": {
+    "libertyDefaultCountyId": "liberty-tx",
+    "libertyOperationalDefault": true,
+    "montgomeryRegistryEntryExists": true,
+    "montgomeryKnownToRuntime": true,
+    "montgomeryStage": "disabled-staged",
+    "montgomeryOperational": false,
+    "montgomeryProductionEnabled": false,
+    "montgomerySelectable": false,
+    "montgomeryCanBecomeActiveCounty": false,
+    "montgomeryCanBecomeSelectedCounty": false
+  },
+  "containmentEvidence": {
+    "libertyAssetsRemainLibertyOwned": true,
+    "montgomeryAssetsRemainMontgomeryOwned": true,
+    "montgomeryAssetsPlacedInData": false,
+    "crossCountyContaminationBlocked": true,
+    "countyOwnershipEnforcementFunctioning": true,
+    "unknownCountyHandling": "fail_closed"
+  },
+  "runtimeGateEvidence": {
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE_exists": true,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE_default": false,
+    "montgomeryCannotActivateWhenGateFalse": true,
+    "montgomeryCannotBypassGate": true
+  },
+  "protectedSystemValidation": {
+    "supabaseChanged": false,
+    "migrationsChanged": false,
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "validationCommands": [
+    { "command": "node -c js/app.js", "expectedResult": "pass" },
+    { "command": "node tests/county-runtime/montgomeryRuntimeRegistryV584.test.js", "expectedResult": "pass" },
+    { "command": "node tests/county-runtime/montgomeryStagedRuntimeValidationV585.test.js", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v584-protected-boundary-audit.mjs", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v585-staged-runtime-validation-audit.mjs", "expectedResult": "pass" }
+  ],
+  "finalDetermination": "STAGED RUNTIME VALIDATION COMPLETE WITH OBSERVATIONS"
+}

@@ -1,0 +1,117 @@
+{
+  "artifactVersion": "V583",
+  "artifactType": "montgomery-launch-gap-matrix",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "gaps": [
+    {
+      "id": "production-authorization",
+      "gap": "No Montgomery production launch authorization or release approval exists.",
+      "reason": "No Montgomery production launch authorization or release approval exists.",
+      "risk": "HIGH",
+      "dependency": "Release governance approval, launch owner, activation/change record",
+      "recommendedResolution": "Record explicit production authorization with approver, scope, window, protected-boundary attestations, and go/no-go authority.",
+      "estimatedReadinessImpact": "Blocks launch-ready status until approved."
+    },
+    {
+      "id": "runtime-county-package-integration",
+      "gap": "Montgomery artifacts are package-scoped only and are not wired into runtime county package loading.",
+      "reason": "Montgomery artifacts are package-scoped only and are not wired into runtime county package loading.",
+      "risk": "HIGH",
+      "dependency": "Authorized implementation change touching county package loading only after approval",
+      "recommendedResolution": "Integrate approved Montgomery county package using existing county-selection patterns without Supabase, historical, DriveTexas, Transportation Intelligence, or unrelated runtime changes.",
+      "estimatedReadinessImpact": "Required for operational county service."
+    },
+    {
+      "id": "production-registry-integration",
+      "gap": "Existing registry artifact is not a production registry record.",
+      "reason": "Existing registry artifact is not a production registry record.",
+      "risk": "HIGH",
+      "dependency": "Registry owner approval and production registry change plan",
+      "recommendedResolution": "Create production registry entry only after authorization; validate rollback removal/disable path.",
+      "estimatedReadinessImpact": "Required for discoverability and selection."
+    },
+    {
+      "id": "county-selection-and-awareness-filtering",
+      "gap": "County selection, awareness scope, route-watch, alerts, and report ownership implications have not been production-validated for Montgomery.",
+      "reason": "County selection, awareness scope, route-watch, alerts, and report ownership implications have not been production-validated for Montgomery.",
+      "risk": "HIGH",
+      "dependency": "Runtime integration plus containment validation fixtures",
+      "recommendedResolution": "Validate county selection resolves Montgomery only when selected and that awareness, alerts, route-watch, and reports remain county-contained.",
+      "estimatedReadinessImpact": "Required to prevent cross-county leakage."
+    },
+    {
+      "id": "data-asset-placement",
+      "gap": "Montgomery assets are intentionally not placed in data/ and cannot be consumed by production paths.",
+      "reason": "Montgomery assets are intentionally not placed in data/ and cannot be consumed by production paths.",
+      "risk": "HIGH",
+      "dependency": "Authorized asset promotion plan",
+      "recommendedResolution": "Promote only approved Montgomery artifacts to production-consumable location after authorization; preserve package provenance.",
+      "estimatedReadinessImpact": "Required for runtime consumption."
+    },
+    {
+      "id": "launch-validation-execution",
+      "gap": "Pre-launch audits, containment checks, regression checks, and Liberty baseline comparisons have not been executed after runtime integration.",
+      "reason": "Pre-launch audits, containment checks, regression checks, and Liberty baseline comparisons have not been executed after runtime integration.",
+      "risk": "HIGH",
+      "dependency": "Validation owner and test evidence",
+      "recommendedResolution": "Run artifact, dependency, containment, regression, Liberty-baseline, protected-boundary, registry, and rollback validations after authorized integration.",
+      "estimatedReadinessImpact": "Required before launch decision."
+    },
+    {
+      "id": "observation-period-execution",
+      "gap": "V580 observation plan exists but has not been executed.",
+      "reason": "V580 observation plan exists but has not been executed.",
+      "risk": "MODERATE",
+      "dependency": "Operations monitoring, daily review cadence, escalation owner",
+      "recommendedResolution": "Run a 7-calendar-day observation window after implementation validation, tracking protected boundaries, issue triage, containment, rollback triggers, and unauthorized mutation checks.",
+      "estimatedReadinessImpact": "Required to move from implementation-ready to launch-ready."
+    },
+    {
+      "id": "rollback-acceptance",
+      "gap": "Rollback is documented but not acceptance-signed for live launch state.",
+      "reason": "Rollback is documented but not acceptance-signed for live launch state.",
+      "risk": "HIGH",
+      "dependency": "Rollback coordinator and release owner signoff",
+      "recommendedResolution": "Desk-check or rehearse deactivation/removal path for registry/runtime changes and obtain owner acceptance before launch decision.",
+      "estimatedReadinessImpact": "Required launch safety gate."
+    },
+    {
+      "id": "final-launch-decision-record",
+      "gap": "No final go/no-go record exists.",
+      "reason": "No final go/no-go record exists.",
+      "risk": "HIGH",
+      "dependency": "Production authorization, validation evidence, observation closeout, rollback acceptance",
+      "recommendedResolution": "Create final launch decision record summarizing approvals, evidence, risks, rollback, and protected-boundary verification.",
+      "estimatedReadinessImpact": "Final gate to launch-ready status."
+    },
+    {
+      "id": "historical-observation-carry-forward",
+      "gap": "V578/V579 historical observations may confuse reviewers although V581/V582 resolved current artifact presence.",
+      "reason": "V578/V579 historical observations may confuse reviewers although V581/V582 resolved current artifact presence.",
+      "risk": "LOW",
+      "dependency": "Reviewer briefing and evidence cross-reference",
+      "recommendedResolution": "Carry forward as resolved observation; do not rewrite prior artifacts unless separately requested.",
+      "estimatedReadinessImpact": "Low impact; documentation clarity only."
+    }
+  ],
+  "riskScale": [
+    "LOW",
+    "MODERATE",
+    "HIGH"
+  ],
+  "finalDetermination": "ADDITIONAL IMPLEMENTATION WORK REQUIRED"
+}

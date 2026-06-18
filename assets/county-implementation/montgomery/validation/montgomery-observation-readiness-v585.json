@@ -1,0 +1,56 @@
+{
+  "artifactVersion": "V585",
+  "artifactType": "montgomery-observation-readiness",
+  "readinessForFutureObservationPeriod": true,
+  "observationScope": "Future non-production staged-runtime observation only; not activation, onboarding, selection, data promotion, Supabase work, migration work, historical activation, DriveTexas resumption, or Transportation Intelligence activation.",
+  "monitoringMetrics": [
+    "Liberty active-default consistency",
+    "Montgomery runtime status invariants: operational=false, productionEnabled=false, selectable=false",
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE=false consistency",
+    "Montgomery active-county override attempts resolving back to Liberty",
+    "Cross-county containment denial counts",
+    "Unknown-county fail-closed outcomes",
+    "Changed-path audit for supabase/, migrations/, and data/",
+    "Protected-boundary invariant checks"
+  ],
+  "auditsToMonitor": [
+    "Runtime registry status audit",
+    "Montgomery gate-bypass audit",
+    "Liberty baseline regression audit",
+    "County-owned asset path audit",
+    "Protected-system audit",
+    "Changed-path audit",
+    "Containment fixture audit"
+  ],
+  "containmentChecksToMonitor": [
+    "Liberty rows allowed only in Liberty context",
+    "Montgomery rows blocked from Liberty context while staged disabled",
+    "Montgomery rows blocked from Montgomery active context while Montgomery is non-operational",
+    "Unknown county rows blocked",
+    "Missing county metadata defaults only to Liberty legacy behavior",
+    "Montgomery package asset references remain outside data/"
+  ],
+  "regressionsToMonitor": [
+    "Liberty no longer active by default",
+    "Montgomery becomes operational, production-enabled, or selectable",
+    "Runtime gate changes from false",
+    "Montgomery appears under data/",
+    "Supabase or migrations paths change",
+    "Historical reads, history UI, historical API exposure, or consumer history dashboard becomes enabled",
+    "DriveTexas paused state changes",
+    "Transportation Intelligence enabled, display, or activation state changes",
+    "Unknown county handling becomes permissive"
+  ],
+  "successCriteria": [
+    "Zero protected-boundary violations",
+    "Zero Supabase, migration, or data/ asset-promotion changes",
+    "Zero Montgomery activation, onboarding, selection, or production enablement events",
+    "Zero successful Montgomery gate-bypass attempts",
+    "Zero unresolved containment failures",
+    "Liberty baseline behavior remains unchanged",
+    "All validation/audit commands pass at observation closeout",
+    "Any moderate observation is documented with owner, severity, and accepted disposition before closeout"
+  ],
+  "recommendedObservationDuration": "Minimum 7 calendar days after a separately authorized observation start decision.",
+  "finalReadinessAssessment": "Ready for future staged-runtime observation with observations; not launch ready and not production activation ready."
+}

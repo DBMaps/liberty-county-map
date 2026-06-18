@@ -1,0 +1,89 @@
+{
+  "artifactVersion": "V583",
+  "artifactType": "montgomery-launch-sequence",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "sequence": [
+    {
+      "phase": "Current State",
+      "status": "IMPLEMENTATION READY WITH OBSERVATIONS",
+      "steps": [
+        "Confirm V500-V582 artifact set remains available",
+        "Confirm Montgomery inactive and package-scoped"
+      ]
+    },
+    {
+      "phase": "Required Work",
+      "steps": [
+        "Production authorization",
+        "Runtime county package integration",
+        "Production registry integration",
+        "County selection and containment wiring",
+        "Asset promotion to production-consumable path",
+        "Route-watch, alert, report ownership checks",
+        "Rollback owner assignment"
+      ]
+    },
+    {
+      "phase": "Validation",
+      "steps": [
+        "Dependency review",
+        "Artifact review",
+        "JSON/schema review",
+        "Containment validation",
+        "Awareness filtering validation",
+        "Regression checks",
+        "Liberty baseline comparison",
+        "Protected-boundary verification",
+        "Rollback desk-check"
+      ]
+    },
+    {
+      "phase": "Observation",
+      "duration": "7 calendar days minimum",
+      "steps": [
+        "Daily monitoring",
+        "Escalation review",
+        "Issue triage",
+        "Protected-boundary and rollback-trigger monitoring",
+        "Closeout evidence"
+      ]
+    },
+    {
+      "phase": "Launch Decision",
+      "steps": [
+        "Review approvals",
+        "Review validation evidence",
+        "Review observation closeout",
+        "Review rollback acceptance",
+        "Record go/no-go decision"
+      ],
+      "allowedDeterminations": [
+        "LAUNCH READY",
+        "LAUNCH READY WITH OBSERVATIONS",
+        "ADDITIONAL IMPLEMENTATION WORK REQUIRED"
+      ]
+    }
+  ],
+  "shortestPath": [
+    "Authorize",
+    "Integrate Montgomery only",
+    "Validate",
+    "Observe",
+    "Decide"
+  ],
+  "finalDetermination": "ADDITIONAL IMPLEMENTATION WORK REQUIRED"
+}
