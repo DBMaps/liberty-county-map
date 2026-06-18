@@ -1,0 +1,129 @@
+{
+  "artifactVersion": "V579",
+  "artifactType": "montgomery-rollback-procedure",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "procedureMode": "documentation_only_no_runtime_execution",
+  "rollbackScope": {
+    "included": [
+      "Montgomery package-scoped rollback planning artifacts",
+      "Rollback expectations for any future Montgomery activation readiness work",
+      "Verification expectations for dependency and containment references"
+    ],
+    "excluded": [
+      "Application runtime behavior changes",
+      "Application code changes",
+      "Supabase changes",
+      "Production registry record changes",
+      "Montgomery activation or onboarding",
+      "Migrations",
+      "Liberty boundary data changes",
+      "Assets placed into data/",
+      "Historical systems enablement",
+      "DriveTexas resumption",
+      "Transportation Intelligence enablement"
+    ]
+  },
+  "inputReferences": {
+    "boundary": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "registry": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "packageManifest": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+    "fixtureSuite": "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json",
+    "containmentValidation": "assets/county-implementation/montgomery/validation/montgomery-containment-validation-v578.json"
+  },
+  "rollbackTriggers": [
+    "Future activation readiness review identifies incomplete Montgomery dependency evidence",
+    "Future activation readiness review identifies containment uncertainty",
+    "Future release governance requests Montgomery package withdrawal before activation",
+    "Future verification detects unintended production registry, runtime, or boundary mutation attributable to Montgomery activation preparation"
+  ],
+  "rollbackOwners": [
+    {
+      "role": "Release owner",
+      "responsibility": "Authorize rollback decision for Montgomery readiness work before any activation step."
+    },
+    {
+      "role": "County package owner",
+      "responsibility": "Confirm Montgomery package-scoped artifacts and dependency references remain reversible."
+    },
+    {
+      "role": "Validation reviewer",
+      "responsibility": "Confirm rollback verification evidence and protected-system safeguards."
+    },
+    {
+      "role": "Communications owner",
+      "responsibility": "Coordinate stakeholder notice that rollback planning is documentation-only and no runtime action has executed."
+    }
+  ],
+  "rollbackSequence": [
+    {
+      "step": 1,
+      "name": "Freeze Montgomery activation progression",
+      "expectation": "Pause any future Montgomery activation readiness advancement until rollback review is complete."
+    },
+    {
+      "step": 2,
+      "name": "Confirm package-scoped artifacts",
+      "expectation": "Review Montgomery artifacts under assets/county-implementation/montgomery/ without moving files into data/ or production paths."
+    },
+    {
+      "step": 3,
+      "name": "Verify dependency references",
+      "expectation": "Confirm boundary, registry, package manifest, containment fixture, and containment validation references are documented; missing V577 registry/manifest files remain observations unless supplied by a separate approved package."
+    },
+    {
+      "step": 4,
+      "name": "Validate protected-system state",
+      "expectation": "Confirm protected systems remain unchanged and Montgomery remains not activated."
+    },
+    {
+      "step": 5,
+      "name": "Document rollback evidence",
+      "expectation": "Record assumptions, reversibility expectations, observations, and final rollback readiness decision."
+    },
+    {
+      "step": 6,
+      "name": "Communicate rollback status",
+      "expectation": "Notify release stakeholders of rollback readiness status and any dependency observations without implying runtime execution."
+    }
+  ],
+  "rollbackVerificationSteps": [
+    "Confirm rollback procedure artifact exists and is valid JSON.",
+    "Confirm rollback validation artifact exists and records sequence completeness.",
+    "Confirm rollback evidence artifact exists and records assumptions and dependency references.",
+    "Confirm Montgomery boundary dependency reference is present and boundary data is not modified by V579.",
+    "Confirm containment fixture and validation references are present.",
+    "Confirm expected V577 registry and package manifest references are recorded, with workspace absence treated as an observation if files are not present.",
+    "Confirm no production registry records are created.",
+    "Confirm Montgomery activation state remains not_activated.",
+    "Confirm no application code, runtime behavior, Supabase, Liberty boundary data, historical systems, DriveTexas, or Transportation Intelligence changes occurred."
+  ],
+  "rollbackCommunicationExpectations": [
+    "Describe V579 as rollback planning and evidence only.",
+    "Disclose dependency observations for missing V577 registry and package-manifest artifacts when applicable.",
+    "Do not communicate Montgomery as activated, onboarded, migrated, or production-ready.",
+    "Direct reviewers to the V579 validation and evidence artifacts before activation readiness work proceeds."
+  ],
+  "rollbackReviewRequirements": [
+    "Review all generated V579 JSON artifacts for valid JSON.",
+    "Review documentation report for protected-system verification.",
+    "Review dependency observations before recommending activation readiness.",
+    "Require a separately approved milestone for any runtime, registry, migration, or activation action."
+  ],
+  "protectedSystemSafeguards": {
+    "applicationRuntimeBehavior": "unchanged",
+    "applicationCode": "unchanged",
+    "supabase": "unchanged",
+    "productionRegistryRecords": "unchanged",
+    "montgomeryActivationState": "not_activated",
+    "libertyBoundaryData": "unchanged",
+    "historicalSystems": "unchanged",
+    "driveTexas": "unchanged",
+    "transportationIntelligence": "unchanged"
+  },
+  "executionStatus": "not_executed",
+  "activationStatus": "not_activated"
+}
