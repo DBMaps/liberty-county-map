@@ -1,0 +1,130 @@
+{
+  "artifactVersion": "V586",
+  "artifactType": "montgomery-controlled-observation-plan",
+  "countyId": "montgomery-tx",
+  "finalDetermination": "CONTROLLED OBSERVATION READY WITH OBSERVATIONS",
+  "activationAuthorized": false,
+  "runtimeRequirements": {
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false
+  },
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "requiredInputsReviewed": [
+    "V580 Activation Readiness Package",
+    "V583 Launch Readiness Program",
+    "V584 Runtime Registry Integration",
+    "V585 Staged Runtime Validation",
+    "V585 Observation Readiness Artifact"
+  ],
+  "observationScope": {
+    "willBeObserved": [
+      "Montgomery runtime registry recognition while disabled",
+      "Runtime gate enforcement with GRIDLY_MONTGOMERY_RUNTIME_GATE remaining false",
+      "Containment enforcement between Liberty, Montgomery, unknown, and missing county metadata",
+      "County ownership enforcement for package-scoped Montgomery assets and Liberty-owned runtime defaults",
+      "Liberty baseline preservation as the only active default county",
+      "Protected-system preservation for historical, DriveTexas, Transportation Intelligence, Supabase, migrations, and data/ boundaries",
+      "Evidence completeness needed for V588 launch decision package preparation"
+    ],
+    "willNotBeObserved": [
+      "User-facing Montgomery activation or onboarding",
+      "Montgomery selection, production enablement, or operational traffic",
+      "Supabase writes, schema changes, migrations, or production data mutations",
+      "Placement of Montgomery assets under data/",
+      "Historical reads, history UI, historical API exposure, or consumer history dashboards",
+      "DriveTexas resumption",
+      "Transportation Intelligence enablement, display, or activation"
+    ],
+    "runtimeAreasInScope": [
+      "GRIDLY_DEFAULT_COUNTY_ID remains liberty-tx",
+      "GRIDLY_COUNTY_REGISTRY includes Montgomery as known but disabled",
+      "gridlyNormalizeCountyId resolves Montgomery and unknown counties back to Liberty while Montgomery is disabled",
+      "gridlyIsCountyOperational returns false for Montgomery",
+      "gridlyGetCountyRuntimeStatus reports disabled Montgomery invariants"
+    ],
+    "containmentAreasInScope": [
+      "Liberty rows are allowed in Liberty context",
+      "Montgomery rows are denied in Liberty context",
+      "Montgomery self-context is denied while non-operational",
+      "Unknown county rows fail closed",
+      "Missing county metadata preserves Liberty legacy behavior only"
+    ],
+    "registryAreasInScope": [
+      "County ID normalization",
+      "Registry immutability expectations",
+      "Boundary and asset paths remaining package-scoped",
+      "Activation-relevant registry fields remaining false"
+    ],
+    "validationAreasInScope": [
+      "Runtime tests",
+      "V585 staged runtime audit",
+      "V586 artifact parse validation",
+      "Changed-path audit for supabase/, migrations/, and data/",
+      "Protected-boundary invariant review"
+    ]
+  },
+  "reviewCadence": {
+    "checkpoints": [
+      {
+        "name": "observation_start_readiness_check",
+        "timing": "Before any controlled observation window begins",
+        "requiredEvidence": ["clean runtime invariant test output", "all V586 artifacts parse", "owner confirms no activation decision is implied"]
+      },
+      {
+        "name": "daily_invariant_review",
+        "timing": "Each observation day",
+        "requiredEvidence": ["runtime gate state", "Montgomery disabled state", "containment denial samples", "protected-boundary audit notes"]
+      },
+      {
+        "name": "midpoint_governance_review",
+        "timing": "Midpoint of the observation window",
+        "requiredEvidence": ["open observations list", "failure threshold review", "Liberty regression review", "changed-path review"]
+      },
+      {
+        "name": "closeout_signoff_review",
+        "timing": "Observation closeout before V588 is drafted",
+        "requiredEvidence": ["final metrics summary", "all failure triggers dispositioned", "owner signoff", "final determination"]
+      }
+    ],
+    "reviewOwnership": {
+      "runtimeOwner": "County runtime maintainer",
+      "containmentOwner": "County package governance owner",
+      "protectedBoundaryOwner": "Platform governance reviewer",
+      "launchDecisionOwner": "Montgomery launch decision approver"
+    },
+    "evidenceCollectionRequirements": [
+      "Record exact command, timestamp, reviewer, result, and artifact references for each checkpoint",
+      "Attach failing output or observation notes for any PASS WITH OBSERVATIONS or FAIL result",
+      "Preserve changed-path evidence proving no Supabase, migration, or data/ modifications occurred",
+      "Document any accepted observation with severity, owner, due date, and launch-decision impact"
+    ],
+    "finalObservationSignoffRequirements": [
+      "No FAIL status remains unresolved",
+      "All PASS WITH OBSERVATIONS entries have accepted dispositions",
+      "Protected boundaries remain unchanged",
+      "Montgomery remains staged, disabled, non-selectable, and gate-blocked",
+      "V588 launch decision inputs are complete"
+    ]
+  },
+  "launchDecisionInputsRequiredForV588": [
+    "Completed controlled observation evidence log",
+    "Final success criteria matrix",
+    "Final failure threshold review with zero unresolved blockers",
+    "Runtime invariant test results from start, midpoint, and closeout",
+    "Protected-boundary audit results",
+    "Changed-path audit proving no Supabase, migration, or data/ changes",
+    "Governance signoff from runtime, containment, protected-boundary, and launch decision owners",
+    "Explicit statement that V586 did not activate Montgomery and that V588 is a decision package only"
+  ]
+}

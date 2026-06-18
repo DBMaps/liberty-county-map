@@ -1,0 +1,75 @@
+{
+  "artifactVersion": "V586",
+  "artifactType": "montgomery-controlled-observation-evidence",
+  "countyId": "montgomery-tx",
+  "evidenceStatus": "preparation_complete_pending_future_observation_execution",
+  "finalDetermination": "CONTROLLED OBSERVATION READY WITH OBSERVATIONS",
+  "reviewedInputs": [
+    {
+      "input": "V580 Activation Readiness Package",
+      "evidence": "Activation readiness and prior observation-period planning reviewed as prerequisites only; no activation authorized."
+    },
+    {
+      "input": "V583 Launch Readiness Program",
+      "evidence": "Launch readiness remains gated by future observation evidence, rollback acceptance, and final launch decision."
+    },
+    {
+      "input": "V584 Runtime Registry Integration",
+      "evidence": "Montgomery is registry-known only as disabled staged runtime."
+    },
+    {
+      "input": "V585 Staged Runtime Validation",
+      "evidence": "Runtime gate, disabled Montgomery state, Liberty baseline, containment, and protected boundaries validated."
+    },
+    {
+      "input": "V585 Observation Readiness Artifact",
+      "evidence": "Observation metrics and monitoring scope expanded into controlled observation governance artifacts."
+    }
+  ],
+  "preparedArtifacts": [
+    "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-plan-v586.json",
+    "assets/county-implementation/montgomery/observation/montgomery-observation-success-criteria-v586.json",
+    "assets/county-implementation/montgomery/observation/montgomery-observation-failure-thresholds-v586.json",
+    "assets/county-implementation/montgomery/evidence/montgomery-controlled-observation-evidence-v586.json",
+    "GRIDLY-MONTGOMERY-CONTROLLED-OBSERVATION-PREPARATION-V586.md"
+  ],
+  "currentRuntimeStateRequired": {
+    "montgomeryOperational": false,
+    "montgomeryProductionEnabled": false,
+    "montgomerySelectable": false,
+    "montgomeryRuntimeGate": false,
+    "libertyDefaultPreserved": true
+  },
+  "currentProtectedBoundariesRequired": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "evidenceNeededBeforeV588": [
+    "Executed observation checkpoint log",
+    "Start, midpoint, and closeout command results",
+    "Signed success criteria matrix",
+    "Signed failure threshold disposition",
+    "Protected-boundary audit evidence",
+    "Changed-path audit evidence",
+    "Runtime, containment, registry, and Liberty baseline evidence",
+    "Owner signoffs for all PASS WITH OBSERVATIONS items"
+  ],
+  "openObservations": [
+    {
+      "observation": "Controlled observation has been prepared but not executed by V586.",
+      "severity": "expected_followup",
+      "impact": "V588 cannot be created until execution evidence exists."
+    },
+    {
+      "observation": "Final launch decision remains outside V586 scope.",
+      "severity": "governance_note",
+      "impact": "No Montgomery activation, onboarding, selectability, or production enablement is authorized."
+    }
+  ]
+}

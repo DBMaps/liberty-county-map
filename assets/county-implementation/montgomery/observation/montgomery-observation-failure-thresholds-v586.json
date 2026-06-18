@@ -1,0 +1,45 @@
+{
+  "artifactVersion": "V586",
+  "artifactType": "montgomery-observation-failure-thresholds",
+  "countyId": "montgomery-tx",
+  "escalationTriggers": [
+    {
+      "trigger": "county_contamination",
+      "failureThreshold": "Any Montgomery runtime data, asset path, or row is accepted into Liberty context, or any unknown county is treated as allowed.",
+      "severity": "blocker",
+      "requiredAction": "Stop observation, preserve evidence, assign containment owner, and require remediation before V588."
+    },
+    {
+      "trigger": "montgomery_activation_leakage",
+      "failureThreshold": "Montgomery becomes operational, productionEnabled, selectable, active, user-visible, or gate-enabled in any observed path.",
+      "severity": "blocker",
+      "requiredAction": "Stop observation, revert unauthorized activation path, and require launch governance review."
+    },
+    {
+      "trigger": "liberty_regression",
+      "failureThreshold": "Liberty is no longer the default active county, loses production/selectable status, or rejects valid Liberty-owned rows.",
+      "severity": "blocker",
+      "requiredAction": "Stop observation and restore Liberty baseline before any launch decision package work."
+    },
+    {
+      "trigger": "registry_corruption",
+      "failureThreshold": "Registry fields, boundary paths, IDs, normalization behavior, or runtime status helpers return inconsistent or corrupted values.",
+      "severity": "high",
+      "requiredAction": "Freeze observation evidence, run registry audit, and require maintainer signoff on remediation."
+    },
+    {
+      "trigger": "protected_boundary_violation",
+      "failureThreshold": "Historical systems enable, DriveTexas resumes, Transportation Intelligence enables, Supabase/migrations change, or Montgomery assets enter data/.",
+      "severity": "blocker",
+      "requiredAction": "Stop observation, document violation scope, and require protected-boundary governance approval before continuation."
+    }
+  ],
+  "automaticFailConditions": [
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE is not false",
+    "Montgomery operational is not false",
+    "Montgomery productionEnabled is not false",
+    "Montgomery selectable is not false",
+    "Any required V586 artifact fails JSON parsing",
+    "Any required evidence checkpoint is missing at closeout"
+  ]
+}
