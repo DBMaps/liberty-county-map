@@ -1,0 +1,40 @@
+{
+  "version": "V598",
+  "county_id": "montgomery-tx",
+  "validation_name": "Montgomery Runtime Data Source Integration",
+  "final_determination": "MONTGOMERY RUNTIME DATA SOURCE INTEGRATION COMPLETE WITH OBSERVATIONS",
+  "validated_at": "2026-06-18T00:00:00.000Z",
+  "protected_boundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "source_registry": {
+    "liberty-tx": {
+      "boundary_source": "data/liberty-county-boundary.geojson",
+      "road_source": "data/liberty-county-road-segments.geojson",
+      "crossing_source": "data/liberty-county-rail-crossings.geojson",
+      "awareness_areas": "available"
+    },
+    "montgomery-tx": {
+      "boundary_source": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+      "road_source": null,
+      "crossing_source": null,
+      "awareness_areas": "available"
+    }
+  },
+  "observations": [
+    "Montgomery boundary and awareness sources are county-owned and active.",
+    "Montgomery road segment geometry is not present in the package; runtime resolver fails safe to Conroe, Montgomery County, selected awareness area, or neutral wording.",
+    "Montgomery rail crossing source is not present in the package; crossing source state is neutral/pending and cannot reuse Liberty crossing counts.",
+    "Legacy untagged event rows are excluded from Montgomery active incident generation while remaining Liberty-compatible."
+  ],
+  "tests": [
+    "tests/county-runtime/montgomeryRuntimeDataSourceIntegrationV598.test.js"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "version": "V598",
+  "evidence_name": "Montgomery Runtime Data Source Integration Evidence",
+  "county_id": "montgomery-tx",
+  "collected_at": "2026-06-18T00:00:00.000Z",
+  "runtime_inventory": [
+    { "area": "county boundaries", "liberty": "data/liberty-county-boundary.geojson", "montgomery": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson", "status": "county-aware" },
+    { "area": "roads / road segments", "liberty": "data/liberty-county-road-segments.geojson", "montgomery": null, "status": "Montgomery missing; neutral fallback enforced" },
+    { "area": "rail crossings", "liberty": "data/liberty-county-rail-crossings.geojson", "montgomery": null, "status": "Montgomery missing; neutral crossing state enforced" },
+    { "area": "default awareness areas", "liberty": "Liberty County communities", "montgomery": "Montgomery County communities", "status": "county-aware" },
+    { "area": "resolver fallback data", "liberty": "Liberty road candidates allowed only in Liberty context", "montgomery": "Conroe / Montgomery County / selected area / this area", "status": "county-aware" },
+    { "area": "active incident generation inputs", "liberty": "liberty-tx and legacy untagged rows", "montgomery": "montgomery-tx rows only", "status": "county-isolated" },
+    { "area": "event history storage keys", "liberty": "county-scoped helper available", "montgomery": "county-scoped helper available and metadata-tagged", "status": "county-aware" },
+    { "area": "report metadata", "liberty": "liberty-tx", "montgomery": "montgomery-tx", "status": "county-aware" },
+    { "area": "alert/marker/popup producer inputs", "liberty": "Liberty source registry", "montgomery": "Montgomery source registry or neutral fallback", "status": "producer-source fixed" }
+  ],
+  "test_command": "node tests/county-runtime/montgomeryRuntimeDataSourceIntegrationV598.test.js",
+  "test_result": "passed",
+  "final_answer": "Has the Liberty-rooted runtime data/source leakage been fixed at the producer/source layer? YES"
+}
