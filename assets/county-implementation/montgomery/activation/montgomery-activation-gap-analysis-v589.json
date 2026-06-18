@@ -1,0 +1,204 @@
+{
+  "artifactVersion": "V589",
+  "artifactType": "montgomery-activation-gap-analysis",
+  "countyId": "montgomery-tx",
+  "purpose": "Identify exact remaining implementation and activation work between current disabled staged Montgomery implementation and operational Montgomery County.",
+  "notAReadinessReview": true,
+  "currentRuntimeState": {
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false
+  },
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "gapAnalysis": {
+    "Code changes": [
+      {
+        "id": "code-runtime-flags",
+        "description": "Update `js/app.js` Montgomery runtime constants/entry so `GRIDLY_MONTGOMERY_RUNTIME_GATE` is true, Montgomery `stage` is operational, `operational`, `productionEnabled`, and `selectable` are true, and `productionActivationBlocked` is false.",
+        "whyRequired": "These values are the active runtime blockers that force Montgomery requests back to Liberty and prevent self-contained Montgomery rows from being allowed.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "code-activation-tests",
+        "description": "Add or update activation-mode runtime tests so Montgomery can normalize to `montgomery-tx`, be selected through the active-county override, pass Montgomery self-containment, and remain isolated from Liberty and unknown counties.",
+        "whyRequired": "Existing V584-V587 tests intentionally assert the disabled staged state; activation needs positive coverage for the operational state without weakening Liberty containment.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ],
+    "Configuration changes": [
+      {
+        "id": "config-active-county",
+        "description": "Set the deployment/runtime active-county configuration to allow Montgomery selection, including any `window.GRIDLY_ACTIVE_COUNTY_ID` or deployment equivalent used for the target environment.",
+        "whyRequired": "The runtime helper only activates non-default counties when the requested county normalizes as operational; deployment configuration must request/permit Montgomery where the operational experience is expected.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "config-protected-boundaries",
+        "description": "Keep protected boundary configuration unchanged: historical reads/UI/API/dashboard false, DriveTexas paused, and Transportation Intelligence disabled/display-disabled/activation-disabled.",
+        "whyRequired": "The user-provided protected boundaries remain out of scope for Montgomery activation and must not be toggled as part of county activation.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ],
+    "Registry changes": [
+      {
+        "id": "registry-runtime-entry",
+        "description": "Promote the runtime registry entry for `montgomery-tx` from disabled staged to operational while preserving its canonical identity, package references, and containment metadata.",
+        "whyRequired": "The registry is the runtime control plane; Montgomery cannot be operational while the runtime registry advertises disabled staged, non-production, non-selectable status.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "registry-artifact-refresh",
+        "description": "Refresh `assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json` so activation, production, containment, rollback, and activation-readiness fields reflect completed V578-V588 evidence and the intended operational registry state.",
+        "whyRequired": "The existing artifact still says activation is not enabled, no production registry record exists, containment/rollback validation are not performed, and runtime references were not created; those statements are stale relative to V578-V588 and incompatible with activation evidence.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "manifest-refresh",
+        "description": "Refresh `assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json` to remove obsolete \u201cno runtime references/no activation references\u201d implementation-scope statements and point to the V578-V588 validation/evidence chain.",
+        "whyRequired": "The manifest remains V577-era and does not reflect the completed containment, rollback, activation readiness, staged runtime, observation, and launch decision artifacts that activation relies on.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ],
+    "Runtime changes": [
+      {
+        "id": "runtime-gate-flip",
+        "description": "Flip the Montgomery runtime gate for the activation deployment from false to true.",
+        "whyRequired": "`runtimeGateEnabled` is bound to `GRIDLY_MONTGOMERY_RUNTIME_GATE`; while false, activation-relevant behavior remains intentionally closed.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "runtime-selection-path",
+        "description": "Enable Montgomery active-county selection in the target runtime while confirming Liberty remains the default when no Montgomery selection is requested.",
+        "whyRequired": "Operational Montgomery must be reachable without making unknown or unset county contexts accidentally resolve to Montgomery.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "runtime-assets",
+        "description": "Decide and implement the production asset consumption path: either continue reading Montgomery assets from `assets/county-implementation/montgomery/` as the runtime registry currently points, or promote/copy approved Montgomery runtime assets into an explicitly documented production-consumable path.",
+        "whyRequired": "Montgomery has a valid package-scoped boundary path today, but activation needs an intentional production asset path decision so runtime behavior is supportable and rollbackable.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small-to-medium"
+      }
+    ],
+    "Activation steps": [
+      {
+        "id": "activation-execute",
+        "description": "Execute the activation change set as one controlled deployment: code flag changes, registry promotion, configuration update, validation run, release, and post-release smoke check.",
+        "whyRequired": "The current repository state is staged; Montgomery becomes operational only after the coordinated runtime/config/registry changes are deployed together.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "activation-owners",
+        "description": "Confirm named operational owner, rollback owner, support owner, and escalation owner before deployment.",
+        "whyRequired": "V588 identified owner confirmation as an observation; activation requires accountable responders if the county must be disabled or support messaging is needed.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ],
+    "Rollback preparations": [
+      {
+        "id": "rollback-baseline",
+        "description": "Capture the current disabled staged baseline values and prepare a revert patch/runbook that restores gate=false, stage disabled, operational=false, productionEnabled=false, selectable=false, productionActivationBlocked=true, and the prior active-county configuration.",
+        "whyRequired": "Rollback must be executable quickly if containment, selection, asset, or support behavior fails after activation.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "rollback-validation",
+        "description": "Validate rollback commands or patch application in a non-production branch/environment and confirm Liberty still passes after rollback.",
+        "whyRequired": "Rollback planning exists, but the activation-specific rollback package must be executable against the actual activation diff.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ],
+    "Testing": [
+      {
+        "id": "testing-preflight",
+        "description": "Run current disabled-state regression tests before changing the activation flags to prove the starting point is intact.",
+        "whyRequired": "Confirms no drift from V584-V587 before making the activation diff.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "testing-activation",
+        "description": "Run new activation-mode tests after the activation diff to prove Montgomery normalizes, selects, reports metadata, and contains rows correctly while Liberty and unknown-county behavior remain safe.",
+        "whyRequired": "The existing tests assert Montgomery is disabled; activation requires positive operational assertions.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "testing-audits",
+        "description": "Run artifact JSON parse validation, protected-boundary audit, registry/manifest consistency checks, and Liberty non-regression checks.",
+        "whyRequired": "Activation must not break artifact integrity, protected-system boundaries, or the Liberty production baseline.",
+        "riskLevel": "high",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      },
+      {
+        "id": "testing-smoke",
+        "description": "Perform post-deployment smoke checks for Montgomery selection, boundary loading, report metadata county_id, Liberty default behavior, and rollback readiness.",
+        "whyRequired": "Runtime tests alone do not prove the deployed environment is serving the intended county state.",
+        "riskLevel": "medium",
+        "blockingStatus": "blocking",
+        "estimatedEffort": "small"
+      }
+    ]
+  },
+  "technicalActivationReadiness": "TECHNICALLY NOT YET ACTIVATION READY",
+  "remainingBlockers": [
+    "code-runtime-flags",
+    "code-activation-tests",
+    "config-active-county",
+    "config-protected-boundaries",
+    "registry-runtime-entry",
+    "registry-artifact-refresh",
+    "manifest-refresh",
+    "runtime-gate-flip",
+    "runtime-selection-path",
+    "runtime-assets",
+    "activation-execute",
+    "activation-owners",
+    "rollback-baseline",
+    "rollback-validation",
+    "testing-preflight",
+    "testing-activation",
+    "testing-audits",
+    "testing-smoke"
+  ]
+}
