@@ -1,0 +1,93 @@
+{
+  "artifactVersion": "V585",
+  "artifactType": "montgomery-staged-runtime-validation",
+  "objective": "Validate the V584 staged Montgomery runtime integration and determine readiness for a future non-production observation period.",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "countyId": "montgomery-tx",
+    "geoid": "48339"
+  },
+  "reviewInputs": [
+    "V583 Launch Readiness Program",
+    "V584 Runtime Registry Integration",
+    "js/app.js runtime integration changes",
+    "Montgomery registry integration",
+    "Montgomery containment enforcement",
+    "Montgomery runtime gate behavior",
+    "Liberty default behavior"
+  ],
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "montgomeryRuntimeRequirements": {
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false
+  },
+  "validationAreas": [
+    {
+      "area": "Runtime Registry Validation",
+      "result": "pass_with_staged_constraints",
+      "findings": [
+        "Montgomery registry entry exists and is recognized by runtime helpers.",
+        "Montgomery remains disabled-staged, non-operational, production disabled, and non-selectable.",
+        "Montgomery cannot become active through normalization or window active-county override while disabled.",
+        "Liberty remains the active operational default."
+      ]
+    },
+    {
+      "area": "Containment Validation",
+      "result": "pass",
+      "findings": [
+        "Liberty runtime assets remain data-owned Liberty assets.",
+        "Montgomery assets remain package-scoped under assets/county-implementation/montgomery/ and are not placed into data/.",
+        "Montgomery rows are blocked from Liberty context.",
+        "Unknown county rows fail closed and are not treated as active known counties."
+      ]
+    },
+    {
+      "area": "Runtime Gate Validation",
+      "result": "pass",
+      "findings": [
+        "GRIDLY_MONTGOMERY_RUNTIME_GATE exists and defaults false.",
+        "Montgomery registry runtimeGateEnabled is bound to the false gate.",
+        "Montgomery cannot activate or bypass the gate because operational, productionEnabled, selectable, and productionActivationBlocked remain closed."
+      ]
+    },
+    {
+      "area": "Protected-System Validation",
+      "result": "pass",
+      "findings": [
+        "No Supabase or migration path changes are part of V585.",
+        "Historical reads, history UI, historical API exposure, and consumer-facing history dashboard remain false.",
+        "DriveTexas remains paused.",
+        "Transportation Intelligence enabled, display, and activation states remain false."
+      ]
+    },
+    {
+      "area": "Observation Readiness Review",
+      "result": "ready_for_future_non_production_observation_with_observations",
+      "findings": [
+        "Observation should monitor runtime status invariants, containment checks, protected-boundary audits, changed-path audits, Liberty baseline behavior, and Montgomery gate-bypass attempts.",
+        "Observation is not an activation, onboarding, selection, Supabase, migration, historical, DriveTexas, Transportation Intelligence, or data/ asset-promotion event."
+      ]
+    }
+  ],
+  "requiredTesting": [
+    "node -c js/app.js",
+    "node tests/county-runtime/montgomeryRuntimeRegistryV584.test.js",
+    "node tests/county-runtime/montgomeryStagedRuntimeValidationV585.test.js",
+    "node scripts/county-runtime/v584-protected-boundary-audit.mjs",
+    "node scripts/county-runtime/v585-staged-runtime-validation-audit.mjs"
+  ],
+  "finalDetermination": "STAGED RUNTIME VALIDATION COMPLETE WITH OBSERVATIONS"
+}
