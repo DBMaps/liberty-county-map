@@ -1,0 +1,73 @@
+{
+  "artifactVersion": "V597",
+  "artifactType": "multi_county_runtime_root_cause_audit_validation",
+  "countyId": "montgomery-tx",
+  "countyName": "Montgomery County",
+  "finalDetermination": "ROOT CAUSE IDENTIFIED WITH IMPLEMENTATION BLOCKERS",
+  "rootCause": "Montgomery was activated in the runtime registry before county-specific road, crossing, storage, resolver, and alert producer contracts were integrated. Runtime producers still rely on global arrays, missing Montgomery asset fields, Liberty default compatibility, and downstream string sanitizers.",
+  "missedMilestone": [
+    "county-aware data source integration",
+    "county-aware resolver integration",
+    "county-aware storage migration",
+    "county-aware alert pipeline migration",
+    "Montgomery road asset ingestion",
+    "Montgomery rail crossing asset ingestion"
+  ],
+  "validatedFindings": [
+    {
+      "id": "v597-registry-missing-runtime-assets",
+      "status": "fail",
+      "evidence": "The Montgomery runtime registry entry defines boundary/package/manifest/containment metadata but does not define roadSegmentsPath, crossingsPath, localCrossingsPath, or crossingOverridesPath.",
+      "source": "js/app.js"
+    },
+    {
+      "id": "v597-road-resolver-global-state",
+      "status": "fail",
+      "evidence": "loadRoadwayDataset stores one fetched roadway dataset in global roadwaySegmentFeatures, and resolveNearestRoadName scans that global collection rather than a county-keyed collection.",
+      "source": "js/app.js"
+    },
+    {
+      "id": "v597-generated-incidents-preserve-raw-report",
+      "status": "fail",
+      "evidence": "gridlyBuildRoadHazardIncidentsFromReports groups activeHazards and preserves latestReport unchanged, allowing raw or legacy road labels to flow downstream.",
+      "source": "js/app.js"
+    },
+    {
+      "id": "v597-string-sanitizer-is-symptom-patch",
+      "status": "warning",
+      "evidence": "normalizeGridlyCountyAwareDisplayText rewrites Local Road Impact Into Liberty for non-default counties, proving the Liberty label can already be present before final display.",
+      "source": "js/app.js"
+    },
+    {
+      "id": "v597-global-history-key",
+      "status": "warning",
+      "evidence": "GRIDLY_EVENT_HISTORY_STORAGE_KEY remains gridlyEventHistoryV1 and read/write helpers use the global key directly, despite county-scoped key helper availability.",
+      "source": "js/app.js"
+    },
+    {
+      "id": "v597-montgomery-assets-incomplete",
+      "status": "fail",
+      "evidence": "Montgomery package inventory includes boundary and governance artifacts but no accepted road-segment, rail-crossing, or crossing-override runtime assets.",
+      "source": "assets/county-implementation/montgomery/"
+    }
+  ],
+  "protectedBoundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "requiredRootFix": "Introduce a County Runtime Data Session that owns county-scoped assets, resolver caches, active incident generation, containment validation, and alert view models. Operational county activation must fail closed when required county runtime assets or producer contracts are missing.",
+  "patchesToAvoid": [
+    "Additional Liberty-to-Montgomery string replacements",
+    "Per-surface regex patches for Local Road Impact Into Liberty",
+    "Using defaultCity as a substitute for road/crossing datasets",
+    "Activating counties with undefined runtime asset fields",
+    "Sharing global roadway/crossing/activeHazard arrays across counties",
+    "Allowing legacy missing-county rows in Montgomery context"
+  ]
+}
