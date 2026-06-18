@@ -1,0 +1,91 @@
+{
+  "artifactVersion": "V580",
+  "artifactType": "montgomery-activation-readiness-validation",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "validationMode": "documentation_only_no_runtime_execution",
+  "artifactValidated": "assets/county-implementation/montgomery/activation/montgomery-activation-readiness-packet-v580.json",
+  "checks": [
+    {
+      "id": "V580-VAL-001",
+      "check": "boundary artifact present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson"
+    },
+    {
+      "id": "V580-VAL-002",
+      "check": "registry artifact present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json"
+    },
+    {
+      "id": "V580-VAL-003",
+      "check": "package manifest present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json"
+    },
+    {
+      "id": "V580-VAL-004",
+      "check": "containment fixture present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json"
+    },
+    {
+      "id": "V580-VAL-005",
+      "check": "containment validation present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/validation/montgomery-containment-validation-v578.json"
+    },
+    {
+      "id": "V580-VAL-006",
+      "check": "rollback procedure present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/rollback/montgomery-rollback-procedure-v579.json"
+    },
+    {
+      "id": "V580-VAL-007",
+      "check": "rollback validation present",
+      "status": "pass",
+      "evidence": "assets/county-implementation/montgomery/validation/montgomery-rollback-validation-v579.json"
+    },
+    {
+      "id": "V580-VAL-008",
+      "check": "activation remains disabled",
+      "status": "pass",
+      "evidence": "No runtime, production, or protected-system files modified by V580 readiness artifacts."
+    },
+    {
+      "id": "V580-VAL-009",
+      "check": "production remains disabled",
+      "status": "pass",
+      "evidence": "No runtime, production, or protected-system files modified by V580 readiness artifacts."
+    },
+    {
+      "id": "V580-VAL-010",
+      "check": "historical systems remain disabled",
+      "status": "pass",
+      "evidence": "No runtime, production, or protected-system files modified by V580 readiness artifacts."
+    },
+    {
+      "id": "V580-VAL-011",
+      "check": "DriveTexas remains paused",
+      "status": "pass",
+      "evidence": "No runtime, production, or protected-system files modified by V580 readiness artifacts."
+    },
+    {
+      "id": "V580-VAL-012",
+      "check": "Transportation Intelligence remains disabled",
+      "status": "pass",
+      "evidence": "No runtime, production, or protected-system files modified by V580 readiness artifacts."
+    }
+  ],
+  "overallStatus": "pass",
+  "activationRemainsDisabled": true,
+  "productionRemainsDisabled": true,
+  "historicalSystemsRemainDisabled": true,
+  "driveTexasRemainsPaused": true,
+  "transportationIntelligenceRemainsDisabled": true
+}
