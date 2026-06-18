@@ -1,0 +1,20 @@
+{
+  "validation_version": "V577",
+  "artifact_validated": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+  "validation_status": "pass",
+  "package_complete": true,
+  "artifact_references_resolve": true,
+  "resolved_artifact_references": [
+    "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "assets/county-implementation/montgomery/validation/montgomery-boundary-validation-v576.json",
+    "assets/county-implementation/montgomery/validation/montgomery-registry-validation-v577.json",
+    "assets/county-implementation/montgomery/evidence/montgomery-boundary-source-provenance-v576.json"
+  ],
+  "geoid_consistency": true,
+  "dependency_sections_present": true,
+  "protected_boundary_declarations_present": true,
+  "runtime_references_created": false,
+  "activation_references_created": false,
+  "observations": []
+}
