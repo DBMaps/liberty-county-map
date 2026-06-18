@@ -1,0 +1,60 @@
+{
+  "artifactVersion": "V580",
+  "artifactType": "montgomery-observation-period-plan",
+  "county": {
+    "name": "Montgomery County",
+    "state": "Texas",
+    "geoid": "48339"
+  },
+  "planMode": "readiness_planning_only_no_activation",
+  "observationPurpose": "Define how Montgomery would be monitored during a separately authorized future observation period without activating Montgomery in V580.",
+  "observationPrerequisites": [
+    "V580 readiness package accepted by implementation-readiness review.",
+    "Separate production authorization and activation change approval obtained if activation is ever pursued.",
+    "Baseline protected-system and rollback checks confirmed immediately before any future observation window."
+  ],
+  "observationMetrics": [
+    "Artifact integrity and reference resolution",
+    "County containment expectations",
+    "Activation state and production authorization state",
+    "Rollback trigger status",
+    "Protected-system invariant status",
+    "Issue count, severity, owner, and time-to-triage"
+  ],
+  "ownerRoles": [
+    "Implementation owner",
+    "Validation owner",
+    "Operations reviewer",
+    "Rollback coordinator",
+    "Release governance approver"
+  ],
+  "reviewCadence": [
+    "Pre-window readiness review",
+    "Daily review during any future observation period",
+    "Immediate review on escalation trigger",
+    "Closeout review before any subsequent milestone"
+  ],
+  "escalationTriggers": [
+    "Artifact reference missing or changed unexpectedly",
+    "Containment ambiguity involving Montgomery/Liberty boundary expectations",
+    "Any indication of runtime, production registry, Supabase, migration, or data/ mutation",
+    "Activation or production flag enabled without separate authorization",
+    "Rollback trigger detected"
+  ],
+  "rollbackTriggerMonitoring": [
+    "Monitor V579 rollback triggers before, during, and after any future observation period.",
+    "Escalate immediately if protected-system mutation is suspected."
+  ],
+  "protectedSystemMonitoring": [
+    "application runtime behavior unchanged",
+    "application code unchanged",
+    "Supabase unchanged",
+    "production registry records not created or modified",
+    "Montgomery activation state remains disabled",
+    "Liberty boundary data unchanged",
+    "historical systems remain disabled",
+    "DriveTexas remains paused",
+    "Transportation Intelligence remains disabled"
+  ],
+  "activationSeparationNote": "This plan does not activate Montgomery and does not authorize production use."
+}
