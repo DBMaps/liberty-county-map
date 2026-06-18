@@ -1,0 +1,59 @@
+{
+  "artifactVersion": "V597",
+  "artifactType": "multi_county_runtime_root_cause_evidence",
+  "countyId": "montgomery-tx",
+  "evidenceCollectedAt": "2026-06-18T00:00:00.000Z",
+  "commands": [
+    "rg -n \"Local Road Impact|Impact Into|Into Liberty|generatedRoadIncidents|gridlyEventHistoryV1|ROADWAY_SEGMENTS_URL|resolveNearestRoadName|loadRoadwayDataset\" js/app.js tests assets --glob '!node_modules/**'",
+    "sed -n '1,230p' js/app.js",
+    "sed -n '980,1215p' js/app.js",
+    "sed -n '28245,28290p' js/app.js",
+    "sed -n '45480,45555p' js/app.js",
+    "sed -n '66380,66830p' js/app.js",
+    "find assets/county-implementation/montgomery -maxdepth 2 -type f | sort"
+  ],
+  "sourceFunctions": {
+    "localRoadImpactIntoLibertyConsumers": [
+      "normalizeGridlyCountyAwareDisplayText",
+      "gridlyIsInvalidCountyAwareRoadLabel",
+      "isOtherHazardGenericRoadLabel"
+    ],
+    "rawRoadLabelProducers": [
+      "gridlyRoadClusterRoadName",
+      "gridlyBuildRoadHazardIncidentsFromReports",
+      "resolveOtherHazardNarrativeRoadName",
+      "buildOtherHazardNarrativeModel",
+      "buildAlertTitle",
+      "buildSpecificAlertTitle"
+    ],
+    "activeCountyLossPoints": [
+      "module-load constants FRA_URL, LOCAL_CROSSINGS_URL, CROSSING_REVIEW_OVERRIDES_URL, ROADWAY_SEGMENTS_URL, LIBERTY_COUNTY_BOUNDARY_URL",
+      "global roadwaySegmentFeatures",
+      "global crossings",
+      "global activeHazards",
+      "global recentlyClearedRoadHazards",
+      "global GRIDLY_EVENT_HISTORY_STORAGE_KEY"
+    ]
+  },
+  "assetInventoryFinding": {
+    "montgomeryBoundaryPresent": true,
+    "montgomeryRoadSegmentsPresent": false,
+    "montgomeryRailCrossingsPresent": false,
+    "montgomeryCrossingOverridesPresent": false,
+    "libertyRuntimeAssetsPresent": true
+  },
+  "systemsStillLibertyBound": [
+    "default county normalization",
+    "missing county row compatibility",
+    "road resolver dataset globals",
+    "rail crossing dataset globals",
+    "generated road incident producer",
+    "alert title/subtitle consumers",
+    "route context incident inputs",
+    "marker metadata inputs",
+    "global event history key",
+    "Liberty-specific fallback copy"
+  ],
+  "architectureAssessment": "The current architecture contains a county registry and some county-aware labels, but it does not yet provide true multi-county runtime isolation. Montgomery is staged in the registry and partially reflected in UI context, while core producer pipelines remain global and Liberty-compatible.",
+  "finalDetermination": "ROOT CAUSE IDENTIFIED WITH IMPLEMENTATION BLOCKERS"
+}
