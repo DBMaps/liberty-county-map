@@ -1,0 +1,53 @@
+{
+  "artifactVersion": "V586",
+  "artifactType": "montgomery-observation-success-criteria",
+  "countyId": "montgomery-tx",
+  "determinationOptions": [
+    "PASS",
+    "PASS WITH OBSERVATIONS",
+    "FAIL"
+  ],
+  "monitoredAreas": [
+    {
+      "area": "county_registry_recognition",
+      "pass": "Montgomery is recognized as a known registry county while operational=false, productionEnabled=false, selectable=false, and productionActivationBlocked=true.",
+      "passWithObservations": "Recognition remains disabled but documentation, ownership, or evidence freshness requires follow-up before V588.",
+      "fail": "Montgomery is missing from the registry, registry fields are corrupted, or any activation-relevant field becomes enabled."
+    },
+    {
+      "area": "runtime_gate_enforcement",
+      "pass": "GRIDLY_MONTGOMERY_RUNTIME_GATE remains false and all Montgomery activation, override, selection, and operational checks fail closed.",
+      "passWithObservations": "Gate remains false, but monitoring finds non-exploitable ambiguity in logs, naming, or evidence traceability.",
+      "fail": "Runtime gate becomes true, is bypassed, or is no longer bound to Montgomery runtime status."
+    },
+    {
+      "area": "containment_enforcement",
+      "pass": "Liberty rows are allowed only in Liberty context; Montgomery and unknown rows are denied while Montgomery is disabled; missing county metadata preserves Liberty legacy behavior only.",
+      "passWithObservations": "Containment holds, but fixture coverage, log labeling, or reviewer notes identify a non-blocking gap.",
+      "fail": "Any Montgomery row is accepted into Liberty context, any unknown county row is accepted, or Montgomery self-context becomes operational."
+    },
+    {
+      "area": "county_ownership_enforcement",
+      "pass": "Montgomery assets remain package-scoped under assets/county-implementation/montgomery/ and are not promoted into data/; Liberty runtime ownership remains unchanged.",
+      "passWithObservations": "Ownership remains correct but a package artifact needs clearer provenance, owner, or review metadata.",
+      "fail": "Montgomery assets are placed under data/, Liberty ownership is overwritten, or county ownership becomes ambiguous in runtime paths."
+    },
+    {
+      "area": "liberty_baseline_preservation",
+      "pass": "Liberty remains the default, operational, production-enabled, selectable county with unchanged baseline behavior.",
+      "passWithObservations": "Liberty behavior remains correct but a regression-risk note requires owner acknowledgement before V588.",
+      "fail": "Liberty default, selection, production, or containment behavior regresses."
+    },
+    {
+      "area": "protected_system_preservation",
+      "pass": "Historical boundaries remain false, DriveTexas remains paused, Transportation Intelligence remains disabled, and no Supabase, migration, or data/ changes occur.",
+      "passWithObservations": "Protected boundaries remain intact but supporting evidence needs clarification or an owner note.",
+      "fail": "Any protected boundary changes, any Supabase or migration work occurs, DriveTexas resumes, Transportation Intelligence enables, or history exposure appears."
+    }
+  ],
+  "overallDeterminationRules": {
+    "CONTROLLED OBSERVATION READY": "Every monitored area is PASS with complete evidence and no open observations.",
+    "CONTROLLED OBSERVATION READY WITH OBSERVATIONS": "No monitored area is FAIL and all observations are non-blocking, owned, and accepted before V588.",
+    "ADDITIONAL OBSERVATION PREPARATION REQUIRED": "Any monitored area is FAIL, evidence is missing for a required area, or unresolved observations could affect launch safety."
+  }
+}
