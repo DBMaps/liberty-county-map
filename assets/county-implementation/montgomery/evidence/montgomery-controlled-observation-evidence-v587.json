@@ -1,0 +1,57 @@
+{
+  "artifactVersion": "V587",
+  "countyId": "montgomery-tx",
+  "evidencePurpose": "Controlled observation execution evidence for a future V588 launch decision package.",
+  "runtimeEvidence": {
+    "montgomeryRegistryEntryExists": true,
+    "montgomeryRecognizedByRuntime": true,
+    "montgomeryOperational": false,
+    "montgomeryProductionEnabled": false,
+    "montgomerySelectable": false,
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false,
+    "activationAttemptsBlocked": true,
+    "overrideAttemptsBlocked": true,
+    "bypassPathIdentified": false
+  },
+  "containmentEvidence": {
+    "libertyOwnershipPreserved": true,
+    "montgomeryOwnershipPreserved": true,
+    "montgomeryBlockedFromLibertyContext": true,
+    "montgomerySelfContextBlockedWhileDisabled": true,
+    "unknownCountyHandlingFailClosed": true,
+    "countyOwnershipEnforcementFunctioning": true
+  },
+  "libertyBaselineEvidence": {
+    "libertyDefault": true,
+    "libertyOperational": true,
+    "libertyProductionEnabled": true,
+    "libertySelectable": true,
+    "libertyRuntimeAssetsRemainInData": true,
+    "behaviorRegressionObserved": false
+  },
+  "protectedSystemEvidence": {
+    "supabaseChanges": false,
+    "migrationChanges": false,
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "validationCommands": [
+    { "command": "node -c js/app.js", "expectedResult": "pass" },
+    { "command": "node tests/county-runtime/montgomeryRuntimeRegistryV584.test.js", "expectedResult": "pass" },
+    { "command": "node tests/county-runtime/montgomeryStagedRuntimeValidationV585.test.js", "expectedResult": "pass" },
+    { "command": "node tests/county-runtime/montgomeryControlledObservationExecutionV587.test.js", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v584-protected-boundary-audit.mjs", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v585-staged-runtime-validation-audit.mjs", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v586-controlled-observation-preparation-audit.mjs", "expectedResult": "pass" },
+    { "command": "node scripts/county-runtime/v587-controlled-observation-execution-audit.mjs", "expectedResult": "pass" }
+  ],
+  "finalDetermination": "OBSERVATION COMPLETE WITH OBSERVATIONS",
+  "canProceedToV588LaunchDecisionPackage": true,
+  "requiredFinalStatement": "Can Montgomery proceed to V588 Launch Decision Package? YES"
+}
