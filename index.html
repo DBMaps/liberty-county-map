@@ -1016,7 +1016,7 @@
     </div>
   </div>
 
-  <footer class="app-footer">
+  <footer class="app-footer" data-gridly-county-owned="app-footer-county">
     Gridly Beta • Liberty County
   </footer>
 
@@ -1083,7 +1083,7 @@
           </div>
           <div class="gridly-welcome-preview-card" id="gridlyWelcomePreviewCard" aria-live="polite">
             <p class="gridly-welcome-preview-greeting" id="gridlyWelcomePreviewGreeting">Good morning.</p>
-            <p class="gridly-welcome-preview-place" id="gridlyWelcomePreviewPlace">Watching your selected area</p>
+            <p class="gridly-welcome-preview-place" id="gridlyWelcomePreviewPlace" data-gridly-county-owned="welcome-preview-watch-area">Watching your selected area</p>
             <div class="gridly-welcome-preview-alert">
               <span>Nearby Alert</span>
               <strong>Flooding on US 90</strong>
@@ -1108,16 +1108,16 @@
           <p>Start with your county, then choose the home area Gridly should watch first.</p>
           <label class="gridly-welcome-select-label">
             Select County
-            <select id="gridlyWelcomeCountySelect" data-gridly-county-select aria-label="Select County">
-              <option value="liberty-tx">Liberty County</option>
-              <option value="montgomery-tx">Montgomery County</option>
+            <select id="gridlyWelcomeCountySelect" data-gridly-county-select data-gridly-county-option-list aria-label="Select County">
+              <option value="liberty-tx" data-gridly-county-option="liberty-tx">Liberty County</option>
+              <option value="montgomery-tx" data-gridly-county-option="montgomery-tx">Montgomery County</option>
             </select>
           </label>
           <label class="gridly-welcome-select-label">
             <span class="gridly-welcome-subtitle">Choose Your Home Area</span>
             <select id="gridlyWelcomeHomeAreaSelect" data-gridly-home-area-select aria-label="Select Home Area"></select>
           </label>
-          <p class="gridly-welcome-status" id="gridlyWelcomeTownStatus" aria-live="polite"></p>
+          <p class="gridly-welcome-status" id="gridlyWelcomeTownStatus" data-gridly-county-owned="welcome-town-status" aria-live="polite"></p>
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
           <p class="eyebrow">Daily route</p>

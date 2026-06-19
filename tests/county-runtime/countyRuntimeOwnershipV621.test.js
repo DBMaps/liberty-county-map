@@ -36,7 +36,7 @@ function loadRuntime(windowOverrides = {}, selectedAwarenessArea = null, bodyTex
 }
 
 
-function testNode({ id, text, tagName = 'DIV', attrs = {}, parent = null }) {
+function testNode({ id, text, tagName = 'DIV', attrs = {}, parent = null, descendants = [] }) {
   return {
     id,
     tagName,
@@ -44,7 +44,8 @@ function testNode({ id, text, tagName = 'DIV', attrs = {}, parent = null }) {
     textContent: text,
     getAttribute: (name) => attrs[name] || null,
     hasAttribute: (name) => Object.prototype.hasOwnProperty.call(attrs, name),
-    closest: (selector) => (selector === '[data-gridly-county-select]' && (attrs['data-gridly-county-select'] !== undefined || parent?.attrs?.['data-gridly-county-select'] !== undefined)) ? {} : null
+    closest: (selector) => (selector === '[data-gridly-county-select]' && (attrs['data-gridly-county-select'] !== undefined || parent?.attrs?.['data-gridly-county-select'] !== undefined)) ? {} : null,
+    querySelectorAll: (selector) => selector.includes('data-gridly-county') ? descendants : []
   };
 }
 
@@ -79,11 +80,14 @@ assert(markup.includes('id="crossingInventoryCountyText">Public crossing invento
 assert(!markup.includes('Public crossing inventory currently loaded for Liberty County.'), 'Dashboard crossing inventory markup does not ship a stale Liberty default');
 assert(markup.includes('id="mobileAwarenessPanelKicker">LOCATION AWARENESS • SELECTED COUNTY'), 'Portrait awareness panel default is neutral until county sync');
 assert(!markup.includes('LOCATION AWARENESS • LIBERTY COUNTY'), 'Portrait awareness panel markup does not ship a stale Liberty default');
-assert(markup.includes('id="gridlyWelcomePreviewPlace">Watching your selected area'), 'Welcome onboarding/steps default is neutral until county sync');
+assert(/id="gridlyWelcomePreviewPlace"[^>]*>Watching your selected area/.test(markup), 'Welcome onboarding/steps default is neutral until county sync');
 assert(!markup.includes('Watching Dayton'), 'Welcome onboarding and steps markup do not ship a stale Dayton default');
 assert(source.includes('document.querySelectorAll?.("#crossingsSection p, #dashboardSection p, #crossingInventoryCountyText")'), 'County static label sync rewrites dashboard crossing inventory text');
 assert(source.includes('safeText("mobileAwarenessPanelKicker", `LOCATION AWARENESS • ${awarenessLabel.toUpperCase()}`)'), 'County static label sync rewrites portrait awareness kicker');
 assert(source.includes('safeText("gridlyWelcomePreviewPlace", `Watching ${awarenessLabel}`)'), 'County static label sync rewrites welcome preview watch area');
+assert(source.includes('function gridlyMarkCountyOwnedRuntimeLabels'), 'County context sync marks active runtime labels with a county-owned DOM contract');
+assert(markup.includes('data-gridly-county-option="liberty-tx"'), 'Passive Liberty selector option has a passive county-option DOM contract');
+assert(markup.includes('data-gridly-county-owned="welcome-preview-watch-area"'), 'Welcome active runtime watch copy has a county-owned DOM contract');
 
 const samples = montgomery.gridlyGetCountyRuntimeOwnershipSamples();
 assert(!/Liberty|Local Road Impact Into Liberty/i.test(samples.awarenessSample), 'Montgomery active county does not generate Liberty awareness copy');
@@ -111,6 +115,37 @@ assert.strictEqual(passiveOnlyAudit.safeForActiveCountyRuntime, true, 'Audit rem
 assert(passiveOnlyAudit.passiveCountyOptionSources.some((source) => source.source === 'dom.#gridlyWelcomeCountySelect'), 'Audit reports passive county option source');
 assert(passiveOnlyAudit.exemptedCountyOptionSources.some((source) => source.source === 'dom.#gridlyWelcomeCountySelect'), 'Audit reports exempted county option source');
 assert.strictEqual(passiveOnlyAudit.activeDomLeakSources.length, 0, 'Passive county options are not active DOM leaks');
+
+const passiveCountyOptionNode = testNode({
+  tagName: 'OPTION',
+  attrs: { 'data-gridly-county-option': 'liberty-tx' },
+  text: 'Liberty County'
+});
+const welcomeContainerAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'Select County\nLiberty County\nMontgomery County',
+  [
+    testNode({ id: 'gridlyWelcomeOnboarding', text: 'Select County\nLiberty County\nMontgomery County', descendants: [passiveCountyOptionNode] }),
+    testNode({ id: 'gridlyWelcomeSteps', text: 'Select County\nLiberty County\nMontgomery County', descendants: [passiveCountyOptionNode] }),
+    passiveCountySelectNode
+  ]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(welcomeContainerAudit.libertyLeakDetected, false, 'Welcome containers do not fail when Liberty appears only as passive selector option text');
+assert.strictEqual(welcomeContainerAudit.genericCountyLeakDetected, false, 'Welcome containers do not fail when inactive counties appear only as passive selector option text');
+assert.strictEqual(welcomeContainerAudit.safeForActiveCountyRuntime, true, 'Welcome passive selector copy is safe for active Montgomery runtime');
+
+const staleWelcomeContainerAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'Liberty County Awareness\nSelect County\nLiberty County\nMontgomery County',
+  [
+    testNode({ id: 'gridlyWelcomeOnboarding', text: 'Liberty County Awareness\nSelect County\nLiberty County\nMontgomery County', descendants: [passiveCountyOptionNode] }),
+    passiveCountySelectNode
+  ]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(staleWelcomeContainerAudit.safeForActiveCountyRuntime, false, 'Welcome containers still fail on active stale Liberty copy after passive options are removed');
+assert(staleWelcomeContainerAudit.activeDomLeakSources.some((source) => source.source === 'dom.#gridlyWelcomeOnboarding'), 'Stale welcome container active copy remains a DOM leak source');
 
 const stalePanelAudit = loadRuntime(
   { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
