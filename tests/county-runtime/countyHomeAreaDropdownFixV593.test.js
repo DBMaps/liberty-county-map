@@ -6,8 +6,8 @@ const markup = fs.readFileSync('index.html', 'utf8');
 
 assert(markup.includes('id="gridlyWelcomeCountySelect"'), 'County selector exists');
 assert(markup.includes('data-gridly-county-select'), 'County selector has controlled data hook');
-assert(markup.includes('<option value="liberty-tx">Liberty County</option>'), 'Liberty County is selectable');
-assert(markup.includes('<option value="montgomery-tx">Montgomery County</option>'), 'Montgomery County is selectable');
+assert(/<option value="liberty-tx"[^>]*>Liberty County<\/option>/.test(markup), 'Liberty County is selectable');
+assert(/<option value="montgomery-tx"[^>]*>Montgomery County<\/option>/.test(markup), 'Montgomery County is selectable');
 assert(markup.includes('id="gridlyWelcomeHomeAreaSelect"'), 'Home-area dropdown exists');
 assert(markup.includes('data-gridly-home-area-select'), 'Home-area dropdown has controlled data hook');
 
