@@ -50,6 +50,11 @@ assert.strictEqual(montgomeryAudit.routeContextCounty, 'montgomery-tx');
 assert.strictEqual(montgomeryAudit.crossingSourceCounty, 'montgomery-tx');
 assert.strictEqual(montgomeryAudit.destinationCounty, 'montgomery-tx');
 assert.strictEqual(montgomeryAudit.libertyLeakDetected, false, 'Montgomery runtime audit has no Liberty leak');
+assert.strictEqual(montgomeryAudit.genericCountyLeakDetected, false, 'Montgomery runtime audit has no generic county leak');
+assert.strictEqual(montgomeryAudit.libertyLeakSources.length, 0, 'Clean Montgomery samples produce no Liberty evidence');
+assert(montgomeryAudit.checkedTextSurfaces.includes('sample.awarenessSample'), 'Audit lists checked text surfaces');
+assert(montgomeryAudit.checkedStateSurfaces.includes('state.activeHazards'), 'Audit lists checked state surfaces');
+assert(montgomeryAudit.checkedSearchSurfaces.includes('search.lastLiveSearchAudit'), 'Audit lists checked search surfaces');
 assert.strictEqual(montgomeryAudit.safeForActiveCountyRuntime, true, 'Montgomery runtime is county-safe');
 
 const samples = montgomery.gridlyGetCountyRuntimeOwnershipSamples();
@@ -80,9 +85,16 @@ const leakingDom = loadRuntime(
 );
 const leakingAudit = leakingDom.gridlyCountyRuntimeOwnershipAudit();
 assert.strictEqual(leakingAudit.libertyLeakDetected, true, 'Audit detects stale Liberty UI/provider leakage');
+assert.strictEqual(leakingAudit.genericCountyLeakDetected, true, 'Audit detects stale generic county leakage even when samples are clean');
+assert.strictEqual(leakingAudit.firstLibertyLeak.source, 'document.body.visibleText', 'Audit reports first Liberty leak source');
+assert(leakingAudit.libertyLeakSources.some((source) => /Local Road Impact Into Liberty/i.test(source.match)), 'Audit reports Liberty leak match evidence');
 assert.strictEqual(leakingAudit.safeForActiveCountyRuntime, false, 'Audit passes only when all checked ownership surfaces are county-safe');
 
 assert(source.includes('window.gridlyCountyRuntimeOwnershipAudit = gridlyCountyRuntimeOwnershipAudit;'), 'audit helper is exposed on window');
 assert(source.includes('gridlyDestinationSearchContainmentAudit'), 'destination search remains included in county ownership implementation surface');
+assert(source.includes('function gridlyMontgomeryReportSubmissionAudit()'), 'Montgomery report submission audit helper exists');
+assert(source.includes('gridlyRecordReportSubmissionOwnershipAttempt(row, \"hazard\")'), 'Hazard submissions record active-county ownership attempts');
+assert(source.includes('gridlyRecordReportSubmissionOwnershipAccepted(localHazardEntry, \"hazard\")'), 'Montgomery-created hazards are audited after becoming visible/countable');
+assert(source.includes('activeReports = [localCrossingRows[0]'), 'Crossing submissions are locally registered for active-county rendering');
 
 console.log('County runtime ownership V621 tests passed');
