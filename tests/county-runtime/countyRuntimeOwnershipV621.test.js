@@ -7,7 +7,7 @@ const markup = fs.readFileSync('index.html', 'utf8');
 const cutoff = source.indexOf('function getGridlyHomeTownPreference()');
 assert.ok(cutoff > 0, 'runtime ownership audit is defined before preferences binding');
 
-function loadRuntime(windowOverrides = {}, selectedAwarenessArea = null, bodyText = '') {
+function loadRuntime(windowOverrides = {}, selectedAwarenessArea = null, bodyText = '', domNodes = []) {
   const sandbox = {
     console,
     window: { addEventListener: () => {}, removeEventListener: () => {}, setInterval, clearInterval, setTimeout, clearTimeout, navigator: {}, ...windowOverrides },
@@ -16,7 +16,7 @@ function loadRuntime(windowOverrides = {}, selectedAwarenessArea = null, bodyTex
       removeEventListener: () => {},
       getElementById: () => null,
       querySelector: () => null,
-      querySelectorAll: () => [],
+      querySelectorAll: () => domNodes,
       body: { innerText: bodyText, textContent: bodyText },
       documentElement: { style: {} }
     },
@@ -33,6 +33,19 @@ function loadRuntime(windowOverrides = {}, selectedAwarenessArea = null, bodyTex
   vm.createContext(sandbox);
   vm.runInContext(`${source.slice(0, cutoff)}\ngetGridlySelectedAwarenessArea = () => __selectedAwarenessArea || null;\nthis.api = { gridlyGetActiveCountyId, normalizeGridlyCountyAwareDisplayText, gridlyCountyRuntimeOwnershipAudit, gridlyGetCountyRuntimeOwnershipSamples };`, sandbox);
   return sandbox.api;
+}
+
+
+function testNode({ id, text, tagName = 'DIV', attrs = {}, parent = null }) {
+  return {
+    id,
+    tagName,
+    innerText: text,
+    textContent: text,
+    getAttribute: (name) => attrs[name] || null,
+    hasAttribute: (name) => Object.prototype.hasOwnProperty.call(attrs, name),
+    closest: (selector) => (selector === '[data-gridly-county-select]' && (attrs['data-gridly-county-select'] !== undefined || parent?.attrs?.['data-gridly-county-select'] !== undefined)) ? {} : null
+  };
 }
 
 const montgomery = loadRuntime(
@@ -78,6 +91,52 @@ assert(!/Liberty|Local Road Impact Into Liberty/i.test(samples.alertSample), 'Mo
 assert(!/Liberty|Local Road Impact Into Liberty/i.test(samples.popupSample), 'Montgomery hazard reports do not generate Liberty popup copy');
 assert(!/Liberty|Local Road Impact Into Liberty/i.test(samples.routeSample), 'Montgomery route context does not generate Liberty language');
 assert(source.includes('function normalizeGridlyLightweightAlertSummaryText(value = "") {\n  return normalizeGridlyCountyAwareDisplayText'), 'Top awareness summary normalization is county-owned');
+
+
+const passiveCountySelectNode = testNode({
+  id: 'gridlyWelcomeCountySelect',
+  tagName: 'SELECT',
+  attrs: { 'data-gridly-county-select': '' },
+  text: 'Liberty County\nMontgomery County'
+});
+const passiveOnlyAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'Select County\nLiberty County\nMontgomery County',
+  [passiveCountySelectNode]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(passiveOnlyAudit.libertyLeakDetected, false, 'County selector options may include Liberty County without failing Liberty audit');
+assert.strictEqual(passiveOnlyAudit.genericCountyLeakDetected, false, 'County selector options may include inactive counties without failing generic audit');
+assert.strictEqual(passiveOnlyAudit.safeForActiveCountyRuntime, true, 'Audit remains safe when only passive county options contain Liberty');
+assert(passiveOnlyAudit.passiveCountyOptionSources.some((source) => source.source === 'dom.#gridlyWelcomeCountySelect'), 'Audit reports passive county option source');
+assert(passiveOnlyAudit.exemptedCountyOptionSources.some((source) => source.source === 'dom.#gridlyWelcomeCountySelect'), 'Audit reports exempted county option source');
+assert.strictEqual(passiveOnlyAudit.activeDomLeakSources.length, 0, 'Passive county options are not active DOM leaks');
+
+const stalePanelAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'LOCATION AWARENESS • LIBERTY COUNTY\nLiberty County Awareness',
+  [testNode({ id: 'gridlyPortraitLocationAwarenessPanel', text: 'LOCATION AWARENESS • LIBERTY COUNTY\nLiberty County Awareness' })]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(stalePanelAudit.safeForActiveCountyRuntime, false, 'Stale portrait panel is an active leak for Montgomery');
+assert(stalePanelAudit.activeDomLeakSources.some((source) => source.source === 'dom.#gridlyPortraitLocationAwarenessPanel'), 'Audit classifies stale portrait panel as active DOM leak');
+
+const cleanPanelWithPassiveOptionsAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'LOCATION AWARENESS • CONROE\nConroe Awareness\nSelect County\nLiberty County\nMontgomery County',
+  [testNode({ id: 'gridlyPortraitLocationAwarenessPanel', text: 'LOCATION AWARENESS • CONROE\nConroe Awareness' }), passiveCountySelectNode]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(cleanPanelWithPassiveOptionsAudit.safeForActiveCountyRuntime, true, 'Montgomery portrait panel copy plus passive options is county-safe');
+
+const staleWelcomePreviewAudit = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'montgomery-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' },
+  'Watching Dayton\nSelect County\nLiberty County\nMontgomery County',
+  [testNode({ id: 'gridlyWelcomePreviewPlace', text: 'Watching Dayton' }), passiveCountySelectNode]
+).gridlyCountyRuntimeOwnershipAudit();
+assert.strictEqual(staleWelcomePreviewAudit.safeForActiveCountyRuntime, false, 'Active welcome preview text cannot say Dayton for Montgomery/Conroe');
+assert(staleWelcomePreviewAudit.activeDomLeakSources.some((source) => source.source === 'dom.#gridlyWelcomePreviewPlace'), 'Audit keeps active welcome preview leaks separate from passive selector options');
 
 const selectedOverridesStaleCounty = loadRuntime(
   { GRIDLY_ACTIVE_COUNTY_ID: 'liberty-tx' },
