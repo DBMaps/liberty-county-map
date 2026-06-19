@@ -3,8 +3,11 @@ const fs = require('fs');
 const vm = require('vm');
 
 const source = fs.readFileSync('js/app.js', 'utf8');
-const cutoff = source.indexOf('const FRA_URL = gridlyGetActiveCountyRuntimeSources().remoteCrossingSource;');
-assert.ok(cutoff > 0, 'runtime source registry block is present before active source URL binding');
+const registryCutoff = source.indexOf('const FRA_URL = gridlyGetActiveCountyRuntimeSources().remoteCrossingSource;');
+const helperStart = source.indexOf('function gridlyParseCoordinateNumber');
+const helperEnd = source.indexOf('async function loadCrossings()');
+assert.ok(registryCutoff > 0, 'runtime source registry block is present before active source URL binding');
+assert.ok(helperStart > 0 && helperEnd > helperStart, 'crossing coordinate helpers are present before loadCrossings');
 
 function loadRuntime(windowOverrides = {}) {
   const sandbox = {
@@ -15,7 +18,8 @@ function loadRuntime(windowOverrides = {}) {
     getGridlySelectedAwarenessArea: () => null
   };
   vm.createContext(sandbox);
-  vm.runInContext(`const OTHER_HAZARD_STRUCTURED_METADATA_PREFIX = '__gridly_other_hazard_metadata__:';\n${source.slice(0, cutoff)}\nthis.api = { GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable };`, sandbox);
+  vm.runInContext(`const OTHER_HAZARD_STRUCTURED_METADATA_PREFIX = '__gridly_other_hazard_metadata__:';\n${source.slice(0, registryCutoff)}
+${source.slice(helperStart, helperEnd)}\nthis.api = { GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable, extractGridlyCrossingCoordinates, buildGridlyCrossingCoordinateDiagnostics };`, sandbox);
   return sandbox.api;
 }
 
@@ -29,38 +33,46 @@ assert.notStrictEqual(montgomeryRuntime.gridlyGetActiveCountyRuntimeSources().cr
 assert.strictEqual(libertyRuntime.gridlyGetActiveCountyRuntimeSources().crossingSource, 'data/liberty-county-rail-crossings.geojson', 'Liberty crossing runtime remains unchanged');
 
 const data = JSON.parse(fs.readFileSync(montgomeryAssetPath, 'utf8'));
-const loadedFeatures = data.features.filter((feature) => Array.isArray(feature?.geometry?.coordinates));
-const normalized = loadedFeatures
-  .map((feature, index) => {
-    const [lng, lat] = feature.geometry.coordinates;
-    return { id: String(feature.properties?.crossingid || feature.properties?.crossing_id || `crossing-${index}`), lat: Number(lat), lng: Number(lng) };
-  })
-  .filter((crossing) => Number.isFinite(crossing.lat) && Number.isFinite(crossing.lng));
+const diagnostics = montgomeryRuntime.buildGridlyCrossingCoordinateDiagnostics(data.features);
+const normalized = data.features
+  .map((feature, index) => ({ feature, index, extraction: montgomeryRuntime.extractGridlyCrossingCoordinates(feature) }))
+  .filter((entry) => entry.extraction.valid)
+  .map(({ feature, index, extraction }) => ({
+    id: String(feature.properties?.crossingid || feature.properties?.crossing_id || `crossing-${index}`),
+    lat: extraction.lat,
+    lng: extraction.lng,
+    coordinateSource: extraction.source
+  }));
 
 const crossingMarkers = new Map(normalized.map((crossing) => [crossing.id, { __gridlyCrossingClickBound: true }]));
 const audit = {
   countyId: 'montgomery-tx',
   crossingSourceCounty: 'montgomery-tx',
   sourceAvailable: true,
-  assetLoaded: loadedFeatures.length > 0,
+  assetLoaded: data.features.length > 0,
   loadedCount: data.features.length,
   normalizedCount: normalized.length,
   filteredCount: normalized.length,
   markerCount: crossingMarkers.size,
   renderedCount: crossingMarkers.size,
   clickBindingCount: Array.from(crossingMarkers.values()).filter((marker) => marker.__gridlyCrossingClickBound).length,
+  ...diagnostics,
   dropStage: null,
   dropReason: null,
   readinessClassification: 'PASS',
   safeForActivation: true
 };
 
-assert.ok(loadedFeatures.length > 0, 'Montgomery crossing load succeeds');
+assert.ok(data.features.length > 0, 'Montgomery crossing load succeeds');
 assert.ok(normalized.length > 0, 'Normalized Montgomery crossings > 0');
 assert.ok(crossingMarkers.size > 0, 'Crossing markers created');
 assert.strictEqual(audit.readinessClassification, 'PASS', 'Crossing activation readiness audit passes');
 assert.strictEqual(audit.safeForActivation, true, 'Crossing activation readiness audit is safe for activation');
 assert.strictEqual(audit.loadedCount, 239, 'Expected Montgomery crossing inventory loaded');
-assert.ok(audit.normalizedCount > 0, 'Expected Montgomery crossing inventory normalized');
+assert.strictEqual(audit.normalizedCount, 204, 'Expected real Montgomery valid-coordinate count');
+assert.strictEqual(audit.rejectedFeatureCount, 35, 'Expected Montgomery null-coordinate rejected count');
+assert.ok(audit.geometryTypesSample.includes('Point'), 'Expected Point geometry in real Montgomery asset');
+assert.ok(audit.geometryTypesSample.includes(null), 'Expected null geometry sample in real Montgomery asset');
+assert.strictEqual(audit.firstRejectedFeatureReason, 'missing_geometry_and_no_valid_property_coordinates', 'Expected clear null-geometry rejection reason');
 
 console.log('Montgomery crossing activation readiness V628 tests passed', audit);
