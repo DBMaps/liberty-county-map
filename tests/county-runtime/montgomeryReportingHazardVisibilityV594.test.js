@@ -29,7 +29,7 @@ assert.strictEqual(montgomeryRuntime.gridlyValidateCountyContainment({ county_id
 assert.strictEqual(montgomeryRuntime.gridlyReportMatchesActiveCounty({ county_id: 'montgomery-tx' }, 'montgomery-tx'), true, 'Montgomery hazards are visible to active Montgomery filters');
 assert.strictEqual(montgomeryRuntime.gridlyReportMatchesActiveCounty({ county_id: 'unknown-tx' }, 'montgomery-tx'), false, 'Unknown county reports remain blocked by visibility filters');
 
-assert(source.includes('const countyScopedReportMetadata = gridlyGetCountyScopedReportMetadata();'), 'road hazard submit flow resolves active county metadata once per payload');
+assert(source.includes('const countyScopedReportMetadata = coordinateCountyResolution.countyId'), 'road hazard submit flow resolves county metadata from the report coordinate');
 assert(source.includes('county_id: countyScopedReportMetadata.county_id'), 'road hazard structured metadata carries county_id for legacy Supabase fallback rows');
 assert(source.includes('countyId: countyScopedReportMetadata.county_id'), 'road hazard structured metadata carries countyId alias for local rendering and marker pipelines');
 assert(source.includes('const rawCountyId = row?.county_id || row?.countyId || structured.county_id || structured.countyId;'), 'normalization reads county metadata from top-level columns or structured fallback detail');
