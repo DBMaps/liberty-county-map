@@ -13,3 +13,5 @@ js/gridly.local.js
 assets/county-sources/montgomery/census-tiger-2025/
 # V603 local generated county normalization staging outputs.
 assets/county-implementation/*/generated/local-normalization-staging/
+# V604 local generated county boundary staging outputs.
+assets/county-implementation/*/generated/boundary-staging/
