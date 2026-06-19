@@ -3,6 +3,7 @@ const fs = require('fs');
 const vm = require('vm');
 
 const source = fs.readFileSync('js/app.js', 'utf8');
+const markup = fs.readFileSync('index.html', 'utf8');
 const cutoff = source.indexOf('function getGridlyHomeTownPreference()');
 assert.ok(cutoff > 0, 'runtime ownership audit is defined before preferences binding');
 
@@ -56,6 +57,20 @@ assert(montgomeryAudit.checkedTextSurfaces.includes('sample.awarenessSample'), '
 assert(montgomeryAudit.checkedStateSurfaces.includes('state.activeHazards'), 'Audit lists checked state surfaces');
 assert(montgomeryAudit.checkedSearchSurfaces.includes('search.lastLiveSearchAudit'), 'Audit lists checked search surfaces');
 assert.strictEqual(montgomeryAudit.safeForActiveCountyRuntime, true, 'Montgomery runtime is county-safe');
+assert.strictEqual(montgomeryAudit.reportAttemptObserved, false, 'Audit distinguishes that no report attempt was observed');
+assert.strictEqual(montgomeryAudit.reportRegistrationStatus, 'not_applicable_no_attempt', 'No-attempt report status does not imply registration success');
+assert.strictEqual(montgomeryAudit.reportRegistrationSafeForActiveCounty, 'not_applicable', 'No-attempt report safety is not a false success');
+
+
+assert(markup.includes('id="crossingInventoryCountyText">Public crossing inventory currently loaded for the selected county.'), 'Dashboard crossing inventory default is neutral until county sync');
+assert(!markup.includes('Public crossing inventory currently loaded for Liberty County.'), 'Dashboard crossing inventory markup does not ship a stale Liberty default');
+assert(markup.includes('id="mobileAwarenessPanelKicker">LOCATION AWARENESS • SELECTED COUNTY'), 'Portrait awareness panel default is neutral until county sync');
+assert(!markup.includes('LOCATION AWARENESS • LIBERTY COUNTY'), 'Portrait awareness panel markup does not ship a stale Liberty default');
+assert(markup.includes('id="gridlyWelcomePreviewPlace">Watching your selected area'), 'Welcome onboarding/steps default is neutral until county sync');
+assert(!markup.includes('Watching Dayton'), 'Welcome onboarding and steps markup do not ship a stale Dayton default');
+assert(source.includes('document.querySelectorAll?.("#crossingsSection p, #dashboardSection p, #crossingInventoryCountyText")'), 'County static label sync rewrites dashboard crossing inventory text');
+assert(source.includes('safeText("mobileAwarenessPanelKicker", `LOCATION AWARENESS • ${awarenessLabel.toUpperCase()}`)'), 'County static label sync rewrites portrait awareness kicker');
+assert(source.includes('safeText("gridlyWelcomePreviewPlace", `Watching ${awarenessLabel}`)'), 'County static label sync rewrites welcome preview watch area');
 
 const samples = montgomery.gridlyGetCountyRuntimeOwnershipSamples();
 assert(!/Liberty|Local Road Impact Into Liberty/i.test(samples.awarenessSample), 'Montgomery active county does not generate Liberty awareness copy');
