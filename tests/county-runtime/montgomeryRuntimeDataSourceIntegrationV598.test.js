@@ -15,7 +15,7 @@ function loadRuntime(windowOverrides = {}) {
     getGridlySelectedAwarenessArea: () => windowOverrides.__selectedAwarenessArea || null
   };
   vm.createContext(sandbox);
-  vm.runInContext(`${source.slice(0, cutoff)}\nthis.api = { GRIDLY_DEFAULT_COUNTY_ID, GRIDLY_COUNTY_REGISTRY, GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyId, gridlyGetActiveCountyConfig, gridlyGetCountyRuntimeSources, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable, gridlyValidateCountyContainment, gridlyReportMatchesActiveCounty, gridlyGetReportCountyId, gridlyGetCountyScopedReportMetadata, gridlyResolveCountyAwareFallbackLocation, gridlyIsInvalidCountyAwareRoadLabel, normalizeGridlyCountyAwareDisplayText };`, sandbox);
+  vm.runInContext(`const OTHER_HAZARD_STRUCTURED_METADATA_PREFIX = '__gridly_other_hazard_metadata__:';\n${source.slice(0, cutoff)}\nthis.api = { GRIDLY_DEFAULT_COUNTY_ID, GRIDLY_COUNTY_REGISTRY, GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyId, gridlyGetActiveCountyConfig, gridlyGetCountyRuntimeSources, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable, gridlyValidateCountyContainment, gridlyReportMatchesActiveCounty, gridlyGetReportCountyId, gridlyGetCountyScopedReportMetadata, gridlyResolveCountyAwareFallbackLocation, gridlyIsInvalidCountyAwareRoadLabel, normalizeGridlyCountyAwareDisplayText };`, sandbox);
   return sandbox.api;
 }
 
@@ -42,8 +42,9 @@ assert(!/Liberty/i.test(montgomeryBadRoadText), 'Montgomery alert card fallback 
 assert(/Conroe|Montgomery County|this area/i.test(montgomeryBadRoadText), 'Missing Montgomery road data falls back to Conroe, Montgomery County, selected area, or neutral wording');
 assert.strictEqual(libertyRuntime.normalizeGridlyCountyAwareDisplayText('Reported on Local Road Impact Into Liberty', { county_id: 'liberty-tx', roadName: 'Local Road Impact Into Liberty' }), 'Reported on Local Road Impact Into Liberty', 'Liberty incidents remain unchanged');
 
-assert.strictEqual(montgomeryRuntime.gridlyGetActiveCountyRuntimeSources().crossingSource, null, 'Montgomery crossing source is explicitly missing when no Montgomery crossings exist');
-assert.strictEqual(montgomeryRuntime.gridlyCountyRuntimeSourceAvailable('crossings'), false, 'Montgomery crossing source is neutral/pending rather than Liberty-owned');
+assert.strictEqual(montgomeryRuntime.gridlyGetActiveCountyRuntimeSources().crossingSource, 'assets/county-implementation/montgomery/runtime-assets/montgomery-county-rail-crossings.geojson', 'Montgomery crossing source resolves to Montgomery-owned rail crossing asset');
+assert.strictEqual(montgomeryRuntime.gridlyGetActiveCountyRuntimeSources().crossingOverridesSource, 'assets/county-implementation/montgomery/runtime-assets/montgomery-county-crossing-review-overrides.json', 'Montgomery crossing review overrides resolve to Montgomery-owned asset');
+assert.strictEqual(montgomeryRuntime.gridlyCountyRuntimeSourceAvailable('crossings'), true, 'Montgomery crossing source is marked available');
 assert.notStrictEqual(montgomeryRuntime.gridlyGetActiveCountyRuntimeSources().crossingSource, libertyRuntime.gridlyGetActiveCountyRuntimeSources().crossingSource, 'Montgomery crossing count cannot use Liberty crossing source');
 
 assert.strictEqual(montgomeryRuntime.gridlyReportMatchesActiveCounty({ county_id: 'montgomery-tx' }, 'montgomery-tx'), true, 'Montgomery incidents are generated from Montgomery-tagged records');
