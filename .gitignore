@@ -11,3 +11,5 @@ js/gridly.local.js
 !/android/app/src/main/assets/public/.gitkeep
 # Montgomery TIGER source files
 assets/county-sources/montgomery/census-tiger-2025/
+# V603 local generated county normalization staging outputs.
+assets/county-implementation/*/generated/local-normalization-staging/
