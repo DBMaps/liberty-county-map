@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const app = fs.readFileSync('js/app.js', 'utf8');
-assert.match(app, /GRIDLY_MONTGOMERY_RUNTIME_GATE = false/, 'Montgomery runtime gate must remain false');
-assert.match(app, /productionEnabled: false/, 'Montgomery production must remain disabled');
+assert.match(app, /GRIDLY_MONTGOMERY_RUNTIME_GATE = true/, 'Montgomery runtime gate must be true');
+assert.match(app, /productionEnabled: true/, 'Montgomery production must be enabled');
 assert.doesNotMatch(app, /data\/montgomery|data\/counties\/montgomery-tx/, 'Montgomery runtime assets must not be placed under data/');
 assert.match(app, /historicalReadsEnabled:\s*false/, 'historical reads boundary must remain false');
 assert.match(app, /historyUiEnabled:\s*false/, 'history UI boundary must remain false');

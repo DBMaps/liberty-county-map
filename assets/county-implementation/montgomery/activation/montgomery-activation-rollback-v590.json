@@ -1,0 +1,35 @@
+{
+  "milestone": "V590",
+  "county_id": "montgomery-tx",
+  "county_name": "Montgomery County",
+  "geoid": "48339",
+  "protected_boundaries": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "historicalApiExposure": false,
+    "consumerFacingHistoryDashboard": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "production_asset_path": {
+    "boundaryPath": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+    "manifestPath": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+    "registryArtifactPath": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+    "rationale": "Package-scoped production consumption avoids unnecessary data/ duplication, preserves provenance, and makes rollback a registry/gate change rather than asset movement.",
+    "rollbackImpact": "Assets remain inert after rollback; operational selection is disabled by gate and registry booleans.",
+    "futureCountyImplications": "County #3 can follow package-root activation after boundary, registry, containment, validation, and rollback artifacts pass."
+  },
+  "artifact_type": "Montgomery Activation Rollback",
+  "rollback_restores": {
+    "GRIDLY_MONTGOMERY_RUNTIME_GATE": false,
+    "operational": false,
+    "productionEnabled": false,
+    "selectable": false,
+    "productionActivationBlocked": true,
+    "stage": "disabled-staged"
+  },
+  "rollback_validation": "Validated by tests/county-runtime/montgomeryActivationValidationV590.test.js rollback simulation.",
+  "supabase_or_migration_impact": "None"
+}

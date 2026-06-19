@@ -14,15 +14,15 @@ assert.strictEqual(api.GRIDLY_DEFAULT_COUNTY_ID, 'liberty-tx');
 assert.strictEqual(api.gridlyGetActiveCountyId(), 'liberty-tx', 'Liberty remains the active default');
 assert.strictEqual(api.gridlyGetActiveCountyConfig().id, 'liberty-tx', 'Liberty config remains active by default');
 assert.strictEqual(api.gridlyIsKnownCountyId('montgomery-tx'), true, 'Montgomery is recognized by registry');
-assert.strictEqual(api.gridlyIsCountyOperational('montgomery-tx'), false, 'Montgomery is not operational');
-assert.strictEqual(api.gridlyNormalizeCountyId('montgomery-tx'), 'liberty-tx', 'disabled Montgomery cannot become active through normalization');
+assert.strictEqual(api.gridlyIsCountyOperational('montgomery-tx'), true, 'Montgomery is operational');
+assert.strictEqual(api.gridlyNormalizeCountyId('montgomery-tx'), 'montgomery-tx', 'Montgomery can become active through normalization');
 assert.deepStrictEqual(JSON.parse(JSON.stringify(api.gridlyGetCountyRuntimeStatus('montgomery-tx'))), {
   known: true,
   countyId: 'montgomery-tx',
-  operational: false,
-  stage: 'disabled-staged',
-  productionEnabled: false,
-  selectable: false
+  operational: true,
+  stage: 'operational',
+  productionEnabled: true,
+  selectable: true
 });
 assert.ok(api.GRIDLY_COUNTY_REGISTRY['montgomery-tx'].boundaryPath.startsWith('assets/county-implementation/montgomery/'), 'Montgomery assets stay outside data/');
 assert.strictEqual(api.gridlyReportMatchesActiveCounty({ county_id: 'liberty-tx' }, 'liberty-tx'), true, 'Liberty reports remain visible in Liberty context');
