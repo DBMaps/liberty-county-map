@@ -48,6 +48,21 @@ assert.strictEqual(montgomeryAudit.fallbackUsed, false, 'Montgomery context does
 assert.strictEqual(montgomeryAudit.libertyFallbackDetected, false, 'Montgomery context does not detect Liberty fallback');
 assert.strictEqual(montgomeryAudit.safeForMontgomeryContext, true, 'Montgomery/Conroe context is safe');
 
+
+const contradictoryRuntime = loadRuntime(
+  { GRIDLY_ACTIVE_COUNTY_ID: 'liberty-tx' },
+  { countyId: 'montgomery-tx', label: 'Conroe', key: 'conroe', storageValue: 'Conroe' }
+);
+const contradictoryAudit = contradictoryRuntime.gridlyCountyContextContainmentAudit();
+assert.strictEqual(contradictoryAudit.activeCounty, 'montgomery-tx', 'Selected Montgomery awareness area overrides stale Liberty active county');
+assert.strictEqual(contradictoryAudit.activeTown, 'Conroe', 'Conroe remains the active town in the contradictory state');
+assert.strictEqual(contradictoryAudit.selectedAwarenessArea.countyId, 'montgomery-tx', 'Contradictory fixture preserves selected Montgomery county id');
+assert.strictEqual(contradictoryAudit.countyBoundsSource, 'montgomery-awareness-bounds', 'County bounds cannot use Liberty awareness bounds for selected Montgomery area');
+assert.strictEqual(contradictoryAudit.townBoundsSource, 'montgomery-awareness-bounds', 'Conroe resolves to Montgomery town bounds in contradictory state');
+assert.strictEqual(contradictoryAudit.fitBoundsTarget, 'montgomery-tx', 'Fit bounds cannot target Liberty for Conroe/Montgomery context');
+assert.strictEqual(contradictoryAudit.libertyFallbackDetected, true, 'Stale Liberty runtime county is detected for selected Montgomery context');
+assert.strictEqual(contradictoryAudit.safeForMontgomeryContext, false, 'Contradictory Liberty/Montgomery state is not safe');
+
 const montgomeryBounds = montgomeryRuntime.gridlyGetCountyBounds('montgomery-tx');
 assert.deepStrictEqual(JSON.parse(JSON.stringify(montgomeryBounds.sw)), [30.087076, -95.83024], 'Montgomery fit southwest corner uses Montgomery bounds');
 assert.deepStrictEqual(JSON.parse(JSON.stringify(montgomeryBounds.ne)), [30.630284, -95.0964], 'Montgomery fit northeast corner uses Montgomery bounds');
