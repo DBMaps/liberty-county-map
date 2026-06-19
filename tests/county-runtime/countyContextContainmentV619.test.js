@@ -60,8 +60,9 @@ assert.strictEqual(contradictoryAudit.selectedAwarenessArea.countyId, 'montgomer
 assert.strictEqual(contradictoryAudit.countyBoundsSource, 'montgomery-awareness-bounds', 'County bounds cannot use Liberty awareness bounds for selected Montgomery area');
 assert.strictEqual(contradictoryAudit.townBoundsSource, 'montgomery-awareness-bounds', 'Conroe resolves to Montgomery town bounds in contradictory state');
 assert.strictEqual(contradictoryAudit.fitBoundsTarget, 'montgomery-tx', 'Fit bounds cannot target Liberty for Conroe/Montgomery context');
-assert.strictEqual(contradictoryAudit.libertyFallbackDetected, true, 'Stale Liberty runtime county is detected for selected Montgomery context');
-assert.strictEqual(contradictoryAudit.safeForMontgomeryContext, false, 'Contradictory Liberty/Montgomery state is not safe');
+assert.strictEqual(contradictoryAudit.fallbackUsed, false, 'Stale Liberty runtime county does not create a bounds fallback when selected Montgomery ownership is intact');
+assert.strictEqual(contradictoryAudit.libertyFallbackDetected, false, 'Stale Liberty runtime county is ignored when active Montgomery fields are Montgomery-owned');
+assert.strictEqual(contradictoryAudit.safeForMontgomeryContext, true, 'Corrected Conroe/Montgomery pass state is safe even with stale runtime county');
 
 const montgomeryBounds = montgomeryRuntime.gridlyGetCountyBounds('montgomery-tx');
 assert.deepStrictEqual(JSON.parse(JSON.stringify(montgomeryBounds.sw)), [30.087076, -95.83024], 'Montgomery fit southwest corner uses Montgomery bounds');
