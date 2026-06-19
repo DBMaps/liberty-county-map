@@ -15,11 +15,23 @@ function loadRuntime(windowOverrides = {}) {
     window: { ...windowOverrides },
     LOCATION_DEFAULTS: { country: 'USA', state: 'Texas', county: 'Liberty County' },
     normalizeGridlyUserFacingRoadText: (value) => String(value || '').replace(/\s+/g, ' ').trim(),
-    getGridlySelectedAwarenessArea: () => null
+    getGridlySelectedAwarenessArea: () => null,
+    getGridlyReviewedCrossingLocationContext: () => ({ displayName: '', primaryLabel: '', secondaryLabel: '', source: '' }),
+    inferCrossingCity: (name, props = {}) => props.cityname || props.city || 'Conroe',
+    buildRegionKey: ({ country, state, county, city }) => [country, state, county, city].filter(Boolean).join('|'),
+    calculateBaseRisk: () => 1,
+    populateCrossingSelect: () => {},
+    applyGridlyHomeTownAwarenessContext: () => {},
+    scheduleRenderCrossings: () => {},
+    evaluateLayoutMode: () => 'mobile',
+    updateDailyHabitStatus: () => {},
+    updateLastUpdated: () => {},
+    safeText: () => {},
+    renderUnifiedIncidents: () => {}
   };
   vm.createContext(sandbox);
   vm.runInContext(`const OTHER_HAZARD_STRUCTURED_METADATA_PREFIX = '__gridly_other_hazard_metadata__:';\n${source.slice(0, registryCutoff)}
-${source.slice(helperStart, helperEnd)}\nthis.api = { GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable, extractGridlyCrossingCoordinates, buildGridlyCrossingCoordinateDiagnostics };`, sandbox);
+${source.slice(helperStart, helperEnd)}\nthis.api = { GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY, gridlyGetActiveCountyRuntimeSources, gridlyCountyRuntimeSourceAvailable, extractGridlyCrossingCoordinates, buildGridlyCrossingCoordinateDiagnostics, normalizeGridlyCrossingFeatures };`, sandbox);
   return sandbox.api;
 }
 
@@ -34,15 +46,7 @@ assert.strictEqual(libertyRuntime.gridlyGetActiveCountyRuntimeSources().crossing
 
 const data = JSON.parse(fs.readFileSync(montgomeryAssetPath, 'utf8'));
 const diagnostics = montgomeryRuntime.buildGridlyCrossingCoordinateDiagnostics(data.features);
-const normalized = data.features
-  .map((feature, index) => ({ feature, index, extraction: montgomeryRuntime.extractGridlyCrossingCoordinates(feature) }))
-  .filter((entry) => entry.extraction.valid)
-  .map(({ feature, index, extraction }) => ({
-    id: String(feature.properties?.crossingid || feature.properties?.crossing_id || `crossing-${index}`),
-    lat: extraction.lat,
-    lng: extraction.lng,
-    coordinateSource: extraction.source
-  }));
+const normalized = montgomeryRuntime.normalizeGridlyCrossingFeatures(data.features, { source: 'county_runtime_source', overrides: {} });
 
 const crossingMarkers = new Map(normalized.map((crossing) => [crossing.id, { __gridlyCrossingClickBound: true }]));
 const audit = {
@@ -74,5 +78,9 @@ assert.strictEqual(audit.rejectedFeatureCount, 35, 'Expected Montgomery null-coo
 assert.ok(audit.geometryTypesSample.includes('Point'), 'Expected Point geometry in real Montgomery asset');
 assert.ok(audit.geometryTypesSample.includes(null), 'Expected null geometry sample in real Montgomery asset');
 assert.strictEqual(audit.firstRejectedFeatureReason, 'missing_geometry_and_no_valid_property_coordinates', 'Expected clear null-geometry rejection reason');
+assert.strictEqual(diagnostics.diagnosticNormalizedCount, normalized.length, 'Runtime crossing inventory receives the same normalized count as diagnostics');
+assert.ok(diagnostics.normalizedSample.length > 0 && normalized.length > 0, 'normalizedSample cannot be non-empty while runtime normalized count is zero');
+assert.ok(source.includes('["local_fallback", "county_runtime_source"].includes(String(crossing.source || ""))'), 'County runtime local-only crossing asset branch assigns normalized crossings');
+assert.strictEqual(normalized[0].county, 'Montgomery County', 'Montgomery crossings carry active county metadata through runtime normalization');
 
 console.log('Montgomery crossing activation readiness V628 tests passed', audit);
