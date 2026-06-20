@@ -40,6 +40,10 @@ includes('bottomCountMatchesClassification: bottomHazardCountModel.bottomCountMa
 // 5-6. Placeholder labels like St 0000 are rejected while better reviewed/name/parsed labels can win.
 includes('function isGridlyZeroCodedPlaceholderRoadName(value = "")', 'zero-coded placeholder detector exists');
 includes('if (isGridlyZeroCodedPlaceholderRoadName(label)) return true;', 'zero-coded placeholder labels are low quality');
+includes('if (/^(?:private|unknown|unnamed road|unnamed|local crossing impact)$/i.test(label)) return true;', 'Private, Unknown, unnamed road, and Local crossing impact labels are low quality crossing tokens');
+includes('const safeIncidentCrossingName = isGridlyConsumerCrossingLocationTokenUseful(incident.crossingName) ? gridlyCleanConsumerCrossingLocationToken(incident.crossingName) : "";', 'Montgomery Private source labels are suppressed before unified crossing title rendering');
+includes('? (headlineLocation ? `Train blocking crossing on ${headlineLocation}` : "Train Blocking Crossing")', 'generic crossing fallback copy is allowed when only low-quality labels exist');
+includes('if (activeConditionPresent && gridlyV238IsBlockedCrossingCondition(selectedCondition) && typeof isGridlyConsumerCrossingLocationTokenUseful === "function" && !isGridlyConsumerCrossingLocationTokenUseful(selectedRoad)) selectedRoad = "";', 'crossing narrative road-name resolver guesses cannot promote low-quality road labels');
 includes('const reviewedPrimaryRoad = gridlyCleanConsumerCrossingLocationToken(localContext?.primaryLabel);', 'reviewed crossing context remains ahead of fallback source fields');
 includes('|| parsedCrossingParts.find((value) => isGridlyConsumerCrossingLocationTokenUseful(value))', 'parsed crossing label can win over placeholder source values');
 
@@ -57,5 +61,7 @@ includes('classificationActiveRoadHazardCount: Number(classification.activeRoadH
 includes('bottomCountMatchesClassification: Number(summary?.bottomHazardCount || 0) === Number(classification.activeRoadHazardCount || 0)', 'promotion audit verifies bottom hazard count matches classification');
 includes('safeForCrossingAwarenessPromotion', 'audit exposes safety boolean');
 includes('roadNameLookupCachedValueSamples', 'audit includes cached value samples');
+includes('visibleCrossingCopyForQualityAudit', 'promotion audit checks only visible crossing copy for low-quality labels');
+includes('(?:Private|Unknown|unnamed road|Local crossing impact|St\\s+0{3,}|Street\\s+0{3,})', 'promotion audit flags Private and Local crossing impact when visible');
 
 console.log('v633CrossingAwarenessRefinement.test.js passed');
