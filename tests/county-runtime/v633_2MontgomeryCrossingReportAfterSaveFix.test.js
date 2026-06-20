@@ -26,5 +26,9 @@ includes('gridlyCoordinateInsideCountyBounds(coords.lat, coords.lng, areaCountyI
 includes('const crossingReportCount = explicitCrossingRows.length || activeReportRows.filter((record) => typeof isGridlyCrossingReportRecord === "function" && isGridlyCrossingReportRecord(record)).length', 'bottom panel keeps crossing report count separate');
 includes('classifiedAsRoadHazard: row.sourceKind === "activeHazard" && !gridlyIsClearedHazardAwarenessRecord(row.item || row)', 'crossing awareness samples are not road hazards');
 includes('if (category === "rail") return `Train Blocking Crossing${hasLocation ? ` near ${locationLabel}` : ""}`;', 'V633 Train Blocking Crossing wording remains unchanged');
+includes('classificationActiveRoadHazardCount: safeClassificationActiveRoadHazardCount,', 'post-save restored crossing summary carries classification road hazard count before bottom fallback');
+includes('activeHazards: activeHazardsInArea,\n        activeReports: activeReportsInArea,\n        unifiedIncidents: [],\n        alerts: []', 'area summary classification reconciles scoped hazards and reports without fallback sources');
+includes('const safeClassificationActiveRoadHazardCount = Number.isFinite(classificationActiveRoadHazardCount)', 'classification road hazard count preserves finite zero as valid');
+includes('bottomCountMatchesClassification: true', 'bottom count match remains true when classification count drives bottom hazards');
 
 console.log('v633_2MontgomeryCrossingReportAfterSaveFix.test.js passed');
