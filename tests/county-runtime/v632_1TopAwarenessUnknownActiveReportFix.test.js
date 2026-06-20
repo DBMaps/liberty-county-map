@@ -19,7 +19,7 @@ includes('const activeHazardCount = explicitActiveHazardsSupplied\n    ? activeH
 // 3. cleared hazards and unsafe crossing records are rejected from selected top awareness.
 includes('function getGridlyTopAwarenessDetailRejectionReason(detailOrItem = {})', 'top-awareness rejection reason helper is present');
 includes('return "cleared_hazard_excluded_from_top_awareness";', 'cleared hazards receive an explicit selected-detail rejection reason');
-includes('return "unknown_active_report_crossing_uses_crossing_renderer";', 'unknown active crossing reports are rejected from road-hazard top-awareness selection');
+includes('Crossing reports are first-class awareness conditions and must not be rejected only because they are not road hazards.', 'unknown active crossing reports are promoted as crossing conditions instead of road-hazard fallback');
 
 // 4. enhanced audit exposes root-cause detail and fallback detection.
 includes('selectedTopAwarenessRawDetail: selectedRawSummary', 'classification audit exposes selected raw detail');
