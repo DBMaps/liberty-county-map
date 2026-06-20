@@ -26,7 +26,13 @@ includes('Crossing reports are first-class awareness conditions and must not be 
 // 4. Bottom awareness exposes crossing report count separately.
 includes('const crossingReportCount = explicitCrossingRows.length || activeReportRows.filter((record) => typeof isGridlyCrossingReportRecord === "function" && isGridlyCrossingReportRecord(record)).length', 'bottom panel derives crossing report count independently');
 includes('active crossing report${crossingReportCount === 1 ? "" : "s"}', 'bottom panel renders active crossing report wording');
+includes('const bottomHazardCountModel = getGridlyBottomAwarenessHazardCountModel(safeSummary);', 'bottom panel reads hazard count from reconciliation model');
+includes('bottomHazardCountSource: "awarenessClassification.activeRoadHazardCount"', 'bottom hazard count source is the awareness classification road-hazard count');
+includes('const hazardCount = bottomHazardCountModel.bottomHazardCount;', 'bottom panel renders reconciled active road hazard count');
 includes('const activeIssueCount = hazardCount + reportCount + crossingReportCount;', 'active issue count includes crossings separately from road hazards');
+includes('bottomHazardCount: bottomHazardCountModel.bottomHazardCount', 'normalized summary exposes bottom hazard count separately');
+includes('classificationActiveRoadHazardCount: bottomHazardCountModel.classificationActiveRoadHazardCount', 'normalized summary exposes classification hazard count');
+includes('bottomCountMatchesClassification: bottomHazardCountModel.bottomCountMatchesClassification', 'normalized summary exposes bottom/classification match flag');
 
 // 5-6. Placeholder labels like St 0000 are rejected while better reviewed/name/parsed labels can win.
 includes('function isGridlyZeroCodedPlaceholderRoadName(value = "")', 'zero-coded placeholder detector exists');
@@ -42,6 +48,10 @@ includes('gridlyRoadNameLookupCache.formatterValues.set(key, value)', 'road-name
 
 // Required diagnostic.
 includes('function gridlyCrossingAwarenessPromotionAudit(options = {})', 'crossing awareness promotion audit exists');
+includes('bottomHazardCountSource: summary?.bottomHazardCountSource || ""', 'promotion audit exposes bottom hazard count source');
+includes('bottomHazardCount: Number(summary?.bottomHazardCount || 0)', 'promotion audit exposes bottom hazard count');
+includes('classificationActiveRoadHazardCount: Number(classification.activeRoadHazardCount || 0)', 'promotion audit exposes classification active road hazard count');
+includes('bottomCountMatchesClassification: Number(summary?.bottomHazardCount || 0) === Number(classification.activeRoadHazardCount || 0)', 'promotion audit verifies bottom hazard count matches classification');
 includes('safeForCrossingAwarenessPromotion', 'audit exposes safety boolean');
 includes('roadNameLookupCachedValueSamples', 'audit includes cached value samples');
 
