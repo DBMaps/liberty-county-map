@@ -23,6 +23,8 @@ assert(/staleInventorySuppressed:[\s\S]*gridlyCrossingInventoryCountyId === acti
 includes('function gridlyApplyClearedHazardAwarenessContainment(clearRow = {})', 'cleared-hazard containment helper is present');
 includes('activeHazards = (Array.isArray(activeHazards) ? activeHazards : []).filter((row) => !isSameClearedHazard(row));', 'cleared hazard is removed from active hazard candidates');
 includes('buildGridlyLightweightActiveAwareness({ activeHazards: [] })', 'cleared-hazard audit verifies an empty active-awareness model');
+includes('const explicitActiveHazardsSupplied = Array.isArray(options?.activeHazards);', 'lightweight awareness detects caller-supplied active hazard fixtures');
+includes('explicitActiveHazardsSupplied\n    ? []\n    : getGridlyUserFacingActiveRoadHazardIncidents', 'explicit empty activeHazards fixtures do not repopulate hazard count from global unified incidents');
 
 // 4. Cleared flooding removed from awareness header.
 includes('window.__gridlyLatestAlertsForRender = window.__gridlyLatestAlertsForRender.filter((row) => !isSameClearedHazard(row));', 'cleared hazard is removed from alert/header candidate cache');
