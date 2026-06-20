@@ -63,5 +63,10 @@ includes('safeForCrossingAwarenessPromotion', 'audit exposes safety boolean');
 includes('roadNameLookupCachedValueSamples', 'audit includes cached value samples');
 includes('visibleCrossingCopyForQualityAudit', 'promotion audit checks only visible crossing copy for low-quality labels');
 includes('(?:Private|Unknown|unnamed road|Local crossing impact|St\\s+0{3,}|Street\\s+0{3,})', 'promotion audit flags Private and Local crossing impact when visible');
+includes('function isGridlyLowQualityCrossingAwarenessLocationLabel(value = "", category = "", source = "")', 'crossing awareness location labels have a shared low-quality suppression gate');
+includes('gridlyReusableCrossingAlertSummaryHasLowQualityLocation(text, detail?.resolvedCategory)', 'DOM parsed alert text Local Crossing Impact is rejected before reusable crossing alert summaries can win');
+includes('rejectionReason: "low_quality_crossing_location_label"', 'top awareness candidates reject low-quality crossing location labels');
+includes('const crossingNamingSample = crossingCandidates.map((candidate) => suppressGridlyLowQualityCrossingLocationInCopy(candidate.headline || candidate.title || candidate.summary || candidate.crossingId || "")).filter(Boolean).slice(0, 5);', 'crossing naming samples suppress low-quality visible location labels');
+includes('return Boolean(parsedLocation && isGridlyLowQualityCrossingAwarenessLocationLabel(parsedLocation, category, "reusedAlertText:parsed_location"));', 'reused alert text cannot promote Local Crossing Impact as a crossing fallback');
 
 console.log('v633CrossingAwarenessRefinement.test.js passed');
