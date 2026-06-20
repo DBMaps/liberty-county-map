@@ -27,6 +27,9 @@ includes('Crossing reports are first-class awareness conditions and must not be 
 includes('const crossingReportCount = explicitCrossingRows.length || activeReportRows.filter((record) => typeof isGridlyCrossingReportRecord === "function" && isGridlyCrossingReportRecord(record)).length', 'bottom panel derives crossing report count independently');
 includes('active crossing report${crossingReportCount === 1 ? "" : "s"}', 'bottom panel renders active crossing report wording');
 includes('const bottomHazardCountModel = getGridlyBottomAwarenessHazardCountModel(safeSummary);', 'bottom panel reads hazard count from reconciliation model');
+includes('const summaryClassificationActiveRoadHazardCount = Number(safeSummary.classificationActiveRoadHazardCount);', 'bottom hazard count model reads cached classification count before fallback');
+includes('if (Number.isFinite(summaryClassificationActiveRoadHazardCount)) {', 'bottom hazard count model treats classification zero as available');
+includes('bottomHazardCount: safeClassificationCount,', 'bottom hazard count honors cached classification count including zero');
 includes('bottomHazardCountSource: "awarenessClassification.activeRoadHazardCount"', 'bottom hazard count source is the awareness classification road-hazard count');
 includes('const hazardCount = bottomHazardCountModel.bottomHazardCount;', 'bottom panel renders reconciled active road hazard count');
 includes('const activeIssueCount = hazardCount + reportCount + crossingReportCount;', 'active issue count includes crossings separately from road hazards');
