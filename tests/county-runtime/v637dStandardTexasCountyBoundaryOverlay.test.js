@@ -27,10 +27,12 @@ includes('usesStandardTexasBoundarySource: true', 'audit reports standard Texas 
 includes('usesStatewidePayload: true', 'audit reports statewide payload usage');
 includes('texasCountyFeatureCount: statewideCountyIds.length', 'audit reports detected Texas county feature count');
 includes('activeCountyGeoid,', 'audit reports the active county GEOID');
-includes('weight: active ? 3.25 : 1.5', 'active/passive boundary weights still differ');
-includes('dashArray: active ? "" : "8 10"', 'active/passive dash styling still differs');
+includes('weight: active ? 4.25 : passiveCountyWeight', 'active/passive boundary weights still differ');
+includes('dashArray: active ? "" : "3 12"', 'active/passive dash styling still differs');
 includes('interactive: false', 'boundary polygons remain non-interactive');
 includes('pointerEventsSafe: pointerEvents === "none" && activeStyle.interactive === false', 'audit verifies marker click safety');
+includes('passiveCountyOpacity: passiveStyle.opacity', 'audit reports visually suppressed passive opacity');
+includes('safeForCountyBoundaryVisualRefinement:', 'audit reports visual refinement safe state');
 includes('safeForCountyBoundaryOverlay: Boolean(supportedCountyIds.length === 2 && statewideCountyIds.length === 254', 'audit safe state requires supported V637B counties and full Texas payload');
 
 console.log('v637dStandardTexasCountyBoundaryOverlay.test.js passed');
