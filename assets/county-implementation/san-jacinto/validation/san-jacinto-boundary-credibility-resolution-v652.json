@@ -1,0 +1,122 @@
+{
+  "milestone": "V652",
+  "title": "San Jacinto Boundary Credibility Resolution",
+  "finalDetermination": "BOUNDARY CREDIBILITY NOT RESOLVED",
+  "authorizationImpact": "Not Eligible For Reauthorization Review",
+  "recommendedNextMilestone": "Repeat V652 after authoritative TIGER/Line county-boundary source acquisition, or complete a San Jacinto-specific boundary extraction/provenance package before V653.",
+  "activeBoundaryAsset": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+  "sourceInventory": {
+    "activeBoundaryAsset": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+    "sourceBoundaryAssets": [],
+    "authoritativeCandidatesInRepository": [],
+    "placeholderCandidates": [
+      "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson"
+    ],
+    "relatedSourceAssets": [
+      "assets/county-implementation/san-jacinto/runtime-assets/source/tl_2025_48407_roads.* (road geometry only; not a county polygon boundary source)"
+    ],
+    "lineageDetermination": "The active boundary is a county-specific committed GeoJSON with plausible San Jacinto coordinates but no committed source dataset, extraction command, source checksum, or provenance artifact. The statewide cartographic asset is a known placeholder and is rejected."
+  },
+  "countyIdentityValidation": {
+    "expected": {
+      "STATEFP": "48",
+      "COUNTYFP": "407",
+      "GEOID": "48407",
+      "countyName": "San Jacinto County",
+      "state": "Texas"
+    },
+    "observed": {
+      "STATEFP": "48",
+      "COUNTYFP": "407",
+      "GEOID": "48407",
+      "NAME": "San Jacinto",
+      "NAMELSAD": "San Jacinto County",
+      "name": "San Jacinto County",
+      "state": "TX",
+      "geoid": "48407"
+    },
+    "result": "PASS"
+  },
+  "provenanceValidation": {
+    "canProvenanceBeDocumented": false,
+    "classification": "FAIL",
+    "notes": [
+      "No authoritative county-boundary source file exists in the repository for San Jacinto.",
+      "No TIGER/Line county extraction artifact or source checksum exists for San Jacinto.",
+      "The 20260620 Texas Counties Cartographic Boundary Map is rejected as placeholder geometry."
+    ]
+  },
+  "geometryValidation": {
+    "geometryType": "Polygon",
+    "coordinateCount": 431,
+    "boundingBox": [
+      -95.311289,
+      30.28588,
+      -94.826068,
+      30.910794
+    ],
+    "classification": "PASS",
+    "visualCredibilityStatus": "plausible_location_and_shape_but_not_production_credible_without_provenance",
+    "notes": [
+      "Coordinate envelope is in East Texas and consistent with San Jacinto vicinity including Coldspring/Shepherd/Point Blank/Lake Livingston edge expectations.",
+      "Geometry is not a five-point placeholder rectangle.",
+      "Geometry plausibility does not substitute for documented authoritative lineage."
+    ]
+  },
+  "boundaryReplacement": {
+    "performed": false,
+    "oldSource": "unknown-provenance active San Jacinto boundary GeoJSON",
+    "newSource": null,
+    "reason": "No authoritative San Jacinto county-boundary polygon source already exists in the repository; V652 does not fabricate or promote an unverifiable boundary."
+  },
+  "auditIntegration": {
+    "visualCorrectnessPass": false,
+    "sourceAssetRecommendedForProduction": false,
+    "boundaryCredibilityDetermination": "fail",
+    "productionRecommendationStatus": "blocked_pending_authoritative_boundary_source"
+  },
+  "validationMatrix": [
+    {
+      "category": "Source Identity",
+      "result": "FAIL",
+      "notes": "Active asset exists; authoritative source lineage is absent."
+    },
+    {
+      "category": "Provenance",
+      "result": "FAIL",
+      "notes": "Unknown provenance; no TIGER/Line county-boundary extraction evidence for San Jacinto is committed."
+    },
+    {
+      "category": "Geometry",
+      "result": "PASS",
+      "notes": "Polygon, 431 coordinates, plausible East Texas bbox, not five-point placeholder."
+    },
+    {
+      "category": "County Identity",
+      "result": "PASS",
+      "notes": "STATEFP 48, COUNTYFP 407, GEOID 48407, San Jacinto County identity now explicit in active asset metadata."
+    },
+    {
+      "category": "Visual Credibility",
+      "result": "FAIL",
+      "notes": "Plausible geometry remains held because source cannot be trusted."
+    },
+    {
+      "category": "Production Recommendation",
+      "result": "FAIL",
+      "notes": "Not recommended for production."
+    },
+    {
+      "category": "Liberty Regression",
+      "result": "PASS",
+      "notes": "No Liberty asset or runtime change made."
+    },
+    {
+      "category": "Montgomery Regression",
+      "result": "PASS",
+      "notes": "No Montgomery asset or runtime change made."
+    }
+  ],
+  "protectedSystems": "unchanged",
+  "sha256": "1bbae76faf4c2bd3491f036bced086b6e061c3f7f91f755e19f647f21242560e"
+}
