@@ -1,0 +1,38 @@
+{
+  "milestone": "V650R.11",
+  "countyId": "san-jacinto-tx",
+  "purpose": "Fresh browser validation rerun after San Jacinto road geometry generation and runtime wiring.",
+  "browserValidationCompleted": false,
+  "browserValidationBlocker": "No executable browser was available in the local validation environment, and installing Playwright from npm was blocked by registry policy.",
+  "activationStatus": {
+    "validationOnly": true,
+    "productionEnabled": false,
+    "productionActivationBlocked": true,
+    "reauthorizationRequired": true,
+    "productionActivationApproved": false
+  },
+  "validationMatrix": {
+    "countySelection": { "result": "PASS", "notes": "Static selector evidence confirms San Jacinto County (validation only) remains present." },
+    "awarenessSelection": { "result": "OBSERVATION", "notes": "Coldspring remains registered to san-jacinto-tx; browser selection was not executable." },
+    "boundary": { "result": "OBSERVATION", "notes": "Audit remains honest and visual correctness is not force-passed; live audit output was not captured." },
+    "reportVisibility": { "result": "FAIL", "notes": "Fresh browser hazard submission was not completed." },
+    "roadResolution": { "result": "FAIL", "notes": "Road geometry is wired statically, but browser-observed road-name resolution was not captured." },
+    "alertWording": { "result": "FAIL", "notes": "Alert panel wording was not reviewed in a browser." },
+    "awarenessWording": { "result": "FAIL", "notes": "Top Awareness, Awareness Brief, and Location card were not reviewed in a browser." },
+    "countReconciliation": { "result": "FAIL", "notes": "Visible count surfaces were not reconciled in a browser." },
+    "crossCountyValidation": { "result": "FAIL", "notes": "Dayton/Willis/Coldspring switching sequence was not executed in a browser." },
+    "auditReliability": { "result": "FAIL", "notes": "Audit output could not be compared against browser-observed behavior." }
+  },
+  "finalDetermination": "BROWSER VALIDATION FAIL",
+  "authorizationImpact": "Not Eligible For Reauthorization Review",
+  "recommendedNextMilestone": "V650R.12 — San Jacinto Browser Validation Environment Remediation and Rerun",
+  "protectedSystemsPreserved": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "mergeRecommendation": "Merge only as validation-status documentation. No activation or production behavior change is authorized."
+}
