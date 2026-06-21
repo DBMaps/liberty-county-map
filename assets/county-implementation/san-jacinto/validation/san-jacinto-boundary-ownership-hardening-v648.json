@@ -1,0 +1,95 @@
+{
+  "milestone": "V648",
+  "countyId": "san-jacinto-tx",
+  "countyName": "San Jacinto County, Texas",
+  "activationStatus": "activation_held_not_operational_not_selectable_production_blocked",
+  "boundaryProvenanceReview": {
+    "path": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+    "declaredSource": "Gridly controlled activation county-specific boundary asset v646.1",
+    "extractionMethod": "not documented in committed asset or inventory; no authoritative TIGER/Line county-boundary extraction command or source-file lineage is present for the boundary asset",
+    "sourceOriginDetermination": "FAIL_UNVERIFIED_LOCAL_CONTROLLED_ASSET",
+    "geoidAlignment": {
+      "expected": "48407",
+      "observed": "48407",
+      "countyId": "san-jacinto-tx",
+      "result": "PASS"
+    },
+    "countyIdentity": {
+      "expectedName": "San Jacinto County",
+      "observedName": "San Jacinto County",
+      "state": "TX",
+      "result": "PASS"
+    }
+  },
+  "boundaryCorrectnessDetermination": {
+    "result": "FAIL_NOT_PRODUCTION_READY",
+    "reason": "The asset metadata and coordinate envelope are San Jacinto-labeled, but provenance and extraction lineage are insufficient to satisfy visual credibility. Coordinate density alone is not accepted as proof.",
+    "coordinateStats": {
+      "ringCoordinateCount": 431,
+      "west": -95.311289,
+      "south": 30.28588,
+      "east": -94.826068,
+      "north": 30.910794
+    },
+    "expectedGeographyReviewed": [
+      "Coldspring",
+      "Shepherd",
+      "Point Blank",
+      "Lake Livingston edge",
+      "Cleveland side",
+      "Walker adjacency",
+      "Montgomery adjacency"
+    ],
+    "visualCredibility": "HELD_PENDING_AUTHORITATIVE_BOUNDARY_COMPARISON"
+  },
+  "ownershipAuditResults": {
+    "sanJacintoCanonicalCountyId": "san-jacinto-tx",
+    "knownCounty": true,
+    "operational": false,
+    "selectable": false,
+    "productionEnabled": false,
+    "candidateAreas": [
+      "San Jacinto County",
+      "Coldspring",
+      "Shepherd",
+      "Point Blank",
+      "Oakhurst"
+    ],
+    "fallbackPolicy": "Unknown or unsupported counties remain fail-closed; San Jacinto rows must not match Liberty or Montgomery contexts while activation is held.",
+    "montgomeryLeakage": "not accepted",
+    "libertyLeakage": "not accepted"
+  },
+  "visibilityPipelineFindings": {
+    "pipeline": [
+      "submit",
+      "ownership",
+      "storage",
+      "filtering",
+      "alert",
+      "marker",
+      "awareness"
+    ],
+    "requiredSanJacintoTransition": "Submitted San Jacinto reports must retain county_id san-jacinto-tx from ownership through filtering before they can be visible in marker, alert, and awareness surfaces.",
+    "heldStatus": "Visibility is audit-only because San Jacinto is non-operational and activation-held."
+  },
+  "auditHardeningResults": {
+    "helper": "window.gridlySanJacintoReportSubmissionAudit",
+    "requiredFields": [
+      "activeCounty",
+      "reportSubmitCounty",
+      "reportRegistrationStatus",
+      "lastReportAccepted",
+      "lastReportVisible",
+      "markerVisible",
+      "alertVisible",
+      "awarenessVisible"
+    ],
+    "result": "PATCHED"
+  },
+  "remainingBlockers": [
+    "Boundary source provenance remains unverifiable from committed evidence.",
+    "Authoritative visual comparison is still required before production boundary readiness.",
+    "Browser validation of San Jacinto report ownership/visibility remains required after activation-candidate controls are explicitly authorized."
+  ],
+  "mergeRecommendation": "Merge V648 hardening evidence and audit-surface patch only. Do not activate San Jacinto."
+}
