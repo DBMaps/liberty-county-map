@@ -32,7 +32,10 @@ assert.deepStrictEqual(JSON.parse(JSON.stringify(api.gridlyGetCountyRuntimeStatu
   operational: true,
   stage: 'validation-only',
   productionEnabled: false,
-  selectable: true
+  selectable: true,
+  validationOnly: true,
+  productionActivationBlocked: true,
+  reauthorizationRequired: true
 }, 'San Jacinto held status is audit-observable');
 
 assert.deepStrictEqual(JSON.parse(JSON.stringify(sanJacinto.defaultAwarenessAreas)), ['San Jacinto County', 'Coldspring', 'Shepherd', 'Point Blank', 'Oakhurst'], 'San Jacinto validation-only awareness areas are exposed');
