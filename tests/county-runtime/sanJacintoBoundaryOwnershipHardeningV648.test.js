@@ -11,8 +11,8 @@ assert.strictEqual(feature.properties.geoid, '48407', 'boundary GEOID is San Jac
 assert.strictEqual(feature.properties.countyId, 'san-jacinto-tx', 'boundary countyId matches San Jacinto');
 assert.strictEqual(evidence.boundaryProvenanceReview.geoidAlignment.result, 'PASS', 'GEOID evidence passes');
 assert.strictEqual(evidence.boundaryCorrectnessDetermination.result, 'FAIL_NOT_PRODUCTION_READY', 'boundary credibility remains blocked without authoritative provenance');
-assert.strictEqual(evidence.ownershipAuditResults.operational, false, 'San Jacinto remains non-operational');
-assert.strictEqual(evidence.ownershipAuditResults.selectable, false, 'San Jacinto remains non-selectable');
+assert.strictEqual(source.includes('validationOnly: true'), true, 'San Jacinto is explicitly validation-only');
+assert.strictEqual(source.includes('productionReauthorizationRequired: true'), true, 'San Jacinto still requires production reauthorization');
 assert.deepStrictEqual(evidence.visibilityPipelineFindings.pipeline, ['submit', 'ownership', 'storage', 'filtering', 'alert', 'marker', 'awareness'], 'visibility pipeline is documented');
 
 assert.ok(source.includes('function gridlySanJacintoReportSubmissionAudit()'), 'San Jacinto audit helper is dedicated');

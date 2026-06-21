@@ -14,7 +14,7 @@ assert.ok(source.includes('countLineage'), 'V649 audit documents count lineage')
 assert.ok(source.includes('languageAudit'), 'V649 audit exposes language audit');
 assert.ok(source.includes('countAudit'), 'V649 audit exposes count audit');
 assert.ok(source.includes('visibilityAudit'), 'V649 audit exposes visibility audit');
-assert.ok(source.includes('activationHeld: true'), 'V649 audit keeps San Jacinto activation held');
+assert.ok(source.includes('validationOnly: true'), 'V650R keeps San Jacinto validation-only');
 assert.ok(!source.includes('return "Local road impact";'), 'inferCorridorLabel no longer emits Local road impact fallback');
 
 const protectedFlags = ['historicalReadsEnabled: false', 'historyUiEnabled: false', 'DriveTexasPaused: true', 'TransportationIntelligenceEnabled: false', 'TransportationIntelligenceDisplay: false', 'TransportationIntelligenceActivation: false'];
