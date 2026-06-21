@@ -1,0 +1,106 @@
+{
+  "milestone": "V650R.12",
+  "countyId": "san-jacinto-tx",
+  "purpose": "Validate whether San Jacinto road geometry is available to consumer-language surfaces or whether community-level location still wins over roadway context.",
+  "activationStatus": {
+    "validationOnly": true,
+    "productionEnabled": false,
+    "productionActivationBlocked": true,
+    "reauthorizationRequired": true,
+    "productionActivationApproved": false
+  },
+  "validatedIncidentModel": {
+    "source": "V650R.11 browser-observed San Jacinto road-hazard presentation",
+    "countyId": "san-jacinto-tx",
+    "type": "crash",
+    "observedTitle": "Crash / Wreck on Coldspring",
+    "validationCoordinate": { "lat": 30.5924, "lng": -95.1294 },
+    "communityContext": "Coldspring",
+    "ownership": "san-jacinto-tx via validation-only awareness area and county runtime registration"
+  },
+  "incidentLocationTrace": [
+    { "stage": "incident", "finding": "The browser-visible model is a San Jacinto crash/wreck with Coldspring community text and validation coordinates at the Coldspring awareness anchor.", "result": "PASS" },
+    { "stage": "ownership", "finding": "San Jacinto remains validation-only and blocked from production activation; the Coldspring awareness area is scoped to san-jacinto-tx.", "result": "PASS" },
+    { "stage": "road candidate lookup", "finding": "collectNearbyRoadCandidates uses the active county roadwaySegmentFeatures dataset after San Jacinto runtime wiring; static candidate trace found roadway geometry within 0.45 miles.", "result": "PASS" },
+    { "stage": "road resolution", "finding": "resolveNearestRoadName can select the closest valid roadway segment and can append a meaningful secondary road through resolveNearbyRoadPair.", "result": "PASS" },
+    { "stage": "location phrase generation", "finding": "resolveIncidentRoadLookupPayload appends resolved road geometry after explicit incident location fields; explicit community fields can therefore win before the resolver output when they are treated as resolvable location candidates.", "result": "OBSERVATION" },
+    { "stage": "alert title", "finding": "buildGridlyAlertCardConsumerModel normalizes the event title to Crash / Wreck but does not remove a pre-rendered community location from fallback title unless a stronger authoritative road label is present in the alert record.", "result": "OBSERVATION" },
+    { "stage": "alert detail", "finding": "normalizeGridlyAlertCardLocationLabel checks authoritative road-hazard labels first, then popup/community fields; if the record has only locationName/knownLocation=Coldspring and no road fields, detail language can remain community-oriented.", "result": "OBSERVATION" },
+    { "stage": "awareness headline", "finding": "Lightweight awareness resolves active item category and location from supplied active hazard/report fields; it does not independently force the nearest roadway resolver over explicit community labels.", "result": "OBSERVATION" }
+  ],
+  "roadCandidateFindings": {
+    "method": "Static local GeoJSON distance trace against assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson at 30.5924,-95.1294 with 0.45 mile radius.",
+    "candidateCountWithinRadius": 12,
+    "topCandidates": [
+      { "rank": 1, "name": "Byrd Ave", "distanceMiles": 0.0081 },
+      { "rank": 2, "name": "State Hwy 156", "distanceMiles": 0.0081 },
+      { "rank": 3, "name": "State Hwy 150", "distanceMiles": 0.0081 },
+      { "rank": 4, "name": "Church St", "distanceMiles": 0.0093 },
+      { "rank": 5, "name": "FM 1514", "distanceMiles": 0.0216 },
+      { "rank": 6, "name": "E Cedar Ave", "distanceMiles": 0.0406 },
+      { "rank": 7, "name": "W Cedar Ave", "distanceMiles": 0.0474 },
+      { "rank": 8, "name": "Hill Ave", "distanceMiles": 0.0571 }
+    ],
+    "classification": "PASS"
+  },
+  "roadResolutionFindings": {
+    "roadwayNameAvailable": true,
+    "expectedSelectedRoadway": "Byrd Ave",
+    "secondaryRoadAvailable": "State Hwy 156 or State Hwy 150, depending source feature order after same-distance sorting",
+    "selectionScore": "distance-based nearest valid candidate; closest distance approximately 0.0081 miles (about 13 meters)",
+    "acceptedOrRejected": "Accepted by resolver when coordinates and San Jacinto roadwaySegmentFeatures are loaded; not guaranteed to win consumer text if explicit community fields enter the location-candidate list earlier.",
+    "classification": "PASS"
+  },
+  "communityPreferenceFindings": {
+    "community": "Coldspring",
+    "intentionalPolicy": "Partly intentional as a fallback/explicit-field preference, not as a San Jacinto-specific community-first rule.",
+    "expectedBehavior": "Crash / Wreck on Coldspring is consumer-friendly but not the most specific behavior when nearby road geometry and a valid roadway name are available.",
+    "recommendationClass": "B. Road resolution available but location-selection logic needs adjustment",
+    "classification": "OBSERVATION"
+  },
+  "comparison": {
+    "liberty": {
+      "roadDataStatus": "available",
+      "behavior": "Liberty has roadSegmentsPath available and the same resolver can preserve resolved road names; community fallback is used when no useful road label is present.",
+      "parityExpectation": "San Jacinto should match Liberty: road name first when a valid resolved road label is available, community fallback only when road resolution is unavailable or invalid.",
+      "classification": "OBSERVATION"
+    },
+    "montgomery": {
+      "roadDataStatus": "missing",
+      "behavior": "Montgomery roadSegmentsPath remains null, so safe selected-awareness-area/county wording is expected when no road resolves; valid explicit Montgomery road names are preserved.",
+      "parityExpectation": "San Jacinto should not mirror Montgomery fallback behavior now that San Jacinto road geometry is available.",
+      "classification": "PASS"
+    }
+  },
+  "consumerLanguageReview": {
+    "observed": "Crash / Wreck on Coldspring",
+    "standard": "Accepted language requires clear consumer wording without technical metadata and with an understandable location phrase.",
+    "classification": "OBSERVATION",
+    "notes": "The phrase is understandable and consumer-safe, but it is less specific than available road context for the validated coordinate. Do not redesign wording in this milestone."
+  },
+  "validationMatrix": {
+    "roadCandidateLookup": { "result": "PASS", "notes": "Nearby roadway candidates are found from San Jacinto geometry." },
+    "roadResolution": { "result": "PASS", "notes": "A valid roadway name is available and distance-selectable." },
+    "locationPhraseGeneration": { "result": "OBSERVATION", "notes": "Explicit community fields can precede resolver-derived roadway labels." },
+    "alertTitle": { "result": "OBSERVATION", "notes": "Community-oriented fallback title can remain visible." },
+    "alertDetail": { "result": "OBSERVATION", "notes": "Detail line can use community label when road fields are absent from alert record." },
+    "awarenessHeadline": { "result": "OBSERVATION", "notes": "Awareness uses reusable active item location fields and does not force road geometry over community fields." },
+    "libertyComparison": { "result": "OBSERVATION", "notes": "Liberty road-first parity indicates San Jacinto should use roads when available." },
+    "montgomeryComparison": { "result": "PASS", "notes": "Montgomery fallback is expected because road geometry remains missing." },
+    "consumerLanguage": { "result": "OBSERVATION", "notes": "Consumer-safe but less specific than available road evidence." }
+  },
+  "finalDetermination": "ROAD RESOLUTION VERIFIED WITH OBSERVATIONS",
+  "remainingBlockers": [
+    { "type": "OBSERVATION", "item": "Location-selection precedence can allow Coldspring to win over available roadway context." },
+    { "type": "BLOCKER", "item": "Boundary credibility remains tracked separately and is not resolved by this milestone." }
+  ],
+  "protectedSystemsPreserved": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "mergeRecommendation": "Merge as documentation-only validation. No activation, production behavior change, San Jacinto-specific wording rule, Liberty behavior change, Montgomery behavior change, or boundary asset change is included."
+}
