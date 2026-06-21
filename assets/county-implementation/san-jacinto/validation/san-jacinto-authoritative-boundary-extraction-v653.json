@@ -1,0 +1,54 @@
+{
+  "milestone": "V653-follow-up",
+  "sourcePath": "assets/county-implementation/source/tl_2025_us_county/tl_2025_us_county.shp",
+  "sourceDataset": "tl_2025_us_county",
+  "STATEFP": "48",
+  "COUNTYFP": "407",
+  "GEOID": "48407",
+  "NAMELSAD": "San Jacinto County",
+  "geometryType": "Polygon",
+  "coordinateCount": 431,
+  "boundingBox": [
+    -95.359156,
+    30.31945,
+    -94.829719,
+    30.906719
+  ],
+  "oldGeometry": {
+    "source": "pre-follow-up V653 committed boundary geometry",
+    "coordinateCount": 431,
+    "boundingBox": [
+      -95.311289,
+      30.28588,
+      -94.826068,
+      30.910794
+    ]
+  },
+  "newGeometry": {
+    "source": "tl_2025_us_county filtered feature geometry",
+    "coordinateCount": 431,
+    "boundingBox": [
+      -95.359156,
+      30.31945,
+      -94.829719,
+      30.906719
+    ]
+  },
+  "geometryChanged": true,
+  "visualShapePlausibility": "PASS: bbox encloses Coldspring/Shepherd/Point Blank/Lake Livingston region and matches San Jacinto County east-of-Montgomery, west-of-Trinity-River placement.",
+  "extractionMethod": "Filter authoritative Census TIGER/Line 2025 county dataset tl_2025_us_county to STATEFP='48', COUNTYFP='407', GEOID='48407'; serialize one county Polygon/MultiPolygon as GeoJSON FeatureCollection.",
+  "validationStatus": "PASS",
+  "checks": {
+    "featureCollection": true,
+    "singleFeature": true,
+    "statefp48": true,
+    "countyfp407": true,
+    "geoid48407": true,
+    "sourceDatasetTl2025UsCounty": true,
+    "geometryChangedFromPreviousV653": true,
+    "notPlaceholderCoordinateCount": true,
+    "notFiveCoordinateRectangle": true,
+    "eastTexasBboxPlausible": true,
+    "sourceAssetRecommendedForProduction": true
+  }
+}
