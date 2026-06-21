@@ -25,6 +25,14 @@ includes('findGridlyCountyBoundaryOverlayFeatureForCounty(features, countyId)', 
 includes('normalizeGridlyCountyBoundaryOverlayName', 'runtime keeps normalized county-name fallback matching');
 includes('usesStandardTexasBoundarySource: true', 'audit reports standard Texas source usage');
 includes('usesStatewidePayload: true', 'audit reports statewide payload usage');
+includes('GRIDLY_ACTIVE_COUNTY_BOUNDARY_PAYLOAD_SCOPE = "county_specific_runtime_geojson"', 'runtime defines county-specific active boundary payload scope');
+includes('GRIDLY_COUNTY_BOUNDARY_OVERLAY_MIN_ACTIVE_COORDINATE_COUNT = 250', 'runtime defines an active county geometry quality floor');
+includes('gridlyCountyBoundaryOverlaySourceMetadataById[countyId] = { sourceType: "county_specific_active"', 'active county outlines use county-specific geometry when available');
+includes('boundaryGeometryQuality:', 'audit exposes boundaryGeometryQuality');
+includes('activeCountyCoordinateCount: activeCountyQuality.coordinateCount', 'audit exposes activeCountyCoordinateCount');
+includes('activeCountyGeometryTooCoarse: activeCountyQuality.tooCoarse', 'audit exposes activeCountyGeometryTooCoarse');
+includes('activeCountyGeometryQualityPass: activeCountyQuality.pass', 'audit exposes activeCountyGeometryQualityPass');
+includes('sourceAssetRecommendedForProduction,', 'audit exposes sourceAssetRecommendedForProduction');
 includes('texasCountyFeatureCount: statewideCountyIds.length', 'audit reports detected Texas county feature count');
 includes('activeCountyGeoid,', 'audit reports the active county GEOID');
 includes('weight: active ? 4.25 : passiveCountyWeight', 'active/passive boundary weights still differ');

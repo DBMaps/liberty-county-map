@@ -32,6 +32,11 @@ includes('passiveCountyRenderMode: "statewide_suppressed"', 'audit reports state
 includes('activeCountyVisualDominancePass,', 'audit reports active county visual dominance');
 includes('passiveCountyVisualSuppressionPass,', 'audit reports passive county suppression');
 includes('safeForCountyBoundaryVisualRefinement:', 'audit exposes safe visual refinement state');
+includes('boundaryGeometryQuality:', 'audit exposes boundary geometry quality');
+includes('activeCountyCoordinateCount:', 'audit exposes active county coordinate count');
+includes('activeCountyGeometryTooCoarse:', 'audit exposes active county geometry coarse flag');
+includes('activeCountyGeometryQualityPass:', 'audit exposes active county geometry pass flag');
+includes('sourceAssetRecommendedForProduction,', 'audit exposes production source recommendation');
 includes('activeCountyFillEnabled: Boolean(activeStyle.fill)', 'audit reports active fill state');
 includes('passiveCountyOpacity: passiveStyle.opacity', 'audit reports passive opacity');
 includes('passiveCountyWeight: passiveStyle.weight', 'audit reports passive weight');
