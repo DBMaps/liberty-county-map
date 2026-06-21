@@ -23,6 +23,8 @@ assert(appSource.includes('function collectNearbyRoadCandidates'), 'nearby road 
 assert(appSource.includes('function resolveNearestRoadName'), 'nearest road resolver remains present');
 assert(appSource.includes('function resolveIncidentRoadLookupPayload'), 'shared incident road lookup payload remains present');
 assert(appSource.includes('locationCandidates.push(resolvedRoadName);'), 'resolved road name is appended to location candidates');
+assert(appSource.indexOf('if (resolvedRoadName) locationCandidates.push(resolvedRoadName);') < appSource.indexOf('locationCandidates.push(incident?.location_name'), 'resolved road context is considered before community/location fallback fields');
+assert(appSource.includes('resolvedRoadLookup?.locationContext?.primaryRoad'), 'alert location model consumes shared resolved road context');
 assert(appSource.includes('function buildGridlyAlertCardConsumerModel'), 'alert consumer model remains present');
 assert(appSource.includes('function buildGridlyLightweightActiveAwareness'), 'awareness model remains present');
 
