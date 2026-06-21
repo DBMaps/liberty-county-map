@@ -131,6 +131,7 @@ The official onboarding checklist is implementation-oriented. Each item must be 
 - County package manifest exists.
 - County registry artifact exists.
 - County boundary/bounds asset exists.
+- County boundary source is identified, with county-owned active geometry preferred over unvalidated statewide production display geometry.
 - County awareness areas exist.
 - County town/community definitions exist.
 - County rollback artifact exists.
@@ -156,6 +157,8 @@ The official onboarding checklist is implementation-oriented. Each item must be 
 - Crossing source path is registered.
 - Road source path is registered or formally observed with mitigation.
 - Boundary source path is registered.
+- Active county boundary display source is county-owned or explicitly validated as production-quality fallback geometry.
+- Boundary overlay policy is active-county-only; inactive county boundaries are suppressed during normal runtime.
 - Awareness source path is registered.
 - Runtime source availability reports expected status.
 
@@ -172,6 +175,9 @@ The official onboarding checklist is implementation-oriented. Each item must be 
 ### Rendering and interaction readiness
 
 - County map viewport/bounds are correct.
+- Exactly one active county boundary renders in normal runtime.
+- Inactive county boundaries are hidden in normal runtime.
+- County boundary styling remains visually subordinate to awareness, alerts, crossings, and hazards.
 - Crossing markers render.
 - Road features render or are intentionally observed.
 - Marker counts reconcile to normalized inventory and visibility filters.
@@ -200,10 +206,29 @@ The official onboarding checklist is implementation-oriented. Each item must be 
 - Naming-quality suppression is verified.
 - Awareness promotion survives refresh.
 
+
+### County Boundary Validation
+
+County boundaries provide geographic context only. They are not primary content and must never compete with awareness, alerts, crossings, hazards, route workflows, markers, popups, or map controls. Future counties inherit the V637B–V637E.3 production boundary standard: normal runtime displays exactly one active county boundary, prefers county-owned active geometry, suppresses inactive county boundaries, preserves subordinate styling, and keeps overlay layers pointer-event safe.
+
+- County boundary source identified.
+- County-owned geometry available for active display.
+- Statewide geometry is limited to lookup, matching, fallback, or administration unless its active-boundary visual quality is explicitly validated.
+- Active county renders correctly.
+- Inactive counties are suppressed in normal user-facing runtime.
+- Boundary styling is visually subordinate to awareness, alerts, crossings, and hazards.
+- Every awareness area carries explicit `countyId` ownership rather than relying on town names, historical defaults, or fallback behavior.
+- County switching updates awareness context, active county context, boundary overlay, and county identity rendering together.
+- Boundary overlays rebuild when county ownership changes.
+- Overlay safety is verified for pointer events, markers, popups, routes, controls, reporting, hazard selection, crossing selection, and route workflows.
+- Audit passes.
+
 ### Containment readiness
 
 - County containment is verified.
 - County switching is verified in both directions.
+- County switching synchronizes awareness context, active county context, active county boundary overlay, and county identity rendering.
+- Boundary overlays rebuild when county ownership changes.
 - Historical containment is verified or protected-surface neutralization is confirmed.
 - Liberty fallback contamination is absent.
 - Untagged legacy row behavior is documented.
@@ -227,7 +252,8 @@ The validation order is mandatory because each stage depends on the prior stage.
 9. **Awareness promotion validation** — prove reports promote into the correct awareness category and display language.
 10. **Bottom-count validation** — prove active issue counts, road-hazard counts, and crossing counts reconcile.
 11. **County-switch validation** — prove switching away and back reloads or preserves the correct county-owned state.
-12. **Containment validation** — prove no reports, awareness rows, historical rows, markers, or inventory leak across counties.
+12. **County boundary validation** — prove the active county boundary renders from validated county-owned geometry where available, inactive boundaries are suppressed, visual hierarchy is subordinate, county switching rebuilds overlays, and overlay safety is preserved.
+13. **Containment validation** — prove no reports, awareness rows, historical rows, markers, boundaries, or inventory leak across counties.
 
 ### Why order matters
 
@@ -247,6 +273,7 @@ A county is considered implemented only when required gates pass or receive form
 - **CrossingAwarenessPromotionAudit** — crossing reports become first-class rail/crossing awareness conditions and are not rejected as non-road hazards.
 - **HistoricalPanelContainmentAudit** — historical reads and history UI remain disabled or produce county-contained/neutralized output under protected flags.
 - **RuntimeInventoryAssignmentAudit** — active county, loaded source county, expected source path, normalized inventory, and reload requirement agree.
+- **CountyBoundaryValidationAudit** — boundary source, county-owned geometry, active-only rendering, inactive suppression, visual hierarchy, county-switch synchronization, and overlay safety are proven.
 - **AfterSaveVisibilityAudit** — accepted reports are locally preserved and visible immediately after save.
 - **RefreshPersistenceAudit** — saved reports rehydrate after refresh without cross-county leakage.
 - **BottomAwarenessCountAudit** — bottom counts reconcile by classification.
@@ -279,7 +306,11 @@ A gate is **FAIL** when any of the following occurs:
 - county switching leaves stale inventory;
 - historical or report data leaks across counties;
 - protected systems are activated without authorization;
-- Liberty fallback masks a missing county dependency.
+- Liberty fallback masks a missing county dependency;
+- inactive county boundaries render in normal user-facing runtime;
+- active county boundary geometry is unvalidated or visually misleading;
+- boundary styling dominates awareness, alerts, crossings, hazards, or route context;
+- boundary overlays interfere with pointer events, markers, popups, controls, reporting, hazard selection, crossing selection, or route workflows.
 
 ---
 
@@ -333,6 +364,25 @@ A gate is **FAIL** when any of the following occurs:
 - **Montgomery evidence:** Runtime ownership and crossing source selection had to prove Montgomery-owned paths rather than fallback behavior.
 - **Correct approach:** Require county-owned source paths and explicit fallback classification for every runtime source.
 
+
+### Displaying inactive county boundaries
+
+- **Why dangerous:** Inactive county outlines create visual confusion about the active operating area and can imply that multiple counties are live when only one county context should be user-facing.
+- **Montgomery evidence:** V637B–V637E.3 showed that normal runtime should display exactly one active county boundary: Liberty for Dayton, Montgomery for Willis, and the future county boundary for County #3 when it becomes active.
+- **Correct approach:** Suppress inactive county boundaries in normal runtime and rebuild the boundary overlay whenever county ownership changes.
+
+### Using statewide geometry as automatic active display geometry
+
+- **Why dangerous:** Statewide Texas boundary assets may be useful for lookup, matching, fallback, and administration, but may not provide sufficient visual quality for active county production display.
+- **Montgomery evidence:** Boundary refinement showed that active county display requires county-owned geometry support or explicit validation of any fallback geometry before production use.
+- **Correct approach:** Prefer county-owned geometry for active display; use statewide geometry as production display only after visual quality and active-boundary behavior are validated.
+
+### Letting county boundaries dominate the map
+
+- **Why dangerous:** County outlines are context, not primary content. Heavy strokes or attention-grabbing county rendering can distract from the Awareness Platform First mission.
+- **Montgomery evidence:** V637B–V637E.3 confirmed the visual priority order: awareness, alerts, crossings, hazards, then county context.
+- **Correct approach:** Keep boundary styling visually subordinate and verify it does not interfere with markers, popups, routes, controls, reporting, or selection workflows.
+
 ### Treating county switch as a display-only event
 
 - **Why dangerous:** County switching changes source ownership, inventory validity, awareness scope, and report containment.
@@ -349,6 +399,7 @@ Before implementation starts for County #3, the following must be reviewed and d
 
 - Confirm county name, state, GEOID, canonical county ID, and display name.
 - Confirm county bounds and boundary source.
+- Identify county-owned active boundary geometry and document whether statewide geometry is lookup-only, fallback-only, administrative, or validated for display.
 - Confirm town/community definitions and awareness-area assignments.
 - Identify edge communities and border-adjacent assets that may create containment risk.
 
@@ -366,11 +417,12 @@ Before implementation starts for County #3, the following must be reviewed and d
 - Define whether each source is local, remote, fallback, or package-scoped.
 - Define activation flags and staged/operational expectations.
 - Define reload expectations for county switching.
+- Define active-only boundary overlay expectations and inactive-boundary suppression behavior.
 - Define report county-tagging expectations.
 
 ### Audit coverage
 
-- Confirm availability or planned coverage for activation readiness, crossing readiness, awareness classification, crossing awareness promotion, historical panel containment, inventory assignment, after-save visibility, refresh persistence, bottom count reconciliation, naming quality, and duplicate lifecycle suppression.
+- Confirm availability or planned coverage for activation readiness, crossing readiness, awareness classification, crossing awareness promotion, historical panel containment, inventory assignment, county boundary validation, after-save visibility, refresh persistence, bottom count reconciliation, naming quality, and duplicate lifecycle suppression.
 
 ### Known county-specific risks
 
@@ -385,7 +437,7 @@ Before implementation starts for County #3, the following must be reviewed and d
 
 ### Preflight exit criteria
 
-County #3 may begin runtime implementation only when package assets, expected source paths, activation stage, audit coverage, containment risks, and known limitations are documented. Preflight does not activate the county; it only authorizes controlled implementation work.
+County #3 may begin runtime implementation only when package assets, expected source paths, activation stage, audit coverage, containment risks, boundary source, county-owned active geometry plan, active-only boundary rendering expectation, and known limitations are documented. County #3 must not be activated until its county boundary source is identified, active geometry is validated, active-only rendering is confirmed, and the County Boundary Validation checklist is complete. Preflight does not activate the county; it only authorizes controlled implementation work.
 
 ---
 
@@ -431,11 +483,11 @@ Production approval
 
 Montgomery produced sufficient implementation knowledge to establish a repeatable county onboarding methodology.
 
-The key determination is that future counties must not be onboarded through validation-only or registry-only approval. Montgomery showed that implementation readiness requires a staged runtime framework that proves source registration, inventory assignment, rendering, click binding, submission, after-save visibility, refresh persistence, awareness promotion, bottom-count reconciliation, county switching, and containment.
+The key determination is that future counties must not be onboarded through validation-only or registry-only approval. Montgomery showed that implementation readiness requires a staged runtime framework that proves source registration, inventory assignment, active county boundary validation, rendering, click binding, submission, after-save visibility, refresh persistence, awareness promotion, bottom-count reconciliation, county switching, and containment.
 
 ### Recommendation for County #3 onboarding
 
-County #3 should use this V636 blueprint as the authoritative implementation methodology. County #3 should not proceed directly from fast-track readiness into activation. It should first complete preflight, then execute the mandatory validation sequence, then receive a formal activation readiness classification.
+County #3 should use this V636 blueprint as the authoritative implementation methodology. County #3 should not proceed directly from fast-track readiness into activation. It should first complete preflight, then execute the mandatory validation sequence, including County Boundary Validation, then receive a formal activation readiness classification. County #3 must not activate until boundary source identification, county-owned active geometry validation, active-only rendering confirmation, overlay safety verification, and checklist completion are documented.
 
 County #3 should be expected to move faster than Montgomery because the failure modes are now known, but speed must come from better gates rather than skipped gates.
 
