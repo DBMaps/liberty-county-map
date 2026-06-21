@@ -1,0 +1,9 @@
+{
+  "milestone": "V639",
+  "countyId": "san-jacinto-tx",
+  "purpose": "Runtime onboarding foundation only; activation is not authorized.",
+  "runtimeRegistration": "registered-non-operational",
+  "awarenessAreas": "candidate-inventory-only",
+  "boundary": "foundation-registered",
+  "sourceInventoryPath": "assets/county-implementation/san-jacinto/inventory/san-jacinto-source-inventory-v639.json"
+}

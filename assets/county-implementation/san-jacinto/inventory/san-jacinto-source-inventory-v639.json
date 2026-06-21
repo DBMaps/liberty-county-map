@@ -1,0 +1,28 @@
+{
+  "milestone": "V639",
+  "countyId": "san-jacinto-tx",
+  "crossingInventory": {
+    "status": "available-in-runtime-assets-inventory",
+    "path": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-rail-crossings.geojson",
+    "activation": false
+  },
+  "roadwayAssets": {
+    "status": "source-shapefile-inventory-only",
+    "path": "assets/county-implementation/san-jacinto/runtime-assets/source/tl_2025_48407_roads.shp",
+    "normalization": false,
+    "activation": false
+  },
+  "countyBoundarySource": {
+    "status": "identified",
+    "standardTexasBoundaryGeoid": "48407",
+    "standardTexasBoundarySource": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+    "countySpecificBoundaryPath": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+    "activation": false
+  },
+  "awarenessAreaCandidates": {
+    "status": "inventory-only",
+    "countyId": "san-jacinto-tx",
+    "candidates": ["San Jacinto County", "Coldspring", "Shepherd", "Point Blank", "Oakhurst", "Camilla"],
+    "activation": false
+  }
+}
