@@ -2,14 +2,23 @@
 
 ## Quick Summary
 
-San Jacinto County is activated in a controlled, reversible, auditable manner. The activation makes San Jacinto operational, selectable, and county-aware while preserving Liberty and Montgomery containment and protected systems.
+San Jacinto County activation is held. V646.4 returns San Jacinto to safe staged status while preserving prior readiness artifacts and Liberty/Montgomery containment.
 
-## Activation Implementation Summary
 
-- County registration status: active for `san-jacinto-tx`.
-- Selectable status: active for onboarding county selection.
-- Operational status: active through county runtime normalization and containment helpers.
-- Controlled activation metadata: `V646`, reversible, auditable, contained, fail-closed.
+## V646.4 Activation Hold Summary
+
+V646.4 is not complete as an activation. San Jacinto County is returned to safe staged status: non-operational, production-disabled, non-selectable, and activation-blocked. The V638 through V645 planning, readiness, inventory, registry, documentation, and audit artifacts remain preserved for future work, but they do not authorize production exposure.
+
+The activation hold is required because browser validation found unresolved blockers: boundary shape is not trusted, generic wording regression remains, count mismatch remains, the submit audit is not San-Jacinto-specific, and browser validation is incomplete. This patch intentionally does not continue boundary, wording, or count fixes.
+
+Production-facing selectors must not expose San Jacinto while the hold is active. Liberty and Montgomery behavior remain preserved, unknown counties continue to fail closed, and protected historical, DriveTexas, and Transportation Intelligence systems remain unchanged.
+
+## Activation Hold Implementation Summary
+
+- County registration status: retained for `san-jacinto-tx` as staged/onboarded evidence only.
+- Selectable status: disabled for onboarding and production-facing county selection.
+- Operational status: disabled through county runtime normalization and containment helpers.
+- Activation metadata: `V646.4`, not complete, activation-blocked, browser-validation-incomplete, retained for future audit work.
 - Protected systems remain unchanged:
   - `historicalReadsEnabled: false`
   - `historyUiEnabled: false`
@@ -18,20 +27,20 @@ San Jacinto County is activated in a controlled, reversible, auditable manner. T
   - `TransportationIntelligenceDisplay: false`
   - `TransportationIntelligenceActivation: false`
 
-## Awareness Activation Summary
+## Awareness Hold Summary
 
-Activated San Jacinto awareness areas are limited to the V643-approved set:
+San Jacinto awareness candidates remain documented from the V643-approved set, but they are not production-selectable:
 
 - Primary: Coldspring, Shepherd
 - Secondary: Point Blank, Oakhurst
 - County fallback: San Jacinto County
 
-No additional San Jacinto awareness areas are activated.
+No San Jacinto awareness areas are activated by V646.4.
 
 ## Boundary Validation Results
 
-- Active county boundary registry includes Liberty, Montgomery, and San Jacinto.
-- San Jacinto uses explicit county-owned boundary geometry at `assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson`.
+- Active county boundary behavior remains limited to operational counties.
+- San Jacinto retains explicit county-owned boundary evidence at `assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson` for future validation only.
 - San Jacinto GEOID `48407` remains registered for standard Texas boundary validation.
 - Passive boundary suppression and non-interactive boundary rendering remain preserved.
 
@@ -39,7 +48,7 @@ No additional San Jacinto awareness areas are activated.
 
 - Liberty: PASS
 - Montgomery: PASS
-- San Jacinto: PASS
+- San Jacinto: HELD / NOT SELECTABLE
 - Unknown county: FAIL-CLOSED
 - Cross-county San Jacinto-to-Liberty and San Jacinto-to-Montgomery visibility is blocked.
 - Cross-county Liberty/Montgomery-to-San Jacinto visibility is blocked.
@@ -50,9 +59,9 @@ No additional San Jacinto awareness areas are activated.
 - Montgomery remains operational and selectable.
 - Historical, DriveTexas, and Transportation Intelligence protected systems remain unchanged.
 
-## Rollback Procedure Summary
+## Hold Procedure Summary
 
-To roll back San Jacinto activation:
+V646.4 hold state is implemented as follows:
 
 1. In `js/app.js`, restore `san-jacinto-tx` registry fields to:
    - `stage: GRIDLY_COUNTY_STAGE_RUNTIME_ONBOARDED`
@@ -79,4 +88,4 @@ Rollback is successful when San Jacinto returns to runtime-onboarded/non-operati
 
 ## Merge Recommendation
 
-Merge recommended after V646 activation, containment, boundary, awareness ownership, cross-county, regression, rollback, and `git diff --check` validation pass.
+Do not merge as an activation. Merge only as an activation-hold/regression-containment patch after San Jacinto non-selection, Liberty PASS, Montgomery PASS, unknown-county fail-closed behavior, protected-system invariants, and `git diff --check` validation pass.
