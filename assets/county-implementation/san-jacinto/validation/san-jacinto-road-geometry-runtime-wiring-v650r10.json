@@ -1,0 +1,56 @@
+{
+  "milestone": "V650R.10",
+  "countyId": "san-jacinto-tx",
+  "purpose": "Wire normalized San Jacinto road geometry into the shared Gridly runtime roadway pipeline for validation-only road-name, corridor, alert, awareness, and location resolution consumption.",
+  "activationStatus": {
+    "validationOnly": true,
+    "productionEnabled": false,
+    "productionActivationBlocked": true,
+    "reauthorizationRequired": true,
+    "productionActivationApproved": false
+  },
+  "runtimeRegistrationStatus": {
+    "status": "wired-validation-only",
+    "oldRegistration": {
+      "roads": "inventory-only",
+      "roadSegmentsPath": "assets/county-implementation/san-jacinto/runtime-assets/source/tl_2025_48407_roads.shp"
+    },
+    "newRegistration": {
+      "roads": "available",
+      "roadSegmentsPath": "assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson"
+    }
+  },
+  "roadwaySourcePath": "assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson",
+  "runtimeAvailability": {
+    "boundary": "available",
+    "roads": "available",
+    "crossings": "available",
+    "awarenessAreas": "validation-only"
+  },
+  "roadResolverIntegration": {
+    "status": "integrated-through-shared-runtime-path",
+    "loader": "ROADWAY_SEGMENTS_URL derives from gridlyGetActiveCountyRuntimeSources().roadSource and loadRoadwayDataset fetches the active county road GeoJSON when roads are available.",
+    "resolverPath": "collectNearbyRoadCandidates consumes roadwaySegmentFeatures populated by loadRoadwayDataset; road-name, nearby pair, reference road, and corridor helpers share that dataset."
+  },
+  "alertIntegration": {
+    "status": "available-through-shared-location-helpers",
+    "consumerModel": "buildGridlyAlertCardConsumerModel remains on shared road/location helper paths; no San Jacinto-specific alert wording was added."
+  },
+  "awarenessIntegration": {
+    "status": "available-through-shared-awareness-generation",
+    "consumerModel": "buildGridlyLightweightActiveAwareness remains on shared road-context and top-awareness generation paths; no county-specific awareness wording was added."
+  },
+  "protectedSystemsPreserved": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "validationStatus": "pass",
+  "notes": [
+    "No activation authorized or performed.",
+    "San Jacinto remains validation-only and production-blocked pending V651 reauthorization."
+  ]
+}
