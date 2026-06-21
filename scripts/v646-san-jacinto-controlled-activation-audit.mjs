@@ -19,12 +19,12 @@ const featureProperties = boundary.features[0]?.properties || {};
 assert.equal(boundary.type, 'FeatureCollection', 'San Jacinto boundary evidence must remain preserved as a FeatureCollection');
 assert.equal(featureProperties.geoid, '48407', 'San Jacinto boundary evidence must carry GEOID 48407');
 assert.equal(featureProperties.countyId, 'san-jacinto-tx', 'San Jacinto boundary evidence must remain county-owned');
-assert.match(app, /"san-jacinto-tx": Object\.freeze\([\s\S]*stage: GRIDLY_COUNTY_STAGE_RUNTIME_ONBOARDED,[\s\S]*operational: false,[\s\S]*productionEnabled: false,[\s\S]*selectable: false,[\s\S]*productionActivationBlocked: true/, 'San Jacinto must be runtime-onboarded, non-operational, production-disabled, non-selectable, and activation-blocked');
-assert.match(app, /defaultAwarenessAreas: \[\]/, 'San Jacinto must not publish active default awareness areas');
-assert.match(app, /runtimeSourceAvailability: Object\.freeze\(\{ boundary: "identified", roads: "inventory-only", crossings: "inventory-only", awarenessAreas: "candidates-only" \}\)/, 'San Jacinto assets must remain inventory/staged only');
-assert.match(app, /activationHold: Object\.freeze\(\{ milestone: "V646\.4", complete: false, activationBlocked: true, browserValidationIncomplete: true \}\)/, 'San Jacinto V646.4 activation hold must be documented in runtime registry metadata');
-assert.doesNotMatch(index, /<option[^>]+value="san-jacinto-tx"/, 'San Jacinto must not be present in production-facing onboarding county selector markup');
-assert.doesNotMatch(app, /"san-jacinto-tx": \[GRIDLY_SAN_JACINTO_COUNTY_WIDE_HOME_TOWN/, 'San Jacinto must not have production-facing home-area selector options');
+assert.match(app, /"san-jacinto-tx": Object\.freeze\([\s\S]*stage: GRIDLY_COUNTY_STAGE_VALIDATION_ONLY,[\s\S]*operational: true,[\s\S]*productionEnabled: false,[\s\S]*selectable: true,[\s\S]*productionActivationBlocked: true/, 'San Jacinto must be validation-only, production-disabled, temporarily selectable, and activation-blocked');
+assert.match(app, /defaultAwarenessAreas: \["San Jacinto County", "Coldspring", "Shepherd", "Point Blank", "Oakhurst"\]/, 'San Jacinto must publish only V650R validation awareness areas');
+assert.match(app, /runtimeSourceAvailability: Object\.freeze\(\{ boundary: "available", roads: "inventory-only", crossings: "available", awarenessAreas: "validation-only" \}\)/, 'San Jacinto assets must remain validation-only where enabled');
+assert.match(app, /activationHold: Object\.freeze\(\{ milestone: "V650R", complete: false, activationBlocked: true, validationOnly: true, productionActivationApproved: false, browserValidationIncomplete: true, reauthorizationRequired: true \}\)/, 'San Jacinto V650R validation-only hold must be documented in runtime registry metadata');
+assert.match(index, /<option[^>]+value="san-jacinto-tx"[^>]+data-gridly-validation-only="true"/, 'San Jacinto must be present only as validation-only county selector markup');
+assert.match(app, /"san-jacinto-tx": \[GRIDLY_SAN_JACINTO_COUNTY_WIDE_HOME_TOWN, "Coldspring", "Shepherd", "Point Blank", "Oakhurst"\]/, 'San Jacinto must have validation-only home-area selector options');
 assert.match(app, /if \(status\.known && \(status\.operational !== true \|\| status\.productionEnabled !== true \|\| status\.selectable !== true\)\) option\.remove\(\);/, 'Runtime selector rendering must remove known disabled counties');
 assert.match(app, /gridlyNormalizeCountyId\("not-real"\) === GRIDLY_DEFAULT_COUNTY_ID/, 'Unknown counties must continue to fail closed to the Liberty default normalization path');
 assert.match(app, /gridlyValidateCountyContainment\(\{ county_id: "montgomery-tx" \}, GRIDLY_DEFAULT_COUNTY_ID\)\.allowed === false/, 'Liberty containment regression checks must remain in place');
@@ -32,13 +32,13 @@ assert.match(v646Doc, /Activation Hold Summary/, 'V646 documentation must record
 assert.match(v646Doc, /V646\.4 is not complete as an activation/, 'V646 documentation must state activation is not complete');
 
 console.log(JSON.stringify({
-  audit: 'V646.4 San Jacinto activation hold and regression containment',
-  sanJacintoSelectable: false,
-  sanJacintoOperational: false,
+  audit: 'V650R San Jacinto validation-only activation and regression containment',
+  sanJacintoSelectable: true,
+  sanJacintoOperational: true,
   sanJacintoProductionEnabled: false,
   sanJacintoActivationBlocked: true,
   sanJacintoBoundaryEvidencePreserved: coordinateCount > 0,
-  productionSelectorExcludesSanJacinto: true,
+  productionSelectorValidationOnly: true,
   libertyRegressionCoverage: true,
   montgomeryRegressionCoverage: true,
   unknownCountyFailClosedCoverage: true

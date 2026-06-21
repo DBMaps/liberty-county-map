@@ -10,8 +10,8 @@ assert.doesNotMatch(app, /return "Local road impact";/, 'Runtime fallback must n
 assert.match(app, /replace\(\/\\bLocal Road Impact\\b\/gi, fallback\)/, 'Generic Local Road Impact display text must be sanitized');
 assert.match(app, /incidentReportCount/, 'Alert cards must accept shared incident-level report counts');
 assert.match(app, /countLineage/, 'Count lineage must be documented by runtime audit');
-assert.doesNotMatch(index, /<option[^>]+value="san-jacinto-tx"/, 'San Jacinto remains hidden from county selector');
-assert.match(app, /"san-jacinto-tx": Object\.freeze\([\s\S]*operational: false,[\s\S]*productionEnabled: false,[\s\S]*selectable: false,[\s\S]*productionActivationBlocked: true/, 'San Jacinto remains activation-held');
+assert.match(index, /<option[^>]+value="san-jacinto-tx"[^>]+data-gridly-validation-only="true"/, 'San Jacinto is exposed only as validation-only selector option');
+assert.match(app, /"san-jacinto-tx": Object\.freeze\([\s\S]*stage: GRIDLY_COUNTY_STAGE_VALIDATION_ONLY,[\s\S]*operational: true,[\s\S]*productionEnabled: false,[\s\S]*selectable: true,[\s\S]*productionActivationBlocked: true/, 'San Jacinto remains validation-only and activation-blocked');
 
 console.log(JSON.stringify({
   audit: 'V649 San Jacinto language and count reconciliation hardening',
@@ -19,6 +19,6 @@ console.log(JSON.stringify({
   countReconciliationAudit: 'PASS',
   ownershipAudit: 'PASS',
   visibilityAudit: 'PASS',
-  activationHeld: true,
-  productionSelectorExcludesSanJacinto: true
+  validationOnly: true,
+  productionSelectorValidationOnly: true
 }, null, 2));
