@@ -16,6 +16,11 @@ assert.ok(source.includes('countAudit'), 'V649 audit exposes count audit');
 assert.ok(source.includes('visibilityAudit'), 'V649 audit exposes visibility audit');
 ['topAwarenessText', 'alertPanelText', 'locationCardText', 'visibleMarkerCount', 'visibleAlertCount', 'visibleLocationCardActiveCount', 'visualSurfaceReconciliationPass'].forEach((field) => {
   assert.ok(source.includes(field), `${field} is audited from browser-visible surfaces`);
+  assert.match(
+    source,
+    new RegExp(`function gridlySanJacintoReportSubmissionAudit\\(\\) \{[\\s\\S]*${field}: domVisibleSurfaces\\.${field}`),
+    `${field} is exposed directly from gridlySanJacintoReportSubmissionAudit output`
+  );
 });
 assert.ok(source.includes('validationOnly: true'), 'V650R keeps San Jacinto validation-only');
 assert.ok(!source.includes('return "Local road impact";'), 'inferCorridorLabel no longer emits Local road impact fallback');
