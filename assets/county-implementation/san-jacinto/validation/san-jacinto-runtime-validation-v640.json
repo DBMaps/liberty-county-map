@@ -1,0 +1,106 @@
+{
+  "milestone": "V640",
+  "countyId": "san-jacinto-tx",
+  "countyName": "San Jacinto County",
+  "purpose": "Validate the V639 runtime onboarding foundation without production activation.",
+  "productionActivationAuthorized": false,
+  "validationStatus": "PASS",
+  "countyNumber": 3,
+  "status": {
+    "runtimeOnboarded": true,
+    "activated": false,
+    "operational": false,
+    "selectable": false,
+    "productionEnabled": false,
+    "productionActivationBlocked": true
+  },
+  "audits": {
+    "countyRegistration": {
+      "result": "PASS",
+      "evidence": [
+        "GRIDLY_COUNTY_REGISTRY contains san-jacinto-tx.",
+        "San Jacinto stage remains runtime-onboarded.",
+        "San Jacinto is known but non-operational, non-production, non-selectable, and activation-blocked."
+      ]
+    },
+    "countyOwnership": {
+      "result": "PASS",
+      "evidence": [
+        "Runtime source owner is san-jacinto-owned.",
+        "Boundary, roadway, crossing, crossing override, and awareness candidate ownership metadata are county-scoped.",
+        "No fallback ownership path is accepted for San Jacinto activation or report scope."
+      ]
+    },
+    "containment": {
+      "result": "PASS",
+      "evidence": [
+        "Liberty context remains Liberty.",
+        "Montgomery context remains Montgomery.",
+        "San Jacinto rows are blocked from Liberty and Montgomery contexts.",
+        "San Jacinto self-context remains blocked because the county is not operational."
+      ]
+    },
+    "boundaryFoundation": {
+      "result": "PASS",
+      "geoid": "48407",
+      "evidence": [
+        "San Jacinto GEOID 48407 is registered in boundary metadata.",
+        "Boundary availability is identified only.",
+        "Active-only boundary architecture compatibility is preserved without requiring activation."
+      ]
+    },
+    "nonActivation": {
+      "result": "PASS",
+      "evidence": [
+        "productionEnabled is false.",
+        "operational is false.",
+        "selectable is false.",
+        "productionActivationBlocked is true.",
+        "San Jacinto is absent from production-facing awareness and onboarding selection paths."
+      ]
+    },
+    "failClosed": {
+      "result": "PASS",
+      "evidence": [
+        "Unknown explicit county rows fail containment checks.",
+        "Unknown county normalization does not create a new active county.",
+        "San Jacinto report metadata requests resolve through the active production-safe default, not San Jacinto."
+      ]
+    },
+    "libertyRegression": {
+      "result": "PASS",
+      "evidence": [
+        "Liberty remains operational, production-enabled, selectable, and report-scoped to liberty-tx."
+      ]
+    },
+    "montgomeryRegression": {
+      "result": "PASS",
+      "evidence": [
+        "Montgomery remains operational, production-enabled, selectable, and report-scoped to montgomery-tx."
+      ]
+    }
+  },
+  "validationMatrix": {
+    "liberty": {
+      "registration": "PASS",
+      "containment": "PASS",
+      "boundary": "PASS"
+    },
+    "montgomery": {
+      "registration": "PASS",
+      "containment": "PASS",
+      "boundary": "PASS"
+    },
+    "sanJacinto": {
+      "registration": "PASS",
+      "ownership": "PASS",
+      "boundaryFoundation": "PASS",
+      "nonActivation": "PASS",
+      "containment": "PASS"
+    },
+    "unknownCounty": {
+      "failClosed": "PASS"
+    }
+  },
+  "mergeRecommendation": "Merge V640 validation evidence only. Do not activate San Jacinto; V641 remains the Activation Readiness Review milestone."
+}
