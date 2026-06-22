@@ -3,11 +3,11 @@
   "countyId": "san-jacinto-tx",
   "countyName": "San Jacinto County",
   "state": "TX",
-  "runtimeOnboardingStatus": "foundation-only",
-  "productionActivationAuthorized": false,
-  "operational": false,
-  "productionEnabled": false,
-  "selectable": false,
+  "runtimeOnboardingStatus": "production-operational",
+  "productionActivationAuthorized": true,
+  "operational": true,
+  "productionEnabled": true,
+  "selectable": true,
   "ownership": {
     "countyIdRequired": true,
     "implicitFallbackOwnershipAllowed": false,
@@ -17,7 +17,7 @@
     "standardTexasBoundaryGeoid": "48407",
     "standardTexasBoundarySource": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
     "countySpecificBoundaryPath": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
-    "countySpecificBoundaryStatus": "identified-not-activated",
+    "countySpecificBoundaryStatus": "production-active",
     "activeOnlyBoundaryArchitecturePreserved": true,
     "passiveSuppressionPreserved": true,
     "overlayStylingChanged": false
@@ -27,5 +27,11 @@
     "unknownCountyLeakageAllowed": false,
     "libertyRegressionAllowed": false,
     "montgomeryRegressionAllowed": false
-  }
+  },
+  "stage": "operational",
+  "validationOnly": false,
+  "productionActivationBlocked": false,
+  "productionReauthorizationRequired": false,
+  "reauthorizationRequired": false,
+  "activationMilestone": "V674 \u2014 San Jacinto Production Activation"
 }
