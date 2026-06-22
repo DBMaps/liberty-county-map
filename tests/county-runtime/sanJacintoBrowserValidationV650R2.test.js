@@ -8,7 +8,7 @@ function includes(needle, message) {
 }
 
 includes('activeCountyBoundaryCredibilityReview', 'boundary audit exposes credibility review');
-includes('visualCorrectnessPass: false', 'San Jacinto visual correctness blocks production readiness');
+includes('visualCorrectnessPass: activeBoundaryAuthoritativeSanJacinto', 'San Jacinto visual correctness follows authoritative boundary validation');
 includes('sourceAssetRecommendedForProduction = Boolean(activeBoundaryUsesCountySpecificPayload && activeCountyQuality.pass && !activeCountyQuality.tooCoarse && activeCountyBoundaryCredibilityReview.visualCorrectnessPass', 'production recommendation requires visual correctness');
 includes('currentSanJacintoVisibleReportCount', 'San Jacinto report audit exposes current visible report count');
 includes('currentSanJacintoMarkerCount', 'San Jacinto report audit exposes current marker count');
