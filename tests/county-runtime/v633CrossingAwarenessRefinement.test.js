@@ -32,7 +32,9 @@ includes('if (Number.isFinite(summaryClassificationActiveRoadHazardCount)) {', '
 includes('bottomHazardCount: safeClassificationCount,', 'bottom hazard count honors cached classification count including zero');
 includes('bottomHazardCountSource: "awarenessClassification.activeRoadHazardCount"', 'bottom hazard count source is the awareness classification road-hazard count');
 includes('const hazardCount = bottomHazardCountModel.bottomHazardCount;', 'bottom panel renders reconciled active road hazard count');
-includes('const activeIssueCount = hazardCount + reportCount + crossingReportCount;', 'active issue count includes crossings separately from road hazards');
+includes('const rawActiveIssueCount = hazardCount + reportCount + crossingReportCount;', 'raw active issue count includes crossings separately from road hazards');
+includes('const activeIssueCount = getGridlyReconciledAwarenessActiveIssueCount(safeSummary, { activeIssueCount: rawActiveIssueCount, hazardCount, reportCount: reportCount + crossingReportCount });', 'bottom panel reconciles active issue count against visible surface counts');
+includes('`${activeIssueCount} active issue${activeIssueCount === 1 ? "" : "s"} nearby', 'active bottom line leads with reconciled active issue count');
 includes('bottomHazardCount: bottomHazardCountModel.bottomHazardCount', 'normalized summary exposes bottom hazard count separately');
 includes('classificationActiveRoadHazardCount: bottomHazardCountModel.classificationActiveRoadHazardCount', 'normalized summary exposes classification hazard count');
 includes('bottomCountMatchesClassification: bottomHazardCountModel.bottomCountMatchesClassification', 'normalized summary exposes bottom/classification match flag');
