@@ -19,4 +19,14 @@ includes('expectedInactiveCrossingMarkersAtZoom13: 0', 'zoom audit documents zer
 includes('expectedInactiveCrossingMarkersAtZoom14: "visible when crossing inventory is loaded and markers are inside the map viewport"', 'zoom audit documents zoom 14 proof expectation');
 includes('Treat 0 inactive San Jacinto crossing infrastructure markers at zoom 13 as expected policy behavior; prove infrastructure appears at zoom 14 instead of raising town startup zooms.', 'validation expectation is aligned to policy rather than changing startup zoom behavior');
 
+includes('function gridlySanJacintoTownCrossingCountAudit(options = {})', 'San Jacinto town crossing count inventory audit helper is exposed');
+includes('window.gridlySanJacintoTownCrossingCountAudit = gridlySanJacintoTownCrossingCountAudit', 'San Jacinto town crossing count audit helper is available in the browser console');
+includes('sourceOfTruth: "loaded normalized crossing inventory records"', 'town crossing count audit uses normalized crossing inventory as source of truth');
+includes('renderedMarkerCountUsed: false', 'town crossing count audit explicitly does not use rendered marker count');
+includes('totalSanJacintoCrossingInventoryCount: inventory.length', 'town crossing count audit returns San Jacinto crossing inventory count');
+includes('totalValidCoordinateCount: validCrossings.length', 'town crossing count audit returns valid coordinate count');
+includes('crossingsOutsideAllTownRadii', 'town crossing count audit returns crossings outside all town radii');
+includes('Visible markers may be 0 at startup zoom 13 because inactive San Jacinto crossing infrastructure markers require zoom 14', 'town crossing count audit documents zoom 13 marker visibility policy');
+includes('GRIDLY_SAN_JACINTO_TOWN_CROSSING_COUNT_AUDIT_KEYS = Object.freeze(["coldspring", "shepherd", "point-blank", "oakhurst"])', 'town crossing count audit is limited to the four San Jacinto awareness towns');
+
 console.log('sanJacintoCrossingVisibilityEvidenceV669.test.js passed');
