@@ -11,7 +11,12 @@ includes('function isGridlyHazardCategoryOnlyLocationAuthority(value = "", incid
 includes('function hasGridlyRealCrossingLocationAuthority(value = "", incident = {})', 'crossing authority requires real crossing/location evidence');
 includes('function resolveGridlyAuthoritativeIncidentDisplayLocation(incident = {}, options = {})', 'shared authoritative incident display-location resolver exists');
 includes('gridlyResolveQualifiedRoadLocationLabel(incident, resolvedLookup)', 'authority consumes existing qualified resolved road helper');
-includes('collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8)', 'authority exposes nearby road candidate diagnostics from existing collector');
+includes('collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8)', 'authority calls nearby road candidate collector directly from incident coordinates');
+includes('nearestRoad?.roadName || nearestRoad?.name || nearestRoad?.label, "road.nearbyCandidate"', 'authority can identify nearby road candidates as the selected road source');
+includes('selectedRoadCandidate: authoritativeDisplayLocation?.selectedRoadCandidate || null,', 'audit exposes selected nearby road candidate');
+includes('coordinateLat: authoritativeDisplayLocation?.coordinateLat ?? null,', 'audit exposes incident coordinate latitude');
+includes('coordinateLng: authoritativeDisplayLocation?.coordinateLng ?? null,', 'audit exposes incident coordinate longitude');
+includes('roadAssetStatus: authoritativeDisplayLocation?.roadAssetStatus || "",', 'audit exposes active road asset status');
 includes('selectedReason: "empty fallback"', 'authority returns structured selected reason metadata');
 includes('rejectedCandidates.push({ label, source, reason, kind });', 'authority returns rejected candidates');
 includes('const authoritativeDisplayLocation = resolveGridlyAuthoritativeIncidentDisplayLocation(item, { roadHazard: true });', 'top awareness uses shared authoritative resolver');
@@ -31,12 +36,14 @@ includes('const auditIncident = currentVisibleAudit?.countLineage?.incidents?.[0
 includes('const alertCount = Math.max(0, Number(countModel.visibleAlertIncidentCount ?? 0) || 0, Number(alertsSurfaceCount || 0));', 'alert visibility/count includes alerts-surface rows');
 
 const helperStart = source.indexOf('function resolveGridlyAuthoritativeIncidentDisplayLocation');
+const nearbyIndex = source.indexOf('nearest qualified active-county road candidate', helperStart);
 const qualifiedIndex = source.indexOf('qualified resolved road geometry candidate', helperStart);
 const explicitIndex = source.indexOf('qualified explicit road/corridor field', helperStart);
 const crossingIndex = source.indexOf('verified crossing location', helperStart);
 const placeIndex = source.indexOf('specific named place fallback', helperStart);
 const communityIndex = source.indexOf('community fallback only after no qualified road or place exists', helperStart);
-assert(qualifiedIndex > helperStart, 'qualified resolved road candidate is first in authority order');
+assert(nearbyIndex > helperStart, 'nearby road candidate branch is present in authority order');
+assert(qualifiedIndex > nearbyIndex, 'qualified resolved road candidate follows direct nearby road candidate authority');
 assert(explicitIndex > qualifiedIndex, 'explicit road fields follow resolved geometry');
 assert(source.indexOf('!isGridlyHazardCategoryOnlyLocationAuthority(qualifiedResolvedRoad, incident)', helperStart) > helperStart, 'qualified roads reject hazard/category-only text');
 assert(source.indexOf('!isGridlyHazardCategoryOnlyLocationAuthority(explicitRoad, incident)', helperStart) > helperStart, 'explicit road fields reject hazard/category-only text');
