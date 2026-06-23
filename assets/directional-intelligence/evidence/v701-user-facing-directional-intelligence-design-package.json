@@ -1,0 +1,190 @@
+{
+  "milestone": "V701",
+  "generatedAt": "2026-06-23T21:43:11.708006Z",
+  "userValueDefinition": {
+    "problemSolved": "Directional intelligence helps users understand which direction of travel or impact is affected by a delay, crossing impact, roadway hazard, or directional roadway condition.",
+    "mission": "Improve awareness before travel decisions; not navigation, routing, turn-by-turn guidance, or route optimization.",
+    "valueExamples": [
+      "understanding delay direction",
+      "understanding impact direction",
+      "understanding crossing impact direction",
+      "understanding roadway hazard direction"
+    ]
+  },
+  "placementEvaluation": [
+    {
+      "placement": "Awareness Cards",
+      "value": "high",
+      "complexity": "low_to_moderate",
+      "risk": "moderate",
+      "missionAlignment": "high",
+      "order": 1,
+      "rationale": "Best match for Know Before You Go because directional context clarifies situational awareness without implying navigation."
+    },
+    {
+      "placement": "Dedicated Directional Surface",
+      "value": "moderate_to_high",
+      "complexity": "moderate_to_high",
+      "risk": "moderate",
+      "missionAlignment": "moderate_to_high",
+      "order": 2,
+      "rationale": "Useful later for focused review, but premature for MVP because it creates a new surface and support burden."
+    },
+    {
+      "placement": "Destination Intelligence",
+      "value": "moderate",
+      "complexity": "moderate",
+      "risk": "moderate_to_high",
+      "missionAlignment": "moderate",
+      "order": 3,
+      "rationale": "Can help destination-adjacent interpretation but may be mistaken for travel advice."
+    },
+    {
+      "placement": "Alert Cards",
+      "value": "moderate",
+      "complexity": "moderate",
+      "risk": "high",
+      "missionAlignment": "moderate",
+      "order": 4,
+      "rationale": "Alert wording is safety-sensitive and could overstate certainty or priority."
+    },
+    {
+      "placement": "Route Watch",
+      "value": "moderate",
+      "complexity": "high",
+      "risk": "high",
+      "missionAlignment": "low_to_moderate",
+      "order": 5,
+      "rationale": "Route Watch is closer to route intelligence and should follow awareness validation, not lead it."
+    }
+  ],
+  "languageEvaluation": {
+    "options": [
+      {
+        "option": "A",
+        "label": "NB / SB / EB / WB",
+        "readability": "low_to_moderate",
+        "userUnderstanding": "moderate_for_familiar_drivers",
+        "ambiguity": "moderate",
+        "scalability": "high",
+        "decision": "not_primary"
+      },
+      {
+        "option": "B",
+        "label": "Northbound / Southbound / Eastbound / Westbound",
+        "readability": "high",
+        "userUnderstanding": "high",
+        "ambiguity": "low",
+        "scalability": "high",
+        "decision": "primary"
+      },
+      {
+        "option": "C",
+        "label": "Toward Houston / Toward Cleveland / Toward Conroe / Toward Liberty",
+        "readability": "high_contextual",
+        "userUnderstanding": "high_when_known",
+        "ambiguity": "moderate",
+        "scalability": "moderate_to_low",
+        "decision": "future_supplement_only"
+      },
+      {
+        "option": "D",
+        "label": "Inbound / Outbound",
+        "readability": "moderate",
+        "userUnderstanding": "low_without_reference_point",
+        "ambiguity": "high",
+        "scalability": "low",
+        "decision": "not_recommended"
+      }
+    ],
+    "primaryStrategy": "Use full-word cardinal direction labels: Northbound, Southbound, Eastbound, Westbound.",
+    "rationale": "Full words are readable, accessible, scalable across counties, and less ambiguous than abbreviations, toward-city phrasing, or inbound/outbound language."
+  },
+  "confidenceThresholdDesign": {
+    "recommendedThreshold": "strong_candidates_only",
+    "rejectedOptions": [
+      "strong_plus_reviewed",
+      "all_candidates"
+    ],
+    "rationale": "User-facing display must start with the most reliable directional candidates. Reviewed or ambiguous records should not be visible until separately validated and authorized."
+  },
+  "reviewBucketVisibilityDesign": {
+    "visibility": "prohibited",
+    "buckets": [
+      "reversible_lane",
+      "construction_segment",
+      "hov_hot_lane",
+      "missing_county",
+      "missing_oneway",
+      "missing_ref",
+      "manual_review_required"
+    ],
+    "decision": "Review buckets remain excluded from user-facing directional visibility."
+  },
+  "bearingProtectionDesign": {
+    "bearingOnlyDirectionalIntelligence": "prohibited",
+    "bearingOnlyDisplay": "prohibited",
+    "bearingOnlyAwareness": "prohibited",
+    "requiredSafeguards": [
+      "do not derive user labels from geometry bearing alone",
+      "require accepted directional metadata",
+      "fail closed when only bearing is available",
+      "log or classify bearing-only records for internal review only"
+    ]
+  },
+  "countyContainmentDesign": {
+    "requirement": "Directional intelligence may only appear when county containment passes.",
+    "failureBehavior": "No directional display; fail closed.",
+    "countyContainmentPassRequired": true
+  },
+  "userFacingSafetyRules": [
+    "strong candidate threshold required",
+    "county containment pass required",
+    "review bucket exclusion required",
+    "bearing-only exclusion required",
+    "fail closed on missing, degraded, or conflicting evidence",
+    "no display without explicit future display authorization",
+    "no Route Watch, Alert, Destination, DriveTexas, or Transportation Intelligence wiring in V701"
+  ],
+  "minimumViableExperience": {
+    "recommendedMvp": "Directional Awareness Layer",
+    "included": [
+      "awareness-first presentation",
+      "full-word direction labels for strong contained candidates only",
+      "clear non-navigation language"
+    ],
+    "excluded": [
+      "routing",
+      "navigation",
+      "turn-by-turn",
+      "Route Watch integration",
+      "Alert integration",
+      "Destination integration",
+      "DriveTexas",
+      "Transportation Intelligence"
+    ]
+  },
+  "productStrategyRecommendation": {
+    "choice": "Awareness-first directional rollout",
+    "rationale": "Awareness Cards best match Gridly's posture of Awareness Platform First and Route Intelligence Second while limiting premature routing or alert implications."
+  },
+  "designState": "DESIGN PACKAGE COMPLETE WITH CONSTRAINTS",
+  "nextPhaseRecommendation": {
+    "milestone": "V702 \u2014 Directional Awareness Layer Implementation Plan",
+    "purpose": "Translate approved design into an implementation plan.",
+    "restrictions": [
+      "No implementation",
+      "No display activation",
+      "No runtime behavior change"
+    ]
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "DESIGN PACKAGE COMPLETE WITH CONSTRAINTS"
+}
