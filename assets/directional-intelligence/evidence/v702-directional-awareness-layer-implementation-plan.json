@@ -1,0 +1,197 @@
+{
+  "milestone": "V702",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "awarenessLayerPurpose": {
+    "adds": [
+      "understanding direction of impact",
+      "understanding direction of delay",
+      "understanding direction of congestion",
+      "understanding directional consequence",
+      "differentiating one-direction corridor impacts"
+    ],
+    "doesNotAdd": [
+      "routing",
+      "navigation",
+      "turn-by-turn guidance",
+      "alternate-route recommendations",
+      "trip optimization"
+    ],
+    "missionAlignment": "Know Before You Go; Awareness Platform First; Route Intelligence Second"
+  },
+  "awarenessSurfaceSelection": {
+    "mvpPlacement": "Top Awareness cards only",
+    "evaluatedSurfaces": [
+      {
+        "surface": "Top Awareness cards",
+        "decision": "selected_for_mvp",
+        "rolloutOrder": 1,
+        "rationale": "Highest awareness value and lowest route-intelligence implication when phrased carefully."
+      },
+      {
+        "surface": "Awareness detail cards",
+        "decision": "deferred",
+        "rolloutOrder": 2,
+        "rationale": "Useful after Top Awareness card visibility validation."
+      },
+      {
+        "surface": "Awareness summaries",
+        "decision": "deferred",
+        "rolloutOrder": 3,
+        "rationale": "Summary wording may overgeneralize directional context."
+      },
+      {
+        "surface": "Consequence cards",
+        "decision": "deferred",
+        "rolloutOrder": 4,
+        "rationale": "Consequence language needs additional review to avoid guidance implications."
+      },
+      {
+        "surface": "Other awareness surfaces",
+        "decision": "deferred",
+        "rolloutOrder": 5,
+        "rationale": "Requires separate milestone approval."
+      }
+    ]
+  },
+  "userLanguageSpecification": {
+    "approvedDirectionLabels": [
+      "Northbound",
+      "Southbound",
+      "Eastbound",
+      "Westbound"
+    ],
+    "approvedPhrases": [
+      "Northbound delays reported",
+      "Southbound congestion observed",
+      "Eastbound traffic impacts",
+      "Westbound roadway impacts"
+    ],
+    "notApprovedForMvp": [
+      "NB",
+      "SB",
+      "EB",
+      "WB",
+      "Inbound",
+      "Outbound",
+      "Toward <city>",
+      "take",
+      "turn",
+      "reroute",
+      "avoid",
+      "use instead"
+    ],
+    "formattingStandards": [
+      "Use full-word cardinal direction labels with initial capital letter.",
+      "Place the direction label at the beginning of the phrase when possible.",
+      "Use concise awareness-focused sentence-style text.",
+      "Do not instruct user action or imply calculated routing.",
+      "Do not expose confidence buckets, review bucket names, OSM tags, candidate IDs, or bearing values."
+    ]
+  },
+  "confidenceVisibilityRules": {
+    "threshold": "strong_candidates_only",
+    "visible": [
+      "strong_candidates"
+    ],
+    "notVisible": [
+      "review_required",
+      "blocked",
+      "bearing_only"
+    ],
+    "gates": [
+      "candidate confidence available",
+      "candidate confidence equals accepted strong-candidate threshold",
+      "county containment passes",
+      "no review bucket present",
+      "candidate is not bearing-only",
+      "service and source evidence available"
+    ],
+    "failClosedOnMissingConfidence": true
+  },
+  "reviewBucketExclusionRules": {
+    "buckets": [
+      "reversible_lane",
+      "construction_segment",
+      "hov_hot_lane",
+      "missing_county",
+      "missing_oneway",
+      "missing_ref",
+      "manual_review_required"
+    ],
+    "rule": "Never displayed, never surfaced, never promoted.",
+    "displayBlocker": true
+  },
+  "countyContainmentRules": {
+    "countyContainmentRequired": true,
+    "countyOwnershipRequired": true,
+    "noLeakageRequired": true,
+    "failureBehavior": "No directional awareness; fail closed."
+  },
+  "bearingProtectionRules": {
+    "bearingOnlyVisible": false,
+    "bearingOnlySurfaced": false,
+    "bearingOnlyDisplayed": false,
+    "bearingOnlyUsedAsDirectionalAwareness": false,
+    "rule": "Do not derive user-facing labels from geometry bearing alone; fail closed when only bearing is available."
+  },
+  "failClosedDisplayRules": {
+    "triggers": [
+      "source unavailable",
+      "confidence unavailable",
+      "confidence below strong-candidate threshold",
+      "containment invalid",
+      "county ownership invalid",
+      "review bucket present",
+      "bearing-only state present",
+      "service unavailable",
+      "service response malformed",
+      "service response stale",
+      "service response conflicting",
+      "service response incomplete",
+      "protected-system state cannot be verified"
+    ],
+    "expectedResult": "No directional awareness shown."
+  },
+  "awarenessCardMockContent": [
+    "Northbound delays reported near Dayton.",
+    "Southbound traffic impacts observed.",
+    "Eastbound congestion affecting corridor travel.",
+    "Westbound roadway impacts reported.",
+    "Northbound roadway impacts reported near the corridor.",
+    "Southbound congestion observed near the affected area.",
+    "Eastbound delays reported near the work area.",
+    "Westbound traffic impacts observed near the incident area."
+  ],
+  "rolloutValidationPlan": [
+    "containment validation",
+    "confidence validation",
+    "review bucket validation",
+    "bearing protection validation",
+    "fail-closed validation",
+    "user visibility validation",
+    "language validation",
+    "protected-system validation",
+    "runtime non-regression validation"
+  ],
+  "rolloutReadinessState": "awareness_layer_plan_complete",
+  "nextMilestoneRecommendation": {
+    "milestone": "V703",
+    "title": "Directional Awareness Layer Activation Readiness Review",
+    "purpose": "Final review before any user-facing implementation work begins.",
+    "restrictions": [
+      "No implementation.",
+      "No activation.",
+      "No runtime behavior changes.",
+      "No directional display rollout."
+    ]
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "AWARENESS LAYER IMPLEMENTATION PLAN COMPLETE"
+}
