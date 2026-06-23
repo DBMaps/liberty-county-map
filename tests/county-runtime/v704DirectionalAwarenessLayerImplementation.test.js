@@ -35,17 +35,35 @@ assert.strictEqual(typeof context.window.gridlyDirectionalAwarenessCards, 'funct
 assert.strictEqual(typeof context.window.gridlyDirectionalAwarenessLayerTestHarness, 'function', 'awareness test harness is available');
 
 const audit = context.window.gridlyDirectionalAwarenessAudit();
+// V705 changed directional visibility semantics from internal candidate-based
+// visibility to actual DOM-visible directional wording. V706 confirmed that
+// directional awareness can render first, then be displaced by Awareness Brief
+// ownership after incident/community awareness hydration. Candidate generation
+// and user-visible rendering are therefore intentionally validated separately.
 assert.deepStrictEqual(JSON.parse(JSON.stringify(audit)), {
   enabled: true,
-  visibleDirectionalCards: 4,
+  visibleDirectionalCards: 0,
   candidateCount: 164,
   reviewExcludedCount: 81,
   containmentPass: true,
   bearingProtectionPass: true,
   failClosedPass: true,
   displayFormat: 'corridor-first',
-  userVisible: true
+  userVisible: false,
+  domDirectionalTextMatches: [],
+  visibleDirectionalTextSamples: [],
+  visibilitySource: 'none',
+  candidateVisibilityMismatch: true
 });
+assert(audit.candidateCount > 0, 'candidate generation remains functional');
+assert(audit.reviewExcludedCount >= 0, 'review exclusion reporting remains functional');
+assert.strictEqual(audit.enabled, true, 'directional service remains enabled');
+assert.strictEqual(audit.containmentPass, true, 'containment protections remain active');
+assert.strictEqual(audit.bearingProtectionPass, true, 'bearing protections remain active');
+assert.strictEqual(audit.failClosedPass, true, 'fail-closed protections remain active');
+assert.strictEqual(audit.visibleDirectionalCards, 0, 'visibility reflects no DOM-visible directional wording');
+assert.strictEqual(audit.userVisible, false, 'no DOM-visible directional wording is user-visible');
+assert.strictEqual(audit.candidateVisibilityMismatch, true, 'candidate/service presence does not imply user-visible rendering');
 
 const cards = context.window.gridlyDirectionalAwarenessCards();
 assert.strictEqual(cards.length, 4, 'awareness cards render');
