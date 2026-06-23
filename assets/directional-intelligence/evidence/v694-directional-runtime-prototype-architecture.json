@@ -1,0 +1,166 @@
+{
+  "milestone": "V694",
+  "generatedAt": "2026-06-23T20:45:37.384Z",
+  "runtimePhilosophy": {
+    "mission": "Directional intelligence exists to improve awareness quality for Gridly Know Before You Go.",
+    "posture": [
+      "Awareness Platform First",
+      "Route Intelligence Second"
+    ],
+    "nonNavigationBoundary": "Directional intelligence must not become navigation, turn guidance, routing instruction, or user-facing NB/SB/EB/WB display without later authorization.",
+    "subordinationRule": "Any future runtime prototype remains subordinate to awareness safety, protected-system boundaries, county containment, and fail-closed behavior."
+  },
+  "runtimeDataArchitecture": {
+    "pipeline": [
+      "Source Asset",
+      "Extracted Inventory",
+      "Validated Inventory",
+      "Confidence Inventory",
+      "Runtime Candidate Set",
+      "(Protected Runtime Layer)"
+    ],
+    "runtimeEligibleArtifacts": [
+      "validated strong-confidence, county-owned, corridor-valid, non-review, non-bearing-only candidate records derived from V684/V685/V686R/V688 evidence after a future authorization gate"
+    ],
+    "prohibitedRuntimeArtifacts": [
+      "source-only records",
+      "raw extracted inventory without validation",
+      "review bucket records",
+      "bearing-only records",
+      "blocked records",
+      "records missing county/corridor/confidence/source traceability",
+      "governance documents as runtime data"
+    ],
+    "currentMilestoneBehavior": "V694 creates architecture evidence only and does not load any directional data into runtime."
+  },
+  "reviewBucketIsolationArchitecture": {
+    "isolatedClasses": [
+      "reversible_lane",
+      "construction_segment",
+      "hov_hot_lane",
+      "missing_county",
+      "missing_oneway",
+      "missing_ref",
+      "manual_review_required"
+    ],
+    "hardExclusionModel": "A record with any review bucket, review reason, manual-review marker, reversible/construction/HOV-HOT signal, missing county, missing oneway, or missing ref is excluded before runtime candidate set construction.",
+    "escapeHandling": "Any review-bucket escape attempt invalidates the full candidate set and returns no directional intelligence."
+  },
+  "runtimeCandidateArchitecture": {
+    "eligibilityRequirements": [
+      "strong confidence",
+      "valid county",
+      "valid corridor",
+      "not review-required",
+      "not bearing-only",
+      "not blocked",
+      "source traceability present",
+      "county containment pass"
+    ],
+    "candidateLifecycle": [
+      "offline source evidence",
+      "extracted inventory",
+      "validated inventory",
+      "confidence inventory",
+      "review-bucket exclusion",
+      "county containment check",
+      "runtime candidate set build",
+      "protected runtime layer audit",
+      "no user-facing output unless separately authorized"
+    ],
+    "currentEvidenceCounts": {
+      "strongCandidates": 164,
+      "reviewRequiredCandidates": 81,
+      "blockedCandidates": 0,
+      "bearingOnlyCandidates": 0
+    }
+  },
+  "countyContainmentArchitecture": {
+    "model": "County-aware runtime containment owns each candidate by exactly one valid county and prevents cross-county mixing.",
+    "requirements": [
+      "fail closed",
+      "county ownership",
+      "no county leakage",
+      "no cross-county contamination"
+    ],
+    "enforcement": "Missing, ambiguous, invalid, or mismatched county ownership blocks the candidate and invalidates the runtime candidate set for the affected county scope."
+  },
+  "failClosedArchitecture": {
+    "defaultOutcome": "No directional intelligence.",
+    "triggers": {
+      "sourceMissing": "No directional intelligence.",
+      "confidenceMissing": "No directional intelligence.",
+      "countyMissing": "No directional intelligence.",
+      "corridorInvalid": "No directional intelligence.",
+      "reviewBucketPresent": "No directional intelligence.",
+      "containmentFails": "No directional intelligence."
+    },
+    "degradedModeProhibited": true
+  },
+  "runtimeAuditArchitecture": {
+    "futureHelpers": [
+      "window.gridlyDirectionalRuntimeAudit?.()",
+      "window.gridlyDirectionalContainmentAudit?.()",
+      "window.gridlyDirectionalCandidateAudit?.()",
+      "window.gridlyDirectionalReviewBucketAudit?.()"
+    ],
+    "expectedOutputs": [
+      "authorization state",
+      "protected-system state",
+      "candidate counts",
+      "excluded review bucket counts",
+      "county containment pass/fail",
+      "fail-closed reason list",
+      "runtimeChanged false until separately authorized"
+    ],
+    "implementedInV694": false
+  },
+  "runtimeSafetyArchitecture": {
+    "downgradePath": "Any confidence, containment, or audit regression downgrades to no directional intelligence.",
+    "rollbackPath": "Remove candidate asset reference and return protected runtime layer to no directional intelligence.",
+    "containmentFailureResponse": "Block affected scope, emit audit failure, and display nothing.",
+    "reviewBucketEscapeResponse": "Invalidate candidate set, emit audit failure, and display nothing.",
+    "confidenceRegressionResponse": "Demote affected records to review/offline status and display nothing."
+  },
+  "runtimeAuthorizationBoundaries": {
+    "doesNotAuthorize": [
+      "runtime activation",
+      "runtime loading",
+      "display",
+      "NB/SB/EB/WB labels",
+      "Route Watch integration",
+      "Alerts integration",
+      "Awareness integration",
+      "DriveTexas activation",
+      "Transportation Intelligence activation"
+    ],
+    "runtimeAuthorization": "NOT GRANTED",
+    "directionalDisplayAuthorization": "NOT GRANTED"
+  },
+  "futurePrototypeDefinition": {
+    "smallestPrototype": "A non-user-facing, county-contained, fail-closed, audit-visible runtime candidate dry-run that excludes all review buckets and produces no labels or UI.",
+    "requirements": [
+      "county-contained",
+      "fail-closed",
+      "review-bucket excluded",
+      "audit-visible",
+      "user-invisible"
+    ],
+    "nextMilestone": "V695 — Directional Prototype Design Package"
+  },
+  "architectureReadinessState": "architecture_ready_for_prototype_design",
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "RUNTIME PROTOTYPE ARCHITECTURE COMPLETE"
+}
