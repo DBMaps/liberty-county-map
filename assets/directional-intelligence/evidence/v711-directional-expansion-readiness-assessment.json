@@ -1,0 +1,280 @@
+{
+  "milestone": "V711",
+  "title": "Directional Expansion Readiness Assessment",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "scope": {
+    "assessmentOnly": true,
+    "runtimeChanges": false,
+    "uiChanges": false,
+    "directionalRenderingChanges": false,
+    "countyActivationChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false
+  },
+  "inputArtifacts": [
+    "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+    "assets/directional-intelligence/evidence/v687r2-osm-corridor-readiness-reassessment-after-v686-recovery.json",
+    "assets/directional-intelligence/evidence/v695-directional-runtime-candidate-prototype.json",
+    "assets/directional-intelligence/evidence/v710-directional-incident-context-readiness-audit.json",
+    "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+    "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json"
+  ],
+  "prototypeScopeVerification": {
+    "prototypeCorridor": "I-69 / US 59",
+    "intentionallySelected": true,
+    "basis": "V684-V710 artifacts are explicitly named and scoped to the US 59 / I-69 corridor inventory; V695 uses that recovered confidence artifact for candidate generation.",
+    "validated": [
+      "offline extraction shape",
+      "review bucket preservation",
+      "confidence candidate generation",
+      "bearing-only exclusion",
+      "fail-closed containment",
+      "audit-only runtime candidate posture",
+      "incident-context readiness for the prototype corridor"
+    ],
+    "unvalidated": [
+      "US 90",
+      "TX 146",
+      "TX 321",
+      "FM 1960",
+      "FM 1409",
+      "FM 1011",
+      "county-wide directional coverage",
+      "future-county onboarding coverage"
+    ],
+    "v710FindingClassification": "Expected prototype behavior, not evidence of an unexpected coverage failure"
+  },
+  "currentDirectionalCoverage": {
+    "totalSegmentsEvaluated": 245,
+    "candidateCount": 164,
+    "reviewExcludedCount": 81,
+    "blockedCount": 0,
+    "bearingOnlyCount": 0,
+    "coverageConcentration": "Current validated coverage is concentrated in the I-69 / US 59 prototype corridor."
+  },
+  "expansionCandidateInventory": [
+    {
+      "corridor": "I-69 / US 59",
+      "presentInDirectionalInventory": true,
+      "candidateCount": 164,
+      "reviewExcludedCount": 81,
+      "confidenceStatus": "164 strong; 81 review-required; 0 blocked; 0 bearing-only",
+      "containmentStatus": "Prototype-contained for extracted inventory; includes county attribution across Montgomery, Liberty, San Jacinto, Harris, and missing-county review records",
+      "productionReadiness": "Ready with observations for offline incident-context enrichment only; not runtime-connected"
+    },
+    {
+      "corridor": "US 90",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    },
+    {
+      "corridor": "TX 146",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    },
+    {
+      "corridor": "TX 321",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    },
+    {
+      "corridor": "FM 1960",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    },
+    {
+      "corridor": "FM 1409",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    },
+    {
+      "corridor": "FM 1011",
+      "presentInDirectionalInventory": false,
+      "candidateCount": 0,
+      "reviewExcludedCount": 0,
+      "confidenceStatus": "Not evaluated",
+      "containmentStatus": "Unvalidated",
+      "productionReadiness": "Not ready until extraction, containment, confidence, and incident-context review run"
+    }
+  ],
+  "countyReadiness": [
+    {
+      "county": "Liberty County",
+      "currentDirectionalCoverage": "28 strong prototype-corridor candidates and 3 construction review records in the extracted I-69 / US 59 inventory",
+      "directionalReadyCorridors": [
+        "I-69 / US 59 prototype segments only"
+      ],
+      "blockedCorridors": [
+        "US 90",
+        "TX 146",
+        "TX 321",
+        "FM 1960",
+        "FM 1409",
+        "FM 1011"
+      ],
+      "reviewRequiredCorridors": [
+        "I-69 / US 59 construction segments"
+      ],
+      "expansionRisk": "Medium",
+      "classification": "Ready with observations"
+    },
+    {
+      "county": "Montgomery County",
+      "currentDirectionalCoverage": "74 strong prototype-corridor candidates, 17 manual-review records, and 1 missing-oneway review record",
+      "directionalReadyCorridors": [
+        "I-69 / US 59 prototype segments only"
+      ],
+      "blockedCorridors": [
+        "US 90",
+        "TX 146",
+        "TX 321",
+        "FM 1960",
+        "FM 1409",
+        "FM 1011"
+      ],
+      "reviewRequiredCorridors": [
+        "I-69 / US 59 manual-review and missing-oneway records"
+      ],
+      "expansionRisk": "Medium",
+      "classification": "Ready with observations"
+    },
+    {
+      "county": "San Jacinto County",
+      "currentDirectionalCoverage": "1 strong prototype-corridor candidate and 4 construction review records",
+      "directionalReadyCorridors": [
+        "I-69 / US 59 prototype segment only"
+      ],
+      "blockedCorridors": [
+        "US 90",
+        "TX 146",
+        "TX 321",
+        "FM 1960",
+        "FM 1409",
+        "FM 1011"
+      ],
+      "reviewRequiredCorridors": [
+        "I-69 / US 59 construction segments"
+      ],
+      "expansionRisk": "High",
+      "classification": "Ready with observations"
+    }
+  ],
+  "multiCountyScalability": {
+    "architectureReadiness": "Ready with observations",
+    "containmentReadiness": "Ready with observations; county leakage and missing county records remain review exclusions",
+    "confidenceModelReadiness": "Ready with observations; model is corridor-agnostic but empirically validated only on I-69 / US 59",
+    "operationalScalability": "Not ready for production operation without per-corridor extraction and review runs",
+    "maintenanceBurden": "Moderate now; high if each county/corridor expansion is maintained manually"
+  },
+  "confidenceExpansionReadiness": {
+    "canSupportAdditionalCorridorsToday": "Yes, as an offline assessment model",
+    "changesRequired": "Minor tuning",
+    "rationale": "The model can score additional extracted records, but non-motorway FM/SH corridors likely need calibration for bidirectional roads, missing one-way semantics, and less complete lane/destination metadata."
+  },
+  "reviewBucketAnalysis": {
+    "counts": {
+      "reversible_lane": 7,
+      "construction_segment": 8,
+      "hov_hot_lane": 10,
+      "missing_county": 36,
+      "missing_oneway": 3,
+      "missing_ref": 0,
+      "manual_review_required": 17
+    },
+    "mostFrequentBlockers": [
+      "missing_county",
+      "manual_review_required",
+      "hov_hot_lane",
+      "construction_segment",
+      "reversible_lane"
+    ],
+    "remainBlocked": [
+      "reversible_lane",
+      "construction_segment",
+      "hov_hot_lane",
+      "missing_county",
+      "missing_oneway",
+      "missing_ref",
+      "manual_review_required"
+    ],
+    "futureReviewCandidates": [
+      "missing_county where county can be independently resolved",
+      "missing_oneway on clearly bidirectional rural corridors",
+      "manual_review_required after documented analyst decision"
+    ],
+    "noRemediationPerformed": true
+  },
+  "expansionOrderRecommendation": [
+    {
+      "phase": "Phase 1",
+      "corridors": [
+        "US 90"
+      ],
+      "rationale": "Highest county-wide awareness value and a named Liberty baseline corridor from prior county-platform defaults; use as the first non-prototype arterial validation."
+    },
+    {
+      "phase": "Phase 2",
+      "corridors": [
+        "TX 146",
+        "FM 1960"
+      ],
+      "rationale": "Adds major north-south/state-highway and commuter arterial patterns after US 90 validates non-prototype extraction."
+    },
+    {
+      "phase": "Phase 3",
+      "corridors": [
+        "TX 321",
+        "FM 1409",
+        "FM 1011"
+      ],
+      "rationale": "Adds lower-order or more localized corridors after confidence behavior is tuned for state/FM road classes."
+    },
+    {
+      "phase": "Phase 4",
+      "corridors": [
+        "Additional protected corridors identified during county onboarding"
+      ],
+      "rationale": "Future counties should onboard only after the first three phases prove repeatable extraction, containment, review, and confidence operations."
+    }
+  ],
+  "productionImpactProjection": {
+    "potentialDirectionalEnrichmentBand": "26-50%",
+    "rationale": "The current prototype alone is corridor-concentrated; adding US 90, TX 146, TX 321, FM 1960, FM 1409, and FM 1011 would materially expand named-road incident matchability, but area-only/weather-only incidents and review-excluded records would remain ineligible."
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "EXPANSION READY WITH OBSERVATIONS",
+  "supportingEvidence": [
+    "Current validated candidates exist only for the prototype I-69 / US 59 inventory.",
+    "No requested expansion corridors are present in extracted directional inventory today.",
+    "Architecture and confidence model are designed to scale offline, but evidence must be generated per corridor before production use.",
+    "Review buckets remain intentionally blocked and unchanged."
+  ]
+}
