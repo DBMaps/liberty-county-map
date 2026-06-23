@@ -1,0 +1,295 @@
+{
+  "milestone": "V691",
+  "generatedAt": "2026-06-23T20:16:44.447Z",
+  "inputEvidence": [
+    {
+      "milestone": "V683",
+      "determination": "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "milestone": "V684",
+      "determination": "EXTRACTION PROTOTYPE PARTIAL — VALIDATION ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "milestone": "V685",
+      "determination": "EXTRACTION VALIDATION PARTIAL — CONFIDENCE VALIDATION ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "milestone": "V686R",
+      "determination": "CONFIDENCE VALIDATION RECOVERY PARTIAL — REASSESSMENT ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "milestone": "V688",
+      "determination": "DIRECTIONAL EVIDENCE CHAIN COMPLETE WITH REVIEW BUCKETS — GOVERNANCE REVIEW ALLOWED"
+    },
+    {
+      "milestone": "V689",
+      "determination": "GOVERNANCE REVIEW COMPLETE WITH REVIEW BUCKETS — GOVERNANCE PACKAGE ALLOWED"
+    },
+    {
+      "milestone": "V690",
+      "determination": "GOVERNANCE PACKAGE COMPLETE WITH REVIEW BUCKETS — V691 ASSESSMENT ALLOWED"
+    }
+  ],
+  "missionAlignmentReadiness": {
+    "posture": [
+      "Awareness Platform First",
+      "Route Intelligence Second"
+    ],
+    "status": "conditionally_aligned_for_future_assessment_only",
+    "preservingConditions": [
+      "Directional intelligence remains awareness-supporting and does not become navigation, turn-by-turn, or route-guidance behavior.",
+      "Runtime evaluation, if ever separately authorized, is contained behind protection gates and downgrade rules.",
+      "Review-required candidates remain isolated from runtime confidence until manually resolved.",
+      "No display, Route Watch, Alerts, Awareness, DriveTexas, or Transportation Intelligence coupling occurs in V691."
+    ],
+    "violatingConditions": [
+      "Using directional evidence for navigation or route guidance.",
+      "Displaying NB/SB/EB/WB labels without separate authorization and display validation.",
+      "Promoting review buckets or bearing-only evidence into runtime confidence.",
+      "Connecting directional outputs to protected systems or county activation paths."
+    ]
+  },
+  "evidenceReadinessReview": {
+    "status": "ready_with_conditions",
+    "metadataGovernance": "partial metadata coverage accepted only with preserved review buckets from V683.",
+    "extractionGovernance": "V684 extraction is usable for assessment only because rejected/review records remain identified.",
+    "validationGovernance": "V685 validation is partial and allows confidence validation with review buckets, not runtime.",
+    "confidenceGovernance": "V686R recovered confidence evaluation but leaves 81 review-required records.",
+    "evidenceGovernance": "V688/V689/V690 complete the governance chain with review buckets and explicit non-authorization.",
+    "conditions": [
+      "manual treatment for all review-required records",
+      "runtime containment validation",
+      "display validation before any future display consideration",
+      "separate future authorization"
+    ]
+  },
+  "confidenceReadinessReview": {
+    "totalSegments": 245,
+    "strongCandidates": 164,
+    "strongPercentage": 66.94,
+    "reviewRequiredCandidates": 81,
+    "reviewRequiredPercentage": 33.06,
+    "blockedCandidates": 0,
+    "manualResolutionRequiredPercentage": 100,
+    "evidenceReadinessStatus": "ready_with_conditions",
+    "reviewBucketsRemainAcceptable": true,
+    "reviewBucketAcceptanceRationale": "Review buckets are acceptable for governance and assessment only because they are preserved, isolated, and not silently promoted."
+  },
+  "reviewBucketRuntimeReadiness": {
+    "buckets": {
+      "missing_county": 36,
+      "construction_segment": 8,
+      "missing_oneway": 3,
+      "hov_hot_lane": 10,
+      "reversible_lane": 7,
+      "manual_review_required": 17
+    },
+    "bucketEvaluations": {
+      "reversible_lane": {
+        "protection": "isolate; require manual lane-operation semantics review",
+        "prohibition": "block runtime if reversible state cannot be deterministically sourced"
+      },
+      "construction_segment": {
+        "protection": "isolate; require current construction status and source freshness",
+        "prohibition": "block runtime if construction status is stale or unresolved"
+      },
+      "hov_hot_lane": {
+        "protection": "isolate; require managed-lane rules and time-of-day semantics",
+        "prohibition": "block runtime if managed-lane access rules are absent"
+      },
+      "missing_county": {
+        "protection": "isolate; require county attribution repair",
+        "prohibition": "block runtime if county containment is unknown"
+      },
+      "missing_oneway": {
+        "protection": "isolate; require non-bearing directional evidence",
+        "prohibition": "block runtime if direction depends on bearing only"
+      },
+      "missing_ref": {
+        "protection": "isolate; require stable roadway reference identity",
+        "prohibition": "block runtime if segment identity is ambiguous"
+      },
+      "manual_review_required": {
+        "protection": "isolate; require explicit manual disposition",
+        "prohibition": "block runtime until disposition is complete"
+      }
+    },
+    "runtimeProtectionsRequired": [
+      "hard isolation",
+      "no silent promotion",
+      "downgrade to unavailable",
+      "auditable manual disposition",
+      "blocked display for unresolved buckets"
+    ]
+  },
+  "bearingRuntimeReadiness": {
+    "bearingOnlyConfidenceProhibited": true,
+    "bearingOnlyRuntimeBehaviorProhibited": true,
+    "bearingOnlyDisplayProhibited": true,
+    "bearingOnlyPolicyPass": true,
+    "bearingOnlyCandidates": 0,
+    "enforcementControls": [
+      "reject bearing-only confidence states",
+      "fail validation if bearing is sole directional source",
+      "block runtime and display on bearing-only records",
+      "log downgrade reason"
+    ]
+  },
+  "runtimeSafetyRequirements": [
+    {
+      "category": "evidence quality",
+      "minimumRequirement": "complete V683-V690 evidence chain with parseable artifacts and stable source traceability"
+    },
+    {
+      "category": "confidence quality",
+      "minimumRequirement": "all runtime-considered records must have non-bearing confidence and no unresolved review bucket"
+    },
+    {
+      "category": "review bucket protection",
+      "minimumRequirement": "review buckets must be isolated, manually resolved, or downgraded unavailable"
+    },
+    {
+      "category": "downgrade behavior",
+      "minimumRequirement": "unsafe or uncertain records downgrade to no directional runtime value"
+    },
+    {
+      "category": "rollback behavior",
+      "minimumRequirement": "single-step rollback to no directional runtime evaluation on regression triggers"
+    },
+    {
+      "category": "containment behavior",
+      "minimumRequirement": "county containment must be validated before county-specific use or expansion"
+    },
+    {
+      "category": "display protection",
+      "minimumRequirement": "no display unless separately authorized after display readiness validation"
+    }
+  ],
+  "rollbackReadiness": {
+    "triggers": [
+      "evidence regression",
+      "confidence regression",
+      "source corruption",
+      "review bucket growth",
+      "metadata loss",
+      "containment failure",
+      "bearing-only policy failure",
+      "unexpected runtime coupling"
+    ],
+    "expectations": [
+      "disable directional runtime evaluation",
+      "remove directional output from downstream consumers",
+      "preserve evidence for audit",
+      "restore prior protected-system state",
+      "require revalidation before reconsideration"
+    ]
+  },
+  "countyContainmentReadiness": {
+    "status": "not_ready_for_expansion",
+    "currentDistribution": {
+      "Harris, TX": 61,
+      "__MISSING__": 56,
+      "San Jacinto, TX": 5,
+      "Montgomery, TX": 92,
+      "Liberty, TX": 31
+    },
+    "requirementsBeforeFutureCountyExpansion": [
+      "complete county attribution",
+      "county boundary validation",
+      "no missing_county runtime candidates",
+      "county-specific rollback plan",
+      "separate activation authorization"
+    ],
+    "blockingFailures": [
+      "missing county attribution",
+      "cross-county leakage",
+      "unvalidated boundary source",
+      "runtime use of evidence-only counties",
+      "county activation without separate authorization"
+    ]
+  },
+  "displayReadinessReview": {
+    "status": "not_ready",
+    "prerequisitesBeforeNBSBEBWBCouldEverBeConsidered": [
+      "manual resolution of review buckets",
+      "non-bearing directional evidence for display candidates",
+      "runtime containment validation",
+      "human-language/display safety review",
+      "separate future display authorization"
+    ],
+    "displayAuthorized": false,
+    "displayRecommended": false,
+    "displayRulesCreated": false
+  },
+  "runtimeReadinessState": "runtime_readiness_not_established",
+  "runtimeConsiderationGates": [
+    {
+      "gate": "Gate A",
+      "name": "Evidence chain complete",
+      "status": "Passed",
+      "rationale": "V683 through V690 evidence exists and V690 allows V691 assessment."
+    },
+    {
+      "gate": "Gate B",
+      "name": "Governance complete",
+      "status": "Passed",
+      "rationale": "V690 governance package is complete with review buckets."
+    },
+    {
+      "gate": "Gate C",
+      "name": "Review bucket treatment defined",
+      "status": "Conditional",
+      "rationale": "Treatment is identified, but 81 records still need manual resolution before runtime consideration."
+    },
+    {
+      "gate": "Gate D",
+      "name": "Bearing policy enforced",
+      "status": "Passed",
+      "rationale": "Bearing-only policy passes with 0 bearing-only candidates and explicit prohibitions."
+    },
+    {
+      "gate": "Gate E",
+      "name": "Runtime containment validated",
+      "status": "Blocked",
+      "rationale": "No runtime containment validation exists."
+    },
+    {
+      "gate": "Gate F",
+      "name": "Display readiness reviewed",
+      "status": "Blocked",
+      "rationale": "Display readiness is not established and display is not authorized."
+    },
+    {
+      "gate": "Gate G",
+      "name": "Separate future authorization",
+      "status": "Blocked",
+      "rationale": "No future runtime authorization exists in V691."
+    }
+  ],
+  "explicitRuntimeBlockers": [
+    "runtime integration",
+    "directional display",
+    "NB/SB/EB/WB labels",
+    "Route Watch integration",
+    "Awareness integration",
+    "Alerts integration",
+    "DriveTexas activation",
+    "Transportation Intelligence activation"
+  ],
+  "nextPhaseRecommendation": "V692 — Directional Runtime Protection Framework (assessment/governance only; not runtime integration or display)",
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "RUNTIME READINESS ASSESSMENT COMPLETE WITH CONDITIONS — FUTURE EVALUATION ALLOWED"
+}
