@@ -1,0 +1,26 @@
+{
+  "milestone": "V675",
+  "auditType": "osm_directional_intelligence_feasibility",
+  "protectedSystemsVerified": true,
+  "runtimeBehaviorChanged": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "osmSupplementalCatalogEvaluated": true,
+  "countiesInScope": [
+    "liberty-tx",
+    "montgomery-tx",
+    "san-jacinto-tx"
+  ],
+  "corridorsReviewed": [
+    "US 59 / I-69",
+    "US 90",
+    "TX 146",
+    "TX 321",
+    "FM 1960",
+    "SH 105",
+    "SH 150",
+    "I-10"
+  ],
+  "finalDetermination": "LIMITED CORRIDOR-ONLY OSM FEASIBILITY REVIEW RECOMMENDED BEFORE ANY IMPLEMENTATION"
+}
