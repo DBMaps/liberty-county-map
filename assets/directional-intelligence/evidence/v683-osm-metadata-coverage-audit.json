@@ -1,0 +1,618 @@
+{
+  "milestone": "V683",
+  "sourceAsset": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+  "inspectedSourceAsset": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+  "generatedAt": "2026-06-23T18:30:14.545Z",
+  "totalFeatures": 245,
+  "counts": {
+    "sourceFileExists": true,
+    "requestedSourceFileExists": false,
+    "inspectedLegacySourceAsset": true,
+    "geometry": 245,
+    "ref": 245,
+    "fut_ref": 39,
+    "name": 182,
+    "oneway": 242,
+    "oneway=reversible": 7,
+    "oneway:conditional": 7,
+    "lanes": 220,
+    "turn:lanes": 60,
+    "destination:lanes": 43,
+    "tiger:county": 189,
+    "highway": 245,
+    "Texas_Trunk_System": 136,
+    "NHS": 197,
+    "hgv:national_network": 223
+  },
+  "percentages": {
+    "geometry": 100,
+    "ref": 100,
+    "fut_ref": 15.92,
+    "name": 74.29,
+    "oneway": 98.78,
+    "oneway=reversible": 2.86,
+    "oneway:conditional": 2.86,
+    "lanes": 89.8,
+    "turn:lanes": 24.49,
+    "destination:lanes": 17.55,
+    "tiger:county": 77.14,
+    "highway": 100,
+    "Texas_Trunk_System": 55.51,
+    "NHS": 80.41,
+    "hgv:national_network": 91.02
+  },
+  "countyDistribution": {
+    "Montgomery, TX": 92,
+    "Harris, TX": 61,
+    "__MISSING__": 56,
+    "Liberty, TX": 31,
+    "San Jacinto, TX": 5
+  },
+  "highwayDistribution": {
+    "motorway": 233,
+    "construction": 7,
+    "secondary_link": 2,
+    "tertiary": 2,
+    "secondary": 1
+  },
+  "confidenceRiskCounts": {
+    "reversibleLanes": 7,
+    "constructionSegments": 8,
+    "missingRef": 0,
+    "missingOneway": 3,
+    "missingCountyAttribution": 56,
+    "hovHotLaneSegments": 17,
+    "fixmeTags": 17
+  },
+  "manualReviewCandidateCount": 80,
+  "manualReviewCandidates": [
+    {
+      "featureIndex": 1,
+      "id": "way/21225227",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 2,
+      "id": "way/21225229",
+      "ref": "US 59",
+      "name": "US-59",
+      "highway": "construction",
+      "county": "San Jacinto, TX",
+      "reasons": [
+        "construction"
+      ]
+    },
+    {
+      "featureIndex": 10,
+      "id": "way/21881387",
+      "ref": "US 59 Business;FM 2090",
+      "name": "Old Highway 59",
+      "highway": "secondary",
+      "county": null,
+      "reasons": [
+        "missing oneway",
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 11,
+      "id": "way/37358098",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 12,
+      "id": "way/37398185",
+      "ref": "US 59",
+      "name": null,
+      "highway": "construction",
+      "county": "Liberty, TX",
+      "reasons": [
+        "construction"
+      ]
+    },
+    {
+      "featureIndex": 13,
+      "id": "way/42722738",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 14,
+      "id": "way/42722742",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 15,
+      "id": "way/42722743",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 16,
+      "id": "way/42722800",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 17,
+      "id": "way/42722801",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 36,
+      "id": "way/50730493",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 37,
+      "id": "way/50799133",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 61,
+      "id": "way/104152585",
+      "ref": "US 59",
+      "name": null,
+      "highway": "construction",
+      "county": "Liberty, TX",
+      "reasons": [
+        "construction"
+      ]
+    },
+    {
+      "featureIndex": 62,
+      "id": "way/104152631",
+      "ref": "US 59 Business",
+      "name": "Old US Highway 59 North",
+      "highway": "tertiary",
+      "county": null,
+      "reasons": [
+        "missing oneway",
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 63,
+      "id": "way/118082234",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 65,
+      "id": "way/118082243",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 66,
+      "id": "way/118082244",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 72,
+      "id": "way/124875367",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 74,
+      "id": "way/143671021",
+      "ref": "US 59 Business",
+      "name": "Old Highway 59",
+      "highway": "tertiary",
+      "county": "Montgomery, TX",
+      "reasons": [
+        "missing oneway"
+      ]
+    },
+    {
+      "featureIndex": 75,
+      "id": "way/174481270",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 78,
+      "id": "way/174481273",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 87,
+      "id": "way/174481353",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 105,
+      "id": "way/176099488",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 106,
+      "id": "way/176099494",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 107,
+      "id": "way/176099498",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 108,
+      "id": "way/176099499",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 109,
+      "id": "way/176099500",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 110,
+      "id": "way/176099503",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 111,
+      "id": "way/176099525",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 112,
+      "id": "way/176099565",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 125,
+      "id": "way/204179507",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 134,
+      "id": "way/254161034",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 135,
+      "id": "way/254161035",
+      "ref": "US 59",
+      "name": null,
+      "highway": "construction",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "construction"
+      ]
+    },
+    {
+      "featureIndex": 136,
+      "id": "way/258765339",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 143,
+      "id": "way/558982915",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 146,
+      "id": "way/558982920",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county",
+        "reversible"
+      ]
+    },
+    {
+      "featureIndex": 149,
+      "id": "way/632305595",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 150,
+      "id": "way/632305596",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 151,
+      "id": "way/632305600",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 152,
+      "id": "way/632305601",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 153,
+      "id": "way/902364775",
+      "ref": "I 69;US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 154,
+      "id": "way/902364776",
+      "ref": "I 69;US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 155,
+      "id": "way/903420810",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 156,
+      "id": "way/903420811",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 161,
+      "id": "way/918586847",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 170,
+      "id": "way/947242803",
+      "ref": "I 69;US 59",
+      "name": "US 59 (Eastex Freeway) HOV/HOT lane",
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 171,
+      "id": "way/949337737",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 173,
+      "id": "way/949383537",
+      "ref": "I 69;US 59",
+      "name": "Eastex Freeway",
+      "highway": "motorway",
+      "county": "Montgomery, TX",
+      "reasons": []
+    },
+    {
+      "featureIndex": 175,
+      "id": "way/957553820",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    },
+    {
+      "featureIndex": 176,
+      "id": "way/957553821",
+      "ref": "US 59",
+      "name": null,
+      "highway": "motorway",
+      "county": null,
+      "reasons": [
+        "missing county"
+      ]
+    }
+  ],
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS"
+}
