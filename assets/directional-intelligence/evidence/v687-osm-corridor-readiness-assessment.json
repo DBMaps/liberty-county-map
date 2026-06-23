@@ -1,0 +1,192 @@
+{
+  "milestone": "V687",
+  "generatedAt": "2026-06-23T19:23:35.718Z",
+  "inputArtifacts": [
+    {
+      "name": "source",
+      "filePath": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "exists": false,
+      "parseValid": false,
+      "error": "missing input artifact"
+    },
+    {
+      "name": "corridorInventory",
+      "filePath": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "name": "segmentInventory",
+      "filePath": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "name": "v683",
+      "filePath": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "name": "v684",
+      "filePath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "name": "v685",
+      "filePath": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "name": "v686",
+      "filePath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "exists": false,
+      "parseValid": false,
+      "error": "missing input artifact"
+    }
+  ],
+  "dependencyDeterminations": {
+    "v683": {
+      "filePath": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "exists": true,
+      "parseValid": true,
+      "finalDetermination": "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS",
+      "expected": [
+        "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS"
+      ],
+      "determinationAccepted": true
+    },
+    "v684": {
+      "filePath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "exists": true,
+      "parseValid": true,
+      "finalDetermination": "EXTRACTION PROTOTYPE PARTIAL — VALIDATION ALLOWED WITH REVIEW BUCKETS",
+      "expected": [
+        "EXTRACTION PROTOTYPE PARTIAL — VALIDATION ALLOWED WITH REVIEW BUCKETS",
+        "EXTRACTION PROTOTYPE STRONG — VALIDATION ALLOWED"
+      ],
+      "determinationAccepted": true
+    },
+    "v685": {
+      "filePath": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "exists": true,
+      "parseValid": true,
+      "finalDetermination": "EXTRACTION VALIDATION PARTIAL — CONFIDENCE VALIDATION ALLOWED WITH REVIEW BUCKETS",
+      "expected": [
+        "EXTRACTION VALIDATION PARTIAL — CONFIDENCE VALIDATION ALLOWED WITH REVIEW BUCKETS",
+        "EXTRACTION VALIDATION STRONG — READY FOR CONFIDENCE VALIDATION PROTOTYPE"
+      ],
+      "determinationAccepted": true
+    },
+    "v686": {
+      "filePath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "exists": false,
+      "parseValid": false,
+      "finalDetermination": null,
+      "expected": [
+        "CONFIDENCE VALIDATION PARTIAL — CORRIDOR READINESS ASSESSMENT ALLOWED WITH REVIEW BUCKETS",
+        "CONFIDENCE VALIDATION STRONG — CORRIDOR READINESS ASSESSMENT ALLOWED"
+      ],
+      "determinationAccepted": false
+    }
+  },
+  "corridorIdentityValidation": {
+    "corridorId": "us59-i69",
+    "displayName": "US 59 / I-69",
+    "sourceAssetPath": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "totalExtractedSegmentSummary": 245,
+    "passed": true
+  },
+  "datasetContinuityValidation": {
+    "v684ExtractedSegmentCount": 245,
+    "v685TotalSegments": 245,
+    "v686TotalSegmentsEvaluated": null,
+    "countsAligned": false,
+    "note": "Counts do not align or one or more required milestone counts are unavailable."
+  },
+  "confidenceReadinessAggregation": {
+    "confidence_candidate_strong": 0,
+    "confidence_candidate_limited": 0,
+    "confidence_review_required": 0,
+    "confidence_blocked": 0,
+    "total": 0,
+    "strongCandidateRatio": 0,
+    "reviewRequiredRatio": 0,
+    "blockedRatio": 0
+  },
+  "reviewBucketReadiness": {
+    "reviewBucketDistribution": {
+      "none": 164,
+      "missing_county": 36,
+      "manual_review_required": 17,
+      "hov_hot_lane": 10,
+      "construction_segment": 8,
+      "reversible_lane": 7,
+      "missing_oneway": 3
+    },
+    "reviewBucketsPreserved": true,
+    "reversibleLaneSegmentsRemainReviewRequired": true,
+    "constructionSegmentsRemainReviewRequired": true,
+    "hovHotSegmentsRemainReviewRequired": true,
+    "missingCountyRefOnewayRemainReviewRequired": true,
+    "promotedFromReviewCount": null,
+    "noReviewRequiredRecordsSilentlyPromoted": false
+  },
+  "countyContainmentReadiness": {
+    "countyDistribution": {
+      "Montgomery, TX": 92,
+      "Harris, TX": 61,
+      "__MISSING__": 56,
+      "Liberty, TX": 31,
+      "San Jacinto, TX": 5
+    },
+    "missingCountyCount": 56,
+    "unknownCountyCount": 0,
+    "multiCountyAmbiguityCount": 0,
+    "observedEvidenceOnlyCounties": [
+      "Liberty, TX",
+      "Montgomery, TX",
+      "San Jacinto, TX",
+      "Harris, TX"
+    ],
+    "countyEvidenceDoesNotAuthorizeActivation": true
+  },
+  "bearingOnlyReadiness": {
+    "bearingOnlyPolicyPass": false,
+    "bearingOnlyCandidateCount": null,
+    "bearingOnlyCandidatesBlockedOrAbsent": false,
+    "bearingWasGeometryOnlyEvidence": true,
+    "noBearingOnlyConfidenceCreated": false
+  },
+  "corridorReadinessState": "corridor_not_ready",
+  "governanceRecommendation": {
+    "nextMilestone": "V688 — OSM Directional Governance Package",
+    "recommendation": "Define governance rules for the US59/I69 corridor evidence package before any future runtime consideration; do not activate runtime, UI, or directional display."
+  },
+  "blockedActions": [
+    "runtime integration",
+    "directional labels",
+    "NB/SB/EB/WB display",
+    "route intelligence activation",
+    "DriveTexas resumption",
+    "Transportation Intelligence activation",
+    "county onboarding",
+    "UI changes"
+  ],
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "CORRIDOR READINESS INSUFFICIENT — DIRECTIONAL GOVERNANCE BLOCKED"
+}
