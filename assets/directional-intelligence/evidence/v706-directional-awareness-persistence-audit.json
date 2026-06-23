@@ -1,0 +1,66 @@
+{
+  "milestone": "V706",
+  "mission": "Know Before You Go",
+  "scope": "audit and root-cause analysis only",
+  "directionalRenderDetected": true,
+  "directionalRenderTimestampOrder": [
+    "gridlyDirectionalAwarenessLayer creates awarenessState during script evaluation",
+    "gridlyApplyDirectionalAwarenessCards runs on DOMContentLoaded or immediately when document is already ready",
+    "gridlyApplyDirectionalAwarenessCards retries once through setTimeout(..., 0)",
+    "later portrait awareness refreshes can write the same nodes after incident hydration"
+  ],
+  "initialOwner": {
+    "system": "V704 Directional Awareness Layer",
+    "sourceFunction": "gridlyApplyDirectionalAwarenessCards -> renderTopAwareness",
+    "targets": ["gridlyV2TopStatusPrimary", "gridlyV2TopStatusSecondary"],
+    "renderedPrimary": "US 90 Westbound",
+    "renderedSecondary": "Traffic impacts reported near Dayton."
+  },
+  "overwriteDetected": true,
+  "overwriteSource": {
+    "system": "Portrait V2 Awareness Brief localized intelligence",
+    "sourceFunction": "refreshPortraitV2LocalizedIntelligence",
+    "writeHelper": "setGridlyTopPanelTextIfChanged",
+    "targets": ["gridlyV2TopStatusPrimary", "gridlyV2TopStatusSecondary"],
+    "hydratedExamplePrimary": "Disabled Vehicle on US 90 at Waco Street",
+    "hydratedExampleSecondary": "Awaiting additional reports..."
+  },
+  "finalOwner": {
+    "system": "awareness_brief_localized_intelligence / shared_active_awareness",
+    "ownershipDecision": "Awareness Brief owns what_happened and why_gridly_elevated_it after active-state evidence ownership is applied; Community Pulse owns where_it_is_happening; directional awareness has no retained ownership slot."
+  },
+  "directionalOwnershipRetained": false,
+  "directionalOwnershipDisplaced": true,
+  "finalDetermination": {
+    "A_render_success_then_overwritten": true,
+    "B_placeholder_until_incident_intelligence": false,
+    "C_competes_and_loses_arbitration": true,
+    "intentionalOrAccidental": "Accidental integration/ownership defect for persistence expectations; intentional active-awareness refresh logic is operating, but there is no explicit directional persistence arbitration."
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "nonGoalsConfirmed": {
+    "uiBehaviorChanged": false,
+    "directionalPersistenceForced": false,
+    "awarenessRankingChanged": false,
+    "ownershipLogicChanged": false,
+    "incidentGenerationChanged": false,
+    "alertsChanged": false,
+    "routeWatchChanged": false,
+    "routingChanged": false,
+    "supabaseChanged": false
+  },
+  "evidenceSources": [
+    "js/gridlyDirectionalAwarenessLayer.js",
+    "js/app.js",
+    "js/gridlyDirectionalRuntimeCandidatePrototype.js",
+    "index.html",
+    "tests/county-runtime/v704DirectionalAwarenessLayerImplementation.test.js"
+  ]
+}
