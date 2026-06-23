@@ -1,0 +1,17 @@
+{
+  "milestone": "V676",
+  "planningType": "osm_corridor_prototype",
+  "runtimeBehaviorChanged": false,
+  "directionalDisplayEnabled": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "prototypeAuthorized": false,
+  "preferredPrototypeCorridor": "US 59 / I-69",
+  "countiesInScope": [
+    "liberty-tx",
+    "montgomery-tx",
+    "san-jacinto-tx"
+  ],
+  "finalDetermination": "Future V677 offline prototype may be considered for US 59 / I-69, but V676 does not authorize implementation, activation, runtime use, DriveTexas integration, Transportation Intelligence activation, TIGER replacement, or directional display."
+}
