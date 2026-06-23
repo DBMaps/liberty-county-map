@@ -95,6 +95,30 @@
     });
   }
 
+  function readVisibleDirectionalDomEvidence() {
+    if (typeof document === "undefined" || !document.body) {
+      return {
+        domDirectionalTextMatches: [],
+        visibleDirectionalTextSamples: [],
+        visibilitySource: "none"
+      };
+    }
+
+    const bodyText = String(document.body.innerText || "");
+    const domDirectionalTextMatches = Array.from(bodyText.matchAll(/\b(?:Northbound|Southbound|Eastbound|Westbound)\b/g), (match) => match[0]);
+    const visibleDirectionalTextSamples = bodyText
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => /\b(?:Northbound|Southbound|Eastbound|Westbound)\b/.test(line))
+      .slice(0, 10);
+
+    return {
+      domDirectionalTextMatches,
+      visibleDirectionalTextSamples,
+      visibilitySource: domDirectionalTextMatches.length > 0 ? "dom-text" : "none"
+    };
+  }
+
   function renderTopAwareness(state) {
     if (typeof document === "undefined" || !state || state.failClosedState || !state.cards.length) return false;
     const primary = document.getElementById("gridlyV2TopStatusPrimary");
@@ -111,16 +135,24 @@
   const awarenessState = createAwarenessState();
 
   window.gridlyDirectionalAwarenessAudit = function gridlyDirectionalAwarenessAudit() {
+    const domVisibility = readVisibleDirectionalDomEvidence();
+    const visibleDirectionalCards = domVisibility.domDirectionalTextMatches.length;
+    const userVisible = visibleDirectionalCards > 0;
+
     return clone({
       enabled: awarenessState.enabled,
-      visibleDirectionalCards: awarenessState.visibleDirectionalCards,
+      visibleDirectionalCards,
       candidateCount: awarenessState.candidateCount,
       reviewExcludedCount: awarenessState.reviewExcludedCount,
       containmentPass: awarenessState.containmentPass,
       bearingProtectionPass: awarenessState.bearingProtectionPass,
       failClosedPass: awarenessState.failClosedPass,
       displayFormat: awarenessState.displayFormat,
-      userVisible: awarenessState.userVisible
+      userVisible,
+      domDirectionalTextMatches: domVisibility.domDirectionalTextMatches,
+      visibleDirectionalTextSamples: domVisibility.visibleDirectionalTextSamples,
+      visibilitySource: domVisibility.visibilitySource,
+      candidateVisibilityMismatch: awarenessState.candidateCount > 0 && !userVisible
     });
   };
 
