@@ -1,0 +1,18 @@
+{
+  "milestone": "V681",
+  "designType": "osm_directional_validation_model",
+  "runtimeBehaviorChanged": false,
+  "directionalDisplayEnabled": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "corridorAgnosticDesign": true,
+  "evidenceTaxonomyDefined": true,
+  "acceptanceConditionsDefined": true,
+  "rejectionConditionsDefined": true,
+  "blockingConditionsDefined": true,
+  "manualReviewConditionsDefined": true,
+  "countyContainmentIntegrated": true,
+  "validationOutputsDefined": true,
+  "finalDetermination": "VALIDATION MODEL READY FOR CONFIDENCE MODEL DESIGN"
+}
