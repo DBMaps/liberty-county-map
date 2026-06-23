@@ -1,0 +1,114 @@
+{
+  "milestone": "V695",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "finalDetermination": "RUNTIME CANDIDATE PROTOTYPE COMPLETE",
+  "runtimePosture": {
+    "mission": "Gridly remains Know Before You Go.",
+    "productPosture": ["Awareness Platform First", "Route Intelligence Second"],
+    "userFacing": false,
+    "runtimeContained": true,
+    "auditVisibleOnly": true
+  },
+  "authoritativeArtifactsUsed": [
+    "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+    "assets/directional-intelligence/evidence/v694-directional-runtime-prototype-architecture.json"
+  ],
+  "candidateEligibilityRules": [
+    "strong confidence",
+    "county-valid",
+    "corridor-valid",
+    "source-traceable",
+    "not review-required",
+    "not blocked",
+    "not bearing-only"
+  ],
+  "reviewBucketExclusionRules": [
+    "reversible_lane",
+    "construction_segment",
+    "hov_hot_lane",
+    "missing_county",
+    "missing_oneway",
+    "missing_ref",
+    "manual_review_required"
+  ],
+  "containmentRules": [
+    "county must be present",
+    "county must be unambiguous",
+    "county leakage must not be detected",
+    "containment invalid returns zero runtime candidates"
+  ],
+  "failClosedBehavior": {
+    "sourceMissing": "candidateCount becomes 0 and failClosedState becomes true",
+    "evidenceMissing": "candidateCount becomes 0 and failClosedState becomes true",
+    "confidenceMissing": "candidateCount becomes 0 and failClosedState becomes true",
+    "containmentInvalid": "candidateCount becomes 0 and failClosedState becomes true",
+    "degradedDirectionalIntelligenceAllowed": false
+  },
+  "candidateCounts": {
+    "totalSegments": 245,
+    "eligibleRuntimeCandidates": 164,
+    "reviewExcludedCandidates": 81,
+    "blockedCandidates": 0,
+    "bearingOnlyRuntimeCandidates": 0
+  },
+  "reviewBucketExclusionCounts": {
+    "reversible_lane": 7,
+    "construction_segment": 8,
+    "hov_hot_lane": 10,
+    "missing_county": 36,
+    "missing_oneway": 3,
+    "missing_ref": 0,
+    "manual_review_required": 17,
+    "totalExcluded": 81
+  },
+  "auditOutputs": {
+    "gridlyDirectionalCandidateAudit": {
+      "available": true,
+      "candidateCount": 164,
+      "reviewExcludedCount": 81,
+      "blockedCount": 0,
+      "countyContained": true,
+      "bearingOnlyCandidates": 0,
+      "failClosedState": false,
+      "safeForPrototypePhase": true
+    },
+    "gridlyDirectionalContainmentAudit": {
+      "countyContainmentPass": true,
+      "leakageDetected": false,
+      "invalidCandidates": 0,
+      "excludedCandidates": 81,
+      "activeCounty": "Liberty County",
+      "safeForRuntimePrototype": true
+    },
+    "gridlyDirectionalRuntimeAudit": {
+      "candidateGenerationAvailable": true,
+      "runtimeVisibleToUsers": false,
+      "displayEnabled": false,
+      "routeWatchConnected": false,
+      "alertsConnected": false,
+      "awarenessConnected": false,
+      "reviewBucketsExcluded": true,
+      "bearingProtectionPass": true,
+      "failClosedProtectionPass": true
+    }
+  },
+  "runtimeProtectionVerification": {
+    "directionalDisplayEnabled": false,
+    "directionalLabelsEnabled": false,
+    "nbSbEbWbEnabled": false,
+    "mapRenderingEnabled": false,
+    "uiSurfacesEnabled": false,
+    "routeWatchConnected": false,
+    "alertsConnected": false,
+    "awarenessConnected": false
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "nextMilestoneRecommendation": "V696 — Directional Prototype Runtime Validation"
+}
