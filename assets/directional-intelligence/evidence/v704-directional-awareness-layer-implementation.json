@@ -1,0 +1,20 @@
+{
+  "milestone": "V704",
+  "renderedDirectionalCards": 4,
+  "candidateCount": 164,
+  "excludedCount": 81,
+  "containmentPass": true,
+  "bearingProtectionPass": true,
+  "failClosedPass": true,
+  "displayFormat": "corridor-first",
+  "visibleToUsers": true,
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "DIRECTIONAL AWARENESS LAYER IMPLEMENTED WITH CONSTRAINTS"
+}
