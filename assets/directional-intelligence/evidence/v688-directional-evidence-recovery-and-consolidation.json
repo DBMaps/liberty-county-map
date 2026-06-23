@@ -1,0 +1,351 @@
+{
+  "milestone": "V688",
+  "generatedAt": "2026-06-23T19:58:55.603Z",
+  "artifactInventory": [
+    {
+      "milestone": "V683",
+      "expectedPath": "GRIDLY-V683-OSM-METADATA-COVERAGE-AUDIT.md",
+      "actualPath": "GRIDLY-V683-OSM-METADATA-COVERAGE-AUDIT.md",
+      "exists": true,
+      "fileSizeBytes": 5664,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V683",
+      "expectedPath": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "actualPath": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "exists": true,
+      "fileSizeBytes": 13857,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "expectedPath": "GRIDLY-V684-OSM-EXTRACTION-PROTOTYPE.md",
+      "actualPath": "GRIDLY-V684-OSM-EXTRACTION-PROTOTYPE.md",
+      "exists": true,
+      "fileSizeBytes": 7993,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "expectedPath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "actualPath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "exists": true,
+      "fileSizeBytes": 2219,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "expectedPath": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "actualPath": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "exists": true,
+      "fileSizeBytes": 2061,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "expectedPath": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "actualPath": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "exists": true,
+      "fileSizeBytes": 439969,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V685",
+      "expectedPath": "GRIDLY-V685-OSM-EXTRACTION-VALIDATION-AUDIT.md",
+      "actualPath": "GRIDLY-V685-OSM-EXTRACTION-VALIDATION-AUDIT.md",
+      "exists": true,
+      "fileSizeBytes": 9543,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V685",
+      "expectedPath": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "actualPath": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "exists": true,
+      "fileSizeBytes": 12691,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V686",
+      "expectedPath": "GRIDLY-V686-OSM-CONFIDENCE-VALIDATION-PROTOTYPE.md",
+      "actualPath": "GRIDLY-V686-OSM-CONFIDENCE-VALIDATION-PROTOTYPE.md",
+      "exists": true,
+      "fileSizeBytes": 6937,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V686",
+      "expectedPath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "actualPath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "exists": true,
+      "fileSizeBytes": 7578,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Recovered artifact carries milestone V686R and supersedes original V686 evidence gap."
+    },
+    {
+      "milestone": "V686R",
+      "expectedPath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "actualPath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "exists": true,
+      "fileSizeBytes": 7578,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V687",
+      "expectedPath": "GRIDLY-V687-OSM-CORRIDOR-READINESS-ASSESSMENT.md",
+      "actualPath": "GRIDLY-V687-OSM-CORRIDOR-READINESS-ASSESSMENT.md",
+      "exists": true,
+      "fileSizeBytes": 5017,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Superseded by V687R.2 recovery reassessment."
+    },
+    {
+      "milestone": "V687",
+      "expectedPath": "assets/directional-intelligence/evidence/v687-osm-corridor-readiness-assessment.json",
+      "actualPath": "assets/directional-intelligence/evidence/v687-osm-corridor-readiness-assessment.json",
+      "exists": true,
+      "fileSizeBytes": 6760,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Superseded by V687R.2 recovery reassessment."
+    },
+    {
+      "milestone": "V687R",
+      "expectedPath": "GRIDLY-V687R-OSM-CORRIDOR-READINESS-REASSESSMENT.md",
+      "actualPath": null,
+      "exists": false,
+      "fileSizeBytes": 0,
+      "parseable": false,
+      "authoritative": false,
+      "notes": "Expected artifact missing."
+    },
+    {
+      "milestone": "V687R",
+      "expectedPath": "assets/directional-intelligence/evidence/v687r-osm-corridor-readiness-reassessment.json",
+      "actualPath": null,
+      "exists": false,
+      "fileSizeBytes": 0,
+      "parseable": false,
+      "authoritative": false,
+      "notes": "Expected artifact missing."
+    },
+    {
+      "milestone": "V687R.2",
+      "expectedPath": "GRIDLY-V687R2-OSM-CORRIDOR-READINESS-REASSESSMENT-AFTER-V686-RECOVERY.md",
+      "actualPath": "GRIDLY-V687R2-OSM-CORRIDOR-READINESS-REASSESSMENT-AFTER-V686-RECOVERY.md",
+      "exists": true,
+      "fileSizeBytes": 8127,
+      "parseable": true,
+      "authoritative": false,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V687R.2",
+      "expectedPath": "assets/directional-intelligence/evidence/v687r2-osm-corridor-readiness-reassessment-after-v686-recovery.json",
+      "actualPath": "assets/directional-intelligence/evidence/v687r2-osm-corridor-readiness-reassessment-after-v686-recovery.json",
+      "exists": true,
+      "fileSizeBytes": 5588,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "SOURCE_CANONICAL",
+      "expectedPath": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "actualPath": null,
+      "exists": false,
+      "fileSizeBytes": 0,
+      "parseable": false,
+      "authoritative": false,
+      "notes": "Expected artifact missing."
+    },
+    {
+      "milestone": "SOURCE_ACTUAL_TYPO",
+      "expectedPath": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "actualPath": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "exists": true,
+      "fileSizeBytes": 306497,
+      "parseable": true,
+      "authoritative": true,
+      "notes": "Actual typo-path source asset; referenced by existing evidence as inspected source."
+    }
+  ],
+  "authoritativeArtifacts": [
+    {
+      "milestone": "V683",
+      "path": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "path": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V684",
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V685",
+      "path": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V686",
+      "path": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "notes": "Recovered artifact carries milestone V686R and supersedes original V686 evidence gap."
+    },
+    {
+      "milestone": "V686R",
+      "path": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "V687R.2",
+      "path": "assets/directional-intelligence/evidence/v687r2-osm-corridor-readiness-reassessment-after-v686-recovery.json",
+      "notes": "Artifact present and parseable."
+    },
+    {
+      "milestone": "SOURCE_ACTUAL_TYPO",
+      "path": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "notes": "Actual typo-path source asset; referenced by existing evidence as inspected source."
+    }
+  ],
+  "evidenceChainValidation": {
+    "sequence": [
+      "V683",
+      "V684",
+      "V685",
+      "V686R",
+      "V688"
+    ],
+    "chainStatus": "chain complete with review buckets",
+    "note": "Authoritative V683-V686R inputs validate; V687/V687R readiness artifacts contain missing-source/path-mismatch blockers and are superseded for this consolidation."
+  },
+  "dependencyValidation": [
+    {
+      "stage": "Metadata Coverage",
+      "milestone": "V683",
+      "inputArtifactExists": true,
+      "artifactParses": true,
+      "containsDetermination": true,
+      "determinationAllowsProgression": true,
+      "determination": "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "stage": "Extraction",
+      "milestone": "V684",
+      "inputArtifactExists": true,
+      "artifactParses": true,
+      "containsDetermination": true,
+      "determinationAllowsProgression": true,
+      "determination": "EXTRACTION PROTOTYPE PARTIAL — VALIDATION ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "stage": "Validation",
+      "milestone": "V685",
+      "inputArtifactExists": true,
+      "artifactParses": true,
+      "containsDetermination": true,
+      "determinationAllowsProgression": true,
+      "determination": "EXTRACTION VALIDATION PARTIAL — CONFIDENCE VALIDATION ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "stage": "Confidence",
+      "milestone": "V686R",
+      "inputArtifactExists": true,
+      "artifactParses": true,
+      "containsDetermination": true,
+      "determinationAllowsProgression": true,
+      "determination": "CONFIDENCE VALIDATION RECOVERY PARTIAL — REASSESSMENT ALLOWED WITH REVIEW BUCKETS"
+    },
+    {
+      "stage": "Readiness",
+      "milestone": "V688",
+      "inputArtifactExists": true,
+      "artifactParses": true,
+      "containsDetermination": true,
+      "determinationAllowsProgression": true,
+      "determination": "Generated by this consolidation"
+    }
+  ],
+  "pathMismatchAssessment": {
+    "canonicalPath": "assets/directional-intelligence/",
+    "actualPaths": [
+      "assets/directional-intelligenc/"
+    ],
+    "mismatchExists": true,
+    "severity": "medium",
+    "actuallyUsedByExistingEvidence": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "futureNormalizationRecommended": true,
+    "actionTaken": "none"
+  },
+  "consolidatedConfidenceSummary": {
+    "totalSegments": 245,
+    "strongConfidenceCandidates": 164,
+    "reviewRequiredCandidates": 81,
+    "blockedCandidates": 0,
+    "bearingOnlyCandidates": 0,
+    "bearingOnlyPolicyPass": true,
+    "countyDistribution": {
+      "Harris, TX": 61,
+      "__MISSING__": 56,
+      "San Jacinto, TX": 5,
+      "Montgomery, TX": 92,
+      "Liberty, TX": 31
+    },
+    "reviewBucketDistribution": {
+      "missing_county": 36,
+      "construction_segment": 8,
+      "missing_oneway": 3,
+      "hov_hot_lane": 10,
+      "reversible_lane": 7,
+      "manual_review_required": 17
+    }
+  },
+  "consolidatedReadinessState": "directional_evidence_chain_complete_with_review_buckets",
+  "governanceRecommendation": "V689 — Directional Governance Review",
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "DIRECTIONAL EVIDENCE CHAIN COMPLETE WITH REVIEW BUCKETS — GOVERNANCE REVIEW ALLOWED"
+}
