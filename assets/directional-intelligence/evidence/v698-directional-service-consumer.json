@@ -1,0 +1,12 @@
+{
+  "milestone": "V698",
+  "candidateCount": 164,
+  "excludedCount": 81,
+  "blockedCount": 0,
+  "containmentPass": true,
+  "bearingProtectionPass": true,
+  "failClosedPass": true,
+  "serviceAvailable": true,
+  "userVisible": false,
+  "finalDetermination": "DIRECTIONAL SERVICE CONSUMER COMPLETE"
+}
