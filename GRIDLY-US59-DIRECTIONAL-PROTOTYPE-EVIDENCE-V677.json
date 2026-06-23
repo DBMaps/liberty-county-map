@@ -1,0 +1,18 @@
+{
+  "milestone": "V677",
+  "prototypeType": "offline_directional_validation",
+  "corridor": "US 59 / I-69",
+  "countiesInScope": [
+    "liberty-tx",
+    "montgomery-tx"
+  ],
+  "runtimeBehaviorChanged": false,
+  "directionalDisplayEnabled": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "corridorContinuityValidated": false,
+  "directionalityValidated": false,
+  "confidenceLevel": "blocked: no local V677 OSM extract, route-relation member table, source timestamp, checksum, per-segment audit table, or county-contained directional confidence scores are available; directionality would require guessing",
+  "finalDetermination": "FAIL"
+}
