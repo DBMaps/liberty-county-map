@@ -1,0 +1,32 @@
+{
+  "milestone": "V678",
+  "architectureType": "osm_directional_intelligence_framework",
+  "runtimeBehaviorChanged": false,
+  "directionalDisplayEnabled": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "frameworkScope": "corridor_agnostic",
+  "us59OnlySolutionRejected": true,
+  "osmDirectionalPrimitivesObserved": true,
+  "requiredSignals": [
+    "route_reference",
+    "highway_classification",
+    "oneway",
+    "geometry",
+    "county_attribution",
+    "lane_metadata_optional",
+    "destination_lane_metadata_optional"
+  ],
+  "futureCorridorsSupportedByDesign": [
+    "US 59 / I-69",
+    "I-10",
+    "US 90",
+    "TX 146",
+    "TX 321",
+    "SH 105",
+    "SH 150",
+    "FM 1960"
+  ],
+  "finalDetermination": "FRAMEWORK ARCHITECTURE READY FOR EXTRACTION PLANNING"
+}
