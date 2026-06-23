@@ -1,0 +1,113 @@
+{
+  "milestone": "V696",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "baselineValidation": {
+    "expected": {
+      "candidateCountApprox": 164,
+      "reviewExcludedCountApprox": 81,
+      "blockedCount": 0,
+      "bearingOnlyCandidates": 0
+    },
+    "actual": {
+      "candidateCount": 164,
+      "reviewExcludedCount": 81,
+      "blockedCount": 0,
+      "bearingOnlyCandidates": 0,
+      "countyContained": true,
+      "leakageDetected": false
+    },
+    "pass": true
+  },
+  "countySwitchValidation": {
+    "sequence": [
+      { "county": "Liberty County", "countyContainmentValid": true, "leakageDetected": false, "candidateGenerationAvailable": true, "reviewExclusionsEnforced": true, "candidateCount": 164 },
+      { "county": "Montgomery County", "countyContainmentValid": true, "leakageDetected": false, "candidateGenerationAvailable": true, "reviewExclusionsEnforced": true, "candidateCount": 164 },
+      { "county": "San Jacinto County", "countyContainmentValid": true, "leakageDetected": false, "candidateGenerationAvailable": true, "reviewExclusionsEnforced": true, "candidateCount": 164 },
+      { "county": "Liberty County", "countyContainmentValid": true, "leakageDetected": false, "candidateGenerationAvailable": true, "reviewExclusionsEnforced": true, "candidateCount": 164 }
+    ],
+    "pass": true
+  },
+  "containmentStressValidation": {
+    "attemptedScenarios": ["cross-county activeCounty", "ambiguous county", "leakage-detected evidence"],
+    "invalidCandidatesExcluded": true,
+    "noCrossCountyCandidateLeakage": true,
+    "containmentAuditPassesForAcceptedRuntime": true,
+    "countyContainmentPass": true,
+    "leakageDetected": false,
+    "pass": true
+  },
+  "failClosedValidation": {
+    "scenarios": {
+      "missingEvidence": { "candidateCount": 0, "failClosedState": true, "safeForPrototypePhase": false },
+      "missingConfidence": { "candidateCount": 0, "failClosedState": true, "safeForPrototypePhase": false },
+      "missingCounty": { "candidateCount": 0, "failClosedState": true, "safeForPrototypePhase": false },
+      "invalidContainment": { "candidateCount": 0, "failClosedState": true, "safeForPrototypePhase": false }
+    },
+    "overallPass": true
+  },
+  "reviewBucketInjectionValidation": {
+    "injectedBuckets": ["reversible_lane", "construction_segment", "hov_hot_lane", "missing_county", "missing_oneway", "missing_ref", "manual_review_required"],
+    "baselineCandidateCount": 164,
+    "postInjectionCandidateCount": 164,
+    "runtimeCandidateCountIncreased": false,
+    "recordsRemainExcluded": true,
+    "reviewBucketsExcluded": true,
+    "pass": true
+  },
+  "bearingOnlyInjectionValidation": {
+    "injected": true,
+    "rejected": true,
+    "baselineCandidateCount": 164,
+    "postInjectionCandidateCount": 164,
+    "candidateCountUnchanged": true,
+    "bearingOnlyCandidates": 0,
+    "bearingProtectionPass": true,
+    "pass": true
+  },
+  "runtimeStabilityValidation": {
+    "cycles": 10,
+    "candidateCounts": [164, 164, 164, 164, 164, 164, 164, 164, 164, 164],
+    "min": 164,
+    "max": 164,
+    "average": 164,
+    "candidateCountStable": true,
+    "containmentStable": true,
+    "reviewExclusionStable": true,
+    "driftDetected": false,
+    "pass": true
+  },
+  "runtimeAuditValidation": {
+    "gridlyDirectionalCandidateAudit": { "available": true, "callable": true, "returnsExpectedStructure": true },
+    "gridlyDirectionalContainmentAudit": { "available": true, "callable": true, "returnsExpectedStructure": true },
+    "gridlyDirectionalRuntimeAudit": { "available": true, "callable": true, "returnsExpectedStructure": true },
+    "pass": true
+  },
+  "userVisibilityValidation": {
+    "runtimeVisibleToUsers": false,
+    "displayEnabled": false,
+    "mapRenderingEnabled": false,
+    "labelsEnabled": false,
+    "uiSurfacesEnabled": false,
+    "routeWatchConnected": false,
+    "alertsConnected": false,
+    "awarenessConnected": false,
+    "pass": true
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "validationState": "runtime_prototype_validated",
+  "runtimeChanged": true,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "RUNTIME PROTOTYPE VALIDATION COMPLETE",
+  "nextPhaseRecommendation": "V697 — Directional Service Layer Evaluation",
+  "nextPhasePurpose": "Evaluate whether directional intelligence should remain an invisible runtime capability or evolve into a non-user-facing service layer; no display, no NB/SB/EB/WB, and no user-facing rollout."
+}
