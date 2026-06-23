@@ -1,0 +1,98 @@
+{
+  "milestone": "V710",
+  "title": "Directional Incident Context Readiness Audit",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "scope": {
+    "auditOnly": true,
+    "runtimeChanges": false,
+    "uiChanges": false,
+    "alertChanges": false,
+    "routeChanges": false,
+    "navigationChanges": false,
+    "directionalRenderingChanges": false,
+    "supabaseChanges": false
+  },
+  "finalDetermination": "READY WITH OBSERVATIONS",
+  "candidateReadiness": {
+    "candidateCount": 164,
+    "reviewExcludedCount": 81,
+    "directionallyReadyCandidateCount": 164,
+    "protectedCorridorCandidateCount": 164,
+    "totalSegmentsEvaluated": 245,
+    "blockedCandidateCount": 0,
+    "bearingOnlyRuntimeCandidateCount": 0
+  },
+  "corridorCoverage": [
+    { "corridor": "US 90", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." },
+    { "corridor": "I-69", "candidateCount": 164, "reviewExcludedCount": 81, "directionallyReadyCandidateCount": 164, "protectedCorridorCandidateCount": 164, "readiness": "Ready with observations", "reason": "Available as the US 59 / I-69 directional inventory; incident enrichment adapter is not connected." },
+    { "corridor": "TX 146", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." },
+    { "corridor": "TX 321", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." },
+    { "corridor": "FM 1960", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." },
+    { "corridor": "FM 1409", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." },
+    { "corridor": "FM 1011", "candidateCount": 0, "reviewExcludedCount": 0, "directionallyReadyCandidateCount": 0, "protectedCorridorCandidateCount": 0, "readiness": "Not eligible", "reason": "No extracted directional inventory found for V710." }
+  ],
+  "confidenceReadiness": {
+    "highConfidence": 164,
+    "mediumConfidence": 0,
+    "reviewRequired": 81,
+    "excluded": 81,
+    "blocked": 0,
+    "sufficientForProductionIncidentEnrichment": false,
+    "rationale": "Confidence model has strong candidates, but coverage is limited to the extracted US 59 / I-69 package."
+  },
+  "incidentCoverageReadiness": [
+    { "type": "road_hazard", "classification": "Unknown", "eligibleWhen": "specific road/corridor or coordinate-backed roadway lookup exists", "ineligibleWhen": "generic area/community-only report" },
+    { "type": "flooding", "classification": "Unknown", "eligibleWhen": "route_name/roadway/road field exists", "ineligibleWhen": "countywide/weather-only notice" },
+    { "type": "disabled_vehicle", "classification": "Eligible", "eligibleWhen": "official/source record includes route or coordinates", "ineligibleWhen": "area-only record" },
+    { "type": "crash", "classification": "Eligible", "eligibleWhen": "route/corridor or coordinates exist", "ineligibleWhen": "record lacks roadway context" },
+    { "type": "construction", "classification": "Eligible", "eligibleWhen": "official route/corridor or segment exists", "ineligibleWhen": "project notice has no segment detail" },
+    { "type": "traffic_backup", "classification": "Unknown", "eligibleWhen": "named roadway exists", "ineligibleWhen": "general congestion/community label only" },
+    { "type": "crossing_blocked", "classification": "Ready with observations", "eligibleWhen": "crossing label and nearby corridor candidate exist", "ineligibleWhen": "crossing-only record lacks roadway/corridor context" },
+    { "type": "crossing_cleared", "classification": "Ready with observations", "eligibleWhen": "cleared wording policy authorizes context and location is specific", "ineligibleWhen": "low-quality or generic crossing label" }
+  ],
+  "locationBuilderReadiness": [
+    { "surface": "Alert cards", "classification": "Ready with observations", "acceptsUS90Westbound": true, "notes": "Location line is string-based; upstream adapter must avoid grammar duplication." },
+    { "surface": "Awareness Brief", "classification": "Ready with observations", "acceptsUS90Westbound": true, "notes": "Actual Awareness Brief owner must receive enriched location; displaced directional card is not sufficient." },
+    { "surface": "Hazard popups", "classification": "Ready", "acceptsUS90Westbound": true, "notes": "Popup model can consume direction embedded in a location string." },
+    { "surface": "Crossing popups", "classification": "Ready with observations", "acceptsUS90Westbound": true, "notes": "Crossing identity must remain clear." },
+    { "surface": "Localized intelligence", "classification": "Ready with observations", "acceptsUS90Westbound": true, "notes": "Consumes location context strings when supplied." },
+    { "surface": "Community awareness", "classification": "Ready with observations", "acceptsUS90Westbound": true, "notes": "Suppress enrichment for generic or place-only reports." }
+  ],
+  "failClosedReadiness": {
+    "classification": "Pass",
+    "noCandidateBehavior": "Current wording remains unchanged because directional incident enrichment is not connected.",
+    "blankWordingDetected": false,
+    "degradedWordingDetected": false,
+    "brokenWordingDetected": false
+  },
+  "countyContainmentReadiness": {
+    "classification": "Pass with observations",
+    "countyContainmentPass": true,
+    "crossCountyLeakageDetected": false,
+    "directionalLeakageDetected": false,
+    "counties": [
+      { "county": "Liberty", "countyContainmentPass": true, "crossCountyLeakageDetected": false, "directionalLeakageDetected": false },
+      { "county": "Montgomery", "countyContainmentPass": true, "crossCountyLeakageDetected": false, "directionalLeakageDetected": false },
+      { "county": "San Jacinto", "countyContainmentPass": true, "crossCountyLeakageDetected": false, "directionalLeakageDetected": false }
+    ],
+    "observation": "Source inventory includes Harris and missing-county segments; runtime containment/review exclusion prevents promotion, and future incident enrichment must preserve active-county filtering."
+  },
+  "productionImpactEstimate": {
+    "range": "0-25%",
+    "rationale": [
+      "Strong candidates currently cover only the US 59 / I-69 package.",
+      "No V710 candidate inventory was found for six of seven minimum-review corridors.",
+      "Community and crossing records may lack specific roadway context.",
+      "Production surfaces are not connected to directional runtime candidates."
+    ]
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "implementationReadinessRecommendation": "Proceed with implementation planning only after corridor coverage expansion, high-confidence-only gating, county-contained matching, and fail-closed wording tests are specified."
+}
