@@ -1,0 +1,73 @@
+[
+  {
+    "corridorId": "us59-i69",
+    "displayName": "US 59 / I-69",
+    "sourceAsset": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "inspectedSourceAsset": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "totalSourceFeatures": 245,
+    "totalLineStringFeatures": 245,
+    "totalExtractedSegments": 245,
+    "totalRejectedSegments": 0,
+    "totalReviewSegments": 81,
+    "countyDistribution": {
+      "Montgomery, TX": 92,
+      "Harris, TX": 61,
+      "__MISSING__": 56,
+      "Liberty, TX": 31,
+      "San Jacinto, TX": 5
+    },
+    "highwayDistribution": {
+      "motorway": 233,
+      "construction": 7,
+      "secondary_link": 2,
+      "tertiary": 2,
+      "secondary": 1
+    },
+    "refDistribution": {
+      "I 69;US 59": 173,
+      "US 59": 64,
+      "US 59 Business": 4,
+      "I-69;US 59": 3,
+      "US 59 Business;FM 2090": 1
+    },
+    "reviewBucketDistribution": {
+      "none": 164,
+      "missing_county": 36,
+      "manual_review_required": 17,
+      "hov_hot_lane": 10,
+      "construction_segment": 8,
+      "reversible_lane": 7,
+      "missing_oneway": 3
+    },
+    "evidenceCoverageSummary": {
+      "hasRef": 245,
+      "hasFutureRef": 39,
+      "hasName": 182,
+      "hasCounty": 189,
+      "hasOneway": 242,
+      "hasOnewayConditional": 7,
+      "hasLanes": 220,
+      "hasTurnLanes": 60,
+      "hasDestinationLanes": 43,
+      "hasStrategicTags": 223,
+      "hasGeometry": 245,
+      "isReversible": 7,
+      "isConstruction": 8,
+      "isHovHot": 17,
+      "hasFixme": 17
+    },
+    "protectedSystemsVerified": {
+      "historicalReadsEnabled": false,
+      "historyUiEnabled": false,
+      "DriveTexasPaused": true,
+      "TransportationIntelligenceEnabled": false,
+      "TransportationIntelligenceDisplay": false,
+      "TransportationIntelligenceActivation": false
+    },
+    "runtimeChanged": false,
+    "appJsChanged": false,
+    "uiChanged": false,
+    "driveTexasChanged": false,
+    "transportationIntelligenceChanged": false
+  }
+]
