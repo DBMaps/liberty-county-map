@@ -1,0 +1,11 @@
+{
+  "milestone": "V697",
+  "candidateCount": 164,
+  "excludedCount": 81,
+  "blockedCount": 0,
+  "containmentPass": true,
+  "bearingProtectionPass": true,
+  "failClosedPass": true,
+  "userVisible": false,
+  "finalDetermination": "DIRECTIONAL SERVICE LAYER COMPLETE"
+}
