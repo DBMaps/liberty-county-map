@@ -1,0 +1,18 @@
+{
+  "milestone": "V682",
+  "designType": "osm_directional_confidence_model",
+  "runtimeBehaviorChanged": false,
+  "directionalDisplayEnabled": false,
+  "driveTexasActivated": false,
+  "transportationIntelligenceActivated": false,
+  "tigerReplacementRecommended": false,
+  "corridorAgnosticDesign": true,
+  "bearingOnlyEvidenceRejected": true,
+  "confidenceStatesDefined": true,
+  "confidenceInputsDefined": true,
+  "confidenceReductionDefined": true,
+  "confidenceBlockingDefined": true,
+  "manualReviewDefined": true,
+  "countyContainmentIntegrated": true,
+  "finalDetermination": "CONFIDENCE MODEL READY FOR CONFIDENCE VALIDATION PROTOTYPE"
+}
