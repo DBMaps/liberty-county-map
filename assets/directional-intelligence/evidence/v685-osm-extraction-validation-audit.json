@@ -1,0 +1,447 @@
+{
+  "milestone": "V685",
+  "generatedAt": "2026-06-23T18:51:22.872Z",
+  "inputArtifacts": [
+    {
+      "filePath": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "filePath": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "exists": true,
+      "parseValid": true
+    },
+    {
+      "filePath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "exists": true,
+      "parseValid": true
+    }
+  ],
+  "v683Dependency": {
+    "determination": "METADATA COVERAGE PARTIAL — EXTRACTION PROTOTYPE ALLOWED WITH REVIEW BUCKETS"
+  },
+  "v684Dependency": {
+    "milestone": "V684",
+    "finalDetermination": "EXTRACTION PROTOTYPE PARTIAL — VALIDATION ALLOWED WITH REVIEW BUCKETS",
+    "evidencePath": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json"
+  },
+  "detectedInputShapes": {
+    "segmentInventory": "array",
+    "corridorInventory": "array",
+    "corridorIdUs59I69Found": true
+  },
+  "totalSegments": 245,
+  "extractedCount": 164,
+  "extractedWithReviewCount": 81,
+  "rejectedCount": 0,
+  "segmentIdValidation": {
+    "nonRejectedCount": 245,
+    "nonRejectedMissingSegmentIdCount": 0,
+    "uniqueSegmentIdCount": 245,
+    "duplicateSegmentIds": [],
+    "sourceWayIdPreservedCount": 245,
+    "duplicateSourceWayIdCount": 0,
+    "duplicateSourceWayIds": []
+  },
+  "sourceTraceabilityValidation": {
+    "sourceWayIdCount": 245,
+    "sourceWayIdPercent": 100,
+    "sourceIdentityCount": 245,
+    "sourceIdentityPercent": 100,
+    "geometrySummaryCount": 245,
+    "geometrySummaryPercent": 100
+  },
+  "geometryValidation": {
+    "validGeometryCount": 245,
+    "invalidGeometryCount": 0,
+    "coordinateCountAtLeastTwoCount": 245,
+    "startCoordinateCount": 245,
+    "endCoordinateCount": 245,
+    "bboxCount": 245,
+    "bearingPresentWhenGeometryValidCount": 245,
+    "bearingNote": "Bearing is validated as geometry-only evidence and is not treated as standalone directional confidence."
+  },
+  "corridorMembershipValidation": {
+    "acceptedPrimaryCorridorSegments": 245,
+    "rejectedNonPrimaryCorridorSegments": 0,
+    "suspiciousAcceptedWeakCorridorEvidenceCount": 0,
+    "suspiciousAcceptedWeakCorridorEvidenceSample": [],
+    "suspiciousRejectedPossibleCorridorEvidenceCount": 0,
+    "suspiciousRejectedPossibleCorridorEvidenceSample": []
+  },
+  "countyContainmentValidation": {
+    "expectedCountyNames": [
+      "Liberty, TX",
+      "Montgomery, TX",
+      "San Jacinto, TX",
+      "Harris, TX"
+    ],
+    "countyPreservedCount": 189,
+    "missingCountyCount": 56,
+    "countyDistribution": {
+      "Harris, TX": 61,
+      "__MISSING__": 56,
+      "San Jacinto, TX": 5,
+      "Montgomery, TX": 92,
+      "Liberty, TX": 31
+    },
+    "unknownCountyCount": 0,
+    "unknownCountySample": [],
+    "multiCountyAmbiguityCount": 0,
+    "harrisAndSanJacintoEvidenceOnly": true
+  },
+  "reviewBucketValidation": {
+    "correctlyBucketedCount": 225,
+    "questionableBucketCount": 20,
+    "bucketDistribution": {
+      "none": 164,
+      "missing_county": 36,
+      "construction_segment": 8,
+      "missing_oneway": 3,
+      "hov_hot_lane": 10,
+      "reversible_lane": 7,
+      "manual_review_required": 17
+    },
+    "questionableBucketSample": [
+      {
+        "segmentId": "v684-00011",
+        "reviewBucket": "missing_oneway",
+        "reviewReasons": [
+          "missing_oneway",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": false,
+          "hasOnewayConditional": false,
+          "hasLanes": false,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": false,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00014",
+        "reviewBucket": "hov_hot_lane",
+        "reviewReasons": [
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": false,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00015",
+        "reviewBucket": "reversible_lane",
+        "reviewReasons": [
+          "reversible_lane",
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": true,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": true,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00016",
+        "reviewBucket": "reversible_lane",
+        "reviewReasons": [
+          "reversible_lane",
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": true,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": true,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00017",
+        "reviewBucket": "hov_hot_lane",
+        "reviewReasons": [
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": false,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00018",
+        "reviewBucket": "hov_hot_lane",
+        "reviewReasons": [
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": false,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00063",
+        "reviewBucket": "missing_oneway",
+        "reviewReasons": [
+          "missing_oneway",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": false,
+          "hasOnewayConditional": false,
+          "hasLanes": false,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": false,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00073",
+        "reviewBucket": "hov_hot_lane",
+        "reviewReasons": [
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": false,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00106",
+        "reviewBucket": "hov_hot_lane",
+        "reviewReasons": [
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": false,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": false,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      },
+      {
+        "segmentId": "v684-00107",
+        "reviewBucket": "reversible_lane",
+        "reviewReasons": [
+          "reversible_lane",
+          "hov_hot_lane",
+          "missing_county"
+        ],
+        "evidenceSignals": {
+          "hasRef": true,
+          "hasFutureRef": false,
+          "hasName": true,
+          "hasCounty": false,
+          "hasOneway": true,
+          "hasOnewayConditional": true,
+          "hasLanes": true,
+          "hasTurnLanes": false,
+          "hasDestinationLanes": false,
+          "hasStrategicTags": false,
+          "hasGeometry": true,
+          "isReversible": true,
+          "isConstruction": false,
+          "isHovHot": true,
+          "hasFixme": false
+        }
+      }
+    ]
+  },
+  "rejectionValidation": {
+    "rejectedCount": 0,
+    "correctRejectionCount": 0,
+    "questionableRejectionCount": 0,
+    "questionableRejectionSample": []
+  },
+  "extractionStatusValidation": {
+    "allowedStatuses": [
+      "extracted",
+      "extracted_with_review",
+      "rejected"
+    ],
+    "unexpectedStatuses": [],
+    "unexpectedStatusCount": 0
+  },
+  "evidenceSignalValidation": {
+    "expectedSignalFields": [
+      "hasRef",
+      "hasFutureRef",
+      "hasName",
+      "hasCounty",
+      "hasOneway",
+      "hasOnewayConditional",
+      "hasLanes",
+      "hasTurnLanes",
+      "hasDestinationLanes",
+      "hasStrategicTags",
+      "hasGeometry",
+      "isReversible",
+      "isConstruction",
+      "isHovHot",
+      "hasFixme"
+    ],
+    "recordsWithEvidenceSignalsCount": 245,
+    "missingSignalCoverage": []
+  },
+  "confidencePrerequisiteReadiness": {
+    "distribution": {
+      "confidence_ready_candidate": 164,
+      "confidence_review_required": 81,
+      "confidence_blocked": 0
+    },
+    "samples": {
+      "confidence_ready_candidate": [
+        "v684-00001",
+        "v684-00004",
+        "v684-00005",
+        "v684-00006",
+        "v684-00007",
+        "v684-00008",
+        "v684-00009",
+        "v684-00010",
+        "v684-00019",
+        "v684-00020"
+      ],
+      "confidence_review_required": [
+        "v684-00002",
+        "v684-00003",
+        "v684-00011",
+        "v684-00012",
+        "v684-00013",
+        "v684-00014",
+        "v684-00015",
+        "v684-00016",
+        "v684-00017",
+        "v684-00018"
+      ],
+      "confidence_blocked": []
+    },
+    "note": "No final confidence score calculated."
+  },
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "EXTRACTION VALIDATION PARTIAL — CONFIDENCE VALIDATION ALLOWED WITH REVIEW BUCKETS"
+}
