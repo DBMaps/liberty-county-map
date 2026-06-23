@@ -1,0 +1,145 @@
+{
+  "milestone": "V712",
+  "title": "Directional Expansion Implementation Strategy",
+  "generatedAt": "2026-06-23T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "positioning": {
+    "primary": "Awareness Platform First",
+    "secondary": "Route Intelligence Second"
+  },
+  "scope": {
+    "strategyOnly": true,
+    "runtimeChanges": false,
+    "uiChanges": false,
+    "directionalRenderingChanges": false,
+    "corridorActivationChanges": false,
+    "countyActivationChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "directionalExtractionChanges": false,
+    "confidenceLogicChanges": false,
+    "reviewBucketChanges": false,
+    "alertsChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false
+  },
+  "currentState": {
+    "v711Determination": "EXPANSION READY WITH OBSERVATIONS",
+    "operationalCounties": ["Liberty County", "Montgomery County", "San Jacinto County"],
+    "validatedPrototypeCorridor": "I-69 / US 59",
+    "validatedArchitecture": [
+      "containment",
+      "confidence model",
+      "service layer",
+      "consumer layer",
+      "awareness integration path",
+      "fail-closed behavior",
+      "protected corridor governance"
+    ]
+  },
+  "preferredExpansionPhilosophy": {
+    "model": "Hybrid corridor-first with county containment gates",
+    "rationale": "Directional evidence is corridor-shaped, while county containment and governance are required release gates. This prevents county-wide assumptions and preserves Gridly as an awareness-first platform."
+  },
+  "expansionWaves": [
+    {
+      "corridor": "US 90",
+      "phase": 1,
+      "readinessLevel": "Strategy-ready; evidence not yet extracted",
+      "validationRequirements": ["corridor inventory", "segment inventory", "county attribution", "confidence scoring", "review-bucket audit", "incident-context audit", "containment verification"],
+      "riskLevel": "Medium",
+      "expectedAwarenessValue": "High",
+      "expectedDirectionalValue": "High"
+    },
+    {
+      "corridor": "TX 146",
+      "phase": 1,
+      "readinessLevel": "Strategy-ready with containment observations",
+      "validationRequirements": ["corridor inventory", "segment inventory", "county attribution", "confidence scoring", "review-bucket audit", "incident-context audit", "protected-corridor review"],
+      "riskLevel": "Medium",
+      "expectedAwarenessValue": "High",
+      "expectedDirectionalValue": "Medium-high"
+    },
+    {
+      "corridor": "FM 1960",
+      "phase": 2,
+      "readinessLevel": "Dependency-ready after Phase 1 workflow validation",
+      "validationRequirements": ["full corridor package", "commuter-arterial confidence drift review", "review-bucket analysis"],
+      "riskLevel": "Medium-high",
+      "expectedAwarenessValue": "High",
+      "expectedDirectionalValue": "Medium"
+    },
+    {
+      "corridor": "TX 321",
+      "phase": 2,
+      "readinessLevel": "Secondary candidate",
+      "validationRequirements": ["full corridor package", "rural/state-highway naming review", "county attribution review"],
+      "riskLevel": "Medium",
+      "expectedAwarenessValue": "Medium-high",
+      "expectedDirectionalValue": "Medium"
+    },
+    {
+      "corridor": "FM 1409",
+      "phase": 3,
+      "readinessLevel": "Delayed candidate",
+      "validationRequirements": ["full corridor package", "manual-review sizing", "bidirectional/FM-road confidence review"],
+      "riskLevel": "Medium-high",
+      "expectedAwarenessValue": "Medium",
+      "expectedDirectionalValue": "Low-medium"
+    },
+    {
+      "corridor": "FM 1011",
+      "phase": 3,
+      "readinessLevel": "Delayed candidate",
+      "validationRequirements": ["full corridor package", "county containment", "FM-road confidence review", "review-bucket growth analysis"],
+      "riskLevel": "Medium-high",
+      "expectedAwarenessValue": "Medium",
+      "expectedDirectionalValue": "Low-medium"
+    }
+  ],
+  "futureCountyInheritanceStrategy": {
+    "automaticDirectionalCapability": false,
+    "inherits": ["directional framework", "governance standards", "evidence schema", "validation tooling"],
+    "mandatory": ["county roadway assets", "corridor inventory", "segment inventory", "confidence validation", "containment validation", "review-bucket validation", "protected corridor inventory", "governance approval"],
+    "optional": ["manual analyst review when review buckets exceed thresholds", "user-facing directional display only by separate authorization"],
+    "automated": ["evidence generation where possible", "schema validation", "protected-system checks", "review-bucket counting"]
+  },
+  "governanceModel": {
+    "authorizers": ["directional program owner", "county containment reviewer", "confidence/evidence reviewer", "protected-corridor governance", "product/awareness owner"],
+    "validationGates": ["scope", "inventory", "containment", "confidence", "review-bucket", "protected-system", "non-goal"],
+    "blockingConditions": ["missing corridor inventory", "stale county boundary assets", "promoted missing-county records", "promoted unresolved review-bucket records", "bearing-only runtime promotion", "protected-system drift", "routing/navigation/UI/rendering activation"]
+  },
+  "riskStrategy": [
+    {"risk": "Confidence drift", "severity": "High", "mitigation": "Validate each corridor independently and exclude ambiguous records."},
+    {"risk": "County leakage", "severity": "High", "mitigation": "Use county attribution as a release gate and fail closed on missing-county records."},
+    {"risk": "Review-bucket growth", "severity": "Medium-high", "mitigation": "Track bucket counts per corridor and pause expansion if ambiguity exceeds review capacity."},
+    {"risk": "Maintenance burden", "severity": "Medium", "mitigation": "Automate evidence generation and use shared schemas."},
+    {"risk": "Directional over-expansion", "severity": "High", "mitigation": "Require wave-level governance approval."},
+    {"risk": "Navigation creep", "severity": "High", "mitigation": "Explicitly block routing, navigation, UI, and rendering changes."}
+  ],
+  "productionImpactProjection": {
+    "current": "0–25%",
+    "afterPhase1": "26–50%",
+    "afterPhase2": "51–75%",
+    "afterPhase3": "51–75%",
+    "rationale": "Even after all candidate corridors, directional enrichment should continue to exclude non-corridor, area-only, weather-only, ambiguous, protected, and review-bucket incidents."
+  },
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": {
+    "status": "IMPLEMENTATION STRATEGY APPROVED WITH OBSERVATIONS",
+    "supportingEvidence": [
+      "Hybrid corridor-first strategy preserves awareness-first posture while adding county containment gates.",
+      "US 90 and TX 146 are recommended Phase 1 corridors for non-prototype workflow validation.",
+      "Future counties inherit standards and tooling, not automatic directional activation.",
+      "Protected systems remain in required states and no runtime or UI changes are authorized."
+    ]
+  }
+}
