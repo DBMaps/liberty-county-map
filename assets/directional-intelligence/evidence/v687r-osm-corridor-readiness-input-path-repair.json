@@ -1,0 +1,155 @@
+{
+  "milestone": "V687R",
+  "generatedAt": "2026-06-23T19:30:08.818Z",
+  "blockerClassification": "MULTIPLE_ROOT_CAUSES",
+  "expectedPaths": {
+    "source": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "v683": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+    "v684Evidence": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+    "v684CorridorInventory": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+    "v684SegmentInventory": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+    "v685": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+    "v686": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+    "v687": "assets/directional-intelligence/evidence/v687-osm-corridor-readiness-assessment.json"
+  },
+  "actualPaths": {
+    "source": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+    "v683": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+    "v684Evidence": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+    "v684CorridorInventory": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+    "v684SegmentInventory": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+    "v685": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+    "v686": null,
+    "v687": "assets/directional-intelligence/evidence/v687-osm-corridor-readiness-assessment.json"
+  },
+  "inventory": {
+    "source": {
+      "path": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "exists": true,
+      "size": 306497,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    },
+    "v683": {
+      "path": "assets/directional-intelligence/evidence/v683-osm-metadata-coverage-audit.json",
+      "exists": true,
+      "size": 13857,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    },
+    "v684Evidence": {
+      "path": "assets/directional-intelligence/evidence/v684-osm-extraction-prototype-evidence.json",
+      "exists": true,
+      "size": 2219,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    },
+    "v684CorridorInventory": {
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "exists": true,
+      "size": 2061,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    },
+    "v684SegmentInventory": {
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "exists": true,
+      "size": 439969,
+      "lastModified": "2026-06-23T19:28:33.466Z"
+    },
+    "v685": {
+      "path": "assets/directional-intelligence/evidence/v685-osm-extraction-validation-audit.json",
+      "exists": true,
+      "size": 12691,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    },
+    "v686": {
+      "path": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "exists": false,
+      "size": null,
+      "lastModified": null
+    },
+    "v687": {
+      "path": "assets/directional-intelligence/evidence/v687-osm-corridor-readiness-assessment.json",
+      "exists": true,
+      "size": 6760,
+      "lastModified": "2026-06-23T19:28:33.462Z"
+    }
+  },
+  "mismatches": [
+    {
+      "key": "source",
+      "expectedPath": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "actualPath": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "exists": true,
+      "mismatch": true,
+      "repairNeeded": true
+    },
+    {
+      "key": "v686",
+      "expectedPath": "assets/directional-intelligence/evidence/v686-osm-confidence-validation-prototype.json",
+      "actualPath": null,
+      "exists": false,
+      "mismatch": false,
+      "repairNeeded": true
+    }
+  ],
+  "repairedPaths": {
+    "source": {
+      "from": "assets/directional-intelligence/source/osm/us59-i69-liberty-montgomery-source.geojson",
+      "to": "assets/directional-intelligenc/source/osm/us59-i69-liberty-montgomery-source.geojson"
+    }
+  },
+  "sourceAssetFound": true,
+  "sourceAssetFeatureCount": 245,
+  "v686EvidenceFound": false,
+  "v686Validation": {
+    "exists": false,
+    "parseValid": false,
+    "confidenceDistributionValid": false
+  },
+  "dependencyValidationAfterRepair": {
+    "sourceFoundAtRepairedPath": true,
+    "v683Found": true,
+    "v684EvidenceFound": true,
+    "v684CorridorInventoryFound": true,
+    "v684SegmentInventoryFound": true,
+    "v685EvidenceFound": true,
+    "v686EvidenceFound": false,
+    "allRequiredInputsAvailable": false,
+    "v686ParseValid": false,
+    "v686ConfidenceDistributionValid": false
+  },
+  "confidenceAggregationAfterRepair": {
+    "available": false,
+    "reason": "V686 evidence artifact missing; confidence aggregation unavailable."
+  },
+  "reviewBucketReadinessAfterRepair": {
+    "reviewBucketDistribution": {
+      "none": 164,
+      "missing_county": 36,
+      "manual_review_required": 17,
+      "hov_hot_lane": 10,
+      "construction_segment": 8,
+      "reversible_lane": 7,
+      "missing_oneway": 3
+    },
+    "reviewBucketsPreserved": true,
+    "noSilentPromotionVerified": false
+  },
+  "bearingOnlyReadinessAfterRepair": {
+    "available": false,
+    "reason": "V686 evidence artifact missing; bearing-only readiness unavailable."
+  },
+  "readinessStateAfterRepair": "INSUFFICIENT_INPUTS_FOR_READINESS",
+  "protectedSystemsVerified": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "runtimeChanged": false,
+  "appJsChanged": false,
+  "uiChanged": false,
+  "driveTexasChanged": false,
+  "transportationIntelligenceChanged": false,
+  "finalDetermination": "BLOCKER CONFIRMED — REQUIRED INPUTS MISSING"
+}
