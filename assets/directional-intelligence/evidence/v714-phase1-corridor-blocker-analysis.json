@@ -1,0 +1,490 @@
+{
+  "milestone": "V714",
+  "title": "Phase 1 Corridor Blocker Analysis",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "positioning": {
+    "primary": "Awareness Platform First",
+    "secondary": "Route Intelligence Second"
+  },
+  "scope": {
+    "analysisOnly": true,
+    "runtimeChanges": false,
+    "uiChanges": false,
+    "directionalRenderingChanges": false,
+    "corridorActivationChanges": false,
+    "countyActivationChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "directionalExtractionChanges": false,
+    "directionalCandidateChanges": false,
+    "confidenceLogicChanges": false,
+    "reviewBucketChanges": false
+  },
+  "corridors": [
+    {
+      "corridor": "US 90",
+      "overallSeverity": "HIGH",
+      "primaryReadinessConstraint": "Missing extracted directional inventory is the primary readiness constraint. Secondary constraints are unscored confidence, unavailable review-bucket exposure, and unvalidated corridor-level containment for segment records.",
+      "expansionDifficulty": "MODERATE",
+      "recommendedRemediationPath": "Extract US 90 inventory first, normalize references, score candidates, then run containment and bucket review.",
+      "readinessImpact": "NOT READY until corridor inventory, candidates, confidence scoring, review buckets, and corridor-level containment are available.",
+      "confidence": {
+        "highConfidenceCandidates": 0,
+        "mediumConfidenceCandidates": 0,
+        "reviewRequiredCandidates": 0,
+        "confidenceRelatedBlockers": [
+          "No scored candidate inventory exists."
+        ]
+      },
+      "blockers": [
+        {
+          "id": "directional_inventory_gap",
+          "category": "Directional inventory gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "No extracted corridor inventory exists for this corridor in the V713 evidence set.",
+          "impact": "No directional candidate records are available to score, contain, review, or consume.",
+          "readinessEffect": "Blocks all readiness gates.",
+          "requiredRemediation": "Create corridor-specific extraction inventory and segment records.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "candidate_generation_gap",
+          "category": "Candidate generation gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "Directional candidate count is 0 because extraction has not produced corridor records.",
+          "impact": "Service consumers have no candidate payloads; fail-closed behavior remains correct.",
+          "readinessEffect": "Blocks route-intelligence onboarding and incident enrichment.",
+          "requiredRemediation": "Generate directional candidates from extracted inventory without changing runtime behavior.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "confidence_failure",
+          "category": "Confidence failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed by absence",
+          "description": "High-, medium-, and review-required candidate availability are all 0.",
+          "impact": "No candidate can be promoted or reviewed for directional use.",
+          "readinessEffect": "Prevents confidence gate completion.",
+          "requiredRemediation": "Run existing confidence scoring after inventory exists; do not modify confidence logic.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "containment_failure",
+          "category": "Containment failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed at corridor level",
+          "description": "County systems pass globally, but these corridor segments cannot pass corridor-level containment because no segment-level county attribution exists.",
+          "impact": "No leakage is detected; tests are unavailable for these corridors.",
+          "readinessEffect": "Prevents county-gated expansion.",
+          "requiredRemediation": "Run corridor containment after extraction for Liberty, Montgomery, and San Jacinto.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "metadata_deficiency",
+          "category": "Metadata deficiencies",
+          "severity": "HIGH",
+          "likelihood": "Likely",
+          "description": "Required tags and normalized references cannot be audited because records are absent; missing_ref, missing_oneway, and missing_county exposure is unknown.",
+          "impact": "Manual review load cannot be estimated.",
+          "readinessEffect": "Prevents reliable candidate promotion.",
+          "requiredRemediation": "Audit ref/oneway/county metadata after extraction.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "review_bucket_unknown",
+          "category": "Review bucket accumulation",
+          "severity": "HIGH",
+          "likelihood": "Confirmed as unknown",
+          "description": "Review bucket counts are unavailable for all protected buckets until extraction.",
+          "impact": "Cannot distinguish expected exclusions from true defects.",
+          "readinessEffect": "Prevents readiness sign-off.",
+          "requiredRemediation": "Produce bucket counts and keep fail-closed exclusions unchanged.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "geometry_ambiguity",
+          "category": "Geometry ambiguity",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Directional geometry ambiguity cannot be assessed without extracted segments; risk is higher for TX 146 and FM 1960.",
+          "impact": "May increase manual review and segmentation corrections.",
+          "readinessEffect": "May delay readiness after inventory exists.",
+          "requiredRemediation": "Review geometry continuity, divided-road directionality, and local naming once records exist.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "segmentation_issue",
+          "category": "Segmentation issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Segment boundaries are not established for these corridors.",
+          "impact": "May create partial coverage or duplicate corridor candidates.",
+          "readinessEffect": "May delay confidence and containment validation.",
+          "requiredRemediation": "Normalize segment cuts before scoring.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "normalization_issue",
+          "category": "Corridor normalization issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "US/TX/FM naming variants and aliases have not been normalized for the Phase 1 corridors.",
+          "impact": "Reference matching may miss records or split a corridor identity.",
+          "readinessEffect": "May create false gaps.",
+          "requiredRemediation": "Define corridor aliases and canonical corridor IDs during extraction.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "prototype_limitation",
+          "category": "Prototype-only limitations",
+          "severity": "HIGH",
+          "likelihood": "Confirmed",
+          "description": "Existing validated inventory is concentrated in the I-69 / US 59 prototype corridor.",
+          "impact": "Phase 1 corridors inherit no ready inventory from the prototype.",
+          "readinessEffect": "Blocks expansion until onboarding moves beyond prototype evidence.",
+          "requiredRemediation": "Treat as intentional prototype scope, then perform corridor-first onboarding.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        }
+      ]
+    },
+    {
+      "corridor": "TX 146",
+      "overallSeverity": "HIGH",
+      "primaryReadinessConstraint": "Missing extracted directional inventory is the primary readiness constraint, with elevated anticipated ambiguity from state-highway shared alignments and boundary interactions.",
+      "expansionDifficulty": "DIFFICULT",
+      "recommendedRemediationPath": "Extract TX 146 inventory, resolve shared-alignment/reference ambiguity, then score candidates and run containment before any promotion review.",
+      "readinessImpact": "NOT READY until corridor inventory, candidates, confidence scoring, review buckets, and corridor-level containment are available.",
+      "confidence": {
+        "highConfidenceCandidates": 0,
+        "mediumConfidenceCandidates": 0,
+        "reviewRequiredCandidates": 0,
+        "confidenceRelatedBlockers": [
+          "No scored candidate inventory exists."
+        ]
+      },
+      "blockers": [
+        {
+          "id": "directional_inventory_gap",
+          "category": "Directional inventory gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "No extracted corridor inventory exists for this corridor in the V713 evidence set.",
+          "impact": "No directional candidate records are available to score, contain, review, or consume.",
+          "readinessEffect": "Blocks all readiness gates.",
+          "requiredRemediation": "Create corridor-specific extraction inventory and segment records.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "candidate_generation_gap",
+          "category": "Candidate generation gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "Directional candidate count is 0 because extraction has not produced corridor records.",
+          "impact": "Service consumers have no candidate payloads; fail-closed behavior remains correct.",
+          "readinessEffect": "Blocks route-intelligence onboarding and incident enrichment.",
+          "requiredRemediation": "Generate directional candidates from extracted inventory without changing runtime behavior.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "confidence_failure",
+          "category": "Confidence failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed by absence",
+          "description": "High-, medium-, and review-required candidate availability are all 0.",
+          "impact": "No candidate can be promoted or reviewed for directional use.",
+          "readinessEffect": "Prevents confidence gate completion.",
+          "requiredRemediation": "Run existing confidence scoring after inventory exists; do not modify confidence logic.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "containment_failure",
+          "category": "Containment failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed at corridor level",
+          "description": "County systems pass globally, but these corridor segments cannot pass corridor-level containment because no segment-level county attribution exists.",
+          "impact": "No leakage is detected; tests are unavailable for these corridors.",
+          "readinessEffect": "Prevents county-gated expansion.",
+          "requiredRemediation": "Run corridor containment after extraction for Liberty, Montgomery, and San Jacinto.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "metadata_deficiency",
+          "category": "Metadata deficiencies",
+          "severity": "HIGH",
+          "likelihood": "Likely",
+          "description": "Required tags and normalized references cannot be audited because records are absent; missing_ref, missing_oneway, and missing_county exposure is unknown.",
+          "impact": "Manual review load cannot be estimated.",
+          "readinessEffect": "Prevents reliable candidate promotion.",
+          "requiredRemediation": "Audit ref/oneway/county metadata after extraction.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "review_bucket_unknown",
+          "category": "Review bucket accumulation",
+          "severity": "HIGH",
+          "likelihood": "Confirmed as unknown",
+          "description": "Review bucket counts are unavailable for all protected buckets until extraction.",
+          "impact": "Cannot distinguish expected exclusions from true defects.",
+          "readinessEffect": "Prevents readiness sign-off.",
+          "requiredRemediation": "Produce bucket counts and keep fail-closed exclusions unchanged.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "geometry_ambiguity",
+          "category": "Geometry ambiguity",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Directional geometry ambiguity cannot be assessed without extracted segments; risk is higher for TX 146 and FM 1960.",
+          "impact": "May increase manual review and segmentation corrections.",
+          "readinessEffect": "May delay readiness after inventory exists.",
+          "requiredRemediation": "Review geometry continuity, divided-road directionality, and local naming once records exist.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "segmentation_issue",
+          "category": "Segmentation issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Segment boundaries are not established for these corridors.",
+          "impact": "May create partial coverage or duplicate corridor candidates.",
+          "readinessEffect": "May delay confidence and containment validation.",
+          "requiredRemediation": "Normalize segment cuts before scoring.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "normalization_issue",
+          "category": "Corridor normalization issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "US/TX/FM naming variants and aliases have not been normalized for the Phase 1 corridors.",
+          "impact": "Reference matching may miss records or split a corridor identity.",
+          "readinessEffect": "May create false gaps.",
+          "requiredRemediation": "Define corridor aliases and canonical corridor IDs during extraction.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "prototype_limitation",
+          "category": "Prototype-only limitations",
+          "severity": "HIGH",
+          "likelihood": "Confirmed",
+          "description": "Existing validated inventory is concentrated in the I-69 / US 59 prototype corridor.",
+          "impact": "Phase 1 corridors inherit no ready inventory from the prototype.",
+          "readinessEffect": "Blocks expansion until onboarding moves beyond prototype evidence.",
+          "requiredRemediation": "Treat as intentional prototype scope, then perform corridor-first onboarding.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        }
+      ]
+    },
+    {
+      "corridor": "FM 1960",
+      "overallSeverity": "HIGH",
+      "primaryReadinessConstraint": "Missing extracted directional inventory is the primary readiness constraint, with elevated anticipated metadata and commuter-arterial segmentation ambiguity.",
+      "expansionDifficulty": "DIFFICULT",
+      "recommendedRemediationPath": "Extract FM 1960 inventory, normalize FM-road references and segmentation, then score candidates and review metadata-heavy exclusions.",
+      "readinessImpact": "NOT READY until corridor inventory, candidates, confidence scoring, review buckets, and corridor-level containment are available.",
+      "confidence": {
+        "highConfidenceCandidates": 0,
+        "mediumConfidenceCandidates": 0,
+        "reviewRequiredCandidates": 0,
+        "confidenceRelatedBlockers": [
+          "No scored candidate inventory exists."
+        ]
+      },
+      "blockers": [
+        {
+          "id": "directional_inventory_gap",
+          "category": "Directional inventory gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "No extracted corridor inventory exists for this corridor in the V713 evidence set.",
+          "impact": "No directional candidate records are available to score, contain, review, or consume.",
+          "readinessEffect": "Blocks all readiness gates.",
+          "requiredRemediation": "Create corridor-specific extraction inventory and segment records.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "candidate_generation_gap",
+          "category": "Candidate generation gaps",
+          "severity": "CRITICAL",
+          "likelihood": "Confirmed",
+          "description": "Directional candidate count is 0 because extraction has not produced corridor records.",
+          "impact": "Service consumers have no candidate payloads; fail-closed behavior remains correct.",
+          "readinessEffect": "Blocks route-intelligence onboarding and incident enrichment.",
+          "requiredRemediation": "Generate directional candidates from extracted inventory without changing runtime behavior.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "confidence_failure",
+          "category": "Confidence failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed by absence",
+          "description": "High-, medium-, and review-required candidate availability are all 0.",
+          "impact": "No candidate can be promoted or reviewed for directional use.",
+          "readinessEffect": "Prevents confidence gate completion.",
+          "requiredRemediation": "Run existing confidence scoring after inventory exists; do not modify confidence logic.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "containment_failure",
+          "category": "Containment failures",
+          "severity": "HIGH",
+          "likelihood": "Confirmed at corridor level",
+          "description": "County systems pass globally, but these corridor segments cannot pass corridor-level containment because no segment-level county attribution exists.",
+          "impact": "No leakage is detected; tests are unavailable for these corridors.",
+          "readinessEffect": "Prevents county-gated expansion.",
+          "requiredRemediation": "Run corridor containment after extraction for Liberty, Montgomery, and San Jacinto.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "metadata_deficiency",
+          "category": "Metadata deficiencies",
+          "severity": "HIGH",
+          "likelihood": "Likely",
+          "description": "Required tags and normalized references cannot be audited because records are absent; missing_ref, missing_oneway, and missing_county exposure is unknown.",
+          "impact": "Manual review load cannot be estimated.",
+          "readinessEffect": "Prevents reliable candidate promotion.",
+          "requiredRemediation": "Audit ref/oneway/county metadata after extraction.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "review_bucket_unknown",
+          "category": "Review bucket accumulation",
+          "severity": "HIGH",
+          "likelihood": "Confirmed as unknown",
+          "description": "Review bucket counts are unavailable for all protected buckets until extraction.",
+          "impact": "Cannot distinguish expected exclusions from true defects.",
+          "readinessEffect": "Prevents readiness sign-off.",
+          "requiredRemediation": "Produce bucket counts and keep fail-closed exclusions unchanged.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "geometry_ambiguity",
+          "category": "Geometry ambiguity",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Directional geometry ambiguity cannot be assessed without extracted segments; risk is higher for TX 146 and FM 1960.",
+          "impact": "May increase manual review and segmentation corrections.",
+          "readinessEffect": "May delay readiness after inventory exists.",
+          "requiredRemediation": "Review geometry continuity, divided-road directionality, and local naming once records exist.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "segmentation_issue",
+          "category": "Segmentation issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "Segment boundaries are not established for these corridors.",
+          "impact": "May create partial coverage or duplicate corridor candidates.",
+          "readinessEffect": "May delay confidence and containment validation.",
+          "requiredRemediation": "Normalize segment cuts before scoring.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        },
+        {
+          "id": "normalization_issue",
+          "category": "Corridor normalization issues",
+          "severity": "MEDIUM",
+          "likelihood": "Anticipated",
+          "description": "US/TX/FM naming variants and aliases have not been normalized for the Phase 1 corridors.",
+          "impact": "Reference matching may miss records or split a corridor identity.",
+          "readinessEffect": "May create false gaps.",
+          "requiredRemediation": "Define corridor aliases and canonical corridor IDs during extraction.",
+          "estimatedRemediationDifficulty": "LOW"
+        },
+        {
+          "id": "prototype_limitation",
+          "category": "Prototype-only limitations",
+          "severity": "HIGH",
+          "likelihood": "Confirmed",
+          "description": "Existing validated inventory is concentrated in the I-69 / US 59 prototype corridor.",
+          "impact": "Phase 1 corridors inherit no ready inventory from the prototype.",
+          "readinessEffect": "Blocks expansion until onboarding moves beyond prototype evidence.",
+          "requiredRemediation": "Treat as intentional prototype scope, then perform corridor-first onboarding.",
+          "estimatedRemediationDifficulty": "MODERATE"
+        }
+      ]
+    }
+  ],
+  "reviewBucketAnalysis": {
+    "reversible_lane": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "construction_segment": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "hov_hot_lane": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "missing_county": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "missing_oneway": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "missing_ref": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    },
+    "manual_review_required": {
+      "count": null,
+      "driver": "Unknown until corridor extraction",
+      "expected": "Unknown",
+      "trueDefect": "Unknown until records exist"
+    }
+  },
+  "containmentAssessment": {
+    "countySystems": [
+      {
+        "county": "Liberty County",
+        "countyContainmentPass": true
+      },
+      {
+        "county": "Montgomery County",
+        "countyContainmentPass": true
+      },
+      {
+        "county": "San Jacinto County",
+        "countyContainmentPass": true
+      }
+    ],
+    "contributesToBlockers": false,
+    "note": "Global county containment remains passing; corridor-level containment is blocked only by absent corridor segment inventory."
+  },
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": {
+    "status": "BLOCKERS WELL UNDERSTOOD",
+    "supportingEvidence": [
+      "All three corridors share confirmed inventory and candidate-generation blockers.",
+      "Confidence and review-bucket blockers are understood as direct consequences of absent extracted records.",
+      "County containment systems remain passing and do not independently cause failure.",
+      "Prototype-only scope explains why evidence exists for I-69 / US 59 but not these Phase 1 corridors."
+    ]
+  }
+}
