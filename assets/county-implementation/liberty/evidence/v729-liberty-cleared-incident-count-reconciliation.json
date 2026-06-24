@@ -1,0 +1,29 @@
+{
+  "version": "V729",
+  "county": "liberty-tx",
+  "mission": "Know Before You Go",
+  "focus": "Exclude cleared and recently-cleared road hazards/crossing reports from shared active count/source surfaces before marker rendering.",
+  "validation": {
+    "clearedRoadHazardsExcludedFromActiveNearbyLocationCounts": true,
+    "clearedCrossingReportsExcludedFromActiveNearbyLocationCounts": true,
+    "recentlyClearedRecordsNotCountedAsActiveNearby": true,
+    "markerSkipNoLongerMasksUpstreamCountDefect": true,
+    "realActiveRecordsRemainCounted": true,
+    "sharedSourceFilter": "gridlyIsActiveCountSurfaceEligibleRecord -> getGridlyActiveCountSurfaceRows -> getGridlyAlertsSurfaceActiveCommunityReportRows/getActiveUnifiedIncidents"
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "countyBoundaries": {
+    "liberty": "launch focus",
+    "montgomery": "support/maintenance unchanged",
+    "sanJacinto": "support/maintenance unchanged",
+    "jefferson": "deferred unchanged"
+  },
+  "finalDetermination": "LIBERTY CLEARED INCIDENT COUNT RECONCILIATION\nPASS"
+}
