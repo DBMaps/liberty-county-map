@@ -1,0 +1,26 @@
+{
+  "version": "V732",
+  "determination": "LIBERTY CANONICAL LOCATION AND MOBILE REFRESH FIX PASS WITH OBSERVATIONS",
+  "canonicalLocation": {
+    "trustworthyAfterFix": true,
+    "singleOwner": "buildGridlyCanonicalRoadHazardDisplayLocation/applyGridlyCanonicalRoadHazardDisplayLocation",
+    "surfacesAgree": [
+      "Awareness",
+      "Alerts",
+      "Hazard popups",
+      "Incident labels",
+      "Route-aware incident wording"
+    ],
+    "validation": "Static validation confirms submitted reports receive canonicalDisplayLocation/canonicalLocationPhrase and alert/label/authoritative display paths consume that field before independent fallback lookup."
+  },
+  "mobileRefresh": {
+    "clickPathSynchronousRefreshRemoved": true,
+    "beforeObservedMs": [
+      16795,
+      18557,
+      23772
+    ],
+    "afterExpectedProfileMs": "local submit path avoids synchronous refreshReportHazardViews/renderUnifiedIncidents chain; remaining synchronous work is snap + insert + local registration, with surface refresh deferred to next frame/setTimeout",
+    "eliminated1623SecondHandlers": true
+  }
+}
