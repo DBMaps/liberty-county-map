@@ -1,0 +1,51 @@
+{
+  "version": "V751",
+  "title": "Operations Center Layout Hierarchy",
+  "finalDetermination": "PASS",
+  "mission": "Know Before You Respond",
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "previewRequiresHelper": "window.gridlyEnableOperationsCenterPreviewForTest?.()"
+  },
+  "defaultDisabledAudit": {
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "previewRendered": false,
+    "safeForMobile": true
+  },
+  "enabledPreviewAudit": {
+    "operationsCenterEnabled": true,
+    "operationsDashboardRendered": true,
+    "layoutHierarchyPass": true,
+    "primaryStatusCardsRendered": true,
+    "sectionHeadersReadable": true,
+    "emptyStatesReadable": true,
+    "noMobileBleedDetected": true,
+    "readOnlyPresentationOnly": true,
+    "previewUsesDataBridge": true,
+    "previewReadOnly": true,
+    "previewCreatesNoWrites": true,
+    "previewCreatesNoFetches": true,
+    "previewCreatesNoTimers": true
+  },
+  "sections": [
+    "Community Status",
+    "Active Incidents",
+    "Community Pulse",
+    "Corridor Status",
+    "Community Summary",
+    "New Reports",
+    "Recently Cleared",
+    "Route Intelligence Summary",
+    "Source Health"
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  }
+}
