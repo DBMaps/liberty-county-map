@@ -1,0 +1,67 @@
+{
+  "version": "V730",
+  "title": "Liberty Mobile Launch Readiness Surface Audit",
+  "mission": "Know Before You Go",
+  "strategicMode": "GRIDLY LAUNCH FOCUS MODE",
+  "primaryLaunchCounty": "Liberty County",
+  "scope": "audit-only",
+  "finalDetermination": "LIBERTY MOBILE LAUNCH READINESS SURFACE AUDIT\nPASS WITH OBSERVATIONS",
+  "safeToContinueTowardLaunch": true,
+  "highestRiskRemainingDefect": "Mobile browser refresh/rehydration timing could resurrect or miscount a cleared road hazard/crossing after real reopen; no static blocker found.",
+  "nextRecommendedMilestone": "V731 Denise-operated mobile browser lifecycle certification with helper output captured before/after submit, clear, refresh, and reopen.",
+  "v731FixRequired": false,
+  "dispatchBoardWorkSafeInParallel": true,
+  "browserValidationPriorEvidence": {
+    "markerSourceCount": 0,
+    "renderedMarkerCount": 0,
+    "cleared_or_recently_cleared": 0,
+    "alertsVsLocationDelta": 0,
+    "quietCopy": ["Community activity is quiet", "No recent reports nearby"]
+  },
+  "requiredQuestions": {
+    "activeSurfaceAgreement": "Static pass; Denise browser confirmation required for final launch sign-off.",
+    "clearedSurfaceAgreement": "Static pass after V729 active-count filtering.",
+    "agreementAfterRefresh": "No static blocker; browser observation remains.",
+    "agreementAfterRehydration": "No static blocker; browser observation remains.",
+    "visibleButNotCounted": "No static evidence found.",
+    "countedButNotVisible": "No static evidence found after V729.",
+    "filtersConsistent": "Static paths present; browser taps required for Nearby/Area/County/Delays/All.",
+    "daytonVsLibertyExpectedDifference": "Dayton is local awareness-area scope; Liberty County is broader county scope.",
+    "mobileOnlyDefects": "None identified statically.",
+    "launchBlockingInconsistency": false
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "countyProgramBoundaries": {
+    "liberty": "Launch Focus",
+    "montgomery": "Maintenance Mode",
+    "sanJacinto": "Maintenance Mode",
+    "jefferson": "Deferred",
+    "countyStatusChanged": false
+  },
+  "helpersReviewed": {
+    "gridlyUiSmokeTest": "present",
+    "gridlyHealthCheck": "present",
+    "gridlyActiveIncidentAudit": "exact helper not found; equivalent coverage through active reconciliation helpers",
+    "gridlyActiveHazardCountReconciliationAudit": "present",
+    "gridlyReportVisibilityPipelineAudit": "present",
+    "gridlyClearedHazardPersistenceAudit": "present",
+    "gridlyCrossingAwarenessPromotionAudit": "present",
+    "gridlyRefreshBreakdownAudit": "present",
+    "gridlyPostSubmitRefreshAudit": "present"
+  },
+  "staticReviewCommands": [
+    "rg -n \"function gridlyIsActiveCountSurfaceEligibleRecord|function getGridlyActiveCountSurfaceRows|function getGridlyAlertsSurfaceActiveCommunityReportRows|function getActiveUnifiedIncidents|function gridlyActiveHazardCountReconciliationAudit|function gridlyReportVisibilityPipelineAudit|function gridlyClearedHazardPersistenceAudit|window.gridlyUiSmokeTest|function gridlyHealthCheck|function gridlyCrossingAwarenessPromotionAudit\" js/app.js",
+    "rg -n \"markerRenderSkipReasons|cleared_or_recently_cleared|activeGeoFilter|geo-filter\" js/app.js",
+    "node -c js/app.js",
+    "node scripts/v729-liberty-cleared-incident-count-reconciliation-validation.mjs",
+    "git diff --check"
+  ],
+  "mergeRecommendation": "Merge as audit-only evidence milestone; use V731 for Denise mobile lifecycle certification unless browser evidence reveals a fix blocker."
+}
