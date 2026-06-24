@@ -1,0 +1,48 @@
+{
+  "version": "V745",
+  "mission": "Know Before You Go / Know Before You Respond",
+  "finalDetermination": "PASS - desktop gate root cause identified and suppressed for Liberty launch focus mobile validation while Operations Center is disabled.",
+  "actualGateRootCause": "The desktop beta gate is a CSS-owned surface activated by body[data-layout-mode=\"desktop\"]. The runtime layout resolver selected desktop for wide, non-coarse-pointer local browser viewports, which masked the mobile portrait experience even though Operations Center shell and data bridge remained disabled and non-rendered.",
+  "gateSourceReason": {
+    "desktopGateSource": "css_body_data_layout_mode_desktop_gridlyDesktopGate",
+    "previousReason": "desktop_layout_width_gate",
+    "fixedDefaultReason": "suppressed_for_launch_focus_or_mobile_validation"
+  },
+  "patchApplied": {
+    "smallestConfirmedCause": "Tightened desktop layout activation by routing default wide desktop validation viewports to portrait when Liberty launch focus mobile validation is active, Operations Center is disabled, and the desktop gate was not intentionally requested.",
+    "intentionalDesktopGatePreservedBy": "URL query ?gridlyDesktopGate=1, ?gridlyDesktopGate=true, or data-gridly-desktop-gate=\"enabled\" on html/body."
+  },
+  "isolationAudit": {
+    "status": "PASS",
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "dataBridgeRendered": false,
+    "desktopGateVisible": false,
+    "desktopGateReason": "suppressed_for_launch_focus_or_mobile_validation",
+    "desktopGateSource": "css_body_data_layout_mode_desktop_gridlyDesktopGate",
+    "mobileExperienceVisible": true,
+    "mobileExperienceVisibilityReason": "portrait_mobile_surface_visible",
+    "operationsGateSideEffectDetected": false,
+    "safeForMobile": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "whatDidNotChange": [
+    "Mobile portrait layout, bottom dock, Awareness Brief wording, Community Pulse wording, Location Awareness wording, report lifecycle, Route Watch behavior, marker rendering, and refresh pipeline were not changed.",
+    "Operations Center remains disabled by default and no live Operations Center UI was built."
+  ],
+  "deniseBrowserValidationSteps": [
+    "Open the app in the default local desktop browser validation viewport with no gridlyDesktopGate query parameter.",
+    "Run window.gridlyOperationsIsolationAudit?.() and confirm the V745 expected PASS fields.",
+    "Run window.gridlyOperationsDataBridgeAudit?.() and confirm the bridge remains read-only and non-rendered while disabled.",
+    "Run window.gridlyRefreshBreakdownAudit?.() and confirm refresh performance remains fast.",
+    "Run window.gridlyUiSmokeTest?.() and confirm UI smoke remains healthy."
+  ],
+  "mergeRecommendation": "MERGE after required validation passes."
+}
