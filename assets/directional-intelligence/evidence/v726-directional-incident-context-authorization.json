@@ -1,0 +1,152 @@
+{
+  "milestone": "V726",
+  "title": "Directional Incident Context Authorization",
+  "scope": "Authorization review only; no implementation, rendering, runtime behavior, user-facing wording, or ownership changes.",
+  "finalDetermination": "DIRECTIONAL INCIDENT CONTEXT AUTHORIZED WITH OBSERVATIONS",
+  "authorizedFutureSurfaces": [
+    "incident labels",
+    "alert card wording builders",
+    "hazard popup wording builders",
+    "crossing popup wording builders",
+    "route-related wording surfaces that consume incident wording",
+    "buildLocalizedIncidentLabel",
+    "buildRoadHazardDisplay",
+    "resolveGridlyAuthoritativeIncidentDisplayLocation"
+  ],
+  "prohibitedSurfaces": [
+    "Awareness Brief primary ownership",
+    "Awareness Brief secondary ownership",
+    "Community Pulse ownership surfaces",
+    "active-awareness arbitration ownership surfaces",
+    "direct writes to gridlyV2TopStatusPrimary",
+    "direct writes to gridlyV2TopStatusSecondary"
+  ],
+  "ownershipDetermination": {
+    "awarenessBriefParticipationAuthorized": false,
+    "communityPulseParticipationAuthorized": false,
+    "incidentWordingBuilderPathAuthorized": true,
+    "directAwarenessDomWritesAuthorized": false
+  },
+  "architectureReview": {
+    "runtimeCandidatePrototype": {
+      "file": "js/gridlyDirectionalRuntimeCandidatePrototype.js",
+      "validated": true,
+      "reusePath": "source validation and fail-closed candidate eligibility pattern"
+    },
+    "serviceLayer": {
+      "file": "js/gridlyDirectionalServiceLayer.js",
+      "validated": true,
+      "reusePath": "service boundary for future incident wording consumer"
+    },
+    "consumerLayer": {
+      "file": "js/gridlyDirectionalServiceConsumer.js",
+      "validated": true,
+      "reusePath": "consumer boundary; must remain wording-only and fail-closed"
+    },
+    "awarenessLayer": {
+      "file": "js/gridlyDirectionalAwarenessLayer.js",
+      "validated": true,
+      "reusePath": "do not reuse direct top-awareness rendering path; reuse only evidence and protections"
+    }
+  },
+  "staticReviewEvidence": {
+    "refreshPortraitV2LocalizedIntelligence": "js/app.js owns localized Awareness Brief refresh and writes top status primary/secondary.",
+    "gridlyV2TopStatusPrimary": "index.html defines the top status primary element; js/gridlyDirectionalAwarenessLayer.js also targets it, which is prohibited for future directional incident context.",
+    "gridlyV2TopStatusSecondary": "index.html defines the top status secondary element; js/gridlyDirectionalAwarenessLayer.js also targets it, which is prohibited for future directional incident context.",
+    "buildLocalizedIncidentLabel": "js/app.js incident label builder is suitable for future optional directional enrichment.",
+    "buildRoadHazardDisplay": "js/app.js road hazard display builder is suitable for future optional directional enrichment.",
+    "resolveGridlyAuthoritativeIncidentDisplayLocation": "js/app.js authoritative location resolver is suitable as an eligibility checkpoint before adding direction.",
+    "gridlyDirectionalServiceConsumer": "js/gridlyDirectionalServiceConsumer.js keeps directional labels unexposed and protected integrations disconnected.",
+    "userFacingRenderingEnabled": "All reviewed Phase 1 runtime assets keep userFacingRenderingEnabled false."
+  },
+  "confidenceAndEligibilityRequirements": {
+    "minimumConfidence": "high/promotable runtime-eligible candidate only",
+    "corridorEligibilityRequired": true,
+    "activationEligibilityRequired": true,
+    "runtimeEligibilityRequired": true,
+    "sourceTraceableRequired": true,
+    "countyContainmentRequired": true,
+    "authoritativeIncidentLocationRequired": true,
+    "approvedDirectionWords": [
+      "Northbound",
+      "Southbound",
+      "Eastbound",
+      "Westbound"
+    ],
+    "excludedStates": [
+      "medium confidence",
+      "bearing-only",
+      "missing oneway",
+      "reversible lane",
+      "construction segment",
+      "HOV/HOT lane",
+      "missing county",
+      "missing ref",
+      "manual review required",
+      "blocked",
+      "ambiguous",
+      "leakage detected"
+    ],
+    "fallbackBehavior": {
+      "omitDirectionWhenInsufficient": true,
+      "fallBackToCurrentWording": true,
+      "remainFailClosed": true,
+      "placeholderDirectionTextAllowed": false
+    }
+  },
+  "runtimeAssetReview": {
+    "US90": {
+      "asset": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "runtimeCandidateCount": 81,
+      "futureIncidentContextAuthorized": true,
+      "observationsRequired": true
+    },
+    "TX146": {
+      "asset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "runtimeCandidateCount": 36,
+      "futureIncidentContextAuthorized": true,
+      "observationsRequired": true
+    },
+    "FM1960": {
+      "asset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "runtimeCandidateCount": 0,
+      "futureIncidentContextAuthorized": false,
+      "deferred": true,
+      "failClosed": true
+    }
+  },
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "authorizationBeforeRendering": {
+    "userFacingRenderingEnabledMayBecomeTrueOnlyAfterFutureMilestone": true,
+    "US90RequiresExplicitFutureRenderingAuthorization": true,
+    "TX146RequiresExplicitFutureRenderingAuthorization": true,
+    "FM1960RequiresNewReadinessAndAuthorizationBeforeAnyDisplay": true
+  },
+  "implementationRecommendation": {
+    "proceedToFutureV727": true,
+    "limits": [
+      "incident wording enrichment only",
+      "no direct Awareness Brief DOM writes",
+      "no Community Pulse ownership participation",
+      "no runtime behavior change in V726"
+    ]
+  },
+  "mergeRecommendation": {
+    "quickSummary": "Authorize future directional incident context with observations for US 90 and TX 146; keep FM 1960 deferred and all rendering disabled in V726.",
+    "recommendation": "Merge V726 documentation and evidence.",
+    "exactNextStep": "Open V727 for fail-closed incident wording enrichment design behind explicit per-corridor rendering authorization."
+  }
+}
