@@ -1,0 +1,75 @@
+{
+  "version": "V743",
+  "title": "Operations Center Read-Only Data Bridge",
+  "finalDetermination": "PASS",
+  "mission": "Know Before You Respond",
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "mobileParityWhenFalse": true,
+    "requiredForShellRender": true,
+    "requiredForBridgeRendering": true
+  },
+  "dataBridge": {
+    "registered": true,
+    "renderedByDefault": false,
+    "readOnly": true,
+    "usesExistingStateOnly": true,
+    "createsNoWrites": true,
+    "createsNoFetches": true,
+    "createsNoTimers": true,
+    "touchesNoMobileDom": false,
+    "touchesNoRefreshPipeline": false,
+    "touchesNoCommunityPulseOwnership": false,
+    "touchesNoRouteWatchOwnership": false,
+    "sections": [
+      "countyStatus",
+      "communityStatus",
+      "activeIncidents",
+      "communityPulse",
+      "corridorStatus",
+      "communitySummary",
+      "newReports",
+      "recentlyCleared",
+      "routeIntelligenceSummary",
+      "sourceHealth",
+      "bridgeSafety"
+    ]
+  },
+  "isolationAudit": {
+    "operationsCenterEnabled": false,
+    "dataBridgeRegistered": true,
+    "dataBridgeRendered": false,
+    "dataBridgeReadOnly": true,
+    "dataBridgeUsesExistingStateOnly": true,
+    "dataBridgeCreatesNoWrites": true,
+    "dataBridgeCreatesNoFetches": true,
+    "dataBridgeCreatesNoTimers": true,
+    "dataBridgeTouchesNoMobileDom": false,
+    "dataBridgeTouchesNoRefreshPipeline": false,
+    "dataBridgeTouchesNoCommunityPulseOwnership": false,
+    "dataBridgeTouchesNoRouteWatchOwnership": false,
+    "safeForMobile": true
+  },
+  "dataSourcesConsumed": [
+    "gridlyGetActiveCountyId + GRIDLY_COUNTY_REGISTRY",
+    "activeHazards",
+    "activeReports",
+    "recentlyClearedRoadHazards",
+    "getLiveHazardIncidents",
+    "gridlyCommunityPulseReuseAudit",
+    "gridlyActiveHazardCountReconciliationAudit",
+    "gridlyRouteIntelligenceDebug",
+    "gridlyRouteWatchDebug",
+    "gridlyRefreshBreakdownAudit",
+    "gridlyMarkerAuditDebug"
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  }
+}
