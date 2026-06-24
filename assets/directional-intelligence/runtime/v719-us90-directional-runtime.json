@@ -2,7 +2,7 @@
   "corridorId": "us90",
   "displayName": "US 90",
   "preparedAt": "2026-06-24T00:00:00.000Z",
-  "activationEnabled": false,
+  "activationEnabled": true,
   "userFacingRenderingEnabled": false,
   "candidates": [
     {
