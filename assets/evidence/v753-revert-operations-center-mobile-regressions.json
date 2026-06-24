@@ -1,0 +1,36 @@
+{
+  "version": "V753",
+  "finalDetermination": "BLOCKED_PENDING_DENISE_VISUAL_CONFIRMATION",
+  "decision": "Restore validated V749/V750-era mobile portrait containment by disabling Operations Center preview rendering.",
+  "rootCauseRemoved": [
+    "V751 dashboard layout hierarchy rendering",
+    "V751 premium Operations Center visual CSS",
+    "V751R isolated fixed preview host DOM",
+    "V752 off-canvas/mobile preview CSS and visual containment preview path"
+  ],
+  "operationsCenter": {
+    "foundationPreserved": true,
+    "dataBridgePreserved": true,
+    "previewDisabled": true,
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "previewRendered": false,
+    "safeForMobile": true
+  },
+  "expectedMobilePortraitAudit": {
+    "mobilePortraitIntegrityPass": true,
+    "horizontalSplitDetected": false,
+    "mobileContentClipped": false,
+    "leftBleedDetected": false,
+    "operationsCssLeakDetected": false,
+    "operationsPreviewAffectsMobileLayout": false
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  }
+}
