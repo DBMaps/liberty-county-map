@@ -1,0 +1,47 @@
+{
+  "version": "V749",
+  "mission": "Know Before You Go / Know Before You Respond",
+  "status": "PASS",
+  "finalDetermination": "PASS - applyLayoutMode() now applies launch-focus portrait containment whenever Operations Center is disabled, final active layout mode is portrait, no intentional desktop gate override is requested, and launch-focus/mobile-validation context is active or the desktop gate was suppressed/bypassed for launch-focus validation.",
+  "v748RootCauseAddressed": true,
+  "patchApplied": "Decoupled body.gridly-launch-focus-portrait-validation activation from the narrow lastLayoutSignal.desktopGateSuppressedForLaunchFocus branch.",
+  "containmentActivationRule": {
+    "operationsCenterEnabled": false,
+    "finalLayoutMode": "portrait",
+    "intentionalDesktopGateRequested": false,
+    "launchFocusMobileValidationActiveOrSuppressed": true,
+    "bodyClass": "gridly-launch-focus-portrait-validation",
+    "reason": "launch_focus_portrait_container_active"
+  },
+  "intentionalDesktopGateOverridePreserved": [
+    "?gridlyDesktopGate=1",
+    "?gridlyDesktopGate=true",
+    "data-gridly-desktop-gate=\"enabled\" on html/body"
+  ],
+  "isolationAudit": {
+    "status": "PASS",
+    "desktopGateVisible": false,
+    "mobileExperienceVisible": true,
+    "mobilePortraitContained": true,
+    "portraitContainmentReason": "launch_focus_portrait_container_active",
+    "containedByWidth": true,
+    "containmentClassPresent": true,
+    "containmentStyleApplied": true,
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "dataBridgeRendered": false,
+    "operationsGateSideEffectDetected": false,
+    "safeForMobile": true,
+    "finalLayoutMode": "portrait",
+    "containmentClassPresentOnBody": true,
+    "portraitRootWidthBounded": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  }
+}
