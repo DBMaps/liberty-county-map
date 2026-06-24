@@ -1,0 +1,59 @@
+{
+  "version": "V744",
+  "title": "Operations Center Gate Isolation Fix",
+  "finalDetermination": "PASS",
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "confirmedFalseDuringIssue": true
+  },
+  "gateIssueRootCause": {
+    "cause": "The Operations Center registration did not render the shell or bridge, but the isolation audit did not explicitly prove disabled Operations Center work could not coincide with or mask a desktop/tactical gate state. V744 adds visible-gate and mobile-experience checks to the Operations isolation contract.",
+    "viewportDetection": "audited",
+    "desktopLandingActivation": "blocked from Operations Center side effects when disabled",
+    "operationsShellRegistrationSideEffect": false,
+    "bodyClassMutation": false,
+    "rootContainerMutation": false,
+    "desktopSafeModeFallback": false,
+    "missingMobileMount": false
+  },
+  "isolationAudit": {
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "dataBridgeRendered": false,
+    "desktopGateVisible": false,
+    "mobileExperienceVisible": true,
+    "operationsGateSideEffectDetected": false,
+    "safeForMobile": true
+  },
+  "desktopGateBehavior": {
+    "operationsRegistrationAltersDesktopGate": false,
+    "operationsCssAddsDesktopOrLandingClasses": false,
+    "operationsDomHelperTouchesPresentationStateWhenDisabled": false
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "browserValidationExpected": {
+    "window.gridlyOperationsIsolationAudit?.()": {
+      "status": "PASS",
+      "findings.operationsCenterEnabled": false,
+      "findings.shellRendered": false,
+      "findings.dataBridgeRendered": false,
+      "findings.desktopGateVisible": false,
+      "findings.mobileExperienceVisible": true,
+      "findings.operationsGateSideEffectDetected": false,
+      "findings.safeForMobile": true
+    },
+    "window.gridlyOperationsDataBridgeAudit?.()": {
+      "operationsCenterEnabled": false,
+      "dataBridgeRendered": false
+    }
+  },
+  "mergeRecommendation": "Merge after Denise validates on a portrait mobile viewport that the mobile experience is visible and no desktop or tactical gate appears from disabled Operations Center registration."
+}
