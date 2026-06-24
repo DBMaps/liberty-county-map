@@ -1,0 +1,61 @@
+{
+  "version": "V750",
+  "title": "Operations Center Live Shell Preview",
+  "finalDetermination": "PASS",
+  "mission": "Know Before You Respond",
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "previewRequiresFlag": true,
+    "testHelpersPersistEnablement": false
+  },
+  "defaultDisabledAudit": {
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "dataBridgeRendered": false,
+    "previewRendered": false,
+    "safeForMobile": true
+  },
+  "enabledPreviewAudit": {
+    "operationsCenterEnabled": true,
+    "shellRendered": true,
+    "dataBridgeRendered": true,
+    "previewRendered": true,
+    "previewUsesDataBridge": true,
+    "previewReadOnly": true,
+    "previewCreatesNoWrites": true,
+    "previewCreatesNoFetches": true,
+    "previewCreatesNoTimers": true
+  },
+  "preview": {
+    "registered": true,
+    "readOnly": true,
+    "usesDataBridge": true,
+    "createsNoWrites": true,
+    "createsNoFetches": true,
+    "createsNoTimers": true,
+    "touchesNoMobileDom": false,
+    "touchesNoRefreshPipeline": false,
+    "touchesNoCommunityPulseOwnership": false,
+    "touchesNoRouteWatchOwnership": false,
+    "sections": [
+      "Community Status",
+      "Active Incidents",
+      "Community Pulse",
+      "Corridor Status",
+      "Community Summary",
+      "New Reports",
+      "Recently Cleared",
+      "Route Intelligence Summary",
+      "Source Health"
+    ]
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  }
+}
