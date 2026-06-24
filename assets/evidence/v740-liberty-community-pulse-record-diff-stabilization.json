@@ -1,0 +1,53 @@
+{
+  "version": "V740",
+  "mission": "Know Before You Go",
+  "finalDetermination": "The remaining V739 record-level miss is classified as volatile/equivalent when the changed field is raw-only serialization of the same authoritative record parts; lifecycle/status, type/category, report count, canonical location, coordinates, and active/cleared eligibility remain protected.",
+  "exactRecordLevelDiffFinding": {
+    "changedRecordId": "Denise physical-device V739 changedRecordIds[0]",
+    "changedRecordField": "raw (record signature serialization only)",
+    "beforeAfterValues": "Inspect window.gridlyV739CommunityPulseSignatureDiffAudit?.().changedRecordValuesBeforeAfter on device; V740 keeps the before/after audit visible while parsing JSON signatures and legacy colon signatures.",
+    "classification": "volatile/equivalent if changedRecordFields contains only raw; authoritative if lifecycle, type, reportCount, lat, or lng changes",
+    "userFacingWordingImpact": false,
+    "protectedFieldImpact": {
+      "lifecycleStatus": false,
+      "typeCategory": false,
+      "reportCount": false,
+      "canonicalLocation": false,
+      "coordinates": false,
+      "activeClearedEligibility": false
+    }
+  },
+  "patchApplied": "Stable record signatures now use canonical JSON parts so delimiters and null/undefined record-field formatting cannot create raw-only misses; V739 field-level audit visibility is preserved and remains backward-compatible with legacy colon signatures.",
+  "whatDidNotChange": [
+    "Community Pulse wording",
+    "report lifecycle",
+    "marker rendering",
+    "Route Watch behavior",
+    "Dispatch Board",
+    "county expansion",
+    "DriveTexas or Transportation Intelligence",
+    "historical reads or history UI"
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "performanceTargets": {
+    "totalRefreshMs": "< 5000",
+    "refreshGridlyCommunityPulseSharedModelMs": "< 1500 on unchanged warm refresh",
+    "refreshPortraitV2LocalizedIntelligenceMs": "< 1500",
+    "renderUnifiedIncidentsMs": "< 500",
+    "cacheOutcome": "hit on unchanged warm refresh",
+    "exactCacheMissReason": "cache_hit_signature_match on unchanged warm refresh"
+  },
+  "deniseValidation": [
+    "Run two unchanged warm refreshes on the physical device.",
+    "Confirm window.gridlyRefreshBreakdownAudit?.().v738CommunityPulseReuseAudit.cacheOutcome is hit.",
+    "Confirm window.gridlyV739CommunityPulseSignatureDiffAudit?.().changedRecordIds is empty unless lifecycle, type, reportCount, lat, or lng changed."
+  ],
+  "mergeRecommendation": "Merge after Denise confirms unchanged warm refresh cache hit and no authoritative changedRecordFields."
+}
