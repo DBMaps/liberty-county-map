@@ -1,0 +1,265 @@
+{
+  "milestone": "V716",
+  "title": "Phase 1 Candidate Generation And Readiness Validation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "positioning": {
+    "primary": "Awareness Platform First",
+    "secondary": "Route Intelligence Second"
+  },
+  "scope": {
+    "candidateGenerationValidationOnly": true,
+    "corridorActivationChanges": false,
+    "runtimeChanges": false,
+    "renderingChanges": false,
+    "alertsChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "countySystemChanges": false,
+    "supabaseChanges": false
+  },
+  "candidateMethod": {
+    "prototypeRules": [
+      "Generate candidates only from source LineString features with usable endpoint bearing.",
+      "Exclude review bucket exposure from candidate promotion.",
+      "High confidence requires Liberty County containment, ref presence, oneway=yes, and no review buckets.",
+      "Medium confidence requires Liberty County containment, ref presence, explicit oneway=no, and no review buckets.",
+      "Missing/non-Liberty county, missing ref, missing oneway, reversible/center turn lane, construction, HOV/HOT, or manual review exposure is not promoted."
+    ],
+    "reviewBuckets": [
+      "reversible_lane",
+      "construction_segment",
+      "hov_hot_lane",
+      "missing_county",
+      "missing_oneway",
+      "missing_ref",
+      "manual_review_required"
+    ]
+  },
+  "corridors": [
+    {
+      "corridor": "US 90",
+      "sourcePath": "assets/directional-intelligenc/source/osm/liberty-us90-source.geojson",
+      "sourceFeatureCount": 127,
+      "candidateCount": 40,
+      "highConfidenceCount": 40,
+      "mediumConfidenceCount": 0,
+      "reviewRequiredCount": 87,
+      "excludedCount": 87,
+      "reviewBucketExposure": {
+        "reversible_lane": 14,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 14,
+        "missing_oneway": 34,
+        "missing_ref": 0,
+        "manual_review_required": 43
+      },
+      "validation": {
+        "containmentPass": true,
+        "bearingProtectionPass": true,
+        "failClosedPass": true
+      },
+      "samples": [
+        {
+          "sourceId": "way/21021786",
+          "confidence": "review_required",
+          "bearing": 80.72,
+          "direction": "NB",
+          "reviewBuckets": [
+            "manual_review_required"
+          ]
+        },
+        {
+          "sourceId": "way/21077231",
+          "confidence": "high",
+          "bearing": 260.32,
+          "direction": "SB",
+          "reviewBuckets": []
+        },
+        {
+          "sourceId": "way/21077234",
+          "confidence": "review_required",
+          "bearing": 259.33,
+          "direction": "SB",
+          "reviewBuckets": [
+            "reversible_lane",
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/21077238",
+          "confidence": "high",
+          "bearing": 228.68,
+          "direction": "SB",
+          "reviewBuckets": []
+        },
+        {
+          "sourceId": "way/21077255",
+          "confidence": "high",
+          "bearing": 261.29,
+          "direction": "SB",
+          "reviewBuckets": []
+        }
+      ],
+      "determination": "READY WITH OBSERVATIONS"
+    },
+    {
+      "corridor": "TX 146",
+      "sourcePath": "assets/directional-intelligenc/source/osm/liberty-tx146-source.geojson",
+      "sourceFeatureCount": 87,
+      "candidateCount": 20,
+      "highConfidenceCount": 20,
+      "mediumConfidenceCount": 0,
+      "reviewRequiredCount": 67,
+      "excludedCount": 67,
+      "reviewBucketExposure": {
+        "reversible_lane": 17,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 14,
+        "missing_oneway": 43,
+        "missing_ref": 0,
+        "manual_review_required": 19
+      },
+      "validation": {
+        "containmentPass": true,
+        "bearingProtectionPass": true,
+        "failClosedPass": true
+      },
+      "samples": [
+        {
+          "sourceId": "way/21077231",
+          "confidence": "high",
+          "bearing": 260.32,
+          "direction": "SB",
+          "reviewBuckets": []
+        },
+        {
+          "sourceId": "way/21077234",
+          "confidence": "review_required",
+          "bearing": 259.33,
+          "direction": "SB",
+          "reviewBuckets": [
+            "reversible_lane",
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/21077434",
+          "confidence": "high",
+          "bearing": 188.44,
+          "direction": "WB",
+          "reviewBuckets": []
+        },
+        {
+          "sourceId": "way/21077442",
+          "confidence": "review_required",
+          "bearing": 169.47,
+          "direction": "WB",
+          "reviewBuckets": [
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/21077448",
+          "confidence": "review_required",
+          "bearing": 11.57,
+          "direction": "EB",
+          "reviewBuckets": [
+            "missing_oneway"
+          ]
+        }
+      ],
+      "determination": "READY WITH OBSERVATIONS"
+    },
+    {
+      "corridor": "FM 1960",
+      "sourcePath": "assets/directional-intelligenc/source/osm/liberty-fm1960-source.geojson",
+      "sourceFeatureCount": 5,
+      "candidateCount": 0,
+      "highConfidenceCount": 0,
+      "mediumConfidenceCount": 0,
+      "reviewRequiredCount": 5,
+      "excludedCount": 5,
+      "reviewBucketExposure": {
+        "reversible_lane": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 4,
+        "missing_oneway": 4,
+        "missing_ref": 0,
+        "manual_review_required": 0
+      },
+      "validation": {
+        "containmentPass": true,
+        "bearingProtectionPass": true,
+        "failClosedPass": true
+      },
+      "samples": [
+        {
+          "sourceId": "way/21081368",
+          "confidence": "review_required",
+          "bearing": 64.8,
+          "direction": "NB",
+          "reviewBuckets": [
+            "missing_county"
+          ]
+        },
+        {
+          "sourceId": "way/21082063",
+          "confidence": "review_required",
+          "bearing": 89.25,
+          "direction": "NB",
+          "reviewBuckets": [
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/220291030",
+          "confidence": "review_required",
+          "bearing": 111.81,
+          "direction": "NB",
+          "reviewBuckets": [
+            "missing_county",
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/220291031",
+          "confidence": "review_required",
+          "bearing": 93.28,
+          "direction": "NB",
+          "reviewBuckets": [
+            "missing_county",
+            "missing_oneway"
+          ]
+        },
+        {
+          "sourceId": "way/751881385",
+          "confidence": "review_required",
+          "bearing": 89.58,
+          "direction": "NB",
+          "reviewBuckets": [
+            "missing_county",
+            "missing_oneway"
+          ]
+        }
+      ],
+      "determination": "NOT READY"
+    }
+  ],
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false,
+    "status": "UNCHANGED_BY_V716_DOCUMENTATION_AND_EVIDENCE_ONLY"
+  },
+  "overallDetermination": "PHASE 1 NOT READY",
+  "overallBlockingObservation": "FM 1960 produced zero promotable candidates under the fail-closed prototype rules because every source feature carries review bucket exposure."
+}
