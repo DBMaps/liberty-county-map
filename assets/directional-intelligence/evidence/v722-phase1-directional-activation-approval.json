@@ -1,0 +1,140 @@
+{
+  "milestone": "V722",
+  "title": "Phase 1 Directional Activation Approval",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "activationApprovalDeterminationOnly": true,
+    "runtimeActivation": false,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false,
+    "candidateInventoryChanges": false,
+    "runtimeAssetChanges": false
+  },
+  "reviewedMilestones": [
+    "V718 Phase 1 Expansion Authorization Review",
+    "V719 Corridor Expansion Implementation",
+    "V720 Corridor Expansion Validation",
+    "V721 Directional Activation Readiness Review"
+  ],
+  "readinessConfirmations": {
+    "inventoryReadiness": "PASS WITH OBSERVATIONS",
+    "candidateReadiness": "PASS WITH OBSERVATIONS",
+    "confidenceReadiness": "PASS WITH OBSERVATIONS",
+    "containmentReadiness": "PASS WITH OBSERVATIONS",
+    "protectionReadiness": "PASS",
+    "operationalReadiness": "PASS WITH OBSERVATIONS",
+    "riskReadiness": "PASS WITH OBSERVATIONS",
+    "reviewBucketReadiness": "PASS WITH OBSERVATIONS"
+  },
+  "corridorApprovals": [
+    {
+      "corridorId": "us90",
+      "displayName": "US 90",
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "reviewRequiredCount": 46,
+      "runtimeCandidateCount": 81,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "MODERATE",
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "rationale": "US 90 has a promotable inactive runtime subset and all required protections pass; approval carries observations for review-required volume, source metadata gaps, and cross-county/source containment controls."
+    },
+    {
+      "corridorId": "tx146",
+      "displayName": "TX 146",
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "reviewRequiredCount": 51,
+      "runtimeCandidateCount": 36,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "MODERATE",
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "rationale": "TX 146 has a promotable inactive runtime subset and all required protections pass; approval carries observations for review-required volume, source metadata gaps, and cross-county/source containment controls."
+    },
+    {
+      "corridorId": "fm1960",
+      "displayName": "FM 1960",
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "reviewRequiredCount": 5,
+      "runtimeCandidateCount": 0,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "HIGH",
+      "approvalStatus": "DEFERRED",
+      "rationale": "Continued deferral remains appropriate because candidateCount=5, promotableCount=0, reviewRequiredCount=5, all candidates are manual-review-required, and the runtime candidate set remains empty by fail-closed design."
+    }
+  ],
+  "approvalMatrix": [
+    {
+      "corridor": "US 90",
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "MODERATE",
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "rationale": "US 90 has a promotable inactive runtime subset and all required protections pass; approval carries observations for review-required volume, source metadata gaps, and cross-county/source containment controls."
+    },
+    {
+      "corridor": "TX 146",
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "MODERATE",
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "rationale": "TX 146 has a promotable inactive runtime subset and all required protections pass; approval carries observations for review-required volume, source metadata gaps, and cross-county/source containment controls."
+    },
+    {
+      "corridor": "FM 1960",
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "containmentStatus": "PASS",
+      "protectionStatus": "PASS",
+      "riskLevel": "HIGH",
+      "approvalStatus": "DEFERRED",
+      "rationale": "Continued deferral remains appropriate because candidateCount=5, promotableCount=0, reviewRequiredCount=5, all candidates are manual-review-required, and the runtime candidate set remains empty by fail-closed design."
+    }
+  ],
+  "protectionReview": {
+    "containmentPass": "PASS WITH OBSERVATIONS",
+    "bearingProtectionPass": "PASS",
+    "failClosedPass": "PASS",
+    "reviewBucketProtectionPass": "PASS",
+    "rationale": "Protections remain unchanged and inactive; observations are limited to source metadata/county containment evidence, not runtime behavior."
+  },
+  "riskReview": {
+    "confidenceDrift": "MODERATE",
+    "directionalAmbiguity": "MODERATE",
+    "reviewBucketGrowth": "MODERATE",
+    "countyLeakage": "MODERATE",
+    "operationalMaintenance": "MODERATE",
+    "navigationCreep": "LOW",
+    "overallRisk": "MODERATE",
+    "rationale": "US 90 and TX 146 carry moderate evidence/maintenance risk; FM 1960 is high corridor-specific risk and remains deferred, reducing activation-package risk."
+  },
+  "recommendation": "Approve US 90 and TX 146 only; defer FM 1960.",
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "PHASE 1 ACTIVATION APPROVED WITH OBSERVATIONS",
+  "finalRationale": "Approval is limited to the activation package determination for US 90 and TX 146. No runtime activation, user-facing rendering, routing, navigation, county, Supabase, or protected-system changes are made. FM 1960 remains deferred because it has zero promotable candidates and all five candidates remain in the review-required bucket."
+}
