@@ -14,7 +14,7 @@ assert.match(app, /desktopGateSuppressedForLaunchFocus \? "portrait" : forcedDes
 assert.match(app, /const desktopGateReason = desktopGateVisible \? GRIDLY_DESKTOP_GATE_DEFAULT_REASON : getGridlyDesktopGateReason\(\);/, 'isolation audit must expose desktop gate reason');
 assert.match(app, /const desktopGateSource = GRIDLY_DESKTOP_GATE_SOURCE;/, 'isolation audit must expose desktop gate source');
 assert.match(app, /const mobileExperienceVisibilityReason = mobileExperienceVisible \? "portrait_mobile_surface_visible" : "no_mobile_owned_surface_visible";/, 'isolation audit must expose mobile visibility reason');
-assert.match(app, /version: "V745"/, 'isolation audit version must be V745');
+assert.match(app, /version: "V74[56]"/, 'isolation audit version must remain V745-compatible or newer');
 
 assert.equal(evidence.isolationAudit.status, 'PASS');
 assert.equal(evidence.isolationAudit.operationsCenterEnabled, false);

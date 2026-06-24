@@ -20707,3 +20707,45 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   color: rgba(233, 251, 255, 0.76);
   line-height: 1.45;
 }
+
+
+/* GRIDLY V746 — launch-focus desktop validation keeps Portrait V2 visually phone-contained. */
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 245, 240, 0.08), transparent 34%), var(--gridly-bg-deep);
+}
+
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 {
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: auto;
+  width: min(100vw, 430px);
+  max-width: 430px;
+  height: 100vh;
+  transform: translateX(-50%);
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0, 245, 240, 0.16), 0 26px 70px rgba(0, 0, 0, 0.58);
+  background: var(--gridly-bg-deep);
+}
+
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-topbar,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-status-pill,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-segments,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-sheet {
+  left: calc(50% - min(50vw, 215px) + 10px);
+  right: calc(50% - min(50vw, 215px) + 10px);
+}
+
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-control-rail {
+  right: calc(50% - min(50vw, 215px) + 10px);
+}
+
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-bottom-region,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-bottom-dock {
+  left: calc(50% - min(50vw, 215px) + 10px);
+  right: calc(50% - min(50vw, 215px) + 10px);
+}
