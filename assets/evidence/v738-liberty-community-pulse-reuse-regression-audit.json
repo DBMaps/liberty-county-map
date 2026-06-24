@@ -1,0 +1,38 @@
+{
+  "version": "V738",
+  "mission": "Know Before You Go",
+  "finalDetermination": "Community Pulse reuse regression confirmed for unchanged authoritative content when volatile freshness/update timestamps changed the V734 shared-model signature.",
+  "regressionConfirmed": true,
+  "exactCacheMissReason": "cache_miss_authoritative_signature_changed after timestamp-only record field churn; first refresh remains cache_miss_no_shared_model, unchanged warm refresh should become cache_hit_signature_match.",
+  "exactVolatileSignatureField": ["updated_at", "updatedAt", "lastUpdated", "created_at", "createdAt", "submittedAt", "timestamp"],
+  "patch": {
+    "scope": "single highest-confidence cause",
+    "change": "normalize Community Pulse reuse signatures by excluding purely freshness/update timestamp fields and rounding coordinates to stable precision",
+    "addsMissReasonReporting": true,
+    "addsWarmRefreshReuseValidation": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "performanceTargets": {
+    "totalRefreshMs": "< 5000",
+    "refreshGridlyCommunityPulseSharedModelWarmMs": "< 1500",
+    "refreshPortraitV2LocalizedIntelligenceMs": "< 1500",
+    "renderUnifiedIncidentsMs": "< 500"
+  },
+  "browserHelpers": [
+    "window.gridlyRefreshBreakdownAudit?.()",
+    "window.gridlyV737StaleFirstPaintAudit?.()",
+    "window.gridlyBackgroundLoopAudit?.()",
+    "window.gridlyAuditPerformanceReview?.()",
+    "window.gridlyUiSmokeTest?.()",
+    "window.gridlyActiveHazardCountReconciliationAudit?.()",
+    "window.gridlyRouteIntelligenceDebug?.()",
+    "window.gridlyRouteWatchDebug?.()"
+  ]
+}
