@@ -20809,3 +20809,81 @@ body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridl
   left: calc(50% - min(50vw, 215px) + 10px);
   right: calc(50% - min(50vw, 215px) + 10px);
 }
+
+/* GRIDLY V751 — Operations Center layout hierarchy preview (desktop/presentation only). */
+.gridly-operations-center-shell__dashboard {
+  display: grid;
+  gap: 22px;
+}
+
+.gridly-operations-center-shell__sections--primary {
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.gridly-operations-center-shell__sections--operational {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.gridly-operations-center-shell__sections--support {
+  grid-template-columns: minmax(260px, 0.66fr);
+  opacity: 0.88;
+}
+
+.gridly-operations-center-shell__card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(157, 239, 255, 0.12);
+}
+
+.gridly-operations-center-shell__card-kicker {
+  flex: 0 0 auto;
+  color: rgba(157, 239, 255, 0.72);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gridly-operations-center-shell__card--primary {
+  min-height: 178px;
+  background:
+    linear-gradient(180deg, rgba(14, 55, 78, 0.86), rgba(4, 20, 31, 0.78)),
+    rgba(4, 20, 31, 0.72);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.gridly-operations-center-shell__card--support {
+  background: rgba(3, 13, 22, 0.58);
+}
+
+.gridly-operations-center-shell__metric--prominent {
+  display: grid;
+  gap: 6px;
+}
+
+.gridly-operations-center-shell__metric--prominent .gridly-operations-center-shell__metric-value {
+  color: #9defff;
+  font-size: clamp(1.9rem, 4vw, 3.2rem);
+  line-height: 1;
+}
+
+.gridly-operations-center-shell__empty-state {
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed rgba(157, 239, 255, 0.22);
+  border-radius: 14px;
+  color: rgba(233, 251, 255, 0.68);
+  background: rgba(157, 239, 255, 0.05);
+}
+
+@media (max-width: 900px) {
+  .gridly-operations-center-shell__sections--primary,
+  .gridly-operations-center-shell__sections--support {
+    grid-template-columns: 1fr;
+  }
+}
