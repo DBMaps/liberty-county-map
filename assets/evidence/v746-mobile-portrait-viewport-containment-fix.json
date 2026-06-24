@@ -1,0 +1,44 @@
+{
+  "version": "V746",
+  "mission": "Know Before You Go / Know Before You Respond",
+  "finalDetermination": "PASS - launch-focus desktop browser validation now suppresses the desktop gate and keeps the mobile portrait experience inside a bounded portrait-style container while Operations Center remains disabled and non-rendered.",
+  "portraitContainmentRootCause": "V745 correctly routed a wide desktop validation viewport away from the desktop gate, but the portrait shell's fixed-position chrome still used viewport-wide left/right anchors and the strict portrait containment gate only activated for mobile-width portrait media. A wide local browser therefore exposed the mobile app without the phone-width containment that actual mobile devices already receive.",
+  "patchApplied": {
+    "smallestConfirmedCause": "Mark launch-focus gate-suppressed portrait validation on body, allow the existing Portrait V2 containment gate to activate for that validation mode, and add a max-width centered Portrait V2 container only under that launch-focus validation class.",
+    "actualMobileBehaviorPreservedBy": "The new max-width desktop validation wrapper is scoped to body.gridly-launch-focus-portrait-validation, which is only applied when the desktop gate is suppressed for launch-focus validation; normal mobile-width portrait CSS remains unchanged.",
+    "intentionalDesktopGatePreservedBy": "URL query ?gridlyDesktopGate=1, ?gridlyDesktopGate=true, or data-gridly-desktop-gate=\"enabled\" on html/body."
+  },
+  "isolationAudit": {
+    "status": "PASS",
+    "desktopGateVisible": false,
+    "desktopGateReason": "suppressed_for_launch_focus_or_mobile_validation",
+    "mobileExperienceVisible": true,
+    "mobilePortraitContained": true,
+    "portraitContainmentReason": "launch_focus_portrait_container_active",
+    "operationsCenterEnabled": false,
+    "shellRendered": false,
+    "dataBridgeRendered": false,
+    "operationsGateSideEffectDetected": false,
+    "safeForMobile": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "whatDidNotChange": [
+    "Mobile portrait visual hierarchy, bottom dock behavior, Awareness Brief wording, Community Pulse wording, Location Awareness wording, alert generation, report lifecycle, Route Watch behavior, marker rendering, and refresh pipeline were not changed.",
+    "Operations Center remains disabled by default; no live Operations Center UI, DriveTexas, Transportation Intelligence, historical reads, or history UI was enabled."
+  ],
+  "deniseBrowserValidationSteps": [
+    "Open the app in the default local desktop browser validation viewport with no gridlyDesktopGate query parameter.",
+    "Run window.gridlyOperationsIsolationAudit?.() and confirm status is PASS, desktopGateVisible is false, mobileExperienceVisible is true, mobilePortraitContained is true, portraitContainmentReason is launch_focus_portrait_container_active, operationsCenterEnabled is false, shellRendered is false, dataBridgeRendered is false, operationsGateSideEffectDetected is false, and safeForMobile is true.",
+    "Run window.gridlyOperationsDataBridgeAudit?.() and confirm the bridge remains read-only and non-rendered while disabled.",
+    "Run window.gridlyRefreshBreakdownAudit?.() and confirm refresh performance remains fast.",
+    "Run window.gridlyUiSmokeTest?.() and confirm UI smoke remains healthy."
+  ],
+  "mergeRecommendation": "MERGE after required validation passes."
+}
