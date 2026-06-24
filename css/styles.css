@@ -13756,6 +13756,29 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
   z-index: 9502;
 }
 
+
+/* V747 Launch-focus desktop browser portrait containment.
+   The transformed fixed shell creates the containing block for Portrait V2's
+   fixed-position chrome, so desktop validation measures the actual visible
+   phone-width portrait root rather than a full-viewport shell. */
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 {
+  left: 50%;
+  right: auto;
+  width: min(100vw, 430px);
+  max-width: 430px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  contain: layout paint;
+}
+
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-topbar,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-status-pill,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-segments,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-bottom-dock,
+body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridlyPortraitV2 .gridly-v2-sheet {
+  max-width: calc(430px - 20px);
+}
+
 /* V128.1 Portrait V2 cleanup */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   display: block;
