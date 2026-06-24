@@ -1,0 +1,6226 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-06-24T00:23:29Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21021786",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Jefferson, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:reviewed": "no"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.4629916,
+            30.0297604
+          ],
+          [
+            -94.4623123,
+            30.0298458
+          ],
+          [
+            -94.4606386,
+            30.0301523
+          ],
+          [
+            -94.459394,
+            30.0304403
+          ],
+          [
+            -94.4580088,
+            30.0307376
+          ],
+          [
+            -94.4571195,
+            30.030849
+          ],
+          [
+            -94.4551025,
+            30.0311184
+          ],
+          [
+            -94.4527057,
+            30.0314765
+          ],
+          [
+            -94.4503926,
+            30.0317778
+          ],
+          [
+            -94.4486438,
+            30.0320101
+          ],
+          [
+            -94.4471095,
+            30.0321958
+          ],
+          [
+            -94.446101,
+            30.0322516
+          ],
+          [
+            -94.4448136,
+            30.032363
+          ],
+          [
+            -94.4437621,
+            30.0325023
+          ],
+          [
+            -94.4423718,
+            30.0327147
+          ],
+          [
+            -94.440968,
+            30.032913
+          ],
+          [
+            -94.438269,
+            30.033288
+          ],
+          [
+            -94.4381822,
+            30.0332999
+          ],
+          [
+            -94.438047,
+            30.033318
+          ],
+          [
+            -94.433357,
+            30.033969
+          ],
+          [
+            -94.4332784,
+            30.0339797
+          ],
+          [
+            -94.433129,
+            30.034
+          ],
+          [
+            -94.4277124,
+            30.0347477
+          ]
+        ]
+      },
+      "id": "way/21021786"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21077231",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8440004,
+            30.0552908
+          ],
+          [
+            -94.848291,
+            30.054639
+          ],
+          [
+            -94.8542773,
+            30.0537749
+          ],
+          [
+            -94.8585393,
+            30.0531622
+          ],
+          [
+            -94.8622849,
+            30.0525908
+          ]
+        ]
+      },
+      "id": "way/21077231"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21077234",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:both_ways": "1",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7835707,
+            30.0584246
+          ],
+          [
+            -94.7847776,
+            30.0583134
+          ],
+          [
+            -94.7855262,
+            30.0581846
+          ],
+          [
+            -94.7858636,
+            30.0581228
+          ],
+          [
+            -94.7861768,
+            30.0580494
+          ],
+          [
+            -94.7864306,
+            30.0579828
+          ],
+          [
+            -94.7869255,
+            30.0578281
+          ],
+          [
+            -94.7873909,
+            30.0576571
+          ],
+          [
+            -94.7885112,
+            30.057208
+          ],
+          [
+            -94.7886455,
+            30.0571597
+          ],
+          [
+            -94.7887803,
+            30.057115
+          ],
+          [
+            -94.7891425,
+            30.0570011
+          ],
+          [
+            -94.7895023,
+            30.0569017
+          ],
+          [
+            -94.7899405,
+            30.0567996
+          ],
+          [
+            -94.7905275,
+            30.056699
+          ],
+          [
+            -94.7910371,
+            30.0566352
+          ],
+          [
+            -94.7914551,
+            30.0566058
+          ],
+          [
+            -94.7933924,
+            30.056573
+          ],
+          [
+            -94.7945909,
+            30.0565604
+          ],
+          [
+            -94.7947879,
+            30.0565589
+          ],
+          [
+            -94.7950213,
+            30.0565571
+          ]
+        ]
+      },
+      "id": "way/21077234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21077238",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9031018,
+            30.035598
+          ],
+          [
+            -94.9032312,
+            30.0355665
+          ],
+          [
+            -94.903348,
+            30.0355092
+          ],
+          [
+            -94.9035088,
+            30.0353881
+          ],
+          [
+            -94.9036557,
+            30.035297
+          ],
+          [
+            -94.9048348,
+            30.0344146
+          ],
+          [
+            -94.9092238,
+            30.03104
+          ],
+          [
+            -94.9115264,
+            30.0292855
+          ],
+          [
+            -94.9146678,
+            30.0268432
+          ],
+          [
+            -94.9194101,
+            30.0231834
+          ]
+        ]
+      },
+      "id": "way/21077238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21077255",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.443967,
+            30.032741
+          ],
+          [
+            -94.4492338,
+            30.032168
+          ],
+          [
+            -94.4500385,
+            30.0320658
+          ],
+          [
+            -94.4527325,
+            30.0316932
+          ],
+          [
+            -94.4565616,
+            30.0311555
+          ],
+          [
+            -94.45801,
+            30.0309697
+          ],
+          [
+            -94.4598028,
+            30.0306487
+          ],
+          [
+            -94.4620127,
+            30.0303466
+          ]
+        ]
+      },
+      "id": "way/21077255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21077642",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "East Main Street",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Main",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_direction_prefix": "E",
+        "tiger:name_type": "St",
+        "tiger:reviewed": "no",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7273199,
+            30.0510146
+          ],
+          [
+            -94.7275524,
+            30.0510463
+          ],
+          [
+            -94.7280748,
+            30.0511302
+          ],
+          [
+            -94.7320974,
+            30.0517765
+          ],
+          [
+            -94.7333545,
+            30.0519592
+          ],
+          [
+            -94.7338675,
+            30.0520398
+          ],
+          [
+            -94.7369588,
+            30.0525253
+          ],
+          [
+            -94.7383201,
+            30.0527349
+          ],
+          [
+            -94.7399368,
+            30.0529973
+          ],
+          [
+            -94.7405088,
+            30.053084
+          ],
+          [
+            -94.7411419,
+            30.0531846
+          ],
+          [
+            -94.7424702,
+            30.0533947
+          ]
+        ]
+      },
+      "id": "way/21077642"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/21078703",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "West Main Street",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Main",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_direction_prefix": "W",
+        "tiger:name_type": "St",
+        "tiger:reviewed": "no",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7445215,
+            30.0537214
+          ],
+          [
+            -94.745249,
+            30.0538381
+          ],
+          [
+            -94.7484478,
+            30.0543497
+          ],
+          [
+            -94.7501647,
+            30.0546219
+          ],
+          [
+            -94.7523597,
+            30.0549719
+          ],
+          [
+            -94.7524798,
+            30.054991
+          ],
+          [
+            -94.7534263,
+            30.0551419
+          ]
+        ]
+      },
+      "id": "way/21078703"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/38850750",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9656187,
+            29.9877284
+          ],
+          [
+            -94.9648624,
+            29.9883069
+          ],
+          [
+            -94.9600379,
+            29.9919974
+          ],
+          [
+            -94.9588094,
+            29.9929411
+          ],
+          [
+            -94.958564,
+            29.9931296
+          ],
+          [
+            -94.9542701,
+            29.9964278
+          ],
+          [
+            -94.9531816,
+            29.9972382
+          ],
+          [
+            -94.9525251,
+            29.9977177
+          ],
+          [
+            -94.9523534,
+            29.9978365
+          ],
+          [
+            -94.9519998,
+            29.9980811
+          ],
+          [
+            -94.9518907,
+            29.9981566
+          ],
+          [
+            -94.951798,
+            29.9982251
+          ],
+          [
+            -94.9512268,
+            29.9986471
+          ],
+          [
+            -94.9504485,
+            29.9992373
+          ],
+          [
+            -94.9503749,
+            29.9992924
+          ],
+          [
+            -94.9489542,
+            30.0003567
+          ],
+          [
+            -94.9476101,
+            30.0013636
+          ],
+          [
+            -94.9469058,
+            30.0018912
+          ],
+          [
+            -94.9465324,
+            30.0021734
+          ],
+          [
+            -94.9450176,
+            30.0033183
+          ],
+          [
+            -94.9443824,
+            30.0037346
+          ],
+          [
+            -94.9439575,
+            30.0040937
+          ]
+        ]
+      },
+      "id": "way/38850750"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/38850756",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "no",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8934202,
+            30.0420303
+          ],
+          [
+            -94.8929251,
+            30.0423227
+          ],
+          [
+            -94.8924846,
+            30.0425829
+          ],
+          [
+            -94.8924382,
+            30.0426103
+          ],
+          [
+            -94.8923261,
+            30.0426765
+          ],
+          [
+            -94.8906993,
+            30.0436122
+          ],
+          [
+            -94.8906217,
+            30.0436568
+          ],
+          [
+            -94.8903786,
+            30.0437966
+          ],
+          [
+            -94.8901243,
+            30.0439428
+          ],
+          [
+            -94.8900081,
+            30.0440096
+          ],
+          [
+            -94.8899197,
+            30.0440613
+          ],
+          [
+            -94.8894945,
+            30.0443099
+          ],
+          [
+            -94.8893979,
+            30.0443664
+          ],
+          [
+            -94.889362,
+            30.0443874
+          ],
+          [
+            -94.8891623,
+            30.0445041
+          ],
+          [
+            -94.8889436,
+            30.0446319
+          ],
+          [
+            -94.888842,
+            30.0446913
+          ],
+          [
+            -94.888539,
+            30.0448685
+          ],
+          [
+            -94.8880804,
+            30.0451366
+          ]
+        ]
+      },
+      "id": "way/38850756"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/38852039",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:reviewed": "no"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7642271,
+            30.0568228
+          ],
+          [
+            -94.7640508,
+            30.056795
+          ],
+          [
+            -94.7629071,
+            30.056622
+          ],
+          [
+            -94.7620999,
+            30.0564929
+          ],
+          [
+            -94.7597881,
+            30.0561234
+          ],
+          [
+            -94.7590724,
+            30.056009
+          ],
+          [
+            -94.7585331,
+            30.0559228
+          ],
+          [
+            -94.7580477,
+            30.0558452
+          ],
+          [
+            -94.7573659,
+            30.0557362
+          ],
+          [
+            -94.757122,
+            30.0556994
+          ],
+          [
+            -94.7539022,
+            30.0552137
+          ],
+          [
+            -94.7534263,
+            30.0551419
+          ]
+        ]
+      },
+      "id": "way/38852039"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/38852040",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "lanes:backward": "2",
+        "lanes:forward": "1",
+        "placement:backward": "left_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "turn:lanes:backward": "|right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7715325,
+            30.0579801
+          ],
+          [
+            -94.7703884,
+            30.0577839
+          ]
+        ]
+      },
+      "id": "way/38852040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/38852940",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.4630644,
+            30.0302029
+          ],
+          [
+            -94.4705175,
+            30.0291705
+          ],
+          [
+            -94.471862,
+            30.0289842
+          ],
+          [
+            -94.4727976,
+            30.0288207
+          ],
+          [
+            -94.4747202,
+            30.028412
+          ],
+          [
+            -94.4791577,
+            30.0278101
+          ],
+          [
+            -94.4802433,
+            30.027662
+          ],
+          [
+            -94.484516,
+            30.02706
+          ],
+          [
+            -94.4893412,
+            30.0263877
+          ],
+          [
+            -94.4940579,
+            30.0257591
+          ],
+          [
+            -94.4976156,
+            30.0252864
+          ],
+          [
+            -94.5007956,
+            30.0248674
+          ],
+          [
+            -94.5054218,
+            30.0241763
+          ],
+          [
+            -94.5071728,
+            30.0238939
+          ],
+          [
+            -94.5091469,
+            30.0235
+          ],
+          [
+            -94.5096903,
+            30.0234171
+          ],
+          [
+            -94.510656,
+            30.0233432
+          ],
+          [
+            -94.5127369,
+            30.0232375
+          ],
+          [
+            -94.5133122,
+            30.023197
+          ],
+          [
+            -94.5137217,
+            30.0231582
+          ],
+          [
+            -94.5184854,
+            30.0224935
+          ]
+        ]
+      },
+      "id": "way/38852940"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/117809150",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7778112,
+            30.058471
+          ],
+          [
+            -94.7766365,
+            30.0585274
+          ]
+        ]
+      },
+      "id": "way/117809150"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/117809172",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5184854,
+            30.0224935
+          ],
+          [
+            -94.5197612,
+            30.0223131
+          ],
+          [
+            -94.5217211,
+            30.022036
+          ],
+          [
+            -94.5237209,
+            30.021657
+          ],
+          [
+            -94.5283816,
+            30.0210179
+          ],
+          [
+            -94.5299008,
+            30.0208544
+          ],
+          [
+            -94.5315627,
+            30.0207494
+          ],
+          [
+            -94.5334112,
+            30.0206983
+          ],
+          [
+            -94.5344807,
+            30.0207132
+          ],
+          [
+            -94.5354421,
+            30.0207489
+          ],
+          [
+            -94.5369568,
+            30.0208759
+          ],
+          [
+            -94.5382263,
+            30.021003
+          ],
+          [
+            -94.5406296,
+            30.0213523
+          ],
+          [
+            -94.5445091,
+            30.0219766
+          ],
+          [
+            -94.5470456,
+            30.0224014
+          ],
+          [
+            -94.5484917,
+            30.0227123
+          ],
+          [
+            -94.5537779,
+            30.0235973
+          ],
+          [
+            -94.5575436,
+            30.0241886
+          ]
+        ]
+      },
+      "id": "way/117809172"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/117809192",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7766365,
+            30.0585274
+          ],
+          [
+            -94.7778022,
+            30.0586335
+          ],
+          [
+            -94.7786948,
+            30.0586706
+          ],
+          [
+            -94.7794385,
+            30.0586521
+          ],
+          [
+            -94.7798292,
+            30.0586525
+          ]
+        ]
+      },
+      "id": "way/117809192"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/205577669",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "ref": "US 90;FM 770",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6699739,
+            30.041715
+          ],
+          [
+            -94.6710665,
+            30.0417127
+          ],
+          [
+            -94.6718,
+            30.0417112
+          ],
+          [
+            -94.6720717,
+            30.0417106
+          ]
+        ]
+      },
+      "id": "way/205577669"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/205577670",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6857233,
+            30.044458
+          ],
+          [
+            -94.6916229,
+            30.0453682
+          ],
+          [
+            -94.6950133,
+            30.0457694
+          ],
+          [
+            -94.6980602,
+            30.0462746
+          ],
+          [
+            -94.7040598,
+            30.0472256
+          ],
+          [
+            -94.7046981,
+            30.0473247
+          ],
+          [
+            -94.7053419,
+            30.0474247
+          ],
+          [
+            -94.7056391,
+            30.0474708
+          ],
+          [
+            -94.7064802,
+            30.0476045
+          ],
+          [
+            -94.7092011,
+            30.04808
+          ],
+          [
+            -94.7119648,
+            30.0484738
+          ],
+          [
+            -94.7126429,
+            30.0486001
+          ],
+          [
+            -94.7150719,
+            30.0490756
+          ],
+          [
+            -94.7184187,
+            30.0496185
+          ],
+          [
+            -94.7191757,
+            30.0497307
+          ],
+          [
+            -94.721286,
+            30.0500414
+          ],
+          [
+            -94.7219813,
+            30.0501454
+          ],
+          [
+            -94.7228653,
+            30.050294
+          ],
+          [
+            -94.7237421,
+            30.05044
+          ],
+          [
+            -94.7242043,
+            30.0505169
+          ],
+          [
+            -94.7249939,
+            30.0506357
+          ],
+          [
+            -94.7261011,
+            30.050814
+          ],
+          [
+            -94.7268307,
+            30.0509329
+          ],
+          [
+            -94.7273199,
+            30.0510146
+          ]
+        ]
+      },
+      "id": "way/205577670"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/255700040",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:forward": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "no",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8942189,
+            30.0416512
+          ],
+          [
+            -94.8936777,
+            30.0418912
+          ],
+          [
+            -94.8934202,
+            30.0420303
+          ]
+        ]
+      },
+      "id": "way/255700040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/255700044",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:forward": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "no",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9031018,
+            30.035598
+          ],
+          [
+            -94.9026155,
+            30.0359674
+          ],
+          [
+            -94.9018847,
+            30.0365226
+          ],
+          [
+            -94.9018261,
+            30.036567
+          ],
+          [
+            -94.8985242,
+            30.0390752
+          ],
+          [
+            -94.8979087,
+            30.0395421
+          ],
+          [
+            -94.8975439,
+            30.0398188
+          ],
+          [
+            -94.8973646,
+            30.0399548
+          ],
+          [
+            -94.8972017,
+            30.0400634
+          ],
+          [
+            -94.8967442,
+            30.0404331
+          ],
+          [
+            -94.8961005,
+            30.040866
+          ],
+          [
+            -94.8957502,
+            30.0410617
+          ],
+          [
+            -94.8954104,
+            30.0412102
+          ],
+          [
+            -94.8947628,
+            30.0414499
+          ],
+          [
+            -94.8942189,
+            30.0416512
+          ]
+        ]
+      },
+      "id": "way/255700044"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/255700049",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8622488,
+            30.0523962
+          ],
+          [
+            -94.858501,
+            30.0529295
+          ],
+          [
+            -94.8558223,
+            30.0533292
+          ],
+          [
+            -94.8483599,
+            30.0544304
+          ],
+          [
+            -94.8475654,
+            30.0545476
+          ],
+          [
+            -94.8442394,
+            30.0550436
+          ]
+        ]
+      },
+      "id": "way/255700049"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/308416034",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8233697,
+            30.0580392
+          ],
+          [
+            -94.8224942,
+            30.0581082
+          ]
+        ]
+      },
+      "id": "way/308416034"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/308416035",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8233889,
+            30.0581937
+          ],
+          [
+            -94.8236358,
+            30.0581952
+          ],
+          [
+            -94.8242366,
+            30.0581729
+          ],
+          [
+            -94.8250091,
+            30.0580912
+          ],
+          [
+            -94.8260011,
+            30.0579381
+          ]
+        ]
+      },
+      "id": "way/308416035"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/316633561",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8224942,
+            30.0581082
+          ],
+          [
+            -94.8229749,
+            30.0581729
+          ],
+          [
+            -94.8233889,
+            30.0581937
+          ]
+        ]
+      },
+      "id": "way/316633561"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/316633563",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "layer": "1",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8164543,
+            30.0577638
+          ],
+          [
+            -94.8176376,
+            30.0578416
+          ],
+          [
+            -94.8216608,
+            30.0580627
+          ]
+        ]
+      },
+      "id": "way/316633563"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/320596610",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7826576,
+            30.0584447
+          ],
+          [
+            -94.782229,
+            30.0584526
+          ],
+          [
+            -94.7809183,
+            30.0584857
+          ],
+          [
+            -94.7794469,
+            30.0584976
+          ],
+          [
+            -94.7778112,
+            30.058471
+          ]
+        ]
+      },
+      "id": "way/320596610"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/322307038",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "ref": "US 90;TX 146",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7766365,
+            30.0585274
+          ],
+          [
+            -94.775942,
+            30.0585272
+          ],
+          [
+            -94.7755188,
+            30.0585032
+          ],
+          [
+            -94.774729,
+            30.0584211
+          ],
+          [
+            -94.7736613,
+            30.0582859
+          ],
+          [
+            -94.7732332,
+            30.0582239
+          ],
+          [
+            -94.7725978,
+            30.0581347
+          ],
+          [
+            -94.7723824,
+            30.0581032
+          ]
+        ]
+      },
+      "id": "way/322307038"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/427602091",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "Beaumont Highway",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "tiger:reviewed": "aerial"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9848651,
+            29.9733262
+          ],
+          [
+            -94.9860652,
+            29.9724185
+          ]
+        ]
+      },
+      "id": "way/427602091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/427602095",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "Beaumont Highway",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9858736,
+            29.972234
+          ],
+          [
+            -94.9849903,
+            29.9729103
+          ]
+        ]
+      },
+      "id": "way/427602095"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/483242495",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9648308,
+            29.9886396
+          ],
+          [
+            -94.9655767,
+            29.9880639
+          ],
+          [
+            -94.9656882,
+            29.9879778
+          ]
+        ]
+      },
+      "id": "way/483242495"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/483242496",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9656882,
+            29.9879778
+          ],
+          [
+            -94.9691376,
+            29.9853376
+          ],
+          [
+            -94.9710961,
+            29.9838401
+          ],
+          [
+            -94.971985,
+            29.9831799
+          ],
+          [
+            -94.9750169,
+            29.9808451
+          ],
+          [
+            -94.975371,
+            29.9805739
+          ],
+          [
+            -94.9764298,
+            29.979763
+          ],
+          [
+            -94.9765418,
+            29.9796782
+          ]
+        ]
+      },
+      "id": "way/483242496"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/483242497",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "shoulder": "right",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9664398,
+            29.9870955
+          ],
+          [
+            -94.9660928,
+            29.9873598
+          ],
+          [
+            -94.9657205,
+            29.9876493
+          ],
+          [
+            -94.9656187,
+            29.9877284
+          ]
+        ]
+      },
+      "id": "way/483242497"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/483242498",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "right",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9770583,
+            29.978961
+          ],
+          [
+            -94.9766547,
+            29.97927
+          ],
+          [
+            -94.976203,
+            29.9796143
+          ],
+          [
+            -94.975204,
+            29.9803758
+          ],
+          [
+            -94.9708612,
+            29.9836861
+          ],
+          [
+            -94.9669891,
+            29.9866719
+          ],
+          [
+            -94.9664398,
+            29.9870955
+          ]
+        ]
+      },
+      "id": "way/483242498"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/538121823",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "lanes:backward": "1",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "placement:forward": "left_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes:forward": "merge_to_right|"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5997649,
+            30.0287541
+          ],
+          [
+            -94.6001099,
+            30.0288355
+          ]
+        ]
+      },
+      "id": "way/538121823"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/538121824",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "lanes:backward": "2",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes:backward": "|merge_to_left",
+        "turn:lanes:forward": "left|"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5986105,
+            30.0285157
+          ],
+          [
+            -94.5993707,
+            30.0286737
+          ]
+        ]
+      },
+      "id": "way/538121824"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/538121825",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6012947,
+            30.029121
+          ],
+          [
+            -94.6013516,
+            30.0291321
+          ],
+          [
+            -94.6019009,
+            30.0292395
+          ],
+          [
+            -94.6027699,
+            30.0294601
+          ],
+          [
+            -94.60533,
+            30.030117
+          ],
+          [
+            -94.6072256,
+            30.0305001
+          ],
+          [
+            -94.6147701,
+            30.0323058
+          ],
+          [
+            -94.6171734,
+            30.0328334
+          ],
+          [
+            -94.620332,
+            30.0335987
+          ],
+          [
+            -94.6249754,
+            30.0346985
+          ],
+          [
+            -94.6252072,
+            30.0347505
+          ],
+          [
+            -94.6254816,
+            30.0348019
+          ],
+          [
+            -94.6277048,
+            30.0352112
+          ],
+          [
+            -94.6298506,
+            30.0355158
+          ],
+          [
+            -94.6380679,
+            30.0368198
+          ],
+          [
+            -94.6386912,
+            30.0369202
+          ],
+          [
+            -94.6419396,
+            30.0374255
+          ],
+          [
+            -94.643688,
+            30.0377042
+          ],
+          [
+            -94.645452,
+            30.037986
+          ],
+          [
+            -94.6469912,
+            30.0382292
+          ],
+          [
+            -94.6489095,
+            30.0385301
+          ],
+          [
+            -94.649771,
+            30.0386681
+          ],
+          [
+            -94.6509193,
+            30.0388373
+          ],
+          [
+            -94.6520116,
+            30.0390156
+          ],
+          [
+            -94.6525488,
+            30.0391038
+          ],
+          [
+            -94.6541836,
+            30.0393722
+          ],
+          [
+            -94.6551856,
+            30.0395286
+          ],
+          [
+            -94.6559271,
+            30.0396728
+          ],
+          [
+            -94.6578221,
+            30.0400542
+          ],
+          [
+            -94.6588699,
+            30.0402415
+          ],
+          [
+            -94.6595809,
+            30.0403457
+          ],
+          [
+            -94.6607935,
+            30.0405364
+          ],
+          [
+            -94.6615995,
+            30.0406636
+          ],
+          [
+            -94.6629303,
+            30.0408682
+          ],
+          [
+            -94.6662514,
+            30.041408
+          ],
+          [
+            -94.6674109,
+            30.04158
+          ],
+          [
+            -94.6678152,
+            30.0416346
+          ],
+          [
+            -94.668174,
+            30.041683
+          ],
+          [
+            -94.6688435,
+            30.0417052
+          ],
+          [
+            -94.6693972,
+            30.04171
+          ]
+        ]
+      },
+      "id": "way/538121825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/612399147",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "surface": "concrete"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5577224,
+            30.0239328
+          ],
+          [
+            -94.5555569,
+            30.0235707
+          ],
+          [
+            -94.553841,
+            30.0232995
+          ],
+          [
+            -94.5503125,
+            30.0227418
+          ],
+          [
+            -94.5486406,
+            30.022475
+          ],
+          [
+            -94.5478888,
+            30.022293
+          ],
+          [
+            -94.5467166,
+            30.0220261
+          ],
+          [
+            -94.5462823,
+            30.0219574
+          ],
+          [
+            -94.544503,
+            30.0216663
+          ],
+          [
+            -94.5415609,
+            30.0211972
+          ],
+          [
+            -94.5407032,
+            30.0210681
+          ],
+          [
+            -94.5390625,
+            30.0208212
+          ],
+          [
+            -94.5382872,
+            30.020712
+          ],
+          [
+            -94.5373532,
+            30.0206069
+          ],
+          [
+            -94.5365173,
+            30.0205422
+          ],
+          [
+            -94.5354012,
+            30.0204815
+          ],
+          [
+            -94.5352237,
+            30.0204654
+          ],
+          [
+            -94.5338321,
+            30.0204209
+          ],
+          [
+            -94.5324077,
+            30.020429
+          ],
+          [
+            -94.5316185,
+            30.0204532
+          ],
+          [
+            -94.5298723,
+            30.0205782
+          ],
+          [
+            -94.52905,
+            30.0206392
+          ],
+          [
+            -94.5278872,
+            30.0207767
+          ],
+          [
+            -94.5241592,
+            30.0212545
+          ],
+          [
+            -94.5196906,
+            30.0218032
+          ],
+          [
+            -94.5111982,
+            30.022846
+          ],
+          [
+            -94.5099108,
+            30.023017
+          ],
+          [
+            -94.509413,
+            30.0231136
+          ],
+          [
+            -94.5071971,
+            30.0235203
+          ],
+          [
+            -94.5040829,
+            30.0240722
+          ],
+          [
+            -94.5028984,
+            30.0242431
+          ],
+          [
+            -94.4975639,
+            30.0249719
+          ],
+          [
+            -94.4932854,
+            30.0255733
+          ],
+          [
+            -94.4892992,
+            30.026133
+          ],
+          [
+            -94.4832089,
+            30.0269704
+          ],
+          [
+            -94.4801909,
+            30.0273755
+          ],
+          [
+            -94.4744799,
+            30.0281742
+          ],
+          [
+            -94.4704373,
+            30.0287326
+          ],
+          [
+            -94.4686691,
+            30.0289768
+          ],
+          [
+            -94.4672701,
+            30.0291997
+          ],
+          [
+            -94.4643079,
+            30.029595
+          ]
+        ]
+      },
+      "id": "way/612399147"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/612399148",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "oneway": "no",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5851018,
+            30.0263928
+          ],
+          [
+            -94.5870537,
+            30.0267634
+          ],
+          [
+            -94.5876462,
+            30.0268809
+          ],
+          [
+            -94.5889811,
+            30.0271551
+          ],
+          [
+            -94.5902509,
+            30.0274055
+          ],
+          [
+            -94.5906488,
+            30.0274957
+          ],
+          [
+            -94.5910865,
+            30.0275639
+          ],
+          [
+            -94.5913144,
+            30.0275994
+          ],
+          [
+            -94.5917792,
+            30.0276718
+          ],
+          [
+            -94.5923151,
+            30.0277423
+          ],
+          [
+            -94.5925844,
+            30.0277792
+          ],
+          [
+            -94.5928802,
+            30.0278192
+          ],
+          [
+            -94.5936634,
+            30.0278849
+          ]
+        ]
+      },
+      "id": "way/612399148"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072219",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5575436,
+            30.0241886
+          ],
+          [
+            -94.5577852,
+            30.0242265
+          ]
+        ]
+      },
+      "id": "way/634072219"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072220",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5577852,
+            30.0242265
+          ],
+          [
+            -94.562488,
+            30.0249696
+          ]
+        ]
+      },
+      "id": "way/634072220"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072221",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5628125,
+            30.0250205
+          ],
+          [
+            -94.5697362,
+            30.0261273
+          ],
+          [
+            -94.5703379,
+            30.0262224
+          ],
+          [
+            -94.570838,
+            30.0262752
+          ],
+          [
+            -94.571708,
+            30.0263209
+          ],
+          [
+            -94.5725414,
+            30.0263104
+          ],
+          [
+            -94.5740987,
+            30.0261659
+          ],
+          [
+            -94.5776536,
+            30.0258024
+          ],
+          [
+            -94.578611,
+            30.0257463
+          ],
+          [
+            -94.5794361,
+            30.0257257
+          ],
+          [
+            -94.5801632,
+            30.0257368
+          ],
+          [
+            -94.5809185,
+            30.0257591
+          ],
+          [
+            -94.5814515,
+            30.0258025
+          ]
+        ]
+      },
+      "id": "way/634072221"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072222",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.562488,
+            30.0249696
+          ],
+          [
+            -94.5628125,
+            30.0250205
+          ]
+        ]
+      },
+      "id": "way/634072222"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072223",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5814515,
+            30.0258025
+          ],
+          [
+            -94.5817642,
+            30.0258363
+          ]
+        ]
+      },
+      "id": "way/634072223"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/634072224",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5817642,
+            30.0258363
+          ],
+          [
+            -94.5820343,
+            30.0258706
+          ],
+          [
+            -94.5825493,
+            30.0259523
+          ],
+          [
+            -94.5833774,
+            30.0260974
+          ],
+          [
+            -94.584287,
+            30.0262706
+          ],
+          [
+            -94.5851018,
+            30.0263928
+          ]
+        ]
+      },
+      "id": "way/634072224"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/935881537",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8259479,
+            30.0577327
+          ],
+          [
+            -94.8245542,
+            30.0579277
+          ],
+          [
+            -94.8239448,
+            30.0580094
+          ],
+          [
+            -94.8233697,
+            30.0580392
+          ]
+        ]
+      },
+      "id": "way/935881537"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/937024324",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "lanes:backward": "1",
+        "lanes:forward": "2",
+        "ref": "US 90;TX 146",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes:forward": "left|"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7723824,
+            30.0581032
+          ],
+          [
+            -94.7719303,
+            30.05804
+          ],
+          [
+            -94.7715325,
+            30.0579801
+          ]
+        ]
+      },
+      "id": "way/937024324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/937024325",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7703884,
+            30.0577839
+          ],
+          [
+            -94.7689974,
+            30.0575761
+          ]
+        ]
+      },
+      "id": "way/937024325"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/937024326",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "lanes:backward": "1",
+        "lanes:forward": "3",
+        "name": "East Main Street",
+        "placement:forward": "middle_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Main",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_direction_prefix": "E",
+        "tiger:name_type": "St",
+        "tiger:reviewed": "no",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575",
+        "turn:lanes:forward": "left||right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7424702,
+            30.0533947
+          ],
+          [
+            -94.7425854,
+            30.0534129
+          ],
+          [
+            -94.7434903,
+            30.053556
+          ]
+        ]
+      },
+      "id": "way/937024326"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/937024327",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "lanes:backward": "3",
+        "lanes:forward": "1",
+        "name": "West Main Street",
+        "placement:backward": "middle_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Main",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_direction_prefix": "W",
+        "tiger:name_type": "St",
+        "tiger:reviewed": "no",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575",
+        "turn:lanes:backward": "left||right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7434903,
+            30.053556
+          ],
+          [
+            -94.7445215,
+            30.0537214
+          ]
+        ]
+      },
+      "id": "way/937024327"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/995993971",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "lanes:backward": "2",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes:backward": "|right",
+        "turn:lanes:forward": "merge_to_right|"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6001099,
+            30.0288355
+          ],
+          [
+            -94.6012947,
+            30.029121
+          ]
+        ]
+      },
+      "id": "way/995993971"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/995993973",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "lanes:backward": "1",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "placement:forward": "left_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes:forward": "left|"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5993707,
+            30.0286737
+          ],
+          [
+            -94.5997649,
+            30.0287541
+          ]
+        ]
+      },
+      "id": "way/995993973"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1014978172",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "1",
+        "name": "US Highway 90",
+        "oneway": "no",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5953917,
+            30.0280351
+          ],
+          [
+            -94.5956889,
+            30.0280738
+          ],
+          [
+            -94.5959812,
+            30.0281063
+          ],
+          [
+            -94.5976818,
+            30.0283594
+          ],
+          [
+            -94.5979931,
+            30.0284118
+          ],
+          [
+            -94.598365,
+            30.0284744
+          ],
+          [
+            -94.5986105,
+            30.0285157
+          ]
+        ]
+      },
+      "id": "way/1014978172"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198500",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9249307,
+            30.0186476
+          ],
+          [
+            -94.9233539,
+            30.0198329
+          ],
+          [
+            -94.9205326,
+            30.0220089
+          ]
+        ]
+      },
+      "id": "way/1015198500"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198501",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9205326,
+            30.0220089
+          ],
+          [
+            -94.9202477,
+            30.0222286
+          ],
+          [
+            -94.9200644,
+            30.0223754
+          ],
+          [
+            -94.9198753,
+            30.0225223
+          ]
+        ]
+      },
+      "id": "way/1015198501"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198502",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9194101,
+            30.0231834
+          ],
+          [
+            -94.919882,
+            30.022825
+          ]
+        ]
+      },
+      "id": "way/1015198502"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198503",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.919882,
+            30.022825
+          ],
+          [
+            -94.922417,
+            30.020843
+          ],
+          [
+            -94.9230964,
+            30.0203382
+          ],
+          [
+            -94.9241521,
+            30.0195208
+          ],
+          [
+            -94.9245699,
+            30.0192126
+          ]
+        ]
+      },
+      "id": "way/1015198503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198505",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9245699,
+            30.0192126
+          ],
+          [
+            -94.9250791,
+            30.018837
+          ]
+        ]
+      },
+      "id": "way/1015198505"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198506",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9250791,
+            30.018837
+          ],
+          [
+            -94.926141,
+            30.0180186
+          ],
+          [
+            -94.9267244,
+            30.0175908
+          ],
+          [
+            -94.9276477,
+            30.0168844
+          ]
+        ]
+      },
+      "id": "way/1015198506"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198507",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9256931,
+            30.0180785
+          ],
+          [
+            -94.9249307,
+            30.0186476
+          ]
+        ]
+      },
+      "id": "way/1015198507"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198508",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9280316,
+            30.0162763
+          ],
+          [
+            -94.9276896,
+            30.0165373
+          ],
+          [
+            -94.9256931,
+            30.0180785
+          ]
+        ]
+      },
+      "id": "way/1015198508"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198509",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9282439,
+            30.0164356
+          ],
+          [
+            -94.9317002,
+            30.0137754
+          ]
+        ]
+      },
+      "id": "way/1015198509"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198510",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9276477,
+            30.0168844
+          ],
+          [
+            -94.9282439,
+            30.0164356
+          ]
+        ]
+      },
+      "id": "way/1015198510"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198511",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.928766,
+            30.0157251
+          ],
+          [
+            -94.9280316,
+            30.0162763
+          ]
+        ]
+      },
+      "id": "way/1015198511"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198512",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9320285,
+            30.0132175
+          ],
+          [
+            -94.9309503,
+            30.0140525
+          ],
+          [
+            -94.928766,
+            30.0157251
+          ]
+        ]
+      },
+      "id": "way/1015198512"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198514",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9317002,
+            30.0137754
+          ],
+          [
+            -94.9321753,
+            30.0134132
+          ]
+        ]
+      },
+      "id": "way/1015198514"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198515",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9390999,
+            30.0081363
+          ],
+          [
+            -94.9402238,
+            30.0072688
+          ],
+          [
+            -94.9403575,
+            30.0071656
+          ]
+        ]
+      },
+      "id": "way/1015198515"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198516",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9328199,
+            30.0126056
+          ],
+          [
+            -94.9320285,
+            30.0132175
+          ]
+        ]
+      },
+      "id": "way/1015198516"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198517",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9369922,
+            30.0094096
+          ],
+          [
+            -94.936764,
+            30.0095832
+          ],
+          [
+            -94.9366123,
+            30.0096986
+          ],
+          [
+            -94.9363576,
+            30.0098938
+          ],
+          [
+            -94.9328199,
+            30.0126056
+          ]
+        ]
+      },
+      "id": "way/1015198517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198518",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9427535,
+            30.0053295
+          ],
+          [
+            -94.9433553,
+            30.0048736
+          ]
+        ]
+      },
+      "id": "way/1015198518"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198519",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9433553,
+            30.0048736
+          ],
+          [
+            -94.9443309,
+            30.0040839
+          ],
+          [
+            -94.9452064,
+            30.0034967
+          ],
+          [
+            -94.9505384,
+            29.9994823
+          ],
+          [
+            -94.9523205,
+            29.9981682
+          ],
+          [
+            -94.953698,
+            29.9971496
+          ],
+          [
+            -94.954828,
+            29.9963089
+          ],
+          [
+            -94.9587762,
+            29.9933131
+          ],
+          [
+            -94.9648308,
+            29.9886396
+          ]
+        ]
+      },
+      "id": "way/1015198519"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198520",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9439575,
+            30.0040937
+          ],
+          [
+            -94.9432033,
+            30.0046829
+          ]
+        ]
+      },
+      "id": "way/1015198520"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1015198521",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9198753,
+            30.0225223
+          ],
+          [
+            -94.9182126,
+            30.0237419
+          ],
+          [
+            -94.9145012,
+            30.0266397
+          ],
+          [
+            -94.9111316,
+            30.0292707
+          ],
+          [
+            -94.9090662,
+            30.0308457
+          ],
+          [
+            -94.9068747,
+            30.0325497
+          ],
+          [
+            -94.9051138,
+            30.0338939
+          ],
+          [
+            -94.9046587,
+            30.0342413
+          ],
+          [
+            -94.9033612,
+            30.0352344
+          ],
+          [
+            -94.9031111,
+            30.0354783
+          ],
+          [
+            -94.9031018,
+            30.035598
+          ]
+        ]
+      },
+      "id": "way/1015198521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1047586883",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "lanes:backward": "1",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "placement:forward": "left_of:1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes:forward": "|right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6693972,
+            30.04171
+          ],
+          [
+            -94.6699739,
+            30.041715
+          ]
+        ]
+      },
+      "id": "way/1047586883"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1047586899",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.4620127,
+            30.0303466
+          ],
+          [
+            -94.4630644,
+            30.0302029
+          ]
+        ]
+      },
+      "id": "way/1047586899"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1047586900",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Jefferson, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:reviewed": "no",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.4643079,
+            30.029595
+          ],
+          [
+            -94.4629916,
+            30.0297604
+          ]
+        ]
+      },
+      "id": "way/1047586900"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1047586901",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "US Highway 90",
+        "oneway": "no",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "turn:lanes:both_ways": "left",
+        "turn:lanes:forward": "|merge_to_left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5942499,
+            30.027939
+          ],
+          [
+            -94.594724,
+            30.0279688
+          ],
+          [
+            -94.5950961,
+            30.0279966
+          ],
+          [
+            -94.5953917,
+            30.0280351
+          ]
+        ]
+      },
+      "id": "way/1047586901"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1051364605",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9765418,
+            29.9796782
+          ],
+          [
+            -94.9772262,
+            29.9791595
+          ]
+        ]
+      },
+      "id": "way/1051364605"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1051364606",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9772262,
+            29.9791595
+          ],
+          [
+            -94.9789028,
+            29.9778649
+          ],
+          [
+            -94.9806098,
+            29.9765958
+          ],
+          [
+            -94.9848651,
+            29.9733262
+          ]
+        ]
+      },
+      "id": "way/1051364606"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1051364607",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "shoulder": "right",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9776581,
+            29.9785018
+          ],
+          [
+            -94.9770583,
+            29.978961
+          ]
+        ]
+      },
+      "id": "way/1051364607"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1051364608",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "oneway": "yes",
+        "ref": "US 90",
+        "shoulder": "right",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9849903,
+            29.9729103
+          ],
+          [
+            -94.9829375,
+            29.9744596
+          ],
+          [
+            -94.9776581,
+            29.9785018
+          ]
+        ]
+      },
+      "id": "way/1051364608"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672502",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9403575,
+            30.0071656
+          ],
+          [
+            -94.9427535,
+            30.0053295
+          ]
+        ]
+      },
+      "id": "way/1240672502"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672503",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9368656,
+            30.0098392
+          ],
+          [
+            -94.9390999,
+            30.0081363
+          ]
+        ]
+      },
+      "id": "way/1240672503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672504",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:1",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "turn:lanes": "||right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9416147,
+            30.0058892
+          ],
+          [
+            -94.9404994,
+            30.0067411
+          ]
+        ]
+      },
+      "id": "way/1240672504"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672505",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9432033,
+            30.0046829
+          ],
+          [
+            -94.9428129,
+            30.0049741
+          ],
+          [
+            -94.9416147,
+            30.0058892
+          ]
+        ]
+      },
+      "id": "way/1240672505"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672513",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:1",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "turn:lanes": "||right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.938069,
+            30.0085907
+          ],
+          [
+            -94.9369922,
+            30.0094096
+          ]
+        ]
+      },
+      "id": "way/1240672513"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672514",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9404994,
+            30.0067411
+          ],
+          [
+            -94.9402839,
+            30.0069056
+          ],
+          [
+            -94.9401478,
+            30.0070096
+          ],
+          [
+            -94.9399375,
+            30.0071695
+          ],
+          [
+            -94.938069,
+            30.0085907
+          ]
+        ]
+      },
+      "id": "way/1240672514"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672515",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "placement": "right_of:2",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9353937,
+            30.0109608
+          ],
+          [
+            -94.9367095,
+            30.0099581
+          ],
+          [
+            -94.9368656,
+            30.0098392
+          ]
+        ]
+      },
+      "id": "way/1240672515"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1240672516",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "United States Highway 90 West",
+        "oneway": "yes",
+        "ref": "US 90",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "Highway 90",
+        "tiger:name_direction_prefix_1": "W",
+        "tiger:zip_left": "77535",
+        "tiger:zip_right": "77535"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.9321753,
+            30.0134132
+          ],
+          [
+            -94.9353937,
+            30.0109608
+          ]
+        ]
+      },
+      "id": "way/1240672516"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315244822",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8815444,
+            30.049563
+          ],
+          [
+            -94.8810095,
+            30.0496135
+          ],
+          [
+            -94.8806073,
+            30.0496747
+          ],
+          [
+            -94.8803207,
+            30.0497203
+          ],
+          [
+            -94.8784244,
+            30.0500053
+          ],
+          [
+            -94.8760354,
+            30.0504021
+          ],
+          [
+            -94.870978,
+            30.0511059
+          ],
+          [
+            -94.866841,
+            30.0517166
+          ]
+        ]
+      },
+      "id": "way/1315244822"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315244823",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "surface": "asphalt",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.866841,
+            30.0517166
+          ],
+          [
+            -94.8624734,
+            30.0523629
+          ],
+          [
+            -94.8622488,
+            30.0523962
+          ]
+        ]
+      },
+      "id": "way/1315244823"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315244824",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8668709,
+            30.0519134
+          ],
+          [
+            -94.8710106,
+            30.0513241
+          ],
+          [
+            -94.8778653,
+            30.0502853
+          ],
+          [
+            -94.8792211,
+            30.0500869
+          ],
+          [
+            -94.8800652,
+            30.0499656
+          ],
+          [
+            -94.8804118,
+            30.0499133
+          ],
+          [
+            -94.8807075,
+            30.049861
+          ],
+          [
+            -94.881036,
+            30.0497879
+          ],
+          [
+            -94.8815444,
+            30.049563
+          ]
+        ]
+      },
+      "id": "way/1315244824"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315244825",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "surface": "asphalt",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8622849,
+            30.0525908
+          ],
+          [
+            -94.8668709,
+            30.0519134
+          ]
+        ]
+      },
+      "id": "way/1315244825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629860",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "placement": "transition",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7828459,
+            30.0584914
+          ],
+          [
+            -94.7826576,
+            30.0584447
+          ]
+        ]
+      },
+      "id": "way/1315629860"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629861",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "placement": "transition",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575",
+        "turn:lanes": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.782671,
+            30.0585608
+          ],
+          [
+            -94.7828459,
+            30.0584914
+          ]
+        ]
+      },
+      "id": "way/1315629861"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629862",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "4",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575",
+        "turn:lanes": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7822419,
+            30.0585735
+          ],
+          [
+            -94.782671,
+            30.0585608
+          ]
+        ]
+      },
+      "id": "way/1315629862"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629863",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "placement": "transition",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7798292,
+            30.0586525
+          ],
+          [
+            -94.7801807,
+            30.058622
+          ]
+        ]
+      },
+      "id": "way/1315629863"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629864",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "placement": "transition",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7820128,
+            30.0585951
+          ],
+          [
+            -94.7822419,
+            30.0585735
+          ]
+        ]
+      },
+      "id": "way/1315629864"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629865",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575",
+        "turn:lanes": "left||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7801807,
+            30.058622
+          ],
+          [
+            -94.7809087,
+            30.0586159
+          ]
+        ]
+      },
+      "id": "way/1315629865"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629866",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "3",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "Santa Anna",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_base_2": "State Highway 146",
+        "tiger:name_type": "Ave",
+        "tiger:zip_left": "77575",
+        "tiger:zip_right": "77575"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7809087,
+            30.0586159
+          ],
+          [
+            -94.7820128,
+            30.0585951
+          ]
+        ]
+      },
+      "id": "way/1315629866"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629867",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "4",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:backward": "left|||right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7828459,
+            30.0584914
+          ],
+          [
+            -94.7835707,
+            30.0584246
+          ]
+        ]
+      },
+      "id": "way/1315629867"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629868",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "6",
+        "lanes:backward": "3",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "Highway 90",
+        "placement:both_ways": "middle_of:1",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8103808,
+            30.0568293
+          ],
+          [
+            -94.8106785,
+            30.0569227
+          ],
+          [
+            -94.8107583,
+            30.0569503
+          ],
+          [
+            -94.8115671,
+            30.0571868
+          ]
+        ]
+      },
+      "id": "way/1315629868"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629869",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:both_ways": "1",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left",
+        "turn:lanes:forward": "||merge_to_left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8099176,
+            30.0567124
+          ],
+          [
+            -94.8103808,
+            30.0568293
+          ]
+        ]
+      },
+      "id": "way/1315629869"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629870",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:both_ways": "1",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.802841,
+            30.0565909
+          ],
+          [
+            -94.8030143,
+            30.0565896
+          ],
+          [
+            -94.8032941,
+            30.0565832
+          ],
+          [
+            -94.8046465,
+            30.0565653
+          ],
+          [
+            -94.8057261,
+            30.0565614
+          ],
+          [
+            -94.8069879,
+            30.0565354
+          ],
+          [
+            -94.8082261,
+            30.0565214
+          ],
+          [
+            -94.808822,
+            30.0565519
+          ],
+          [
+            -94.8094672,
+            30.0566191
+          ],
+          [
+            -94.8099176,
+            30.0567124
+          ]
+        ]
+      },
+      "id": "way/1315629870"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629871",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "4",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:backward": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7950213,
+            30.0565571
+          ],
+          [
+            -94.7958045,
+            30.056551
+          ]
+        ]
+      },
+      "id": "way/1315629871"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629872",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:forward": "4",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:forward": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7958045,
+            30.056551
+          ],
+          [
+            -94.796071,
+            30.0565572
+          ],
+          [
+            -94.7963615,
+            30.0565657
+          ],
+          [
+            -94.7963871,
+            30.0565665
+          ],
+          [
+            -94.7965723,
+            30.0565689
+          ],
+          [
+            -94.7967378,
+            30.0565728
+          ]
+        ]
+      },
+      "id": "way/1315629872"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629873",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:both_ways": "1",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7967378,
+            30.0565728
+          ],
+          [
+            -94.796855,
+            30.0565755
+          ],
+          [
+            -94.7970304,
+            30.0565796
+          ],
+          [
+            -94.798289,
+            30.0566187
+          ],
+          [
+            -94.7985937,
+            30.0566265
+          ],
+          [
+            -94.7989931,
+            30.0566367
+          ],
+          [
+            -94.7995132,
+            30.0566309
+          ],
+          [
+            -94.8007283,
+            30.0566348
+          ],
+          [
+            -94.8012803,
+            30.056628
+          ]
+        ]
+      },
+      "id": "way/1315629873"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629874",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "3",
+        "lanes:forward": "4",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:forward": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8012803,
+            30.056628
+          ],
+          [
+            -94.8020066,
+            30.0566017
+          ]
+        ]
+      },
+      "id": "way/1315629874"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629875",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "7",
+        "lanes:backward": "4",
+        "lanes:forward": "3",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:backward": "left|||"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8020066,
+            30.0566017
+          ],
+          [
+            -94.8022755,
+            30.0565966
+          ],
+          [
+            -94.802841,
+            30.0565909
+          ]
+        ]
+      },
+      "id": "way/1315629875"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315629876",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8115671,
+            30.0571868
+          ],
+          [
+            -94.8119399,
+            30.0573062
+          ],
+          [
+            -94.8126485,
+            30.0574484
+          ],
+          [
+            -94.812884,
+            30.05748
+          ],
+          [
+            -94.8131135,
+            30.0575028
+          ],
+          [
+            -94.8143398,
+            30.0575931
+          ],
+          [
+            -94.8143856,
+            30.0575965
+          ],
+          [
+            -94.8148323,
+            30.0576323
+          ],
+          [
+            -94.8150557,
+            30.0576502
+          ],
+          [
+            -94.8155975,
+            30.0576936
+          ],
+          [
+            -94.8156973,
+            30.0577018
+          ],
+          [
+            -94.816361,
+            30.0577562
+          ],
+          [
+            -94.8164543,
+            30.0577638
+          ]
+        ]
+      },
+      "id": "way/1315629876"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1315630133",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "layer": "1",
+        "name": "Highway 90",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146",
+        "turn:lanes:both_ways": "left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8216608,
+            30.0580627
+          ],
+          [
+            -94.8219635,
+            30.0580793
+          ],
+          [
+            -94.8224942,
+            30.0581082
+          ]
+        ]
+      },
+      "id": "way/1315630133"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191955",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8389417,
+            30.055826
+          ],
+          [
+            -94.8373859,
+            30.0560557
+          ],
+          [
+            -94.8351121,
+            30.0563833
+          ],
+          [
+            -94.8299848,
+            30.057122
+          ],
+          [
+            -94.8299088,
+            30.057133
+          ]
+        ]
+      },
+      "id": "way/1330191955"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191956",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8407615,
+            30.0555553
+          ],
+          [
+            -94.8389417,
+            30.055826
+          ]
+        ]
+      },
+      "id": "way/1330191956"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191957",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8299186,
+            30.0573557
+          ],
+          [
+            -94.8351533,
+            30.0565738
+          ],
+          [
+            -94.8386191,
+            30.0560893
+          ]
+        ]
+      },
+      "id": "way/1330191957"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191958",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8386191,
+            30.0560893
+          ],
+          [
+            -94.8407658,
+            30.055764
+          ]
+        ]
+      },
+      "id": "way/1330191958"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191960",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8407658,
+            30.055764
+          ],
+          [
+            -94.8424905,
+            30.0555096
+          ]
+        ]
+      },
+      "id": "way/1330191960"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191961",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8424905,
+            30.0555096
+          ],
+          [
+            -94.8440004,
+            30.0552908
+          ]
+        ]
+      },
+      "id": "way/1330191961"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191962",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8426845,
+            30.0552759
+          ],
+          [
+            -94.8407615,
+            30.0555553
+          ]
+        ]
+      },
+      "id": "way/1330191962"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1330191963",
+        "bridge": "yes",
+        "expressway": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8442394,
+            30.0550436
+          ],
+          [
+            -94.8426845,
+            30.0552759
+          ]
+        ]
+      },
+      "id": "way/1330191963"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1347909125",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "name": "United States Highway 90 East",
+        "oneway": "no",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8880804,
+            30.0451366
+          ],
+          [
+            -94.8875658,
+            30.0454782
+          ],
+          [
+            -94.8870484,
+            30.0458756
+          ],
+          [
+            -94.8862744,
+            30.0465205
+          ],
+          [
+            -94.8856585,
+            30.0469874
+          ],
+          [
+            -94.885391,
+            30.047201
+          ],
+          [
+            -94.8852367,
+            30.0473243
+          ],
+          [
+            -94.8850943,
+            30.0474355
+          ],
+          [
+            -94.88493,
+            30.0475638
+          ],
+          [
+            -94.884592,
+            30.0478277
+          ],
+          [
+            -94.8844741,
+            30.0479198
+          ],
+          [
+            -94.8838497,
+            30.0484074
+          ],
+          [
+            -94.8835131,
+            30.0486437
+          ],
+          [
+            -94.8833579,
+            30.0487526
+          ],
+          [
+            -94.8833423,
+            30.0487636
+          ],
+          [
+            -94.8829448,
+            30.048996
+          ],
+          [
+            -94.8825369,
+            30.0491746
+          ],
+          [
+            -94.8819488,
+            30.0494362
+          ],
+          [
+            -94.8815444,
+            30.049563
+          ]
+        ]
+      },
+      "id": "way/1347909125"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1359151663",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:reviewed": "no"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7689974,
+            30.0575761
+          ],
+          [
+            -94.7648941,
+            30.0569277
+          ]
+        ]
+      },
+      "id": "way/1359151663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1359151664",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:reviewed": "no"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.7648941,
+            30.0569277
+          ],
+          [
+            -94.7642271,
+            30.0568228
+          ]
+        ]
+      },
+      "id": "way/1359151664"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1427583612",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8278507,
+            30.0576663
+          ],
+          [
+            -94.8290727,
+            30.0574828
+          ],
+          [
+            -94.8299186,
+            30.0573557
+          ]
+        ]
+      },
+      "id": "way/1427583612"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1427583613",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8299088,
+            30.057133
+          ],
+          [
+            -94.827831,
+            30.0574545
+          ]
+        ]
+      },
+      "id": "way/1427583613"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1427583614",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A25",
+        "tiger:county": "Harris, TX",
+        "tiger:name_base": "Beaumont",
+        "tiger:name_base_1": "United States Highway 90",
+        "tiger:name_type": "Hwy"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.827831,
+            30.0574545
+          ],
+          [
+            -94.8259479,
+            30.0577327
+          ]
+        ]
+      },
+      "id": "way/1427583614"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1427583615",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "Highway 90",
+        "oneway": "yes",
+        "ref": "US 90;TX 146",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90",
+        "tiger:name_base_1": "State Highway 146"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.8260011,
+            30.0579381
+          ],
+          [
+            -94.8278507,
+            30.0576663
+          ]
+        ]
+      },
+      "id": "way/1427583615"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1487414973",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6720717,
+            30.0417106
+          ],
+          [
+            -94.6731653,
+            30.041688
+          ],
+          [
+            -94.6742165,
+            30.0416978
+          ],
+          [
+            -94.6751932,
+            30.0417081
+          ],
+          [
+            -94.6756322,
+            30.0417061
+          ],
+          [
+            -94.6760464,
+            30.0417309
+          ],
+          [
+            -94.6763342,
+            30.0417552
+          ],
+          [
+            -94.6770387,
+            30.0418763
+          ],
+          [
+            -94.677684,
+            30.0420693
+          ],
+          [
+            -94.681533,
+            30.043526
+          ],
+          [
+            -94.683087,
+            30.043961
+          ],
+          [
+            -94.6837523,
+            30.0441274
+          ],
+          [
+            -94.6851613,
+            30.0443661
+          ]
+        ]
+      },
+      "id": "way/1487414973"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1487414974",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "2",
+        "layer": "1",
+        "name": "US Highway 90",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "tiger:cfcc": "A21",
+        "tiger:county": "Liberty, TX",
+        "tiger:name_base": "United States Highway 90"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.6851613,
+            30.0443661
+          ],
+          [
+            -94.6857233,
+            30.044458
+          ]
+        ]
+      },
+      "id": "way/1487414974"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1488419653",
+        "bridge": "yes",
+        "hgv": "designated",
+        "hgv:national_network": "yes",
+        "highway": "trunk",
+        "lanes": "5",
+        "lanes:backward": "2",
+        "lanes:both_ways": "1",
+        "lanes:forward": "2",
+        "layer": "1",
+        "name": "US Highway 90",
+        "oneway": "no",
+        "ref": "US 90",
+        "shoulder": "yes",
+        "source:hgv:national_network": "https://www.ecfr.gov/current/title-23/chapter-I/subchapter-G/part-658;https://hepgis-usdot.hub.arcgis.com/apps/usdot::national-network-conventional-combination-trucks-map",
+        "turn:lanes:both_ways": "left",
+        "turn:lanes:forward": "|merge_to_left"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.5936634,
+            30.0278849
+          ],
+          [
+            -94.5942499,
+            30.027939
+          ]
+        ]
+      },
+      "id": "way/1488419653"
+    }
+  ]
+}
