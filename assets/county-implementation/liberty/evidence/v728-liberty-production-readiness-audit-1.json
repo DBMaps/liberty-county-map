@@ -1,0 +1,71 @@
+{
+  "auditId": "V728",
+  "title": "Liberty County Production Readiness Audit #1",
+  "mission": "Know Before You Go",
+  "mode": "GRIDLY LAUNCH FOCUS MODE",
+  "scope": "audit_only",
+  "runtimeBehaviorChanged": false,
+  "uiBehaviorChanged": false,
+  "countyActivationChanged": false,
+  "directionalImplementationTouched": false,
+  "dispatchBoardTouched": false,
+  "primaryLaunchCounty": "Liberty County",
+  "supportCounties": ["Montgomery County", "San Jacinto County"],
+  "deferredExpansion": ["Jefferson County", "Future Counties"],
+  "finalDetermination": "LIBERTY PRODUCTION READINESS AUDIT #1 — PASS WITH OBSERVATIONS",
+  "reportedState": {
+    "localMessage": "No active local issues reported",
+    "nearbyMessage": "2 active issues nearby",
+    "explainableAsCorrectBehavior": true,
+    "condition": "Correct only when local awareness and nearby/route surfaces use different scopes and the two active issues are outside the selected local awareness area."
+  },
+  "mostLikelyStaleSurfaceIfIncorrect": "route/nearby/mobile/bottom-panel count sourced from getUnifiedIncidents/getActiveUnifiedIncidents, alert-surface rows, or the max-based awareness reconciler",
+  "clearedRoadHazardsExcludedFromActiveCounts": "generally_yes_static_review",
+  "clearedCrossingReportsExcludedFromActiveCounts": "generally_yes_static_review",
+  "routePanelCountsReconciledWithAlertAwarenessCounts": "partial_shared_primitives_not_single_scoped_truth",
+  "libertySafeToContinueTowardLaunchReadiness": true,
+  "smallestRecommendedV729Fix": "Add/read-only-log exact source, scope, count, and record IDs for each displayed active-count surface; bind nearby copy to the same area filter or rename route-scoped counts.",
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "countyProgramBoundaries": {
+    "liberty": "launch_focus",
+    "montgomery": "maintenance_support",
+    "sanJacinto": "maintenance_support",
+    "jefferson": "deferred",
+    "registryOperationalStatusChanged": false
+  },
+  "sourceInventory": {
+    "activeHazards": "Raw road hazard collection; requires lifecycle filtering before user-facing active counts.",
+    "activeReports": "Raw crossing/community report collection; requires getIncidentLifecycleState(report) === active for crossing active counts.",
+    "recentlyClearedRoadHazards": "Recently cleared road hazards retained for Recently Cleared visibility and active suppression, not active status.",
+    "getUnifiedIncidents": "Combines rail incidents, active road hazards, recently cleared road hazards as cleared, and future placeholder feeds.",
+    "getActiveUnifiedIncidents": "Filters getUnifiedIncidents() by status === active.",
+    "activeIssuesNearby": "Bottom/mobile awareness active copy using normalized activeIssueCount after reconciliation.",
+    "awarenessHeader": "Area-scoped awareness summary and refreshPortraitV2LocalizedIntelligence.",
+    "alertsPanel": "renderAlerts/buildCommuteConsequenceIntelligence active unified incident model plus separate recently-cleared block.",
+    "routePanel": "Route-relevant hazards/alert rows/user-facing active road hazard incidents; not identical to selected awareness area.",
+    "markersClusters": "Unified incidents and hazard marker inputs; active consumers must filter cleared status."
+  },
+  "runtimeHelpers": {
+    "gridlyActiveHazardCountReconciliationAudit": "found",
+    "gridlyActiveIncidentAudit": "found",
+    "gridlyReportVisibilityPipelineAudit": "found",
+    "gridlyClearedHazardPersistenceAudit": "found",
+    "gridlyCrossingAwarenessPromotionAudit": "found",
+    "gridlyUiSmokeTest": "found",
+    "gridlyHealthCheck": "found",
+    "gridlyPostSubmitRefreshAudit": "found",
+    "gridlyRefreshBreakdownAudit": "found",
+    "gap": "No single Liberty production count source ledger helper snapshots every displayed count with source scope and record IDs after submit-clear cycles."
+  },
+  "staticReviewCommands": [
+    "rg -n \"active issues nearby|recently cleared|cleared|activeHazards|activeIncidents|activeReports|crossingReports|renderPortraitRouteWatch|refreshPortraitV2LocalizedIntelligence|gridlyActiveHazardCountReconciliationAudit|gridlyClearedHazardPersistenceAudit\" js/app.js",
+    "rg -n \"gridlyActiveIncidentAudit|gridlyReportVisibilityPipelineAudit|gridlyCrossingAwarenessPromotionAudit|gridlyUiSmokeTest|gridlyHealthCheck|gridlyPostSubmitRefreshAudit|gridlyRefreshBreakdownAudit\" js/app.js"
+  ]
+}
