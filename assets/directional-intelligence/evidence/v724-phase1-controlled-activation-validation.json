@@ -1,0 +1,102 @@
+{
+  "milestone": "V724",
+  "title": "Phase 1 Controlled Activation Validation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "validationOnly": true,
+    "runtimeActivationChanges": false,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false
+  },
+  "runtimeAssetValidation": [
+    {
+      "corridor": "US 90",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "activationEnabled": true,
+      "expectedActivationEnabled": true,
+      "activationValidationPass": true,
+      "userFacingRenderingEnabled": false,
+      "expectedUserFacingRenderingEnabled": false,
+      "userFacingRenderingValidationPass": true,
+      "candidateCount": 81,
+      "expectedCandidateCount": 81,
+      "candidateCountValidationPass": true,
+      "validationPass": true
+    },
+    {
+      "corridor": "TX 146",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "activationEnabled": true,
+      "expectedActivationEnabled": true,
+      "activationValidationPass": true,
+      "userFacingRenderingEnabled": false,
+      "expectedUserFacingRenderingEnabled": false,
+      "userFacingRenderingValidationPass": true,
+      "candidateCount": 36,
+      "expectedCandidateCount": 36,
+      "candidateCountValidationPass": true,
+      "validationPass": true
+    },
+    {
+      "corridor": "FM 1960",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "activationEnabled": false,
+      "expectedActivationEnabled": false,
+      "activationValidationPass": true,
+      "userFacingRenderingEnabled": false,
+      "expectedUserFacingRenderingEnabled": false,
+      "userFacingRenderingValidationPass": true,
+      "candidateCount": 0,
+      "expectedCandidateCount": 0,
+      "candidateCountValidationPass": true,
+      "validationPass": true
+    }
+  ],
+  "evidenceValidation": {
+    "source": "assets/directional-intelligence/evidence/v723-phase1-directional-controlled-activation.json",
+    "expectedFinalDetermination": "PHASE 1 CONTROLLED ACTIVATION COMPLETE WITH OBSERVATIONS",
+    "actualFinalDetermination": "PHASE 1 CONTROLLED ACTIVATION COMPLETE WITH OBSERVATIONS",
+    "validationPass": true
+  },
+  "userFacingIsolationValidation": {
+    "directionalWordingExpectedToRender": false,
+    "allPhase1RuntimeAssetsUserFacingRenderingDisabled": true,
+    "uiChecksAdded": false,
+    "validationPass": true
+  },
+  "protectionValidation": {
+    "source": "assets/directional-intelligence/evidence/v723-phase1-directional-controlled-activation.json",
+    "bearingProtectionPass": "PASS",
+    "failClosedPass": "PASS",
+    "reviewBucketProtectionPass": "PASS",
+    "validationPass": true
+  },
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false,
+    "validationPass": true
+  },
+  "nonGoalsConfirmed": {
+    "runtimeAssetsModified": false,
+    "fm1960Activated": false,
+    "userFacingRenderingEnabled": false,
+    "uiModified": false,
+    "protectedSystemsModified": false
+  },
+  "finalDetermination": "CONTROLLED ACTIVATION VALIDATION PASS",
+  "finalRationale": "US 90 and TX 146 controlled activation states are verified, FM 1960 remains inactive and fail-closed with zero runtime candidates, all Phase 1 runtime assets keep user-facing rendering disabled, V723 evidence and protections remain passing, and protected-system flags remain unchanged."
+}
