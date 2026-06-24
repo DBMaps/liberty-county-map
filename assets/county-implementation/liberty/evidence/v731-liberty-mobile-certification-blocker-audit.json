@@ -1,0 +1,114 @@
+{
+  "audit": "V731 Liberty Mobile Certification Blocker Audit",
+  "mission": "Know Before You Go",
+  "mode": "GRIDLY LAUNCH FOCUS MODE",
+  "primaryLaunchCounty": "Liberty County",
+  "scope": "Audit only; no runtime, UI, county status, directional system, Dispatch Board, or onboarding changes.",
+  "finalDetermination": "LIBERTY MOBILE CERTIFICATION BLOCKER AUDIT\nBLOCKED",
+  "blockers": [
+    {
+      "id": "BLOCKER_1",
+      "name": "Incorrect Road Attribution",
+      "finding": "Tap Map coordinate ownership and display road-name ownership can diverge. A TX 146 raw tap can keep TX 146 coordinates while resolver/cached/fallback road metadata supplies US 90/Waco Street wording.",
+      "highestConfidenceRootCause": "Split location ownership across raw tap placement, road resolver diagnostics, submission metadata, shared road lookup, display builders, and awareness/alert wording builders.",
+      "trustworthyToday": false,
+      "impact": "Launch blocker because user-facing surfaces can attribute one incident to conflicting roads."
+    },
+    {
+      "id": "BLOCKER_2",
+      "name": "Severe Mobile Interaction Delay",
+      "finding": "The click-to-submit path awaits network insert and then performs synchronous local-immediate refresh/render work before returning, including refreshReportHazardViews, renderUnifiedIncidents, and immediate marker auto-render scheduling.",
+      "highestConfidenceRootCause": "Synchronous post-submit refresh/render chain on the mobile click handler path, with possible network/fallback insert contribution.",
+      "observedConsoleDurationsMs": [16795, 18557, 23772],
+      "impact": "Launch blocker because normal reporting appears unresponsive."
+    }
+  ],
+  "roadAttributionAudit": {
+    "reviewedFunctions": [
+      "buildLocalizedIncidentLabel",
+      "buildRoadHazardDisplay",
+      "resolveGridlyAuthoritativeIncidentDisplayLocation",
+      "collectNearbyRoadCandidates",
+      "resolveNearestRoadName",
+      "resolveNearbyRoadPair",
+      "refreshPortraitV2LocalizedIntelligence",
+      "renderAlerts",
+      "renderRoadHazards",
+      "renderUnifiedIncidents"
+    ],
+    "surfaceDivergence": {
+      "awareness": "Can use shared active-awareness/road-display wording.",
+      "alerts": "Can use corridor/localized summaries and reported-on metadata.",
+      "popups": "Can render correct marker coordinate with resolver-derived popup text.",
+      "routes": "Can inherit unified incident wording while route relevance remains spatial."
+    },
+    "multipleBuildersCompeting": true,
+    "staleResolverDataRisk": true,
+    "v727Contribution": "Not primary cause; directional context can make mismatches more visible but does not itself select the base road.",
+    "scopeAssessment": "Shared platform bug class; Liberty launch-critical manifestation."
+  },
+  "mobilePerformanceAudit": {
+    "reviewedFunctions": [
+      "handleHazardPlacementMapClick",
+      "createSharedHazardReport",
+      "runPostSubmitRefreshInBackground",
+      "refreshReportHazardViews",
+      "renderUnifiedIncidents",
+      "scheduleHazardMarkerAutoRender",
+      "refreshPortraitV2LocalizedIntelligence",
+      "renderAlerts"
+    ],
+    "likelySlowStages": [
+      "Supabase insert or metadata fallback retry",
+      "refreshReportHazardViews local-immediate refresh",
+      "renderUnifiedIncidents layer clearing/marker/popup generation",
+      "scheduleHazardMarkerAutoRender immediate render plus delayed rerenders",
+      "awareness and alert synchronization"
+    ],
+    "classification": {
+      "libertySpecific": "Launch impact yes; code path shared.",
+      "mobileSpecific": "Mobile-amplified due to Tap Map, portrait Awareness, and sheet transitions.",
+      "browserSpecific": "Not proven.",
+      "platformWide": "Yes, shared refresh/render architecture."
+    }
+  },
+  "runtimeHelperInventory": [
+    "gridlyUiSmokeTest",
+    "gridlyActiveHazardCountReconciliationAudit",
+    "gridlyReportVisibilityPipelineAudit",
+    "gridlyRefreshBreakdownAudit",
+    "gridlyPostSubmitRefreshAudit",
+    "gridlyRoadNameResolverDebug",
+    "gridlyReferenceRoadResolverAudit",
+    "gridlyBackgroundLoopAudit",
+    "gridlyAuditPerformanceReview",
+    "gridlyRouteIntelligenceDebug",
+    "gridlyPlacementPipelineTraceAudit",
+    "gridlyGeometryAwarePlacementAudit",
+    "gridlySnapRejectionDecisionAudit",
+    "gridlyPortraitIntelligenceBreakdownAudit",
+    "gridlyReflowAudit"
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "countyBoundaries": {
+    "liberty": "Launch Focus; unchanged",
+    "montgomery": "Maintenance Mode; unchanged",
+    "sanJacinto": "Maintenance Mode; unchanged",
+    "jefferson": "Deferred; unchanged"
+  },
+  "smallestRecommendedV732Scope": [
+    "Create one canonical post-submit display-location contract for all surfaces.",
+    "Confidence-gate resolver road names against the raw tap coordinate and accepted candidate distance.",
+    "Isolate/invalidate per-tap resolver state so cached road names cannot cross submissions.",
+    "Defer and coalesce full refresh/render work until after immediate UI acknowledgment.",
+    "Use existing diagnostics before creating new helper systems."
+  ],
+  "launchReadinessBlocked": true
+}
