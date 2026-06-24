@@ -1,0 +1,190 @@
+{
+  "artifactType": "directional_incident_context_ownership_audit",
+  "version": "V725",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "runtimeBehaviorModified": false,
+  "userFacingRenderingEnabled": false,
+  "awarenessBriefOwnershipChanged": false,
+  "finalDetermination": {
+    "canReuseExistingDirectionalStackForIncidentContext": true,
+    "shouldDuplicateV695ToV704Work": false,
+    "smallestSafePath": "Reuse the existing directional runtime, service, and consumer layers as read-only incident-context inputs for existing incident wording builders; do not write directional text directly to Awareness Brief DOM nodes."
+  },
+  "existingDirectionalStackInventory": [
+    {
+      "layer": "runtime_candidate_prototype",
+      "file": "js/gridlyDirectionalRuntimeCandidatePrototype.js",
+      "present": true,
+      "rebuildRequired": false,
+      "finding": "Candidate generation and runtime audit foundation already exist."
+    },
+    {
+      "layer": "service_layer",
+      "file": "js/gridlyDirectionalServiceLayer.js",
+      "present": true,
+      "rebuildRequired": false,
+      "finding": "Service gating, containment checks, and bearing protections already exist."
+    },
+    {
+      "layer": "consumer_layer",
+      "file": "js/gridlyDirectionalServiceConsumer.js",
+      "present": true,
+      "rebuildRequired": false,
+      "finding": "Consumer-safe snapshot and fail-closed evaluation already exist."
+    },
+    {
+      "layer": "awareness_layer",
+      "file": "js/gridlyDirectionalAwarenessLayer.js",
+      "present": true,
+      "rebuildRequired": false,
+      "finding": "Awareness layer exists but must not own Awareness Brief top-status DOM for the incident-context path."
+    }
+  ],
+  "runtimeAssets": [
+    {
+      "corridor": "US 90",
+      "asset": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "exists": true,
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 81,
+      "reuseForIncidentContext": true,
+      "rebuildRequired": false
+    },
+    {
+      "corridor": "TX 146",
+      "asset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "exists": true,
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 36,
+      "reuseForIncidentContext": true,
+      "rebuildRequired": false
+    },
+    {
+      "corridor": "FM 1960",
+      "asset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "exists": true,
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 0,
+      "reuseForIncidentContext": false,
+      "failClosed": true,
+      "mustDisplayDirectionalContext": false
+    }
+  ],
+  "v706RootCauseConfirmation": {
+    "refreshOwnerFunction": "refreshPortraitV2LocalizedIntelligence",
+    "directionalAwarenessDomWriterDetected": true,
+    "forbiddenDirectionalOwnershipTargets": [
+      "gridlyV2TopStatusPrimary",
+      "gridlyV2TopStatusSecondary"
+    ],
+    "finding": "Directional text must not compete with Awareness Brief ownership by writing directly to top-status DOM nodes."
+  },
+  "incidentWordingOwnershipInventory": [
+    {
+      "surface": "incident_labels",
+      "functions": [
+        "buildLocalizedIncidentLabel",
+        "buildRoadHazardDisplay"
+      ],
+      "currentWordingInputs": [
+        "shared resolved road lookup",
+        "locationContext.primary",
+        "locationContext.phrasing",
+        "nearestKnownLocation",
+        "area/city/county",
+        "coordinates",
+        "status",
+        "age_minutes"
+      ],
+      "futureDirectionalContextRole": "Potential future enrichment point for incident wording after authorization."
+    },
+    {
+      "surface": "alert_cards",
+      "functions": [
+        "getAlertsSurfaceSnapshot",
+        "buildSpecificAlertTitle",
+        "buildAlertTitle",
+        "buildGridlyAlertCardConsumerModel",
+        "buildAlertsSurfaceHtml"
+      ],
+      "currentWordingInputs": [
+        "roadName",
+        "corridor",
+        "primaryRoad",
+        "referenceRoadA",
+        "referenceRoadB",
+        "knownLocation",
+        "nearestRoad",
+        "locationName",
+        "minutesText"
+      ],
+      "futureDirectionalContextRole": "Consume enriched incident model fields; do not use a separate Awareness Brief DOM writer."
+    },
+    {
+      "surface": "hazard_popups",
+      "functions": [
+        "resolveGridlyHazardPopupRoadLabel",
+        "buildGridlyHazardPopupConsumerModel",
+        "buildUnifiedIncidentPopup"
+      ],
+      "currentWordingInputs": [
+        "shared resolved road lookup",
+        "road_name",
+        "roadName",
+        "resolvedRoadName",
+        "primaryRoad",
+        "corridor",
+        "nearest_road",
+        "location_name"
+      ],
+      "futureDirectionalContextRole": "Consume incident-context direction only after later rendering authorization."
+    },
+    {
+      "surface": "crossing_popups",
+      "functions": [
+        "buildPopup",
+        "buildGridlyCrossingPopupConsumerModel",
+        "buildUnifiedIncidentPopup"
+      ],
+      "currentWordingInputs": [
+        "crossing.name",
+        "crossing.railroad",
+        "report.type",
+        "crossing report state",
+        "location line"
+      ],
+      "futureDirectionalContextRole": "Not the primary road-corridor context target; leave unchanged unless separately authorized."
+    }
+  ],
+  "smallestSafeOwnershipPath": [
+    "Keep V695-V704 candidate, service, consumer, and runtime asset layers intact.",
+    "Use directional intelligence as read-only incident context, not as an Awareness Brief DOM writer.",
+    "Resolve context only for validated corridors and accepted full-word directions.",
+    "Feed future authorized context through incident wording builders rather than gridlyV2TopStatusPrimary or gridlyV2TopStatusSecondary.",
+    "Leave refreshPortraitV2LocalizedIntelligence as the Awareness Brief top-status owner.",
+    "Keep FM1960 fail-closed.",
+    "Keep userFacingRenderingEnabled false until a later milestone explicitly authorizes rendering."
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false,
+    "changedByV725": false
+  },
+  "staticGrepEvidenceTerms": [
+    "refreshPortraitV2LocalizedIntelligence",
+    "gridlyV2TopStatusPrimary",
+    "gridlyV2TopStatusSecondary",
+    "buildLocalizedIncidentLabel",
+    "buildRoadHazardDisplay",
+    "resolveGridlyAuthoritativeIncidentDisplayLocation",
+    "gridlyDirectionalServiceConsumer",
+    "userFacingRenderingEnabled"
+  ]
+}
