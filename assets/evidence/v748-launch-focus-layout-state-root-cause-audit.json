@@ -1,0 +1,28 @@
+{
+  "version": "V748",
+  "mission": "Know Before You Go / Know Before You Respond",
+  "status": "REVIEW",
+  "rootCauseFound": true,
+  "finalDetermination": "Launch-focus portrait containment did not activate because applyLayoutMode() only applies the body gridly-launch-focus-portrait-validation class when the final mode is portrait and lastLayoutSignal.desktopGateSuppressedForLaunchFocus is true. Browser validation reached a portrait/mobile-visible state without that desktop-gate-suppression flag, so the body class was absent, the CSS selector never matched #gridlyPortraitV2, and the portrait root remained desktop-wide.",
+  "layoutStateOwner": "computeLayoutModeSignals() -> resolveLayoutMode() -> evaluateLayoutMode() -> applyLayoutMode()",
+  "bodyLayoutModeOwner": "applyLayoutMode() writes body[data-layout-mode] and body[data-layout-mode-legacy].",
+  "desktopGateOwner": "CSS shows #gridlyDesktopGate from body[data-layout-mode=desktop]; resolveLayoutMode() suppresses that path by returning portrait only when forcedDesktop and shouldSuppressGridlyDesktopGateForLaunchFocus() are both true.",
+  "portraitRootOwner": "#gridlyPortraitV2 is static markup; body[data-layout-mode=portrait] CSS displays it; applyLayoutMode() calls activateGridlyPortraitV2StartupOwner() in portrait mode.",
+  "containmentOwner": "applyLayoutMode() toggles gridly-launch-focus-portrait-validation on body; CSS expects body[data-layout-mode=portrait].gridly-launch-focus-portrait-validation #gridlyPortraitV2.",
+  "containmentClassElementExpected": "body",
+  "whyContainmentClassPresentFalse": "The class is gated by lastLayoutSignal.desktopGateSuppressedForLaunchFocus rather than by final launch-focus portrait validation. That flag is only true on the forcedDesktop suppression branch; it is false when portrait is chosen or retained for width/container/overflow reasons.",
+  "classStateDetermination": "never_applied_for_this_resolver_path_or_removed_when_a_later_resolver_run_lacked_desktopGateSuppressedForLaunchFocus",
+  "whyPortraitMaxAllowedWidthWas980": "The V747 audit computes portraitMaxAllowedWidth as 430 only when isGridlyLaunchFocusPortraitValidationActive() is true. Because the body containment class was absent and lastLayoutSignal.desktopGateSuppressedForLaunchFocus was false, launchFocusPortraitValidation was false and the fallback Math.min(viewportWidth || portraitRootWidth || 980, 980) produced 980.",
+  "operationsCenterCausedIssue": false,
+  "operationsAssessment": "Operations Center remains disabled and its shell/data bridge do not own body layout mode, desktop-gate CSS, #gridlyPortraitV2 visibility, or the containment class. The issue is an older desktop-gate/layout-mode coupling exposed by suppressing the desktop gate.",
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "requiredHelper": "window.gridlyLaunchFocusLayoutStateAudit?.()",
+  "recommendedNextFix": "In a later behavior-change milestone, make applyLayoutMode() apply the body containment class whenever launch-focus mobile validation is active and the resolved final layout is portrait, instead of requiring desktopGateSuppressedForLaunchFocus to be true. V748 intentionally does not patch behavior."
+}
