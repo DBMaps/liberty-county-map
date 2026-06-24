@@ -20670,11 +20670,11 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   top: 0;
   right: 0;
   bottom: 0;
-  left: calc(50% + 235px);
+  left: auto;
   z-index: 1200;
-  width: auto;
-  min-width: 0;
-  max-width: calc(100vw - 470px);
+  width: min(520px, max(360px, calc((100vw - 470px) / 2)));
+  min-width: 360px;
+  max-width: 520px;
   overflow: auto;
   overscroll-behavior: contain;
   contain: layout paint style;
@@ -20902,10 +20902,12 @@ body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridl
 
 @media (max-width: 900px) {
   .gridly-operations-center-preview-host {
-    left: auto;
-    right: 0;
-    width: min(360px, calc(100vw - 430px));
-    max-width: calc(100vw - 430px);
+    left: 100vw;
+    right: auto;
+    width: 360px;
+    min-width: 360px;
+    max-width: 360px;
+    pointer-events: none;
   }
 
   .gridly-operations-center-shell__sections--primary,
