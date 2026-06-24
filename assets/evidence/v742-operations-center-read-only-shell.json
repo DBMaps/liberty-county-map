@@ -1,0 +1,66 @@
+{
+  "version": "V742",
+  "title": "Operations Center Read-Only Shell",
+  "finalDetermination": "PASS",
+  "mission": "Know Before You Respond",
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "mobileParityWhenFalse": true,
+    "requiredForShellRender": true
+  },
+  "shell": {
+    "registered": true,
+    "renderedByDefault": false,
+    "renderBlockedWhenDisabled": true,
+    "readOnly": true,
+    "header": "Gridly Operations Center",
+    "subline": "Know Before You Respond",
+    "countyStatus": "Liberty County",
+    "sections": [
+      "Community Status",
+      "Active Incidents",
+      "Community Pulse",
+      "Corridor Status",
+      "Community Summary",
+      "New Reports",
+      "Recently Cleared"
+    ]
+  },
+  "isolationAudit": {
+    "operationsCenterEnabled": false,
+    "shellRegistered": true,
+    "shellRendered": false,
+    "shellRenderBlockedWhenDisabled": true,
+    "mobileDomModified": false,
+    "portraitRendererModified": false,
+    "mobileRefreshHookAdded": false,
+    "sharedModelOwnershipChanged": false,
+    "communityPulseOwnershipChanged": false,
+    "routeWatchOwnershipChanged": false,
+    "refreshPipelineModified": false,
+    "safeForMobile": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "unchangedSystems": [
+    "Dispatch Board routing",
+    "mobile portrait DOM when flag false",
+    "bottom dock",
+    "Awareness Brief wording",
+    "Community Pulse wording and ownership",
+    "Location Awareness wording",
+    "alert generation",
+    "Route Watch behavior and ownership",
+    "incident lifecycle",
+    "report lifecycle",
+    "marker rendering",
+    "mobile refresh pipeline"
+  ]
+}
