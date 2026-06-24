@@ -14,7 +14,7 @@ The source inventory is valid GeoJSON and supports simulated candidate generatio
 - Gridly remains **Awareness Platform First, Route Intelligence Second**.
 - V716 is documentation/evidence only and produces no runtime artifact consumed by the application.
 - Requested source directory: `assets/directional-intelligence/source/osm/`.
-- Observed source directory in this checkout: `assets/directional-intelligenc/source/osm/`.
+- Observed source directory in this checkout: `assets/directional-intelligence/source/osm/`.
 - Observation: Source assets are present in the observed misspelled directory from V715; V716 does not move source files or alter runtime paths.
 
 ## Source Inventory Review
@@ -25,9 +25,9 @@ All eight V715 source files exist in the observed source directory and parse as 
 
 | Corridor | sourceFileUsed | sourceFeatureCount | candidateCount | highConfidenceCount | mediumConfidenceCount | reviewRequiredCount | excludedCount | promotableCandidateCount | failClosedPass | containmentPass | bearingProtectionPass | readinessStatus |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| US 90 | `assets/directional-intelligenc/source/osm/liberty-us90-source.geojson` | 127 | 127 | 81 | 46 | 46 | 0 | 81 | True | True | True | READY WITH OBSERVATIONS |
-| TX 146 | `assets/directional-intelligenc/source/osm/liberty-tx146-source.geojson` | 87 | 87 | 36 | 51 | 51 | 0 | 36 | True | True | True | READY WITH OBSERVATIONS |
-| FM 1960 | `assets/directional-intelligenc/source/osm/liberty-fm1960-source.geojson` | 5 | 5 | 0 | 5 | 5 | 0 | 0 | True | True | True | NOT READY |
+| US 90 | `assets/directional-intelligence/source/osm/liberty-us90-source.geojson` | 127 | 127 | 81 | 46 | 46 | 0 | 81 | True | True | True | READY WITH OBSERVATIONS |
+| TX 146 | `assets/directional-intelligence/source/osm/liberty-tx146-source.geojson` | 87 | 87 | 36 | 51 | 51 | 0 | 36 | True | True | True | READY WITH OBSERVATIONS |
+| FM 1960 | `assets/directional-intelligence/source/osm/liberty-fm1960-source.geojson` | 5 | 5 | 0 | 5 | 5 | 0 | 0 | True | True | True | NOT READY |
 
 ## County Inventory Review
 
@@ -35,15 +35,15 @@ The Liberty county inventory contains all three Phase 1 corridors by ref/name ma
 
 ## US 90 Candidate Validation
 
-US 90 used `assets/directional-intelligenc/source/osm/liberty-us90-source.geojson`. It produced 127 simulated candidates, 81 high-confidence candidates, 46 medium-confidence candidates, 46 review-required records, 0 exclusions, and 81 promotable candidates. Readiness is **READY WITH OBSERVATIONS** because promotable candidates exist, while missing county/oneway metadata still requires review.
+US 90 used `assets/directional-intelligence/source/osm/liberty-us90-source.geojson`. It produced 127 simulated candidates, 81 high-confidence candidates, 46 medium-confidence candidates, 46 review-required records, 0 exclusions, and 81 promotable candidates. Readiness is **READY WITH OBSERVATIONS** because promotable candidates exist, while missing county/oneway metadata still requires review.
 
 ## TX 146 Candidate Validation
 
-TX 146 used `assets/directional-intelligenc/source/osm/liberty-tx146-source.geojson`. It produced 87 simulated candidates, 36 high-confidence candidates, 46 medium-confidence candidates, 51 review-required records, 0 exclusions, and 36 promotable candidates. Readiness is **READY WITH OBSERVATIONS** because promotable candidates exist, while shared US 90/TX 146 alignments and missing metadata still require review.
+TX 146 used `assets/directional-intelligence/source/osm/liberty-tx146-source.geojson`. It produced 87 simulated candidates, 36 high-confidence candidates, 46 medium-confidence candidates, 51 review-required records, 0 exclusions, and 36 promotable candidates. Readiness is **READY WITH OBSERVATIONS** because promotable candidates exist, while shared US 90/TX 146 alignments and missing metadata still require review.
 
 ## FM 1960 Candidate Validation
 
-FM 1960 used `assets/directional-intelligenc/source/osm/liberty-fm1960-source.geojson`. It produced 5 simulated candidates, 0 high-confidence candidates, 5 medium-confidence candidates, 5 review-required records, 0 exclusions, and 0 promotable candidates. Readiness is **NOT READY** because the source is valid but the small source set lacks promotable high-confidence records.
+FM 1960 used `assets/directional-intelligence/source/osm/liberty-fm1960-source.geojson`. It produced 5 simulated candidates, 0 high-confidence candidates, 5 medium-confidence candidates, 5 review-required records, 0 exclusions, and 0 promotable candidates. Readiness is **NOT READY** because the source is valid but the small source set lacks promotable high-confidence records.
 
 ## Review Bucket Exposure
 
@@ -61,10 +61,10 @@ FM 1960 used `assets/directional-intelligenc/source/osm/liberty-fm1960-source.ge
 
 | County source | validGeojson | featureCount | refCoverage | nameCoverage | candidateExtractionViable | futureCountyExpansionValue |
 |---|---:|---:|---:|---:|---:|---|
-| `assets/directional-intelligenc/source/osm/liberty-major-roads-source.geojson` | True | 929 | 910 (97.95%) | 647 (69.64%) | True | HIGH for Liberty Phase 1 extraction |
-| `assets/directional-intelligenc/source/osm/montgomery-major-roads-source.geojson` | True | 15907 | 12915 (81.19%) | 13310 (83.67%) | False | MEDIUM after Texas-county filtering |
-| `assets/directional-intelligenc/source/osm/san-jacinto-major-roads-source.geojson` | True | 129 | 128 (99.22%) | 51 (39.53%) | False | MEDIUM after Texas-county filtering |
-| `assets/directional-intelligenc/source/osm/jefferson-major-roads-source.geojson` | True | 14964 | 14964 (100.0%) | 10393 (69.45%) | False | MEDIUM after Texas-county filtering |
+| `assets/directional-intelligence/source/osm/liberty-major-roads-source.geojson` | True | 929 | 910 (97.95%) | 647 (69.64%) | True | HIGH for Liberty Phase 1 extraction |
+| `assets/directional-intelligence/source/osm/montgomery-major-roads-source.geojson` | True | 15907 | 12915 (81.19%) | 13310 (83.67%) | False | MEDIUM after Texas-county filtering |
+| `assets/directional-intelligence/source/osm/san-jacinto-major-roads-source.geojson` | True | 129 | 128 (99.22%) | 51 (39.53%) | False | MEDIUM after Texas-county filtering |
+| `assets/directional-intelligence/source/osm/jefferson-major-roads-source.geojson` | True | 14964 | 14964 (100.0%) | 10393 (69.45%) | False | MEDIUM after Texas-county filtering |
 
 ## Containment Validation
 

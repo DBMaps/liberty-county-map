@@ -4,7 +4,7 @@
 
 V715 revalidates Phase 1 corridor inventory readiness after county-contained OSM source datasets were added. This is documentation and evidence only: no runtime, UI, activation, routing, navigation, extraction, candidate, confidence, review-bucket, county-system, or Supabase changes were made.
 
-The V714 zero-source/zero-inventory condition is no longer current for US 90, TX 146, or FM 1960: each has a valid GeoJSON FeatureCollection with LineString geometry. The source files are present under `assets/directional-intelligenc/source/osm/`, while the requested path `assets/directional-intelligence/source/osm/` is absent in this checkout; this path-spelling observation should be tracked before automation depends on the requested directory.
+The V714 zero-source/zero-inventory condition is no longer current for US 90, TX 146, or FM 1960: each has a valid GeoJSON FeatureCollection with LineString geometry. The source files are present under `assets/directional-intelligence/source/osm/`, while the requested path `assets/directional-intelligence/source/osm/` is absent in this checkout; this path-spelling observation should be tracked before automation depends on the requested directory.
 
 **Overall Phase 1 inventory determination: PHASE 1 INVENTORY READY WITH OBSERVATIONS.**
 
@@ -23,9 +23,9 @@ Inventory and candidate generation are feasible from the source data, but genera
 
 | Corridor | Source file | Valid GeoJSON | Feature count | Geometry count | Geometry types | Ref coverage | Name coverage |
 |---|---|---:|---:|---:|---|---|---|
-| US 90 | `assets/directional-intelligenc/source/osm/liberty-us90-source.geojson` | true | 127 | 127 | LineString | US 90, US 90;FM 770, US 90;TX 146 | Beaumont Highway, East Main Street, Highway 90, US Highway 90, United States Highway 90 East, United States Highway 90 West, West Main Street |
-| TX 146 | `assets/directional-intelligenc/source/osm/liberty-tx146-source.geojson` | true | 87 | 87 | LineString | TX 146, US 90;TX 146 | Highway 146 South, Highway 90, North Main, North Main Street, United States Highway 90 East, United States Highway 90 West |
-| FM 1960 | `assets/directional-intelligenc/source/osm/liberty-fm1960-source.geojson` | true | 5 | 5 | LineString | FM 1960 | West Clayton Street |
+| US 90 | `assets/directional-intelligence/source/osm/liberty-us90-source.geojson` | true | 127 | 127 | LineString | US 90, US 90;FM 770, US 90;TX 146 | Beaumont Highway, East Main Street, Highway 90, US Highway 90, United States Highway 90 East, United States Highway 90 West, West Main Street |
+| TX 146 | `assets/directional-intelligence/source/osm/liberty-tx146-source.geojson` | true | 87 | 87 | LineString | TX 146, US 90;TX 146 | Highway 146 South, Highway 90, North Main, North Main Street, United States Highway 90 East, United States Highway 90 West |
+| FM 1960 | `assets/directional-intelligence/source/osm/liberty-fm1960-source.geojson` | true | 5 | 5 | LineString | FM 1960 | West Clayton Street |
 
 ## US 90 Revalidation
 
@@ -48,7 +48,7 @@ Remaining blockers:
 - Correct or explicitly track the source directory spelling before downstream automation expects assets/directional-intelligence/source/osm/.
 
 Observations:
-- Source files are present in assets/directional-intelligenc/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
+- Source files are present in assets/directional-intelligence/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
 - Most features do not carry oneway metadata, so directional extraction can start from geometry/ref/name but still needs existing directional normalization and review gates before promotion.
 
 ## TX 146 Revalidation
@@ -72,7 +72,7 @@ Remaining blockers:
 - Correct or explicitly track the source directory spelling before downstream automation expects assets/directional-intelligence/source/osm/.
 
 Observations:
-- Source files are present in assets/directional-intelligenc/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
+- Source files are present in assets/directional-intelligence/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
 - Most features do not carry oneway metadata, so directional extraction can start from geometry/ref/name but still needs existing directional normalization and review gates before promotion.
 - Shared alignment with US 90 is visible through the US 90;TX 146 ref and needs alias/shared-segment normalization during extraction.
 
@@ -97,7 +97,7 @@ Remaining blockers:
 - Correct or explicitly track the source directory spelling before downstream automation expects assets/directional-intelligence/source/osm/.
 
 Observations:
-- Source files are present in assets/directional-intelligenc/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
+- Source files are present in assets/directional-intelligence/source/osm/; the requested assets/directional-intelligence/source/osm/ directory is absent in this checkout.
 - Most features do not carry oneway metadata, so directional extraction can start from geometry/ref/name but still needs existing directional normalization and review gates before promotion.
 - Small source inventory is present; limited feature volume makes continuity and endpoint review important.
 
@@ -113,7 +113,7 @@ Observations:
 
 All three corridors have parseable LineString source geometry and coordinate coverage appropriate for corridor containment testing once segment inventory is generated. V715 did not run containment against generated segment artifacts because no extraction or candidate-generation changes were in scope.
 
-The principal containment observation is repository-path hygiene: source files are under `assets/directional-intelligenc/source/osm/`, not the requested `assets/directional-intelligence/source/osm/` path.
+The principal containment observation is repository-path hygiene: source files are under `assets/directional-intelligence/source/osm/`, not the requested `assets/directional-intelligence/source/osm/` path.
 
 ## Candidate Generation Feasibility
 
