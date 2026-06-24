@@ -1,0 +1,125 @@
+{
+  "milestone": "V723",
+  "title": "Phase 1 Directional Controlled Activation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "controlledRuntimeActivation": true,
+    "approvedCorridorsOnly": true,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false
+  },
+  "activationSource": {
+    "priorDetermination": "V722 PHASE 1 ACTIVATION APPROVED WITH OBSERVATIONS",
+    "approvedCorridors": [
+      "US 90",
+      "TX 146"
+    ],
+    "deferredCorridors": [
+      "FM 1960"
+    ]
+  },
+  "runtimeValidation": [
+    {
+      "corridorId": "us90",
+      "displayName": "US 90",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "reviewRequiredCount": 46,
+      "runtimeCandidateCount": 81,
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "runtimeStatus": "ACTIVE",
+      "awarenessIntegrationEnabled": false,
+      "alertIntegrationEnabled": false,
+      "routeWatchIntegrationEnabled": false,
+      "destinationIntelligenceIntegrationEnabled": false,
+      "routingEnabled": false,
+      "navigationEnabled": false
+    },
+    {
+      "corridorId": "tx146",
+      "displayName": "TX 146",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "activationEnabled": true,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "reviewRequiredCount": 51,
+      "runtimeCandidateCount": 36,
+      "approvalStatus": "APPROVED WITH OBSERVATIONS",
+      "runtimeStatus": "ACTIVE",
+      "awarenessIntegrationEnabled": false,
+      "alertIntegrationEnabled": false,
+      "routeWatchIntegrationEnabled": false,
+      "destinationIntelligenceIntegrationEnabled": false,
+      "routingEnabled": false,
+      "navigationEnabled": false
+    },
+    {
+      "corridorId": "fm1960",
+      "displayName": "FM 1960",
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "reviewRequiredCount": 5,
+      "runtimeCandidateCount": 0,
+      "approvalStatus": "DEFERRED",
+      "runtimeStatus": "INACTIVE_FAIL_CLOSED",
+      "awarenessIntegrationEnabled": false,
+      "alertIntegrationEnabled": false,
+      "routeWatchIntegrationEnabled": false,
+      "destinationIntelligenceIntegrationEnabled": false,
+      "routingEnabled": false,
+      "navigationEnabled": false
+    }
+  ],
+  "protectionValidation": {
+    "containmentPass": "PASS WITH OBSERVATIONS",
+    "bearingProtectionPass": "PASS",
+    "failClosedPass": "PASS",
+    "reviewBucketProtectionPass": "PASS",
+    "rationale": "Approved corridors activate runtime eligibility only; review-required buckets remain excluded, FM 1960 remains inactive with no runtime candidates, and user-facing rendering remains disabled for all corridors."
+  },
+  "userFacingIsolationValidation": {
+    "US 90": {
+      "userFacingRenderingEnabled": false,
+      "directionalWordingVisible": false
+    },
+    "TX 146": {
+      "userFacingRenderingEnabled": false,
+      "directionalWordingVisible": false
+    },
+    "FM 1960": {
+      "userFacingRenderingEnabled": false,
+      "directionalWordingVisible": false
+    },
+    "awarenessSurfaceIntegration": false,
+    "alertIntegration": false,
+    "routeWatchIntegration": false,
+    "destinationIntelligenceIntegration": false
+  },
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "PHASE 1 CONTROLLED ACTIVATION COMPLETE WITH OBSERVATIONS",
+  "finalRationale": "US 90 and TX 146 runtime assets are active under controlled activation while user-facing rendering and all awareness, alert, Route Watch, destination, routing, navigation, Supabase, county, and protected-system integrations remain unchanged. Observations from V722 remain attached to the activated corridors. FM 1960 remains deferred, inactive, and fail-closed."
+}
