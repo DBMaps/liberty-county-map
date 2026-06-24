@@ -1,0 +1,35 @@
+{
+  "version": "V739",
+  "mission": "Know Before You Go",
+  "finalDetermination": "The remaining Community Pulse authoritative-signature instability was routeWatchIdle changing while routeWatchActivated was false. That idle/standby bit is equivalent and non-authoritative for Community Pulse content when Route Watch is not active.",
+  "signatureDiffFinding": {
+    "changedTopLevelFields": ["routeWatchIdle"],
+    "changedRecordIds": [],
+    "changedRecordFields": {},
+    "changedRecordValuesBeforeAfter": {},
+    "changedRouteWatchFields": ["routeWatchIdle"],
+    "changedCountyOwnershipFields": [],
+    "changedAwarenessAreaFields": [],
+    "changedLifecycleFields": {},
+    "changedCoordinateFields": {},
+    "changedReportCountFields": {},
+    "changedFreshnessFields": []
+  },
+  "exactChangedFieldCausingMiss": "routeWatchIdle",
+  "classification": "volatile/equivalent when routeWatchActivated is false",
+  "whyV738StillMissed": "V738 excluded timestamp freshness fields and rounded coordinates, but the authoritative signature still included routeWatchIdle as a raw boolean. Warm refreshes can flip idle/standby bookkeeping while Route Watch is not activated, causing cache_miss_authoritative_signature_changed without Community Pulse content changing.",
+  "patchApplied": "Normalize routeWatchIdle in the V734 Community Pulse reuse signature so it can only be true when routeWatchActivated is true.",
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "expectedWarmRefresh": {
+    "cacheOutcome": "hit",
+    "exactCacheMissReason": "cache_hit_signature_match",
+    "refreshGridlyCommunityPulseSharedModelTargetMs": 1500
+  }
+}
