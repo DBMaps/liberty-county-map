@@ -1,0 +1,274 @@
+{
+  "milestone": "V720",
+  "title": "Phase 1 Corridor Expansion Validation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "validationOnly": true,
+    "runtimeActivation": false,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false
+  },
+  "corridors": [
+    {
+      "corridorId": "us90",
+      "displayName": "US 90",
+      "files": {
+        "corridor": "assets/directional-intelligence/extracted/v719-us90-corridor-inventory.json",
+        "segment": "assets/directional-intelligence/extracted/v719-us90-segment-inventory.json",
+        "candidate": "assets/directional-intelligence/extracted/v719-us90-candidate-inventory.json",
+        "runtime": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json"
+      },
+      "fileExists": true,
+      "validJson": true,
+      "expectedCounts": {
+        "candidateCount": 127,
+        "promotableCount": 81,
+        "reviewRequiredCount": 46,
+        "excludedCount": 0
+      },
+      "observedCounts": {
+        "candidateCount": 127,
+        "promotableCount": 81,
+        "reviewRequiredCount": 46,
+        "excludedCount": 0
+      },
+      "inventoryConsistency": {
+        "segmentInventoryCount": 127,
+        "candidateInventoryCount": 127,
+        "corridorCandidateCount": 127,
+        "countsMatchExpected": true,
+        "segmentCandidateCountsMatch": true,
+        "reviewBucketCandidateCounts": {
+          "none": 81,
+          "manual_review_required": 46
+        }
+      },
+      "runtimeValidation": {
+        "activationEnabled": false,
+        "userFacingRenderingEnabled": false,
+        "runtimeCandidateCount": 81,
+        "runtimeCountMatchesPromotableInventory": true,
+        "runtimeReviewBuckets": {
+          "none": 81
+        },
+        "runtimeStructureValid": true
+      },
+      "containmentValidation": {
+        "containmentPass": true,
+        "countyDistribution": {
+          "Jefferson, TX": 2,
+          "Liberty, TX": 70,
+          "Harris, TX": 41,
+          "__MISSING__": 14
+        },
+        "Liberty": true,
+        "Montgomery": true,
+        "SanJacinto": true,
+        "crossCountyLeakage": false
+      },
+      "protectionValidation": {
+        "bearingProtectionPass": true,
+        "failClosedPass": true,
+        "reviewBucketProtectionPass": true
+      },
+      "userFacingProtection": {
+        "newVisibleDirectionalWording": false,
+        "directionalRendering": false,
+        "uiOwnershipChanges": false,
+        "awarenessBriefChanges": false,
+        "alertChanges": false,
+        "routeWatchChanges": false,
+        "destinationChanges": false
+      },
+      "status": "PASS"
+    },
+    {
+      "corridorId": "tx146",
+      "displayName": "TX 146",
+      "files": {
+        "corridor": "assets/directional-intelligence/extracted/v719-tx146-corridor-inventory.json",
+        "segment": "assets/directional-intelligence/extracted/v719-tx146-segment-inventory.json",
+        "candidate": "assets/directional-intelligence/extracted/v719-tx146-candidate-inventory.json",
+        "runtime": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json"
+      },
+      "fileExists": true,
+      "validJson": true,
+      "expectedCounts": {
+        "candidateCount": 87,
+        "promotableCount": 36,
+        "reviewRequiredCount": 51,
+        "excludedCount": 0
+      },
+      "observedCounts": {
+        "candidateCount": 87,
+        "promotableCount": 36,
+        "reviewRequiredCount": 51,
+        "excludedCount": 0
+      },
+      "inventoryConsistency": {
+        "segmentInventoryCount": 87,
+        "candidateInventoryCount": 87,
+        "corridorCandidateCount": 87,
+        "countsMatchExpected": true,
+        "segmentCandidateCountsMatch": true,
+        "reviewBucketCandidateCounts": {
+          "none": 36,
+          "manual_review_required": 51
+        }
+      },
+      "runtimeValidation": {
+        "activationEnabled": false,
+        "userFacingRenderingEnabled": false,
+        "runtimeCandidateCount": 36,
+        "runtimeCountMatchesPromotableInventory": true,
+        "runtimeReviewBuckets": {
+          "none": 36
+        },
+        "runtimeStructureValid": true
+      },
+      "containmentValidation": {
+        "containmentPass": true,
+        "countyDistribution": {
+          "Liberty, TX": 54,
+          "Polk, TX": 1,
+          "Harris, TX": 18,
+          "__MISSING__": 14
+        },
+        "Liberty": true,
+        "Montgomery": true,
+        "SanJacinto": true,
+        "crossCountyLeakage": false
+      },
+      "protectionValidation": {
+        "bearingProtectionPass": true,
+        "failClosedPass": true,
+        "reviewBucketProtectionPass": true
+      },
+      "userFacingProtection": {
+        "newVisibleDirectionalWording": false,
+        "directionalRendering": false,
+        "uiOwnershipChanges": false,
+        "awarenessBriefChanges": false,
+        "alertChanges": false,
+        "routeWatchChanges": false,
+        "destinationChanges": false
+      },
+      "status": "PASS"
+    },
+    {
+      "corridorId": "fm1960",
+      "displayName": "FM 1960",
+      "files": {
+        "corridor": "assets/directional-intelligence/extracted/v719-fm1960-corridor-inventory.json",
+        "segment": "assets/directional-intelligence/extracted/v719-fm1960-segment-inventory.json",
+        "candidate": "assets/directional-intelligence/extracted/v719-fm1960-candidate-inventory.json",
+        "runtime": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json"
+      },
+      "fileExists": true,
+      "validJson": true,
+      "expectedCounts": {
+        "candidateCount": 5,
+        "promotableCount": 0,
+        "reviewRequiredCount": 5,
+        "excludedCount": 0
+      },
+      "observedCounts": {
+        "candidateCount": 5,
+        "promotableCount": 0,
+        "reviewRequiredCount": 5,
+        "excludedCount": 0
+      },
+      "inventoryConsistency": {
+        "segmentInventoryCount": 5,
+        "candidateInventoryCount": 5,
+        "corridorCandidateCount": 5,
+        "countsMatchExpected": true,
+        "segmentCandidateCountsMatch": true,
+        "reviewBucketCandidateCounts": {
+          "manual_review_required": 5
+        }
+      },
+      "runtimeValidation": {
+        "activationEnabled": false,
+        "userFacingRenderingEnabled": false,
+        "runtimeCandidateCount": 0,
+        "runtimeCountMatchesPromotableInventory": true,
+        "runtimeReviewBuckets": {},
+        "runtimeStructureValid": true
+      },
+      "containmentValidation": {
+        "containmentPass": true,
+        "countyDistribution": {
+          "__MISSING__": 4,
+          "Liberty, TX": 1
+        },
+        "Liberty": true,
+        "Montgomery": true,
+        "SanJacinto": true,
+        "crossCountyLeakage": false
+      },
+      "protectionValidation": {
+        "bearingProtectionPass": true,
+        "failClosedPass": true,
+        "reviewBucketProtectionPass": true
+      },
+      "userFacingProtection": {
+        "newVisibleDirectionalWording": false,
+        "directionalRendering": false,
+        "uiOwnershipChanges": false,
+        "awarenessBriefChanges": false,
+        "alertChanges": false,
+        "routeWatchChanges": false,
+        "destinationChanges": false
+      },
+      "status": "PASS",
+      "fm1960FailClosedValidation": {
+        "inactive": true,
+        "nonRendering": true,
+        "zeroPromotable": true,
+        "failClosed": true,
+        "determination": "Expected behavior"
+      }
+    }
+  ],
+  "containmentValidation": {
+    "containmentPass": true,
+    "Liberty": true,
+    "Montgomery": true,
+    "SanJacinto": true,
+    "noCrossCountyLeakage": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "userFacingProtectionValidation": {
+    "noRuntimeActivation": true,
+    "noUserFacingRendering": true,
+    "noAwarenessBriefChanges": true,
+    "noAlertChanges": true,
+    "noRouteWatchChanges": true,
+    "noDestinationIntelligenceChanges": true,
+    "noRoutingChanges": true,
+    "noNavigationChanges": true
+  },
+  "observations": [
+    "FM 1960 has zero promotable candidates; runtime asset is inactive, non-rendering, empty, and fail-closed as expected.",
+    "US 90 and TX 146 retain manual-review buckets that are excluded from runtime candidates; this is expected validation-only behavior."
+  ],
+  "finalDetermination": "PHASE 1 VALIDATION PASS WITH OBSERVATIONS"
+}
