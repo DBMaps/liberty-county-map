@@ -1,0 +1,73 @@
+{
+  "milestone": "V727",
+  "title": "Directional Incident Context Implementation",
+  "mission": "Know Before You Go",
+  "productPhilosophy": [
+    "Awareness Platform First",
+    "Route Intelligence Second"
+  ],
+  "determination": "DIRECTIONAL INCIDENT CONTEXT IMPLEMENTATION PASS",
+  "implementationScope": {
+    "directionalArchitectureCreated": false,
+    "candidateGenerationRebuilt": false,
+    "serviceLayerRebuilt": false,
+    "consumerLayerRebuilt": false,
+    "runtimeAssetsRebuilt": false,
+    "corridorExtractionRebuilt": false,
+    "authorizedWordingBuilders": [
+      "buildLocalizedIncidentLabel",
+      "buildRoadHazardDisplay",
+      "resolveGridlyAuthoritativeIncidentDisplayLocation"
+    ]
+  },
+  "authorizedCorridors": {
+    "US90": {
+      "status": "authorized",
+      "validatedPath": "Disabled Vehicle on US 90 Westbound near Dayton"
+    },
+    "TX146": {
+      "status": "authorized",
+      "validatedPath": "Crash on TX 146 Northbound near Liberty"
+    },
+    "FM1960": {
+      "status": "deferred_fail_closed",
+      "validatedPath": "Flooding on FM 1960 near Huffman"
+    }
+  },
+  "failClosedRequirements": {
+    "confidenceUnavailable": "retain existing wording",
+    "candidateUnavailable": "retain existing wording",
+    "corridorUnauthorized": "retain existing wording",
+    "runtimeProtectionsFail": "retain existing wording",
+    "directionalContextUnavailable": "retain existing wording"
+  },
+  "ownershipProtections": {
+    "writesToGridlyV2TopStatusPrimary": false,
+    "writesToGridlyV2TopStatusSecondary": false,
+    "refreshPortraitV2LocalizedIntelligenceModified": false,
+    "awarenessBriefOwnershipChanged": false,
+    "communityPulseOwnershipChanged": false
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "validation": {
+    "script": "node scripts/v727-directional-incident-context-validation.mjs",
+    "gitDiffCheck": "git diff --check",
+    "staticEvidenceSymbols": [
+      "buildLocalizedIncidentLabel",
+      "buildRoadHazardDisplay",
+      "resolveGridlyAuthoritativeIncidentDisplayLocation",
+      "gridlyDirectionalServiceConsumer",
+      "gridlyV2TopStatusPrimary",
+      "gridlyV2TopStatusSecondary",
+      "refreshPortraitV2LocalizedIntelligence",
+      "userFacingRenderingEnabled"
+    ]
+  }
+}
