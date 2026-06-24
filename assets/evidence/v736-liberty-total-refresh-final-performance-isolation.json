@@ -1,0 +1,42 @@
+{
+  "version": "V736",
+  "mission": "Know Before You Go",
+  "branch": "V736-Liberty-Total-Refresh-Final-Performance-Isolation",
+  "determination": "PATCHED FOR PHYSICAL-DEVICE VALIDATION",
+  "launchReadinessClaimed": false,
+  "remainingRootCauseFound": "After V734 and V735 isolated Community Pulse, portrait localized intelligence, and unified incident rendering, the remaining refresh overage is most likely the mobile follow-up updateDailyHabitStatus child path rebuilding the same Community Pulse model already produced earlier in the same refresh cycle.",
+  "exactRemainingSlowSection": "updateDailyHabitStatus.shared_community_pulse_model_reuse, replacing a direct buildGridlyCommunityPulseModel call with the V734 refreshGridlyCommunityPulseSharedModel signature reuse path.",
+  "optimization": {
+    "singleHotPath": "updateDailyHabitStatus",
+    "changeType": "reuse already-refreshed V734 Community Pulse shared model instead of rebuilding the same model",
+    "preservesWording": true,
+    "preservesVisualBehavior": true,
+    "preservesV729CountReconciliation": true,
+    "preservesV732CanonicalLocation": true,
+    "preservesV734Reuse": true,
+    "preservesV735PortraitLocalizedIntelligenceImprovement": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "performanceTargets": {
+    "totalRefreshMsLessThan": 5000,
+    "refreshPortraitV2LocalizedIntelligenceMsLessThan": 1500,
+    "communityPulseMsLessThan": 1500,
+    "renderUnifiedIncidentsMsLessThan": 500
+  },
+  "browserHelpers": [
+    "window.gridlyRefreshBreakdownAudit?.()",
+    "window.gridlyBackgroundLoopAudit?.()",
+    "window.gridlyAuditPerformanceReview?.()",
+    "window.gridlyUiSmokeTest?.()",
+    "window.gridlyActiveHazardCountReconciliationAudit?.()",
+    "window.gridlyRouteIntelligenceDebug?.()",
+    "window.gridlyRouteWatchDebug?.()"
+  ]
+}
