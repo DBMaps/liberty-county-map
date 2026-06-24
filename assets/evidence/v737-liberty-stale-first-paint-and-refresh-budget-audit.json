@@ -1,0 +1,51 @@
+{
+  "version": "V737",
+  "artifact": "liberty-stale-first-paint-and-refresh-budget-audit",
+  "finalDetermination": "Audit instrumentation added; static review did not confirm a stale-first-paint root cause without Denise device runtime evidence.",
+  "staleFirstPaintPresent": "not confirmed by static audit",
+  "initialOwnershipSource": {
+    "awarenessBrief": "refreshPortraitV2LocalizedIntelligence -> buildGridlyPortraitSharedLocalizedIntelligenceSnapshot",
+    "communityPulse": "refreshGridlyCommunityPulseSharedModel with V734 signature-gated reuse",
+    "locationAwareness": "refreshGridlyPortraitLocationAwarenessPanel consuming the shared community awareness summary",
+    "localizedIntelligence": "buildGridlyPortraitSharedLocalizedIntelligenceSnapshot consuming the shared pulse model"
+  },
+  "authoritativeOwnershipSource": {
+    "canonicalIncidentOwnership": "active-state evidence ownership when present; otherwise current shared active-awareness model scoped by active county and awareness area",
+    "activeCountyOwnership": "gridlyGetActiveCountyId and gridlyGetActiveCountyConfig",
+    "awarenessAreaOwnership": "getGridlySelectedAwarenessArea"
+  },
+  "replacementTrigger": "Runtime audit records replacement when first rendered text differs from later authoritative text in the same refresh cycle.",
+  "replacementTiming": "Measured by window.gridlyV737StaleFirstPaintAudit().replacements[].replacementTimingMs.",
+  "refreshBudgetImpact": "No material static budget attribution confirmed; runtime impact is measured as lastRefreshBudgetImpactMs if stale first paint is observed.",
+  "rootCause": "Unconfirmed. Existing V734/V735/V736 reuse paths remain intact; added instrumentation distinguishes cached first-paint ownership from authoritative ownership before patching behavior.",
+  "whatChanged": [
+    "Added V737 first-paint and ownership instrumentation for Awareness Brief, Community Pulse, Location Awareness, and localized intelligence.",
+    "Added V737 audit payload to gridlyRefreshBreakdownAudit.",
+    "Added validation script and audit report artifacts."
+  ],
+  "whatDidNotChange": [
+    "No wording redesign.",
+    "No awareness model redesign.",
+    "No county architecture changes.",
+    "No Dispatch Board, DriveTexas, Transportation Intelligence, historical reads/UI, Route Watch, or report lifecycle changes."
+  ],
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "requiredBrowserHelpers": [
+    "window.gridlyRefreshBreakdownAudit?.()",
+    "window.gridlyV737StaleFirstPaintAudit?.()",
+    "window.gridlyBackgroundLoopAudit?.()",
+    "window.gridlyAuditPerformanceReview?.()",
+    "window.gridlyUiSmokeTest?.()",
+    "window.gridlyActiveHazardCountReconciliationAudit?.()",
+    "window.gridlyRouteIntelligenceDebug?.()",
+    "window.gridlyRouteWatchDebug?.()"
+  ],
+  "mergeRecommendation": "Merge for instrumentation-only audit. Patch behavior only if Denise runtime evidence shows stale first paint with material replacement timing."
+}
