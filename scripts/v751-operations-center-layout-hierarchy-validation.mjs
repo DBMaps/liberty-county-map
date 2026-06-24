@@ -9,6 +9,9 @@ const evidence = JSON.parse(fs.readFileSync('assets/evidence/v751-operations-cen
 assert.match(app, /const GRIDLY_OPERATIONS_CENTER_ENABLED = false;/);
 assert.match(app, /window\.gridlyEnableOperationsCenterPreviewForTest = function gridlyEnableOperationsCenterPreviewForTest/);
 assert.match(app, /window\.gridlyOperationsLayoutHierarchyAudit = function gridlyOperationsLayoutHierarchyAudit/);
+assert.match(app, /window\.gridlyOperationsVisualContainmentAudit = function gridlyOperationsVisualContainmentAudit/);
+assert.match(app, /gridlyOperationsVisualContainmentBaseline = gridlyOperationsCaptureVisualContainmentSnapshot\(\)/);
+assert.match(app, /gridly-operations-center-preview-host/);
 assert.match(app, /window\.gridlyOperationsDataBridgeAudit\(\)/, 'preview must continue using V743 data bridge audit');
 assert.match(app, /dataset\.gridlyOperationsPreviewUsesDataBridge = "true"/);
 assert.match(app, /dataset\.gridlyOperationsLayoutHierarchy = "v751"/);
@@ -16,12 +19,21 @@ assert.match(app, /gridlyOperationsCardTier/);
 assert.match(app, /primaryStatusCardsRendered/);
 assert.match(app, /readOnlyPresentationOnly/);
 assert.match(app, /noMobileBleedDetected/);
+assert.match(app, /mobilePortraitShiftDetected/);
+assert.match(app, /mobilePortraitWidthChanged/);
+assert.match(app, /mobilePortraitCompressed/);
+assert.match(app, /mobileDockContained/);
+assert.match(app, /mapContained/);
+assert.match(app, /awarenessCardContained/);
+assert.match(app, /operationsPreviewIsolated/);
+assert.match(app, /visualContainmentPass/);
 assert.doesNotMatch(app, /buildGridlyOperationsCenterShellDocument[\s\S]{0,12000}fetch\(/);
 assert.doesNotMatch(app, /buildGridlyOperationsCenterShellDocument[\s\S]{0,12000}setInterval\(/);
 assert.doesNotMatch(app, /buildGridlyOperationsCenterShellDocument[\s\S]{0,12000}setTimeout\(/);
 assert.doesNotMatch(app, /gridlyOperationsLayoutHierarchyAudit[\s\S]{0,6000}(localStorage|sessionStorage|indexedDB|fetch\(|setInterval\(|setTimeout\()/);
 
 for (const cls of [
+  'gridly-operations-center-preview-host',
   'gridly-operations-center-shell__dashboard',
   'gridly-operations-center-shell__sections--primary',
   'gridly-operations-center-shell__card--primary',

@@ -20665,8 +20665,27 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   transform: none;
 }
 
+.gridly-operations-center-preview-host {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: calc(50% + 235px);
+  z-index: 1200;
+  width: auto;
+  min-width: 0;
+  max-width: calc(100vw - 470px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  contain: layout paint style;
+  pointer-events: auto;
+  background: #030a12;
+}
+
 .gridly-operations-center-shell {
-  min-height: 100vh;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
   padding: 32px;
   color: #e9fbff;
   background:
@@ -20882,6 +20901,13 @@ body[data-layout-mode="portrait"].gridly-launch-focus-portrait-validation #gridl
 }
 
 @media (max-width: 900px) {
+  .gridly-operations-center-preview-host {
+    left: auto;
+    right: 0;
+    width: min(360px, calc(100vw - 430px));
+    max-width: calc(100vw - 430px);
+  }
+
   .gridly-operations-center-shell__sections--primary,
   .gridly-operations-center-shell__sections--support {
     grid-template-columns: 1fr;
