@@ -1,0 +1,77 @@
+{
+  "auditId": "V733",
+  "title": "Liberty Awareness Refresh Performance Audit",
+  "mission": "Know Before You Go",
+  "strategicMode": "GRIDLY LAUNCH FOCUS MODE",
+  "primaryLaunchCounty": "Liberty County",
+  "scope": "Audit only; no runtime, UI, county status, Dispatch Board, directional, or onboarding changes.",
+  "finalDetermination": "LIBERTY AWARENESS REFRESH PERFORMANCE AUDIT — BLOCKED",
+  "launchReadinessBlockedByRefreshPerformance": true,
+  "v732ObservedRefresh": {
+    "lastRefreshDurationMs": 32757.9,
+    "slowestChildren": [
+      { "name": "refreshPortraitV2LocalizedIntelligence", "durationMs": 14471 },
+      { "name": "refreshGridlyCommunityPulseSharedModel", "durationMs": 14003.3 },
+      { "name": "renderUnifiedIncidents", "durationMs": 4280.5 }
+    ],
+    "activeIncidentContext": "Only 2 active incidents were reported in the V732 evidence."
+  },
+  "staticAssetCounts": {
+    "libertyRoadSegmentFeatures": 8407,
+    "libertyRailCrossingFeatures": 5
+  },
+  "helperCoverage": {
+    "gridlyRefreshBreakdownAudit": "Available; exposes child durations, item counts, cache reuse, DOM skip counts, route-intelligence state, and recommendations.",
+    "gridlyBackgroundLoopAudit": "Available; exposes top-panel write/owner-check counts, repeated same-value write suppression, active timers, suspected loops, and callers.",
+    "gridlyAuditPerformanceReview": "Available; performance review helper present, dependent on populated runtime measurements.",
+    "gridlyUiSmokeTest": "Available; smoke/helper availability only, not sufficient for timing root cause.",
+    "gridlyActiveHazardCountReconciliationAudit": "Available; count reconciliation only.",
+    "gridlyRouteIntelligenceDebug": "Available; route relevance state/debug data.",
+    "gridlyRouteWatchDebug": "Available; route watch state/debug data."
+  },
+  "staticFindings": {
+    "slowestFunction": "refreshPortraitV2LocalizedIntelligence in V732 observed evidence, with refreshGridlyCommunityPulseSharedModel statistically equivalent.",
+    "highestConfidenceRootCause": "Repeated full rebuilds of Community Pulse / active-awareness / localized-intelligence model inputs during each Liberty refresh cycle, with insufficient unchanged-input reuse at the shared Community Pulse boundary and fallback localized commute-intelligence paths.",
+    "communityPulseRecomputesWhenInputsUnchanged": true,
+    "localizedIntelligenceMayRecomputeWhenInputsUnchanged": true,
+    "routeWatchInactiveWorkRisk": "Route hazard scoring is guarded by routeWatchActivated, but per-incident route relevance checks can still execute in commute consequence mapping and should be verified/short-circuited only if helper evidence confirms material cost.",
+    "domWriteOrOwnershipOverhead": "Contributing but not primary; same-value top-panel writes are suppressed and owner diagnostics are auditable.",
+    "libertySpecificity": "Pattern is platform-wide, but Liberty is most exposed because production road geometry has 8407 road segment features and launch traffic depends on Liberty refresh latency."
+  },
+  "requiredAnswers": {
+    "isLibertyLaunchReadinessBlockedByRefreshPerformance": "Yes.",
+    "highestConfidenceRootCause": "Repeated unchanged-input rebuild of Community Pulse / Awareness / localized-intelligence models, amplified by road/corridor/incident lookup work.",
+    "v734FirstTargetFunction": "refreshGridlyCommunityPulseSharedModel",
+    "smallestSafeV734Fix": "Add compact unchanged-input model reuse at refreshGridlyCommunityPulseSharedModel/buildGridlyCommunityPulseModel boundary and have refreshPortraitV2LocalizedIntelligence consume the reused model; cache category-only localized fallback by active-detail signature.",
+    "v734PerformanceTarget": "Same physical-device scenario: total Liberty refresh under 5000ms p95; refreshGridlyCommunityPulseSharedModel and refreshPortraitV2LocalizedIntelligence each under 1500ms p95; renderUnifiedIncidents under 500ms with two active incidents.",
+    "dispatchBoardSafeBeforeFix": "No. Dispatch Board work should wait until the Liberty refresh blocker is fixed and validated."
+  },
+  "protectedSystemsUnchanged": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "countyBoundaryScopeUnchanged": {
+    "liberty": "Launch Focus for this audit",
+    "montgomery": "Maintenance Mode; unchanged by this audit",
+    "sanJacinto": "Maintenance Mode; unchanged by this audit",
+    "jefferson": "Deferred; unchanged by this audit"
+  },
+  "recommendedV734Scope": [
+    "Compact signature cache for shared Community Pulse / active-awareness model.",
+    "Portrait refresh consumes cached shared model on unchanged inputs.",
+    "Cache category-only localized fallback by active-detail signature.",
+    "Use existing helpers to validate route watch idle cost and refresh child timings.",
+    "No Dispatch Board, county status, UI behavior, directional, or onboarding changes."
+  ],
+  "deniseValidationSteps": [
+    "Open Liberty on the same physical device/profile used for V732.",
+    "Ensure Route Watch is inactive.",
+    "Trigger the same refresh scenario.",
+    "Run gridlyRefreshBreakdownAudit(), gridlyBackgroundLoopAudit(), gridlyAuditPerformanceReview(), gridlyUiSmokeTest(), gridlyActiveHazardCountReconciliationAudit(), gridlyRouteIntelligenceDebug(), and gridlyRouteWatchDebug().",
+    "Confirm total refresh under 5000ms, Community Pulse and portrait intelligence each under 1500ms, renderUnifiedIncidents under 500ms with two active incidents, and routeIntelligenceState idle."
+  ]
+}
