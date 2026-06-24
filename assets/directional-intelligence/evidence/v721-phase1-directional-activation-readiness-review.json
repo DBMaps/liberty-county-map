@@ -1,0 +1,247 @@
+{
+  "milestone": "V721",
+  "title": "Phase 1 Directional Activation Readiness Review",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "activationReadinessReviewOnly": true,
+    "runtimeActivation": false,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false,
+    "candidateInventoryChanges": false,
+    "runtimeAssetChanges": false
+  },
+  "corridorReadiness": [
+    {
+      "corridorId": "us90",
+      "displayName": "US 90",
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "reviewRequiredCount": 46,
+      "runtimeCandidateCount": 81,
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "confidenceDistribution": {
+        "highConfidence": 81,
+        "mediumConfidence": 46
+      },
+      "reviewBucketDistribution": {
+        "none": 81,
+        "manual_review_required": 46
+      },
+      "reviewReasonDistribution": {
+        "none": 81,
+        "missing_oneway": 34,
+        "manual_review_required": 46,
+        "missing_county": 14
+      },
+      "countyDistribution": {
+        "Jefferson, TX": 2,
+        "Liberty, TX": 70,
+        "Harris, TX": 41,
+        "None": 14
+      },
+      "onewayDistribution": {
+        "yes": 85,
+        "None": 34,
+        "no": 8
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "MODERATE",
+      "activationReadiness": "READY WITH OBSERVATIONS",
+      "rationale": "Largest promotable pool and passing protections, with review-required, missing-county, and cross-county source metadata observations deferred to activation package controls."
+    },
+    {
+      "corridorId": "tx146",
+      "displayName": "TX 146",
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "reviewRequiredCount": 51,
+      "runtimeCandidateCount": 36,
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "confidenceDistribution": {
+        "highConfidence": 36,
+        "mediumConfidence": 51
+      },
+      "reviewBucketDistribution": {
+        "none": 36,
+        "manual_review_required": 51
+      },
+      "reviewReasonDistribution": {
+        "none": 36,
+        "missing_oneway": 43,
+        "manual_review_required": 51,
+        "missing_county": 14
+      },
+      "countyDistribution": {
+        "Liberty, TX": 54,
+        "Polk, TX": 1,
+        "Harris, TX": 18,
+        "None": 14
+      },
+      "onewayDistribution": {
+        "yes": 42,
+        "None": 43,
+        "no": 2
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "MODERATE",
+      "activationReadiness": "READY WITH OBSERVATIONS",
+      "rationale": "Promotable runtime subset exists and protections pass, but review-required volume exceeds promotable volume and metadata observations require activation package controls."
+    },
+    {
+      "corridorId": "fm1960",
+      "displayName": "FM 1960",
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "reviewRequiredCount": 5,
+      "runtimeCandidateCount": 0,
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "confidenceDistribution": {
+        "mediumConfidence": 5
+      },
+      "reviewBucketDistribution": {
+        "manual_review_required": 5
+      },
+      "reviewReasonDistribution": {
+        "missing_county": 4,
+        "manual_review_required": 5,
+        "missing_oneway": 4
+      },
+      "countyDistribution": {
+        "None": 4,
+        "Liberty, TX": 1
+      },
+      "onewayDistribution": {
+        "no": 1,
+        "None": 4
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "HIGH",
+      "activationReadiness": "NOT READY",
+      "rationale": "Zero promotable candidates; all candidates are manual-review-required and the runtime candidate set is empty by fail-closed design."
+    }
+  ],
+  "activationMatrix": [
+    {
+      "displayName": "US 90",
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "MODERATE",
+      "activationReadiness": "READY WITH OBSERVATIONS",
+      "rationale": "Largest promotable pool and passing protections, with review-required, missing-county, and cross-county source metadata observations deferred to activation package controls."
+    },
+    {
+      "displayName": "TX 146",
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "MODERATE",
+      "activationReadiness": "READY WITH OBSERVATIONS",
+      "rationale": "Promotable runtime subset exists and protections pass, but review-required volume exceeds promotable volume and metadata observations require activation package controls."
+    },
+    {
+      "displayName": "FM 1960",
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "riskLevel": "HIGH",
+      "activationReadiness": "NOT READY",
+      "rationale": "Zero promotable candidates; all candidates are manual-review-required and the runtime candidate set is empty by fail-closed design."
+    }
+  ],
+  "protectionReview": {
+    "containmentPass": "PASS WITH OBSERVATIONS",
+    "bearingProtectionPass": "PASS",
+    "failClosedPass": "PASS",
+    "reviewBucketProtectionPass": "PASS"
+  },
+  "riskReview": {
+    "confidenceDrift": "MODERATE",
+    "directionalAmbiguity": "MODERATE",
+    "reviewBucketGrowth": "MODERATE",
+    "countyLeakage": "MODERATE",
+    "operationalMaintenance": "MODERATE",
+    "navigationCreep": "LOW"
+  },
+  "futureRecommendation": "Proceed to activation package for US 90 and TX 146; keep FM 1960 deferred until source metadata and directional confidence are remediated.",
+  "protectedSystemsVerification": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "ACTIVATION REVIEW APPROVED WITH OBSERVATIONS",
+  "fm1960RootCauseReview": {
+    "determination": "FM 1960 is blocked primarily by data quality and expected fail-closed behavior, with prototype-era limitations in metadata coverage and extraction confidence. Pipeline behavior is protective rather than defective.",
+    "causes": [
+      {
+        "cause": "Source coverage limitation",
+        "severity": "MODERATE",
+        "description": "Only five FM 1960 candidates were available in the Phase 1 source set, limiting confidence normalization and representative coverage.",
+        "evidence": "candidateCount=5 with runtimeCandidateCount=0.",
+        "remediationComplexity": "MODERATE"
+      },
+      {
+        "cause": "Metadata deficiency",
+        "severity": "HIGH",
+        "description": "Four of five candidates lack county metadata and four of five lack oneway metadata, forcing manual review.",
+        "evidence": "reviewReasonDistribution includes missing_county=4 and missing_oneway=4.",
+        "remediationComplexity": "MODERATE"
+      },
+      {
+        "cause": "Confidence failure",
+        "severity": "HIGH",
+        "description": "All candidates are mediumConfidence; none reached highConfidence or activation eligibility.",
+        "evidence": "confidenceDistribution mediumConfidence=5; promotableCount=0.",
+        "remediationComplexity": "MODERATE"
+      },
+      {
+        "cause": "Review bucket classification",
+        "severity": "HIGH",
+        "description": "Every candidate is classified manual_review_required, so review-bucket protection excludes all candidates from runtime.",
+        "evidence": "reviewBucketDistribution manual_review_required=5.",
+        "remediationComplexity": "LOW"
+      },
+      {
+        "cause": "Expected fail-closed behavior",
+        "severity": "LOW",
+        "description": "The runtime asset has no candidates because zero inventory candidates are promotable.",
+        "evidence": "runtimeCandidateCount=0, activationEnabled=false, userFacingRenderingEnabled=false.",
+        "remediationComplexity": "LOW"
+      }
+    ]
+  }
+}
