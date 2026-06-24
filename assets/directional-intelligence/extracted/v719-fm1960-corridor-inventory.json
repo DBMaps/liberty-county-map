@@ -1,0 +1,44 @@
+{
+  "corridorId": "fm1960",
+  "displayName": "FM 1960",
+  "sourceAsset": "assets/directional-intelligence/source/osm/liberty-fm1960-source.geojson",
+  "totalSourceFeatures": 5,
+  "totalExtractedSegments": 5,
+  "candidateCount": 5,
+  "promotableCount": 0,
+  "reviewRequiredCount": 5,
+  "excludedCount": 0,
+  "confidenceCounts": {
+    "highConfidence": 0,
+    "mediumConfidence": 5,
+    "reviewRequired": 5,
+    "excluded": 0
+  },
+  "countyDistribution": {
+    "__MISSING__": 4,
+    "Liberty, TX": 1
+  },
+  "refDistribution": {
+    "FM 1960": 5
+  },
+  "nameDistribution": {
+    "West Clayton Street": 1
+  },
+  "reviewBucketDistribution": {
+    "none": 0,
+    "missing_county": 4,
+    "missing_oneway": 4,
+    "missing_ref": 0,
+    "construction_segment": 0,
+    "hov_hot_lane": 0,
+    "reversible_lane": 0,
+    "manual_review_required": 5
+  },
+  "containmentPass": true,
+  "bearingProtectionPass": true,
+  "failClosedPass": true,
+  "reviewBucketProtectionPass": true,
+  "runtimeAsset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+  "activationEnabled": false,
+  "userFacingRenderingEnabled": false
+}

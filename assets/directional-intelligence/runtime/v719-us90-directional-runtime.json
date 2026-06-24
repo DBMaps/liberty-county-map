@@ -1,0 +1,2763 @@
+{
+  "corridorId": "us90",
+  "displayName": "US 90",
+  "preparedAt": "2026-06-24T00:00:00.000Z",
+  "activationEnabled": false,
+  "userFacingRenderingEnabled": false,
+  "candidates": [
+    {
+      "segmentId": "v719-us90-00001",
+      "sourceWayId": "way/21021786",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Jefferson, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 23,
+        "startCoordinate": [
+          -94.4629916,
+          30.0297604
+        ],
+        "endCoordinate": [
+          -94.4277124,
+          30.0347477
+        ],
+        "approximateBearingDegrees": 80.72,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00001",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00002",
+      "sourceWayId": "way/21077231",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.8440004,
+          30.0552908
+        ],
+        "endCoordinate": [
+          -94.8622849,
+          30.0525908
+        ],
+        "approximateBearingDegrees": 260.32,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00002",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00004",
+      "sourceWayId": "way/21077238",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 10,
+        "startCoordinate": [
+          -94.9031018,
+          30.035598
+        ],
+        "endCoordinate": [
+          -94.9194101,
+          30.0231834
+        ],
+        "approximateBearingDegrees": 228.68,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00004",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00005",
+      "sourceWayId": "way/21077255",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 8,
+        "startCoordinate": [
+          -94.443967,
+          30.032741
+        ],
+        "endCoordinate": [
+          -94.4620127,
+          30.0303466
+        ],
+        "approximateBearingDegrees": 261.29,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00005",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00008",
+      "sourceWayId": "way/38850750",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 22,
+        "startCoordinate": [
+          -94.9656187,
+          29.9877284
+        ],
+        "endCoordinate": [
+          -94.9439575,
+          30.0040937
+        ],
+        "approximateBearingDegrees": 48.89,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00008",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00009",
+      "sourceWayId": "way/38850756",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "no",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 19,
+        "startCoordinate": [
+          -94.8934202,
+          30.0420303
+        ],
+        "endCoordinate": [
+          -94.8880804,
+          30.0451366
+        ],
+        "approximateBearingDegrees": 56.1,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00009",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00013",
+      "sourceWayId": "way/117809150",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7778112,
+          30.058471
+        ],
+        "endCoordinate": [
+          -94.7766365,
+          30.0585274
+        ],
+        "approximateBearingDegrees": 86.82,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00013",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00014",
+      "sourceWayId": "way/117809172",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 18,
+        "startCoordinate": [
+          -94.5184854,
+          30.0224935
+        ],
+        "endCoordinate": [
+          -94.5575436,
+          30.0241886
+        ],
+        "approximateBearingDegrees": 272.88,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00014",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00015",
+      "sourceWayId": "way/117809192",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.7766365,
+          30.0585274
+        ],
+        "endCoordinate": [
+          -94.7798292,
+          30.0586525
+        ],
+        "approximateBearingDegrees": 272.59,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00015",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00018",
+      "sourceWayId": "way/255700040",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "no",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.8942189,
+          30.0416512
+        ],
+        "endCoordinate": [
+          -94.8934202,
+          30.0420303
+        ],
+        "approximateBearingDegrees": 61.26,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00018",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00019",
+      "sourceWayId": "way/255700044",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "no",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 15,
+        "startCoordinate": [
+          -94.9031018,
+          30.035598
+        ],
+        "endCoordinate": [
+          -94.8942189,
+          30.0416512
+        ],
+        "approximateBearingDegrees": 51.79,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00019",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00020",
+      "sourceWayId": "way/255700049",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 6,
+        "startCoordinate": [
+          -94.8622488,
+          30.0523962
+        ],
+        "endCoordinate": [
+          -94.8442394,
+          30.0550436
+        ],
+        "approximateBearingDegrees": 80.36,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00020",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00021",
+      "sourceWayId": "way/308416034",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8233697,
+          30.0580392
+        ],
+        "endCoordinate": [
+          -94.8224942,
+          30.0581082
+        ],
+        "approximateBearingDegrees": 84.8,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00021",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00022",
+      "sourceWayId": "way/308416035",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.8233889,
+          30.0581937
+        ],
+        "endCoordinate": [
+          -94.8260011,
+          30.0579381
+        ],
+        "approximateBearingDegrees": 263.55,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00022",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00023",
+      "sourceWayId": "way/316633561",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.8224942,
+          30.0581082
+        ],
+        "endCoordinate": [
+          -94.8233889,
+          30.0581937
+        ],
+        "approximateBearingDegrees": 276.3,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00023",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00025",
+      "sourceWayId": "way/320596610",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.7826576,
+          30.0584447
+        ],
+        "endCoordinate": [
+          -94.7778112,
+          30.058471
+        ],
+        "approximateBearingDegrees": 89.64,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00025",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00027",
+      "sourceWayId": "way/427602091",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "Beaumont Highway",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9848651,
+          29.9733262
+        ],
+        "endCoordinate": [
+          -94.9860652,
+          29.9724185
+        ],
+        "approximateBearingDegrees": 228.88,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00027",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00028",
+      "sourceWayId": "way/427602095",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "Beaumont Highway",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9858736,
+          29.972234
+        ],
+        "endCoordinate": [
+          -94.9849903,
+          29.9729103
+        ],
+        "approximateBearingDegrees": 48.53,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00028",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00029",
+      "sourceWayId": "way/483242495",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9648308,
+          29.9886396
+        ],
+        "endCoordinate": [
+          -94.9656882,
+          29.9879778
+        ],
+        "approximateBearingDegrees": 228.29,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00029",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00030",
+      "sourceWayId": "way/483242496",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 8,
+        "startCoordinate": [
+          -94.9656882,
+          29.9879778
+        ],
+        "endCoordinate": [
+          -94.9765418,
+          29.9796782
+        ],
+        "approximateBearingDegrees": 228.56,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00030",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00031",
+      "sourceWayId": "way/483242497",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 4,
+        "startCoordinate": [
+          -94.9664398,
+          29.9870955
+        ],
+        "endCoordinate": [
+          -94.9656187,
+          29.9877284
+        ],
+        "approximateBearingDegrees": 48.33,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00031",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00032",
+      "sourceWayId": "way/483242498",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 7,
+        "startCoordinate": [
+          -94.9770583,
+          29.978961
+        ],
+        "endCoordinate": [
+          -94.9664398,
+          29.9870955
+        ],
+        "approximateBearingDegrees": 48.51,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00032",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00044",
+      "sourceWayId": "way/935881537",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 4,
+        "startCoordinate": [
+          -94.8259479,
+          30.0577327
+        ],
+        "endCoordinate": [
+          -94.8233697,
+          30.0580392
+        ],
+        "approximateBearingDegrees": 82.18,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00044",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00052",
+      "sourceWayId": "way/1015198500",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9249307,
+          30.0186476
+        ],
+        "endCoordinate": [
+          -94.9205326,
+          30.0220089
+        ],
+        "approximateBearingDegrees": 48.56,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00052",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00053",
+      "sourceWayId": "way/1015198501",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 4,
+        "startCoordinate": [
+          -94.9205326,
+          30.0220089
+        ],
+        "endCoordinate": [
+          -94.9198753,
+          30.0225223
+        ],
+        "approximateBearingDegrees": 47.95,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00053",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00054",
+      "sourceWayId": "way/1015198502",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9194101,
+          30.0231834
+        ],
+        "endCoordinate": [
+          -94.919882,
+          30.022825
+        ],
+        "approximateBearingDegrees": 228.74,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00054",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00055",
+      "sourceWayId": "way/1015198503",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.919882,
+          30.022825
+        ],
+        "endCoordinate": [
+          -94.9245699,
+          30.0192126
+        ],
+        "approximateBearingDegrees": 228.33,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00055",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00056",
+      "sourceWayId": "way/1015198505",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9245699,
+          30.0192126
+        ],
+        "endCoordinate": [
+          -94.9250791,
+          30.018837
+        ],
+        "approximateBearingDegrees": 229.57,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00056",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00057",
+      "sourceWayId": "way/1015198506",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 4,
+        "startCoordinate": [
+          -94.9250791,
+          30.018837
+        ],
+        "endCoordinate": [
+          -94.9276477,
+          30.0168844
+        ],
+        "approximateBearingDegrees": 228.72,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00057",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00058",
+      "sourceWayId": "way/1015198507",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9256931,
+          30.0180785
+        ],
+        "endCoordinate": [
+          -94.9249307,
+          30.0186476
+        ],
+        "approximateBearingDegrees": 49.24,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00058",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00059",
+      "sourceWayId": "way/1015198508",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9280316,
+          30.0162763
+        ],
+        "endCoordinate": [
+          -94.9256931,
+          30.0180785
+        ],
+        "approximateBearingDegrees": 48.33,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00059",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00060",
+      "sourceWayId": "way/1015198509",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9282439,
+          30.0164356
+        ],
+        "endCoordinate": [
+          -94.9317002,
+          30.0137754
+        ],
+        "approximateBearingDegrees": 228.37,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00060",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00061",
+      "sourceWayId": "way/1015198510",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9276477,
+          30.0168844
+        ],
+        "endCoordinate": [
+          -94.9282439,
+          30.0164356
+        ],
+        "approximateBearingDegrees": 229,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00061",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00062",
+      "sourceWayId": "way/1015198511",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.928766,
+          30.0157251
+        ],
+        "endCoordinate": [
+          -94.9280316,
+          30.0162763
+        ],
+        "approximateBearingDegrees": 49.08,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00062",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00063",
+      "sourceWayId": "way/1015198512",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9320285,
+          30.0132175
+        ],
+        "endCoordinate": [
+          -94.928766,
+          30.0157251
+        ],
+        "approximateBearingDegrees": 48.41,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00063",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00064",
+      "sourceWayId": "way/1015198514",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9317002,
+          30.0137754
+        ],
+        "endCoordinate": [
+          -94.9321753,
+          30.0134132
+        ],
+        "approximateBearingDegrees": 228.64,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00064",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00065",
+      "sourceWayId": "way/1015198515",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9390999,
+          30.0081363
+        ],
+        "endCoordinate": [
+          -94.9403575,
+          30.0071656
+        ],
+        "approximateBearingDegrees": 228.29,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00065",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00066",
+      "sourceWayId": "way/1015198516",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9328199,
+          30.0126056
+        ],
+        "endCoordinate": [
+          -94.9320285,
+          30.0132175
+        ],
+        "approximateBearingDegrees": 48.24,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00066",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00067",
+      "sourceWayId": "way/1015198517",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.9369922,
+          30.0094096
+        ],
+        "endCoordinate": [
+          -94.9328199,
+          30.0126056
+        ],
+        "approximateBearingDegrees": 48.5,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00067",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00068",
+      "sourceWayId": "way/1015198518",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9427535,
+          30.0053295
+        ],
+        "endCoordinate": [
+          -94.9433553,
+          30.0048736
+        ],
+        "approximateBearingDegrees": 228.82,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00068",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00069",
+      "sourceWayId": "way/1015198519",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 9,
+        "startCoordinate": [
+          -94.9433553,
+          30.0048736
+        ],
+        "endCoordinate": [
+          -94.9648308,
+          29.9886396
+        ],
+        "approximateBearingDegrees": 228.89,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00069",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00070",
+      "sourceWayId": "way/1015198520",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9439575,
+          30.0040937
+        ],
+        "endCoordinate": [
+          -94.9432033,
+          30.0046829
+        ],
+        "approximateBearingDegrees": 47.95,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00070",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00071",
+      "sourceWayId": "way/1015198521",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 11,
+        "startCoordinate": [
+          -94.9198753,
+          30.0225223
+        ],
+        "endCoordinate": [
+          -94.9031018,
+          30.035598
+        ],
+        "approximateBearingDegrees": 48,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00071",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00073",
+      "sourceWayId": "way/1047586899",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.4620127,
+          30.0303466
+        ],
+        "endCoordinate": [
+          -94.4630644,
+          30.0302029
+        ],
+        "approximateBearingDegrees": 261.03,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00073",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00074",
+      "sourceWayId": "way/1047586900",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Jefferson, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.4643079,
+          30.029595
+        ],
+        "endCoordinate": [
+          -94.4629916,
+          30.0297604
+        ],
+        "approximateBearingDegrees": 81.74,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00074",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00076",
+      "sourceWayId": "way/1051364605",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9765418,
+          29.9796782
+        ],
+        "endCoordinate": [
+          -94.9772262,
+          29.9791595
+        ],
+        "approximateBearingDegrees": 228.82,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00076",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00077",
+      "sourceWayId": "way/1051364606",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 4,
+        "startCoordinate": [
+          -94.9772262,
+          29.9791595
+        ],
+        "endCoordinate": [
+          -94.9848651,
+          29.9733262
+        ],
+        "approximateBearingDegrees": 228.6,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00077",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00078",
+      "sourceWayId": "way/1051364607",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9776581,
+          29.9785018
+        ],
+        "endCoordinate": [
+          -94.9770583,
+          29.978961
+        ],
+        "approximateBearingDegrees": 48.53,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00078",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00079",
+      "sourceWayId": "way/1051364608",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "US Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9849903,
+          29.9729103
+        ],
+        "endCoordinate": [
+          -94.9776581,
+          29.9785018
+        ],
+        "approximateBearingDegrees": 48.64,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00079",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00080",
+      "sourceWayId": "way/1240672502",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9403575,
+          30.0071656
+        ],
+        "endCoordinate": [
+          -94.9427535,
+          30.0053295
+        ],
+        "approximateBearingDegrees": 228.49,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00080",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00081",
+      "sourceWayId": "way/1240672503",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9368656,
+          30.0098392
+        ],
+        "endCoordinate": [
+          -94.9390999,
+          30.0081363
+        ],
+        "approximateBearingDegrees": 228.65,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00081",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00082",
+      "sourceWayId": "way/1240672504",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9416147,
+          30.0058892
+        ],
+        "endCoordinate": [
+          -94.9404994,
+          30.0067411
+        ],
+        "approximateBearingDegrees": 48.59,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00082",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00083",
+      "sourceWayId": "way/1240672505",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9432033,
+          30.0046829
+        ],
+        "endCoordinate": [
+          -94.9416147,
+          30.0058892
+        ],
+        "approximateBearingDegrees": 48.75,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00083",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00084",
+      "sourceWayId": "way/1240672513",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.938069,
+          30.0085907
+        ],
+        "endCoordinate": [
+          -94.9369922,
+          30.0094096
+        ],
+        "approximateBearingDegrees": 48.71,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00084",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00085",
+      "sourceWayId": "way/1240672514",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.9404994,
+          30.0067411
+        ],
+        "endCoordinate": [
+          -94.938069,
+          30.0085907
+        ],
+        "approximateBearingDegrees": 48.69,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00085",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00086",
+      "sourceWayId": "way/1240672515",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.9353937,
+          30.0109608
+        ],
+        "endCoordinate": [
+          -94.9368656,
+          30.0098392
+        ],
+        "approximateBearingDegrees": 228.65,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00086",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00087",
+      "sourceWayId": "way/1240672516",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90",
+      "sourceName": "United States Highway 90 West",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.9321753,
+          30.0134132
+        ],
+        "endCoordinate": [
+          -94.9353937,
+          30.0109608
+        ],
+        "approximateBearingDegrees": 228.65,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00087",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00088",
+      "sourceWayId": "way/1315244822",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 8,
+        "startCoordinate": [
+          -94.8815444,
+          30.049563
+        ],
+        "endCoordinate": [
+          -94.866841,
+          30.0517166
+        ],
+        "approximateBearingDegrees": 80.39,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00088",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00089",
+      "sourceWayId": "way/1315244823",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.866841,
+          30.0517166
+        ],
+        "endCoordinate": [
+          -94.8622488,
+          30.0523962
+        ],
+        "approximateBearingDegrees": 80.3,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00089",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00090",
+      "sourceWayId": "way/1315244824",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 9,
+        "startCoordinate": [
+          -94.8668709,
+          30.0519134
+        ],
+        "endCoordinate": [
+          -94.8815444,
+          30.049563
+        ],
+        "approximateBearingDegrees": 259.52,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00090",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00091",
+      "sourceWayId": "way/1315244825",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8622849,
+          30.0525908
+        ],
+        "endCoordinate": [
+          -94.8668709,
+          30.0519134
+        ],
+        "approximateBearingDegrees": 260.32,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00091",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00092",
+      "sourceWayId": "way/1315629860",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7828459,
+          30.0584914
+        ],
+        "endCoordinate": [
+          -94.7826576,
+          30.0584447
+        ],
+        "approximateBearingDegrees": 105.99,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00092",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00093",
+      "sourceWayId": "way/1315629861",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.782671,
+          30.0585608
+        ],
+        "endCoordinate": [
+          -94.7828459,
+          30.0584914
+        ],
+        "approximateBearingDegrees": 245.37,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00093",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00094",
+      "sourceWayId": "way/1315629862",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7822419,
+          30.0585735
+        ],
+        "endCoordinate": [
+          -94.782671,
+          30.0585608
+        ],
+        "approximateBearingDegrees": 268.04,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00094",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00095",
+      "sourceWayId": "way/1315629863",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7798292,
+          30.0586525
+        ],
+        "endCoordinate": [
+          -94.7801807,
+          30.058622
+        ],
+        "approximateBearingDegrees": 264.28,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00095",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00096",
+      "sourceWayId": "way/1315629864",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7820128,
+          30.0585951
+        ],
+        "endCoordinate": [
+          -94.7822419,
+          30.0585735
+        ],
+        "approximateBearingDegrees": 263.78,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00096",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00097",
+      "sourceWayId": "way/1315629865",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7801807,
+          30.058622
+        ],
+        "endCoordinate": [
+          -94.7809087,
+          30.0586159
+        ],
+        "approximateBearingDegrees": 269.45,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00097",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00098",
+      "sourceWayId": "way/1315629866",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.7809087,
+          30.0586159
+        ],
+        "endCoordinate": [
+          -94.7820128,
+          30.0585951
+        ],
+        "approximateBearingDegrees": 268.75,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00098",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00110",
+      "sourceWayId": "way/1330191955",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 5,
+        "startCoordinate": [
+          -94.8389417,
+          30.055826
+        ],
+        "endCoordinate": [
+          -94.8299088,
+          30.057133
+        ],
+        "approximateBearingDegrees": 80.51,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00110",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00111",
+      "sourceWayId": "way/1330191956",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8407615,
+          30.0555553
+        ],
+        "endCoordinate": [
+          -94.8389417,
+          30.055826
+        ],
+        "approximateBearingDegrees": 80.25,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00111",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00112",
+      "sourceWayId": "way/1330191957",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.8299186,
+          30.0573557
+        ],
+        "endCoordinate": [
+          -94.8386191,
+          30.0560893
+        ],
+        "approximateBearingDegrees": 260.46,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00112",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00113",
+      "sourceWayId": "way/1330191958",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8386191,
+          30.0560893
+        ],
+        "endCoordinate": [
+          -94.8407658,
+          30.055764
+        ],
+        "approximateBearingDegrees": 260.07,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00113",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00114",
+      "sourceWayId": "way/1330191960",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8407658,
+          30.055764
+        ],
+        "endCoordinate": [
+          -94.8424905,
+          30.0555096
+        ],
+        "approximateBearingDegrees": 260.33,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00114",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00115",
+      "sourceWayId": "way/1330191961",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8424905,
+          30.0555096
+        ],
+        "endCoordinate": [
+          -94.8440004,
+          30.0552908
+        ],
+        "approximateBearingDegrees": 260.5,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00115",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00116",
+      "sourceWayId": "way/1330191962",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8426845,
+          30.0552759
+        ],
+        "endCoordinate": [
+          -94.8407615,
+          30.0555553
+        ],
+        "approximateBearingDegrees": 80.47,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00116",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00117",
+      "sourceWayId": "way/1330191963",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": null,
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8442394,
+          30.0550436
+        ],
+        "endCoordinate": [
+          -94.8426845,
+          30.0552759
+        ],
+        "approximateBearingDegrees": 80.21,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00117",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00118",
+      "sourceWayId": "way/1347909125",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "United States Highway 90 East",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "no",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 19,
+        "startCoordinate": [
+          -94.8880804,
+          30.0451366
+        ],
+        "endCoordinate": [
+          -94.8815444,
+          30.049563
+        ],
+        "approximateBearingDegrees": 51.96,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00118",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00121",
+      "sourceWayId": "way/1427583612",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 3,
+        "startCoordinate": [
+          -94.8278507,
+          30.0576663
+        ],
+        "endCoordinate": [
+          -94.8299186,
+          30.0573557
+        ],
+        "approximateBearingDegrees": 260.16,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00121",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00122",
+      "sourceWayId": "way/1427583613",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8299088,
+          30.057133
+        ],
+        "endCoordinate": [
+          -94.827831,
+          30.0574545
+        ],
+        "approximateBearingDegrees": 79.86,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00122",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00123",
+      "sourceWayId": "way/1427583614",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Harris, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.827831,
+          30.0574545
+        ],
+        "endCoordinate": [
+          -94.8259479,
+          30.0577327
+        ],
+        "approximateBearingDegrees": 80.31,
+        "directionalLabel": "eastbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00123",
+      "runtimeEligible": true,
+      "failClosed": false
+    },
+    {
+      "segmentId": "v719-us90-00124",
+      "sourceWayId": "way/1427583615",
+      "corridorId": "us90",
+      "corridorName": "US 90",
+      "sourceRef": "US 90;TX 146",
+      "sourceName": "Highway 90",
+      "county": "Liberty, TX",
+      "highway": "trunk",
+      "oneway": "yes",
+      "geometrySummary": {
+        "geometryType": "LineString",
+        "coordinateCount": 2,
+        "startCoordinate": [
+          -94.8260011,
+          30.0579381
+        ],
+        "endCoordinate": [
+          -94.8278507,
+          30.0576663
+        ],
+        "approximateBearingDegrees": 260.36,
+        "directionalLabel": "westbound"
+      },
+      "confidenceClass": "highConfidence",
+      "reviewBucket": "none",
+      "reviewReasons": [
+        "none"
+      ],
+      "activationEligible": true,
+      "candidateId": "v719-candidate-us90-00124",
+      "runtimeEligible": true,
+      "failClosed": false
+    }
+  ]
+}

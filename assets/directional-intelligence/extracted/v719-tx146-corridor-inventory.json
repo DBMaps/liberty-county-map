@@ -1,0 +1,52 @@
+{
+  "corridorId": "tx146",
+  "displayName": "TX 146",
+  "sourceAsset": "assets/directional-intelligence/source/osm/liberty-tx146-source.geojson",
+  "totalSourceFeatures": 87,
+  "totalExtractedSegments": 87,
+  "candidateCount": 87,
+  "promotableCount": 36,
+  "reviewRequiredCount": 51,
+  "excludedCount": 0,
+  "confidenceCounts": {
+    "highConfidence": 36,
+    "mediumConfidence": 51,
+    "reviewRequired": 51,
+    "excluded": 0
+  },
+  "countyDistribution": {
+    "Liberty, TX": 54,
+    "Polk, TX": 1,
+    "Harris, TX": 18,
+    "__MISSING__": 14
+  },
+  "refDistribution": {
+    "US 90;TX 146": 49,
+    "TX 146": 38
+  },
+  "nameDistribution": {
+    "Highway 90": 31,
+    "North Main Street": 4,
+    "North Main": 2,
+    "United States Highway 90 West": 1,
+    "Highway 146 South": 1,
+    "United States Highway 90 East": 1
+  },
+  "reviewBucketDistribution": {
+    "none": 36,
+    "missing_county": 14,
+    "missing_oneway": 43,
+    "missing_ref": 0,
+    "construction_segment": 0,
+    "hov_hot_lane": 0,
+    "reversible_lane": 0,
+    "manual_review_required": 51
+  },
+  "containmentPass": true,
+  "bearingProtectionPass": true,
+  "failClosedPass": true,
+  "reviewBucketProtectionPass": true,
+  "runtimeAsset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+  "activationEnabled": false,
+  "userFacingRenderingEnabled": false
+}

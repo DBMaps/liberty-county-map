@@ -1,0 +1,200 @@
+{
+  "milestone": "V719",
+  "title": "Phase 1 Corridor Expansion Implementation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "productPosture": "Awareness Platform First, Route Intelligence Second",
+  "scope": {
+    "directionalCorridorOnboardingOnly": true,
+    "runtimeActivation": false,
+    "userFacingRenderingChanges": false,
+    "awarenessBriefChanges": false,
+    "alertChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "countyActivationChanges": false,
+    "protectedSystemChanges": false
+  },
+  "corridors": [
+    {
+      "corridorId": "us90",
+      "displayName": "US 90",
+      "sourceAsset": "assets/directional-intelligence/source/osm/liberty-us90-source.geojson",
+      "totalSourceFeatures": 127,
+      "totalExtractedSegments": 127,
+      "candidateCount": 127,
+      "promotableCount": 81,
+      "reviewRequiredCount": 46,
+      "excludedCount": 0,
+      "confidenceCounts": {
+        "highConfidence": 81,
+        "mediumConfidence": 46,
+        "reviewRequired": 46,
+        "excluded": 0
+      },
+      "countyDistribution": {
+        "Jefferson, TX": 2,
+        "Liberty, TX": 70,
+        "Harris, TX": 41,
+        "__MISSING__": 14
+      },
+      "refDistribution": {
+        "US 90": 77,
+        "US 90;TX 146": 49,
+        "US 90;FM 770": 1
+      },
+      "nameDistribution": {
+        "US Highway 90": 35,
+        "Highway 90": 31,
+        "United States Highway 90 West": 33,
+        "East Main Street": 2,
+        "West Main Street": 2,
+        "Beaumont Highway": 2,
+        "United States Highway 90 East": 1
+      },
+      "reviewBucketDistribution": {
+        "none": 81,
+        "missing_county": 14,
+        "missing_oneway": 34,
+        "missing_ref": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "reversible_lane": 0,
+        "manual_review_required": 46
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "sourceFeatureCount": 127,
+      "runtimeCandidateCount": 81,
+      "implementationStatus": "ONBOARDED_RUNTIME_PREPARED"
+    },
+    {
+      "corridorId": "tx146",
+      "displayName": "TX 146",
+      "sourceAsset": "assets/directional-intelligence/source/osm/liberty-tx146-source.geojson",
+      "totalSourceFeatures": 87,
+      "totalExtractedSegments": 87,
+      "candidateCount": 87,
+      "promotableCount": 36,
+      "reviewRequiredCount": 51,
+      "excludedCount": 0,
+      "confidenceCounts": {
+        "highConfidence": 36,
+        "mediumConfidence": 51,
+        "reviewRequired": 51,
+        "excluded": 0
+      },
+      "countyDistribution": {
+        "Liberty, TX": 54,
+        "Polk, TX": 1,
+        "Harris, TX": 18,
+        "__MISSING__": 14
+      },
+      "refDistribution": {
+        "US 90;TX 146": 49,
+        "TX 146": 38
+      },
+      "nameDistribution": {
+        "Highway 90": 31,
+        "North Main Street": 4,
+        "North Main": 2,
+        "United States Highway 90 West": 1,
+        "Highway 146 South": 1,
+        "United States Highway 90 East": 1
+      },
+      "reviewBucketDistribution": {
+        "none": 36,
+        "missing_county": 14,
+        "missing_oneway": 43,
+        "missing_ref": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "reversible_lane": 0,
+        "manual_review_required": 51
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "sourceFeatureCount": 87,
+      "runtimeCandidateCount": 36,
+      "implementationStatus": "ONBOARDED_RUNTIME_PREPARED"
+    },
+    {
+      "corridorId": "fm1960",
+      "displayName": "FM 1960",
+      "sourceAsset": "assets/directional-intelligence/source/osm/liberty-fm1960-source.geojson",
+      "totalSourceFeatures": 5,
+      "totalExtractedSegments": 5,
+      "candidateCount": 5,
+      "promotableCount": 0,
+      "reviewRequiredCount": 5,
+      "excludedCount": 0,
+      "confidenceCounts": {
+        "highConfidence": 0,
+        "mediumConfidence": 5,
+        "reviewRequired": 5,
+        "excluded": 0
+      },
+      "countyDistribution": {
+        "__MISSING__": 4,
+        "Liberty, TX": 1
+      },
+      "refDistribution": {
+        "FM 1960": 5
+      },
+      "nameDistribution": {
+        "West Clayton Street": 1
+      },
+      "reviewBucketDistribution": {
+        "none": 0,
+        "missing_county": 4,
+        "missing_oneway": 4,
+        "missing_ref": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "reversible_lane": 0,
+        "manual_review_required": 5
+      },
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "failClosedPass": true,
+      "reviewBucketProtectionPass": true,
+      "runtimeAsset": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "activationEnabled": false,
+      "userFacingRenderingEnabled": false,
+      "sourceFeatureCount": 5,
+      "runtimeCandidateCount": 0,
+      "implementationStatus": "ONBOARDED_FAIL_CLOSED_NO_PROMOTABLE_CANDIDATES"
+    }
+  ],
+  "validation": {
+    "LibertyContainment": true,
+    "MontgomeryContainment": true,
+    "SanJacintoContainment": true,
+    "containmentPass": true,
+    "bearingProtectionPass": true,
+    "failClosedPass": true,
+    "reviewBucketProtectionPass": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "finalDetermination": "PHASE 1 IMPLEMENTATION COMPLETE WITH OBSERVATIONS"
+}
