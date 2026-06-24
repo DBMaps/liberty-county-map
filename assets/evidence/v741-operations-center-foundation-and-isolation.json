@@ -1,0 +1,60 @@
+{
+  "version": "V741",
+  "title": "Operations Center Foundation and Isolation",
+  "finalDetermination": "PASS",
+  "operationsCenterEnabled": false,
+  "runtimeFlag": {
+    "name": "GRIDLY_OPERATIONS_CENTER_ENABLED",
+    "default": false,
+    "protected": true,
+    "mobileParityWhenFalse": true
+  },
+  "isolationAuditExpectedResult": "PASS",
+  "isolationAudit": {
+    "helper": "window.gridlyOperationsIsolationAudit?.()",
+    "mobileDomModified": false,
+    "portraitRendererModified": false,
+    "mobileRefreshHookAdded": false,
+    "sharedModelOwnershipChanged": false,
+    "communityPulseOwnershipChanged": false,
+    "routeWatchOwnershipChanged": false,
+    "refreshPipelineModified": false,
+    "performanceDelta": "none_expected_flag_disabled_no_runtime_loop",
+    "safeForMobile": true
+  },
+  "architecture": {
+    "intelligenceEngine": "shared_authoritative_gridly_engine",
+    "presentationLayers": [
+      "Mobile Portrait Renderer",
+      "Operations Center Renderer"
+    ],
+    "operationsCenterScope": [
+      "Read",
+      "Render",
+      "Sort",
+      "Filter",
+      "Present"
+    ],
+    "implementationAllowedInV741": false
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "nonGoals": [
+    "Do not build Operations Center UI",
+    "Do not replace Dispatch Board",
+    "Do not modify mobile rendering",
+    "Do not modify refresh pipeline",
+    "Do not change Community Pulse",
+    "Do not change Route Watch",
+    "Do not change alert generation",
+    "Do not change wording",
+    "Do not change report lifecycle"
+  ],
+  "mergeRecommendation": "Merge V741 as an architecture-only foundation after required validation passes."
+}
