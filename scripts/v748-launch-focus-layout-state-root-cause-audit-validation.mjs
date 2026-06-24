@@ -10,8 +10,8 @@ assert.match(app, /window\.gridlyLaunchFocusLayoutStateAudit = function gridlyLa
 assert.match(app, /exposeGridlyAuditHelper\("gridlyLaunchFocusLayoutStateAudit"/, 'V748 audit helper must be exposed');
 assert.match(app, /containmentClassElementExpected = "body"/, 'audit must identify body as containment class target');
 assert.match(app, /lastLayoutSignal\.desktopGateSuppressedForLaunchFocus/, 'audit must identify desktop-gate suppression coupling');
-assert.match(app, /recommendedNextFix: "In a later behavior-change milestone/, 'audit must recommend next fix without applying it');
-assert.doesNotMatch(app, /const launchFocusPortraitValidation = Boolean\(activeLayoutMode === "portrait" && shouldSuppressGridlyDesktopGateForLaunchFocus\(\)\);/, 'V748 must not patch containment behavior yet');
+assert.match(app, /recommendedNextFix: "V749 implemented the behavior-change milestone/, 'audit must report the V749 follow-up fix');
+assert.match(app, /ROOT CAUSE ADDRESSED/, 'V748 helper must now report the V749 addressed state');
 
 assert.equal(evidence.version, 'V748');
 assert.equal(evidence.rootCauseFound, true);
