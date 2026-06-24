@@ -1,0 +1,252 @@
+{
+  "milestone": "V716",
+  "title": "Phase 1 Candidate Generation Validation",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "mission": "Know Before You Go",
+  "positioning": {
+    "primary": "Awareness Platform First",
+    "secondary": "Route Intelligence Second"
+  },
+  "scope": {
+    "candidateGenerationAndValidationOnly": true,
+    "runtimeActivation": false,
+    "uiChanges": false,
+    "directionalRenderingChanges": false,
+    "alertsChanges": false,
+    "routeWatchChanges": false,
+    "destinationIntelligenceChanges": false,
+    "routingChanges": false,
+    "navigationChanges": false,
+    "supabaseChanges": false,
+    "protectedSystemChanges": false
+  },
+  "sourceDirectoryRequested": "assets/directional-intelligence/source/osm/",
+  "sourceDirectoryObserved": "assets/directional-intelligenc/source/osm/",
+  "sourceDirectoryObservation": "Source assets are present in the observed misspelled directory from V715; V716 does not move source files or alter runtime paths.",
+  "corridors": [
+    {
+      "corridor": "US 90",
+      "sourceFileUsed": "assets/directional-intelligenc/source/osm/liberty-us90-source.geojson",
+      "sourceFeatureCount": 127,
+      "candidateCount": 127,
+      "highConfidenceCount": 81,
+      "mediumConfidenceCount": 46,
+      "reviewRequiredCount": 46,
+      "excludedCount": 0,
+      "promotableCandidateCount": 81,
+      "failClosedPass": true,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "readinessStatus": "READY WITH OBSERVATIONS",
+      "validGeojson": true,
+      "validationError": null,
+      "refCoverage": [
+        "US 90",
+        "US 90;FM 770",
+        "US 90;TX 146"
+      ],
+      "nameCoverage": [
+        "Beaumont Highway",
+        "East Main Street",
+        "Highway 90",
+        "US Highway 90",
+        "United States Highway 90 East",
+        "United States Highway 90 West",
+        "West Main Street"
+      ],
+      "reviewBuckets": {
+        "reversible_lane": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 14,
+        "missing_oneway": 34,
+        "missing_ref": 0,
+        "manual_review_required": 46
+      }
+    },
+    {
+      "corridor": "TX 146",
+      "sourceFileUsed": "assets/directional-intelligenc/source/osm/liberty-tx146-source.geojson",
+      "sourceFeatureCount": 87,
+      "candidateCount": 87,
+      "highConfidenceCount": 36,
+      "mediumConfidenceCount": 51,
+      "reviewRequiredCount": 51,
+      "excludedCount": 0,
+      "promotableCandidateCount": 36,
+      "failClosedPass": true,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "readinessStatus": "READY WITH OBSERVATIONS",
+      "validGeojson": true,
+      "validationError": null,
+      "refCoverage": [
+        "TX 146",
+        "US 90;TX 146"
+      ],
+      "nameCoverage": [
+        "Highway 146 South",
+        "Highway 90",
+        "North Main",
+        "North Main Street",
+        "United States Highway 90 East",
+        "United States Highway 90 West"
+      ],
+      "reviewBuckets": {
+        "reversible_lane": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 14,
+        "missing_oneway": 43,
+        "missing_ref": 0,
+        "manual_review_required": 51
+      }
+    },
+    {
+      "corridor": "FM 1960",
+      "sourceFileUsed": "assets/directional-intelligenc/source/osm/liberty-fm1960-source.geojson",
+      "sourceFeatureCount": 5,
+      "candidateCount": 5,
+      "highConfidenceCount": 0,
+      "mediumConfidenceCount": 5,
+      "reviewRequiredCount": 5,
+      "excludedCount": 0,
+      "promotableCandidateCount": 0,
+      "failClosedPass": true,
+      "containmentPass": true,
+      "bearingProtectionPass": true,
+      "readinessStatus": "NOT READY",
+      "validGeojson": true,
+      "validationError": null,
+      "refCoverage": [
+        "FM 1960"
+      ],
+      "nameCoverage": [
+        "West Clayton Street"
+      ],
+      "reviewBuckets": {
+        "reversible_lane": 0,
+        "construction_segment": 0,
+        "hov_hot_lane": 0,
+        "missing_county": 4,
+        "missing_oneway": 4,
+        "missing_ref": 0,
+        "manual_review_required": 5
+      }
+    }
+  ],
+  "reviewBucketExposure": {
+    "reversible_lane": 0,
+    "construction_segment": 0,
+    "hov_hot_lane": 0,
+    "missing_county": 32,
+    "missing_oneway": 81,
+    "missing_ref": 0,
+    "manual_review_required": 102
+  },
+  "countyInventoryExtractionViability": [
+    {
+      "sourceFile": "assets/directional-intelligenc/source/osm/liberty-major-roads-source.geojson",
+      "validGeojson": true,
+      "featureCount": 929,
+      "refCoverage": {
+        "featuresWithRef": 910,
+        "percent": 97.95
+      },
+      "nameCoverage": {
+        "featuresWithName": 647,
+        "percent": 69.64
+      },
+      "phase1CorridorMatches": {
+        "US 90": 127,
+        "TX 146": 87,
+        "FM 1960": 5
+      },
+      "candidateExtractionViable": true,
+      "futureCountyExpansionValue": "HIGH for Liberty Phase 1 extraction",
+      "validationError": null
+    },
+    {
+      "sourceFile": "assets/directional-intelligenc/source/osm/montgomery-major-roads-source.geojson",
+      "validGeojson": true,
+      "featureCount": 15907,
+      "refCoverage": {
+        "featuresWithRef": 12915,
+        "percent": 81.19
+      },
+      "nameCoverage": {
+        "featuresWithName": 13310,
+        "percent": 83.67
+      },
+      "phase1CorridorMatches": {
+        "US 90": 0,
+        "TX 146": 0,
+        "FM 1960": 0
+      },
+      "candidateExtractionViable": false,
+      "futureCountyExpansionValue": "MEDIUM after Texas-county filtering",
+      "validationError": null
+    },
+    {
+      "sourceFile": "assets/directional-intelligenc/source/osm/san-jacinto-major-roads-source.geojson",
+      "validGeojson": true,
+      "featureCount": 129,
+      "refCoverage": {
+        "featuresWithRef": 128,
+        "percent": 99.22
+      },
+      "nameCoverage": {
+        "featuresWithName": 51,
+        "percent": 39.53
+      },
+      "phase1CorridorMatches": {
+        "US 90": 0,
+        "TX 146": 0,
+        "FM 1960": 0
+      },
+      "candidateExtractionViable": false,
+      "futureCountyExpansionValue": "MEDIUM after Texas-county filtering",
+      "validationError": null
+    },
+    {
+      "sourceFile": "assets/directional-intelligenc/source/osm/jefferson-major-roads-source.geojson",
+      "validGeojson": true,
+      "featureCount": 14964,
+      "refCoverage": {
+        "featuresWithRef": 14964,
+        "percent": 100.0
+      },
+      "nameCoverage": {
+        "featuresWithName": 10393,
+        "percent": 69.45
+      },
+      "phase1CorridorMatches": {
+        "US 90": 270,
+        "TX 146": 0,
+        "FM 1960": 0
+      },
+      "candidateExtractionViable": false,
+      "futureCountyExpansionValue": "MEDIUM after Texas-county filtering",
+      "validationError": null
+    }
+  ],
+  "corridorPresenceInLibertyMajorRoads": {
+    "US 90": 127,
+    "TX 146": 87,
+    "FM 1960": 5
+  },
+  "validation": {
+    "containmentPass": true,
+    "bearingProtectionPass": true,
+    "failClosedPass": true
+  },
+  "protectedSystems": {
+    "historicalReadsEnabled": false,
+    "historyUiEnabled": false,
+    "DriveTexasPaused": true,
+    "TransportationIntelligenceEnabled": false,
+    "TransportationIntelligenceDisplay": false,
+    "TransportationIntelligenceActivation": false
+  },
+  "overallPhase1Readiness": "PHASE 1 READY WITH OBSERVATIONS"
+}
