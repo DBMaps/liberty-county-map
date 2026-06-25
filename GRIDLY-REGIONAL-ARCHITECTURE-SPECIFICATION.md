@@ -24,13 +24,25 @@ This document is documentation-only. It does not change runtime behavior, UI beh
 
 ## 2. Platform Overview
 
-Gridly is a permanent **Community & Transportation Intelligence Platform**. Its regional architecture is organized around three permanent domains:
+Gridly is a permanent **Community & Transportation Intelligence Platform**. Its regional architecture is organized around four permanent architectural layers:
 
 1. **Community Layer** — owns civic identity, regional membership, counties, municipalities, named communities, awareness areas, boundary assets, and community relationships.
 2. **Transportation Layer** — owns physical transportation infrastructure, corridors, geometry, segments, intersections, rail, crossings, direction, carriageways, and transportation relationships.
 3. **Intelligence Layer** — owns intelligence objects, source interpretation, provider normalization, trust, freshness, lifecycle, presentation eligibility, and historical state.
+4. **Experience Layer** — owns presentation, interaction, visualization, workflow, and audience-specific organization.
 
-Intelligence remains the center of the platform. Community and Transportation provide durable identity and infrastructure context. Intelligence interprets current, historical, and future conditions through relationships to those layers. Presentation surfaces intelligence, but presentation does not own intelligence, community identity, or transportation infrastructure.
+```text
+                Experience Layer
+                      ▲
+                      │
+              Intelligence Layer
+               (Platform Core)
+               ▲            ▲
+               │            │
+     Community Layer   Transportation Layer
+```
+
+Intelligence remains the center of the platform. Community and Transportation provide durable identity and infrastructure context. Intelligence interprets current, historical, and future conditions through relationships to those layers. Experience surfaces intelligence for specific audiences, but Experience does not own intelligence, community identity, transportation infrastructure, trust, or relationships.
 
 ## 3. Regional Architecture
 
@@ -44,9 +56,11 @@ Community Packages
 Transportation Packages
   ↓
 Intelligence Packages
+  ↓
+Experience Packages
 ```
 
-A **Region** is the primary expansion unit for Gridly. A region contains the community, transportation, and intelligence packages required to operate a coherent regional intelligence ecosystem. Counties may be included inside a region, but counties are not the highest architectural unit.
+A **Region** is the primary expansion unit for Gridly. A region contains the community, transportation, intelligence, and experience packages required to operate a coherent regional intelligence ecosystem. Counties may be included inside a region, but counties are not the highest architectural unit.
 
 **Community Packages** define civic identity within the region. They may include county, municipality, community, and awareness-area assets.
 
@@ -54,11 +68,14 @@ A **Region** is the primary expansion unit for Gridly. A region contains the com
 
 **Intelligence Packages** define source-specific and provider-specific intelligence that can relate to many communities and many transportation assets.
 
+**Experience Packages** define audience-specific presentation, interaction, visualization, workflow, and organization that consume Intelligence without owning it.
+
 Package independence is mandatory:
 
 - A community package must not duplicate transportation geometry.
 - A transportation package must not duplicate community identity.
 - An intelligence package must not become a community or transportation package.
+- An experience package must not create, own, or modify Intelligence Objects.
 - Runtime presentation must consume package relationships rather than copy package ownership.
 - Package changes must be validated within the owning domain and then validated across relationships before production certification.
 
@@ -185,10 +202,10 @@ An **Intelligence Package** is the authoritative package for provider-specific o
 Required contents:
 
 - **Provider** — provider identity, source type, access model, update pattern, and ownership.
-- **Relationships** — community relationships, transportation relationships, source relationships, and presentation relationships.
+- **Relationships** — community relationships, transportation relationships, source relationships, and experience eligibility relationships.
 - **Trust** — trust model, source reliability, confidence, verification state, and conflict handling.
 - **Normalization** — source-specific input normalization into permanent Intelligence Objects.
-- **Presentation** — presentation eligibility, display rules, audience constraints, and non-ownership warnings.
+- **Experience Eligibility** — display eligibility, audience constraints, and non-ownership warnings consumed by Experience Packages.
 - **Validation** — checks proving source integrity, normalized object validity, relationship correctness, trust requirements, and freshness requirements.
 - **Certification** — lifecycle evidence for candidate, imported, validated, integrated, certified, and production states.
 - **Production** — release metadata, monitoring notes, fallback behavior, and operational ownership.
@@ -215,7 +232,7 @@ Recommended folder structure:
         communities.json
         transportation.json
         sources.json
-        presentation.json
+        experience.json
       trust/
         trust-model.json
         conflict-resolution.md
@@ -232,7 +249,68 @@ Recommended folder structure:
 
 Intelligence packages own intelligence. They do not own community identity or transportation infrastructure.
 
-## 7. Intelligence Object Specification
+## 7. Experience Package Specification
+
+An **Experience Package** is the authoritative package for an audience-specific experience that consumes the Intelligence Layer. Experience owns presentation, interaction, visualization, workflow, and audience-specific organization. Experience does not own Intelligence, Community, Transportation, Trust, or relationships.
+
+Suggested Experience Package responsibilities include:
+
+- **Consumer Mobile** — resident-facing mobile awareness and everyday decision support.
+- **Desktop Operations** — professional situational awareness, triage, and operational workflow.
+- **Public Displays** — passive public-awareness boards, dashboards, kiosks, and shared screens.
+- **API Experience** — externally consumable views and contracts derived from certified Intelligence.
+- **Partner Experience** — partner-specific organization and visualization of shared Intelligence.
+- **Future Native Applications** — platform-native experiences for future devices and operating systems.
+- **Future AI Experiences** — AI-assisted summaries, workflows, and explanation layers that remain consumers of Intelligence.
+
+Experience Packages may:
+
+- organize Intelligence for a specific audience.
+- filter Intelligence for presentation eligibility and relevance.
+- summarize Intelligence using approved platform meaning.
+- visualize Intelligence through maps, lists, panels, dashboards, briefings, APIs, or future surfaces.
+- prioritize Intelligence according to audience workflow.
+
+Experience Packages may NOT:
+
+- create Intelligence.
+- own Intelligence.
+- modify Intelligence Objects.
+- modify Community ownership.
+- modify Transportation ownership.
+- modify Trust ownership.
+- modify another Experience Package.
+
+Recommended folder structure:
+
+```text
+/experience-packages/
+  <region-id>/
+    <experience-id>/
+      package.json
+      audience.json
+      presentation/
+        hierarchy.json
+        eligibility.json
+        visualization.md
+      workflows/
+        workflow.md
+      relationships/
+        intelligence.json
+      validation/
+        checklist.md
+        results.json
+      certification/
+        evidence.md
+        status.json
+      production/
+        release-notes.md
+        rollback.md
+```
+
+Experience packages own experience design. They consume Intelligence and never become Intelligence Packages.
+
+## 8. Intelligence Object Specification
 
 An **Intelligence Object** is the permanent unit of interpreted intelligence in Gridly. It represents one normalized condition, report, incident, alert, observation, advisory, or future intelligence unit.
 
@@ -252,7 +330,7 @@ Required sections:
 
 An Intelligence Object must be related to its context. It must not duplicate community packages or transportation packages.
 
-## 8. Relationship Model
+## 9. Relationship Model
 
 The permanent relationship model is:
 
@@ -265,7 +343,7 @@ Many Transportation Relationships
   ↓
 Many Intelligence Sources
   ↓
-Many Presentation Layers
+Many Experience Packages
 ```
 
 The model prohibits duplication:
@@ -273,14 +351,15 @@ The model prohibits duplication:
 - One intelligence object may be relevant to many communities.
 - One intelligence object may affect many transportation assets.
 - One intelligence object may be supported by many sources.
-- One intelligence object may appear in many presentation layers.
-- No presentation layer may create a second intelligence object solely for display convenience.
+- One intelligence object may appear in many Experience Packages.
+- No Experience Package may create a second intelligence object solely for display convenience.
+- No Experience Package may modify another Experience Package.
 - No county may receive a duplicated corridor solely because the corridor crosses that county.
 - No provider may bypass normalization by storing provider records as production intelligence without an Intelligence Object.
 
 Relationships are first-class architecture. They must be validated, versioned where necessary, and eligible for certification evidence.
 
-## 9. Validation Framework
+## 10. Validation Framework
 
 Validation proves that packages and relationships match the Blueprint and this specification.
 
@@ -288,15 +367,16 @@ Required validation categories:
 
 - **Community Validation** — proves community package identity uniqueness, regional membership, boundary validity, source traceability, awareness-area consistency, and non-ownership of transportation and intelligence.
 - **Transportation Validation** — proves corridor uniqueness, geometry integrity, segment continuity, intersection validity, rail and crossing correctness, directional consistency, carriageway correctness, and non-duplication by county.
-- **Intelligence Validation** — proves provider records normalize into valid Intelligence Objects with required identity, lifecycle, trust, freshness, and presentation fields.
-- **Relationship Validation** — proves community, transportation, source, and presentation relationships point to existing owned assets and do not imply ownership transfer.
+- **Intelligence Validation** — proves provider records normalize into valid Intelligence Objects with required identity, lifecycle, trust, freshness, and experience eligibility fields.
+- **Experience Validation** — proves Experience Packages consume Intelligence without creating Intelligence, owning Intelligence, modifying Intelligence Objects, or modifying other Experience Packages.
+- **Relationship Validation** — proves community, transportation, source, and experience relationships point to existing owned assets and do not imply ownership transfer.
 - **Trust Validation** — proves source confidence, verification state, conflict handling, moderation state, freshness rules, and stale-state behavior meet provider requirements.
 - **Regional Validation** — proves all packages in a region work together as a regional intelligence ecosystem and do not require county-specific architecture forks.
 - **Production Certification** — proves validated packages have evidence, release notes, rollback notes, operational ownership, and production approval.
 
 Validation must be automated where possible and documented where automation is not yet available. Missing automation does not remove the requirement for validation evidence.
 
-## 10. Certification Framework
+## 11. Certification Framework
 
 Every package moves through the same certification lifecycle:
 
@@ -309,7 +389,7 @@ Every package moves through the same certification lifecycle:
 
 No package may skip lifecycle states. Emergency changes may be expedited only by documenting each state and preserving certification evidence.
 
-## 11. Regional Growth Model
+## 12. Regional Growth Model
 
 Gridly begins with the **Southeast Texas Region** as the initial regional intelligence ecosystem. Future growth must add new regions using the same package architecture.
 
@@ -319,9 +399,9 @@ Growth sequence:
 2. Future Texas Regions
 3. Future States
 
-No architecture changes are required to add regions. A new region adds new community packages, transportation packages, intelligence packages, relationship definitions, validation evidence, and certification records. The platform must not be redesigned around a single county, a single provider, or a single presentation surface.
+No architecture changes are required to add regions. A new region adds new community packages, transportation packages, intelligence packages, experience packages, relationship definitions, validation evidence, and certification records. The platform must not be redesigned around a single county, a single provider, or a single presentation surface.
 
-## 12. Directory Structure
+## 13. Directory Structure
 
 Recommended permanent repository organization:
 
@@ -346,6 +426,10 @@ Recommended permanent repository organization:
   <region-id>/
     <provider-id>/
 
+/experience-packages/
+  <region-id>/
+    <experience-id>/
+
 /runtime/
   adapters/
   registries/
@@ -356,6 +440,7 @@ Recommended permanent repository organization:
   community/
   transportation/
   intelligence/
+  experience/
   relationships/
   trust/
   regional/
@@ -370,14 +455,15 @@ Recommended permanent repository organization:
 
 The exact physical repository layout may evolve, but implementation must preserve the ownership model: regions coordinate packages, packages own domain assets, runtime consumes certified packages, validation verifies conformance, and specifications govern implementation.
 
-## 13. Implementation Rules
+## 14. Implementation Rules
 
 Permanent implementation rules:
 
 - Intelligence owns Intelligence.
 - Community owns Identity.
 - Transportation owns Infrastructure.
-- Presentation owns nothing.
+- Experience owns presentation, interaction, visualization, workflow, and audience-specific organization.
+- Presentation owns no Intelligence.
 - Relationships are preferred over duplication.
 - One corridor.
 - One intelligence object.
@@ -389,7 +475,7 @@ Permanent implementation rules:
 - Validation must exist before production certification.
 - Release must not promote uncertified package architecture.
 
-## 14. Future DriveTexas Integration
+## 15. Future DriveTexas Integration
 
 DriveTexas belongs in the Intelligence Layer as an **Intelligence Package**. It is not a Community Package and is not a Transportation Package.
 
@@ -404,7 +490,7 @@ DriveTexas integration must:
 
 DriveTexas may inform transportation conditions, but it does not own transportation infrastructure.
 
-## 15. Future Roadside Intelligence
+## 16. Future Roadside Intelligence
 
 Roadside Intelligence must be modeled through transportation ownership and intelligence relationships.
 
@@ -418,7 +504,7 @@ Required concepts:
 
 Roadside Intelligence must never create duplicate corridors or duplicate community-specific copies of transportation assets.
 
-## 16. Engineering Principles
+## 17. Engineering Principles
 
 Permanent engineering principles:
 
@@ -427,6 +513,8 @@ Permanent engineering principles:
 - Relationships before duplication.
 - Regions before counties.
 - Intelligence before presentation.
+- Experience consumes Intelligence.
+- Presentation is replaceable; Intelligence is not.
 - Validation before production.
 - Ownership before rendering.
 - Certification before release.
@@ -500,9 +588,31 @@ These principles are enforceable engineering constraints, not aspirational langu
     "communities": [],
     "transportation": [],
     "sources": [],
-    "presentation": []
+    "experience": []
   },
   "trust": {},
+  "validation": {},
+  "certification": {},
+  "production": {}
+}
+```
+
+### Experience Package Template
+
+```json
+{
+  "packageType": "experience",
+  "packageId": "experience.<region>.<audience>",
+  "regionId": "<region-id>",
+  "status": "candidate|imported|validated|integrated|certified|production",
+  "audience": {},
+  "presentation": {},
+  "interaction": {},
+  "visualization": {},
+  "workflow": {},
+  "relationships": {
+    "intelligence": []
+  },
   "validation": {},
   "certification": {},
   "production": {}
@@ -524,7 +634,7 @@ These principles are enforceable engineering constraints, not aspirational langu
     "communities": [],
     "transportation": [],
     "sources": [],
-    "presentation": []
+    "experience": []
   },
   "trust": {
     "confidence": null,
@@ -538,7 +648,7 @@ These principles are enforceable engineering constraints, not aspirational langu
     "staleState": "fresh|aging|stale|expired"
   },
   "lifecycle": "candidate|imported|validated|integrated|certified|production|expired|archived|superseded",
-  "presentation": {},
+  "experience": {},
   "historicalState": []
 }
 ```
@@ -552,7 +662,9 @@ These principles are enforceable engineering constraints, not aspirational langu
 - [ ] Transportation geometry is valid and segment continuity is documented.
 - [ ] Direction and carriageway models are valid where applicable.
 - [ ] Intelligence provider records normalize into Intelligence Objects.
-- [ ] Intelligence Objects include identity, relationships, trust, freshness, lifecycle, presentation, and historical state.
+- [ ] Intelligence Objects include identity, relationships, trust, freshness, lifecycle, experience eligibility, and historical state.
+- [ ] Experience Packages consume Intelligence without creating, owning, or modifying Intelligence Objects.
+- [ ] Experience Packages remain independently maintainable and do not modify another Experience Package.
 - [ ] Relationship targets exist and remain owned by their source packages.
 - [ ] Trust and freshness rules are documented and validated.
 - [ ] Regional validation proves cross-package integration.
@@ -573,7 +685,7 @@ These principles are enforceable engineering constraints, not aspirational langu
 
 ## Success Criteria
 
-This specification succeeds when a future engineer can build Gridly without requiring historical project knowledge. The engineer should understand the permanent regional architecture, the three platform domains, package ownership, relationship rules, validation gates, certification lifecycle, DriveTexas placement, roadside intelligence model, repository organization, and implementation constraints from this document alone.
+This specification succeeds when a future engineer can build Gridly without requiring historical project knowledge. The engineer should understand the permanent regional architecture, the four platform layers, package ownership, relationship rules, validation gates, certification lifecycle, DriveTexas placement, roadside intelligence model, repository organization, and implementation constraints from this document alone.
 
 ## Final Determination
 

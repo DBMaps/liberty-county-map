@@ -29,7 +29,11 @@ Release
 - Architecture drives implementation.
 - Intelligence has one owner.
 - Community and Transportation remain independent.
-- Presentation never owns intelligence.
+- Experience consumes Intelligence.
+- Presentation never owns Intelligence.
+- Presentation layers remain independently maintainable.
+- No Experience Layer may modify another Experience Layer.
+- Architecture discovered through implementation should be formally captured through Blueprint Amendments.
 - Documentation precedes implementation for major architectural work.
 - Historical documents remain preserved, but future decisions defer to the Blueprint when conflicts exist.
 - Implementation may evolve, but the Blueprint defines the long-term platform direction.
