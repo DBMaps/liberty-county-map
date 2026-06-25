@@ -2520,21 +2520,27 @@ Growth should strengthen the platform.
 
 It should never require redesigning it.
 
-Regions Are the Operational Unit
+Operational Region
 
-The primary expansion unit within Gridly is the Region.
+Gridly defines one or more Operational Regions.
 
-Regions represent real-world areas where communities, transportation systems, and public infrastructure naturally interact.
+An Operational Region is the highest geographic organizational unit for Community Packages. It exists solely to define the geographic scope of the Gridly platform and is not intended to match any single government region, census region, tourism region, economic region, transportation district, or third-party geographic definition.
 
-Examples include:
+Operational Regions organize:
 
-Southeast Texas
-East Texas
-Gulf Coast Texas
-Central Texas
-North Texas
+Community Packages
+Transportation Packages
+Intelligence Packages
 
-Regions are defined by operational relationships rather than political convenience.
+Operational Regions do not own Intelligence.
+
+Operational Regions do not own Transportation assets.
+
+Operational Regions organize package relationships.
+
+Operational Regions also support future Experience Layers by preserving geographic scope while keeping presentation ownership separate from Community, Transportation, and Intelligence ownership.
+
+Future Operational Regions may be created only through future Blueprint amendments.
 
 Regional Composition
 
@@ -2630,7 +2636,7 @@ Gridly expands in layers.
 
 Step 1
 
-Define the Region.
+Define the Operational Region.
 
 Step 2
 
@@ -2667,25 +2673,23 @@ Infrastructure events influencing several communities.
 
 The platform should naturally communicate regional awareness without forcing users to think in terms of county boundaries.
 
-The Southeast Texas Region
+The Southeast Texas Operational Region
 
-The first operational region for Gridly is Southeast Texas.
+The first Operational Region for Gridly is Southeast Texas.
 
-Initial Community Packages include:
+The Southeast Texas Operational Region is a Gridly architectural definition. It is not intended to mirror any single governmental, census, transportation, economic, or tourism definition.
 
-Liberty County
-Chambers County
-Montgomery County
-San Jacinto County
-Jefferson County
-Hardin County
-Orange County
-Polk County
-Tyler County
-Walker County
-Harris County (regional portion)
+The Blueprint is the authoritative source for Operational Region membership. Future Operational Regions may be created through future Blueprint amendments.
 
-Additional communities may be added as regional needs evolve.
+Active Community Packages are Community Packages currently implemented in production. The initial active Community Packages for the Southeast Texas Operational Region are:
+
+Liberty
+Montgomery
+San Jacinto
+
+Planned Community Packages are Community Packages identified for future implementation. Planned membership is maintained through Community Package registration and future Blueprint amendments rather than through a permanent hardcoded list in this section.
+
+Community Package membership may evolve over time. The Blueprint governs architecture, the Package Registry governs runtime registration, and implementation follows both.
 
 Transportation Strategy
 

@@ -29,6 +29,7 @@ Release
 - Architecture drives implementation.
 - Intelligence has one owner.
 - Community and Transportation remain independent.
+- Operational Regions organize Community Package, Transportation Package, and Intelligence Package relationships without owning those domains.
 - Experience consumes Intelligence.
 - Presentation never owns Intelligence.
 - Presentation layers remain independently maintainable.
@@ -47,3 +48,11 @@ Future Blueprint revisions must be handled as formal amendments:
 3. Record the approval in `BLUEPRINT-CHANGELOG.md` before implementation begins.
 4. Update affected architecture specifications to align with the amended Blueprint.
 5. Validate that any later implementation remains consistent with the amended Blueprint.
+
+## Operational Region Governance
+
+Operational Regions are constitutional architectural definitions governed by the Blueprint. Future creation, removal, renaming, or scope changes for Operational Regions require Blueprint amendments.
+
+Community Package membership may evolve over time. The Blueprint governs the architecture, the Package Registry governs runtime registration, and implementation must follow both.
+
+Operational Regions organize Community Packages, support Transportation Packages, support Intelligence Packages, and support future Experience Layers. They do not replace Community ownership, Transportation ownership, Intelligence ownership, or Experience ownership.

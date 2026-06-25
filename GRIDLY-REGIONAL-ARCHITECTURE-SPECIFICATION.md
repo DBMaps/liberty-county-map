@@ -49,7 +49,7 @@ Intelligence remains the center of the platform. Community and Transportation pr
 The permanent regional hierarchy is:
 
 ```text
-Region
+Operational Region
   ↓
 Community Packages
   ↓
@@ -60,9 +60,13 @@ Intelligence Packages
 Experience Packages
 ```
 
-A **Region** is the primary expansion unit for Gridly. A region contains the community, transportation, intelligence, and experience packages required to operate a coherent regional intelligence ecosystem. Counties may be included inside a region, but counties are not the highest architectural unit.
+An **Operational Region** is the primary expansion unit and highest geographic organizational unit for Community Packages in Gridly. An Operational Region contains the community, transportation, intelligence, and experience package relationships required to operate a coherent regional intelligence ecosystem. Counties may be included inside an Operational Region, but counties are not the highest architectural unit.
 
-**Community Packages** define civic identity within the region. They may include county, municipality, community, and awareness-area assets.
+Operational Regions are Gridly architectural definitions. They are not required to mirror any single governmental, census, transportation, economic, tourism, or third-party geographic definition. Operational Regions organize package relationships; they do not own Intelligence, Transportation assets, Community ownership, or Experience ownership.
+
+The initial Operational Region is **Southeast Texas**. The Southeast Texas Operational Region is defined by the Blueprint, not by an external governmental, census, transportation, economic, or tourism boundary. Its initial active Community Packages are Liberty, Montgomery, and San Jacinto. Planned Community Package membership is maintained through Community Package registration and future Blueprint amendments.
+
+**Community Packages** define civic identity within the Operational Region. They may include county, municipality, community, and awareness-area assets.
 
 **Transportation Packages** define shared infrastructure within the region. Transportation assets exist once and are related to communities as needed.
 
@@ -86,7 +90,7 @@ A **Community Package** is the authoritative package for civic identity and comm
 Required contents:
 
 - **Identity** — stable package id, display name, canonical slug, version, owner, and status.
-- **Region** — region id and regional membership.
+- **Operational Region** — Operational Region id and membership.
 - **County** — county identity where applicable, including canonical county name and external identifiers.
 - **Municipality** — municipal identities where applicable.
 - **Community** — named communities, neighborhoods, districts, or locally meaningful civic areas.
