@@ -834,3 +834,293 @@ Help people understand what is happening before it affects them.
 If a decision strengthens that outcome, it aligns with the Blueprint.
 
 If it weakens that outcome, it should be reconsidered.
+Chapter 5
+The Regional Intelligence Architecture
+Purpose
+
+Gridly is not organized around counties.
+
+It is not organized around roads.
+
+It is not organized around reports.
+
+It is organized around Intelligence.
+
+Every capability, every integration, every presentation layer, and every future expansion begins with a single architectural principle:
+
+Intelligence is the center of the platform.
+
+Everything else exists to create, strengthen, validate, or consume intelligence.
+
+The Architecture
+
+Gridly is composed of three permanent domains.
+
+                     GRIDLY
+
+      Community & Transportation Intelligence Platform
+
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+        │                  │                  │
+ Community Layer     Transportation Layer    Intelligence Layer
+        │                  │                  │
+        └──────────────────┼──────────────────┘
+                           │
+                 Shared Intelligence Objects
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+     Mobile          Future Desktop      Future APIs
+
+The architecture intentionally separates ownership from presentation.
+
+The Community Layer
+
+The Community Layer represents the places where people live.
+
+It answers questions such as:
+
+Which community is affected?
+Which awareness area should receive this intelligence?
+Which county is responsible?
+Which municipalities are involved?
+Which neighborhoods should understand this situation?
+
+The Community Layer provides identity.
+
+It does not own transportation.
+
+The Transportation Layer
+
+The Transportation Layer represents how people move.
+
+It answers questions such as:
+
+Which roadway is affected?
+Which rail corridor is involved?
+Which crossing is blocked?
+Which direction is impacted?
+Which corridor carries this intelligence?
+
+Transportation assets exist independently from county boundaries.
+
+A roadway is one continuous transportation asset regardless of how many communities it passes through.
+
+The Intelligence Layer
+
+The Intelligence Layer is the heart of Gridly.
+
+Everything flows through it.
+
+It answers questions such as:
+
+What is happening?
+Where is it happening?
+How trustworthy is this information?
+How recent is it?
+Who is affected?
+Which transportation assets are involved?
+Which communities are involved?
+What should the user understand?
+
+No presentation layer owns intelligence.
+
+No county owns intelligence.
+
+No roadway owns intelligence.
+
+Gridly owns intelligence.
+
+Intelligence Objects
+
+Every situation known to Gridly becomes an Intelligence Object.
+
+Examples include:
+
+Flooding
+Train blocking crossing
+Road closure
+Construction
+Disabled vehicle
+Downed power line
+Weather impact
+Community event
+Utility outage
+Public safety event
+
+The object exists once.
+
+Relationships provide context.
+
+Relationships
+
+Every Intelligence Object may connect to many domains simultaneously.
+
+Example:
+
+Intelligence Object
+
+Flooding
+
+↓
+
+Transportation
+
+TX 146
+
+↓
+
+Communities
+
+Dayton
+
+Ames
+
+Liberty County
+
+↓
+
+Official Sources
+
+DriveTexas
+
+National Weather Service
+
+↓
+
+Community Sources
+
+Community Reports
+
+Nothing is duplicated.
+
+Only relationships are created.
+
+Ownership
+
+Ownership defines who is responsible for maintaining a piece of information.
+
+Community owns
+Counties
+Cities
+Communities
+Neighborhoods
+Awareness Areas
+Community Identity
+Transportation owns
+Highways
+FM Roads
+US Highways
+Interstates
+Rail Corridors
+Rail Crossings
+Intersections
+Direction
+Mile Progression
+Carriageways
+Intelligence owns
+Situations
+Confidence
+Freshness
+Relationships
+Trust
+Summaries
+Community Impact
+Transportation Impact
+Regional Impact
+Presentation Layers
+
+Presentation is intentionally separated from intelligence.
+
+Current presentation layers include:
+
+Mobile Consumer Experience
+
+Future presentation layers include:
+
+Desktop Operations
+Public Dashboards
+Emergency Management
+APIs
+Third-party Integrations
+
+Each presentation layer consumes the same intelligence.
+
+No presentation layer owns intelligence.
+
+Data Sources
+
+Gridly treats all incoming information as sources rather than truth.
+
+Examples include:
+
+Community Reports
+
+DriveTexas
+
+Weather Services
+
+Rail Data
+
+Emergency Management
+
+Future DOT Integrations
+
+Future Utility Providers
+
+Each source contributes evidence.
+
+The Intelligence Layer determines how that evidence becomes useful intelligence.
+
+Scalability
+
+This architecture is designed to scale indefinitely.
+
+Adding another county should not require redesigning transportation.
+
+Adding another transportation corridor should not require redesigning communities.
+
+Adding another intelligence source should not require redesigning either.
+
+Each domain grows independently while strengthening the shared intelligence model.
+
+Blueprint Rules
+Architecture Rule #1
+
+Intelligence is the center of the platform.
+
+Everything else exists in relationship to it.
+
+Architecture Rule #2
+
+Community, Transportation, and Intelligence remain independent domains.
+
+Architecture Rule #3
+
+Presentation layers consume intelligence.
+
+They never own it.
+
+Architecture Rule #4
+
+Relationships are preferred over duplicated ownership.
+
+Architecture Rule #5
+
+Every future capability must naturally fit into one of the three permanent domains.
+
+If it cannot, the architecture should be questioned before the feature is added.
+
+Chapter Summary
+
+The Regional Intelligence Architecture defines Gridly as a platform built around Intelligence rather than geography or transportation alone.
+
+Communities provide identity.
+
+Transportation provides infrastructure.
+
+Intelligence connects them.
+
+This separation of responsibilities allows Gridly to scale from a single community to an entire region while maintaining clarity, consistency, and trust.
