@@ -4,6 +4,10 @@
 
 Gridly is a real-time mobility and hazard intelligence platform built to help people understand what may slow them down before they travel.
 
+## Project Constitution
+
+`THE-GRIDLY-BLUEPRINT.md` is the governing architectural document for Gridly. All future architectural decisions should align with the Blueprint. Implementation may evolve, but the Blueprint defines the long-term direction of the platform.
+
 ## Current Version
 
 **Gridly V7 Hybrid Dashboard**

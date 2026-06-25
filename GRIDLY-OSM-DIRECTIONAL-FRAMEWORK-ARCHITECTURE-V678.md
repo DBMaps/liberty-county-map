@@ -1,3 +1,5 @@
+> **Supersession Note:** This document has been superseded by `THE-GRIDLY-BLUEPRINT.md` as the governing architectural authority for Gridly. It remains preserved for historical context.
+
 # GRIDLY V678 — OSM Directional Intelligence Framework Architecture
 
 ## Mission Alignment
