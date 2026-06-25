@@ -847,6 +847,18 @@ Blueprint Law #5
 
 The mission is permanent. The implementation is temporary.
 
+Blueprint Law #6
+
+Experience Layers are independent consumers of the Intelligence Layer. No Experience Layer may own or modify another Experience Layer.
+
+Blueprint Law #7
+
+The Intelligence Platform is permanent. Experience Layers may evolve independently.
+
+Blueprint Law #8
+
+Presentation is replaceable. Intelligence is not.
+
 Core Principle Summary
 
 Every decision within Gridly should support one simple outcome:
@@ -875,27 +887,24 @@ Everything else exists to create, strengthen, validate, or consume intelligence.
 
 The Architecture
 
-Gridly is composed of three permanent domains.
+Gridly is composed of four permanent architectural layers.
 
                      GRIDLY
 
       Community & Transportation Intelligence Platform
 
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-        │                  │                  │
- Community Layer     Transportation Layer    Intelligence Layer
-        │                  │                  │
-        └──────────────────┼──────────────────┘
-                           │
-                 Shared Intelligence Objects
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-     Mobile          Future Desktop      Future APIs
+                Experience Layer
+                      ▲
+                      │
+              Intelligence Layer
+               (Platform Core)
+               ▲            ▲
+               │            │
+     Community Layer   Transportation Layer
 
-The architecture intentionally separates ownership from presentation.
+The Intelligence Layer remains the center of the platform. Community and Transportation provide the durable context Intelligence needs. Experience consumes Intelligence and turns it into audience-specific presentation, interaction, visualization, workflow, and organization.
+
+The architecture intentionally separates platform ownership from presentation.
 
 The Community Layer
 
@@ -953,6 +962,39 @@ No county owns intelligence.
 No roadway owns intelligence.
 
 Gridly owns intelligence.
+
+The Experience Layer
+
+The Experience Layer represents how specific audiences interact with Intelligence.
+
+It answers questions such as:
+
+How should this intelligence be presented?
+Which workflow should this audience follow?
+Which visualization best communicates meaning?
+What should be summarized, prioritized, filtered, or organized for this audience?
+
+The Experience Layer owns:
+
+presentation
+interaction
+visualization
+workflow
+audience-specific organization
+
+The Experience Layer does not own:
+
+Intelligence
+Community
+Transportation
+Trust
+Relationships
+
+Experience is not Intelligence.
+
+Experience consumes Intelligence.
+
+Experience Layers are independently maintainable and may evolve without changing the Intelligence Platform or another Experience Layer.
 
 Intelligence Objects
 
@@ -1051,15 +1093,15 @@ Summaries
 Community Impact
 Transportation Impact
 Regional Impact
-Presentation Layers
+Experience Layers
 
-Presentation is intentionally separated from intelligence.
+Presentation is intentionally separated from intelligence through the Experience Layer.
 
-Current presentation layers include:
+Current Experience Layers include:
 
 Mobile Consumer Experience
 
-Future presentation layers include:
+Future Experience Layers include:
 
 Desktop Operations
 Public Dashboards
@@ -1067,9 +1109,11 @@ Emergency Management
 APIs
 Third-party Integrations
 
-Each presentation layer consumes the same intelligence.
+Each Experience Layer consumes the same intelligence.
 
-No presentation layer owns intelligence.
+No Experience Layer owns intelligence.
+
+No Experience Layer may modify another Experience Layer.
 
 Data Sources
 
@@ -4305,9 +4349,9 @@ This chapter permanently changes one lesson we learned during development.
 
 The Operations Center was never the problem.
 
-Shared presentation ownership was.
+Shared presentation ownership was. Presentation-layer coupling creates architectural risk because one experience can begin participating in the layout ownership, workflow, or maintainability of another. Future Experience Layers must remain isolated while consuming the same Intelligence Platform.
 
-Going forward, the Consumer Experience and Operations Experience should evolve independently while remaining permanently connected through the Intelligence Platform.
+Going forward, the Consumer Experience and Operations Experience should evolve independently while remaining permanently connected through the Intelligence Platform. This lesson is now part of the permanent Blueprint through Blueprint Amendment 001: Experience Layer.
 
 That separation protects both experiences and allows each to become exceptional without compromising the other.
 
