@@ -31,7 +31,9 @@
       status: typeof normalized.status === "string" ? normalized.status.trim().toLowerCase() : "placeholder",
       dependencies: Object.freeze(cloneArray(normalized.dependencies).map(normalizeDependency)),
       capabilities: Object.freeze(cloneArray(normalized.capabilities).filter((capability) => typeof capability === "string" && capability.trim()).map((capability) => capability.trim())),
-      validationState: typeof normalized.validationState === "string" ? normalized.validationState.trim().toLowerCase() : "pending"
+      validationState: typeof normalized.validationState === "string" ? normalized.validationState.trim().toLowerCase() : "pending",
+      community: normalized.community && typeof normalized.community === "object" && !Array.isArray(normalized.community) ? Object.freeze(Object.assign({}, normalized.community)) : null,
+      ownership: normalized.ownership && typeof normalized.ownership === "object" && !Array.isArray(normalized.ownership) ? Object.freeze(Object.assign({}, normalized.ownership)) : null
     });
   }
 
@@ -136,7 +138,46 @@
   }
 
   const initialPackageMetadata = Object.freeze([
-    { id: "community.liberty-tx", name: "Liberty", packageType: "community", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["community-metadata"], validationState: "pending" },
+    {
+      id: "community.liberty-tx",
+      name: "Liberty",
+      packageType: "community",
+      version: "1.0.0-v746",
+      status: "active",
+      dependencies: [],
+      capabilities: ["community-identity", "administrative-boundary-relationship", "awareness-areas", "municipalities", "community-validation"],
+      validationState: "valid",
+      community: Object.freeze({
+        countyId: "liberty-tx",
+        displayName: "Liberty",
+        countyName: "Liberty County",
+        state: "TX",
+        administrativeBoundaryRelationship: Object.freeze({ countyId: "liberty-tx", boundaryPath: "data/liberty-county-boundary.geojson", relationship: "county-administrative-boundary" }),
+        awarenessAreas: Object.freeze(["Entire Liberty County", "Dayton", "Liberty", "Cleveland", "Ames", "Hardin", "Devers", "Hull", "Daisetta", "Moss Hill", "Raywood", "Kenefick", "Tarkington"]),
+        municipalities: Object.freeze(["Dayton", "Liberty", "Cleveland", "Ames", "Hardin", "Devers", "Hull", "Daisetta", "Moss Hill", "Raywood", "Kenefick", "Tarkington"]),
+        productionEnabled: true,
+        selectable: true,
+        launchBaselineCompatible: true
+      }),
+      ownership: Object.freeze({
+        ownsCommunityIdentity: true,
+        ownsAdministrativeBoundaryRelationship: true,
+        ownsAwarenessAreas: true,
+        ownsMunicipalities: true,
+        ownsPackageMetadata: true,
+        ownsValidationState: true,
+        ownsRoads: false,
+        ownsCorridors: false,
+        ownsRail: false,
+        ownsCrossings: false,
+        ownsTransportationIntelligence: false,
+        ownsIntelligenceObjects: false,
+        ownsTrust: false,
+        ownsPresentationBehavior: false,
+        ownsMobileLayout: false,
+        ownsDesktopLayout: false
+      })
+    },
     { id: "community.montgomery-tx", name: "Montgomery", packageType: "community", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["community-metadata"], validationState: "pending" },
     { id: "community.san-jacinto-tx", name: "San Jacinto", packageType: "community", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["community-metadata"], validationState: "pending" },
     { id: "intelligence.community-reports", name: "Community Reports", packageType: "intelligence", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["report-metadata"], validationState: "pending" }
