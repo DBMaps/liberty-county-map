@@ -1448,3 +1448,356 @@ Chapter Summary
 The Community Layer defines who is affected and where people belong. It provides the human geography of Gridly—the places people recognize, the communities they identify with, and the awareness areas they care about.
 
 By separating community identity from transportation infrastructure, Gridly ensures that communities remain stable even as roads, data sources, and intelligence evolve. This allows the platform to grow across regions while continuing to communicate in the language that matters most to users: the names of the places they call home.
+
+Chapter 7
+The Transportation Layer
+Purpose
+
+Transportation is the circulatory system of every community.
+
+People travel to work.
+
+Children travel to school.
+
+Emergency responders travel to incidents.
+
+Businesses move goods.
+
+Families visit one another.
+
+Communities are connected through transportation.
+
+The Transportation Layer exists to understand the infrastructure that enables movement and to communicate how changing conditions affect that movement.
+
+Its purpose is not navigation.
+
+Its purpose is awareness.
+
+Mission
+
+The Transportation Layer answers one question:
+
+"What transportation infrastructure is affected?"
+
+Everything within this layer exists to improve understanding of how transportation conditions influence communities.
+
+Transportation Ownership
+
+The Transportation Layer owns infrastructure.
+
+It does not own communities.
+
+It does not own intelligence.
+
+It provides the physical framework upon which intelligence is understood.
+
+The Transportation Layer owns:
+
+Interstate Highways
+US Highways
+State Highways
+Farm-to-Market Roads
+Ranch Roads
+County Roads
+Municipal Streets
+Private Roads (where appropriate)
+Rail Corridors
+Rail Crossings
+Bridges
+Intersections
+Interchanges
+Carriageways
+Travel Direction
+Mile Progression
+Corridor Relationships
+Transportation Hierarchy
+
+Transportation assets are organized by function rather than political boundaries.
+
+Regional Transportation Network
+
+↓
+
+Transportation Corridor
+
+↓
+
+Road Segment
+
+↓
+
+Intersection
+
+↓
+
+Crossing
+
+↓
+
+Point of Intelligence
+
+Each layer exists independently from counties.
+
+Corridors
+
+A corridor is the primary transportation object within Gridly.
+
+Examples include:
+
+TX 146
+US 90
+US 59 / I-69
+I-45
+I-10
+TX 105
+TX 321
+FM 1960
+
+A corridor exists once.
+
+It is never duplicated because it passes through multiple counties.
+
+Communities relate to corridors.
+
+Corridors do not belong to communities.
+
+Road Segments
+
+Road segments divide corridors into meaningful operational sections.
+
+Segments may be defined by:
+
+Major intersections
+Community boundaries
+River crossings
+Bridges
+Significant infrastructure
+Mile ranges
+
+Segments improve the precision of intelligence without fragmenting corridor ownership.
+
+Intersections
+
+Intersections are intelligence anchors.
+
+They help describe where conditions occur in language people understand.
+
+Examples:
+
+TX 146 at FM 686
+US 90 at Main Street
+I-45 at Exit 84
+
+Intersections provide location context.
+
+They do not own intelligence.
+
+Rail Corridors
+
+Rail infrastructure follows the same ownership principles as road corridors.
+
+Rail corridors own:
+
+Track geometry
+Railroad identity
+Crossing relationships
+Connected communities
+Operational relationships
+
+Rail crossings remain relationship objects rather than ownership objects.
+
+Rail Crossings
+
+Crossings represent one of Gridly's defining capabilities.
+
+Each crossing exists once.
+
+A crossing relates to:
+
+Rail corridor
+Road corridor
+Community
+County
+Intelligence Objects
+
+Crossings are transportation infrastructure.
+
+Not community infrastructure.
+
+Direction
+
+Direction belongs exclusively to the Transportation Layer.
+
+Examples:
+
+Northbound
+Southbound
+Eastbound
+Westbound
+
+Future directional intelligence should describe transportation conditions without becoming turn-by-turn navigation.
+
+Direction exists to improve awareness.
+
+Not routing.
+
+Carriageways
+
+Many transportation corridors consist of multiple independent carriageways.
+
+Examples:
+
+Northbound lanes
+Southbound lanes
+Eastbound frontage road
+Westbound frontage road
+
+Gridly should understand these as separate transportation assets that belong to the same corridor.
+
+This allows intelligence to distinguish:
+
+Flooding on southbound TX 146
+
+without implying the northbound lanes are equally affected.
+
+Mile Progression
+
+Transportation assets should support continuous progression along a corridor.
+
+Examples include:
+
+Mile markers
+Linear referencing
+Distance along corridor
+
+This allows future integrations with:
+
+DriveTexas
+Department of Transportation systems
+Emergency management
+Infrastructure agencies
+
+without changing corridor ownership.
+
+Transportation Packages
+
+Transportation assets are onboarded through standardized Transportation Packages.
+
+Each package contains:
+
+Corridor identity
+Geometry
+Segments
+Intersections
+Rail relationships
+Crossing relationships
+Directional metadata
+Connected communities
+Connected counties
+
+Transportation Packages intentionally exclude community identity and intelligence.
+
+Regional Transportation Network
+
+Transportation should be onboarded regionally rather than county by county.
+
+Example:
+
+Southeast Texas Transportation Network
+
+TX 146
+
+US 90
+
+US 59 / I-69
+
+I-45
+
+I-10
+
+TX 105
+
+TX 321
+
+FM 1960
+
+FM 1409
+
+FM 1011
+
+This allows transportation assets to remain continuous across political boundaries.
+
+Future Transportation Intelligence
+
+The Transportation Layer is designed to support future capabilities including:
+
+Both-side roadway awareness
+Corridor health
+Travel direction
+Lane-specific intelligence
+Bridge conditions
+Construction impacts
+Infrastructure resilience
+Regional transportation summaries
+
+These capabilities strengthen awareness without changing Gridly into a navigation platform.
+
+Transportation Layer Principles
+
+Transportation infrastructure belongs to the region.
+
+Communities provide context.
+
+Intelligence connects the two.
+
+Infrastructure should never be duplicated simply because political boundaries change.
+
+Transportation remains continuous.
+
+Gridly's architecture should reflect that continuity.
+
+Blueprint Rules
+Transportation Rule #1
+
+Transportation assets exist once.
+
+Political boundaries never create duplicate transportation ownership.
+
+Transportation Rule #2
+
+Corridors are the primary transportation object.
+
+Road segments, intersections, and crossings exist in relationship to corridors.
+
+Transportation Rule #3
+
+Direction belongs to transportation.
+
+Not community.
+
+Transportation Rule #4
+
+Transportation Packages remain independent of Community Packages.
+
+Transportation Rule #5
+
+Transportation infrastructure provides context.
+
+It never owns intelligence.
+
+Chapter Summary
+
+The Transportation Layer defines what infrastructure is affected and provides the physical geography of Gridly. It organizes roads, railways, crossings, and corridors as continuous regional assets rather than fragmented county assets.
+
+This architecture enables regional awareness, future DriveTexas integration, carriageway-specific intelligence, and both-sides-of-the-road awareness while preserving a single source of truth for every transportation asset.
+
+I want to point out one thing that emerged while writing this chapter, because I think it's a genuine insight.
+
+I no longer think "county onboarding" should be the primary expansion process.
+
+I think the blueprint is naturally leading us toward two parallel onboarding programs:
+
+Community Onboarding (counties, cities, awareness areas, identities).
+Transportation Onboarding (regional corridors, rail, crossings, intersections).
+
+That's a significant shift, and I believe it's one of the biggest architectural improvements we've made. It aligns almost perfectly with your goal of expanding into the surrounding counties while making roads like TX 146, US 59, and I-45 continuous, first-class regional assets instead of duplicated county assets.
