@@ -1,3 +1,5 @@
+> **Supersession Note:** This document has been superseded by `THE-GRIDLY-BLUEPRINT.md` as the governing architectural authority for Gridly. It remains preserved for historical context.
+
 # V380 — Passive Historical Capture Architecture
 
 ## 1. Architectural Goals

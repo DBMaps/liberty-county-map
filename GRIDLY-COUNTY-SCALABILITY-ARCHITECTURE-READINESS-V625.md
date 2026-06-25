@@ -1,3 +1,5 @@
+> **Supersession Note:** This document has been superseded by `THE-GRIDLY-BLUEPRINT.md` as the governing architectural authority for Gridly. It remains preserved for historical context.
+
 # GRIDLY County Scalability Architecture Readiness V625
 
 ## 1. Executive verdict

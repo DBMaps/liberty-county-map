@@ -1,3 +1,5 @@
+> **Supersession Note:** This document has been superseded by `THE-GRIDLY-BLUEPRINT.md` as the governing architectural authority for Gridly. It remains preserved for historical context.
+
 # Gridly V293 — Route Watch Relevance Architecture
 
 Audit date: 2026-06-13<br>
