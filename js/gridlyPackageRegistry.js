@@ -2,7 +2,7 @@
   "use strict";
 
   const GRIDLY_PACKAGE_TYPES = Object.freeze(["community", "transportation", "intelligence", "experience"]);
-  const GRIDLY_PACKAGE_STATUSES = Object.freeze(["placeholder", "draft", "active", "paused", "deprecated", "reserved"]);
+  const GRIDLY_PACKAGE_STATUSES = Object.freeze(["placeholder", "draft", "active", "operational-maintenance", "paused", "deprecated", "reserved"]);
   const GRIDLY_PACKAGE_VALIDATION_STATES = Object.freeze(["pending", "valid", "invalid"]);
 
   const cloneArray = (value) => Array.isArray(value) ? value.slice() : [];
@@ -34,7 +34,8 @@
       validationState: typeof normalized.validationState === "string" ? normalized.validationState.trim().toLowerCase() : "pending",
       community: normalized.community && typeof normalized.community === "object" && !Array.isArray(normalized.community) ? Object.freeze(Object.assign({}, normalized.community)) : null,
       ownership: normalized.ownership && typeof normalized.ownership === "object" && !Array.isArray(normalized.ownership) ? Object.freeze(Object.assign({}, normalized.ownership)) : null,
-      regional: normalized.regional && typeof normalized.regional === "object" && !Array.isArray(normalized.regional) ? Object.freeze(Object.assign({}, normalized.regional)) : null
+      regional: normalized.regional && typeof normalized.regional === "object" && !Array.isArray(normalized.regional) ? Object.freeze(Object.assign({}, normalized.regional)) : null,
+      operationalRegion: normalized.operationalRegion && typeof normalized.operationalRegion === "object" && !Array.isArray(normalized.operationalRegion) ? Object.freeze(Object.assign({}, normalized.operationalRegion)) : null
     });
   }
 
@@ -160,7 +161,8 @@
         selectable: true,
         launchBaselineCompatible: true
       }),
-      regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "liberty-tx", lifecycle: "production", activeImplementation: true, referenceImplementation: true, runtimeOwnershipMigrated: false }),
+      regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "liberty-tx", lifecycle: "production", activeImplementation: true, referenceImplementation: true, launchBaselineProtected: true, runtimeOwnershipMigrated: false }),
+      operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "reference-community-package" }),
       ownership: Object.freeze({
         ownsCommunityIdentity: true,
         ownsAdministrativeBoundaryRelationship: true,
@@ -180,50 +182,60 @@
         ownsDesktopLayout: false
       })
     },
-    { id: "community.montgomery-tx", name: "Montgomery", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "montgomery-tx", lifecycle: "operational-maintenance", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.san-jacinto-tx", name: "San Jacinto", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "san-jacinto-tx", lifecycle: "operational-maintenance", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.chambers-tx", name: "Chambers", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "chambers-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.jefferson-tx", name: "Jefferson", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "jefferson-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.hardin-tx", name: "Hardin", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "hardin-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.orange-tx", name: "Orange", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "orange-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.polk-tx", name: "Polk", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "polk-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.tyler-tx", name: "Tyler", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "tyler-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.walker-tx", name: "Walker", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "walker-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
-    { id: "community.harris-tx", name: "Harris", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", countyId: "harris-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }) },
+    { id: "community.montgomery-tx", name: "Montgomery", packageType: "community", version: "0.0.0-regional-v749", status: "operational-maintenance", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "montgomery-tx", lifecycle: "operational-maintenance", activeImplementation: false, referenceImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "operational-maintenance-community-package" }) },
+    { id: "community.san-jacinto-tx", name: "San Jacinto", packageType: "community", version: "0.0.0-regional-v749", status: "operational-maintenance", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "san-jacinto-tx", lifecycle: "operational-maintenance", activeImplementation: false, referenceImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "operational-maintenance-community-package" }) },
+    { id: "community.chambers-tx", name: "Chambers", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "chambers-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.jefferson-tx", name: "Jefferson", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "jefferson-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.hardin-tx", name: "Hardin", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "hardin-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.orange-tx", name: "Orange", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "orange-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.polk-tx", name: "Polk", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "polk-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.tyler-tx", name: "Tyler", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "tyler-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.walker-tx", name: "Walker", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "walker-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+    { id: "community.harris-tx", name: "Harris", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "harris-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
     { id: "intelligence.community-reports", name: "Community Reports", packageType: "intelligence", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["report-metadata"], validationState: "pending" }
   ]);
 
 
+  const SOUTHEAST_TEXAS_OPERATIONAL_REGION = Object.freeze({
+    id: "operational-region.southeast-texas",
+    name: "Southeast Texas Operational Region",
+    blueprintAmendment: "Blueprint Amendment 002 — Operational Region",
+    geographicRole: "highest-geographic-organizing-unit",
+    constitutionalAuthority: "Blueprint",
+    runtimeRegistrationAuthority: "Package Registry"
+  });
+
   const southeastTexasCommunityFoundation = Object.freeze({
     id: "regional.southeast-texas",
     name: "Southeast Texas Community Foundation",
-    version: "0.1.0-v747",
-    region: Object.freeze({ name: "Southeast Texas", state: "TX", role: "primary-operational-region" }),
+    version: "0.2.0-v749",
     packageType: "regional-community-foundation",
-    runtimeOwnership: Object.freeze({ transportationMigrated: false, intelligenceMigrated: false, experienceChanged: false }),
-    communities: Object.freeze([
-      Object.freeze({ countyId: "liberty-tx", packageId: "community.liberty-tx", lifecycle: "production", activeImplementation: true, referenceImplementation: true }),
-      Object.freeze({ countyId: "montgomery-tx", packageId: "community.montgomery-tx", lifecycle: "operational-maintenance", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "san-jacinto-tx", packageId: "community.san-jacinto-tx", lifecycle: "operational-maintenance", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "chambers-tx", packageId: "community.chambers-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "jefferson-tx", packageId: "community.jefferson-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "hardin-tx", packageId: "community.hardin-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "orange-tx", packageId: "community.orange-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "polk-tx", packageId: "community.polk-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "tyler-tx", packageId: "community.tyler-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "walker-tx", packageId: "community.walker-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false }),
-      Object.freeze({ countyId: "harris-tx", packageId: "community.harris-tx", lifecycle: "planned", activeImplementation: false, referenceImplementation: false })
-    ])
+    operationalRegionId: SOUTHEAST_TEXAS_OPERATIONAL_REGION.id,
+    operationalRegionName: SOUTHEAST_TEXAS_OPERATIONAL_REGION.name,
+    blueprintAmendmentAlignment: SOUTHEAST_TEXAS_OPERATIONAL_REGION.blueprintAmendment,
+    hierarchy: Object.freeze(["Operational Region", "Regional Community Foundation", "Community Packages", "Awareness Areas"]),
+    registryDrivenMembership: true,
+    permanentMembershipHardcoded: false,
+    runtimeOwnership: Object.freeze({ transportationMigrated: false, intelligenceMigrated: false, experienceChanged: false })
   });
 
+  function getRegionalCommunityPackages(foundation, registryRef) {
+    if (!foundation || !registryRef || typeof registryRef.discover !== "function") return Object.freeze([]);
+    return Object.freeze(registryRef.discover({ packageType: "community" }).filter((pkg) => pkg.regional?.foundationId === foundation.id && pkg.regional?.operationalRegionId === foundation.operationalRegionId));
+  }
+
   function validateRegionalCommunityFoundation(foundation, registryRef) {
-    const communities = cloneArray(foundation?.communities);
-    const missingPackages = communities.filter((community) => !registryRef.getPackage(community.packageId));
-    const activeImplementations = communities.filter((community) => community.activeImplementation === true);
+    const communities = getRegionalCommunityPackages(foundation, registryRef);
+    const missingOperationalRegionLinks = communities.filter((pkg) => pkg.operationalRegion?.id !== foundation.operationalRegionId);
+    const activeImplementations = communities.filter((pkg) => pkg.regional?.activeImplementation === true);
+    const operationalMaintenance = communities.filter((pkg) => pkg.regional?.lifecycle === "operational-maintenance");
+    const planned = communities.filter((pkg) => ["planned", "future", "onboarding"].includes(pkg.regional?.lifecycle));
     return Object.freeze({
-      valid: missingPackages.length === 0 && activeImplementations.length === 1 && activeImplementations[0]?.countyId === "liberty-tx",
-      missingPackages: Object.freeze(missingPackages),
-      activeImplementations: Object.freeze(activeImplementations.map((community) => community.countyId))
+      valid: foundation.operationalRegionId === SOUTHEAST_TEXAS_OPERATIONAL_REGION.id && foundation.registryDrivenMembership === true && foundation.permanentMembershipHardcoded === false && missingOperationalRegionLinks.length === 0 && activeImplementations.length === 1 && activeImplementations[0]?.regional?.countyId === "liberty-tx" && operationalMaintenance.every((pkg) => pkg.regional?.activeImplementation === false) && planned.every((pkg) => pkg.regional?.activeImplementation === false && pkg.status === "reserved"),
+      operationalRegion: SOUTHEAST_TEXAS_OPERATIONAL_REGION,
+      communityPackages: Object.freeze(communities),
+      missingOperationalRegionLinks: Object.freeze(missingOperationalRegionLinks.map((pkg) => pkg.id)),
+      activeImplementations: Object.freeze(activeImplementations.map((pkg) => pkg.regional?.countyId))
     });
   }
 
@@ -232,10 +244,11 @@
   globalScope.gridlyPackageRegistry = registry;
   globalScope.gridlyPackageRegistryAudit = function gridlyPackageRegistryAudit() { return registry.audit(); };
   globalScope.gridlySoutheastTexasCommunityFoundation = southeastTexasCommunityFoundation;
-  globalScope.gridlyRegionalCommunityLookup = function gridlyRegionalCommunityLookup(countyId) { return southeastTexasCommunityFoundation.communities.find((community) => community.countyId === countyId) || null; };
+  globalScope.gridlySoutheastTexasOperationalRegion = SOUTHEAST_TEXAS_OPERATIONAL_REGION;
+  globalScope.gridlyRegionalCommunityLookup = function gridlyRegionalCommunityLookup(countyId) { return getRegionalCommunityPackages(southeastTexasCommunityFoundation, registry).find((pkg) => pkg.regional?.countyId === countyId) || null; };
   globalScope.gridlyRegionalCommunityFoundationValidation = function gridlyRegionalCommunityFoundationValidation() { return validateRegionalCommunityFoundation(southeastTexasCommunityFoundation, registry); };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation };
+    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation, SOUTHEAST_TEXAS_OPERATIONAL_REGION };
   }
 })(typeof window !== "undefined" ? window : globalThis);
