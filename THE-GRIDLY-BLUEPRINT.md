@@ -2718,3 +2718,284 @@ The Blueprint now defines expansion as building another regional intelligence ec
 That's a much more powerful model. It naturally supports continuous corridors like TX 146, US 90, US 59/I-69, and I-45, makes DriveTexas integration cleaner, and gives every future region the same repeatable foundation.
 
 I believe this shift—from county onboarding to regional intelligence—will become one of the defining characteristics of Gridly's architecture.
+Chapter 11
+The Onboarding Framework
+Purpose
+
+The long-term success of Gridly depends upon consistency.
+
+Every new region, community, transportation corridor, intelligence source, and future capability should be introduced through a standardized onboarding process.
+
+The purpose of the Onboarding Framework is to eliminate one-off implementations and replace them with a repeatable methodology that ensures quality, consistency, scalability, and trust.
+
+Every onboarding process should strengthen the platform rather than introduce exceptions.
+
+Mission
+
+The Onboarding Framework answers one question:
+
+"What does it mean for something to become part of Gridly?"
+
+Joining the platform is not merely adding data.
+
+It is becoming part of the Gridly Intelligence Platform.
+
+Three Independent Onboarding Programs
+
+Gridly recognizes three permanent onboarding programs.
+
+Regional Intelligence
+
+├── Community Onboarding
+
+├── Transportation Onboarding
+
+└── Intelligence Onboarding
+
+These programs operate independently while contributing to a shared intelligence ecosystem.
+
+Community Onboarding
+
+Community Onboarding defines who and where.
+
+It establishes the human geography of the platform.
+
+Every Community Package should include:
+
+Identity
+Region
+County
+Municipality
+Community Name
+Community Type
+Geography
+County boundary
+Community boundary
+Awareness Areas
+Administrative relationships
+Community Context
+Community identity
+Population metadata (optional)
+Neighboring communities
+Regional relationships
+Validation
+
+Every Community Package must pass:
+
+Boundary validation
+Community relationship validation
+Awareness Area validation
+Regional placement validation
+Transportation Onboarding
+
+Transportation Onboarding defines the infrastructure.
+
+Transportation assets are regional.
+
+Never county-owned.
+
+Every Transportation Package should include:
+
+Corridor Identity
+Corridor name
+Corridor classification
+Regional ownership
+Connected regions
+Geometry
+Continuous geometry
+Road segments
+Intersections
+Bridges
+Rail crossings
+Direction
+Carriageways
+Travel direction
+Mile progression
+Corridor relationships
+Validation
+
+Every Transportation Package must pass:
+
+Geometry validation
+Corridor continuity
+Intersection validation
+Crossing validation
+Community relationship validation
+Intelligence Onboarding
+
+Intelligence Onboarding defines what the platform understands.
+
+Examples include:
+
+DriveTexas
+Community Reports
+National Weather Service
+Railroad data
+Emergency Management
+Future utility providers
+
+Every Intelligence Package should define:
+
+Source
+
+Who provides the information?
+
+Relationships
+
+Which Community Packages are affected?
+
+Which Transportation Packages are affected?
+
+Trust
+
+How should this source contribute to confidence?
+
+Presentation
+
+How should this intelligence appear?
+
+Validation
+
+Every Intelligence Package must pass:
+
+Source validation
+Relationship validation
+Trust validation
+Presentation validation
+The Certification Process
+
+No onboarding is complete until it has been certified.
+
+Every package should move through the same lifecycle.
+
+Candidate
+
+↓
+
+Imported
+
+↓
+
+Validated
+
+↓
+
+Integrated
+
+↓
+
+Certified
+
+↓
+
+Production
+
+This process applies equally to:
+
+Communities
+Transportation
+Intelligence
+Quality Gates
+
+Every onboarding process must satisfy the following questions.
+
+Identity
+
+Do we know what this is?
+
+Ownership
+
+Does it belong in the correct layer?
+
+Relationships
+
+Does it connect correctly?
+
+Trust
+
+Can users rely on it?
+
+Intelligence
+
+Does it improve awareness?
+
+If any answer is no, onboarding remains incomplete.
+
+Regional Certification
+
+A Region becomes operational only when:
+
+Community Packages are certified.
+
+Transportation Packages are certified.
+
+Intelligence Packages are certified.
+
+The region functions as one complete intelligence ecosystem.
+
+Partial certification should remain visible internally but should not represent a production-ready region.
+
+Future Expansion
+
+The Onboarding Framework is designed to support unlimited growth.
+
+Adding another state should require no architectural changes.
+
+Adding another intelligence provider should require no architectural changes.
+
+Adding another transportation network should require no architectural changes.
+
+Growth should consist of onboarding additional packages rather than redesigning the platform.
+
+Blueprint Rules
+Onboarding Rule #1
+
+Every new capability belongs to exactly one onboarding program.
+
+Onboarding Rule #2
+
+Community, Transportation, and Intelligence Packages are independently onboarded and independently certified.
+
+Onboarding Rule #3
+
+Certification is required before production activation.
+
+Onboarding Rule #4
+
+Relationships are validated before visibility.
+
+Onboarding Rule #5
+
+Onboarding is complete only when the package strengthens the shared intelligence model.
+
+Chapter Summary
+
+The Onboarding Framework transforms expansion from an ad hoc implementation process into a disciplined, repeatable methodology.
+
+Every community, transportation corridor, and intelligence source joins the platform through the same certification process.
+
+This ensures that Gridly grows through architecture rather than exception, allowing the platform to scale from one region to many while preserving consistency, trust, and intelligence quality.
+
+Architect's Note
+
+This chapter is directly influenced by our experience onboarding Liberty, Montgomery, and San Jacinto Counties.
+
+Each onboarding effort taught us something new:
+
+Community identity cannot own transportation infrastructure.
+Transportation corridors naturally span multiple counties.
+Intelligence sources must remain independent of geography.
+Certification is more valuable than activation.
+Relationships are more important than duplication.
+
+Rather than treating those lessons as isolated experiences, this framework captures them permanently.
+
+From this point forward, Gridly should never again ask:
+
+"How do we add another county?"
+
+Instead, it should ask:
+
+"How do we certify another Community, Transportation, or Intelligence Package into the Regional Intelligence Platform?"
+
+I believe that shift in thinking will make every future expansion faster, cleaner, and more scalable than anything we've done so far.
