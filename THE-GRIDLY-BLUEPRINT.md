@@ -1124,3 +1124,327 @@ Transportation provides infrastructure.
 Intelligence connects them.
 
 This separation of responsibilities allows Gridly to scale from a single community to an entire region while maintaining clarity, consistency, and trust.
+Chapter 6
+The Community Layer
+Purpose
+
+Communities are the human foundation of Gridly.
+
+People do not live on highways.
+
+They do not identify with roadway geometry.
+
+They identify with communities.
+
+The Community Layer exists to represent where people live, work, attend school, conduct business, and experience daily life.
+
+Its purpose is to provide human context for every Intelligence Object within the platform.
+
+The Community Layer defines who is affected, not what caused the situation.
+
+Mission
+
+The Community Layer answers one question:
+
+"Who needs to know?"
+
+Every capability within this layer exists to improve the relevance of intelligence for the people who receive it.
+
+Community Ownership
+
+The Community Layer owns identity.
+
+It does not own transportation.
+
+It does not own intelligence.
+
+It provides the geographic and social framework through which intelligence is understood.
+
+The Community Layer owns:
+
+Regions
+Counties
+Municipalities
+Cities
+Towns
+Communities
+Neighborhoods
+Awareness Areas
+Community Identity
+Community Relationships
+Community Statistics
+Community Status
+Community Hierarchy
+
+Communities are organized into a permanent hierarchy.
+
+Region
+
+↓
+
+County
+
+↓
+
+Municipality
+
+↓
+
+Community
+
+↓
+
+Awareness Area
+
+Each level exists to improve intelligence delivery.
+
+Not every community requires every level, but every community must belong to a single regional structure.
+
+Regions
+
+A Region is the largest operational unit within Gridly.
+
+Regions exist because people routinely travel across county boundaries.
+
+Examples:
+
+Southeast Texas
+Gulf Coast Texas
+East Texas
+Central Texas
+
+Future regions may overlap operationally but remain independently managed.
+
+Regions exist for intelligence.
+
+Not politics.
+
+Counties
+
+Counties provide administrative identity.
+
+They are responsible for:
+
+Community grouping
+Jurisdiction
+Administrative reporting
+County-wide awareness
+County-wide summaries
+
+Counties no longer own transportation assets.
+
+Roadways may cross many counties.
+
+Community identity remains local.
+
+Municipalities
+
+Municipalities provide official civic identity.
+
+Examples include:
+
+Cities
+Towns
+Villages
+
+Municipal boundaries may influence awareness delivery but do not determine transportation ownership.
+
+Communities
+
+Communities represent the places people recognize.
+
+Examples:
+
+Dayton
+Liberty
+Cleveland
+Conroe
+Shepherd
+Beaumont
+
+Communities are often more meaningful to residents than county names.
+
+Gridly communicates through community identity whenever practical.
+
+Awareness Areas
+
+Awareness Areas are the primary consumer-facing geographic unit.
+
+An Awareness Area represents the area a person chooses to monitor.
+
+Examples:
+
+Home
+Work
+School
+Frequently visited locations
+
+Every Intelligence Object is evaluated against one or more Awareness Areas.
+
+Awareness Areas are dynamic.
+
+Community identity is permanent.
+
+Community Relationships
+
+Every Intelligence Object may relate to many communities.
+
+Example:
+
+Flooding
+
+↓
+
+Transportation
+
+TX 146
+
+↓
+
+Communities
+
+Dayton
+
+Liberty
+
+Mont Belvieu
+
+↓
+
+Counties
+
+Liberty
+
+Chambers
+
+No intelligence is duplicated.
+
+Communities simply maintain relationships.
+
+Community Status
+
+Every community possesses a continuously evaluated Community Status.
+
+Examples:
+
+Quiet
+Normal Activity
+Elevated Activity
+Weather Impact
+Transportation Impact
+Emergency Activity
+
+Community Status represents the overall awareness condition of the community rather than any individual incident.
+
+It is an intelligence product.
+
+Not a manually assigned label.
+
+Community Pulse
+
+Community Pulse belongs entirely within the Community Layer.
+
+Its purpose is to summarize the current awareness environment for a community.
+
+Community Pulse may consider:
+
+Active intelligence
+Community reports
+Official information
+Confidence
+Freshness
+Severity
+Trends
+
+Community Pulse does not own intelligence.
+
+It summarizes it.
+
+Community Packages
+
+Communities are onboarded through standardized Community Packages.
+
+Every Community Package contains:
+
+Region assignment
+County assignment
+Municipality assignment
+Community identity
+Awareness Areas
+Geographic boundaries
+Administrative metadata
+
+Community Packages intentionally exclude transportation infrastructure.
+
+Transportation is onboarded separately.
+
+Consumer Experience
+
+Users should think in terms of communities.
+
+Not counties.
+
+Not road datasets.
+
+Not geographic polygons.
+
+Gridly should naturally communicate:
+
+"Dayton"
+
+rather than
+
+"Liberty County Awareness Area 3"
+
+Human language always takes priority.
+
+Community Layer Principles
+
+The Community Layer exists for people.
+
+Its purpose is to help residents understand what affects the places they care about.
+
+It provides context.
+
+It provides identity.
+
+It provides relevance.
+
+It does not own transportation.
+
+It does not own intelligence.
+
+It helps intelligence reach the right people.
+
+Blueprint Rules
+Community Rule #1
+
+Communities provide identity.
+
+They do not own transportation.
+
+Community Rule #2
+
+Awareness Areas are consumer-facing.
+
+Administrative structures remain internal.
+
+Community Rule #3
+
+Every Intelligence Object may relate to multiple communities without duplication.
+
+Community Rule #4
+
+Community Packages remain independent of Transportation Packages.
+
+Community Rule #5
+
+Community Pulse summarizes intelligence.
+
+It never replaces or owns intelligence.
+
+Chapter Summary
+
+The Community Layer defines who is affected and where people belong. It provides the human geography of Gridly—the places people recognize, the communities they identify with, and the awareness areas they care about.
+
+By separating community identity from transportation infrastructure, Gridly ensures that communities remain stable even as roads, data sources, and intelligence evolve. This allows the platform to grow across regions while continuing to communicate in the language that matters most to users: the names of the places they call home.
