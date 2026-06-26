@@ -1,0 +1,34 @@
+const fs = require("fs");
+const vm = require("vm");
+const assert = require("assert");
+
+const context = { window: {}, globalThis: {}, console };
+context.globalThis = context;
+context.window = context;
+vm.createContext(context);
+
+vm.runInContext(fs.readFileSync("js/gridlyPackageRegistry.js", "utf8"), context, { filename: "js/gridlyPackageRegistry.js" });
+const appSource = fs.readFileSync("js/app.js", "utf8");
+const auditPrefix = appSource.slice(0, appSource.indexOf("function gridlyGetCountyRuntimeSources"));
+vm.runInContext(auditPrefix, context, { filename: "js/app.js#audit-prefix" });
+
+const audit = context.gridlyRailPackageMigrationAudit();
+
+assert.strictEqual(audit.auditName, "V772 Rail Package Metadata Ownership Migration");
+assert.strictEqual(audit.migrationVersion, "V772");
+assert.strictEqual(audit.providerId, "rail");
+assert.strictEqual(audit.packageId, "intelligence.rail");
+assert.strictEqual(audit.validationPassed, true);
+assert.strictEqual(audit.runtimeOwnershipActive, true);
+assert.strictEqual(audit.providerMigrationComplete, true);
+assert.strictEqual(audit.runtimeActivationPerformed, false);
+assert.strictEqual(audit.railRuntimeActivated, false);
+assert.strictEqual(audit.transportationIntelligenceActivated, false);
+assert.strictEqual(audit.directionalIntelligenceActivated, false);
+assert.strictEqual(audit.trustModelActivated, false);
+assert.strictEqual(audit.freshnessModelActivated, false);
+assert.strictEqual(audit.confidenceModelActivated, false);
+assert.strictEqual(audit.protectedSystemsPreserved, true);
+assert.strictEqual(audit.safeForProviderCertification, true);
+
+console.log(JSON.stringify({ audit }, null, 2));

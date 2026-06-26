@@ -21,12 +21,13 @@ assert.strictEqual(audit.packageId, "intelligence.rail");
 assert.strictEqual(audit.reviewPassed, true);
 assert.strictEqual(audit.providerRegistered, true);
 assert.strictEqual(audit.intelligencePackageLinked, true);
-assert.strictEqual(audit.railInactive, true);
-assert.strictEqual(audit.runtimeOwnershipActive, false);
-assert.strictEqual(audit.providerMigrationComplete, false);
+assert.strictEqual(audit.railInactive, false);
+assert.strictEqual(audit.railMetadataOnlyMigrated, true);
+assert.strictEqual(audit.runtimeOwnershipActive, true);
+assert.strictEqual(audit.providerMigrationComplete, true);
 assert.strictEqual(audit.protectedSystemsPreserved, true);
 assert.strictEqual(audit.futureMigrationSafe, true);
-assert.strictEqual(audit.currentStatus, "planned-foundation");
+assert.strictEqual(audit.currentStatus, "controlled-migrated");
 assert.strictEqual(JSON.stringify(audit.ownershipScope), JSON.stringify([
   "provider identity",
   "package metadata",

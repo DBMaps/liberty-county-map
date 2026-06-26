@@ -21,9 +21,10 @@ assert.strictEqual(audit.packageId, "intelligence.rail");
 assert.strictEqual(audit.planPassed, true);
 assert.strictEqual(audit.migrationType, "metadata-only");
 assert.strictEqual(audit.activationAuthorized, false);
-assert.strictEqual(audit.runtimeOwnershipTransferred, false);
-assert.strictEqual(audit.providerMigrationPerformed, false);
-assert.strictEqual(audit.railInactive, true);
+assert.strictEqual(audit.runtimeOwnershipTransferred, true);
+assert.strictEqual(audit.providerMigrationPerformed, true);
+assert.strictEqual(audit.railInactive, false);
+assert.strictEqual(audit.railMetadataOnlyMigrated, true);
 assert.strictEqual(audit.protectedSystemsPreserved, true);
 assert.strictEqual(audit.safeForFutureMigration, true);
 assert.strictEqual(JSON.stringify(audit.migrationScope), JSON.stringify([
