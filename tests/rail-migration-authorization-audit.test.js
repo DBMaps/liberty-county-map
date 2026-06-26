@@ -22,9 +22,10 @@ assert.strictEqual(audit.reviewPassed, true);
 assert.strictEqual(audit.authorizationGranted, true);
 assert.strictEqual(audit.futureMetadataMigrationAuthorized, true);
 assert.strictEqual(audit.activationAuthorized, false);
-assert.strictEqual(audit.runtimeOwnershipTransferred, false);
-assert.strictEqual(audit.providerMigrationPerformed, false);
-assert.strictEqual(audit.providerStillInactive, true);
+assert.strictEqual(audit.runtimeOwnershipTransferred, true);
+assert.strictEqual(audit.providerMigrationPerformed, true);
+assert.strictEqual(audit.providerStillInactive, false);
+assert.strictEqual(audit.metadataMigrationCompleted, true);
 assert.strictEqual(audit.protectedSystemsPreserved, true);
 [
   "future metadata ownership migration",
