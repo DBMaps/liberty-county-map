@@ -31,9 +31,11 @@ assert.strictEqual(
   JSON.stringify(intelligenceAudit.plannedIntelligencePackages.map((pkg) => pkg.providerId)),
   JSON.stringify(["community-reports", "drivetexas", "weather", "rail", "future-providers"])
 );
-assert.strictEqual(intelligenceAudit.runtimeOwnershipMigrated, false);
-assert.strictEqual(intelligenceAudit.providerMigrationComplete, false);
+assert.strictEqual(intelligenceAudit.runtimeOwnershipMigrated, true);
+assert.strictEqual(intelligenceAudit.providerMigrationComplete, true);
 assert.strictEqual(intelligenceAudit.communityReportsControlledMigrated, true);
+assert.strictEqual(intelligenceAudit.driveTexasControlledMigrated, true);
+assert.strictEqual(JSON.stringify(intelligenceAudit.controlledMigratedProviders), JSON.stringify(["community-reports", "drivetexas"]));
 assert.strictEqual(intelligenceAudit.trustModelActivated, false);
 assert.strictEqual(intelligenceAudit.freshnessModelActivated, false);
 assert.strictEqual(intelligenceAudit.confidenceModelActivated, false);
