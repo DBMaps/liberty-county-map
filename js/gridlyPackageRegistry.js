@@ -36,7 +36,8 @@
       ownership: normalized.ownership && typeof normalized.ownership === "object" && !Array.isArray(normalized.ownership) ? Object.freeze(Object.assign({}, normalized.ownership)) : null,
       regional: normalized.regional && typeof normalized.regional === "object" && !Array.isArray(normalized.regional) ? Object.freeze(Object.assign({}, normalized.regional)) : null,
       operationalRegion: normalized.operationalRegion && typeof normalized.operationalRegion === "object" && !Array.isArray(normalized.operationalRegion) ? Object.freeze(Object.assign({}, normalized.operationalRegion)) : null,
-      transportation: normalized.transportation && typeof normalized.transportation === "object" && !Array.isArray(normalized.transportation) ? Object.freeze(Object.assign({}, normalized.transportation)) : null
+      transportation: normalized.transportation && typeof normalized.transportation === "object" && !Array.isArray(normalized.transportation) ? Object.freeze(Object.assign({}, normalized.transportation)) : null,
+      intelligence: normalized.intelligence && typeof normalized.intelligence === "object" && !Array.isArray(normalized.intelligence) ? Object.freeze(Object.assign({}, normalized.intelligence)) : null
     });
   }
 
@@ -204,7 +205,11 @@
     { id: "transportation.fm1960", name: "FM1960", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1960", corridorName: "FM1960", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
     { id: "transportation.fm1409", name: "FM1409", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1409", corridorName: "FM1409", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "chambers-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
     { id: "transportation.fm1011", name: "FM1011", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1011", corridorName: "FM1011", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
-    { id: "intelligence.community-reports", name: "Community Reports", packageType: "intelligence", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["report-metadata"], validationState: "pending" }
+    { id: "intelligence.community-reports", name: "Community Reports", packageType: "intelligence", version: "0.0.0-v751-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["intelligence-package-placeholder", "community-report-metadata"], validationState: "valid", intelligence: Object.freeze({ providerId: "community-reports", providerName: "Community Reports", intelligenceCategory: "community-reporting", operationalRegionRelationship: "planned-regional-intelligence-provider", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx", "san-jacinto-tx"]), supportedTransportationPackages: Object.freeze([]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, providerMigrationComplete: false, trustModelActive: false, freshnessModelActive: false, confidenceModelActive: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-intelligence-package" }) },
+    { id: "intelligence.drivetexas", name: "DriveTexas", packageType: "intelligence", version: "0.0.0-v751-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["intelligence-package-placeholder", "transportation-provider-metadata"], validationState: "valid", intelligence: Object.freeze({ providerId: "drivetexas", providerName: "DriveTexas", intelligenceCategory: "transportation-road-conditions", operationalRegionRelationship: "planned-regional-intelligence-provider", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx", "san-jacinto-tx", "chambers-tx", "jefferson-tx", "hardin-tx", "orange-tx", "polk-tx", "tyler-tx", "walker-tx", "harris-tx"]), supportedTransportationPackages: Object.freeze(["transportation.tx146", "transportation.us90", "transportation.us59-i69", "transportation.i45", "transportation.i10", "transportation.tx105", "transportation.tx321", "transportation.fm1960", "transportation.fm1409", "transportation.fm1011"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, providerMigrationComplete: false, trustModelActive: false, freshnessModelActive: false, confidenceModelActive: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-intelligence-package" }) },
+    { id: "intelligence.weather", name: "Weather", packageType: "intelligence", version: "0.0.0-v751-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["intelligence-package-placeholder", "weather-provider-metadata"], validationState: "valid", intelligence: Object.freeze({ providerId: "weather", providerName: "Weather", intelligenceCategory: "weather-context", operationalRegionRelationship: "planned-regional-intelligence-provider", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx", "san-jacinto-tx"]), supportedTransportationPackages: Object.freeze([]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, providerMigrationComplete: false, trustModelActive: false, freshnessModelActive: false, confidenceModelActive: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-intelligence-package" }) },
+    { id: "intelligence.rail", name: "Rail", packageType: "intelligence", version: "0.0.0-v751-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["intelligence-package-placeholder", "rail-provider-metadata"], validationState: "valid", intelligence: Object.freeze({ providerId: "rail", providerName: "Rail", intelligenceCategory: "rail-crossing-context", operationalRegionRelationship: "planned-regional-intelligence-provider", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx", "san-jacinto-tx"]), supportedTransportationPackages: Object.freeze([]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, providerMigrationComplete: false, trustModelActive: false, freshnessModelActive: false, confidenceModelActive: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-intelligence-package" }) },
+    { id: "intelligence.future-providers", name: "Future Providers", packageType: "intelligence", version: "0.0.0-v751-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["intelligence-package-placeholder", "future-provider-metadata"], validationState: "valid", intelligence: Object.freeze({ providerId: "future-providers", providerName: "Future Providers", intelligenceCategory: "future-provider-readiness", operationalRegionRelationship: "planned-regional-intelligence-provider", supportedCommunities: Object.freeze([]), supportedTransportationPackages: Object.freeze([]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, providerMigrationComplete: false, trustModelActive: false, freshnessModelActive: false, confidenceModelActive: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-intelligence-package" }) }
   ]);
 
 
@@ -274,6 +279,32 @@
     });
   }
 
+  function getIntelligenceFoundationPackages(registryRef) {
+    if (!registryRef || typeof registryRef.discover !== "function") return Object.freeze([]);
+    return Object.freeze(registryRef.discover({ packageType: "intelligence" }).filter((pkg) => pkg.operationalRegion?.id === SOUTHEAST_TEXAS_OPERATIONAL_REGION.id && pkg.intelligence?.lifecycleStatus === "foundation"));
+  }
+
+  function validateIntelligenceFoundation(registryRef) {
+    const intelligencePackages = getIntelligenceFoundationPackages(registryRef);
+    const runtimeOwnershipMigrated = intelligencePackages.some((pkg) => pkg.intelligence?.runtimeOwnershipActive === true);
+    const providerMigrationComplete = intelligencePackages.some((pkg) => pkg.intelligence?.providerMigrationComplete === true);
+    const trustModelActivated = intelligencePackages.some((pkg) => pkg.intelligence?.trustModelActive === true);
+    const freshnessModelActivated = intelligencePackages.some((pkg) => pkg.intelligence?.freshnessModelActive === true);
+    const confidenceModelActivated = intelligencePackages.some((pkg) => pkg.intelligence?.confidenceModelActive === true);
+    const invalidPackages = intelligencePackages.filter((pkg) => pkg.status !== "planned-foundation" || pkg.validationState !== "valid" || pkg.intelligence?.validationState !== "valid");
+    return Object.freeze({
+      valid: intelligencePackages.length === 5 && runtimeOwnershipMigrated === false && providerMigrationComplete === false && trustModelActivated === false && freshnessModelActivated === false && confidenceModelActivated === false && invalidPackages.length === 0,
+      operationalRegion: SOUTHEAST_TEXAS_OPERATIONAL_REGION,
+      intelligencePackages,
+      runtimeOwnershipMigrated,
+      providerMigrationComplete,
+      trustModelActivated,
+      freshnessModelActivated,
+      confidenceModelActivated,
+      invalidPackages: Object.freeze(invalidPackages.map((pkg) => pkg.id))
+    });
+  }
+
   const registry = createGridlyPackageRegistry(initialPackageMetadata);
   globalScope.GridlyPackageRegistry = Object.freeze({ create: createGridlyPackageRegistry, packageTypes: GRIDLY_PACKAGE_TYPES });
   globalScope.gridlyPackageRegistry = registry;
@@ -283,8 +314,9 @@
   globalScope.gridlyRegionalCommunityLookup = function gridlyRegionalCommunityLookup(countyId) { return getRegionalCommunityPackages(southeastTexasCommunityFoundation, registry).find((pkg) => pkg.regional?.countyId === countyId) || null; };
   globalScope.gridlyRegionalCommunityFoundationValidation = function gridlyRegionalCommunityFoundationValidation() { return validateRegionalCommunityFoundation(southeastTexasCommunityFoundation, registry); };
   globalScope.gridlyTransportationFoundationValidation = function gridlyTransportationFoundationValidation() { return validateTransportationFoundation(registry); };
+  globalScope.gridlyIntelligenceFoundationValidation = function gridlyIntelligenceFoundationValidation() { return validateIntelligenceFoundation(registry); };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation, validateTransportationFoundation, SOUTHEAST_TEXAS_OPERATIONAL_REGION };
+    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation, validateTransportationFoundation, validateIntelligenceFoundation, SOUTHEAST_TEXAS_OPERATIONAL_REGION };
   }
 })(typeof window !== "undefined" ? window : globalThis);
