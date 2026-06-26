@@ -18,7 +18,9 @@ assert.strictEqual(audit.auditName, "V757 Intelligence Package Certification");
 assert.strictEqual(audit.certificationVersion, "V757");
 assert.strictEqual(audit.certificationPassed, true);
 assert.strictEqual(audit.communityReportsControlledMigrated, true);
-assert.strictEqual(audit.communityReportsOnlyMigratedProvider, true);
+assert.strictEqual(audit.communityReportsOnlyMigratedProvider, false);
+assert.strictEqual(audit.driveTexasControlledMigrated, true);
+assert.strictEqual(audit.controlledMigratedProvidersExpected, true);
 assert.strictEqual(audit.noAdditionalProviderMigration, true);
 assert.strictEqual(audit.driveTexasPaused, true);
 assert.strictEqual(audit.weatherInactive, true);
@@ -38,7 +40,7 @@ assert.strictEqual(audit.safeForFutureIntelligenceProviderMigration, true);
 
 const packages = context.gridlyPackageRegistry.discover({ packageType: "intelligence" });
 const migratedProviders = packages.filter((pkg) => pkg.status === "controlled-migrated" || pkg.intelligence.runtimeOwnershipActive || pkg.intelligence.providerMigrationComplete).map((pkg) => pkg.intelligence.providerId);
-assert.strictEqual(JSON.stringify(migratedProviders), JSON.stringify(["community-reports"]));
-assert(packages.filter((pkg) => pkg.intelligence.providerId !== "community-reports").every((pkg) => pkg.status === "planned-foundation" && pkg.intelligence.runtimeOwnershipActive === false && pkg.intelligence.providerMigrationComplete === false));
+assert.strictEqual(JSON.stringify(migratedProviders), JSON.stringify(["community-reports", "drivetexas"]));
+assert(packages.filter((pkg) => !["community-reports", "drivetexas"].includes(pkg.intelligence.providerId)).every((pkg) => pkg.status === "planned-foundation" && pkg.intelligence.runtimeOwnershipActive === false && pkg.intelligence.providerMigrationComplete === false));
 
 console.log(JSON.stringify({ audit, migratedProviders }, null, 2));
