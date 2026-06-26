@@ -33,6 +33,7 @@ assert.strictEqual(
 );
 assert.strictEqual(intelligenceAudit.runtimeOwnershipMigrated, false);
 assert.strictEqual(intelligenceAudit.providerMigrationComplete, false);
+assert.strictEqual(intelligenceAudit.communityReportsControlledMigrated, true);
 assert.strictEqual(intelligenceAudit.trustModelActivated, false);
 assert.strictEqual(intelligenceAudit.freshnessModelActivated, false);
 assert.strictEqual(intelligenceAudit.confidenceModelActivated, false);

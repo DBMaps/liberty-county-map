@@ -14,7 +14,7 @@ vm.runInContext(auditPrefix, context, { filename: "js/app.js#audit-prefix" });
 
 const adapterAudit = context.gridlyCommunityReportsAdapterAudit();
 
-assert.strictEqual(adapterAudit.auditName, "V755 Community Reports Adapter Foundation");
+assert.strictEqual(adapterAudit.auditName, "V755 Community Reports Adapter Foundation (superseded by V756 controlled package ownership)");
 assert.strictEqual(adapterAudit.adapterAvailable, true);
 assert.strictEqual(adapterAudit.providerId, "community-reports");
 assert.strictEqual(adapterAudit.packageId, "intelligence.community-reports");
@@ -22,8 +22,8 @@ assert.strictEqual(adapterAudit.intelligencePackageLinked, true);
 assert.strictEqual(adapterAudit.operationalRegionId, "operational-region.southeast-texas");
 assert.strictEqual(JSON.stringify(adapterAudit.supportedCommunityPackages), JSON.stringify(["community.liberty-tx", "community.montgomery-tx", "community.san-jacinto-tx"]));
 assert.strictEqual(JSON.stringify(adapterAudit.supportedReportTypes), JSON.stringify(["flooding", "crash", "disabled_vehicle", "debris", "road_closed", "construction", "traffic_backup", "rail_blockage_delay", "rail_issue", "other_hazard"]));
-assert.strictEqual(adapterAudit.runtimeOwnershipActive, false);
-assert.strictEqual(adapterAudit.providerMigrationComplete, false);
+assert.strictEqual(adapterAudit.runtimeOwnershipActive, true);
+assert.strictEqual(adapterAudit.providerMigrationComplete, true);
 assert.strictEqual(adapterAudit.behaviorChanged, false);
 assert.strictEqual(adapterAudit.writePathChanged, false);
 assert.strictEqual(adapterAudit.readPathChanged, false);
@@ -37,6 +37,7 @@ assert.strictEqual(adapterAudit.weatherActivated, false);
 assert.strictEqual(adapterAudit.railProviderChanged, false);
 assert.strictEqual(adapterAudit.protectedSystemsPreserved, true);
 assert.strictEqual(adapterAudit.safeForCommunityReportsMigration, true);
+assert.strictEqual(adapterAudit.adapterSupersededByPackageMigration, true);
 assert.strictEqual(adapterAudit.safeForDriveTexasPause, true);
 assert.strictEqual(adapterAudit.validationPassed, true);
 
