@@ -2,7 +2,7 @@
   "use strict";
 
   const GRIDLY_PACKAGE_TYPES = Object.freeze(["community", "transportation", "intelligence", "experience"]);
-  const GRIDLY_PACKAGE_STATUSES = Object.freeze(["placeholder", "draft", "active", "operational-maintenance", "paused", "deprecated", "reserved"]);
+  const GRIDLY_PACKAGE_STATUSES = Object.freeze(["placeholder", "draft", "active", "operational-maintenance", "paused", "deprecated", "reserved", "planned-foundation"]);
   const GRIDLY_PACKAGE_VALIDATION_STATES = Object.freeze(["pending", "valid", "invalid"]);
 
   const cloneArray = (value) => Array.isArray(value) ? value.slice() : [];
@@ -35,7 +35,8 @@
       community: normalized.community && typeof normalized.community === "object" && !Array.isArray(normalized.community) ? Object.freeze(Object.assign({}, normalized.community)) : null,
       ownership: normalized.ownership && typeof normalized.ownership === "object" && !Array.isArray(normalized.ownership) ? Object.freeze(Object.assign({}, normalized.ownership)) : null,
       regional: normalized.regional && typeof normalized.regional === "object" && !Array.isArray(normalized.regional) ? Object.freeze(Object.assign({}, normalized.regional)) : null,
-      operationalRegion: normalized.operationalRegion && typeof normalized.operationalRegion === "object" && !Array.isArray(normalized.operationalRegion) ? Object.freeze(Object.assign({}, normalized.operationalRegion)) : null
+      operationalRegion: normalized.operationalRegion && typeof normalized.operationalRegion === "object" && !Array.isArray(normalized.operationalRegion) ? Object.freeze(Object.assign({}, normalized.operationalRegion)) : null,
+      transportation: normalized.transportation && typeof normalized.transportation === "object" && !Array.isArray(normalized.transportation) ? Object.freeze(Object.assign({}, normalized.transportation)) : null
     });
   }
 
@@ -192,6 +193,17 @@
     { id: "community.tyler-tx", name: "Tyler", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "tyler-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
     { id: "community.walker-tx", name: "Walker", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "walker-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
     { id: "community.harris-tx", name: "Harris", packageType: "community", version: "0.0.0-regional-v747", status: "reserved", dependencies: [], capabilities: ["community-metadata", "regional-membership"], validationState: "valid", regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "harris-tx", lifecycle: "planned", activeImplementation: false, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-community-package" }) },
+
+    { id: "transportation.tx146", name: "TX146", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "tx146", corridorName: "TX146", facilityType: "state-highway", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "chambers-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.us90", name: "US90", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "us90", corridorName: "US90", facilityType: "us-highway", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "jefferson-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.us59-i69", name: "US59 / I69", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "us59-i69", corridorName: "US59 / I69", facilityType: "interstate-us-highway-corridor", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx", "san-jacinto-tx", "polk-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.i45", name: "I45", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "i45", corridorName: "I45", facilityType: "interstate", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["montgomery-tx", "walker-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.i10", name: "I10", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "i10", corridorName: "I10", facilityType: "interstate", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["chambers-tx", "jefferson-tx", "orange-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.tx105", name: "TX105", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "tx105", corridorName: "TX105", facilityType: "state-highway", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "montgomery-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.tx321", name: "TX321", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "tx321", corridorName: "TX321", facilityType: "state-highway", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.fm1960", name: "FM1960", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1960", corridorName: "FM1960", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "harris-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.fm1409", name: "FM1409", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1409", corridorName: "FM1409", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx", "chambers-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
+    { id: "transportation.fm1011", name: "FM1011", packageType: "transportation", version: "0.0.0-v750-foundation", status: "planned-foundation", dependencies: ["regional.southeast-texas"], capabilities: ["transportation-package-placeholder", "regional-corridor-metadata"], validationState: "valid", transportation: Object.freeze({ corridorId: "fm1011", corridorName: "FM1011", facilityType: "farm-to-market-road", regionRelationship: "planned-regional-corridor", supportedCommunities: Object.freeze(["liberty-tx"]), lifecycleStatus: "foundation", runtimeOwnershipActive: false, directionalDisplayAllowed: false, assetMigrationComplete: false, validationState: "valid" }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "planned-transportation-package" }) },
     { id: "intelligence.community-reports", name: "Community Reports", packageType: "intelligence", version: "0.0.0-placeholder", status: "placeholder", dependencies: [], capabilities: ["report-metadata"], validationState: "pending" }
   ]);
 
@@ -239,6 +251,29 @@
     });
   }
 
+
+  function getTransportationFoundationPackages(registryRef) {
+    if (!registryRef || typeof registryRef.discover !== "function") return Object.freeze([]);
+    return Object.freeze(registryRef.discover({ packageType: "transportation" }).filter((pkg) => pkg.operationalRegion?.id === SOUTHEAST_TEXAS_OPERATIONAL_REGION.id && pkg.transportation?.lifecycleStatus === "foundation"));
+  }
+
+  function validateTransportationFoundation(registryRef) {
+    const transportationPackages = getTransportationFoundationPackages(registryRef);
+    const runtimeOwnershipMigrated = transportationPackages.some((pkg) => pkg.transportation?.runtimeOwnershipActive === true);
+    const assetMigrationComplete = transportationPackages.some((pkg) => pkg.transportation?.assetMigrationComplete === true);
+    const directionalDisplayAllowed = transportationPackages.some((pkg) => pkg.transportation?.directionalDisplayAllowed === true);
+    const invalidPackages = transportationPackages.filter((pkg) => pkg.status !== "planned-foundation" || pkg.validationState !== "valid" || pkg.transportation?.validationState !== "valid");
+    return Object.freeze({
+      valid: transportationPackages.length === 10 && runtimeOwnershipMigrated === false && assetMigrationComplete === false && directionalDisplayAllowed === false && invalidPackages.length === 0,
+      operationalRegion: SOUTHEAST_TEXAS_OPERATIONAL_REGION,
+      transportationPackages,
+      runtimeOwnershipMigrated,
+      assetMigrationComplete,
+      directionalDisplayAllowed,
+      invalidPackages: Object.freeze(invalidPackages.map((pkg) => pkg.id))
+    });
+  }
+
   const registry = createGridlyPackageRegistry(initialPackageMetadata);
   globalScope.GridlyPackageRegistry = Object.freeze({ create: createGridlyPackageRegistry, packageTypes: GRIDLY_PACKAGE_TYPES });
   globalScope.gridlyPackageRegistry = registry;
@@ -247,8 +282,9 @@
   globalScope.gridlySoutheastTexasOperationalRegion = SOUTHEAST_TEXAS_OPERATIONAL_REGION;
   globalScope.gridlyRegionalCommunityLookup = function gridlyRegionalCommunityLookup(countyId) { return getRegionalCommunityPackages(southeastTexasCommunityFoundation, registry).find((pkg) => pkg.regional?.countyId === countyId) || null; };
   globalScope.gridlyRegionalCommunityFoundationValidation = function gridlyRegionalCommunityFoundationValidation() { return validateRegionalCommunityFoundation(southeastTexasCommunityFoundation, registry); };
+  globalScope.gridlyTransportationFoundationValidation = function gridlyTransportationFoundationValidation() { return validateTransportationFoundation(registry); };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation, SOUTHEAST_TEXAS_OPERATIONAL_REGION };
+    module.exports = { createGridlyPackageRegistry, GRIDLY_PACKAGE_TYPES, initialPackageMetadata, southeastTexasCommunityFoundation, validateRegionalCommunityFoundation, validateTransportationFoundation, SOUTHEAST_TEXAS_OPERATIONAL_REGION };
   }
 })(typeof window !== "undefined" ? window : globalThis);
