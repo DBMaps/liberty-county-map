@@ -1,6 +1,6 @@
 ﻿{
     "registryType":  "Runtime Package Registry",
-    "generatedAt":  "2026-06-27T12:43:45.1913630-05:00",
+    "generatedAt":  "2026-06-27T12:50:28.8832931-05:00",
     "packageTypes":  [
                          {
                              "packageType":  "Community",
@@ -184,169 +184,169 @@
                          "packageType":  "Crossing",
                          "county":  "Austin",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/austin/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Brazoria",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/brazoria/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Brazos",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/brazos/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Calhoun",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/calhoun/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Chambers",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/chambers/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Colorado",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/colorado/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Fayette",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/fayette/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Fort Bend",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/fort-bend/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Galveston",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/galveston/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Grimes",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/grimes/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Hardin",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/hardin/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Harris",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/harris/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Jackson",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/jackson/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Jasper",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/jasper/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Jefferson",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/jefferson/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Lavaca",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/lavaca/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Liberty",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/liberty/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Matagorda",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/matagorda/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Montgomery",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/montgomery/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Newton",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/newton/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Orange",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/orange/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Polk",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/polk/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "San Jacinto",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/san-jacinto/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Tyler",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/tyler/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Walker",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/walker/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Waller",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/waller/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Washington",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/washington/package-manifest.json"
                      },
                      {
                          "packageType":  "Crossing",
                          "county":  "Wharton",
                          "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/crossing-manifest.json"
+                         "manifest":  "Crossing-Packages/wharton/package-manifest.json"
                      }
                  ],
     "totalPackageTypes":  2,
