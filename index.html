@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -32,7 +32,7 @@
     </div>
 
     <nav class="top-nav command-top-nav">
-      <button class="live-data-pill top-command-btn" id="desktopLiveDataBtn" type="button">● Live Data</button>
+      <button class="live-data-pill top-command-btn" id="desktopLiveDataBtn" type="button">â— Live Data</button>
       <button class="nav-btn" data-section="alerts">Alerts</button>
       <button class="nav-btn" data-section="report">Reports</button>
       <button class="nav-btn" data-section="settings">Settings</button>
@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="mobile-live-brand-status-wrap">
-      <button id="mobileHeaderSettingsBtn" class="secondary-btn compact-btn mobile-header-settings-btn" type="button" aria-label="Open Settings">⚙</button>
+      <button id="mobileHeaderSettingsBtn" class="secondary-btn compact-btn mobile-header-settings-btn" type="button" aria-label="Open Settings">âš™</button>
       <div class="mobile-live-brand-status">
         <strong id="mobileWatchLabel">WATCHING</strong>
         <span id="mobileWatchArea">Liberty County</span>
@@ -79,7 +79,7 @@
     <div class="gridly-search-card">
       <div class="gridly-search-header">
         <label class="gridly-search-label" for="gridlyAddressSearchInput">Search destination</label>
-        <button id="gridlySearchCloseBtn" class="gridly-search-close-btn" type="button" aria-label="Close destination search">×</button>
+        <button id="gridlySearchCloseBtn" class="gridly-search-close-btn" type="button" aria-label="Close destination search">Ã—</button>
       </div>
       <div class="gridly-search-input-row">
         <input
@@ -118,7 +118,7 @@
         <span class="pulse-dot dot-b"></span>
         <span class="pulse-dot dot-c"></span>
         <div class="hero-floating-badge live-chip">Live Rail Pulse</div>
-        <div class="hero-floating-badge county-chip">Liberty County · Active Feed</div>
+        <div class="hero-floating-badge county-chip">Liberty County Â· Active Feed</div>
       </div>
 
       <div class="future-hero-overlay">
@@ -134,7 +134,7 @@
       <article class="floating-route-status" aria-label="Route status">
         <span>Route Confidence</span>
         <strong>US-90 Corridor</strong>
-        <p>1 delay · 1 clear · reroute ready</p>
+        <p>1 delay Â· 1 clear Â· reroute ready</p>
       </article>
     </section>
 
@@ -148,7 +148,7 @@
 
           <div class="habit-status-strip" id="habitStatusStrip">
             <span id="habitStatusPill">Community check</span>
-            <strong id="habitStatusHeadline">Building your town’s awareness briefing...</strong>
+            <strong id="habitStatusHeadline">Building your townâ€™s awareness briefing...</strong>
             <p id="habitStatusDetail">Gridly is scanning active community reports, locations, and freshness before you go.</p>
           </div>
 
@@ -241,7 +241,7 @@
         </article>
 
         <article class="mobile-home-card mobile-community-card">
-          <span><span aria-hidden="true">👥</span> Community Impact</span>
+          <span><span aria-hidden="true">ðŸ‘¥</span> Community Impact</span>
           <strong data-bind-text="communityTrust">Building signal</strong>
           <p data-bind-text="communityTrustReason">Shared reports become stronger when more drivers confirm them.</p>
         </article>
@@ -255,7 +255,7 @@
 
         <article class="mobile-home-card mobile-premium-status-bar">
           <div>
-            <span>LIVE NOW · Rail + Road Intelligence</span>
+            <span>LIVE NOW Â· Rail + Road Intelligence</span>
             <strong id="liveOpsStatus">Live Operations</strong>
           </div>
           <p id="liveOpsDetail">Real-time community visibility for rail crossing delays, clears, and route risk.</p>
@@ -346,7 +346,7 @@
       <section class="map-card">
         <article class="mobile-destination-command is-command-card-suppressed" aria-label="Destination route command" aria-hidden="true" hidden>
           <div class="mobile-destination-command-copy">
-            <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">LOCATION AWARENESS • SELECTED COUNTY</span>
+            <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">LOCATION AWARENESS â€¢ SELECTED COUNTY</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
             <p id="mobileDestinationCommandMeta">Choose where you're going</p>
             <p class="mobile-awareness-panel-crossings" id="mobileAwarenessPanelCrossings" hidden></p>
@@ -364,7 +364,7 @@
             <span class="eyebrow">Live Commute State</span>
             <span class="mobile-live-status-pill" id="mobileLiveStatusPill">CLEAR</span>
             <strong id="mobileLiveRouteStatus">CLEAR TO LEAVE</strong>
-            <p id="mobileLiveRouteMeta">Route clear · watching delay pressure live</p>
+            <p id="mobileLiveRouteMeta">Route clear Â· watching delay pressure live</p>
           </div>
           <button class="secondary-btn compact-btn" id="mobileLiveRouteActionBtn" type="button">Leave now</button>
         </article>
@@ -374,14 +374,14 @@
               <p class="eyebrow">Route Watch</p>
               <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring OFF</span>
             </div>
-            <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">→</span><span id="desktopRouteWork">Route Watch</span></strong>
+            <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">â†’</span><span id="desktopRouteWork">Route Watch</span></strong>
             <div class="route-ownership-summary" aria-label="Route details">
               <span><b>From:</b> <em id="routeOwnershipOrigin">Not selected</em></span>
               <span><b>To:</b> <em id="routeOwnershipDestination">Not selected</em></span>
               <span><b>Status:</b> <em id="routeOwnershipMonitoring">Preview Only</em></span>
             </div>
             <p id="desktopRouteStatus">Select a saved route to begin monitoring.</p>
-            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Start Route Watch</p>
+            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home Â· 2. Add Work Â· 3. Start Route Watch</p>
             <div class="route-watch-metrics" aria-label="Route watch intelligence">
               <span><b>Freshness:</b> <em id="routeFreshness">Unknown</em></span>
               <span><b>Monitoring:</b> <em id="routeConfidence">--</em></span>
@@ -468,7 +468,7 @@
       </section>
 
       <aside class="side-panel desktop-command-panel" id="alertsSection">
-        <button class="gridly-surface-close portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">×</button>
+        <button class="gridly-surface-close portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">Ã—</button>
         <details class="panel-card drawer-panel" id="railPulseDrawer" open>
           <summary class="drawer-summary"><span class="eyebrow">Rail Pulse</span></summary>
           <div class="drawer-body">
@@ -505,7 +505,7 @@
           <summary class="drawer-summary"><span class="eyebrow">Saved Route</span><h2>Route Watch</h2></summary>
           <div class="drawer-body">
             <div class="route-summary route-summary-inline">
-              <p><strong id="savedHome">Not saved</strong> → <strong id="savedWork">Not saved</strong></p>
+              <p><strong id="savedHome">Not saved</strong> â†’ <strong id="savedWork">Not saved</strong></p>
               <p class="route-watch-secondary-note" id="sideRouteWatchHint">Primary route watch is pinned above the live map.</p>
             </div>
           </div>
@@ -523,7 +523,7 @@
         <span class="mobile-daily-panel-grip" aria-hidden="true"></span>
         <span class="mobile-daily-panel-handle-row">
           <strong>Daily Panel</strong>
-          <span>Route · Alerts · Report</span>
+          <span>Route Â· Alerts Â· Report</span>
         </span>
       </button>
       <div class="mobile-daily-panel-body" id="mobileDailyPanelBody" hidden>
@@ -649,7 +649,7 @@
     </div>
     <div id="gridlyPortraitV2SheetBackdrop" class="gridly-v2-sheet-backdrop" hidden></div>
     <section id="gridlyPortraitV2Sheet" class="gridly-v2-sheet" hidden aria-live="polite" role="dialog" aria-modal="true" aria-labelledby="gridlyPortraitV2SheetTitle">
-      <header><h3 id="gridlyPortraitV2SheetTitle">Panel</h3><button id="gridlyPortraitV2SheetClose" type="button" aria-label="Close panel">×</button></header>
+      <header><h3 id="gridlyPortraitV2SheetTitle">Panel</h3><button id="gridlyPortraitV2SheetClose" type="button" aria-label="Close panel">Ã—</button></header>
       <div id="gridlyPortraitV2SheetBody"></div>
     </section>
   </section>
@@ -671,11 +671,11 @@
           <p class="eyebrow">Route details</p>
           <h2 id="gridlyDestinationImpactPaneTitle">Travel looks normal right now</h2>
         </div>
-        <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">×</button>
+        <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">Ã—</button>
       </header>
       <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle">Live route context.</p>
       <div class="gridly-current-route-details" id="gridlyCurrentRouteDetailsBlock" aria-label="Current route summary">
-        <strong id="gridlyCurrentRouteLine">Current Location → Destination</strong>
+        <strong id="gridlyCurrentRouteLine">Current Location â†’ Destination</strong>
         <span id="gridlyCurrentRouteMeta">ETA and distance pending</span>
       </div>
       <section class="gridly-destination-impact-body" aria-label="Why Gridly is showing this route awareness summary">
@@ -704,7 +704,7 @@
     <div class="route-setup-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeSetupTitle">
       <div class="route-setup-modal-head">
         <span class="eyebrow">Daily Route</span>
-        <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">×</button>
+        <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">Ã—</button>
       </div>
       <h2 id="routeSetupTitle">Manage Places</h2>
       <p class="smart-alerts-subtitle">Your saved places at a glance.</p>
@@ -791,7 +791,7 @@
     <div class="smart-alerts-modal-card" role="dialog" aria-modal="true" aria-labelledby="smartAlertsStatus">
       <div class="smart-alerts-modal-head">
         <span class="eyebrow">Gridly Premium</span>
-        <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">×</button>
+        <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">Ã—</button>
       </div>
       <h2 id="smartAlertsStatus">Premium Smart Alerts: Off</h2>
       <p class="smart-alerts-subtitle">Choose what Gridly should watch for your saved route and nearby crossings.</p>
@@ -813,14 +813,14 @@
     <div class="settings-modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
       <div class="settings-modal-head">
         <h2 id="settingsModalTitle">Settings</h2>
-        <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
+        <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">Ã—</button>
       </div>
       <p class="settings-modal-subtitle">Summary first. Expand a section when you need to change a saved preference.</p>
       <div class="settings-list-experience" data-gridly-settings-list-experience="true">
         <details class="settings-modal-section settings-list-section" id="settingsProfileAwarenessSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">My Area</span>
-            <span class="settings-list-meta">Awareness Area · Preferred Name</span>
+            <span class="settings-list-meta">Awareness Area Â· Preferred Name</span>
           </summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
@@ -845,7 +845,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsSavedPlacesSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">My Routes</span>
-            <span class="settings-list-meta">Home · Work · Saved Places</span>
+            <span class="settings-list-meta">Home Â· Work Â· Saved Places</span>
           </summary>
           <div class="settings-list-detail">
             <div class="settings-place-grid" aria-label="Route Watch saved places">
@@ -875,7 +875,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsAlertPreferencesSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">Preferences</span>
-            <span class="settings-list-meta">Alerts · Map · Display · Location</span>
+            <span class="settings-list-meta">Alerts Â· Map Â· Display Â· Location</span>
           </summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
@@ -922,7 +922,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsAboutSection" data-gridly-about>
           <summary class="settings-list-summary">
             <span class="settings-list-title">About &amp; Support</span>
-            <span class="settings-list-meta">Version · Help</span>
+            <span class="settings-list-meta">Version Â· Help</span>
           </summary>
           <div class="settings-list-detail">
             <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
@@ -930,7 +930,7 @@
             <section class="settings-pwa-install-card" data-gridly-pwa-install-card hidden aria-label="Install Gridly">
               <div class="settings-pwa-install-copy">
                 <strong>Install Gridly</strong>
-                <p>Add Gridly to your phone’s home screen for quick access.</p>
+                <p>Add Gridly to your phoneâ€™s home screen for quick access.</p>
                 <p class="settings-placeholder-note settings-pwa-install-status" data-gridly-pwa-install-status aria-live="polite"></p>
               </div>
               <button type="button" class="primary-btn compact-btn settings-pwa-install-button" id="settingsPwaInstallBtn" data-gridly-pwa-install-button>Install</button>
@@ -1017,7 +1017,7 @@
   </div>
 
   <footer class="app-footer" data-gridly-county-owned="app-footer-county">
-    Gridly Beta • Liberty County
+    Gridly Beta â€¢ Liberty County
   </footer>
 
   <div class="gridly-welcome-overlay" id="gridlyWelcomeOnboarding" hidden aria-hidden="true">
@@ -1051,7 +1051,7 @@
           <p class="eyebrow">Before you leave</p>
           <h2 id="gridlyWelcomeTitle">Before you leave...</h2>
           <div class="gridly-welcome-hero-copy" id="gridlyWelcomeCopy">
-            <p class="gridly-welcome-tagline">Know what’s happening ahead.</p>
+            <p class="gridly-welcome-tagline">Know whatâ€™s happening ahead.</p>
             <p>Blocked crossings. Road hazards. Community reports.</p>
           </div>
           <p>Before they become your problem.</p>
@@ -1150,10 +1150,10 @@
             <strong>Local Awareness Network</strong>
           </p>
           <ul class="gridly-welcome-checklist" aria-label="Gridly setup coverage">
-            <li>✓ <span>Your Town</span></li>
-            <li>✓ <span>Your Routes</span></li>
-            <li>✓ <span>Community Reports</span></li>
-            <li>✓ <span>Local Alerts</span></li>
+            <li>âœ“ <span>Your Town</span></li>
+            <li>âœ“ <span>Your Routes</span></li>
+            <li>âœ“ <span>Community Reports</span></li>
+            <li>âœ“ <span>Local Alerts</span></li>
           </ul>
           <p class="gridly-welcome-final-note">Every report helps someone know before they go.</p>
         </article>
@@ -1181,7 +1181,7 @@
     <section class="mobile-native-surface-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileNativeSurfaceTitle">
       <header class="mobile-native-surface-header">
         <strong id="mobileNativeSurfaceTitle">Mobile Surface</strong>
-        <button class="gridly-surface-close" type="button" id="mobileNativeSurfaceCloseBtn" aria-label="Close mobile surface">×</button>
+        <button class="gridly-surface-close" type="button" id="mobileNativeSurfaceCloseBtn" aria-label="Close mobile surface">Ã—</button>
       </header>
       <div class="mobile-native-surface-body" id="mobileNativeSurfaceBody"></div>
     </section>
@@ -1223,9 +1223,11 @@
   <script src="js/history-capture/historyCaptureWriter.js?v=415"></script>
   <script src="js/history-capture/historyCapturePhase1A.js?v=415"></script>
   <script src="js/history-capture/historyIntelligenceEngine.js?v=430"></script>
-  <script src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>
+  <script src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script src="js/gridlyPackageDiscovery.js"></script>
+
   <script src="js/app.js?v=1712"></script>
   <script src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
 
 </body>
 </html>
+
