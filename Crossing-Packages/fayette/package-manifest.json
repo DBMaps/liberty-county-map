@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Fayette",
+    "status":  "manufactured",
+    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\fayette\\fayette-crossings.geojson",
+    "crossingCount":  152,
+    "generatedAt":  "2026-06-27T12:14:14.3079456-05:00"
+}

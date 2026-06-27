@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Orange",
+    "status":  "manufactured",
+    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\orange\\orange-crossings.geojson",
+    "crossingCount":  149,
+    "generatedAt":  "2026-06-27T12:12:44.8317110-05:00"
+}

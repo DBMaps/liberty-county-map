@@ -1,0 +1,18 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "San Jacinto",
+    "status":  "operational",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  true,
+    "communities":  [
+                        "Coldspring",
+                        "Shepherd",
+                        "Point Blank",
+                        "Oakhurst"
+                    ],
+    "roadFeatureCount":  null,
+    "notes":  "Existing operational county.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.7990314-05:00"
+}

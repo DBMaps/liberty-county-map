@@ -1,0 +1,20 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "Liberty",
+    "status":  "operational",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  true,
+    "communities":  [
+                        "Dayton",
+                        "Liberty",
+                        "Cleveland",
+                        "Ames",
+                        "Hardin",
+                        "Devers"
+                    ],
+    "roadFeatureCount":  null,
+    "notes":  "Existing operational county.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.7445795-05:00"
+}

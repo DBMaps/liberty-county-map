@@ -1,0 +1,11 @@
+﻿{
+    "type":  "FeatureCollection",
+    "packageType":  "Crossing",
+    "county":  "Tyler",
+    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "generatedAt":  "2026-06-27T12:13:03.8021302-05:00",
+    "crossingCount":  0,
+    "features":  [
+
+                 ]
+}

@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "San Jacinto",
+    "status":  "manufactured",
+    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\san-jacinto\\san-jacinto-crossings.geojson",
+    "crossingCount":  12,
+    "generatedAt":  "2026-06-27T12:12:05.6333716-05:00"
+}

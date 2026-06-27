@@ -1,0 +1,15 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "Washington",
+    "status":  "roads_complete",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  false,
+    "communities":  [
+
+                    ],
+    "roadFeatureCount":  11211,
+    "notes":  "Added for Southeast Texas expansion test.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.9413275-05:00"
+}

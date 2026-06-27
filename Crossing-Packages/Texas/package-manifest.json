@@ -1,0 +1,7 @@
+﻿{
+    "packageType":  "Crossing",
+    "packageName":  "Texas-FRA-Crossings",
+    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
+    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\Texas\\fra-crossings-tx.geojson",
+    "generated":  "2026-06-27T11:41:08.4641290-05:00"
+}

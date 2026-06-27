@@ -1,0 +1,16 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "Montgomery",
+    "status":  "operational",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  true,
+    "communities":  [
+                        "Conroe",
+                        "Willis"
+                    ],
+    "roadFeatureCount":  null,
+    "notes":  "Existing operational county.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.7923173-05:00"
+}
