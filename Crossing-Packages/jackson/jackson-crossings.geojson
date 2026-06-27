@@ -2,8 +2,8 @@
     "type":  "FeatureCollection",
     "packageType":  "Crossing",
     "county":  "Jackson",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "generatedAt":  "2026-06-27T12:14:26.8890616-05:00",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "generatedAt":  "2026-06-27T13:29:56.0717281-05:00",
     "crossingCount":  74,
     "features":  [
                      {

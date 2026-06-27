@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Jefferson",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\jefferson\\jefferson-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/jefferson/jefferson-crossings.geojson",
     "crossingCount":  378,
-    "generatedAt":  "2026-06-27T12:12:18.8689328-05:00"
+    "generatedAt":  "2026-06-27T13:28:10.3101938-05:00"
 }

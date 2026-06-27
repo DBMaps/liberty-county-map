@@ -2,8 +2,8 @@
     "type":  "FeatureCollection",
     "packageType":  "Crossing",
     "county":  "San Jacinto",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "generatedAt":  "2026-06-27T12:12:05.6333716-05:00",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "generatedAt":  "2026-06-27T13:27:59.9500174-05:00",
     "crossingCount":  12,
     "features":  [
                      {

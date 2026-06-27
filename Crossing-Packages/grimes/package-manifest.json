@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Grimes",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\grimes\\grimes-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/grimes/grimes-crossings.geojson",
     "crossingCount":  109,
-    "generatedAt":  "2026-06-27T12:13:55.3156481-05:00"
+    "generatedAt":  "2026-06-27T13:29:29.6428558-05:00"
 }

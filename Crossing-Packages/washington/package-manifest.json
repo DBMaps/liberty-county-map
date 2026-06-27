@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Washington",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\washington\\washington-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/washington/washington-crossings.geojson",
     "crossingCount":  41,
-    "generatedAt":  "2026-06-27T12:13:42.5023996-05:00"
+    "generatedAt":  "2026-06-27T13:29:18.7499138-05:00"
 }

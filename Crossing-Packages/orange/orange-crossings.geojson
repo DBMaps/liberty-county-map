@@ -2,8 +2,8 @@
     "type":  "FeatureCollection",
     "packageType":  "Crossing",
     "county":  "Orange",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "generatedAt":  "2026-06-27T12:12:44.8175797-05:00",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "generatedAt":  "2026-06-27T13:28:31.4440447-05:00",
     "crossingCount":  149,
     "features":  [
                      {

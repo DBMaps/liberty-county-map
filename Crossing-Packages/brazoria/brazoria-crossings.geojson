@@ -2,8 +2,8 @@
     "type":  "FeatureCollection",
     "packageType":  "Crossing",
     "county":  "Brazoria",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "generatedAt":  "2026-06-27T12:13:16.8582516-05:00",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "generatedAt":  "2026-06-27T13:28:57.6963105-05:00",
     "crossingCount":  157,
     "features":  [
                      {

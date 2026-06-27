@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Chambers",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\chambers\\chambers-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/chambers/chambers-crossings.geojson",
     "crossingCount":  15,
-    "generatedAt":  "2026-06-27T12:12:12.2576671-05:00"
+    "generatedAt":  "2026-06-27T13:28:05.1178502-05:00"
 }

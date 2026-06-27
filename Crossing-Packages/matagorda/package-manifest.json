@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Matagorda",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\matagorda\\matagorda-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/matagorda/matagorda-crossings.geojson",
     "crossingCount":  80,
-    "generatedAt":  "2026-06-27T12:14:33.0509359-05:00"
+    "generatedAt":  "2026-06-27T13:30:01.2554998-05:00"
 }

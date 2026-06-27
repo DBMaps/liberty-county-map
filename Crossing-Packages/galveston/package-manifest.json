@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Galveston",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\galveston\\galveston-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/galveston/galveston-crossings.geojson",
     "crossingCount":  144,
-    "generatedAt":  "2026-06-27T12:13:10.4894007-05:00"
+    "generatedAt":  "2026-06-27T13:28:52.5166859-05:00"
 }

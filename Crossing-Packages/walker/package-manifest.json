@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Walker",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\walker\\walker-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/walker/walker-crossings.geojson",
     "crossingCount":  36,
-    "generatedAt":  "2026-06-27T12:12:38.2574627-05:00"
+    "generatedAt":  "2026-06-27T13:28:26.1172147-05:00"
 }

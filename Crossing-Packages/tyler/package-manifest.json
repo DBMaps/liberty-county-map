@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Tyler",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\tyler\\tyler-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/tyler/tyler-crossings.geojson",
     "crossingCount":  0,
-    "generatedAt":  "2026-06-27T12:13:03.8087210-05:00"
+    "generatedAt":  "2026-06-27T13:28:47.2171242-05:00"
 }

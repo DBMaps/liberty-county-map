@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Brazoria",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\brazoria\\brazoria-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/brazoria/brazoria-crossings.geojson",
     "crossingCount":  157,
-    "generatedAt":  "2026-06-27T12:13:16.8925943-05:00"
+    "generatedAt":  "2026-06-27T13:28:57.7122733-05:00"
 }

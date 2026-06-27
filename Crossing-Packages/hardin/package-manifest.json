@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Hardin",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\hardin\\hardin-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/hardin/hardin-crossings.geojson",
     "crossingCount":  82,
-    "generatedAt":  "2026-06-27T12:12:25.4645449-05:00"
+    "generatedAt":  "2026-06-27T13:28:15.5898197-05:00"
 }

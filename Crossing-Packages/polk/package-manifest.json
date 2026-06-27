@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Polk",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\polk\\polk-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/polk/polk-crossings.geojson",
     "crossingCount":  64,
-    "generatedAt":  "2026-06-27T12:12:31.8408620-05:00"
+    "generatedAt":  "2026-06-27T13:28:20.8513735-05:00"
 }

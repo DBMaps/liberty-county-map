@@ -2,8 +2,8 @@
     "packageType":  "Crossing",
     "county":  "Lavaca",
     "status":  "manufactured",
-    "source":  "C:\\GitHub\\Gridly-Source-Data\\FRA\\Processed\\fra-crossings-tx.geojson",
-    "packageFile":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\lavaca\\lavaca-crossings.geojson",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/lavaca/lavaca-crossings.geojson",
     "crossingCount":  39,
-    "generatedAt":  "2026-06-27T12:14:20.4549655-05:00"
+    "generatedAt":  "2026-06-27T13:29:50.7445331-05:00"
 }
