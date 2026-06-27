@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    const BRIDGE_VERSION = "GRIDLY_RUNTIME_SOURCE_REGISTRY_BRIDGE_V1_2";
+    const BRIDGE_VERSION = "GRIDLY_RUNTIME_SOURCE_REGISTRY_BRIDGE_V1_3";
     const RUNTIME_REGISTRY_PATH = "assets/package-registry/runtime-package-registry.json";
 
     function normalizeCountyName(county) {
@@ -17,33 +17,41 @@
     }
 
     function cleanPath(value) {
-        if (!value) return null;
-        const cleaned = String(value).trim().replace(/\\/g, "/").replace(/^\/+/, "");
-        return cleaned || null;
+        if (typeof value !== "string") return null;
+
+        const trimmed = value.trim();
+
+        if (!trimmed || trimmed === "true" || trimmed === "false") return null;
+
+        const looksLikeFile =
+            trimmed.includes("/") ||
+            trimmed.includes("\\") ||
+            /\.(json|geojson)$/i.test(trimmed);
+
+        if (!looksLikeFile) return null;
+
+        return trimmed.replace(/\\/g, "/").replace(/^\/+/, "");
     }
 
     function firstManifestPath(manifest, fieldNames) {
         if (!manifest) return null;
 
         for (const fieldName of fieldNames) {
-            if (manifest[fieldName]) {
-                return cleanPath(manifest[fieldName]);
-            }
+            const value = cleanPath(manifest[fieldName]);
+            if (value) return value;
         }
 
         if (manifest.files && typeof manifest.files === "object") {
             for (const fieldName of fieldNames) {
-                if (manifest.files[fieldName]) {
-                    return cleanPath(manifest.files[fieldName]);
-                }
+                const value = cleanPath(manifest.files[fieldName]);
+                if (value) return value;
             }
         }
 
         if (manifest.sources && typeof manifest.sources === "object") {
             for (const fieldName of fieldNames) {
-                if (manifest.sources[fieldName]) {
-                    return cleanPath(manifest.sources[fieldName]);
-                }
+                const value = cleanPath(manifest.sources[fieldName]);
+                if (value) return value;
             }
         }
 
@@ -100,7 +108,8 @@
                     loaded: false,
                     reason: "runtime_registry_entry_not_found",
                     entry: null,
-                    manifest: null
+                    manifest: null,
+                    manifestPath: null
                 };
             }
 
@@ -111,7 +120,8 @@
                     loaded: false,
                     reason: "runtime_registry_entry_missing_manifest_path",
                     entry,
-                    manifest: null
+                    manifest: null,
+                    manifestPath: null
                 };
             }
 
@@ -140,6 +150,27 @@
         return manifest && typeof manifest === "object" ? Object.keys(manifest).sort() : [];
     }
 
+    function compactManifestPreview(manifest) {
+        if (!manifest || typeof manifest !== "object") return null;
+
+        const preview = {};
+
+        Object.keys(manifest).sort().forEach(function (key) {
+            const value = manifest[key];
+
+            if (
+                typeof value === "string" ||
+                typeof value === "number" ||
+                typeof value === "boolean" ||
+                value === null
+            ) {
+                preview[key] = value;
+            }
+        });
+
+        return preview;
+    }
+
     async function buildRuntimeSourcesFromPackages(county) {
         const requestedCounty = normalizeCountyName(county || "Liberty");
         const countyKey = normalizeCountyKey(requestedCounty);
@@ -159,7 +190,6 @@
                 "boundaryFile",
                 "boundarySource",
                 "boundaryPackageFile",
-                "boundary",
                 "countyBoundary",
                 "boundaryGeojson",
                 "boundaryGeoJson"
@@ -177,7 +207,9 @@
                 "communityFile",
                 "sourceFile",
                 "geojson",
-                "geoJson"
+                "geoJson",
+                "outputFile",
+                "output"
             ]),
 
             crossingSource: firstManifestPath(crossingManifest, [
@@ -190,7 +222,9 @@
                 "crossingFile",
                 "sourceFile",
                 "geojson",
-                "geoJson"
+                "geoJson",
+                "outputFile",
+                "output"
             ]),
 
             crossingOverridesSource: firstManifestPath(crossingManifest, [
@@ -208,10 +242,12 @@
             crossingReason: crossingResult.reason,
             communityPackageType: communityManifest && communityManifest.packageType || null,
             crossingPackageType: crossingManifest && crossingManifest.packageType || null,
-            communityManifestPath: communityResult.manifestPath || getManifestPathFromEntry(communityResult.entry),
-            crossingManifestPath: crossingResult.manifestPath || getManifestPathFromEntry(crossingResult.entry),
+            communityManifestPath: communityResult.manifestPath,
+            crossingManifestPath: crossingResult.manifestPath,
             communityManifestKeys: manifestKeys(communityManifest),
-            crossingManifestKeys: manifestKeys(crossingManifest)
+            crossingManifestKeys: manifestKeys(crossingManifest),
+            communityManifestPreview: compactManifestPreview(communityManifest),
+            crossingManifestPreview: compactManifestPreview(crossingManifest)
         };
 
         const contract = {
