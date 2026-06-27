@@ -16,5 +16,7 @@
     "roadFeatureCount":  null,
     "notes":  "Existing operational county.",
     "sourceManifest":  "Community-Packages/county-manifest.json",
-    "generatedAt":  "2026-06-27T12:42:56.7445795-05:00"
+    "generatedAt":  "2026-06-27T12:42:56.7445795-05:00",
+    "packageFile":  "Community-Packages/liberty/liberty-roads.geojson",
+    "boundaryFile":  "Community-Packages/liberty/liberty-boundary.geojson"
 }
