@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --gridly-app-font-scale: 1;
   --gridly-settings-text-scale: var(--gridly-app-font-scale);
   --gridly-settings-density-scale: 1;
@@ -952,13 +952,13 @@ select:focus {
 }
 
 .drawer-summary::after {
-  content: "▾";
+  content: "â–¾";
   color: var(--muted);
   font-size: 0.9rem;
 }
 
 .drawer-panel:not([open]) .drawer-summary::after {
-  content: "▸";
+  content: "â–¸";
 }
 
 .drawer-summary .eyebrow {
@@ -1468,7 +1468,7 @@ body.route-setup-open #gridlyHazardLauncher {
   white-space: nowrap;
 }
 .settings-feedback-chip input:checked + .settings-feedback-chip-text::before {
-  content: "✓";
+  content: "âœ“";
   font-weight: 950;
 }
 .settings-feedback-chip:has(input:checked) {
@@ -2332,13 +2332,13 @@ body.modal-open {
   }
 
   .report-drawer-summary::after {
-    content: "▾";
+    content: "â–¾";
     color: var(--muted);
     font-size: 0.9rem;
   }
 
   .report-drawer:not([open]) .report-drawer-summary::after {
-    content: "▸";
+    content: "â–¸";
   }
 
   .report-drawer .report-copy,
@@ -9419,7 +9419,7 @@ body.modal-open {
   }
 }
 
-/* V42 — premium tactical mobile polish */
+/* V42 â€” premium tactical mobile polish */
 @media (max-width: 760px) {
   body[data-mobile-mode] .mobile-live-command,
   body[data-mobile-mode] .mobile-map-floating-chips,
@@ -9608,7 +9608,7 @@ body.modal-open {
   }
 }
 
-/* V43C — mobile map layer picker tap + stacking fixes */
+/* V43C â€” mobile map layer picker tap + stacking fixes */
 @media (max-width: 760px) {
   body[data-mobile-mode] #map .gridly-mobile-layer-menu {
     position: absolute;
@@ -9726,7 +9726,7 @@ body.modal-open {
   }
 }
 
-/* V43N — mobile visual cleanup after functional stabilization */
+/* V43N â€” mobile visual cleanup after functional stabilization */
 @media (max-width: 760px) {
   body[data-mobile-mode] .mobile-floating-action-dock {
     left: max(10px, env(safe-area-inset-left, 0px));
@@ -10025,7 +10025,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu-list button:last-child{bor
 .route-setup-grid-mobile #managePlacesSourceGroup .manage-places-group-label,
 .route-setup-grid-mobile #managePlacesSaveGroup .manage-places-group-label{font-size:.68rem;letter-spacing:.12em;color:rgba(194,224,242,.72)}
 
-/* V47B — system unification + overlay simplification */
+/* V47B â€” system unification + overlay simplification */
 .map-toolbar-main-row{gap:8px}
 .map-toolbar-divider{opacity:.35}
 .map-card .map-tools-overlay{box-shadow:0 6px 16px rgba(2,8,16,.16)!important;border-color:rgba(255,255,255,.08)!important}
@@ -10052,7 +10052,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 .manage-places-group .destination-chip{min-height:34px;padding:7px 10px}
 .manage-places-group-utility{margin-top:2px!important;opacity:.86!important}
 
-/* V47C — true layer consolidation + manage places compression */
+/* V47C â€” true layer consolidation + manage places compression */
 #map .gridly-mobile-layer-menu{
   position:absolute;
   right:12px;
@@ -10148,7 +10148,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   .hazard-panel-placement-actions button{min-height:31px!important;padding:6px 9px!important;font-size:.74rem!important}
 }
 
-/* V48 — hard mobile layer closed-state + manage places fit */
+/* V48 â€” hard mobile layer closed-state + manage places fit */
 @media (max-width: 760px) {
   #map .gridly-mobile-layer-menu {
     display: none;
@@ -10234,7 +10234,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
 }
 
 
-/* V49 — mobile map controls + manage places final polish */
+/* V49 â€” mobile map controls + manage places final polish */
 @media (max-width: 760px) {
   body[data-mobile-mode] #map .gridly-mobile-control-rail {
     position: absolute;
@@ -10393,7 +10393,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
 }
 
-/* V50 — final mobile layer anchor + full-width manage places save row */
+/* V50 â€” final mobile layer anchor + full-width manage places save row */
 @media (max-width: 760px) {
   :root {
     --gridly-visual-vh: 100vh;
@@ -10519,7 +10519,7 @@ body[data-mobile-mode] #map .gridly-mobile-layer-menu.is-open .gridly-mobile-lay
   }
 }
 
-/* V51 — final visual polish: unified control rail + safer header/logo breathing room */
+/* V51 â€” final visual polish: unified control rail + safer header/logo breathing room */
 @media (max-width: 1100px) {
   .app-header {
     min-height: 62px;
@@ -10571,7 +10571,7 @@ body[data-layout-mode="mobile"] .desktop-command-panel {
 }
 
 /* =========================================================
-   GRIDLY V52 — MOBILE MAP-FIRST SHELL (PHASE 1A)
+   GRIDLY V52 â€” MOBILE MAP-FIRST SHELL (PHASE 1A)
 ========================================================= */
 @media (max-width: 768px) {
   body[data-layout-mode="mobile"] .future-map-hero,
@@ -10763,7 +10763,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-backdrop {
 body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !important; }
 
 
-/* V52.5 — mobile command surface expansion pass */
+/* V52.5 â€” mobile command surface expansion pass */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 8px) + var(--mobile-brand-height, 42px) + 10px);
@@ -10899,7 +10899,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V52.7 — mobile command compression pass */
+/* V52.7 â€” mobile command compression pass */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .mobile-live-brand {
     top: max(4px, env(safe-area-inset-top, 0px));
@@ -11016,7 +11016,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V52.8 — mobile overlay refinement pass */
+/* V52.8 â€” mobile overlay refinement pass */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .map-tools-overlay {
     top: calc(var(--mobile-command-zone-top) + 60px);
@@ -11106,7 +11106,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V52.9 — mobile proportional refinement pass */
+/* V52.9 â€” mobile proportional refinement pass */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] {
     --mobile-command-zone-top: calc(var(--mobile-brand-top, env(safe-area-inset-top, 0px) + 6px) + var(--mobile-brand-height, 34px) + 5px);
@@ -11240,7 +11240,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
 }
 
 
-/* V53 — tactical surface refinement pass (mobile-only polish) */
+/* V53 â€” tactical surface refinement pass (mobile-only polish) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .map-tools-overlay {
     padding: 2px 3px;
@@ -11353,7 +11353,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V54 — premium tactical calibration (mobile-only, no layout architecture changes) */
+/* V54 â€” premium tactical calibration (mobile-only, no layout architecture changes) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .map-tools-overlay {
     padding: 2px 3px;
@@ -11434,7 +11434,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V55 — spatial calmness & dock integration pass (mobile-only, architecture untouched) */
+/* V55 â€” spatial calmness & dock integration pass (mobile-only, architecture untouched) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .mobile-daily-panel {
     bottom: calc(3px + env(safe-area-inset-bottom));
@@ -11492,7 +11492,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V56 — spatial edge refinement (mobile-only, CSS polish only) */
+/* V56 â€” spatial edge refinement (mobile-only, CSS polish only) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .mobile-live-command {
     padding: 9px 11px 10px;
@@ -11547,7 +11547,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V57 — map dominance recovery (mobile-only, CSS-only) */
+/* V57 â€” map dominance recovery (mobile-only, CSS-only) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] .mobile-daily-panel::before {
     left: 18px;
@@ -11564,7 +11564,7 @@ body[data-layout-mode="desktop"] .mobile-native-surface-layer { display:none !im
   }
 }
 
-/* V71 — bottom clarity + local context restoration (mobile-only, map-first refinement) */
+/* V71 â€” bottom clarity + local context restoration (mobile-only, map-first refinement) */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] {
     --mobile-bottom-safe: env(safe-area-inset-bottom, 0px);
@@ -11666,7 +11666,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 }
 
-/* V74 — compressed tactical mode (mobile-only, CSS-surgical) */
+/* V74 â€” compressed tactical mode (mobile-only, CSS-surgical) */
 @media (max-width: 760px) and (max-height: 620px),
        (max-height: 620px) and (orientation: landscape) {
   body[data-layout-mode="mobile"] {
@@ -11857,7 +11857,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   }
 }
 
-/* V80 — tactical system alignment pass (mobile landscape <=520px) */
+/* V80 â€” tactical system alignment pass (mobile landscape <=520px) */
 @media (orientation: landscape) and (max-height: 520px) {
   /* V80 authoritative short-height landscape tactical contract.
      This block intentionally overrides legacy V74/V7x landscape fragments. */
@@ -12207,7 +12207,7 @@ body[data-layout-mode="desktop"] .mobile-local-context-strip {
   body[data-layout-mode="tactical-landscape"] .gridly-tactical-sheet-actions { margin-top: 10px; }
 }
 
-/* V97 — strict surface visibility ownership cleanup */
+/* V97 â€” strict surface visibility ownership cleanup */
 /* Shared helpers: explicit ownership guards to prevent cross-mode leakage. */
 body[data-layout-mode="desktop"] .mobile-floating-action-dock,
 body[data-layout-mode="desktop"] .mobile-bottom-nav,
@@ -12220,7 +12220,7 @@ body[data-layout-mode="desktop"] .gridly-tactical-dock-sheet {
   pointer-events: none !important;
 }
 
-/* V100 — explicit logo/header ownership by authoritative layout mode. */
+/* V100 â€” explicit logo/header ownership by authoritative layout mode. */
 body[data-layout-mode="desktop"] .mobile-live-brand,
 body[data-layout-mode="desktop"] .mobile-live-brand-main,
 body[data-layout-mode="desktop"] .mobile-live-brand-logo {
@@ -12243,7 +12243,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
   pointer-events: auto !important;
 }
 
-/* V100 — scope logo image containment to live mobile brand only. */
+/* V100 â€” scope logo image containment to live mobile brand only. */
 body[data-layout-mode="portrait"] .mobile-live-brand-logo img,
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand-logo img {
   display: block !important;
@@ -12338,7 +12338,7 @@ body[data-layout-mode="tactical-landscape"] .driver-hero {
   pointer-events: none !important;
 }
 
-/* GRIDLY V102 — when real tactical map is active, suppress oversized fallback/hero surfaces above it. */
+/* GRIDLY V102 â€” when real tactical map is active, suppress oversized fallback/hero surfaces above it. */
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active="true"] .mobile-native-surface-layer,
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .future-map-hero,
 body[data-layout-mode="tactical-landscape"][data-tactical-map-active] .driver-hero,
@@ -12364,7 +12364,7 @@ body[data-layout-mode="tactical-landscape"] .map-card {
 }
 
 
-/* GRIDLY V107 — tactical landscape map-first enforcement across wide landscape widths. */
+/* GRIDLY V107 â€” tactical landscape map-first enforcement across wide landscape widths. */
 body[data-layout-mode="tactical-landscape"] .mobile-live-brand {
   top: calc(env(safe-area-inset-top, 0px) + 2px) !important;
   height: clamp(22px, 5.2vh, 27px) !important;
@@ -12434,7 +12434,7 @@ body[data-layout-mode="tactical-landscape"] #map {
   max-height: none !important;
 }
 
-/* GRIDLY V111 — tactical landscape viewport-fit correction (CSS-only) */
+/* GRIDLY V111 â€” tactical landscape viewport-fit correction (CSS-only) */
 body[data-layout-mode="tactical-landscape"] {
   --gridly-tactical-top-shell: clamp(50px, 13.3vh, 58px);
   --gridly-tactical-dock-band: clamp(38px, 9.5vh, 44px);
@@ -12667,7 +12667,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   display: none;
 }
 
-/* V122.6a — keep zoom controls visible above map overlays */
+/* V122.6a â€” keep zoom controls visible above map overlays */
 @media (max-width: 760px) {
   body[data-layout-mode="mobile"] #map .leaflet-control-zoom {
     z-index: 10090 !important;
@@ -12675,7 +12675,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
-/* V122.6b — portrait zoom controls must clear the bottom dock */
+/* V122.6b â€” portrait zoom controls must clear the bottom dock */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #map .leaflet-control-zoom {
     right: 12px !important;
@@ -12685,7 +12685,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
-/* V122.6c — portrait stabilization: header reservation, alerts flow support, dock/controls spacing */
+/* V122.6c â€” portrait stabilization: header reservation, alerts flow support, dock/controls spacing */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .command-center {
     display: flex !important;
@@ -12770,7 +12770,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
-/* V122.6g — portrait alerts/settings surface hardening */
+/* V122.6g â€” portrait alerts/settings surface hardening */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .mobile-live-brand-status-wrap {
     display: flex;
@@ -12816,7 +12816,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   }
 }
 
-/* V122.6h — portrait visual stabilization cleanup (top safe-area + compact zoom rail) */
+/* V122.6h â€” portrait visual stabilization cleanup (top safe-area + compact zoom rail) */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .command-center {
     padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
@@ -12913,7 +12913,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
 
 #alertsSection .portrait-alerts-close { display: none; }
 
-/* V123 — portrait map-first architecture contract */
+/* V123 â€” portrait map-first architecture contract */
 :root {
   --gridly-surface-radius: 14px;
   --gridly-surface-border: 1px solid rgba(255, 255, 255, 0.14);
@@ -13369,7 +13369,7 @@ body[data-layout-mode="tactical-landscape"] .mobile-destination-command {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* V127.5 final premium productization pass — portrait unified system */
+/* V127.5 final premium productization pass â€” portrait unified system */
 @media (max-width: 760px) and (orientation: portrait) {
   :root {
     --gridly-sheet-inset: 10px;
@@ -13843,7 +13843,7 @@ body[data-layout-mode="portrait"] .map-tools-overlay .geo-filter-shell {
   display: none !important;
 }
 
-/* V129 — Gridly brand system + popup conversion + premium polish foundation */
+/* V129 â€” Gridly brand system + popup conversion + premium polish foundation */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   top: 8px;
   left: 10px;
@@ -13938,7 +13938,7 @@ body[data-layout-mode="portrait"] .settings-modal-section p,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-tile { font-size: 0.75rem; line-height: 1.35; }
 body[data-layout-mode="portrait"] .settings-modal-section h3 { font-size: 0.8rem; letter-spacing: 0.015em; }
 
-/* V131 — Portrait V2 productization refinement (spacing, typography, restraint) */
+/* V131 â€” Portrait V2 productization refinement (spacing, typography, restraint) */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments,
@@ -14070,7 +14070,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-sheet .secondary-
 }
 
 
-/* V132 — Portrait V2 icon system harmonization + header foundation */
+/* V132 â€” Portrait V2 icon system harmonization + header foundation */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   --gridly-v2-control-size: 40px;
   --gridly-v2-control-radius: 12px;
@@ -14146,7 +14146,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-report-action {
   box-shadow: none;
 }
 
-/* V132.1 — Portrait V2 final tightening (header/filter/dock micro-polish) */
+/* V132.1 â€” Portrait V2 final tightening (header/filter/dock micro-polish) */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-status-pill {
   border-color: rgba(171, 205, 242, 0.22);
@@ -14221,7 +14221,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock butto
 }
 
 
-/* V132.2 — Portrait V2 typography + top-strip easing */
+/* V132.2 â€” Portrait V2 typography + top-strip easing */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
   border-color: rgba(171, 205, 242, 0.2);
   box-shadow: 0 5px 11px rgba(2, 8, 18, 0.23);
@@ -14267,7 +14267,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock butto
   opacity: 0.95;
 }
 
-/* V133 — Gridly brand foundation + header identity ownership (portrait only) */
+/* V133 â€” Gridly brand foundation + header identity ownership (portrait only) */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   --gridly-v2-control-border: rgba(162, 198, 238, 0.27);
   --gridly-v2-control-bg: linear-gradient(168deg, rgba(8, 18, 33, 0.9), rgba(6, 14, 25, 0.95));
@@ -14385,7 +14385,7 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
 .gridly-v2-secondary-item strong { font-size: 0.8rem; color: rgba(239, 248, 255, 0.95); }
 .gridly-v2-secondary-item span { font-size: 0.72rem; color: rgba(184, 214, 245, 0.88); }
 
-/* V146F — Report Road Hazard panel visual parity with V2 settings/route sheets */
+/* V146F â€” Report Road Hazard panel visual parity with V2 settings/route sheets */
 #gridlyHazardPanel.gridly-hazard-panel {
   border: 1px solid rgba(173, 206, 244, 0.2);
   background: linear-gradient(180deg, rgba(8, 16, 28, 0.94), rgba(5, 10, 19, 0.97));
@@ -14466,7 +14466,7 @@ body[data-layout-mode="portrait"] #reportSection.report-drawer[data-popup-suppre
   display: none !important;
 }
 
-/* V178.1 Community Pulse surface — passive community-mode awareness above the map */
+/* V178.1 Community Pulse surface â€” passive community-mode awareness above the map */
 .community-pulse-surface {
   display: flex;
   align-items: center;
@@ -14542,7 +14542,7 @@ body[data-layout-mode="mobile"] .community-pulse-copy p {
   font-size: 0.7rem;
 }
 
-/* V181.2 — Portrait V2 top-awareness microline */
+/* V181.2 â€” Portrait V2 top-awareness microline */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-top-awareness-microline {
   display: block;
   margin-top: 2px;
@@ -14559,7 +14559,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-top-awareness-mic
   display: none !important;
 }
 
-/* V181.3 — Portrait V2 top-header background isolation / bleed guard */
+/* V181.3 â€” Portrait V2 top-header background isolation / bleed guard */
 body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 {
   --gridly-v2-top-shield-height: calc(158px + env(safe-area-inset-top, 0px));
 }
@@ -14773,7 +14773,7 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
   }
 }
 
-/* V206.3 — compact historical intelligence entry + bottom sheet content. */
+/* V206.3 â€” compact historical intelligence entry + bottom sheet content. */
 .gridly-intelligence-entry-chip {
   pointer-events: auto;
   position: fixed;
@@ -15082,7 +15082,7 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment.route-setup-open
   }
 }
 
-/* V206.18 — Settings panel functionality + mobile visual polish. */
+/* V206.18 â€” Settings panel functionality + mobile visual polish. */
 body.gridly-theme-light {
   --bg: #f4f8fb;
   --bg-elev: #ffffff;
@@ -15304,7 +15304,7 @@ body.gridly-theme-light .gridly-welcome-personalization-grid :is(select, input) 
 }
 body.gridly-theme-light .gridly-welcome-name-field small { color: #61778c; }
 
-/* V206.19 — Settings Route Watch saved-place card polish */
+/* V206.19 â€” Settings Route Watch saved-place card polish */
 .settings-modal-section#settingsSavedPlacesSection,
 .gridly-settings-sheet .settings-modal-section:first-of-type {
   padding-top: 2px;
@@ -15788,7 +15788,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   box-shadow: 0 14px 34px rgba(30, 170, 215, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 .gridly-welcome-town-btn.is-selected::after {
-  content: "✓";
+  content: "âœ“";
   margin-left: 8px;
   color: #8df6dd;
 }
@@ -15958,7 +15958,7 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   .gridly-welcome-mark::after { animation: none; opacity: 0.5; }
 }
 
-/* Awareness Brief Card V1 — presentation-only hierarchy pass */
+/* Awareness Brief Card V1 â€” presentation-only hierarchy pass */
 .habit-status-strip {
   padding: 18px 18px 16px;
   gap: 8px;
@@ -16065,7 +16065,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
 }
 
 
-/* V212.1 — portrait destination search tap target isolation */
+/* V212.1 â€” portrait destination search tap target isolation */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
     top: calc(168px + env(safe-area-inset-top, 0px)) !important;
@@ -16096,7 +16096,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 }
 
-/* V212.1 — portrait destination command visibility fix */
+/* V212.1 â€” portrait destination command visibility fix */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
     display: grid !important;
@@ -16157,7 +16157,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
     text-overflow: ellipsis !important;
   }
 
-  /* V214.4.3 — keep the impact statement primary on narrow destination cards. */
+  /* V214.4.3 â€” keep the impact statement primary on narrow destination cards. */
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line {
     display: block !important;
     width: 100% !important;
@@ -16187,7 +16187,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::after {
-    content: "›";
+    content: "â€º";
     position: absolute;
     right: 2px;
     top: 50%;
@@ -16217,7 +16217,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 }
 
-/* V225.4 — awareness-first bottom panel replaces idle destination card. */
+/* V225.4 â€” awareness-first bottom panel replaces idle destination card. */
 body[data-layout-mode="portrait"] .mobile-destination-command .mobile-awareness-panel-kicker {
   display: none;
 }
@@ -16269,7 +16269,7 @@ body.gridly-mobile-awareness-panel-present #map .gridly-awareness-identity-label
   display: none !important;
 }
 
-/* V225.5 — awareness panel metrics and dock containment refinement. */
+/* V225.5 â€” awareness panel metrics and dock containment refinement. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-awareness-panel,
   body.gridly-mobile-awareness-panel-present[data-layout-mode="portrait"] .map-card > .mobile-destination-command {
@@ -16336,7 +16336,7 @@ body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="p
   bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
-/* V225.5.1 — awareness panel / dock containment fix.
+/* V225.5.1 â€” awareness panel / dock containment fix.
    Keep the complete awareness card above the Portrait V2 dock while allowing
    large-font and narrow-device copy to wrap inside the panel instead of being
    clipped behind the dock. */
@@ -16394,7 +16394,7 @@ body.gridly-text-large.gridly-mobile-awareness-panel-present[data-layout-mode="p
 }
 
 
-/* V214.4 — Route Impact Details Pane (explainability only). */
+/* V214.4 â€” Route Impact Details Pane (explainability only). */
 body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty) {
   cursor: pointer;
   text-decoration: underline;
@@ -16576,7 +16576,7 @@ body.gridly-theme-light .gridly-destination-impact-reasons {
   color: #12324a;
 }
 
-/* V215 — Route Delay Intelligence significance and driver confidence. */
+/* V215 â€” Route Delay Intelligence significance and driver confidence. */
 .gridly-destination-impact-significance {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -16635,7 +16635,7 @@ body.gridly-theme-light .gridly-destination-impact-significance strong {
   color: #0d1b2a;
 }
 
-/* V219.5 — Map visual hierarchy baseline.
+/* V219.5 â€” Map visual hierarchy baseline.
    Stack, strongest to quietest: selected/focused > route/destination impact > critical hazard > blocked crossing > active hazard > recently cleared > historical/context > normal infrastructure. */
 #map .leaflet-marker-icon.gridly-alert-focused-marker,
 #map .leaflet-marker-icon[data-gridly-selected="true"],
@@ -16738,7 +16738,7 @@ body.gridly-theme-light .gridly-destination-impact-significance strong {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 6px rgba(75, 199, 255, 0.18);
 }
 
-/* V220 — premium calm map visual refinement pass.
+/* V220 â€” premium calm map visual refinement pass.
    Visual-only overrides that reuse V219 metadata to reinforce the hierarchy without changing marker data, routing, reporting, or audit decisions. */
 #map .leaflet-marker-icon.gridly-alert-focused-marker,
 #map .leaflet-marker-icon[data-gridly-selected="true"],
@@ -17293,7 +17293,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* V225.5.4 — awareness panel/dock measured placement contract.
+/* V225.5.4 â€” awareness panel/dock measured placement contract.
    Bottom offsets proved unreliable when the fixed panel is evaluated inside
    nested portrait containment, so JS now measures the real dock top and panel
    height, then writes --gridly-awareness-panel-top. The final applied CSS uses
@@ -17322,7 +17322,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command,
   color: #f5f9ff;
 }
 
-/* V241.2 — hard stop legacy mobile destination command leaks.
+/* V241.2 â€” hard stop legacy mobile destination command leaks.
    Suppress only genuinely hidden command-card states so the restored idle
    Awareness Area panel can remain visible above the dock. */
 body[data-layout-mode="portrait"] .map-card > .mobile-destination-command[hidden],
@@ -17339,7 +17339,7 @@ body[data-layout-mode="portrait"] .mobile-destination-command[aria-hidden="true"
   pointer-events: none !important;
 }
 
-/* V242 — Portrait information hierarchy refinement */
+/* V242 â€” Portrait information hierarchy refinement */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   --gridly-v2-top-shield-height: calc(180px + env(safe-area-inset-top, 0px));
 }
@@ -17482,7 +17482,7 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
   box-shadow: 0 3px 8px rgba(2, 8, 18, 0.1);
 }
 
-/* V242.1 — align active route destination card with Portrait V2 panel rails. */
+/* V242.1 â€” align active route destination card with Portrait V2 panel rails. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:not(.is-awareness-panel):not([hidden]):not(.is-command-card-suppressed) {
     left: calc(12px + env(safe-area-inset-left, 0px)) !important;
@@ -17551,7 +17551,7 @@ body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV
   }
 }
 
-/* V243 — Portrait V2 explicit user-location utility control. */
+/* V243 â€” Portrait V2 explicit user-location utility control. */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [data-v2-control="use-location"] {
   color: rgba(214, 235, 255, 0.94);
   background: linear-gradient(170deg, rgba(10, 30, 52, 0.82), rgba(6, 17, 30, 0.9));
@@ -17563,7 +17563,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [dat
 }
 
 
-/* V249.1 — Settings sheet alignment with History/Hazards compact bottom-sheet rhythm. */
+/* V249.1 â€” Settings sheet alignment with History/Hazards compact bottom-sheet rhythm. */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
   left: 12px !important;
   right: 12px !important;
@@ -17717,7 +17717,7 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
   color: #516473;
 }
 
-/* V249.1 follow-up — Settings V2 runtime alignment fallback independent of body layout marker timing. */
+/* V249.1 follow-up â€” Settings V2 runtime alignment fallback independent of body layout marker timing. */
 #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
   left: 12px !important;
   right: 12px !important;
@@ -17741,7 +17741,7 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
   contain: layout paint;
 }
 
-/* V227.1 — portrait Location Awareness route action restore. */
+/* V227.1 â€” portrait Location Awareness route action restore. */
 .gridly-v2-location-awareness-panel:has(.gridly-v2-location-awareness-route:not([hidden])) {
   pointer-events: auto;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -17773,7 +17773,7 @@ body.gridly-theme-light[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPo
   display: none !important;
 }
 
-/* V250.4 — Settings awareness area chooser */
+/* V250.4 â€” Settings awareness area chooser */
 .settings-awareness-area-chooser {
   display: flex;
   flex-wrap: wrap;
@@ -17801,7 +17801,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-
   display: none !important;
 }
 
-/* V250.6 — Awareness filter strip visibility audit */
+/* V250.6 â€” Awareness filter strip visibility audit */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
   padding: 5px;
   gap: 5px;
@@ -17838,7 +17838,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button.i
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-/* V250.6A — Portrait command-area docked awareness filter strip */
+/* V250.6A â€” Portrait command-area docked awareness filter strip */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   --gridly-v2-command-left: calc(10px + env(safe-area-inset-left, 0px));
   --gridly-v2-command-right: calc(10px + env(safe-area-inset-right, 0px));
@@ -17940,7 +17940,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   right: var(--gridly-v2-command-right);
 }
 
-/* V212.2 — persistent intelligence card hierarchy stabilization. */
+/* V212.2 â€” persistent intelligence card hierarchy stabilization. */
 body[data-layout-mode="portrait"] .gridly-v2-awareness-brief-card {
   top: 54px;
   display: grid;
@@ -17991,7 +17991,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
 }
 
 
-/* V250.8C — persistent bottom intelligence shell parity for Awareness and Route. */
+/* V250.8C â€” persistent bottom intelligence shell parity for Awareness and Route. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed),
   body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed) {
@@ -18135,7 +18135,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* V250.8D — compact persistent shell visual correction. */
+/* V250.8D â€” compact persistent shell visual correction. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed),
   body.gridly-text-large[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed) {
@@ -18236,7 +18236,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* GRIDLY V254.4 — Awareness Primary Surface Hierarchy */
+/* GRIDLY V254.4 â€” Awareness Primary Surface Hierarchy */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
     display: grid;
@@ -18305,7 +18305,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* GRIDLY V254.5 — Filter Strip Hierarchy */
+/* GRIDLY V254.5 â€” Filter Strip Hierarchy */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
     padding: 4px;
@@ -18346,7 +18346,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* GRIDLY V254.6 — Bottom Dock Hierarchy */
+/* GRIDLY V254.6 â€” Bottom Dock Hierarchy */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -18388,7 +18388,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
   }
 }
 
-/* GRIDLY V254.7A — Control Rail Balance */
+/* GRIDLY V254.7A â€” Control Rail Balance */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
     gap: 7px;
@@ -18496,7 +18496,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-participation-ack
   display: none !important;
 }
 
-/* V257.1 — visible route exit controls on portrait active route surfaces. */
+/* V257.1 â€” visible route exit controls on portrait active route surfaces. */
 body[data-layout-mode="portrait"] .mobile-destination-command-actions {
   display: grid;
   grid-auto-rows: minmax(34px, auto);
@@ -18551,7 +18551,7 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
   background: rgba(255, 255, 255, 0.075);
 }
 
-/* V257.1 follow-up — portrait route card footer actions with usable tap targets. */
+/* V257.1 follow-up â€” portrait route card footer actions with usable tap targets. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.is-destination-panel:not([hidden]):not(.is-command-card-suppressed) {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -18619,7 +18619,7 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
   }
 }
 
-/* V257.1 follow-up B — force active portrait route card actions into a separated footer row. */
+/* V257.1 follow-up B â€” force active portrait route card actions into a separated footer row. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command.has-route-exit-actions:not([hidden]):not(.is-command-card-suppressed) {
     grid-template-columns: minmax(0, 1fr) !important;
@@ -18682,7 +18682,7 @@ body[data-layout-mode="portrait"] .mobile-route-exit-control[hidden],
   }
 }
 
-/* V257.1 route exit ownership reset — no separate portrait action bar. */
+/* V257.1 route exit ownership reset â€” no separate portrait action bar. */
 body[data-layout-mode="portrait"] #mobileRouteActionBar {
   display: none !important;
 }
@@ -18693,7 +18693,7 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
   background: rgba(255, 255, 255, 0.075);
 }
 
-/* V266.1A — enforce hidden setup controls on Manage Places primary screen */
+/* V266.1A â€” enforce hidden setup controls on Manage Places primary screen */
 .manage-places-group[hidden],
 .destination-chip-row[hidden],
 #managePlacesSaveGroup[hidden],
@@ -18706,7 +18706,7 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
   pointer-events: none !important;
 }
 
-/* V266.1 — Manage Places single-purpose status-first flow */
+/* V266.1 â€” Manage Places single-purpose status-first flow */
 .manage-places-primary {
   display: grid;
   gap: 12px;
@@ -18810,7 +18810,7 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
   .manage-place-primary-action { min-height: 32px; padding: 6px 9px; font-size: 0.72rem; }
 }
 
-/* V266.1C — Manage Places focused-flow visual polish only */
+/* V266.1C â€” Manage Places focused-flow visual polish only */
 .route-setup-modal-card #managePlacesSourceGroup,
 .route-setup-modal-card #managePlacesAddressGroup,
 .route-setup-modal-card #managePlacesSavedGroup,
@@ -19002,7 +19002,7 @@ body[data-layout-mode="portrait"] #mobileRouteActionBar {
   }
 }
 
-/* V266.1D — Manage Places focused flow consistency fix (visual/layout only) */
+/* V266.1D â€” Manage Places focused flow consistency fix (visual/layout only) */
 .route-setup-modal-card .route-setup-grid-mobile {
   grid-template-columns: minmax(0, 1fr) !important;
   justify-items: stretch !important;
@@ -19316,7 +19316,7 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   transform-origin: var(--gridly-production-marker-anchor-x, 50%) var(--gridly-production-marker-anchor-y, 80%) !important;
 }
 
-/* GRIDLY V272 — desktop-only public beta gate. Portrait/mobile selectors intentionally untouched. */
+/* GRIDLY V272 â€” desktop-only public beta gate. Portrait/mobile selectors intentionally untouched. */
 .gridly-desktop-gate {
   display: none;
 }
@@ -19398,7 +19398,7 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate-board-image {
 }
 
 
-/* GRIDLY V272.2 — consumer readability pass.
+/* GRIDLY V272.2 â€” consumer readability pass.
    Controlled +1 typography step for visible Gridly copy only; markers, gates, filters,
    route/report logic, and diagnostic/debug surfaces remain untouched. */
 @media (max-width: 760px) and (orientation: portrait) {
@@ -19588,7 +19588,7 @@ body[data-layout-mode="desktop"] .gridly-desktop-gate-board-image {
   }
 }
 
-/* GRIDLY V272.2A — Settings selector dark dropdown styling. */
+/* GRIDLY V272.2A â€” Settings selector dark dropdown styling. */
 .settings-select-grid select,
 .gridly-settings-sheet .settings-select-grid select,
 #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid select,
@@ -19679,7 +19679,7 @@ body.gridly-theme-light .settings-select-grid select option:hover {
   }
 }
 
-/* GRIDLY V272.2B — Portrait Settings Text Size segmented control. */
+/* GRIDLY V272.2B â€” Portrait Settings Text Size segmented control. */
 #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-text-size-label {
   gap: 9px !important;
 }
@@ -19737,7 +19737,7 @@ body.gridly-theme-light .settings-select-grid select option:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-/* GRIDLY V272.3 — Mobile viewport / map gesture stability fix.
+/* GRIDLY V272.3 â€” Mobile viewport / map gesture stability fix.
    Portrait-only containment keeps browser pinch/overscroll from resizing the app shell
    while leaving Leaflet's own touch handlers in control of map pan and pinch zoom. */
 html {
@@ -19895,7 +19895,7 @@ body {
   }
 }
 
-/* GRIDLY V272.3A — Portrait Mobile safe-area restoration.
+/* GRIDLY V272.3A â€” Portrait Mobile safe-area restoration.
    V272.3 intentionally pins the portrait shell to the visual viewport for map gesture
    stability; keep that containment, but restore a safe top chrome offset for the
    fixed Portrait V2 header stack on every phone browser. */
@@ -19944,7 +19944,7 @@ body {
   }
 }
 
-/* GRIDLY V272 — About Gridly supportive product guidance. */
+/* GRIDLY V272 â€” About Gridly supportive product guidance. */
 .settings-about-gridly-section {
   border: 1px solid rgba(171, 204, 238, 0.16);
   border-radius: 15px;
@@ -20048,7 +20048,7 @@ body {
 }
 
 .settings-about-gridly-accordion-item[open] .settings-about-gridly-item-summary::after {
-  content: "−";
+  content: "âˆ’";
 }
 
 .settings-about-gridly-item-panel {
@@ -20124,7 +20124,7 @@ body {
 }
 
 
-/* GRIDLY V275.2 — Conservative PWA install entry point inside Settings/About. */
+/* GRIDLY V275.2 â€” Conservative PWA install entry point inside Settings/About. */
 .settings-pwa-install-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -20177,7 +20177,7 @@ body {
   }
 }
 
-/* V282 — Gridly Brand Foundation palette alignment (portrait visual-only). */
+/* V282 â€” Gridly Brand Foundation palette alignment (portrait visual-only). */
 body[data-layout-mode="portrait"] {
   background: var(--gridly-bg-deep);
 }
@@ -20327,7 +20327,7 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   border-color: rgba(0, 245, 240, 0.22) !important;
 }
 
-/* V282.1 — Portrait V2 dock icon family refinement */
+/* V282.1 â€” Portrait V2 dock icon family refinement */
 .gridly-v2-sr-label {
   position: absolute !important;
   width: 1px !important;
@@ -20374,7 +20374,7 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   }
 }
 
-/* V282.2 — Portrait V2 dock button border refinement */
+/* V282.2 â€” Portrait V2 dock button border refinement */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
     box-sizing: border-box;
@@ -20409,7 +20409,7 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   }
 }
 
-/* V282.3 — Portrait V2 sheet height regression audit after dock icon/border refinements. */
+/* V282.3 â€” Portrait V2 sheet height regression audit after dock icon/border refinements. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 {
     --gridly-v2-sheet-dock-clearance: calc(86px + env(safe-area-inset-bottom, 0px));
@@ -20441,7 +20441,7 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
   }
 }
 
-/* V282.4 — Portrait bottom-edge map bleed guard.
+/* V282.4 â€” Portrait bottom-edge map bleed guard.
    DOM/layout audit: the Portrait V2 shell is fixed over a full-viewport Leaflet map;
    the dock intentionally floats above the visual viewport bottom, so unshielded map
    tiles can show through the dock's transparent safe-area gap and rounded lower edge. */
@@ -20641,3 +20641,4 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
 #map .gridly-destination-signature-marker[data-gridly-selected="true"] {
   transform: none;
 }
+
