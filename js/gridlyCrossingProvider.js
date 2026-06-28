@@ -7,7 +7,7 @@
     const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
 
     const state = {
-        mode: "legacy",
+        mode: "fra-review",
         lastLegacyLoad: null,
         lastPackageLoad: null,
         lastFraReviewLoad: null
@@ -144,3 +144,4 @@
 
     window.gridlyCrossingProviderRuntimePackageMode = false;
 })();
+
