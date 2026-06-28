@@ -1,21 +1,21 @@
 ﻿(function () {
     "use strict";
 
-    const PROVIDER_VERSION = "GRIDLY_CROSSING_PROVIDER_V1";
+    const PROVIDER_VERSION = "GRIDLY_CROSSING_PROVIDER_V1_SAFE";
     const LEGACY_SOURCE = "data/liberty-county-rail-crossings.geojson";
-    const PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
+    const CURATED_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings-curated.geojson";
+    const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
 
     const state = {
         mode: "legacy",
         lastLegacyLoad: null,
-        lastPackageLoad: null
+        lastPackageLoad: null,
+        lastFraReviewLoad: null
     };
 
     async function fetchJson(path) {
         const response = await fetch(path, { cache: "no-store" });
-        if (!response.ok) {
-            throw new Error("Fetch failed for " + path + " with status " + response.status);
-        }
+        if (!response.ok) throw new Error("Fetch failed for " + path + " with status " + response.status);
         return response.json();
     }
 
@@ -25,44 +25,31 @@
 
     async function loadLegacyCrossings() {
         const geojson = await fetchJson(LEGACY_SOURCE);
-
-        state.lastLegacyLoad = {
-            source: LEGACY_SOURCE,
-            featureCount: featureCount(geojson),
-            loadedAt: new Date().toISOString()
-        };
-
+        state.lastLegacyLoad = { source: LEGACY_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
         return geojson;
     }
 
-    async function loadPackageCrossings() {
-        if (
-            !window.gridlyCrossingPackageAdapter ||
-            typeof window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson !== "function"
-        ) {
+    async function loadCuratedPackageCrossings() {
+        const geojson = await fetchJson(CURATED_PACKAGE_SOURCE);
+        state.lastPackageLoad = { source: CURATED_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        return geojson;
+    }
+
+    async function loadFraReviewCrossings() {
+        if (!window.gridlyCrossingPackageAdapter?.buildAdaptedCrossingGeojson) {
             throw new Error("gridlyCrossingPackageAdapter unavailable");
         }
 
-        const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PACKAGE_SOURCE);
-
-        state.lastPackageLoad = {
-            source: PACKAGE_SOURCE,
-            featureCount: featureCount(geojson),
-            loadedAt: new Date().toISOString()
-        };
-
+        const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(RAW_FRA_REVIEW_SOURCE);
+        state.lastFraReviewLoad = { source: RAW_FRA_REVIEW_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
         return geojson;
     }
 
     async function getActiveCountyCrossings(options) {
-        const requestedMode =
-            options && options.mode
-                ? String(options.mode).toLowerCase()
-                : state.mode;
+        const requestedMode = options && options.mode ? String(options.mode).toLowerCase() : state.mode;
 
-        if (requestedMode === "package") {
-            return loadPackageCrossings();
-        }
+        if (requestedMode === "package") return loadCuratedPackageCrossings();
+        if (requestedMode === "fra-review") return loadFraReviewCrossings();
 
         return loadLegacyCrossings();
     }
@@ -70,11 +57,11 @@
     function setMode(mode) {
         const normalized = String(mode || "").toLowerCase();
 
-        if (normalized !== "legacy" && normalized !== "package") {
+        if (!["legacy", "package", "fra-review"].includes(normalized)) {
             return {
                 changed: false,
                 reason: "invalid_mode",
-                allowedModes: ["legacy", "package"],
+                allowedModes: ["legacy", "package", "fra-review"],
                 currentMode: state.mode
             };
         }
@@ -89,75 +76,41 @@
     }
 
     async function audit() {
-        let legacyResult = null;
-        let packageResult = null;
-
-        try {
-            const legacy = await loadLegacyCrossings();
-            legacyResult = {
-                loaded: true,
-                source: LEGACY_SOURCE,
-                featureCount: featureCount(legacy)
-            };
-        } catch (error) {
-            legacyResult = {
-                loaded: false,
-                source: LEGACY_SOURCE,
-                error: String(error && error.message ? error.message : error)
-            };
-        }
-
-        try {
-            const packaged = await loadPackageCrossings();
-            packageResult = {
-                loaded: true,
-                source: PACKAGE_SOURCE,
-                featureCount: featureCount(packaged)
-            };
-        } catch (error) {
-            packageResult = {
-                loaded: false,
-                source: PACKAGE_SOURCE,
-                error: String(error && error.message ? error.message : error)
-            };
-        }
-
+        const legacy = await loadLegacyCrossings();
+        const packaged = await loadCuratedPackageCrossings();
+        const fraReview = await loadFraReviewCrossings();
         const active = await getActiveCountyCrossings();
-
-        const valid =
-            legacyResult.loaded &&
-            packageResult.loaded &&
-            legacyResult.featureCount === 5 &&
-            packageResult.featureCount === 115 &&
-            state.mode === "legacy" &&
-            featureCount(active) === 5;
 
         return {
             auditVersion: PROVIDER_VERSION,
             generatedAt: new Date().toISOString(),
-
             currentMode: state.mode,
             defaultMode: "legacy",
 
-            legacyProvider: legacyResult,
-            packageProvider: packageResult,
+            legacyProvider: {
+                source: LEGACY_SOURCE,
+                featureCount: featureCount(legacy),
+                productionSafe: true
+            },
+
+            packageProvider: {
+                source: CURATED_PACKAGE_SOURCE,
+                featureCount: featureCount(packaged),
+                productionSafe: true,
+                visuallyCertified: true
+            },
+
+            fraReviewProvider: {
+                source: RAW_FRA_REVIEW_SOURCE,
+                featureCount: featureCount(fraReview),
+                productionSafe: false,
+                visuallyCertified: false,
+                reason: "raw_fra_coordinates_not_certified_for_user_facing_rendering"
+            },
+
             activeProvider: {
                 mode: state.mode,
                 featureCount: featureCount(active)
-            },
-
-            providerContract: {
-                exposesGridlyCrossingProvider: !!window.gridlyCrossingProvider,
-                exposesGridlyGetActiveCountyCrossings: typeof window.gridlyGetActiveCountyCrossings === "function",
-                legacyProviderAvailable: legacyResult.loaded,
-                packageProviderAvailable: packageResult.loaded,
-                legacyDefaultPreserved: state.mode === "legacy",
-                packageCanBeLoadedWithoutActivation: packageResult.loaded
-            },
-
-            activationState: {
-                packageActivated: state.mode === "package",
-                runtimeCrossingSourceModified: false
             },
 
             protectedSystems: {
@@ -170,9 +123,12 @@
                 mobilePortraitModified: false
             },
 
-            finalDetermination: valid
-                ? "PASS_CROSSING_PROVIDER_READY_LEGACY_DEFAULT"
-                : "BLOCKED_CROSSING_PROVIDER_VALIDATION_FAILED"
+            finalDetermination:
+                featureCount(legacy) === 5 &&
+                featureCount(packaged) === 5 &&
+                featureCount(fraReview) === 115
+                    ? "PASS_SAFE_CROSSING_PROVIDER_RAW_FRA_HELD_FOR_REVIEW"
+                    : "BLOCKED_SAFE_CROSSING_PROVIDER_VALIDATION_FAILED"
         };
     }
 
@@ -185,4 +141,6 @@
 
     window.gridlyGetActiveCountyCrossings = getActiveCountyCrossings;
     window.gridlyCrossingProviderAudit = audit;
+
+    window.gridlyCrossingProviderRuntimePackageMode = false;
 })();
