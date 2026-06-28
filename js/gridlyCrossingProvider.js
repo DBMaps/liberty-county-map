@@ -5,12 +5,14 @@
     const LEGACY_SOURCE = "data/liberty-county-rail-crossings.geojson";
     const CURATED_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings-curated.geojson";
     const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
+    const PRODUCTION_PACKAGE_SOURCE = "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson";
 
     const state = {
-        mode: "fra-review",
+        mode: "production",
         lastLegacyLoad: null,
         lastPackageLoad: null,
-        lastFraReviewLoad: null
+        lastFraReviewLoad: null,
+        lastProductionLoad: null
     };
 
     async function fetchJson(path) {
@@ -50,6 +52,11 @@
 
         if (requestedMode === "package") return loadCuratedPackageCrossings();
         if (requestedMode === "fra-review") return loadFraReviewCrossings();
+        if (requestedMode === "production") {
+            const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PRODUCTION_PACKAGE_SOURCE);
+            state.lastProductionLoad = { source: PRODUCTION_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+            return geojson;
+        }
 
         return loadLegacyCrossings();
     }
@@ -57,11 +64,11 @@
     function setMode(mode) {
         const normalized = String(mode || "").toLowerCase();
 
-        if (!["legacy", "package", "fra-review"].includes(normalized)) {
+        if (!["legacy", "package", "fra-review", "production"].includes(normalized)) {
             return {
                 changed: false,
                 reason: "invalid_mode",
-                allowedModes: ["legacy", "package", "fra-review"],
+                allowedModes: ["legacy", "package", "fra-review", "production"],
                 currentMode: state.mode
             };
         }
@@ -85,7 +92,7 @@
             auditVersion: PROVIDER_VERSION,
             generatedAt: new Date().toISOString(),
             currentMode: state.mode,
-            defaultMode: "legacy",
+            defaultMode: "production",
 
             legacyProvider: {
                 source: LEGACY_SOURCE,
@@ -144,4 +151,5 @@
 
     window.gridlyCrossingProviderRuntimePackageMode = false;
 })();
+
 
