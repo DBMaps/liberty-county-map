@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Liberty",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/liberty/liberty-crossings.geojson",
+    "crossingCount":  115,
+    "generatedAt":  "2026-06-27T13:27:49.5359885-05:00"
+}

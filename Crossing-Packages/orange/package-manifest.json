@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Orange",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/orange/orange-crossings.geojson",
+    "crossingCount":  149,
+    "generatedAt":  "2026-06-27T13:28:31.4614084-05:00"
+}

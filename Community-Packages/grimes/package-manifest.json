@@ -1,0 +1,15 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "Grimes",
+    "status":  "roads_complete",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  false,
+    "communities":  [
+
+                    ],
+    "roadFeatureCount":  6130,
+    "notes":  "Added for Southeast Texas expansion test.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.9617270-05:00"
+}

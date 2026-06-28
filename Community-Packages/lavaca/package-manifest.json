@@ -1,0 +1,15 @@
+﻿{
+    "packageType":  "Community",
+    "county":  "Lavaca",
+    "status":  "roads_complete",
+    "boundary":  true,
+    "roads":  true,
+    "crossings":  false,
+    "communities":  [
+
+                    ],
+    "roadFeatureCount":  4833,
+    "notes":  "Added for Southeast Texas expansion test.",
+    "sourceManifest":  "Community-Packages/county-manifest.json",
+    "generatedAt":  "2026-06-27T12:42:56.9971061-05:00"
+}

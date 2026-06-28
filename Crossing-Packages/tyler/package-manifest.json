@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Tyler",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/tyler/tyler-crossings.geojson",
+    "crossingCount":  0,
+    "generatedAt":  "2026-06-27T13:28:47.2171242-05:00"
+}

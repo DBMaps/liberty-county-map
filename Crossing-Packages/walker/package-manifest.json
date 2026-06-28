@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Walker",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/walker/walker-crossings.geojson",
+    "crossingCount":  36,
+    "generatedAt":  "2026-06-27T13:28:26.1172147-05:00"
+}

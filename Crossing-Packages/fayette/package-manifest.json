@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Fayette",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/fayette/fayette-crossings.geojson",
+    "crossingCount":  152,
+    "generatedAt":  "2026-06-27T13:29:45.3838395-05:00"
+}

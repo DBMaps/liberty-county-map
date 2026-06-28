@@ -1,0 +1,205 @@
+﻿{
+    "dataset":  "FRA Crossing Packages",
+    "status":  "active",
+    "records":  [
+                    {
+                        "county":  "Austin",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\austin\\austin-crossings.geojson",
+                        "crossingCount":  101,
+                        "lastBuilt":  "2026-06-27T13:29:13.3984037-05:00"
+                    },
+                    {
+                        "county":  "Brazoria",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\brazoria\\brazoria-crossings.geojson",
+                        "crossingCount":  157,
+                        "lastBuilt":  "2026-06-27T13:28:57.7122733-05:00"
+                    },
+                    {
+                        "county":  "Brazos",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\brazos\\brazos-crossings.geojson",
+                        "crossingCount":  86,
+                        "lastBuilt":  "2026-06-27T13:29:24.3245974-05:00"
+                    },
+                    {
+                        "county":  "Calhoun",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\calhoun\\calhoun-crossings.geojson",
+                        "crossingCount":  74,
+                        "lastBuilt":  "2026-06-27T13:30:06.5959673-05:00"
+                    },
+                    {
+                        "county":  "Chambers",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\chambers\\chambers-crossings.geojson",
+                        "crossingCount":  15,
+                        "lastBuilt":  "2026-06-27T13:28:05.1178502-05:00"
+                    },
+                    {
+                        "county":  "Colorado",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\colorado\\colorado-crossings.geojson",
+                        "crossingCount":  109,
+                        "lastBuilt":  "2026-06-27T13:29:40.1328257-05:00"
+                    },
+                    {
+                        "county":  "Fayette",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\fayette\\fayette-crossings.geojson",
+                        "crossingCount":  152,
+                        "lastBuilt":  "2026-06-27T13:29:45.3838395-05:00"
+                    },
+                    {
+                        "county":  "Fort Bend",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\fort-bend\\fort-bend-crossings.geojson",
+                        "crossingCount":  175,
+                        "lastBuilt":  "2026-06-27T13:29:02.9434348-05:00"
+                    },
+                    {
+                        "county":  "Galveston",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\galveston\\galveston-crossings.geojson",
+                        "crossingCount":  144,
+                        "lastBuilt":  "2026-06-27T13:28:52.5166859-05:00"
+                    },
+                    {
+                        "county":  "Grimes",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\grimes\\grimes-crossings.geojson",
+                        "crossingCount":  109,
+                        "lastBuilt":  "2026-06-27T13:29:29.6532108-05:00"
+                    },
+                    {
+                        "county":  "Hardin",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\hardin\\hardin-crossings.geojson",
+                        "crossingCount":  82,
+                        "lastBuilt":  "2026-06-27T13:28:15.5898197-05:00"
+                    },
+                    {
+                        "county":  "Harris",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\harris\\harris-crossings.geojson",
+                        "crossingCount":  1159,
+                        "lastBuilt":  "2026-06-27T12:28:26.0748697-05:00"
+                    },
+                    {
+                        "county":  "Jackson",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\jackson\\jackson-crossings.geojson",
+                        "crossingCount":  74,
+                        "lastBuilt":  "2026-06-27T13:29:56.0863456-05:00"
+                    },
+                    {
+                        "county":  "Jasper",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\jasper\\jasper-crossings.geojson",
+                        "crossingCount":  106,
+                        "lastBuilt":  "2026-06-27T13:28:36.8085181-05:00"
+                    },
+                    {
+                        "county":  "Jefferson",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\jefferson\\jefferson-crossings.geojson",
+                        "crossingCount":  378,
+                        "lastBuilt":  "2026-06-27T13:28:10.3231885-05:00"
+                    },
+                    {
+                        "county":  "Lavaca",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\lavaca\\lavaca-crossings.geojson",
+                        "crossingCount":  39,
+                        "lastBuilt":  "2026-06-27T13:29:50.7445331-05:00"
+                    },
+                    {
+                        "county":  "Liberty",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\liberty\\liberty-crossings.geojson",
+                        "crossingCount":  115,
+                        "lastBuilt":  "2026-06-27T13:27:49.5517270-05:00"
+                    },
+                    {
+                        "county":  "Matagorda",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\matagorda\\matagorda-crossings.geojson",
+                        "crossingCount":  80,
+                        "lastBuilt":  "2026-06-27T13:30:01.2554998-05:00"
+                    },
+                    {
+                        "county":  "Montgomery",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\montgomery\\montgomery-crossings.geojson",
+                        "crossingCount":  170,
+                        "lastBuilt":  "2026-06-27T13:27:54.7826769-05:00"
+                    },
+                    {
+                        "county":  "Newton",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\newton\\newton-crossings.geojson",
+                        "crossingCount":  26,
+                        "lastBuilt":  "2026-06-27T13:28:42.0068424-05:00"
+                    },
+                    {
+                        "county":  "Orange",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\orange\\orange-crossings.geojson",
+                        "crossingCount":  149,
+                        "lastBuilt":  "2026-06-27T13:28:31.4614084-05:00"
+                    },
+                    {
+                        "county":  "Polk",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\polk\\polk-crossings.geojson",
+                        "crossingCount":  64,
+                        "lastBuilt":  "2026-06-27T13:28:20.8513735-05:00"
+                    },
+                    {
+                        "county":  "San Jacinto",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\san-jacinto\\san-jacinto-crossings.geojson",
+                        "crossingCount":  12,
+                        "lastBuilt":  "2026-06-27T13:27:59.9656680-05:00"
+                    },
+                    {
+                        "county":  "Tyler",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\tyler\\tyler-crossings.geojson",
+                        "crossingCount":  0,
+                        "lastBuilt":  "2026-06-27T13:28:47.2171242-05:00"
+                    },
+                    {
+                        "county":  "Walker",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\walker\\walker-crossings.geojson",
+                        "crossingCount":  36,
+                        "lastBuilt":  "2026-06-27T13:28:26.1212376-05:00"
+                    },
+                    {
+                        "county":  "Waller",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\waller\\waller-crossings.geojson",
+                        "crossingCount":  46,
+                        "lastBuilt":  "2026-06-27T13:29:08.1457705-05:00"
+                    },
+                    {
+                        "county":  "Washington",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\washington\\washington-crossings.geojson",
+                        "crossingCount":  41,
+                        "lastBuilt":  "2026-06-27T13:29:18.7683929-05:00"
+                    },
+                    {
+                        "county":  "Wharton",
+                        "status":  "manufactured",
+                        "packagePath":  "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\wharton\\wharton-crossings.geojson",
+                        "crossingCount":  72,
+                        "lastBuilt":  "2026-06-27T13:29:34.6229667-05:00"
+                    }
+                ],
+    "totalPackages":  28,
+    "totalCrossings":  3771,
+    "lastUpdated":  "2026-06-27T13:30:06.5959673-05:00"
+}

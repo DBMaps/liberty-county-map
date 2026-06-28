@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Wharton",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/wharton/wharton-crossings.geojson",
+    "crossingCount":  72,
+    "generatedAt":  "2026-06-27T13:29:34.6065175-05:00"
+}

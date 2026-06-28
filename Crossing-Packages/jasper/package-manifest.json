@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Jasper",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/jasper/jasper-crossings.geojson",
+    "crossingCount":  106,
+    "generatedAt":  "2026-06-27T13:28:36.8044911-05:00"
+}

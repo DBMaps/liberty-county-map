@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Galveston",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/galveston/galveston-crossings.geojson",
+    "crossingCount":  144,
+    "generatedAt":  "2026-06-27T13:28:52.5166859-05:00"
+}

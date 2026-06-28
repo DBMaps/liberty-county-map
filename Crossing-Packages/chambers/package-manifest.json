@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Chambers",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/chambers/chambers-crossings.geojson",
+    "crossingCount":  15,
+    "generatedAt":  "2026-06-27T13:28:05.1178502-05:00"
+}

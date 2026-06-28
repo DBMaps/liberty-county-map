@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Calhoun",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/calhoun/calhoun-crossings.geojson",
+    "crossingCount":  74,
+    "generatedAt":  "2026-06-27T13:30:06.5959673-05:00"
+}

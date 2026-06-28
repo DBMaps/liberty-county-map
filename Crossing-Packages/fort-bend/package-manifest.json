@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Fort Bend",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/fort-bend/fort-bend-crossings.geojson",
+    "crossingCount":  175,
+    "generatedAt":  "2026-06-27T13:29:02.9434348-05:00"
+}

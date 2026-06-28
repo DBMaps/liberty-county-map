@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Newton",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/newton/newton-crossings.geojson",
+    "crossingCount":  26,
+    "generatedAt":  "2026-06-27T13:28:42.0028153-05:00"
+}

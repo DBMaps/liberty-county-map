@@ -1,0 +1,9 @@
+﻿{
+    "packageType":  "Crossing",
+    "county":  "Montgomery",
+    "status":  "manufactured",
+    "source":  "FRA/Processed/fra-crossings-tx.geojson",
+    "packageFile":  "Crossing-Packages/montgomery/montgomery-crossings.geojson",
+    "crossingCount":  170,
+    "generatedAt":  "2026-06-27T13:27:54.7666867-05:00"
+}

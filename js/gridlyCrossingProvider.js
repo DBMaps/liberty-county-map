@@ -1,0 +1,155 @@
+﻿(function () {
+    "use strict";
+
+    const PROVIDER_VERSION = "GRIDLY_CROSSING_PROVIDER_V1_SAFE";
+    const LEGACY_SOURCE = "data/liberty-county-rail-crossings.geojson";
+    const CURATED_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings-curated.geojson";
+    const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
+    const PRODUCTION_PACKAGE_SOURCE = "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson";
+
+    const state = {
+        mode: "production",
+        lastLegacyLoad: null,
+        lastPackageLoad: null,
+        lastFraReviewLoad: null,
+        lastProductionLoad: null
+    };
+
+    async function fetchJson(path) {
+        const response = await fetch(path, { cache: "no-store" });
+        if (!response.ok) throw new Error("Fetch failed for " + path + " with status " + response.status);
+        return response.json();
+    }
+
+    function featureCount(geojson) {
+        return geojson && Array.isArray(geojson.features) ? geojson.features.length : 0;
+    }
+
+    async function loadLegacyCrossings() {
+        const geojson = await fetchJson(LEGACY_SOURCE);
+        state.lastLegacyLoad = { source: LEGACY_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        return geojson;
+    }
+
+    async function loadCuratedPackageCrossings() {
+        const geojson = await fetchJson(CURATED_PACKAGE_SOURCE);
+        state.lastPackageLoad = { source: CURATED_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        return geojson;
+    }
+
+    async function loadFraReviewCrossings() {
+        if (!window.gridlyCrossingPackageAdapter?.buildAdaptedCrossingGeojson) {
+            throw new Error("gridlyCrossingPackageAdapter unavailable");
+        }
+
+        const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(RAW_FRA_REVIEW_SOURCE);
+        state.lastFraReviewLoad = { source: RAW_FRA_REVIEW_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        return geojson;
+    }
+
+    async function getActiveCountyCrossings(options) {
+        const requestedMode = options && options.mode ? String(options.mode).toLowerCase() : state.mode;
+
+        if (requestedMode === "package") return loadCuratedPackageCrossings();
+        if (requestedMode === "fra-review") return loadFraReviewCrossings();
+        if (requestedMode === "production") {
+            const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PRODUCTION_PACKAGE_SOURCE);
+            state.lastProductionLoad = { source: PRODUCTION_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+            return geojson;
+        }
+
+        return loadLegacyCrossings();
+    }
+
+    function setMode(mode) {
+        const normalized = String(mode || "").toLowerCase();
+
+        if (!["legacy", "package", "fra-review", "production"].includes(normalized)) {
+            return {
+                changed: false,
+                reason: "invalid_mode",
+                allowedModes: ["legacy", "package", "fra-review", "production"],
+                currentMode: state.mode
+            };
+        }
+
+        state.mode = normalized;
+
+        return {
+            changed: true,
+            mode: state.mode,
+            providerVersion: PROVIDER_VERSION
+        };
+    }
+
+    async function audit() {
+        const legacy = await loadLegacyCrossings();
+        const packaged = await loadCuratedPackageCrossings();
+        const fraReview = await loadFraReviewCrossings();
+        const active = await getActiveCountyCrossings();
+
+        return {
+            auditVersion: PROVIDER_VERSION,
+            generatedAt: new Date().toISOString(),
+            currentMode: state.mode,
+            defaultMode: "production",
+
+            legacyProvider: {
+                source: LEGACY_SOURCE,
+                featureCount: featureCount(legacy),
+                productionSafe: true
+            },
+
+            packageProvider: {
+                source: CURATED_PACKAGE_SOURCE,
+                featureCount: featureCount(packaged),
+                productionSafe: true,
+                visuallyCertified: true
+            },
+
+            fraReviewProvider: {
+                source: RAW_FRA_REVIEW_SOURCE,
+                featureCount: featureCount(fraReview),
+                productionSafe: false,
+                visuallyCertified: false,
+                reason: "raw_fra_coordinates_not_certified_for_user_facing_rendering"
+            },
+
+            activeProvider: {
+                mode: state.mode,
+                featureCount: featureCount(active)
+            },
+
+            protectedSystems: {
+                renderingModified: false,
+                mapBehaviorModified: false,
+                alertsModified: false,
+                routeWatchModified: false,
+                reportingModified: false,
+                supabaseModified: false,
+                mobilePortraitModified: false
+            },
+
+            finalDetermination:
+                featureCount(legacy) === 5 &&
+                featureCount(packaged) === 5 &&
+                featureCount(fraReview) === 115
+                    ? "PASS_SAFE_CROSSING_PROVIDER_RAW_FRA_HELD_FOR_REVIEW"
+                    : "BLOCKED_SAFE_CROSSING_PROVIDER_VALIDATION_FAILED"
+        };
+    }
+
+    window.gridlyCrossingProvider = {
+        version: PROVIDER_VERSION,
+        getActiveCountyCrossings,
+        setMode,
+        audit
+    };
+
+    window.gridlyGetActiveCountyCrossings = getActiveCountyCrossings;
+    window.gridlyCrossingProviderAudit = audit;
+
+    window.gridlyCrossingProviderRuntimePackageMode = false;
+})();
+
+
