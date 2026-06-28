@@ -1,0 +1,39 @@
+﻿{
+    "dataset":  "Gridly Production Crossing Packages",
+    "status":  "active",
+    "generatedAt":  "2026-06-28T15:48:44.9305764-05:00",
+    "totalPackages":  4,
+    "totalCrossings":  312,
+    "passCount":  4,
+    "blockedCount":  0,
+    "records":  [
+                    {
+                        "county":  "Chambers",
+                        "status":  "PASS",
+                        "crossingCount":  15,
+                        "certificationFile":  "Crossing-Packages\\chambers\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\chambers\\Production\\chambers-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Liberty",
+                        "status":  "PASS",
+                        "crossingCount":  115,
+                        "certificationFile":  "Crossing-Packages\\liberty\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\liberty\\Production\\liberty-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Montgomery",
+                        "status":  "PASS",
+                        "crossingCount":  170,
+                        "certificationFile":  "Crossing-Packages\\montgomery\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\montgomery\\Production\\montgomery-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "San Jacinto",
+                        "status":  "PASS",
+                        "crossingCount":  12,
+                        "certificationFile":  "Crossing-Packages\\san-jacinto\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\san-jacinto\\Production\\san-jacinto-production-crossings.geojson"
+                    }
+                ]
+}

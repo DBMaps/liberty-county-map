@@ -68,10 +68,7 @@
                 railroad: railroad || "Railroad",
                 source: "FRA",
                 adapterVersion: ADAPTER_VERSION,
-                originalCrossingNumber: crossingNumber || null,
-                gridlyClassification: p.gridlyClassification || null,
-                gridlyResolvedLocality: p.gridlyResolvedLocality || p.CITYNAME || null,
-                gridlyProductionCertified: Boolean(p.gridlyProductionCertified)
+                originalCrossingNumber: crossingNumber || null
             })
         };
     }
@@ -190,4 +187,3 @@
 
     window.gridlyCrossingPackageAdapterAudit = audit;
 })();
-

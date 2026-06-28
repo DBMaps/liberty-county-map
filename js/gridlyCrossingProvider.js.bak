@@ -5,14 +5,12 @@
     const LEGACY_SOURCE = "data/liberty-county-rail-crossings.geojson";
     const CURATED_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings-curated.geojson";
     const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
-    const PRODUCTION_PACKAGE_SOURCE = "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson";
 
     const state = {
-        mode: "production",
+        mode: "fra-review",
         lastLegacyLoad: null,
         lastPackageLoad: null,
-        lastFraReviewLoad: null,
-        lastProductionLoad: null
+        lastFraReviewLoad: null
     };
 
     async function fetchJson(path) {
@@ -47,22 +45,11 @@
         return geojson;
     }
 
-    async function loadProductionCrossings() {
-        if (!window.gridlyCrossingPackageAdapter?.buildAdaptedCrossingGeojson) {
-            throw new Error("gridlyCrossingPackageAdapter unavailable");
-        }
-
-        const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PRODUCTION_PACKAGE_SOURCE);
-        state.lastProductionLoad = { source: PRODUCTION_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
-        return geojson;
-    }
-
     async function getActiveCountyCrossings(options) {
         const requestedMode = options && options.mode ? String(options.mode).toLowerCase() : state.mode;
 
         if (requestedMode === "package") return loadCuratedPackageCrossings();
         if (requestedMode === "fra-review") return loadFraReviewCrossings();
-        if (requestedMode === "production") return loadProductionCrossings();
 
         return loadLegacyCrossings();
     }
@@ -70,11 +57,11 @@
     function setMode(mode) {
         const normalized = String(mode || "").toLowerCase();
 
-        if (!["legacy", "package", "fra-review", "production"].includes(normalized)) {
+        if (!["legacy", "package", "fra-review"].includes(normalized)) {
             return {
                 changed: false,
                 reason: "invalid_mode",
-                allowedModes: ["legacy", "package", "fra-review", "production"],
+                allowedModes: ["legacy", "package", "fra-review"],
                 currentMode: state.mode
             };
         }
@@ -92,14 +79,13 @@
         const legacy = await loadLegacyCrossings();
         const packaged = await loadCuratedPackageCrossings();
         const fraReview = await loadFraReviewCrossings();
-        const production = await loadProductionCrossings();
         const active = await getActiveCountyCrossings();
 
         return {
             auditVersion: PROVIDER_VERSION,
             generatedAt: new Date().toISOString(),
             currentMode: state.mode,
-            defaultMode: "production",
+            defaultMode: "legacy",
 
             legacyProvider: {
                 source: LEGACY_SOURCE,
@@ -122,14 +108,6 @@
                 reason: "raw_fra_coordinates_not_certified_for_user_facing_rendering"
             },
 
-            productionProvider: {
-                source: PRODUCTION_PACKAGE_SOURCE,
-                featureCount: featureCount(production),
-                productionSafe: true,
-                visuallyCertified: true,
-                certification: "V782 production package"
-            },
-
             activeProvider: {
                 mode: state.mode,
                 featureCount: featureCount(active)
@@ -148,10 +126,9 @@
             finalDetermination:
                 featureCount(legacy) === 5 &&
                 featureCount(packaged) === 5 &&
-                featureCount(fraReview) === 115 &&
-                featureCount(production) === 115
-                    ? "PASS_CROSSING_PROVIDER_PRODUCTION_PACKAGE_ACTIVE"
-                    : "BLOCKED_CROSSING_PROVIDER_PRODUCTION_VALIDATION_FAILED"
+                featureCount(fraReview) === 115
+                    ? "PASS_SAFE_CROSSING_PROVIDER_RAW_FRA_HELD_FOR_REVIEW"
+                    : "BLOCKED_SAFE_CROSSING_PROVIDER_VALIDATION_FAILED"
         };
     }
 
@@ -167,5 +144,4 @@
 
     window.gridlyCrossingProviderRuntimePackageMode = false;
 })();
-
 
