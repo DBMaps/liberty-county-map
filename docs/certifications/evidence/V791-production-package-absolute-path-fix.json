@@ -1,0 +1,73 @@
+{
+  "version": "V791",
+  "title": "Production Package Absolute Path Fix",
+  "milestoneType": "tooling-fix",
+  "objective": "Prevent repository-root prefixing for absolute packageFile paths in production package manifests.",
+  "filesModified": [
+    "tools/ProductionPackages/Build-GridlyProductionPackages.ps1"
+  ],
+  "filesAdded": [
+    "docs/certifications/V791-PRODUCTION-PACKAGE-ABSOLUTE-PATH-FIX.md",
+    "docs/certifications/evidence/V791-production-package-absolute-path-fix.json"
+  ],
+  "pathResolution": {
+    "detectsWindowsDriveAbsolutePaths": true,
+    "detectsWindowsUncAbsolutePaths": true,
+    "detectsPlatformRootedAbsolutePaths": true,
+    "preservesRelativePathBehavior": true,
+    "neverPrefixesRepoRootOntoAbsolutePaths": true,
+    "missingResolvedSourceStillBlocksSafely": true
+  },
+  "preservedBehavior": {
+    "supportsAll": true,
+    "supportsCounty": true,
+    "supportsForce": true,
+    "supportsWhatIf": true,
+    "supportsJson": true,
+    "skipsExistingProductionPackagesUnlessForce": true,
+    "runtimeEnablementChanged": false,
+    "searchChanged": false,
+    "awarenessChanged": false,
+    "consumerBehaviorChanged": false
+  },
+  "harris": {
+    "manifestPackageFile": "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\harris\\harris-crossings.geojson",
+    "previousInvalidResolution": "C:\\GitHub\\liberty-county-map\\C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\harris\\harris-crossings.geojson",
+    "fixedResolution": "C:\\GitHub\\Gridly-Source-Data\\Crossing-Packages\\harris\\harris-crossings.geojson",
+    "pathConcatenationFixed": true
+  },
+  "protectedSystems": {
+    "Shared Reports": "unchanged",
+    "Route Watch": "unchanged",
+    "Awareness Filtering": "unchanged",
+    "Hazard Lifecycle": "unchanged",
+    "Alert Generation": "unchanged",
+    "Supabase Synchronization": "unchanged",
+    "Runtime county registration": "unchanged",
+    "Search configuration": "unchanged",
+    "Awareness configuration": "unchanged",
+    "Consumer crossing behavior": "unchanged"
+  },
+  "testing": [
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\ProductionPackages\\Build-GridlyProductionPackages.ps1 -All -WhatIf",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\ProductionPackages\\Build-GridlyProductionPackages.ps1 -County Harris -WhatIf",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyProductionReadiness.ps1",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "python3 -m json.tool docs/certifications/evidence/V791-production-package-absolute-path-fix.json",
+      "status": "pass"
+    }
+  ],
+  "releaseDecision": "PASS pending PowerShell-enabled verification"
+}
