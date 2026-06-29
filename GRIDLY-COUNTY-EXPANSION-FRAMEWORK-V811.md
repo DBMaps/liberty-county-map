@@ -11,14 +11,14 @@ This inventory is read-only. It does not promote counties, alter runtime ownersh
 ## Framework Summary
 
 - Supported counties: 28
-- Operational counties: 5
-- Ready counties: 23
+- Operational counties: 28
+- Ready counties: 0
 - Blocked counties: 0
 - Missing boundaries: None
 - Missing roads: Jefferson
 - Missing crossings: None
 - Missing registry entries: None
-- Overall determination: FRAMEWORK_READY_WITH_PROMOTION_CANDIDATES_HELD_READ_ONLY
+- Overall determination: FRAMEWORK_READY_NO_NON_OPERATIONAL_COUNTY_READY_FOR_PROMOTION
 
 ## County Inventory
 
@@ -29,33 +29,33 @@ This inventory is read-only. It does not promote counties, alter runtime ownersh
 | San Jacinto | san-jacinto | 48407 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
 | Chambers | chambers | 48071 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
 | Jefferson | jefferson | 48245 | yes | yes | no | yes | yes | yes | OPERATIONAL | Missing roads package or roads=true in Community-Packages/jefferson/package-manifest.json |
-| Hardin | hardin | 48199 | yes | yes | yes | yes | yes | no | READY | None |
-| Polk | polk | 48373 | yes | yes | yes | yes | yes | no | READY | None |
-| Walker | walker | 48471 | yes | yes | yes | yes | yes | no | READY | None |
-| Harris | harris | 48201 | yes | yes | yes | yes | yes | no | READY | None |
-| Orange | orange | 48361 | yes | yes | yes | yes | yes | no | READY | None |
-| Jasper | jasper | 48241 | yes | yes | yes | yes | yes | no | READY | None |
-| Newton | newton | 48351 | yes | yes | yes | yes | yes | no | READY | None |
-| Tyler | tyler | 48457 | yes | yes | yes | yes | yes | no | READY | None |
-| Galveston | galveston | 48167 | yes | yes | yes | yes | yes | no | READY | None |
-| Brazoria | brazoria | 48039 | yes | yes | yes | yes | yes | no | READY | None |
-| Fort Bend | fort-bend | 48157 | yes | yes | yes | yes | yes | no | READY | None |
-| Waller | waller | 48473 | yes | yes | yes | yes | yes | no | READY | None |
-| Austin | austin | 48015 | yes | yes | yes | yes | yes | no | READY | None |
-| Washington | washington | 48477 | yes | yes | yes | yes | yes | no | READY | None |
-| Brazos | brazos | 48041 | yes | yes | yes | yes | yes | no | READY | None |
-| Grimes | grimes | 48185 | yes | yes | yes | yes | yes | no | READY | None |
-| Wharton | wharton | 48481 | yes | yes | yes | yes | yes | no | READY | None |
-| Colorado | colorado | 48089 | yes | yes | yes | yes | yes | no | READY | None |
-| Fayette | fayette | 48149 | yes | yes | yes | yes | yes | no | READY | None |
-| Lavaca | lavaca | 48285 | yes | yes | yes | yes | yes | no | READY | None |
-| Jackson | jackson | 48239 | yes | yes | yes | yes | yes | no | READY | None |
-| Matagorda | matagorda | 48321 | yes | yes | yes | yes | yes | no | READY | None |
-| Calhoun | calhoun | 48057 | yes | yes | yes | yes | yes | no | READY | None |
+| Hardin | hardin | 48199 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Polk | polk | 48373 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Walker | walker | 48471 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Harris | harris | 48201 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Orange | orange | 48361 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Jasper | jasper | 48241 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Newton | newton | 48351 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Tyler | tyler | 48457 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Galveston | galveston | 48167 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Brazoria | brazoria | 48039 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Fort Bend | fort-bend | 48157 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Waller | waller | 48473 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Austin | austin | 48015 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Washington | washington | 48477 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Brazos | brazos | 48041 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Grimes | grimes | 48185 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Wharton | wharton | 48481 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Colorado | colorado | 48089 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Fayette | fayette | 48149 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Lavaca | lavaca | 48285 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Jackson | jackson | 48239 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Matagorda | matagorda | 48321 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
+| Calhoun | calhoun | 48057 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
 
 ## Quick Summary
 
-V811 adds a deterministic, read-only county expansion inventory for the current 28 Gridly-supported counties. The framework confirms Liberty, Montgomery, San Jacinto, Chambers, and Jefferson remain the only operational counties, identifies 23 non-operational counties as READY, and blocks 0 future counties because canonical V809/V810 boundary requirements are incomplete.
+V811 adds a deterministic, read-only county expansion inventory for the current 28 Gridly-supported counties. The framework confirms Liberty, Montgomery, San Jacinto, Chambers, and Jefferson remain the only operational counties, identifies 0 non-operational counties as READY, and blocks 0 future counties because canonical V809/V810 boundary requirements are incomplete.
 
 ## Files Modified
 

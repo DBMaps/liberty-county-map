@@ -1,7 +1,7 @@
 {
   "milestone": "V811",
   "title": "County Expansion Framework",
-  "generatedAt": "2026-06-29T15:21:09.821Z",
+  "generatedAt": "2026-06-29T15:39:35.832Z",
   "readOnly": true,
   "readinessRules": {
     "OPERATIONAL": "County is already enabled in runtime with operational=true; readiness does not promote or modify runtime behavior.",
@@ -10,8 +10,8 @@
   },
   "summary": {
     "supportedCounties": 28,
-    "operationalCounties": 5,
-    "readyCounties": 23,
+    "operationalCounties": 28,
+    "readyCounties": 0,
     "blockedCounties": 0,
     "missingBoundaries": [],
     "missingRoads": [
@@ -19,7 +19,7 @@
     ],
     "missingCrossings": [],
     "missingRegistryEntries": [],
-    "overallDetermination": "FRAMEWORK_READY_WITH_PROMOTION_CANDIDATES_HELD_READ_ONLY"
+    "overallDetermination": "FRAMEWORK_READY_NO_NON_OPERATIONAL_COUNTY_READY_FOR_PROMOTION"
   },
   "inventory": [
     {
@@ -98,8 +98,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -111,8 +111,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -124,8 +124,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -137,8 +137,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -150,8 +150,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -163,8 +163,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -176,8 +176,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -189,8 +189,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -202,8 +202,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -215,8 +215,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -228,8 +228,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -241,8 +241,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -254,8 +254,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -267,8 +267,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -280,8 +280,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -293,8 +293,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -306,8 +306,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -319,8 +319,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -332,8 +332,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -345,8 +345,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -358,8 +358,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -371,8 +371,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     },
     {
@@ -384,8 +384,8 @@
       "roadsPackagePresent": true,
       "crossingsPackagePresent": true,
       "packageRegistryEntryPresent": true,
-      "runtimeRegistrationPresent": false,
-      "promotionStatus": "READY",
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
       "blockers": []
     }
   ]
