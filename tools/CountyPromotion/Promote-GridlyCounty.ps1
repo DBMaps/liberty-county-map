@@ -92,21 +92,59 @@ function Get-CommunityNames([string]$CountySlug) {
     return @($manifest.communities | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 }
 
+
+function Get-PromotionMetadataSeed([object]$Readiness) {
+    $seed = Read-JsonFile "tools/CountyPromotion/county-promotion-metadata.seed.json"
+    if (-not $seed -or -not $seed.counties) { return $null }
+    $countyName = $Readiness.county
+    $slug = $Readiness.countySlug
+    $countyId = $Readiness.countyId
+    $matches = @($seed.counties | Where-Object { $_.countyName -eq $countyName -or $_.countySlug -eq $slug -or $_.countyId -eq $countyId })
+    if ($matches.Count -ne 1) { return $null }
+    return $matches[0]
+}
+
+function Get-ObjectPropertyValue([object]$Object, [string]$Name) {
+    if ($null -eq $Object -or [string]::IsNullOrWhiteSpace($Name)) { return $null }
+    $property = $Object.PSObject.Properties[$Name]
+    if ($null -eq $property) { return $null }
+    return $property.Value
+}
+
+function Test-PromotionMetadataSeed([object]$Readiness, [object]$SeedMetadata) {
+    $blockers = @()
+    if (-not $SeedMetadata) { return @("Missing deterministic metadata seed: tools/CountyPromotion/county-promotion-metadata.seed.json does not contain $($Readiness.county).") }
+    foreach ($field in @("countyName", "countySlug", "countyId", "geoid", "boundarySourceReference", "bounds", "defaultAwarenessArea", "localCommunities", "communityCoordinates", "searchHomeAreaRegistration", "awarenessAreaDefinitions")) {
+        if ($null -eq $SeedMetadata.$field -or ([string]$SeedMetadata.$field).Trim().Length -eq 0) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): missing $field." }
+    }
+    if ($SeedMetadata.countyName -ne $Readiness.county) { $blockers += "Metadata seed countyName mismatch for $($Readiness.county): found '$($SeedMetadata.countyName)'." }
+    if ($SeedMetadata.countySlug -ne $Readiness.countySlug) { $blockers += "Metadata seed countySlug mismatch for $($Readiness.county): found '$($SeedMetadata.countySlug)'." }
+    if ($SeedMetadata.countyId -ne $Readiness.countyId) { $blockers += "Metadata seed countyId mismatch for $($Readiness.county): found '$($SeedMetadata.countyId)'." }
+    foreach ($field in @("south", "west", "north", "east")) { if ($null -eq $SeedMetadata.bounds.$field) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): missing bounds.$field." } }
+    $areas = @($SeedMetadata.awarenessAreaDefinitions | ForEach-Object { [string]$_ })
+    if ($areas.Count -eq 0) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): awarenessAreaDefinitions is empty." }
+    if ($areas -notcontains $SeedMetadata.defaultAwarenessArea) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): defaultAwarenessArea is not registered in awarenessAreaDefinitions." }
+    $homeAreas = @($SeedMetadata.searchHomeAreaRegistration.homeAreaOptions | ForEach-Object { [string]$_ })
+    if ($homeAreas.Count -eq 0) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): searchHomeAreaRegistration.homeAreaOptions is empty." }
+    foreach ($area in $areas) {
+        $coord = Get-ObjectPropertyValue $SeedMetadata.communityCoordinates $area
+        if ($null -eq $coord -or $null -eq $coord.lat -or $null -eq $coord.lng) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): missing communityCoordinates for '$area'." }
+    }
+    foreach ($area in $homeAreas) { if ($areas -notcontains $area) { $blockers += "Incomplete deterministic metadata seed for $($Readiness.county): home area '$area' is not in awarenessAreaDefinitions." } }
+    return $blockers
+}
+
 function Test-DeterministicPlan([object]$Readiness) {
     $countyName = $Readiness.county
     $slug = $Readiness.countySlug
     $countyId = $Readiness.countyId
-    $boundary = Find-BoundaryFeature $countyName
-    $communities = Get-CommunityNames $slug
+    $seedMetadata = Get-PromotionMetadataSeed $Readiness
     $registryPath = Join-Path $script:RepoRoot "js/gridlyPackageRegistry.js"
     $appPath = Join-Path $script:RepoRoot "js/app.js"
     $registry = Get-Content $registryPath -Raw
     $app = Get-Content $appPath -Raw
-    $blockers = @()
+    $blockers = @(Test-PromotionMetadataSeed $Readiness $seedMetadata)
 
-    if (-not $boundary -or [string]::IsNullOrWhiteSpace($boundary.geoid)) { $blockers += "Missing deterministic boundary metadata: standard Texas county boundary GEOID could not be inferred for $countyName." }
-    if (-not $boundary -or -not $boundary.bounds) { $blockers += "Missing deterministic bounds: county awareness bounds could not be computed from boundary geometry for $countyName." }
-    if ($communities.Count -eq 0) { $blockers += "Missing deterministic community mapping: Community-Packages/$slug/package-manifest.json does not list local communities." }
     if ($registry -notmatch [regex]::Escape('id: "community.' + $countyId + '"')) { $blockers += "Package registry pattern missing: community.$countyId entry was not found." }
     if ($app -notmatch "(?m)^  \`"chambers-tx\`": Object\.freeze\(\{") { $blockers += "Runtime insertion anchor missing: Chambers controlled-promotion runtime entry was not found." }
     if ($app -notmatch "const GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID = Object\.freeze\(\{") { $blockers += "Awareness bounds anchor missing." }
@@ -114,18 +152,30 @@ function Test-DeterministicPlan([object]$Readiness) {
     if ($app -notmatch "const GRIDLY_HOME_AREA_OPTIONS_BY_COUNTY = Object\.freeze\(\{") { $blockers += "Home/search options anchor missing." }
     if ($app -notmatch "const GRIDLY_COUNTY_BOUNDARY_OVERLAY_COUNTY_IDS = Object\.freeze\(\[") { $blockers += "Boundary overlay county-id anchor missing." }
 
+    $boundary = $null
+    $communities = @()
     $areas = @()
-    if ($boundary) {
-        $areas += [pscustomobject]@{ key = "$slug-county"; label = "$countyName County"; storageValue = "$countyName County"; lat = $boundary.center.lat; lng = $boundary.center.lng; radiusMiles = $null; startupZoom = 10; countyWide = $true }
-    }
-    foreach ($community in $communities) {
-        # V793 deliberately refuses to geocode or guess local anchors. Community coordinates must exist in deterministic repo data.
-        $blockers += "Missing deterministic community coordinate mapping for '$community' in $countyName; writer will not guess local search/home-area anchors."
+    if ($seedMetadata) {
+        $boundary = [pscustomobject]@{
+            geoid = [string]$seedMetadata.geoid
+            bounds = $seedMetadata.bounds
+            center = (Get-ObjectPropertyValue $seedMetadata.communityCoordinates $seedMetadata.defaultAwarenessArea)
+            sourceReference = [string]$seedMetadata.boundarySourceReference
+        }
+        $communities = @($seedMetadata.localCommunities | ForEach-Object { [string]$_ })
+        foreach ($areaName in @($seedMetadata.awarenessAreaDefinitions | ForEach-Object { [string]$_ })) {
+            $coord = Get-ObjectPropertyValue $seedMetadata.communityCoordinates $areaName
+            if ($coord) {
+                $areas += [pscustomobject]@{ key = (($areaName.ToLowerInvariant() -replace "[^a-z0-9]+", "-" -replace "^-|-$", "")); label = $areaName; storageValue = $areaName; lat = $coord.lat; lng = $coord.lng; radiusMiles = $null; startupZoom = $coord.startupZoom; countyWide = [bool]$coord.countyWide }
+            }
+        }
     }
 
     return [pscustomobject]@{
         safeToWrite = ($blockers.Count -eq 0)
         blockers = $blockers
+        metadataSeedPath = "tools/CountyPromotion/county-promotion-metadata.seed.json"
+        metadataSeed = $seedMetadata
         boundary = $boundary
         communities = $communities
         awarenessAreas = $areas
@@ -189,9 +239,9 @@ function Apply-PromotionBatch([object[]]$ApprovedResults) {
         $countyId = $result.countyId
         $areas = @($result.deterministic.awarenessAreas)
         $areaNames = @($areas | ForEach-Object { $_.storageValue })
-        $defaultCity = if ($areaNames.Count -gt 1) { $areaNames[1] } else { "$name County" }
+        $defaultCity = [string]$result.deterministic.metadataSeed.searchHomeAreaRegistration.defaultCity
         $registryReplacement = @"
-{ id: "community.$countyId", name: "$name", packageType: "community", version: "1.0.0-v793-controlled-promotion", status: "active", dependencies: [], capabilities: ["community-metadata", "regional-membership", "awareness-areas", "controlled-promotion"], validationState: "valid", community: Object.freeze({ countyId: "$countyId", displayName: "$name", countyName: "$name County", state: "TX", awarenessAreas: Object.freeze([$(ConvertTo-JsStringArray $areaNames)]), productionEnabled: true, selectable: true }), regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "$countyId", lifecycle: "production", activeImplementation: true, controlledPromotion: true, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "controlled-enabled-community-package" }), ownership: Object.freeze({ ownsAwarenessAreas: true, ownsPackageMetadata: true, ownsValidationState: true, ownsRoads: false, ownsCorridors: false, ownsRail: false, ownsCrossings: false, ownsTransportationIntelligence: false, ownsIntelligenceObjects: false, ownsTrust: false, ownsPresentationBehavior: false }) }
+{ id: "community.$countyId", name: "$name", packageType: "community", version: "1.0.0-v794-controlled-promotion", status: "active", dependencies: [], capabilities: ["community-metadata", "regional-membership", "awareness-areas", "controlled-promotion"], validationState: "valid", community: Object.freeze({ countyId: "$countyId", displayName: "$name", countyName: "$name County", state: "TX", awarenessAreas: Object.freeze([$(ConvertTo-JsStringArray $areaNames)]), productionEnabled: true, selectable: true }), regional: Object.freeze({ foundationId: "regional.southeast-texas", operationalRegionId: "operational-region.southeast-texas", countyId: "$countyId", lifecycle: "production", activeImplementation: true, controlledPromotion: true, runtimeOwnershipMigrated: false }), operationalRegion: Object.freeze({ id: "operational-region.southeast-texas", role: "controlled-enabled-community-package" }), ownership: Object.freeze({ ownsAwarenessAreas: true, ownsPackageMetadata: true, ownsValidationState: true, ownsRoads: false, ownsCorridors: false, ownsRail: false, ownsCrossings: false, ownsTransportationIntelligence: false, ownsIntelligenceObjects: false, ownsTrust: false, ownsPresentationBehavior: false }) }
 "@
         $registryReplacement = $registryReplacement.Trim()
         $registryPattern = '\{ id: "community\.' + [regex]::Escape($countyId) + '"[^\r\n]*\}'
@@ -215,7 +265,7 @@ function Apply-PromotionBatch([object[]]$ApprovedResults) {
     packageRoot: "assets/county-implementation/$slug/",
     manifestPath: "Community-Packages/$slug/package-manifest.json",
     boundaryPath: "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
-    boundarySource: "standard Texas county boundary overlay GEOID $($result.deterministic.boundary.geoid)",
+    boundarySource: "metadata seed $($result.deterministic.metadataSeedPath); $($result.deterministic.boundary.sourceReference)",
     roadSegmentsPath: null,
     roadSegmentsPathPrevious: "assets/county-implementation/$slug/runtime-assets/source/tl_2025_$($result.deterministic.boundary.geoid)_roads.shp",
     crossingsPath: null,
@@ -224,13 +274,13 @@ function Apply-PromotionBatch([object[]]$ApprovedResults) {
     defaultAwarenessAreas: [$(ConvertTo-JsStringArray $areaNames)],
     runtimeSourceOwner: "$slug-owned",
     runtimeSourceAvailability: Object.freeze({ boundary: "available", roads: "source-available", crossings: "available", awarenessAreas: "available" }),
-    controlledPromotion: Object.freeze({ milestone: "V793", status: "controlled-enabled", readinessGate: "READY FOR CONTROLLED PROMOTION" })
+    controlledPromotion: Object.freeze({ milestone: "V794", status: "controlled-enabled", readinessGate: "READY FOR CONTROLLED PROMOTION" })
   }),
 "@
         $app = $app -replace '(?s)(  "chambers-tx": Object\.freeze\(\{.*?\n  \}\),\r?\n)', "`$1$runtimeEntry"
-        $boundsEntry = '  "' + $countyId + '": Object.freeze({ ...' + ($slug.ToUpperInvariant() -replace '-', '_') + '_COUNTY_AWARENESS_BOUNDS, source: "' + $slug + '-controlled-promotion-bounds-v793" })'
+        $boundsEntry = '  "' + $countyId + '": Object.freeze({ ...' + ($slug.ToUpperInvariant() -replace '-', '_') + '_COUNTY_AWARENESS_BOUNDS, source: "' + $slug + '-controlled-promotion-bounds-v794" })'
         $app = $app -replace '(  "chambers-tx": Object\.freeze\(\{ \.\.\.CHAMBERS_COUNTY_AWARENESS_BOUNDS, source: "chambers-controlled-promotion-bounds-v788" \}\))', "`$1,`r`n$boundsEntry"
-        $areaLines = @($areas | ForEach-Object { '  { key: "' + $_.key + '", label: "' + $_.label + '", storageValue: "' + $_.storageValue + '", countyId: "' + $countyId + '", lat: ' + $_.lat + ', lng: ' + $_.lng + ', radiusMiles: null, startupZoom: 10, countyWide: true, source: "' + $name + ' V793 controlled promotion anchor" },' }) -join "`r`n"
+        $areaLines = @($areas | ForEach-Object { '  { key: "' + $_.key + '", label: "' + $_.label + '", storageValue: "' + $_.storageValue + '", countyId: "' + $countyId + '", lat: ' + $_.lat + ', lng: ' + $_.lng + ', radiusMiles: null, startupZoom: 10, countyWide: true, source: "' + $name + ' V794 controlled promotion anchor" },' }) -join "`r`n"
         $app = $app -replace '(  \{ key: "cove"[^\r\n]+\},\r?\n)', "`$1$areaLines`r`n"
         $homeLine = '  "' + $countyId + '": [' + (ConvertTo-JsStringArray $areaNames) + ']'
         $app = $app -replace '(  "chambers-tx": \[GRIDLY_CHAMBERS_COUNTY_WIDE_HOME_TOWN, "Anahuac", "Mont Belvieu", "Winnie", "Beach City", "Cove"\])', "`$1,`r`n$homeLine"
@@ -297,7 +347,7 @@ if (-not $WhatIf -and -not $hasBlocked) {
 
 $output = [pscustomobject]@{
     title = "GRIDLY COUNTY PROMOTION DETERMINISTIC WRITER"
-    version = "V793"
+    version = "V794"
     mode = if ($WhatIf) { "WhatIf" } else { "Write" }
     writeModeEnabled = $writeModeEnabled
     allOrNothing = $true

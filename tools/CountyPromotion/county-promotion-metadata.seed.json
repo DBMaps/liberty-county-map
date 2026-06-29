@@ -1,0 +1,68 @@
+{
+  "version": "V794",
+  "sourcePolicy": "Explicit county promotion metadata seed. Values are operator-provided deterministic inputs; the promotion writer must not infer or geocode missing values.",
+  "counties": [
+    {
+      "countyName": "Jefferson",
+      "countySlug": "jefferson",
+      "countyId": "jefferson-tx",
+      "state": "TX",
+      "geoid": "48245",
+      "boundarySourceReference": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson feature geoid=48245",
+      "bounds": { "south": 26.92, "west": -105.1, "north": 27.12, "east": -104.9 },
+      "defaultAwarenessArea": "Jefferson County",
+      "localCommunities": ["Beaumont", "Port Arthur", "Nederland", "Port Neches"],
+      "communityCoordinates": {
+        "Jefferson County": { "lat": 27.02, "lng": -105.0, "countyWide": true, "startupZoom": 10 },
+        "Beaumont": { "lat": 30.0802, "lng": -94.1266, "countyWide": false, "startupZoom": 11 },
+        "Port Arthur": { "lat": 29.8849, "lng": -93.9399, "countyWide": false, "startupZoom": 11 },
+        "Nederland": { "lat": 29.9744, "lng": -93.9924, "countyWide": false, "startupZoom": 11 },
+        "Port Neches": { "lat": 29.9913, "lng": -93.9585, "countyWide": false, "startupZoom": 11 }
+      },
+      "searchHomeAreaRegistration": { "defaultCity": "Beaumont", "homeAreaOptions": ["Jefferson County", "Beaumont", "Port Arthur", "Nederland", "Port Neches"] },
+      "awarenessAreaDefinitions": ["Jefferson County", "Beaumont", "Port Arthur", "Nederland", "Port Neches"]
+    },
+    {
+      "countyName": "Polk",
+      "countySlug": "polk",
+      "countyId": "polk-tx",
+      "state": "TX",
+      "geoid": "48373",
+      "boundarySourceReference": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson feature geoid=48373",
+      "bounds": { "south": 27.88, "west": -103.3, "north": 28.08, "east": -103.1 },
+      "defaultAwarenessArea": "Polk County",
+      "localCommunities": ["Livingston", "Onalaska", "Corrigan", "Goodrich"],
+      "communityCoordinates": {
+        "Polk County": { "lat": 27.98, "lng": -103.2, "countyWide": true, "startupZoom": 10 },
+        "Livingston": { "lat": 30.7110, "lng": -94.9322, "countyWide": false, "startupZoom": 11 },
+        "Onalaska": { "lat": 30.8057, "lng": -95.1163, "countyWide": false, "startupZoom": 11 },
+        "Corrigan": { "lat": 30.9969, "lng": -94.8272, "countyWide": false, "startupZoom": 11 },
+        "Goodrich": { "lat": 30.6085, "lng": -94.9466, "countyWide": false, "startupZoom": 11 }
+      },
+      "searchHomeAreaRegistration": { "defaultCity": "Livingston", "homeAreaOptions": ["Polk County", "Livingston", "Onalaska", "Corrigan", "Goodrich"] },
+      "awarenessAreaDefinitions": ["Polk County", "Livingston", "Onalaska", "Corrigan", "Goodrich"]
+    },
+    {
+      "countyName": "Harris",
+      "countySlug": "harris",
+      "countyId": "harris-tx",
+      "state": "TX",
+      "geoid": "48201",
+      "boundarySourceReference": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson feature geoid=48201",
+      "bounds": { "south": 26.6, "west": -106.0, "north": 26.8, "east": -105.8 },
+      "defaultAwarenessArea": "Harris County",
+      "localCommunities": ["Houston", "Pasadena", "Baytown", "Humble", "Katy", "Tomball"],
+      "communityCoordinates": {
+        "Harris County": { "lat": 26.7, "lng": -105.9, "countyWide": true, "startupZoom": 10 },
+        "Houston": { "lat": 29.7604, "lng": -95.3698, "countyWide": false, "startupZoom": 11 },
+        "Pasadena": { "lat": 29.6911, "lng": -95.2091, "countyWide": false, "startupZoom": 11 },
+        "Baytown": { "lat": 29.7355, "lng": -94.9774, "countyWide": false, "startupZoom": 11 },
+        "Humble": { "lat": 29.9988, "lng": -95.2622, "countyWide": false, "startupZoom": 11 },
+        "Katy": { "lat": 29.7858, "lng": -95.8244, "countyWide": false, "startupZoom": 11 },
+        "Tomball": { "lat": 30.0972, "lng": -95.6161, "countyWide": false, "startupZoom": 11 }
+      },
+      "searchHomeAreaRegistration": { "defaultCity": "Houston", "homeAreaOptions": ["Harris County", "Houston", "Pasadena", "Baytown", "Humble", "Katy", "Tomball"] },
+      "awarenessAreaDefinitions": ["Harris County", "Houston", "Pasadena", "Baytown", "Humble", "Katy", "Tomball"]
+    }
+  ]
+}
