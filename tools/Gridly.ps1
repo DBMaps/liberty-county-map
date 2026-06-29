@@ -48,7 +48,8 @@ while ($true) {
         "tools\Inventory\Get-GridlyInventory.ps1",
         "tools\Certification\New-GridlyCertification.ps1",
         "tools\Release\New-GridlyRelease.ps1",
-        "tools\Release\New-GridlyHandoff.ps1"
+        "tools\Release\New-GridlyHandoff.ps1",
+        "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1"
     )
 
     Write-Host "====================================================" -ForegroundColor Cyan
@@ -93,6 +94,7 @@ else {
     Write-Host "5. Open Documentation"
     Write-Host "6. Open Certification Folder"
     Write-Host "7. Open Release Folder"
+    Write-Host "8. County Promotion Readiness"
     Write-Host "0. Exit"
     Write-Host ""
 
@@ -144,6 +146,21 @@ else {
         "7" {
 
             explorer ".\tools\Release"
+
+        }
+
+        "8" {
+
+            Clear-Host
+            $County = Read-Host "County name"
+
+            if (-not [string]::IsNullOrWhiteSpace($County)) {
+                $Tool = Join-Path (Get-Location) "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1"
+                powershell -ExecutionPolicy Bypass -File $Tool -County $County
+            }
+
+            Write-Host ""
+            Read-Host "Press ENTER to return to Command Center" | Out-Null
 
         }
 
