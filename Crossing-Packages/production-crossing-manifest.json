@@ -1,18 +1,123 @@
 ﻿{
     "dataset":  "Gridly Production Crossing Packages",
     "status":  "active",
-    "generatedAt":  "2026-06-28T15:48:44.9305764-05:00",
-    "totalPackages":  4,
-    "totalCrossings":  312,
-    "passCount":  4,
+    "generatedAt":  "2026-06-28T23:37:17.4394378-05:00",
+    "totalPackages":  28,
+    "totalCrossings":  3771,
+    "passCount":  28,
     "blockedCount":  0,
     "records":  [
+                    {
+                        "county":  "Austin",
+                        "status":  "PASS",
+                        "crossingCount":  101,
+                        "certificationFile":  "Crossing-Packages\\austin\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\austin\\Production\\austin-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Brazoria",
+                        "status":  "PASS",
+                        "crossingCount":  157,
+                        "certificationFile":  "Crossing-Packages\\brazoria\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\brazoria\\Production\\brazoria-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Brazos",
+                        "status":  "PASS",
+                        "crossingCount":  86,
+                        "certificationFile":  "Crossing-Packages\\brazos\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\brazos\\Production\\brazos-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Calhoun",
+                        "status":  "PASS",
+                        "crossingCount":  74,
+                        "certificationFile":  "Crossing-Packages\\calhoun\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\calhoun\\Production\\calhoun-production-crossings.geojson"
+                    },
                     {
                         "county":  "Chambers",
                         "status":  "PASS",
                         "crossingCount":  15,
                         "certificationFile":  "Crossing-Packages\\chambers\\Production\\production-certification.json",
                         "packageFile":  "Crossing-Packages\\chambers\\Production\\chambers-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Colorado",
+                        "status":  "PASS",
+                        "crossingCount":  109,
+                        "certificationFile":  "Crossing-Packages\\colorado\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\colorado\\Production\\colorado-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Fayette",
+                        "status":  "PASS",
+                        "crossingCount":  152,
+                        "certificationFile":  "Crossing-Packages\\fayette\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\fayette\\Production\\fayette-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Fort Bend",
+                        "status":  "PASS",
+                        "crossingCount":  175,
+                        "certificationFile":  "Crossing-Packages\\fort-bend\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\fort-bend\\Production\\fort-bend-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Galveston",
+                        "status":  "PASS",
+                        "crossingCount":  144,
+                        "certificationFile":  "Crossing-Packages\\galveston\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\galveston\\Production\\galveston-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Grimes",
+                        "status":  "PASS",
+                        "crossingCount":  109,
+                        "certificationFile":  "Crossing-Packages\\grimes\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\grimes\\Production\\grimes-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Hardin",
+                        "status":  "PASS",
+                        "crossingCount":  82,
+                        "certificationFile":  "Crossing-Packages\\hardin\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\hardin\\Production\\hardin-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Harris",
+                        "status":  "PASS",
+                        "crossingCount":  1159,
+                        "certificationFile":  "Crossing-Packages\\harris\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\harris\\Production\\harris-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Jackson",
+                        "status":  "PASS",
+                        "crossingCount":  74,
+                        "certificationFile":  "Crossing-Packages\\jackson\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\jackson\\Production\\jackson-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Jasper",
+                        "status":  "PASS",
+                        "crossingCount":  106,
+                        "certificationFile":  "Crossing-Packages\\jasper\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\jasper\\Production\\jasper-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Jefferson",
+                        "status":  "PASS",
+                        "crossingCount":  378,
+                        "certificationFile":  "Crossing-Packages\\jefferson\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\jefferson\\Production\\jefferson-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Lavaca",
+                        "status":  "PASS",
+                        "crossingCount":  39,
+                        "certificationFile":  "Crossing-Packages\\lavaca\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\lavaca\\Production\\lavaca-production-crossings.geojson"
                     },
                     {
                         "county":  "Liberty",
@@ -22,6 +127,13 @@
                         "packageFile":  "Crossing-Packages\\liberty\\Production\\liberty-production-crossings.geojson"
                     },
                     {
+                        "county":  "Matagorda",
+                        "status":  "PASS",
+                        "crossingCount":  80,
+                        "certificationFile":  "Crossing-Packages\\matagorda\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\matagorda\\Production\\matagorda-production-crossings.geojson"
+                    },
+                    {
                         "county":  "Montgomery",
                         "status":  "PASS",
                         "crossingCount":  170,
@@ -29,11 +141,67 @@
                         "packageFile":  "Crossing-Packages\\montgomery\\Production\\montgomery-production-crossings.geojson"
                     },
                     {
+                        "county":  "Newton",
+                        "status":  "PASS",
+                        "crossingCount":  26,
+                        "certificationFile":  "Crossing-Packages\\newton\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\newton\\Production\\newton-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Orange",
+                        "status":  "PASS",
+                        "crossingCount":  149,
+                        "certificationFile":  "Crossing-Packages\\orange\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\orange\\Production\\orange-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Polk",
+                        "status":  "PASS",
+                        "crossingCount":  64,
+                        "certificationFile":  "Crossing-Packages\\polk\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\polk\\Production\\polk-production-crossings.geojson"
+                    },
+                    {
                         "county":  "San Jacinto",
                         "status":  "PASS",
                         "crossingCount":  12,
                         "certificationFile":  "Crossing-Packages\\san-jacinto\\Production\\production-certification.json",
                         "packageFile":  "Crossing-Packages\\san-jacinto\\Production\\san-jacinto-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Tyler",
+                        "status":  "PASS",
+                        "crossingCount":  0,
+                        "certificationFile":  "Crossing-Packages\\tyler\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\tyler\\Production\\tyler-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Walker",
+                        "status":  "PASS",
+                        "crossingCount":  36,
+                        "certificationFile":  "Crossing-Packages\\walker\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\walker\\Production\\walker-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Waller",
+                        "status":  "PASS",
+                        "crossingCount":  46,
+                        "certificationFile":  "Crossing-Packages\\waller\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\waller\\Production\\waller-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Washington",
+                        "status":  "PASS",
+                        "crossingCount":  41,
+                        "certificationFile":  "Crossing-Packages\\washington\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\washington\\Production\\washington-production-crossings.geojson"
+                    },
+                    {
+                        "county":  "Wharton",
+                        "status":  "PASS",
+                        "crossingCount":  72,
+                        "certificationFile":  "Crossing-Packages\\wharton\\Production\\production-certification.json",
+                        "packageFile":  "Crossing-Packages\\wharton\\Production\\wharton-production-crossings.geojson"
                     }
                 ]
 }
