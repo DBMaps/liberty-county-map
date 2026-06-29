@@ -5,7 +5,6 @@
     const LEGACY_SOURCE = "data/liberty-county-rail-crossings.geojson";
     const CURATED_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings-curated.geojson";
     const RAW_FRA_REVIEW_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
-    const PRODUCTION_PACKAGE_SOURCE = "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson";
 
     const state = {
         mode: "production",
@@ -51,17 +50,40 @@
         return geojson;
     }
 
+    function resolveRuntimeCrossingSource(options) {
+        const explicitSource = options?.sourcePath || options?.crossingSource || options?.runtimeCrossingSourcePath;
+        if (explicitSource) return explicitSource;
+
+        const countyId = options?.countyId || (typeof window.gridlyGetActiveCountyId === "function" ? window.gridlyGetActiveCountyId() : null);
+        if (countyId && typeof window.gridlyGetCountyRuntimeSources === "function") {
+            return window.gridlyGetCountyRuntimeSources(countyId)?.crossingSource || null;
+        }
+        if (typeof window.gridlyGetActiveCountyRuntimeSources === "function") {
+            return window.gridlyGetActiveCountyRuntimeSources()?.crossingSource || null;
+        }
+        return null;
+    }
+
+    async function loadRuntimeProductionCrossings(options) {
+        if (!window.gridlyCrossingPackageAdapter?.buildAdaptedCrossingGeojson) {
+            throw new Error("gridlyCrossingPackageAdapter unavailable");
+        }
+
+        const runtimeSource = resolveRuntimeCrossingSource(options);
+        if (!runtimeSource) throw new Error("Active county crossing source unavailable");
+
+        const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(runtimeSource, options?.geojson || options?.alreadyFetchedGeojson || null);
+        state.lastProductionLoad = { source: runtimeSource, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        state.lastLoadTrace = { mode: "production", sourcePath: runtimeSource, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), adapterTrace: window.gridlyCrossingPackageAdapter?.getLastLoadTrace?.() || null, loadedAt: state.lastProductionLoad.loadedAt };
+        return geojson;
+    }
+
     async function getActiveCountyCrossings(options) {
         const requestedMode = options && options.mode ? String(options.mode).toLowerCase() : state.mode;
 
         if (requestedMode === "package") return loadCuratedPackageCrossings();
         if (requestedMode === "fra-review") return loadFraReviewCrossings();
-        if (requestedMode === "production") {
-            const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PRODUCTION_PACKAGE_SOURCE);
-            state.lastProductionLoad = { source: PRODUCTION_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
-            state.lastLoadTrace = { mode: "production", sourcePath: PRODUCTION_PACKAGE_SOURCE, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), adapterTrace: window.gridlyCrossingPackageAdapter?.getLastLoadTrace?.() || null, loadedAt: state.lastProductionLoad.loadedAt };
-            return geojson;
-        }
+        if (requestedMode === "production") return loadRuntimeProductionCrossings(options || {});
 
         return loadLegacyCrossings();
     }

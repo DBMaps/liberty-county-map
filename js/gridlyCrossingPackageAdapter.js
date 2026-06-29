@@ -91,9 +91,11 @@
         };
     }
 
-    async function buildAdaptedCrossingGeojson(sourcePath) {
+    async function buildAdaptedCrossingGeojson(sourcePath, alreadyFetchedGeojson) {
         const packageSource = sourcePath || DEFAULT_PACKAGE_SOURCE;
-        const raw = await fetchJson(packageSource);
+        const raw = alreadyFetchedGeojson && typeof alreadyFetchedGeojson === "object"
+            ? alreadyFetchedGeojson
+            : await fetchJson(packageSource);
         const features = Array.isArray(raw && raw.features) ? raw.features : [];
         lastLoadTrace = {
             sourcePath: packageSource,
