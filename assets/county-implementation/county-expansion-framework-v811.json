@@ -1,0 +1,485 @@
+{
+  "milestone": "V811",
+  "title": "County Expansion Framework",
+  "generatedAt": "2026-06-29T13:58:10.351Z",
+  "readOnly": true,
+  "readinessRules": {
+    "OPERATIONAL": "County is already enabled in runtime with operational=true; readiness does not promote or modify runtime behavior.",
+    "READY": "County is not operational and has authoritative boundary source, canonical runtime boundary, roads package, crossings package, and package registry entries.",
+    "BLOCKED": "County is not operational and one or more required assets or registry entries are missing."
+  },
+  "summary": {
+    "supportedCounties": 28,
+    "operationalCounties": 5,
+    "readyCounties": 0,
+    "blockedCounties": 23,
+    "missingBoundaries": [
+      "Hardin",
+      "Polk",
+      "Walker",
+      "Harris",
+      "Orange",
+      "Jasper",
+      "Newton",
+      "Tyler",
+      "Galveston",
+      "Brazoria",
+      "Fort Bend",
+      "Waller",
+      "Austin",
+      "Washington",
+      "Brazos",
+      "Grimes",
+      "Wharton",
+      "Colorado",
+      "Fayette",
+      "Lavaca",
+      "Jackson",
+      "Matagorda",
+      "Calhoun"
+    ],
+    "missingRoads": [
+      "Jefferson"
+    ],
+    "missingCrossings": [],
+    "missingRegistryEntries": [],
+    "overallDetermination": "FRAMEWORK_READY_NO_NON_OPERATIONAL_COUNTY_READY_FOR_PROMOTION"
+  },
+  "inventory": [
+    {
+      "county": "Liberty",
+      "countySlug": "liberty",
+      "geoid": "48291",
+      "boundarySourcePresent": true,
+      "runtimeBoundaryPresent": true,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
+      "blockers": []
+    },
+    {
+      "county": "Montgomery",
+      "countySlug": "montgomery",
+      "geoid": "48339",
+      "boundarySourcePresent": true,
+      "runtimeBoundaryPresent": true,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
+      "blockers": []
+    },
+    {
+      "county": "San Jacinto",
+      "countySlug": "san-jacinto",
+      "geoid": "48407",
+      "boundarySourcePresent": true,
+      "runtimeBoundaryPresent": true,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
+      "blockers": []
+    },
+    {
+      "county": "Chambers",
+      "countySlug": "chambers",
+      "geoid": "48071",
+      "boundarySourcePresent": true,
+      "runtimeBoundaryPresent": true,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
+      "blockers": []
+    },
+    {
+      "county": "Jefferson",
+      "countySlug": "jefferson",
+      "geoid": "48245",
+      "boundarySourcePresent": true,
+      "runtimeBoundaryPresent": true,
+      "roadsPackagePresent": false,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": true,
+      "promotionStatus": "OPERATIONAL",
+      "blockers": [
+        "Missing roads package or roads=true in Community-Packages/jefferson/package-manifest.json"
+      ]
+    },
+    {
+      "county": "Hardin",
+      "countySlug": "hardin",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Polk",
+      "countySlug": "polk",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/polk/boundary/polk-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Walker",
+      "countySlug": "walker",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/walker/boundary/walker-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Harris",
+      "countySlug": "harris",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/harris/boundary/harris-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Orange",
+      "countySlug": "orange",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/orange/boundary/orange-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Jasper",
+      "countySlug": "jasper",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Newton",
+      "countySlug": "newton",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/newton/boundary/newton-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Tyler",
+      "countySlug": "tyler",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Galveston",
+      "countySlug": "galveston",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Brazoria",
+      "countySlug": "brazoria",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Fort Bend",
+      "countySlug": "fort-bend",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Waller",
+      "countySlug": "waller",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/waller/boundary/waller-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Austin",
+      "countySlug": "austin",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/austin/boundary/austin-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Washington",
+      "countySlug": "washington",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/washington/boundary/washington-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Brazos",
+      "countySlug": "brazos",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Grimes",
+      "countySlug": "grimes",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Wharton",
+      "countySlug": "wharton",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Colorado",
+      "countySlug": "colorado",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Fayette",
+      "countySlug": "fayette",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Lavaca",
+      "countySlug": "lavaca",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Jackson",
+      "countySlug": "jackson",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Matagorda",
+      "countySlug": "matagorda",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson"
+      ]
+    },
+    {
+      "county": "Calhoun",
+      "countySlug": "calhoun",
+      "geoid": null,
+      "boundarySourcePresent": false,
+      "runtimeBoundaryPresent": false,
+      "roadsPackagePresent": true,
+      "crossingsPackagePresent": true,
+      "packageRegistryEntryPresent": true,
+      "runtimeRegistrationPresent": false,
+      "promotionStatus": "BLOCKED",
+      "blockers": [
+        "Missing authoritative boundary source: Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson",
+        "Missing canonical runtime boundary: assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson"
+      ]
+    }
+  ]
+}
