@@ -1,0 +1,43 @@
+{
+  "milestone": "V794",
+  "title": "County Promotion Metadata Seed",
+  "status": "implemented_with_runtime_handoff_required",
+  "metadataSeed": "tools/CountyPromotion/county-promotion-metadata.seed.json",
+  "promotionTool": "tools/CountyPromotion/Promote-GridlyCounty.ps1",
+  "seededCounties": ["Jefferson", "Polk", "Harris"],
+  "deterministicInputs": [
+    "countyName",
+    "countySlug",
+    "countyId",
+    "geoid",
+    "boundarySourceReference",
+    "bounds",
+    "localCommunities",
+    "communityCoordinates",
+    "defaultAwarenessArea",
+    "searchHomeAreaRegistration",
+    "awarenessAreaDefinitions"
+  ],
+  "safetyControls": {
+    "allOrNothingWrite": true,
+    "noGuessingMissingValues": true,
+    "incompleteSeedBlocksPromotion": true,
+    "productionPackageContentsChanged": false,
+    "protectedSystemsChanged": false
+  },
+  "runtimeValidation": {
+    "environment": "PowerShell unavailable in validation container",
+    "whatIfRequired": ["Jefferson", "Polk", "Harris"],
+    "writeModeAllowedOnlyIfMetadataComplete": true,
+    "handoffRequired": true
+  },
+  "protectedSystemsNotModified": [
+    "production package contents",
+    "Shared Reports",
+    "Route Watch",
+    "Awareness Filtering",
+    "Hazard Lifecycle",
+    "Alert Generation",
+    "Supabase Sync"
+  ]
+}
