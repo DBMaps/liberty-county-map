@@ -197,7 +197,7 @@ else {
             Clear-Host
             Write-Host "County Promotion Automation" -ForegroundColor Cyan
             Write-Host "1. WhatIf/preflight (default)"
-            Write-Host "2. Actual promotion (currently blocked by V792 safety rules)"
+            Write-Host "2. Actual promotion (readiness-gated deterministic write mode)"
             $PromotionChoice = Read-Host "Select"
             $County = Read-Host "County name(s), comma-separated"
             $Tool = Join-Path (Get-Location) "tools\CountyPromotion\Promote-GridlyCounty.ps1"
