@@ -59,6 +59,16 @@ while ($true) {
     Write-Host ("Repository : {0}" -f (Split-Path (Get-Location) -Leaf))
     Write-Host ("Branch     : {0}" -f $Branch)
     Write-Host ("Git Status : {0}" -f $GitState)
+Write-Host ""
+
+$Readiness = powershell -ExecutionPolicy Bypass -File ".\tools\Runtime\Invoke-GridlyProductionReadiness.ps1" 2>$null
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Production Status : READY TO SHIP" -ForegroundColor Green
+}
+else {
+    Write-Host "Production Status : BLOCKED" -ForegroundColor Red
+}
 
     Write-Host ""
     Write-Host "Toolkit Modules"
