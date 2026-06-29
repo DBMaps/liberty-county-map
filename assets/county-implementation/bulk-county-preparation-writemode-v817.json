@@ -1,0 +1,647 @@
+{
+  "milestone": "V817",
+  "title": "Bulk County Preparation WriteMode Guarded",
+  "generatedAt": "2026-06-29T14:36:17.173Z",
+  "mode": "APPLY_GUARDED_WRITE_MODE_NO_ACTIVATION",
+  "inputs": {
+    "v816": {
+      "path": "assets/county-implementation/bulk-county-preparation-whatif-v816.json",
+      "read": true
+    },
+    "v815": {
+      "path": "assets/county-implementation/bulk-county-preparation-plan-v815.json",
+      "read": true
+    },
+    "v814": {
+      "path": "assets/county-implementation/county-automation-capability-audit-v814.json",
+      "read": true
+    }
+  },
+  "guardrails": {
+    "defaultDryRunNoWrites": false,
+    "noCountyActivation": true,
+    "runtimeRegistrationUnchanged": true,
+    "protectedSystemsUnchanged": true,
+    "deleteOperationsForbidden": true,
+    "existingCanonicalRuntimeFilesNotModified": true
+  },
+  "summary": {
+    "mode": "APPLY_GUARDED_WRITE_MODE_NO_ACTIVATION",
+    "countiesEvaluated": 23,
+    "countiesPrepared": 0,
+    "filesCreated": 0,
+    "filesSkipped": 46,
+    "filesModified": 0,
+    "filesDeleted": 0,
+    "guardrailViolations": 0,
+    "protectedSystemTouchCount": 0,
+    "countiesActivated": 0,
+    "overallDetermination": "GUARDED_PREPARATION_APPLIED_NO_ACTIVATION"
+  },
+  "guardrailViolations": [],
+  "allowedWritePolicy": [
+    "Create missing county boundary folders only under assets/county-implementation/<county>/boundary.",
+    "Copy an existing authoritative WGS84 source boundary from Gridly-Source-Data/Census into the canonical boundary path only when the canonical file is missing.",
+    "Never delete files and never modify protected systems or existing non-equivalent canonical boundary files."
+  ],
+  "counties": [
+    {
+      "county": "Harris",
+      "countySlug": "harris",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/harris/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Polk",
+      "countySlug": "polk",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/polk/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Austin",
+      "countySlug": "austin",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/austin/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Brazoria",
+      "countySlug": "brazoria",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/brazoria/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Brazos",
+      "countySlug": "brazos",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/brazos/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Calhoun",
+      "countySlug": "calhoun",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/calhoun/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Colorado",
+      "countySlug": "colorado",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/colorado/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Fayette",
+      "countySlug": "fayette",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/fayette/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Fort Bend",
+      "countySlug": "fort-bend",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/fort-bend/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Galveston",
+      "countySlug": "galveston",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/galveston/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Grimes",
+      "countySlug": "grimes",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/grimes/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Hardin",
+      "countySlug": "hardin",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/hardin/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Jackson",
+      "countySlug": "jackson",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/jackson/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Jasper",
+      "countySlug": "jasper",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/jasper/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Lavaca",
+      "countySlug": "lavaca",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/lavaca/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Matagorda",
+      "countySlug": "matagorda",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/matagorda/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Newton",
+      "countySlug": "newton",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/newton/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Orange",
+      "countySlug": "orange",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/orange/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Tyler",
+      "countySlug": "tyler",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/tyler/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Walker",
+      "countySlug": "walker",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/walker/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Waller",
+      "countySlug": "waller",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/waller/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Washington",
+      "countySlug": "washington",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/washington/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    },
+    {
+      "county": "Wharton",
+      "countySlug": "wharton",
+      "safeToActivate": false,
+      "sourceBoundary": "Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson",
+      "canonicalBoundary": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+      "v816BoundaryActionClassification": "MANUAL_REQUIRED",
+      "expectedByV816": true,
+      "actions": [
+        {
+          "type": "create_directory",
+          "classification": "SAFE_FUTURE_WRITE_GUARDED_BOUNDARY_ONLY",
+          "target": "assets/county-implementation/wharton/boundary",
+          "allowed": true,
+          "status": "skipped_exists"
+        },
+        {
+          "type": "copy_boundary",
+          "classification": "MANUAL_REQUIRED",
+          "source": "Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson",
+          "target": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+          "allowed": true,
+          "status": "skipped_missing_authoritative_source"
+        }
+      ]
+    }
+  ]
+}
