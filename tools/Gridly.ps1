@@ -49,7 +49,8 @@ while ($true) {
         "tools\Certification\New-GridlyCertification.ps1",
         "tools\Release\New-GridlyRelease.ps1",
         "tools\Release\New-GridlyHandoff.ps1",
-        "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1"
+        "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1",
+        "tools\ProductionPackages\Build-GridlyProductionPackages.ps1"
     )
 
     Write-Host "====================================================" -ForegroundColor Cyan
@@ -95,6 +96,7 @@ else {
     Write-Host "6. Open Certification Folder"
     Write-Host "7. Open Release Folder"
     Write-Host "8. County Promotion Readiness"
+    Write-Host "9. Production Package Manufacturing"
     Write-Host "0. Exit"
     Write-Host ""
 
@@ -157,6 +159,30 @@ else {
             if (-not [string]::IsNullOrWhiteSpace($County)) {
                 $Tool = Join-Path (Get-Location) "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1"
                 powershell -ExecutionPolicy Bypass -File $Tool -County $County
+            }
+
+            Write-Host ""
+            Read-Host "Press ENTER to return to Command Center" | Out-Null
+
+        }
+
+        "9" {
+
+            Clear-Host
+            Write-Host "Production Package Manufacturing" -ForegroundColor Cyan
+            Write-Host "1. All eligible counties"
+            Write-Host "2. One county"
+            $ManufacturingChoice = Read-Host "Select"
+            $Tool = Join-Path (Get-Location) "tools\ProductionPackages\Build-GridlyProductionPackages.ps1"
+
+            if ($ManufacturingChoice -eq "1") {
+                powershell -ExecutionPolicy Bypass -File $Tool -All
+            }
+            elseif ($ManufacturingChoice -eq "2") {
+                $County = Read-Host "County name"
+                if (-not [string]::IsNullOrWhiteSpace($County)) {
+                    powershell -ExecutionPolicy Bypass -File $Tool -County $County
+                }
             }
 
             Write-Host ""

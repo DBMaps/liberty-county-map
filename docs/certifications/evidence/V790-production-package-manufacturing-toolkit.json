@@ -1,0 +1,73 @@
+{
+  "version": "V790",
+  "title": "Production Package Manufacturing Toolkit",
+  "milestoneType": "tooling",
+  "packagesActuallyBuiltDuringMilestone": false,
+  "filesAdded": [
+    "tools/ProductionPackages/Build-GridlyProductionPackages.ps1",
+    "docs/Standards/GRIDLY-PRODUCTION-PACKAGE-MANUFACTURING.md",
+    "docs/certifications/V790-PRODUCTION-PACKAGE-MANUFACTURING-TOOLKIT.md",
+    "docs/certifications/evidence/V790-production-package-manufacturing-toolkit.json"
+  ],
+  "filesModified": [
+    "tools/Gridly.ps1"
+  ],
+  "toolBehavior": {
+    "discoversEligibleCounties": true,
+    "requiresCommunityManifest": true,
+    "requiresCrossingManifest": true,
+    "skipsExistingProductionPackagesUnlessForce": true,
+    "supportsAll": true,
+    "supportsCounty": true,
+    "supportsForce": true,
+    "supportsWhatIf": true,
+    "supportsJson": true,
+    "updatesProductionManifestWhenNotWhatIf": true,
+    "sourcePackagesPreserved": true,
+    "blocksWhenProductionVisibilityRuleCannotBeDiscovered": true,
+    "certificationGeneration": "pending-compatible-pattern-not-present"
+  },
+  "protectedSystems": {
+    "Shared Reports": "unchanged",
+    "Route Watch": "unchanged",
+    "Awareness Filtering": "unchanged",
+    "Hazard Lifecycle": "unchanged",
+    "Alert Generation": "unchanged",
+    "Supabase Synchronization": "unchanged",
+    "Runtime county registration": "unchanged",
+    "Search configuration": "unchanged",
+    "Awareness configuration": "unchanged",
+    "Community Package Pipeline behavior": "unchanged"
+  },
+  "testing": [
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\ProductionPackages\\Build-GridlyProductionPackages.ps1 -All -WhatIf",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\ProductionPackages\\Build-GridlyProductionPackages.ps1 -County Jefferson -WhatIf",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyRuntimeValidation.ps1",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\Validation\\Invoke-GridlySmokeTest.ps1",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyProductionReadiness.ps1",
+      "status": "blocked",
+      "reason": "PowerShell executable is not installed in the execution environment."
+    },
+    {
+      "command": "python3 -m json.tool docs/certifications/evidence/V790-production-package-manufacturing-toolkit.json",
+      "status": "pass"
+    }
+  ]
+}
