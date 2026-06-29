@@ -1,0 +1,105 @@
+{
+  "milestone": "V789",
+  "title": "East Region Controlled Promotion Batch 1",
+  "authorizedCounties": ["Jefferson", "Polk", "Harris"],
+  "modelMilestones": {
+    "promotionPlan": "docs/certifications/V786-PRODUCTION-PACKAGE-PROMOTION-PLAN.md",
+    "readinessTool": "tools/CountyPromotion/Test-GridlyCountyPromotionReadiness.ps1",
+    "controlledPromotionModel": "docs/certifications/V788-CHAMBERS-CONTROLLED-PROMOTION.md"
+  },
+  "executionEnvironment": {
+    "powershellAvailable": false,
+    "pwshAvailable": false,
+    "readinessExecutionMode": "static application of V787 readiness checks"
+  },
+  "countyResults": [
+    {
+      "county": "Jefferson",
+      "countySlug": "jefferson",
+      "countyId": "jefferson-tx",
+      "communityPackage": "PASS",
+      "crossingPackage": "PASS",
+      "productionPackage": "FAIL",
+      "productionManifest": "FAIL",
+      "applicationAssets": "PASS",
+      "runtimeRegistered": "PASS",
+      "searchAwarenessConsumerPrePromotionDisabled": "PASS",
+      "finalStatus": "BLOCKED",
+      "promoted": false,
+      "blockingGaps": [
+        "Missing Crossing-Packages/jefferson/Production/jefferson-production-crossings.geojson",
+        "Missing production manifest entry in Crossing-Packages/production-crossing-manifest.json"
+      ]
+    },
+    {
+      "county": "Polk",
+      "countySlug": "polk",
+      "countyId": "polk-tx",
+      "communityPackage": "PASS",
+      "crossingPackage": "PASS",
+      "productionPackage": "FAIL",
+      "productionManifest": "FAIL",
+      "applicationAssets": "PASS",
+      "runtimeRegistered": "PASS",
+      "searchAwarenessConsumerPrePromotionDisabled": "PASS",
+      "finalStatus": "BLOCKED",
+      "promoted": false,
+      "blockingGaps": [
+        "Missing Crossing-Packages/polk/Production/polk-production-crossings.geojson",
+        "Missing production manifest entry in Crossing-Packages/production-crossing-manifest.json"
+      ]
+    },
+    {
+      "county": "Harris",
+      "countySlug": "harris",
+      "countyId": "harris-tx",
+      "communityPackage": "PASS",
+      "crossingPackage": "PASS",
+      "productionPackage": "FAIL",
+      "productionManifest": "FAIL",
+      "applicationAssets": "PASS",
+      "runtimeRegistered": "PASS",
+      "searchAwarenessConsumerPrePromotionDisabled": "PASS",
+      "finalStatus": "BLOCKED",
+      "promoted": false,
+      "blockingGaps": [
+        "Missing Crossing-Packages/harris/Production/harris-production-crossings.geojson",
+        "Missing production manifest entry in Crossing-Packages/production-crossing-manifest.json"
+      ]
+    }
+  ],
+  "promotionResult": {
+    "countiesPromoted": [],
+    "countiesSkipped": ["Jefferson", "Polk", "Harris"],
+    "unrelatedCountiesEnabled": [],
+    "status": "no-counties-promoted-readiness-blocked"
+  },
+  "packageContentsPreserved": {
+    "productionCrossingPackagesModified": false,
+    "communityPackagesModified": false,
+    "crossingPackagesModified": false
+  },
+  "regressionCounties": {
+    "liberty": "unchanged operational default/reference behavior",
+    "montgomery": "unchanged operational-maintenance behavior",
+    "sanJacinto": "unchanged operational behavior",
+    "chambers": "unchanged V788 controlled-enabled behavior"
+  },
+  "protectedSystemVerification": {
+    "sharedReports": "unchanged",
+    "routeWatch": "unchanged",
+    "awarenessFiltering": "unchanged",
+    "hazardLifecycle": "unchanged",
+    "alertGeneration": "unchanged",
+    "supabaseSynchronization": "unchanged",
+    "communityPackagePipeline": "unchanged"
+  },
+  "testing": {
+    "jsonEvidenceValidation": "PASS",
+    "nodeSyntaxApp": "PASS",
+    "nodeSyntaxPackageRegistry": "PASS",
+    "powershellAvailability": "BLOCKED: no powershell or pwsh executable available in environment",
+    "requiredPowerShellCommandsDocumented": true
+  },
+  "certificationResult": "PASS - controlled promotion batch evaluated with no counties enabled because readiness gates failed"
+}
