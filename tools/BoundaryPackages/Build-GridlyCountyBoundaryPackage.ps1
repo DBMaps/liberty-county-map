@@ -75,7 +75,7 @@ foreach ($target in $Targets) {
         if ([string]$feature.properties.GEOID -ne [string]$target.geoid) { throw "Extracted GEOID mismatch for $slug." }
         $coordinateCount = Get-CoordinateCount $feature.geometry.coordinates
         $bbox = Get-Bbox $feature.geometry.coordinates
-        if ($coordinateCount -le 50) { throw "Coordinate count validation failed for $slug: $coordinateCount." }
+        if ($coordinateCount -le 50) { throw "Coordinate count validation failed for ${slug}: $coordinateCount." }
         if (!(Test-PlausibleBbox $bbox $target.plausibleBbox)) { throw "Plausible bbox validation failed for $slug." }
         $feature.properties | Add-Member -Force NoteProperty countyName $target.countyName
         $feature.properties | Add-Member -Force NoteProperty countySlug $target.countySlug

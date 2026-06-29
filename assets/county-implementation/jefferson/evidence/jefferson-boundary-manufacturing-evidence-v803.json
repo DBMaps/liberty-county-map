@@ -1,0 +1,36 @@
+{
+  "milestone": "V803 Boundary Manufacturing PowerShell Fix",
+  "countyName": "Jefferson",
+  "countySlug": "jefferson",
+  "state": "TX",
+  "GEOID": "48245",
+  "scope": "PowerShell parser compatibility fix for V802 county boundary manufacturing script",
+  "fixedScript": "tools/BoundaryPackages/Build-GridlyCountyBoundaryPackage.ps1",
+  "manufacturedBoundaryPath": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+  "authoritativeSource": "county_sources/census-tiger-2025/tl_2025_us_county.shp",
+  "manualCoordinateEdits": false,
+  "geometryLogicChanged": false,
+  "v802ManufacturingBehaviorPreserved": true,
+  "powershellInterpolationFix": {
+    "issue": "PowerShell treats a variable immediately followed by ':' inside an expandable string as an invalid scoped variable reference unless the variable name is delimited.",
+    "remediation": "Delimited the county slug variable with ${slug}: in the coordinate-count validation error string.",
+    "unsafeVariableColonReferencesRemaining": false
+  },
+  "staticChecks": [
+    {
+      "command": "node tools/Validation/Test-PowerShellInterpolationSafety.mjs tools/BoundaryPackages/Build-GridlyCountyBoundaryPackage.ps1",
+      "purpose": "Detect unscoped PowerShell variable interpolation immediately followed by ':'.",
+      "result": "passed"
+    }
+  ],
+  "runtimeValidation": [
+    {
+      "command": "node scripts/v802-county-boundary-validation.mjs --county jefferson",
+      "purpose": "Confirm existing Jefferson manufactured boundary remains valid after the parser-only script fix.",
+      "result": "passed"
+    }
+  ],
+  "environmentNotes": [
+    "PowerShell was not installed in this Linux container, so script parse/execution was covered by the lightweight interpolation static check and existing Node boundary validation."
+  ]
+}
