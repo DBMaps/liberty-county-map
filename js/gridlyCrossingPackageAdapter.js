@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     "use strict";
 
     const ADAPTER_VERSION = "GRIDLY_CROSSING_PACKAGE_ADAPTER_V1";
@@ -46,6 +46,8 @@
         const crossingNumber = first(p, ["CROSSING", "crossing", "crossing_id", "crossingId"]);
         const street = first(p, ["STREET", "HIGHWAY", "road_name", "roadName", "name"]);
         const railroad = first(p, ["RAILROAD", "OPERATINGR", "INIT", "railroad"]);
+        const countyName = first(p, ["COUNTYNAME", "countyName", "county", "County"]);
+        const countyId = first(p, ["STCYFIPS", "CountyCode", "countyId", "county_id"]);
         const coordinate = coords(feature, p);
 
         const id = crossingNumber
@@ -67,6 +69,9 @@
                 road_name: street || name,
                 railroad: railroad || "Railroad",
                 source: "FRA",
+                countyName: countyName ? countyName.replace(/\s+County$/i, "") + " County" : null,
+                county: countyName ? countyName.replace(/\s+County$/i, "") + " County" : null,
+                countyFips: countyId || null,
                 adapterVersion: ADAPTER_VERSION,
                 originalCrossingNumber: crossingNumber || null
             })
