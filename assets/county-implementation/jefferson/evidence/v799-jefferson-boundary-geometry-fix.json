@@ -1,0 +1,35 @@
+{
+  "audit": "V799 Jefferson Boundary Geometry Fix",
+  "countyId": "jefferson-tx",
+  "activeCountyGeoid": "48245",
+  "source": {
+    "path": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+    "selectionRule": "GEOID=48245",
+    "plainJeffersonTownAmbiguityUsed": false,
+    "bboxFallbackUsed": false,
+    "sourceFeatureCoordinateCount": 325,
+    "renderedFeatureCoordinateCount": 325
+  },
+  "expectedBrowserAudit": {
+    "activeCountyId": "jefferson-tx",
+    "activeCountyGeoid": "48245",
+    "activeBoundaryLayerCount": 1,
+    "activeBoundaryRenderedFeatureCount": 1,
+    "activeBoundaryRenderedGeoids": ["48245"],
+    "activeCountyCoordinateCountGreaterThan": 250,
+    "activeCountyGeometryTooCoarse": false,
+    "visualCorrectnessPass": true,
+    "boundaryCredibilityDetermination": "passed",
+    "sourceAssetRecommendedForProduction": true
+  },
+  "protectedSystemsUnchanged": [
+    "Shared Reports",
+    "Route Watch",
+    "Awareness Filtering",
+    "Hazard Lifecycle",
+    "Alert Generation",
+    "Supabase Sync"
+  ],
+  "validationCommand": "node scripts/v799-jefferson-boundary-geometry-fix-validation.mjs",
+  "validationPassed": true
+}
