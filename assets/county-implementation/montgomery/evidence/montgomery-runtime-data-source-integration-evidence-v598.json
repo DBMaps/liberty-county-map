@@ -4,7 +4,7 @@
   "county_id": "montgomery-tx",
   "collected_at": "2026-06-18T00:00:00.000Z",
   "runtime_inventory": [
-    { "area": "county boundaries", "liberty": "data/liberty-county-boundary.geojson", "montgomery": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson", "status": "county-aware" },
+    { "area": "county boundaries", "liberty": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson", "montgomery": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson", "status": "county-aware" },
     { "area": "roads / road segments", "liberty": "data/liberty-county-road-segments.geojson", "montgomery": null, "status": "Montgomery missing; neutral fallback enforced" },
     { "area": "rail crossings", "liberty": "data/liberty-county-rail-crossings.geojson", "montgomery": null, "status": "Montgomery missing; neutral crossing state enforced" },
     { "area": "default awareness areas", "liberty": "Liberty County communities", "montgomery": "Montgomery County communities", "status": "county-aware" },
