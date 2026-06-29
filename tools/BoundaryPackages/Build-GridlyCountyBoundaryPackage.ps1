@@ -6,12 +6,18 @@ param(
     [string[]]$County,
     [switch]$All,
     [switch]$Force,
+    [string]$SourceShapefile,
     [switch]$Json
 )
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
-$SourceShapefile = Join-Path $RepoRoot "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+$DefaultSourceShapefile = Join-Path $RepoRoot "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+if ([string]::IsNullOrWhiteSpace($SourceShapefile)) {
+    $ResolvedSourceShapefile = $DefaultSourceShapefile
+} else {
+    $ResolvedSourceShapefile = $SourceShapefile
+}
 $SourceLabel = "Census TIGER/Line 2025 county shapefile"
 
 $SupportedCounties = @{
@@ -53,13 +59,14 @@ if (-not $All -and (!$County -or $County.Count -eq 0)) { throw "Specify -County 
 $Targets = if ($All) { $SupportedCounties.Values } else { $County | ForEach-Object { $slug = ConvertTo-CountySlug $_; if (!$SupportedCounties.ContainsKey($slug)) { throw "Unsupported county '$($_)'. Supported: $($SupportedCounties.Keys -join ', ')" }; $SupportedCounties[$slug] } }
 
 $results = @()
-if (!(Test-Path $SourceShapefile)) { throw "Authoritative source shapefile not found: $SourceShapefile" }
+if (!(Test-Path -LiteralPath $ResolvedSourceShapefile -PathType Leaf)) { throw "Authoritative source shapefile not found: $ResolvedSourceShapefile" }
+$ResolvedSourceShapefile = (Resolve-Path -LiteralPath $ResolvedSourceShapefile).Path
 $ogr = Get-Command ogr2ogr -ErrorAction SilentlyContinue
-if (!$ogr) { throw "ogr2ogr is required to manufacture boundary packages from $SourceShapefile." }
+if (!$ogr) { throw "BLOCKED: ogr2ogr is required on PATH to manufacture boundary packages from $ResolvedSourceShapefile." }
 
 foreach ($target in $Targets) {
     $slug = $target.countySlug
-    $relativeOutput = "assets/county-implementation/$slug/boundary/$slug-county-boundary.geojson"
+    $relativeOutput = "assets/county-implementation/$slug/runtime-assets/$slug-county-boundary.geojson"
     $output = Join-Path $RepoRoot $relativeOutput
     $outDir = Split-Path $output -Parent
     if (!(Test-Path $outDir) -and $PSCmdlet.ShouldProcess($outDir, "Create boundary package directory")) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
@@ -67,7 +74,7 @@ foreach ($target in $Targets) {
     if ($PSCmdlet.ShouldProcess($relativeOutput, "Extract GEOID $($target.geoid) from TIGER/Line 2025 county shapefile")) {
         $tmp = "$output.tmp"
         if (Test-Path $tmp) { Remove-Item $tmp -Force }
-        & $ogr.Source -f GeoJSON $tmp $SourceShapefile -where "GEOID='$($target.geoid)'" -lco RFC7946=YES
+        & $ogr.Source -f GeoJSON $tmp $ResolvedSourceShapefile -where "GEOID='$($target.geoid)'" -lco RFC7946=YES
         if ($LASTEXITCODE -ne 0) { throw "ogr2ogr failed for $slug GEOID $($target.geoid)." }
         $geojson = Get-Content $tmp -Raw | ConvertFrom-Json
         if ($geojson.type -ne "FeatureCollection" -or !$geojson.features -or $geojson.features.Count -ne 1) { throw "Expected exactly one GeoJSON feature for $slug GEOID $($target.geoid)." }
@@ -84,7 +91,7 @@ foreach ($target in $Targets) {
         $feature.properties | Add-Member -Force NoteProperty generatedAt ([DateTime]::UtcNow.ToString("o"))
         $feature.properties | Add-Member -Force NoteProperty bboxFallbackUsed $false
         $feature.properties | Add-Member -Force NoteProperty boundaryManufacturingSystem "V802 County Boundary Manufacturing System"
-        $feature.properties | Add-Member -Force NoteProperty manufacturedBoundarySourcePath "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+        $feature.properties | Add-Member -Force NoteProperty manufacturedBoundarySourcePath $ResolvedSourceShapefile
         $feature.properties | Add-Member -Force NoteProperty manufacturedBoundaryOutputPath $relativeOutput
         $geojson | Add-Member -Force NoteProperty source $SourceLabel
         $geojson | ConvertTo-Json -Depth 100 -Compress | Set-Content -Path $output -Encoding UTF8
