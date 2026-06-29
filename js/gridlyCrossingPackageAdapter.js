@@ -3,6 +3,7 @@
 
     const ADAPTER_VERSION = "GRIDLY_CROSSING_PACKAGE_ADAPTER_V1";
     const DEFAULT_PACKAGE_SOURCE = "Crossing-Packages/liberty/liberty-crossings.geojson";
+    let lastLoadTrace = null;
 
     async function fetchJson(path) {
         const response = await fetch(path, { cache: "no-store" });
@@ -16,6 +17,18 @@
         return feature && feature.properties && typeof feature.properties === "object"
             ? feature.properties
             : {};
+    }
+
+
+    function gridlyTraceFeatureId(feature, index) {
+        const p = props(feature);
+        const id = p.CROSSING || p.crossing || p.crossing_id || p.crossingid || p.crossingId || p.id || feature?.id;
+        return id !== undefined && id !== null && String(id).trim() ? String(id).trim() : "index:" + index;
+    }
+
+    function gridlyTraceFeatureCountyName(feature) {
+        const p = props(feature);
+        return p.COUNTYNAME || p.countyName || p.county || p.County || p.county_name || null;
     }
 
     function coords(feature, p) {
@@ -82,12 +95,32 @@
         const packageSource = sourcePath || DEFAULT_PACKAGE_SOURCE;
         const raw = await fetchJson(packageSource);
         const features = Array.isArray(raw && raw.features) ? raw.features : [];
+        lastLoadTrace = {
+            sourcePath: packageSource,
+            exactFetchUrl: packageSource,
+            rawFetchedFeatureCount: features.length,
+            declaredCrossingCount: Number(raw?.crossingCount || raw?.metadata?.sourceFeatureCount || features.length),
+            adapterInputCount: features.length,
+            firstRawInputId: features[0] ? gridlyTraceFeatureId(features[0], 0) : null,
+            lastRawInputId: features[features.length - 1] ? gridlyTraceFeatureId(features[features.length - 1], features.length - 1) : null,
+            firstRawInputCountyName: features[0] ? gridlyTraceFeatureCountyName(features[0]) : null,
+            lastRawInputCountyName: features[features.length - 1] ? gridlyTraceFeatureCountyName(features[features.length - 1]) : null,
+            loadedAt: new Date().toISOString()
+        };
 
         const adaptedFeatures = features
             .map(normalizeCrossing)
             .filter(function (feature) {
                 return feature && feature.geometry && Array.isArray(feature.geometry.coordinates);
             });
+
+        lastLoadTrace = Object.assign({}, lastLoadTrace, {
+            adapterOutputCount: adaptedFeatures.length,
+            firstAdapterOutputId: adaptedFeatures[0]?.properties?.crossing_id || null,
+            lastAdapterOutputId: adaptedFeatures[adaptedFeatures.length - 1]?.properties?.crossing_id || null,
+            firstAdapterOutputCountyName: adaptedFeatures[0]?.properties?.countyName || adaptedFeatures[0]?.properties?.county || null,
+            lastAdapterOutputCountyName: adaptedFeatures[adaptedFeatures.length - 1]?.properties?.countyName || adaptedFeatures[adaptedFeatures.length - 1]?.properties?.county || null
+        });
 
         return {
             type: "FeatureCollection",
@@ -187,7 +220,8 @@
 
     window.gridlyCrossingPackageAdapter = {
         version: ADAPTER_VERSION,
-        buildAdaptedCrossingGeojson
+        buildAdaptedCrossingGeojson,
+        getLastLoadTrace: function () { return lastLoadTrace ? Object.assign({}, lastLoadTrace) : null; }
     };
 
     window.gridlyCrossingPackageAdapterAudit = audit;
