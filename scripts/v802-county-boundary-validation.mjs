@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const counties = {
   liberty: { geoid: '48291', bbox: { west: -95.3, south: 29.7, east: -94.3, north: 30.7 } },
@@ -35,6 +35,18 @@ function readJson(path) {
 function hash(path) {
   return createHash('sha256').update(readFileSync(path)).digest('hex');
 }
+function normalizeAuditPath(path) {
+  return relative(root, path).split(sep).join('/');
+}
+function canonicalRuntimeBoundaryPath(slug) {
+  return `${runtimeRoot}/${slug}/boundary/${slug}-county-boundary.geojson`;
+}
+function isCanonicalRuntimeBoundary(path, slug) {
+  return path === canonicalRuntimeBoundaryPath(slug);
+}
+function isCanonicalRuntimeBoundaryDirectory(path, slug) {
+  return path.startsWith(`${runtimeRoot}/${slug}/boundary/`);
+}
 function findRuntimeBoundaryAssets(slug) {
   const dir = join(root, runtimeRoot, slug);
   if (!existsSync(dir)) return [];
@@ -43,7 +55,7 @@ function findRuntimeBoundaryAssets(slug) {
     for (const entry of readdirSync(subdir, { withFileTypes: true })) {
       const full = join(subdir, entry.name);
       if (entry.isDirectory()) walk(full);
-      else if (/county-boundary.*\.geojson$/i.test(entry.name)) out.push(full.slice(root.length + 1));
+      else if (/county-boundary.*\.geojson$/i.test(entry.name)) out.push(normalizeAuditPath(full));
     }
   };
   walk(dir);
@@ -55,12 +67,12 @@ const results = [];
 for (const slug of requested) {
   const meta = counties[slug];
   if (!meta) throw new Error(`Unsupported county: ${slug}`);
-  const runtimePath = `${runtimeRoot}/${slug}/boundary/${slug}-county-boundary.geojson`;
+  const runtimePath = canonicalRuntimeBoundaryPath(slug);
   const sourcePath = `${sourceRoot}/${slug}-county-2025-wgs84.geojson`;
   const runtimePresent = existsSync(runtimePath);
   const sourcePresent = existsSync(sourcePath);
-  const duplicateRuntimeAssets = findRuntimeBoundaryAssets(slug).filter((path) => path !== runtimePath);
-  const staleRuntimeBoundaryLocations = duplicateRuntimeAssets.filter((path) => !path.includes(`/${slug}/boundary/`));
+  const duplicateRuntimeAssets = findRuntimeBoundaryAssets(slug).filter((path) => !isCanonicalRuntimeBoundary(path, slug));
+  const staleRuntimeBoundaryLocations = duplicateRuntimeAssets.filter((path) => !isCanonicalRuntimeBoundaryDirectory(path, slug));
   let coordinateCount = 0;
   let geoid = null;
   let credibilityMode = null;
