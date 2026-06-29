@@ -31,16 +31,17 @@ function Check-Path {
     )
 
     $FullPath = Join-Path $Repo $RelativePath
+
     Add-Check $Name (Test-Path $FullPath) $RelativePath
 }
 
-# Core Application
+# Core Project
 Check-Path "index.html" "index.html"
 Check-Path "js/app.js" "js\app.js"
 Check-Path "css" "css"
 Check-Path "assets" "assets"
 Check-Path "docs" "docs"
-Check-Path "Tools" "Tools"
+Check-Path "tools" "tools"
 
 # Git Status
 $GitStatus = git status --porcelain 2>$null
@@ -61,27 +62,27 @@ if (-not [string]::IsNullOrWhiteSpace($GitStatus)) {
     Write-Host "Git Changes" -ForegroundColor Yellow
     Write-Host "-----------"
 
-    foreach ($line in ($GitStatus -split "`n")) {
+    foreach ($Line in ($GitStatus -split "`n")) {
 
-        if ([string]::IsNullOrWhiteSpace($line)) {
+        if ([string]::IsNullOrWhiteSpace($Line)) {
             continue
         }
 
-        $status = $line.Substring(0,2).Trim()
-        $file   = $line.Substring(3)
+        $Status = $Line.Substring(0,2).Trim()
+        $File = $Line.Substring(3)
 
-        switch ($status) {
+        switch ($Status) {
 
-            "M"  { $label = "Modified" }
-            "A"  { $label = "Added" }
-            "D"  { $label = "Deleted" }
-            "R"  { $label = "Renamed" }
-            "??" { $label = "Untracked" }
-            default { $label = $status }
+            "M"  { $Label = "Modified" }
+            "A"  { $Label = "Added" }
+            "D"  { $Label = "Deleted" }
+            "R"  { $Label = "Renamed" }
+            "??" { $Label = "Untracked" }
+            default { $Label = $Status }
 
         }
 
-        Write-Host ("{0,-12} {1}" -f $label,$file)
+        Write-Host ("{0,-12} {1}" -f $Label, $File)
     }
 
     Write-Host ""

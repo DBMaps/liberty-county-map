@@ -1,82 +1,148 @@
 # Gridly.ps1
 # Gridly Developer Toolkit Command Center
-# Version: 1.0
 
-function Show-Header {
-    Clear-Host
+function Invoke-GridlyTool {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Script
+    )
+
+    $Tool = Join-Path (Get-Location) $Script
+
+    if (!(Test-Path $Tool)) {
+        Write-Host ""
+        Write-Host "Tool not found:" -ForegroundColor Red
+        Write-Host $Script
+        Read-Host "Press ENTER"
+        return
+    }
+
+    powershell -ExecutionPolicy Bypass -File $Tool
+
     Write-Host ""
+    Read-Host "Press ENTER to return to Command Center" | Out-Null
+}
+
+while ($true) {
+
+    Clear-Host
+
+    $Branch = git branch --show-current 2>$null
+
+    if (-not $Branch) {
+        $Branch = "(unknown)"
+    }
+
+    $GitChanges = git status --porcelain 2>$null
+
+    if ([string]::IsNullOrWhiteSpace($GitChanges)) {
+        $GitState = "Clean"
+    }
+    else {
+        $GitState = "Uncommitted Changes"
+    }
+
+    $Modules = @(
+        "tools\Runtime\Invoke-GridlyRuntimeValidation.ps1",
+        "tools\Validation\Invoke-GridlySmokeTest.ps1",
+        "tools\Inventory\Get-GridlyInventory.ps1",
+        "tools\Certification\New-GridlyCertification.ps1",
+        "tools\Release\New-GridlyRelease.ps1",
+        "tools\Release\New-GridlyHandoff.ps1"
+    )
+
     Write-Host "====================================================" -ForegroundColor Cyan
     Write-Host "              GRIDLY COMMAND CENTER" -ForegroundColor Cyan
     Write-Host "====================================================" -ForegroundColor Cyan
     Write-Host ""
-}
 
-function Get-GitState {
-    $branch = git branch --show-current 2>$null
-    if (-not $branch) { $branch = "(unknown)" }
+    Write-Host ("Repository : {0}" -f (Split-Path (Get-Location) -Leaf))
+    Write-Host ("Branch     : {0}" -f $Branch)
+    Write-Host ("Git Status : {0}" -f $GitState)
 
-    $status = git status --porcelain 2>$null
-    if ([string]::IsNullOrWhiteSpace($status)) {
-        $gitStatus = "Clean"
-    } else {
-        $gitStatus = "Uncommitted Changes"
+    Write-Host ""
+    Write-Host "Toolkit Modules"
+    Write-Host "---------------"
+
+    foreach ($Module in $Modules) {
+
+        if (Test-Path $Module) {
+            Write-Host ("[ OK ] {0}" -f (Split-Path $Module -Leaf))
+        }
+        else {
+            Write-Host ("[MISS] {0}" -f (Split-Path $Module -Leaf))
+        }
+
     }
 
-    [PSCustomObject]@{
-        Project = Split-Path (Get-Location) -Leaf
-        Branch = $branch
-        Status = $gitStatus
-    }
-}
-
-function Wait-ForUser {
     Write-Host ""
-    Read-Host "Press ENTER to continue" | Out-Null
-}
-
-do {
-    Show-Header
-
-    $git = Get-GitState
-
-    Write-Host ("Repository : {0}" -f $git.Project)
-    Write-Host ("Branch     : {0}" -f $git.Branch)
-    Write-Host ("Git Status : {0}" -f $git.Status)
-    Write-Host ""
-
-    Write-Host "1. Git Status"
-    Write-Host "2. Open Build"
-    Write-Host "3. Open Certification"
-    Write-Host "4. Open Runtime"
-    Write-Host "5. Open Validation"
-    Write-Host "6. Open Inventory"
-    Write-Host "7. Open Release"
-    Write-Host "8. Open Docs"
-    Write-Host "9. Open Repository"
+    Write-Host "1. Runtime Validation"
+    Write-Host "2. Smoke Test"
+    Write-Host "3. Inventory"
+    Write-Host "4. Git Status"
+    Write-Host "5. Open Documentation"
+    Write-Host "6. Open Certification Folder"
+    Write-Host "7. Open Release Folder"
     Write-Host "0. Exit"
     Write-Host ""
 
-    $choice = Read-Host "Select"
+    $Choice = Read-Host "Select"
 
-    switch ($choice) {
+    switch ($Choice) {
+
         "1" {
+
+            Invoke-GridlyTool "tools\Runtime\Invoke-GridlyRuntimeValidation.ps1"
+
+        }
+
+        "2" {
+
+            Invoke-GridlyTool "tools\Validation\Invoke-GridlySmokeTest.ps1"
+
+        }
+
+        "3" {
+
+            Invoke-GridlyTool "tools\Inventory\Get-GridlyInventory.ps1"
+
+        }
+
+        "4" {
+
             Clear-Host
+
             git status
-            Wait-ForUser
+
+            Write-Host ""
+            Read-Host "Press ENTER" | Out-Null
+
         }
-        "2" { explorer ".\Tools\Build" }
-        "3" { explorer ".\Tools\Certification" }
-        "4" { explorer ".\Tools\Runtime" }
-        "5" { explorer ".\Tools\Validation" }
-        "6" { explorer ".\Tools\Inventory" }
-        "7" { explorer ".\Tools\Release" }
-        "8" { explorer ".\docs" }
-        "9" { explorer "." }
-        "0" { break }
-        default {
-            Write-Host "Invalid selection."
-            Wait-ForUser
+
+        "5" {
+
+            explorer ".\docs"
+
         }
+
+        "6" {
+
+            explorer ".\tools\Certification"
+
+        }
+
+        "7" {
+
+            explorer ".\tools\Release"
+
+        }
+
+        "0" {
+
+            break
+
+        }
+
     }
 
-} while ($true)
+}
