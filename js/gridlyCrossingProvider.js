@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     "use strict";
 
     const PROVIDER_VERSION = "GRIDLY_CROSSING_PROVIDER_V1_SAFE";
@@ -12,7 +12,8 @@
         lastLegacyLoad: null,
         lastPackageLoad: null,
         lastFraReviewLoad: null,
-        lastProductionLoad: null
+        lastProductionLoad: null,
+        lastLoadTrace: null
     };
 
     async function fetchJson(path) {
@@ -28,12 +29,14 @@
     async function loadLegacyCrossings() {
         const geojson = await fetchJson(LEGACY_SOURCE);
         state.lastLegacyLoad = { source: LEGACY_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        state.lastLoadTrace = { mode: "legacy", sourcePath: LEGACY_SOURCE, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), loadedAt: state.lastLegacyLoad.loadedAt };
         return geojson;
     }
 
     async function loadCuratedPackageCrossings() {
         const geojson = await fetchJson(CURATED_PACKAGE_SOURCE);
         state.lastPackageLoad = { source: CURATED_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        state.lastLoadTrace = { mode: "package", sourcePath: CURATED_PACKAGE_SOURCE, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), loadedAt: state.lastPackageLoad.loadedAt };
         return geojson;
     }
 
@@ -44,6 +47,7 @@
 
         const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(RAW_FRA_REVIEW_SOURCE);
         state.lastFraReviewLoad = { source: RAW_FRA_REVIEW_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+        state.lastLoadTrace = { mode: "fra-review", sourcePath: RAW_FRA_REVIEW_SOURCE, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), adapterTrace: window.gridlyCrossingPackageAdapter?.getLastLoadTrace?.() || null, loadedAt: state.lastFraReviewLoad.loadedAt };
         return geojson;
     }
 
@@ -55,6 +59,7 @@
         if (requestedMode === "production") {
             const geojson = await window.gridlyCrossingPackageAdapter.buildAdaptedCrossingGeojson(PRODUCTION_PACKAGE_SOURCE);
             state.lastProductionLoad = { source: PRODUCTION_PACKAGE_SOURCE, featureCount: featureCount(geojson), loadedAt: new Date().toISOString() };
+            state.lastLoadTrace = { mode: "production", sourcePath: PRODUCTION_PACKAGE_SOURCE, providerFeatureCount: featureCount(geojson), providerInventoryCount: featureCount(geojson), adapterTrace: window.gridlyCrossingPackageAdapter?.getLastLoadTrace?.() || null, loadedAt: state.lastProductionLoad.loadedAt };
             return geojson;
         }
 
@@ -143,7 +148,8 @@
         version: PROVIDER_VERSION,
         getActiveCountyCrossings,
         setMode,
-        audit
+        audit,
+        getLastLoadTrace: function () { return state.lastLoadTrace ? Object.assign({}, state.lastLoadTrace) : null; }
     };
 
     window.gridlyGetActiveCountyCrossings = getActiveCountyCrossings;
