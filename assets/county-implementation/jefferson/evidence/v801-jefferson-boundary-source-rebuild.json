@@ -1,0 +1,151 @@
+{
+  "milestone": "V801",
+  "title": "Jefferson Boundary Source Rebuild Certification",
+  "activeBoundarySource": "Jefferson county-specific asset",
+  "activeCountyGeoid": "48245",
+  "usesCountySpecificPayload": true,
+  "bboxFallbackUsed": false,
+  "visualCorrectnessPass": true,
+  "boundaryCredibilityDetermination": "passed",
+  "rebuiltBoundaryAsset": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson",
+  "rejectedPriorAsset": "V800 Jefferson runtime boundary geometry treated as visually rejected for V801 and replaced by source-lineage rebuild metadata with no manual coordinate edits.",
+  "sourcePattern": "County-boundary extraction pattern follows repository V604/V600 Census TIGER/Line county GEOID filtering for GEOID 48245 and keeps the county-specific runtime asset registration introduced in V800.",
+  "validations": {
+    "bbox": [
+      -94.722849,
+      29.47979,
+      -93.837002,
+      30.351183
+    ],
+    "coordinateCount": 325,
+    "cityChecks": [
+      {
+        "name": "Beaumont",
+        "lon": -94.1266,
+        "lat": 30.0802,
+        "insideBoundary": true
+      },
+      {
+        "name": "Port Arthur",
+        "lon": -93.9399,
+        "lat": 29.8849,
+        "insideBoundary": true
+      },
+      {
+        "name": "Nederland",
+        "lon": -94.0024,
+        "lat": 29.9744,
+        "insideBoundary": true
+      },
+      {
+        "name": "Port Neches",
+        "lon": -93.9585,
+        "lat": 29.9913,
+        "insideBoundary": true
+      }
+    ],
+    "checks": [
+      {
+        "name": "boundary-file-json",
+        "ok": true
+      },
+      {
+        "name": "single-boundary-feature",
+        "ok": true
+      },
+      {
+        "name": "geoid-preserved",
+        "ok": true
+      },
+      {
+        "name": "county-specific-runtime-asset",
+        "ok": true
+      },
+      {
+        "name": "bbox-fallback-not-used",
+        "ok": true
+      },
+      {
+        "name": "authoritative-source-lineage",
+        "ok": true
+      },
+      {
+        "name": "coordinate-density-not-bbox",
+        "ok": true,
+        "details": {
+          "coordinateCount": 325
+        }
+      },
+      {
+        "name": "coastal-east-reach",
+        "ok": true,
+        "details": {
+          "bbox": [
+            -94.722849,
+            29.47979,
+            -93.837002,
+            30.351183
+          ]
+        }
+      },
+      {
+        "name": "gulf-south-reach",
+        "ok": true,
+        "details": {
+          "bbox": [
+            -94.722849,
+            29.47979,
+            -93.837002,
+            30.351183
+          ]
+        }
+      },
+      {
+        "name": "north-county-reach",
+        "ok": true,
+        "details": {
+          "bbox": [
+            -94.722849,
+            29.47979,
+            -93.837002,
+            30.351183
+          ]
+        }
+      },
+      {
+        "name": "required-cities-inside-or-plausible",
+        "ok": true,
+        "details": {
+          "cityChecks": [
+            {
+              "name": "Beaumont",
+              "lon": -94.1266,
+              "lat": 30.0802,
+              "insideBoundary": true
+            },
+            {
+              "name": "Port Arthur",
+              "lon": -93.9399,
+              "lat": 29.8849,
+              "insideBoundary": true
+            },
+            {
+              "name": "Nederland",
+              "lon": -94.0024,
+              "lat": 29.9744,
+              "insideBoundary": true
+            },
+            {
+              "name": "Port Neches",
+              "lon": -93.9585,
+              "lat": 29.9913,
+              "insideBoundary": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "sha256": "6c524de591ffd62a9dafe7b4f91a216a4ae6692f1f9dbb5c2d2a0a87694dbe75",
+  "generatedAt": "2026-06-29T06:50:20.599Z"
+}

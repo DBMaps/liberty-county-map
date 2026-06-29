@@ -14,7 +14,7 @@ sandbox.window.GRIDLY_ACTIVE_COUNTY_ID = 'jefferson-tx';
 const activeSources = sandbox.api.gridlyGetActiveCountyRuntimeSources();
 
 assert.strictEqual(activeSources.countyId, 'jefferson-tx', 'Jefferson remains the active runtime source county');
-assert.strictEqual(activeSources.boundarySource, 'assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson', 'Jefferson uses the active statewide boundary source');
+assert.strictEqual(activeSources.boundarySource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson', 'Jefferson uses the county-specific boundary source');
 assert.strictEqual(activeSources.crossingSource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson', 'Jefferson crossing source stays Jefferson-owned');
 assert.strictEqual(activeSources.roadSource, null, 'Jefferson road source reports unavailable when no loadable Jefferson GeoJSON exists');
 assert.strictEqual(activeSources.roadSourceLoadable, false, 'Jefferson road source is not marked loadable without GeoJSON');
