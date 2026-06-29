@@ -1,14 +1,14 @@
 {
-  "milestone": "V801",
+  "milestone": "V802",
   "title": "Jefferson Boundary Source Rebuild Certification",
-  "activeBoundarySource": "Jefferson county-specific asset",
+  "activeBoundarySource": "Jefferson V802 manufactured boundary asset",
   "activeCountyGeoid": "48245",
   "usesCountySpecificPayload": true,
   "bboxFallbackUsed": false,
   "visualCorrectnessPass": true,
   "boundaryCredibilityDetermination": "passed",
-  "rebuiltBoundaryAsset": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson",
-  "rejectedPriorAsset": "V800 Jefferson runtime boundary geometry treated as visually rejected for V801 and replaced by source-lineage rebuild metadata with no manual coordinate edits.",
+  "rebuiltBoundaryAsset": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+  "rejectedPriorAsset": "V800 Jefferson runtime boundary geometry treated as visually rejected for V802 and replaced by source-lineage rebuild metadata with no manual coordinate edits.",
   "sourcePattern": "County-boundary extraction pattern follows repository V604/V600 Census TIGER/Line county GEOID filtering for GEOID 48245 and keeps the county-specific runtime asset registration introduced in V800.",
   "validations": {
     "bbox": [
@@ -146,6 +146,6 @@
       }
     ]
   },
-  "sha256": "6c524de591ffd62a9dafe7b4f91a216a4ae6692f1f9dbb5c2d2a0a87694dbe75",
-  "generatedAt": "2026-06-29T06:50:20.599Z"
+  "sha256": "ab74fe523d3460a7b27d8fc8d133b3adb852482b3c3f86644cdb81cb051ad41d",
+  "generatedAt": "2026-06-29T07:05:45.322Z"
 }

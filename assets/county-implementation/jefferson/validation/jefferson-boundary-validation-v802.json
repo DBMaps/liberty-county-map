@@ -1,0 +1,26 @@
+{
+  "validation": "V802 county boundary package validation",
+  "ok": true,
+  "results": [
+    {
+      "slug": "jefferson",
+      "ok": true,
+      "path": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+      "coordinateCount": 325,
+      "bbox": {
+        "west": -94.722849,
+        "south": 29.47979,
+        "east": -93.837002,
+        "north": 30.351183
+      },
+      "checks": {
+        "validGeoJson": true,
+        "coordinateCount": true,
+        "geoidMatches": true,
+        "bboxPlausible": true,
+        "noBboxFallback": true,
+        "manufacturedSource": true
+      }
+    }
+  ]
+}

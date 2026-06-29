@@ -13,7 +13,8 @@ $tools = @(
     "Tools\Validation\Invoke-GridlySmokeTest.ps1",
     "Tools\Release\New-GridlyRelease.ps1",
     "Tools\Release\New-GridlyHandoff.ps1",
-    "Tools\Inventory\Get-GridlyInventory.ps1"
+    "Tools\Inventory\Get-GridlyInventory.ps1",
+    "Tools\BoundaryPackages\Build-GridlyCountyBoundaryPackage.ps1"
 )
 
 $missing = $false
