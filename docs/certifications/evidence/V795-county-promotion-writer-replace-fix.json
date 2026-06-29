@@ -1,0 +1,44 @@
+{
+  "milestone": "V795",
+  "title": "County Promotion Writer Replace Fix",
+  "status": "implemented_with_runtime_handoff_required",
+  "promotionTool": "tools/CountyPromotion/Promote-GridlyCounty.ps1",
+  "certification": "docs/certifications/V795-COUNTY-PROMOTION-WRITER-REPLACE-FIX.md",
+  "fixes": {
+    "replaceOperandBug": true,
+    "boundaryOverlayReplacementUsesExactlyPatternAndReplacement": true,
+    "commaSeparatedCountyInputNormalized": true,
+    "staleMenuTextUpdated": true
+  },
+  "preservedSafetyControls": {
+    "requiresReadyForControlledPromotion": true,
+    "deterministicMetadataSeedRequired": true,
+    "allOrNothingWrite": true,
+    "blockersLoosened": false,
+    "packageContentsChanged": false,
+    "protectedSystemsChanged": false
+  },
+  "inputNormalizationExamples": [
+    {
+      "commandShape": "-County Jefferson,Polk,Harris",
+      "expectedCounties": ["Jefferson", "Polk", "Harris"]
+    },
+    {
+      "commandShape": "-County \"Jefferson,Polk,Harris\"",
+      "expectedCounties": ["Jefferson", "Polk", "Harris"]
+    }
+  ],
+  "requiredRuntimeValidation": [
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson -WhatIf",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf",
+    "Runtime Validation",
+    "Smoke Test",
+    "Production Readiness"
+  ],
+  "validationEnvironment": {
+    "containerDate": "2026-06-29",
+    "powerShellAvailable": false,
+    "handoffRequired": true
+  }
+}

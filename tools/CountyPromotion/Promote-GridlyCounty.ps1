@@ -1,5 +1,5 @@
 param(
-    [string]$County,
+    [string[]]$County,
     [switch]$AllReady,
     [switch]$WhatIf,
     [switch]$Json
@@ -39,8 +39,13 @@ function Get-CountyListFromInput {
         return @($manifest.records | Where-Object { $_.status -eq "PASS" } | ForEach-Object { $_.county } | Sort-Object -Unique)
     }
 
-    if ([string]::IsNullOrWhiteSpace($County)) { throw "Specify -County <county or comma-separated counties> or -AllReady." }
-    return @($County -split "," | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $countyTokens = @(
+        $County | ForEach-Object {
+            if ($null -ne $_) { [string]$_ -split "," }
+        } | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    if ($countyTokens.Count -eq 0) { throw "Specify -County <county or comma-separated counties> or -AllReady." }
+    return $countyTokens
 }
 
 function Invoke-Readiness([string]$CountyName) {
@@ -226,6 +231,12 @@ function Set-FileContentUtf8Bom([string]$RelativePath, [string]$Content) {
     [System.IO.File]::WriteAllText($fullPath, $Content, $encoding)
 }
 
+function Invoke-RegexReplaceOnce([string]$Content, [string]$Pattern, [string]$Replacement, [string]$FailureMessage) {
+    $updated = [regex]::Replace($Content, $Pattern, $Replacement, 1)
+    if ($updated -eq $Content) { throw $FailureMessage }
+    return $updated
+}
+
 function Apply-PromotionBatch([object[]]$ApprovedResults) {
     $registryPath = "js/gridlyPackageRegistry.js"
     $appPath = "js/app.js"
@@ -245,12 +256,12 @@ function Apply-PromotionBatch([object[]]$ApprovedResults) {
 "@
         $registryReplacement = $registryReplacement.Trim()
         $registryPattern = '\{ id: "community\.' + [regex]::Escape($countyId) + '"[^\r\n]*\}'
-        $newRegistry = [regex]::Replace($registry, $registryPattern, $registryReplacement, 1)
-        if ($newRegistry -eq $registry) { throw "Safe registry replacement failed for $name." }
-        $registry = $newRegistry
+        $registry = Invoke-RegexReplaceOnce $registry $registryPattern $registryReplacement "Safe registry replacement failed for $name."
 
         $boundsConst = "const $($slug.ToUpperInvariant() -replace '-', '_')_COUNTY_AWARENESS_BOUNDS = { south: $($result.deterministic.boundary.bounds.south), west: $($result.deterministic.boundary.bounds.west), north: $($result.deterministic.boundary.bounds.north), east: $($result.deterministic.boundary.bounds.east) };"
-        if ($app -notmatch [regex]::Escape($boundsConst)) { $app = $app -replace '(const CHAMBERS_COUNTY_AWARENESS_BOUNDS = \{[^\r\n]+\};)', "`$1`r`n$boundsConst" }
+        if ($app -notmatch [regex]::Escape($boundsConst)) {
+            $app = Invoke-RegexReplaceOnce $app '(const CHAMBERS_COUNTY_AWARENESS_BOUNDS = \{[^\r\n]+\};)' ("`$1`r`n" + $boundsConst) "Awareness bounds constant insertion failed for $name."
+        }
 
         $runtimeEntry = @"
   "$countyId": Object.freeze({
@@ -277,18 +288,28 @@ function Apply-PromotionBatch([object[]]$ApprovedResults) {
     controlledPromotion: Object.freeze({ milestone: "V794", status: "controlled-enabled", readinessGate: "READY FOR CONTROLLED PROMOTION" })
   }),
 "@
-        $app = $app -replace '(?s)(  "chambers-tx": Object\.freeze\(\{.*?\n  \}\),\r?\n)', "`$1$runtimeEntry"
+        $app = Invoke-RegexReplaceOnce $app '(?s)(  "chambers-tx": Object\.freeze\(\{.*?\n  \}\),\r?\n)' ("`$1" + $runtimeEntry) "Runtime entry insertion failed for $name."
         $boundsEntry = '  "' + $countyId + '": Object.freeze({ ...' + ($slug.ToUpperInvariant() -replace '-', '_') + '_COUNTY_AWARENESS_BOUNDS, source: "' + $slug + '-controlled-promotion-bounds-v794" })'
-        $app = $app -replace '(  "chambers-tx": Object\.freeze\(\{ \.\.\.CHAMBERS_COUNTY_AWARENESS_BOUNDS, source: "chambers-controlled-promotion-bounds-v788" \}\))', "`$1,`r`n$boundsEntry"
+        $app = Invoke-RegexReplaceOnce $app '(  "chambers-tx": Object\.freeze\(\{ \.\.\.CHAMBERS_COUNTY_AWARENESS_BOUNDS, source: "chambers-controlled-promotion-bounds-v788" \}\))' ("`$1,`r`n" + $boundsEntry) "Awareness bounds insertion failed for $name."
         $areaLines = @($areas | ForEach-Object { '  { key: "' + $_.key + '", label: "' + $_.label + '", storageValue: "' + $_.storageValue + '", countyId: "' + $countyId + '", lat: ' + $_.lat + ', lng: ' + $_.lng + ', radiusMiles: null, startupZoom: 10, countyWide: true, source: "' + $name + ' V794 controlled promotion anchor" },' }) -join "`r`n"
-        $app = $app -replace '(  \{ key: "cove"[^\r\n]+\},\r?\n)', "`$1$areaLines`r`n"
+        $app = Invoke-RegexReplaceOnce $app '(  \{ key: "cove"[^\r\n]+\},\r?\n)' ("`$1" + $areaLines + "`r`n") "Awareness area insertion failed for $name."
         $homeLine = '  "' + $countyId + '": [' + (ConvertTo-JsStringArray $areaNames) + ']'
-        $app = $app -replace '(  "chambers-tx": \[GRIDLY_CHAMBERS_COUNTY_WIDE_HOME_TOWN, "Anahuac", "Mont Belvieu", "Winnie", "Beach City", "Cove"\])', "`$1,`r`n$homeLine"
-        $app = $app -replace '(const GRIDLY_COUNTY_BOUNDARY_OVERLAY_COUNTY_IDS = Object\.freeze\(\[[^\]]*)\]\);', '`$1, "' + $countyId + '"]);'
+        $app = Invoke-RegexReplaceOnce $app '(  "chambers-tx": \[GRIDLY_CHAMBERS_COUNTY_WIDE_HOME_TOWN, "Anahuac", "Mont Belvieu", "Winnie", "Beach City", "Cove"\])' ("`$1,`r`n" + $homeLine) "Home area insertion failed for $name."
+        $boundaryOverlayReplacement = '$1, "' + $countyId + '"]);'
+        $app = Invoke-RegexReplaceOnce $app '(const GRIDLY_COUNTY_BOUNDARY_OVERLAY_COUNTY_IDS = Object\.freeze\(\[[^\]]*)\]\);' $boundaryOverlayReplacement "Boundary overlay county-id insertion failed for $name."
     }
 
-    Set-FileContentUtf8Bom $registryPath $registry
-    Set-FileContentUtf8Bom $appPath $app
+    $originalRegistry = Get-Content (Join-Path $script:RepoRoot $registryPath) -Raw
+    $originalApp = Get-Content (Join-Path $script:RepoRoot $appPath) -Raw
+    try {
+        Set-FileContentUtf8Bom $registryPath $registry
+        Set-FileContentUtf8Bom $appPath $app
+    }
+    catch {
+        Set-FileContentUtf8Bom $registryPath $originalRegistry
+        Set-FileContentUtf8Bom $appPath $originalApp
+        throw
+    }
     $changed.Add($registryPath)
     $changed.Add($appPath)
     return @($changed | Sort-Object -Unique)
@@ -347,7 +368,7 @@ if (-not $WhatIf -and -not $hasBlocked) {
 
 $output = [pscustomobject]@{
     title = "GRIDLY COUNTY PROMOTION DETERMINISTIC WRITER"
-    version = "V794"
+    version = "V795"
     mode = if ($WhatIf) { "WhatIf" } else { "Write" }
     writeModeEnabled = $writeModeEnabled
     allOrNothing = $true

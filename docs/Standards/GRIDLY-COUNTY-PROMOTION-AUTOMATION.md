@@ -2,7 +2,7 @@
 
 ## Purpose
 
-V792 creates the reusable county promotion automation foundation so future county enablement can be preflighted without hand-editing `js/app.js` and `js/gridlyPackageRegistry.js` for every county. The first milestone is intentionally safe: `Promote-GridlyCounty.ps1` provides readiness-gated `-WhatIf` planning and blocks write mode until deterministic edit rules are proven.
+V792 created the reusable county promotion automation foundation, V793/V794 added the deterministic writer and metadata seed gates, and V795 fixes write-mode replacement safety. `Promote-GridlyCounty.ps1` now supports readiness-gated `-WhatIf` planning and deterministic actual promotion when every requested county passes the preserved safety gates.
 
 ## Scope
 
@@ -17,10 +17,8 @@ In scope for `-WhatIf` planning:
 - boundary overlay registration when a county GEOID can be discovered
 - certification/evidence files for the eventual promotion run
 
-Out of scope for V792 write mode:
+Out of scope for deterministic write mode:
 
-- editing `js/app.js`
-- editing `js/gridlyPackageRegistry.js`
 - changing production/community/crossing package contents
 - promoting counties without explicit operator intent
 
@@ -52,7 +50,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\CountyPromotion\Promote-GridlyC
 
 ## WhatIf Behavior
 
-`-WhatIf` mode is the only enabled promotion path in V792. It runs readiness checks for every requested county and reports:
+`-WhatIf` mode runs the same readiness and deterministic safety checks as write mode without writing files. It runs readiness checks for every requested county and reports:
 
 - the readiness status returned by `Test-GridlyCountyPromotionReadiness.ps1`
 - whether the county would be refused, ready, or blocked
@@ -75,7 +73,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\CountyPromotion\Promote-GridlyC
 - `protectedSystemsChanged`
 - per-county `results`
 
-The per-county result includes readiness output, the planned active state, and the files that would be changed by a future safe writer.
+The per-county result includes readiness output, the planned active state, and the files that would be changed by the deterministic writer.
 
 ## Readiness Gate Behavior
 
@@ -91,11 +89,11 @@ The tool refuses counties that are:
 - missing required promotion prerequisites
 - `ALREADY OPERATIONAL`
 
-V792 does not introduce `-Force`; already operational counties are read-only references and are not re-promoted.
+The promotion writer does not introduce `-Force`; already operational counties are read-only references and are not re-promoted.
 
 ## Write-Mode Safety Rules
 
-Write mode is currently blocked. Before write mode can be enabled, a future milestone must prove deterministic edits for all expected outputs:
+Write mode is enabled only after the V793/V794 deterministic safety gates pass for every requested county. The writer must prove deterministic edits for all expected outputs before any file is written:
 
 1. package registry production metadata
 2. runtime registration
@@ -114,10 +112,10 @@ The writer must also prove that it does not alter:
 
 ## Current Limitations
 
-- V792 does not promote counties.
-- V792 does not write generated certification files for actual promotion runs.
+- The writer still refuses any county that is not exactly `READY FOR CONTROLLED PROMOTION`.
+- The writer still refuses missing or incomplete deterministic metadata seed values.
 - Boundary GEOID discovery is best-effort and depends on the state boundary overlay asset being present and containing the county name and `GEOID` property in discoverable proximity.
-- Runtime/search/awareness edits remain blocked because the current application patterns span multiple hand-authored sections and require additional deterministic edit validation.
+- Runtime/search/awareness edits remain deterministic-anchor based and are refused if expected anchors are missing.
 
 ## Relationship to V784-V791
 
@@ -129,7 +127,9 @@ The writer must also prove that it does not alter:
 - V789 proved batch gates should skip counties that are not production-package ready.
 - V790 added production package manufacturing.
 - V791 fixed absolute path handling.
-- V792 adds the next automation layer: safe promotion preflight and reusable operator entry points.
+- V792 added safe promotion preflight and reusable operator entry points.
+- V793/V794 added deterministic writer and metadata seed gates.
+- V795 fixes replacement-string handling in actual promotion write mode and normalizes quoted or unquoted comma-separated county input.
 
 ## Package Manufacturing vs Runtime Enablement
 
