@@ -33,6 +33,26 @@ function Read-JsonFile {
     return Get-Content -Raw -Encoding UTF8 $Path | ConvertFrom-Json
 }
 
+
+function Test-IsAbsolutePackagePath {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if ([System.IO.Path]::IsPathRooted($Path)) { return $true }
+    if ($Path -match '^[A-Za-z]:[\\/]') { return $true }
+    if ($Path -match '^[\\]{2}[^\\/]+[\\/][^\\/]+') { return $true }
+    return $false
+}
+
+function Resolve-PackageFilePath {
+    param(
+        [Parameter(Mandatory)][string]$RepoRoot,
+        [Parameter(Mandatory)][string]$PackageFile
+    )
+
+    if (Test-IsAbsolutePackagePath -Path $PackageFile) { return $PackageFile }
+    return Join-Path $RepoRoot $PackageFile
+}
+
 function Write-JsonFile {
     param(
         [Parameter(Mandatory)]$Value,
@@ -124,7 +144,7 @@ function Get-EligibleCountyRecords {
                 County = if ($manifest.county) { [string]$manifest.county } else { ConvertTo-CountyDisplayName $slug }
                 CommunityManifest = $communityManifest
                 CrossingManifest = $crossingManifest
-                CrossingPackage = Join-Path (Get-Location) ([string]$manifest.packageFile)
+                CrossingPackage = Resolve-PackageFilePath -RepoRoot $repoRoot -PackageFile ([string]$manifest.packageFile)
                 ProductionPackage = Join-Path $crossingDir ("Production\{0}-production-crossings.geojson" -f $slug)
                 ProductionDir = Join-Path $crossingDir "Production"
             }
