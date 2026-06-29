@@ -50,7 +50,8 @@ while ($true) {
         "tools\Release\New-GridlyRelease.ps1",
         "tools\Release\New-GridlyHandoff.ps1",
         "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1",
-        "tools\ProductionPackages\Build-GridlyProductionPackages.ps1"
+        "tools\ProductionPackages\Build-GridlyProductionPackages.ps1",
+        "tools\CountyPromotion\Promote-GridlyCounty.ps1"
     )
 
     Write-Host "====================================================" -ForegroundColor Cyan
@@ -97,6 +98,7 @@ else {
     Write-Host "7. Open Release Folder"
     Write-Host "8. County Promotion Readiness"
     Write-Host "9. Production Package Manufacturing"
+    Write-Host "10. County Promotion Automation"
     Write-Host "0. Exit"
     Write-Host ""
 
@@ -182,6 +184,30 @@ else {
                 $County = Read-Host "County name"
                 if (-not [string]::IsNullOrWhiteSpace($County)) {
                     powershell -ExecutionPolicy Bypass -File $Tool -County $County
+                }
+            }
+
+            Write-Host ""
+            Read-Host "Press ENTER to return to Command Center" | Out-Null
+
+        }
+
+        "10" {
+
+            Clear-Host
+            Write-Host "County Promotion Automation" -ForegroundColor Cyan
+            Write-Host "1. WhatIf/preflight (default)"
+            Write-Host "2. Actual promotion (currently blocked by V792 safety rules)"
+            $PromotionChoice = Read-Host "Select"
+            $County = Read-Host "County name(s), comma-separated"
+            $Tool = Join-Path (Get-Location) "tools\CountyPromotion\Promote-GridlyCounty.ps1"
+
+            if (-not [string]::IsNullOrWhiteSpace($County)) {
+                if ($PromotionChoice -eq "2") {
+                    powershell -ExecutionPolicy Bypass -File $Tool -County $County
+                }
+                else {
+                    powershell -ExecutionPolicy Bypass -File $Tool -County $County -WhatIf
                 }
             }
 
