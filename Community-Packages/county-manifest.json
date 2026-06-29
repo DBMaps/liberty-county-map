@@ -1,398 +1,377 @@
-﻿{
-    "program":  "Gridly Regional Expansion Program",
-    "phase":  "Phase 2 â€” Community Package Manufacturing",
-    "state":  "TX",
-    "sourceDatasets":  {
-                           "osm":  "OpenStreetMap/Regional/texas-260625.osm.pbf",
-                           "censusCountyBoundaries":  "Census/tl_2025_us_county.zip"
-                       },
-    "counties":  [
-                     {
-                         "county":  "Liberty",
-                         "status":  "operational",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  true,
-                         "communities":  [
-                                             "Dayton",
-                                             "Liberty",
-                                             "Cleveland",
-                                             "Ames",
-                                             "Hardin",
-                                             "Devers"
-                                         ],
-                         "notes":  "Existing operational county."
-                     },
-                     {
-                         "county":  "Montgomery",
-                         "status":  "operational",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  true,
-                         "communities":  [
-                                             "Conroe",
-                                             "Willis"
-                                         ],
-                         "notes":  "Existing operational county."
-                     },
-                     {
-                         "county":  "San Jacinto",
-                         "status":  "operational",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  true,
-                         "communities":  [
-                                             "Coldspring",
-                                             "Shepherd",
-                                             "Point Blank",
-                                             "Oakhurst"
-                                         ],
-                         "notes":  "Existing operational county."
-                     },
-                     {
-                         "county":  "Chambers",
-                         "status":  "roads_extracted",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "featureCount":  8493,
-                         "notes":  "Road extraction manually validated."
-                     },
-                     {
-                         "county":  "Jefferson",
-                         "status":  "building",
-                         "boundary":  true,
-                         "roads":  false,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Road extraction in progress via safer temp-file builder."
-                     },
-                     {
-                         "county":  "Hardin",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "",
-                         "roadFeatureCount":  7481,
-                         "lastBuilt":  "2026-06-26T16:44:58",
-                         "lastBuildElapsed":  "00:01:47.6232859"
-                     },
-                     {
-                         "county":  "Polk",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "",
-                         "roadFeatureCount":  7318,
-                         "lastBuilt":  "2026-06-26T16:46:34",
-                         "lastBuildElapsed":  "00:01:34.2477240"
-                     },
-                     {
-                         "county":  "Walker",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "",
-                         "roadFeatureCount":  8451,
-                         "lastBuilt":  "2026-06-26T16:36:02",
-                         "lastBuildElapsed":  "00:01:31.0349211"
-                     },
-                     {
-                         "county":  "Harris",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Selected portions only; not full-county onboarding yet.",
-                         "roadFeatureCount":  470275,
-                         "lastBuilt":  "2026-06-26T17:45:06",
-                         "lastBuildElapsed":  "00:16:39.7716925"
-                     },
-                     {
-                         "county":  "Orange",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  7205,
-                         "lastBuilt":  "2026-06-26T17:02:12",
-                         "lastBuildElapsed":  "00:01:50.9702589"
-                     },
-                     {
-                         "county":  "Jasper",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  5057,
-                         "lastBuilt":  "2026-06-26T17:03:42",
-                         "lastBuildElapsed":  "00:01:28.6526518"
-                     },
-                     {
-                         "county":  "Newton",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  2719,
-                         "lastBuilt":  "2026-06-26T17:05:03",
-                         "lastBuildElapsed":  "00:01:19.1776777"
-                     },
-                     {
-                         "county":  "Tyler",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  4137,
-                         "lastBuilt":  "2026-06-26T17:06:23",
-                         "lastBuildElapsed":  "00:01:18.8296105"
-                     },
-                     {
-                         "county":  "Galveston",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  40453,
-                         "lastBuilt":  "2026-06-26T17:08:31",
-                         "lastBuildElapsed":  "00:02:05.5816415"
-                     },
-                     {
-                         "county":  "Brazoria",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  45696,
-                         "lastBuilt":  "2026-06-26T17:10:45",
-                         "lastBuildElapsed":  "00:02:11.3505200"
-                     },
-                     {
-                         "county":  "Fort Bend",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  93182,
-                         "lastBuilt":  "2026-06-26T17:13:33",
-                         "lastBuildElapsed":  "00:02:43.6938530"
-                     },
-                     {
-                         "county":  "Waller",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  13962,
-                         "lastBuilt":  "2026-06-26T17:15:01",
-                         "lastBuildElapsed":  "00:01:26.2136342"
-                     },
-                     {
-                         "county":  "Austin",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  7795,
-                         "lastBuilt":  "2026-06-26T17:16:32",
-                         "lastBuildElapsed":  "00:01:28.9347239"
-                     },
-                     {
-                         "county":  "Washington",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  11211,
-                         "lastBuilt":  "2026-06-26T17:18:06",
-                         "lastBuildElapsed":  "00:01:32.2069303"
-                     },
-                     {
-                         "county":  "Brazos",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  25609,
-                         "lastBuilt":  "2026-06-26T17:19:56",
-                         "lastBuildElapsed":  "00:01:47.8157838"
-                     },
-                     {
-                         "county":  "Grimes",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  6130,
-                         "lastBuilt":  "2026-06-26T17:21:20",
-                         "lastBuildElapsed":  "00:01:23.1947409"
-                     },
-                     {
-                         "county":  "Wharton",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  11865,
-                         "lastBuilt":  "2026-06-26T17:54:14",
-                         "lastBuildElapsed":  "00:01:53.4637008"
-                     },
-                     {
-                         "county":  "Colorado",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  6819,
-                         "lastBuilt":  "2026-06-26T17:55:57",
-                         "lastBuildElapsed":  "00:01:41.1560222"
-                     },
-                     {
-                         "county":  "Fayette",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  8525,
-                         "lastBuilt":  "2026-06-26T17:57:39",
-                         "lastBuildElapsed":  "00:01:40.2475708"
-                     },
-                     {
-                         "county":  "Lavaca",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  4833,
-                         "lastBuilt":  "2026-06-26T17:59:02",
-                         "lastBuildElapsed":  "00:01:21.5267458"
-                     },
-                     {
-                         "county":  "Jackson",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  3934,
-                         "lastBuilt":  "2026-06-26T18:00:21",
-                         "lastBuildElapsed":  "00:01:17.8592769"
-                     },
-                     {
-                         "county":  "Matagorda",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  7245,
-                         "lastBuilt":  "2026-06-26T18:01:45",
-                         "lastBuildElapsed":  "00:01:22.1214907"
-                     },
-                     {
-                         "county":  "Calhoun",
-                         "status":  "roads_complete",
-                         "boundary":  true,
-                         "roads":  true,
-                         "crossings":  false,
-                         "communities":  [
-
-                                         ],
-                         "notes":  "Added for Southeast Texas expansion test.",
-                         "roadFeatureCount":  2932,
-                         "lastBuilt":  "2026-06-26T18:03:12",
-                         "lastBuildElapsed":  "00:01:25.9733588"
-                     }
-                 ]
+{
+  "program": "Gridly Regional Expansion Program",
+  "phase": "Phase 2 â€” Community Package Manufacturing",
+  "state": "TX",
+  "sourceDatasets": {
+    "osm": "OpenStreetMap/Regional/texas-260625.osm.pbf",
+    "censusCountyBoundaries": "Census/tl_2025_us_county.zip"
+  },
+  "counties": [
+    {
+      "county": "Liberty",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [
+        "Dayton",
+        "Liberty",
+        "Cleveland",
+        "Ames",
+        "Hardin",
+        "Devers"
+      ],
+      "notes": "Existing operational county."
+    },
+    {
+      "county": "Montgomery",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [
+        "Conroe",
+        "Willis"
+      ],
+      "notes": "Existing operational county."
+    },
+    {
+      "county": "San Jacinto",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [
+        "Coldspring",
+        "Shepherd",
+        "Point Blank",
+        "Oakhurst"
+      ],
+      "notes": "Existing operational county."
+    },
+    {
+      "county": "Chambers",
+      "status": "roads_extracted",
+      "boundary": true,
+      "roads": true,
+      "crossings": false,
+      "communities": [],
+      "featureCount": 8493,
+      "notes": "Road extraction manually validated."
+    },
+    {
+      "county": "Jefferson",
+      "status": "building",
+      "boundary": true,
+      "roads": false,
+      "crossings": false,
+      "communities": [],
+      "notes": "Road extraction in progress via safer temp-file builder."
+    },
+    {
+      "county": "Hardin",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 7481,
+      "lastBuilt": "2026-06-26T16:44:58",
+      "lastBuildElapsed": "00:01:47.6232859"
+    },
+    {
+      "county": "Polk",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 7318,
+      "lastBuilt": "2026-06-26T16:46:34",
+      "lastBuildElapsed": "00:01:34.2477240"
+    },
+    {
+      "county": "Walker",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 8451,
+      "lastBuilt": "2026-06-26T16:36:02",
+      "lastBuildElapsed": "00:01:31.0349211"
+    },
+    {
+      "county": "Harris",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 470275,
+      "lastBuilt": "2026-06-26T17:45:06",
+      "lastBuildElapsed": "00:16:39.7716925"
+    },
+    {
+      "county": "Orange",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 7205,
+      "lastBuilt": "2026-06-26T17:02:12",
+      "lastBuildElapsed": "00:01:50.9702589"
+    },
+    {
+      "county": "Jasper",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 5057,
+      "lastBuilt": "2026-06-26T17:03:42",
+      "lastBuildElapsed": "00:01:28.6526518"
+    },
+    {
+      "county": "Newton",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 2719,
+      "lastBuilt": "2026-06-26T17:05:03",
+      "lastBuildElapsed": "00:01:19.1776777"
+    },
+    {
+      "county": "Tyler",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 4137,
+      "lastBuilt": "2026-06-26T17:06:23",
+      "lastBuildElapsed": "00:01:18.8296105"
+    },
+    {
+      "county": "Galveston",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 40453,
+      "lastBuilt": "2026-06-26T17:08:31",
+      "lastBuildElapsed": "00:02:05.5816415"
+    },
+    {
+      "county": "Brazoria",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 45696,
+      "lastBuilt": "2026-06-26T17:10:45",
+      "lastBuildElapsed": "00:02:11.3505200"
+    },
+    {
+      "county": "Fort Bend",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 93182,
+      "lastBuilt": "2026-06-26T17:13:33",
+      "lastBuildElapsed": "00:02:43.6938530"
+    },
+    {
+      "county": "Waller",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 13962,
+      "lastBuilt": "2026-06-26T17:15:01",
+      "lastBuildElapsed": "00:01:26.2136342"
+    },
+    {
+      "county": "Austin",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 7795,
+      "lastBuilt": "2026-06-26T17:16:32",
+      "lastBuildElapsed": "00:01:28.9347239"
+    },
+    {
+      "county": "Washington",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 11211,
+      "lastBuilt": "2026-06-26T17:18:06",
+      "lastBuildElapsed": "00:01:32.2069303"
+    },
+    {
+      "county": "Brazos",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 25609,
+      "lastBuilt": "2026-06-26T17:19:56",
+      "lastBuildElapsed": "00:01:47.8157838"
+    },
+    {
+      "county": "Grimes",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 6130,
+      "lastBuilt": "2026-06-26T17:21:20",
+      "lastBuildElapsed": "00:01:23.1947409"
+    },
+    {
+      "county": "Wharton",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 11865,
+      "lastBuilt": "2026-06-26T17:54:14",
+      "lastBuildElapsed": "00:01:53.4637008"
+    },
+    {
+      "county": "Colorado",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 6819,
+      "lastBuilt": "2026-06-26T17:55:57",
+      "lastBuildElapsed": "00:01:41.1560222"
+    },
+    {
+      "county": "Fayette",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 8525,
+      "lastBuilt": "2026-06-26T17:57:39",
+      "lastBuildElapsed": "00:01:40.2475708"
+    },
+    {
+      "county": "Lavaca",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 4833,
+      "lastBuilt": "2026-06-26T17:59:02",
+      "lastBuildElapsed": "00:01:21.5267458"
+    },
+    {
+      "county": "Jackson",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 3934,
+      "lastBuilt": "2026-06-26T18:00:21",
+      "lastBuildElapsed": "00:01:17.8592769"
+    },
+    {
+      "county": "Matagorda",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 7245,
+      "lastBuilt": "2026-06-26T18:01:45",
+      "lastBuildElapsed": "00:01:22.1214907"
+    },
+    {
+      "county": "Calhoun",
+      "status": "operational",
+      "boundary": true,
+      "roads": true,
+      "crossings": true,
+      "communities": [],
+      "notes": "Promoted to operational by V818 guarded bulk county promotion.",
+      "roadFeatureCount": 2932,
+      "lastBuilt": "2026-06-26T18:03:12",
+      "lastBuildElapsed": "00:01:25.9733588"
+    }
+  ],
+  "lastBulkPromotion": {
+    "milestone": "V818",
+    "promotedCounties": [
+      "Hardin",
+      "Polk",
+      "Walker",
+      "Harris",
+      "Orange",
+      "Jasper",
+      "Newton",
+      "Tyler",
+      "Galveston",
+      "Brazoria",
+      "Fort Bend",
+      "Waller",
+      "Austin",
+      "Washington",
+      "Brazos",
+      "Grimes",
+      "Wharton",
+      "Colorado",
+      "Fayette",
+      "Lavaca",
+      "Jackson",
+      "Matagorda",
+      "Calhoun"
+    ],
+    "operationalCountyCount": 26
+  }
 }
