@@ -1,0 +1,174 @@
+{
+  "milestone": "V786",
+  "title": "Production Package Promotion Plan",
+  "generatedAt": "2026-06-29T00:00:00Z",
+  "scope": "Documentation/planning only; no runtime behavior, county registration, county enablement, production package, community package, manifest, JavaScript, HTML, CSS, file move/copy, or protected-system changes.",
+  "pipeline": [
+    {
+      "stage": "Source Data",
+      "purpose": "Establish authoritative county boundary, road, crossing, and supporting source inputs before package work proceeds.",
+      "inputs": ["county boundary source", "transportation/road source", "crossing source candidates", "source metadata", "provenance notes"],
+      "outputs": ["source data inventory", "accepted source references", "known limitations", "package manufacturing go/no-go decision"],
+      "verification": ["source files or references exist", "provenance is documented", "boundaries and roads are suitable", "no unresolved source-blocking gaps remain"],
+      "exitCriteria": "Authoritative or accepted source material is documented and sufficient to manufacture a community package."
+    },
+    {
+      "stage": "Community Package",
+      "purpose": "Convert accepted source data into community-package format without consumer enablement.",
+      "inputs": ["source data inventory", "county identity metadata", "normalized roads", "normalized boundaries", "community package specification"],
+      "outputs": ["community county package assets", "package-level evidence"],
+      "verification": ["package structure", "county naming", "boundary/road presence", "basic schema conformance", "repository inventory visibility"],
+      "exitCriteria": "Community package exists, is internally consistent, and is ready to feed crossing package generation."
+    },
+    {
+      "stage": "Crossing Package",
+      "purpose": "Produce manufactured crossing package for production promotion evaluation.",
+      "inputs": ["community package", "road network", "boundary geometry", "crossing extraction rules", "crossing package specification"],
+      "outputs": ["county crossing package", "crossing inventory", "crossing metadata", "validation notes"],
+      "verification": ["crossing package existence", "schema conformance", "county association", "boundary containment", "road association", "no fatal validation errors"],
+      "exitCriteria": "Crossing package exists and is suitable for production-package build review."
+    },
+    {
+      "stage": "Production Package",
+      "purpose": "Build the consumer-grade production crossing package without exposing it through runtime registration.",
+      "inputs": ["validated crossing package", "production crossing package standard", "county metadata", "production transformation rules"],
+      "outputs": ["production package assets", "production crossing inventory", "package version metadata", "package build evidence"],
+      "verification": ["production package presence", "package schema", "crossing count", "county identifier alignment", "production metadata", "runtime compatibility"],
+      "exitCriteria": "Production package is complete, reviewable, and ready for formal certification."
+    },
+    {
+      "stage": "Production Certification",
+      "purpose": "Certify the production package before manifest consideration.",
+      "inputs": ["production package", "package build evidence", "validation logs", "protected-system impact assessment", "promotion checklist state"],
+      "outputs": ["certification document", "structured evidence record", "pass/fail decision", "known caveats"],
+      "verification": ["required checks passed or documented as blocked", "protected systems unchanged unless authorized", "certification evidence reproducible"],
+      "exitCriteria": "Certification is complete and explicitly authorizes advancement to production manifest update planning."
+    },
+    {
+      "stage": "Production Manifest",
+      "purpose": "Register the certified production package in the production package manifest.",
+      "inputs": ["certification output", "production package identity", "package version", "crossing count", "package path", "manifest update authorization"],
+      "outputs": ["manifest entry", "manifest validation evidence"],
+      "verification": ["entry matches certified package", "no unrelated manifest changes", "manifest validation succeeds"],
+      "exitCriteria": "Production manifest contains the county package entry and the entry is validated."
+    },
+    {
+      "stage": "Application Repository",
+      "purpose": "Install or expose production package assets within the application repository without automatically enabling runtime consumers.",
+      "inputs": ["manifested production package", "application package placement standard", "repository integration instructions", "installation authorization"],
+      "outputs": ["application-side package assets or references", "installation evidence"],
+      "verification": ["authorized package files changed only", "paths match runtime expectations", "no premature runtime/search/awareness enablement"],
+      "exitCriteria": "Application repository contains the county production package assets in the expected location."
+    },
+    {
+      "stage": "Runtime Registration",
+      "purpose": "Register the county with runtime county registries.",
+      "inputs": ["application-installed package", "county runtime identifier", "registry update authorization", "rollback plan"],
+      "outputs": ["runtime registration entry", "runtime validation evidence"],
+      "verification": ["county appears in runtime registry", "existing counties remain registered", "production crossing runtime loads package", "no unrelated runtime behavior changes"],
+      "exitCriteria": "Runtime registration is complete and runtime validation passes."
+    },
+    {
+      "stage": "Search Integration",
+      "purpose": "Make the registered county discoverable through county-aware search paths.",
+      "inputs": ["runtime-registered county", "search configuration authorization", "county labels/aliases", "search validation cases"],
+      "outputs": ["search enablement configuration", "search validation evidence"],
+      "verification": ["county search queries resolve", "existing search behavior unchanged", "disabled counties remain hidden"],
+      "exitCriteria": "Search integration validates for the county and regression checks pass for existing counties."
+    },
+    {
+      "stage": "Awareness Enablement",
+      "purpose": "Enable county-aware filtering, incident context, and awareness presentation.",
+      "inputs": ["runtime-registered county", "search-enabled county", "awareness configuration authorization", "filtering validation scenarios"],
+      "outputs": ["awareness enablement configuration", "filtering validation evidence"],
+      "verification": ["awareness filtering includes county only when intended", "existing awareness behavior unchanged", "hazard/report flows do not regress"],
+      "exitCriteria": "Awareness validation passes and county behavior is ready for consumer validation."
+    },
+    {
+      "stage": "Consumer Available",
+      "purpose": "Confirm the county is fully available to consumers.",
+      "inputs": ["completed checklist", "readiness evidence", "runtime validation", "search validation", "awareness validation", "rollback notes"],
+      "outputs": ["consumer availability decision", "validation summary", "release/merge recommendation"],
+      "verification": ["county is visible", "county is searchable", "county is filterable", "production crossing runtime operational", "protected systems not regressed"],
+      "exitCriteria": "Consumer validation completes and the county is declared available."
+    }
+  ],
+  "promotionChecklist": [
+    "Source data accepted and provenance documented",
+    "Community package exists",
+    "Community package structure and schema validated",
+    "Crossing package exists",
+    "Crossing package validation completed",
+    "Production package built",
+    "Production package validation completed",
+    "Production certification completed",
+    "Certification evidence recorded",
+    "Production manifest update authorized",
+    "Manifest updated and validated",
+    "Application package installation authorized",
+    "Application package installed or referenced",
+    "Runtime registration authorized",
+    "Runtime registration completed",
+    "Production crossing runtime validation passed",
+    "Search integration authorized",
+    "Search enabled and validated",
+    "Awareness enablement authorized",
+    "Awareness enabled and validated",
+    "Protected-system regression review completed",
+    "Production readiness validated",
+    "Consumer validation completed",
+    "Rollback/disablement path documented",
+    "Consumer availability decision recorded"
+  ],
+  "promotionGates": [
+    {"gate": "G1", "advancement": "Source Data to Community Package", "mandatoryVerification": "Source provenance, boundary scope, road suitability, and source limitations documented", "exitRequirement": "Source data accepted for manufacturing"},
+    {"gate": "G2", "advancement": "Community Package to Crossing Package", "mandatoryVerification": "Community package exists, has expected county identity, and passes structure/schema review", "exitRequirement": "Community package eligible for crossing generation"},
+    {"gate": "G3", "advancement": "Crossing Package to Production Package", "mandatoryVerification": "Crossing package exists, passes county association and geometry/road checks, and has no fatal validation issues", "exitRequirement": "Crossing package eligible for production build"},
+    {"gate": "G4", "advancement": "Production Package to Production Certification", "mandatoryVerification": "Production package exists, metadata and crossing inventory match expectations, and validation evidence is present", "exitRequirement": "Production package eligible for certification"},
+    {"gate": "G5", "advancement": "Production Certification to Production Manifest", "mandatoryVerification": "Certification complete, evidence recorded, and promotion risk accepted", "exitRequirement": "Manifest update may be planned"},
+    {"gate": "G6", "advancement": "Production Manifest to Application Repository", "mandatoryVerification": "Manifest entry authorized, matches certified metadata, and validates without unrelated changes", "exitRequirement": "Application installation may be planned"},
+    {"gate": "G7", "advancement": "Application Repository to Runtime Registration", "mandatoryVerification": "Application assets exist and no runtime/search/awareness enablement occurred prematurely", "exitRequirement": "Runtime registration may be planned"},
+    {"gate": "G8", "advancement": "Runtime Registration to Search Integration", "mandatoryVerification": "Runtime registry includes county, production crossing runtime validates, and existing registered counties unaffected", "exitRequirement": "Search integration may be planned"},
+    {"gate": "G9", "advancement": "Search Integration to Awareness Enablement", "mandatoryVerification": "Search resolves county correctly and existing county search behavior unchanged", "exitRequirement": "Awareness enablement may be planned"},
+    {"gate": "G10", "advancement": "Awareness Enablement to Consumer Available", "mandatoryVerification": "Awareness filtering validates, protected systems clear, and consumer scenarios pass", "exitRequirement": "County may be declared consumer available"}
+  ],
+  "chambersCaseStudy": {
+    "caseStudyOnly": true,
+    "promotionPerformed": false,
+    "currentObservedStage": "Application repository installed but not enabled",
+    "completedStages": ["Community Package", "Crossing Package", "Production Package", "Production Manifest", "Application Repository"],
+    "remainingStages": ["Production Certification", "Runtime Registration", "Production Crossing Runtime Validation", "Search Integration", "Awareness Enablement", "Production Readiness Validation", "Consumer Validation", "Consumer Availability Decision"],
+    "promotionReadiness": "Nearest observed future candidate, but not consumer ready until certification, runtime, search, awareness, and consumer validation gates are completed under separate authorization.",
+    "unchangedState": {
+      "runtimeRegistered": false,
+      "searchEnabled": false,
+      "awarenessEnabled": false,
+      "consumerAvailable": false
+    }
+  },
+  "recommendedCountyEnablementOrder": [
+    {"order": 1, "counties": ["Chambers"], "rationale": "Closest to promotion based on observed production package, manifest presence, and application installation."},
+    {"order": 2, "counties": ["Jefferson"], "rationale": "Application assets present; resolve road dataset and production packaging before enablement."},
+    {"order": 3, "counties": ["Polk"], "rationale": "Application assets present and manufacturing exists; requires production package onward."},
+    {"order": 4, "counties": ["Harris"], "rationale": "Application assets present but likely higher scale/risk; defer until smaller candidates validate process."},
+    {"order": 5, "counties": ["Hardin", "Walker", "Orange", "Jasper", "Newton", "Tyler"], "rationale": "Nearby manufactured counties with community and crossing packages."},
+    {"order": 6, "counties": ["Galveston", "Brazoria", "Fort Bend", "Waller"], "rationale": "Regional expansion group requiring production packaging and later gates."},
+    {"order": 7, "counties": ["Austin", "Washington", "Brazos", "Grimes"], "rationale": "Manufactured inland expansion group requiring full promotion."},
+    {"order": 8, "counties": ["Wharton", "Colorado", "Fayette", "Lavaca", "Jackson", "Matagorda", "Calhoun"], "rationale": "Remaining manufactured expansion group requiring full promotion."}
+  ],
+  "protectedSystems": {
+    "Shared Reports": "unchanged-documentation-only",
+    "Route Watch": "unchanged-documentation-only",
+    "Awareness Filtering": "unchanged-documentation-only",
+    "Hazard Lifecycle": "unchanged-documentation-only",
+    "Alert Generation": "unchanged-documentation-only",
+    "Supabase Synchronization": "unchanged-documentation-only",
+    "Production Crossing Runtime": "unchanged-documentation-only",
+    "Community Package Pipeline": "unchanged-documentation-only",
+    "Developer Toolkit": "unchanged-documentation-only"
+  },
+  "testing": [
+    {"command": "python -m json.tool docs/certifications/evidence/V786-production-package-promotion-plan.json", "result": "PASS", "observation": "Evidence JSON parsed successfully."},
+    {"command": "command -v pwsh", "result": "BLOCKED", "observation": "PowerShell is unavailable in this environment; toolkit execution could not be performed."}
+  ]
+}
