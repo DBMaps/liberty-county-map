@@ -1,7 +1,7 @@
 {
   "milestone": "V811",
   "title": "County Expansion Framework",
-  "generatedAt": "2026-06-29T15:09:06.537Z",
+  "generatedAt": "2026-06-29T15:21:09.821Z",
   "readOnly": true,
   "readinessRules": {
     "OPERATIONAL": "County is already enabled in runtime with operational=true; readiness does not promote or modify runtime behavior.",
