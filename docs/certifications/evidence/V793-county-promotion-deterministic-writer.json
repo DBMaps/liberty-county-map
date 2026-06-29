@@ -1,0 +1,52 @@
+{
+  "milestone": "V793",
+  "title": "County Promotion Deterministic Writer",
+  "status": "implemented_with_safety_gates_no_counties_promoted",
+  "date": "2026-06-29",
+  "writeMode": {
+    "enabled": true,
+    "allOrNothing": true,
+    "requiresReadyForControlledPromotion": true,
+    "refusesAlreadyOperational": true,
+    "blocksOnMissingDeterministicData": true
+  },
+  "deterministicRules": {
+    "packageRegistry": "Convert only the matching community.<county>-tx package from reserved/planned to active controlled-promotion metadata.",
+    "runtimeRegistration": "Add only the requested county runtime entry with county-owned runtime sources and existing package paths.",
+    "searchHomeAreaRegistration": "Requires deterministic local community mapping; blocks instead of guessing.",
+    "awarenessRegistration": "Requires deterministic boundary-derived bounds and deterministic awareness-area data; blocks instead of guessing.",
+    "boundaryOverlayRegistration": "Requires discoverable standard Texas county boundary GEOID."
+  },
+  "protectedSystems": {
+    "sharedReportsChanged": false,
+    "routeWatchChanged": false,
+    "awarenessFilteringChanged": false,
+    "hazardLifecycleChanged": false,
+    "alertGenerationChanged": false,
+    "supabaseSynchronizationChanged": false,
+    "communityPackagePipelineChanged": false,
+    "productionCrossingPackageContentsChanged": false,
+    "communityPackageContentsChanged": false,
+    "crossingPackageContentsChanged": false
+  },
+  "actualPromotion": {
+    "performedInThisChange": false,
+    "countiesPromoted": [],
+    "promotionRunEvidencePersisted": false,
+    "promotionRunEvidenceNote": "Per-run persisted evidence remains pending until a safe promotion succeeds; this V793 certification does not fabricate promotion evidence."
+  },
+  "expectedValidationCommands": [
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson -WhatIf",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Test-GridlyCountyPromotionReadiness.ps1 -County Jefferson",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyRuntimeValidation.ps1",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\Validation\\Invoke-GridlySmokeTest.ps1",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyProductionReadiness.ps1",
+    "python3 -m json.tool docs/certifications/evidence/V793-county-promotion-deterministic-writer.json"
+  ],
+  "notes": [
+    "The tool preserves -WhatIf and -Json output behavior while reporting deterministic blockers.",
+    "The tool blocks an entire batch before writing if any requested county fails readiness or deterministic edit gates.",
+    "No production crossing, crossing, or community package contents were modified."
+  ]
+}
