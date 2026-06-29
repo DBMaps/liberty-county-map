@@ -29,9 +29,23 @@ $SupportedCounties = @{
 }
 
 function ConvertTo-CountySlug([string]$Name) { return ($Name.Trim().ToLowerInvariant() -replace "[^a-z0-9]+", "-" -replace "(^-|-$)", "") }
+function Test-IsNumber($Value) {
+    return $Value -is [byte] `
+        -or $Value -is [sbyte] `
+        -or $Value -is [int16] `
+        -or $Value -is [int32] `
+        -or $Value -is [int64] `
+        -or $Value -is [uint16] `
+        -or $Value -is [uint32] `
+        -or $Value -is [uint64] `
+        -or $Value -is [single] `
+        -or $Value -is [double] `
+        -or $Value -is [decimal]
+}
 function Get-CoordinateCount($Coordinates) {
     if ($null -eq $Coordinates) { return 0 }
-    if ($Coordinates -is [array] -and $Coordinates.Count -ge 2 -and $Coordinates[0] -is [double]) { return 1 }
+    if (Test-IsNumber $Coordinates) { return 0 }
+    if ($Coordinates -is [array] -and $Coordinates.Count -ge 2 -and (Test-IsNumber $Coordinates[0]) -and (Test-IsNumber $Coordinates[1])) { return 1 }
     $count = 0
     foreach ($item in $Coordinates) { $count += Get-CoordinateCount $item }
     return $count
@@ -39,7 +53,8 @@ function Get-CoordinateCount($Coordinates) {
 function Get-Bbox($Coordinates) {
     $box = @{ west = 999; south = 999; east = -999; north = -999 }
     function Walk($node) {
-        if ($node -is [array] -and $node.Count -ge 2 -and $node[0] -is [double]) {
+        if ($null -eq $node -or (Test-IsNumber $node)) { return }
+        if ($node -is [array] -and $node.Count -ge 2 -and (Test-IsNumber $node[0]) -and (Test-IsNumber $node[1])) {
             $lon = [double]$node[0]; $lat = [double]$node[1]
             if ($lon -lt $script:box.west) { $script:box.west = $lon }
             if ($lon -gt $script:box.east) { $script:box.east = $lon }
