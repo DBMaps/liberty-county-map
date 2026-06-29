@@ -1,0 +1,31 @@
+{
+  "version": "V798",
+  "title": "County Boundary And Map Camera Isolation",
+  "activeCountyId": "jefferson-tx",
+  "activeCountyGeoid": "48245",
+  "boundaryRendering": {
+    "statewidePayloadFilteredToActiveCounty": true,
+    "expectedActiveBoundaryLayerCount": 1,
+    "expectedActiveBoundaryRenderedFeatureCount": 1,
+    "expectedActiveBoundaryRenderedGeoids": ["48245"],
+    "passiveCountyBoundaryRendered": 0,
+    "statewidePassiveLayerGroupsRegistered": false
+  },
+  "mapCamera": {
+    "activeCountyContextMovesCamera": true,
+    "jeffersonCountyBounds": { "south": 29.52, "west": -94.55, "north": 30.20, "east": -93.70 },
+    "seededCommunityCameraTargets": ["Beaumont", "Port Arthur", "Nederland", "Port Neches"]
+  },
+  "ambiguityGuard": {
+    "plainJeffersonUnsupported": true,
+    "requiredCountyPhrase": "Jefferson County"
+  },
+  "protectedSystemsUnchanged": [
+    "Shared Reports",
+    "Route Watch",
+    "Awareness Filtering",
+    "Hazard Lifecycle",
+    "Alert Generation",
+    "Supabase Sync"
+  ]
+}
