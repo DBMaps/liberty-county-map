@@ -30,8 +30,8 @@ assert.strictEqual(activeSources.countyId, 'jefferson-tx', 'active runtime sourc
 assert.strictEqual(activeSources.boundarySource, 'assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson', 'Jefferson boundary source is active');
 assert.strictEqual(activeSources.crossingSource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson', 'Jefferson crossing source is active');
 assert.strictEqual(activeSources.crossingOverridesSource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-crossing-review-overrides.json', 'Jefferson crossing overrides source is active');
-assert.strictEqual(activeSources.roadSource, 'assets/county-implementation/jefferson/runtime-assets/source/tl_2025_48245_roads.shp', 'Jefferson road source resolves to Jefferson runtime source artifact without rebuilding package contents');
-assert.strictEqual(api.gridlyCountyRuntimeSourceAvailable('roads', 'jefferson-tx'), false, 'Jefferson SHP road source is exposed for ownership but not fetched through GeoJSON road loader');
+assert.strictEqual(activeSources.roadSource, null, 'Jefferson road source is unavailable until a loadable Jefferson GeoJSON exists');
+assert.strictEqual(api.gridlyCountyRuntimeSourceAvailable('roads', 'jefferson-tx'), false, 'Jefferson road source remains gated to loadable GeoJSON');
 
 sandbox.window.GRIDLY_ACTIVE_COUNTY_ID = 'liberty-tx';
 assert.strictEqual(api.gridlyGetActiveCountyRuntimeSources().countyId, 'liberty-tx', 'Liberty runtime source behavior is preserved');

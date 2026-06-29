@@ -36,6 +36,7 @@
         return (
             runtimeSources &&
             (
+                runtimeSources.countyId ||
                 runtimeSources.county ||
                 runtimeSources.countyName ||
                 runtimeSources.activeCounty ||
@@ -106,14 +107,20 @@
 
         const runtimeCounty = getRuntimeCountyName(output);
         const countyKey = normalizeCountyKey(runtimeCounty);
-        const packageSources = state.packageSourcesByCountyKey[countyKey];
+        const countyAliasKey = countyKey.replace(/-tx$/, "");
+        const packageSources = state.packageSourcesByCountyKey[countyKey] || state.packageSourcesByCountyKey[countyAliasKey];
 
         if (!packageSources) {
             return output;
         }
 
-        output.boundarySource = packageSources.boundarySource;
-        output.roadSource = packageSources.roadSource;
+        if (packageSources.boundarySource) {
+            output.boundarySource = packageSources.boundarySource;
+        }
+        if (packageSources.roadSource && /\.geojson(?:$|[?#])/i.test(packageSources.roadSource)) {
+            output.roadSource = packageSources.roadSource;
+            output.roadSourceLoadable = true;
+        }
 
         output.packageBridgeApplied = true;
         output.packageBridgeActivationVersion = ACTIVATION_VERSION;

@@ -1,0 +1,31 @@
+{
+  "milestone": "V797",
+  "title": "County Runtime Source Path Correction",
+  "generatedAt": "2026-06-29T00:00:00.000Z",
+  "scope": {
+    "packageContentsModified": false,
+    "promotionToolingModified": false,
+    "libertyBehaviorPreserved": true,
+    "jeffersonRuntimeSourceCorrection": true
+  },
+  "jeffersonExpectedRuntimeSources": {
+    "countyId": "jefferson-tx",
+    "boundarySource": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+    "roadSource": null,
+    "roadSourceReason": "No loadable Jefferson road GeoJSON is registered; the prior SHP source artifact is not reported as an active loadable road source.",
+    "crossingSource": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson",
+    "libertyFallbackPathsSuppressed": true
+  },
+  "auditFields": [
+    "activeRuntimeSourceCountyId",
+    "activeBoundaryCountyId",
+    "activeRuntimeBoundarySource",
+    "activeRuntimeRoadSource",
+    "activeRuntimeCrossingSource"
+  ],
+  "validationCommands": [
+    "node tests/county-runtime/v797CountyRuntimeSourcePathCorrection.test.js",
+    "node tests/county-runtime/v796CountyRuntimeSourceActivation.test.js"
+  ],
+  "finalDetermination": "PASS_V797_COUNTY_RUNTIME_SOURCE_PATH_CORRECTION"
+}
