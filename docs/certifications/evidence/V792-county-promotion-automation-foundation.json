@@ -1,0 +1,92 @@
+{
+  "version": "V792",
+  "title": "County Promotion Automation Foundation",
+  "status": "certified-foundation-write-mode-blocked",
+  "filesAdded": [
+    "tools/CountyPromotion/Promote-GridlyCounty.ps1",
+    "docs/Standards/GRIDLY-COUNTY-PROMOTION-AUTOMATION.md",
+    "docs/certifications/V792-COUNTY-PROMOTION-AUTOMATION-FOUNDATION.md",
+    "docs/certifications/evidence/V792-county-promotion-automation-foundation.json"
+  ],
+  "filesModified": [
+    "tools/Gridly.ps1"
+  ],
+  "toolBehavior": {
+    "script": "tools/CountyPromotion/Promote-GridlyCounty.ps1",
+    "supportsCounty": true,
+    "supportsCommaSeparatedCounties": true,
+    "supportsWhatIf": true,
+    "supportsJson": true,
+    "supportsAllReady": true,
+    "readinessGate": "Requires Test-GridlyCountyPromotionReadiness.ps1 finalStatus to equal READY FOR CONTROLLED PROMOTION.",
+    "alreadyOperationalPolicy": "Refused; V792 does not add Force or re-promotion support.",
+    "normalMode": "BLOCKED FOR WRITE MODE"
+  },
+  "whatIfExamples": [
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson -WhatIf",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf",
+    "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf -Json"
+  ],
+  "expectedWouldChangeFiles": [
+    "js/gridlyPackageRegistry.js",
+    "js/app.js",
+    "docs/certifications/<promotion-run>.md",
+    "docs/certifications/evidence/<promotion-run>.json"
+  ],
+  "expectedActiveState": [
+    "package registry active production metadata",
+    "runtime registration",
+    "search/home-area registration",
+    "awareness bounds/areas",
+    "boundary overlay registration when county GEOID is discoverable",
+    "certification/evidence generation"
+  ],
+  "writeMode": {
+    "enabled": false,
+    "blockedReason": "Deterministic runtime/search/awareness/boundary edits across existing Chambers/Liberty/Montgomery/San Jacinto patterns have not yet been proven safe."
+  },
+  "protectedSystemVerification": {
+    "sharedReportsChanged": false,
+    "routeWatchChanged": false,
+    "awarenessFilteringChanged": false,
+    "hazardLifecycleChanged": false,
+    "alertGenerationChanged": false,
+    "supabaseSynchronizationChanged": false,
+    "communityPackagePipelineChanged": false,
+    "productionPackageContentsChanged": false,
+    "communityPackageContentsChanged": false,
+    "crossingPackageContentsChanged": false
+  },
+  "testing": [
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File ./tools/CountyPromotion/Promote-GridlyCounty.ps1 -County Jefferson -WhatIf",
+      "status": "warning",
+      "result": "Not executed: powershell command is not installed in this environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File ./tools/CountyPromotion/Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf",
+      "status": "warning",
+      "result": "Not executed: powershell command is not installed in this environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File ./tools/CountyPromotion/Promote-GridlyCounty.ps1 -County Jefferson,Polk,Harris -WhatIf -Json",
+      "status": "warning",
+      "result": "Not executed: powershell command is not installed in this environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File ./tools/CountyPromotion/Test-GridlyCountyPromotionReadiness.ps1 -County Jefferson",
+      "status": "warning",
+      "result": "Not executed: powershell command is not installed in this environment."
+    },
+    {
+      "command": "powershell -ExecutionPolicy Bypass -File ./tools/Runtime/Invoke-GridlyProductionReadiness.ps1",
+      "status": "warning",
+      "result": "Not executed: powershell command is not installed in this environment."
+    },
+    {
+      "command": "python3 -m json.tool docs/certifications/evidence/V792-county-promotion-automation-foundation.json",
+      "status": "pass",
+      "result": "JSON evidence validated successfully."
+    }
+  ]
+}
