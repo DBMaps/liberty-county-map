@@ -47,7 +47,7 @@
       "expectedRoadFilename": "montgomery-county-road-segments.geojson",
       "expectedCrossingFilename": "montgomery-county-rail-crossings.geojson",
       "expectedOverrideFilename": "montgomery-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-crossing-review-overrides.json"
@@ -64,7 +64,7 @@
       "expectedRoadFilename": "chambers-county-road-segments.geojson",
       "expectedCrossingFilename": "chambers-county-rail-crossings.geojson",
       "expectedOverrideFilename": "chambers-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/chambers/runtime-assets/chambers-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/chambers/runtime-assets/chambers-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/chambers/runtime-assets/chambers-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/chambers/runtime-assets/chambers-county-crossing-review-overrides.json"
@@ -81,7 +81,7 @@
       "expectedRoadFilename": "san-jacinto-county-road-segments.geojson",
       "expectedCrossingFilename": "san-jacinto-county-rail-crossings.geojson",
       "expectedOverrideFilename": "san-jacinto-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-crossing-review-overrides.json"
@@ -98,7 +98,7 @@
       "expectedRoadFilename": "polk-county-road-segments.geojson",
       "expectedCrossingFilename": "polk-county-rail-crossings.geojson",
       "expectedOverrideFilename": "polk-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/polk/runtime-assets/polk-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/polk/runtime-assets/polk-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/polk/runtime-assets/polk-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/polk/runtime-assets/polk-county-crossing-review-overrides.json"
@@ -115,7 +115,7 @@
       "expectedRoadFilename": "jefferson-county-road-segments.geojson",
       "expectedCrossingFilename": "jefferson-county-rail-crossings.geojson",
       "expectedOverrideFilename": "jefferson-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-crossing-review-overrides.json"
@@ -132,7 +132,7 @@
       "expectedRoadFilename": "harris-county-road-segments.geojson",
       "expectedCrossingFilename": "harris-county-rail-crossings.geojson",
       "expectedOverrideFilename": "harris-county-crossing-review-overrides.json",
-      "expectedBoundaryPath": "assets/county-implementation/harris/runtime-assets/harris-county-boundary.geojson",
+      "expectedBoundaryPath": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
       "expectedRoadPath": "assets/county-implementation/harris/runtime-assets/harris-county-road-segments.geojson",
       "expectedCrossingPath": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
       "expectedOverridePath": "assets/county-implementation/harris/runtime-assets/harris-county-crossing-review-overrides.json"

@@ -10,7 +10,7 @@
     "sourceBoundaryAssets": [],
     "authoritativeCandidatesInRepository": [],
     "placeholderCandidates": [
-      "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson"
+      "Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson"
     ],
     "relatedSourceAssets": [
       "assets/county-implementation/san-jacinto/runtime-assets/source/tl_2025_48407_roads.* (road geometry only; not a county polygon boundary source)"

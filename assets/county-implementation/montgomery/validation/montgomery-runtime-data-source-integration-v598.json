@@ -16,7 +16,7 @@
   },
   "source_registry": {
     "liberty-tx": {
-      "boundary_source": "data/liberty-county-boundary.geojson",
+      "boundary_source": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson",
       "road_source": "data/liberty-county-road-segments.geojson",
       "crossing_source": "data/liberty-county-rail-crossings.geojson",
       "awareness_areas": "available"

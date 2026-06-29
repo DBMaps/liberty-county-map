@@ -15,7 +15,7 @@
   "countyBoundarySource": {
     "status": "identified",
     "standardTexasBoundaryGeoid": "48407",
-    "standardTexasBoundarySource": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+    "standardTexasBoundarySource": "Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson",
     "countySpecificBoundaryPath": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
     "activation": false
   },

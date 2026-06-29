@@ -156,7 +156,7 @@
         displayName: "Liberty",
         countyName: "Liberty County",
         state: "TX",
-        administrativeBoundaryRelationship: Object.freeze({ countyId: "liberty-tx", boundaryPath: "data/liberty-county-boundary.geojson", relationship: "county-administrative-boundary" }),
+        administrativeBoundaryRelationship: Object.freeze({ countyId: "liberty-tx", boundaryPath: "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson", relationship: "county-administrative-boundary" }),
         awarenessAreas: Object.freeze(["Entire Liberty County", "Dayton", "Liberty", "Cleveland", "Ames", "Hardin", "Devers", "Hull", "Daisetta", "Moss Hill", "Raywood", "Kenefick", "Tarkington"]),
         municipalities: Object.freeze(["Dayton", "Liberty", "Cleveland", "Ames", "Hardin", "Devers", "Hull", "Daisetta", "Moss Hill", "Raywood", "Kenefick", "Tarkington"]),
         productionEnabled: true,
