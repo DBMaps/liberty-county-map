@@ -1,7 +1,7 @@
 {
   "milestone": "V817",
   "title": "Bulk County Preparation WriteMode Guarded",
-  "generatedAt": "2026-06-29T14:36:17.173Z",
+  "generatedAt": "2026-06-29T14:49:12.567Z",
   "mode": "APPLY_GUARDED_WRITE_MODE_NO_ACTIVATION",
   "inputs": {
     "v816": {
@@ -28,9 +28,9 @@
   "summary": {
     "mode": "APPLY_GUARDED_WRITE_MODE_NO_ACTIVATION",
     "countiesEvaluated": 23,
-    "countiesPrepared": 0,
-    "filesCreated": 0,
-    "filesSkipped": 46,
+    "countiesPrepared": 23,
+    "filesCreated": 23,
+    "filesSkipped": 23,
     "filesModified": 0,
     "filesDeleted": 0,
     "guardrailViolations": 0,
@@ -67,7 +67,7 @@
           "source": "Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -93,7 +93,7 @@
           "source": "Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -119,7 +119,7 @@
           "source": "Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -145,7 +145,7 @@
           "source": "Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -171,7 +171,7 @@
           "source": "Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -197,7 +197,7 @@
           "source": "Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -223,7 +223,7 @@
           "source": "Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -249,7 +249,7 @@
           "source": "Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -275,7 +275,7 @@
           "source": "Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -301,7 +301,7 @@
           "source": "Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -327,7 +327,7 @@
           "source": "Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -353,7 +353,7 @@
           "source": "Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -379,7 +379,7 @@
           "source": "Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -405,7 +405,7 @@
           "source": "Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -431,7 +431,7 @@
           "source": "Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -457,7 +457,7 @@
           "source": "Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -483,7 +483,7 @@
           "source": "Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -509,7 +509,7 @@
           "source": "Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -535,7 +535,7 @@
           "source": "Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -561,7 +561,7 @@
           "source": "Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -587,7 +587,7 @@
           "source": "Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -613,7 +613,7 @@
           "source": "Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     },
@@ -639,7 +639,7 @@
           "source": "Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson",
           "target": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
           "allowed": true,
-          "status": "skipped_missing_authoritative_source"
+          "status": "created"
         }
       ]
     }

@@ -8,9 +8,9 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 | --- | ---: |
 | Mode | `APPLY_GUARDED_WRITE_MODE_NO_ACTIVATION` |
 | Counties evaluated | 23 |
-| Counties prepared | 0 |
-| Files created | 0 |
-| Files skipped | 46 |
+| Counties prepared | 23 |
+| Files created | 23 |
+| Files skipped | 23 |
 | Files modified | 0 |
 | Files deleted | 0 |
 | Guardrail violations | 0 |
@@ -37,7 +37,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/harris/boundary/harris-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/harris/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/harris/boundary/harris-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/harris/boundary/harris-county-boundary.geojson`: `created`
 
 ### Polk
 
@@ -47,7 +47,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/polk/boundary/polk-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/polk/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/polk/boundary/polk-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/polk/boundary/polk-county-boundary.geojson`: `created`
 
 ### Austin
 
@@ -57,7 +57,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/austin/boundary/austin-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/austin/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/austin/boundary/austin-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/austin/boundary/austin-county-boundary.geojson`: `created`
 
 ### Brazoria
 
@@ -67,7 +67,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/brazoria/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson`: `created`
 
 ### Brazos
 
@@ -77,7 +77,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/brazos/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson`: `created`
 
 ### Calhoun
 
@@ -87,7 +87,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/calhoun/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson`: `created`
 
 ### Colorado
 
@@ -97,7 +97,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/colorado/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson`: `created`
 
 ### Fayette
 
@@ -107,7 +107,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/fayette/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson`: `created`
 
 ### Fort Bend
 
@@ -117,7 +117,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/fort-bend/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson`: `created`
 
 ### Galveston
 
@@ -127,7 +127,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/galveston/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson`: `created`
 
 ### Grimes
 
@@ -137,7 +137,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/grimes/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson`: `created`
 
 ### Hardin
 
@@ -147,7 +147,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/hardin/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson`: `created`
 
 ### Jackson
 
@@ -157,7 +157,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/jackson/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson`: `created`
 
 ### Jasper
 
@@ -167,7 +167,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/jasper/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson`: `created`
 
 ### Lavaca
 
@@ -177,7 +177,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/lavaca/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson`: `created`
 
 ### Matagorda
 
@@ -187,7 +187,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/matagorda/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson`: `created`
 
 ### Newton
 
@@ -197,7 +197,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/newton/boundary/newton-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/newton/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/newton/boundary/newton-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/newton/boundary/newton-county-boundary.geojson`: `created`
 
 ### Orange
 
@@ -207,7 +207,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/orange/boundary/orange-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/orange/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/orange/boundary/orange-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/orange/boundary/orange-county-boundary.geojson`: `created`
 
 ### Tyler
 
@@ -217,7 +217,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/tyler/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson`: `created`
 
 ### Walker
 
@@ -227,7 +227,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/walker/boundary/walker-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/walker/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/walker/boundary/walker-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/walker/boundary/walker-county-boundary.geojson`: `created`
 
 ### Waller
 
@@ -237,7 +237,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/waller/boundary/waller-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/waller/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/waller/boundary/waller-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/waller/boundary/waller-county-boundary.geojson`: `created`
 
 ### Washington
 
@@ -247,7 +247,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/washington/boundary/washington-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/washington/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/washington/boundary/washington-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/washington/boundary/washington-county-boundary.geojson`: `created`
 
 ### Wharton
 
@@ -257,7 +257,7 @@ V817 is the first guarded write-mode milestone. It permits only boundary-folder 
 - Canonical boundary: `assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson`
 - Actions:
   - `create_directory` → `assets/county-implementation/wharton/boundary`: `skipped_exists`
-  - `copy_boundary` → `assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson`: `skipped_missing_authoritative_source`
+  - `copy_boundary` → `assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson`: `created`
 
 ## Merge Recommendation
 

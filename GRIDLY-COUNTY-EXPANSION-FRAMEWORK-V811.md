@@ -12,13 +12,13 @@ This inventory is read-only. It does not promote counties, alter runtime ownersh
 
 - Supported counties: 28
 - Operational counties: 5
-- Ready counties: 0
-- Blocked counties: 23
-- Missing boundaries: Hardin, Polk, Walker, Harris, Orange, Jasper, Newton, Tyler, Galveston, Brazoria, Fort Bend, Waller, Austin, Washington, Brazos, Grimes, Wharton, Colorado, Fayette, Lavaca, Jackson, Matagorda, Calhoun
+- Ready counties: 23
+- Blocked counties: 0
+- Missing boundaries: None
 - Missing roads: Jefferson
 - Missing crossings: None
 - Missing registry entries: None
-- Overall determination: FRAMEWORK_READY_NO_NON_OPERATIONAL_COUNTY_READY_FOR_PROMOTION
+- Overall determination: FRAMEWORK_READY_WITH_PROMOTION_CANDIDATES_HELD_READ_ONLY
 
 ## County Inventory
 
@@ -29,33 +29,33 @@ This inventory is read-only. It does not promote counties, alter runtime ownersh
 | San Jacinto | san-jacinto | 48407 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
 | Chambers | chambers | 48071 | yes | yes | yes | yes | yes | yes | OPERATIONAL | None |
 | Jefferson | jefferson | 48245 | yes | yes | no | yes | yes | yes | OPERATIONAL | Missing roads package or roads=true in Community-Packages/jefferson/package-manifest.json |
-| Hardin | hardin | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson |
-| Polk | polk | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/polk/boundary/polk-county-boundary.geojson |
-| Walker | walker | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/walker/boundary/walker-county-boundary.geojson |
-| Harris | harris | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/harris/boundary/harris-county-boundary.geojson |
-| Orange | orange | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/orange/boundary/orange-county-boundary.geojson |
-| Jasper | jasper | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson |
-| Newton | newton | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/newton/boundary/newton-county-boundary.geojson |
-| Tyler | tyler | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson |
-| Galveston | galveston | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson |
-| Brazoria | brazoria | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson |
-| Fort Bend | fort-bend | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson |
-| Waller | waller | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/waller/boundary/waller-county-boundary.geojson |
-| Austin | austin | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/austin/boundary/austin-county-boundary.geojson |
-| Washington | washington | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/washington/boundary/washington-county-boundary.geojson |
-| Brazos | brazos | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson |
-| Grimes | grimes | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson |
-| Wharton | wharton | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson |
-| Colorado | colorado | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson |
-| Fayette | fayette | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson |
-| Lavaca | lavaca | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson |
-| Jackson | jackson | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson |
-| Matagorda | matagorda | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson |
-| Calhoun | calhoun | unknown | no | no | yes | yes | yes | no | BLOCKED | Missing authoritative boundary source: Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson<br>Missing canonical runtime boundary: assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson |
+| Hardin | hardin | 48199 | yes | yes | yes | yes | yes | no | READY | None |
+| Polk | polk | 48373 | yes | yes | yes | yes | yes | no | READY | None |
+| Walker | walker | 48471 | yes | yes | yes | yes | yes | no | READY | None |
+| Harris | harris | 48201 | yes | yes | yes | yes | yes | no | READY | None |
+| Orange | orange | 48361 | yes | yes | yes | yes | yes | no | READY | None |
+| Jasper | jasper | 48241 | yes | yes | yes | yes | yes | no | READY | None |
+| Newton | newton | 48351 | yes | yes | yes | yes | yes | no | READY | None |
+| Tyler | tyler | 48457 | yes | yes | yes | yes | yes | no | READY | None |
+| Galveston | galveston | 48167 | yes | yes | yes | yes | yes | no | READY | None |
+| Brazoria | brazoria | 48039 | yes | yes | yes | yes | yes | no | READY | None |
+| Fort Bend | fort-bend | 48157 | yes | yes | yes | yes | yes | no | READY | None |
+| Waller | waller | 48473 | yes | yes | yes | yes | yes | no | READY | None |
+| Austin | austin | 48015 | yes | yes | yes | yes | yes | no | READY | None |
+| Washington | washington | 48477 | yes | yes | yes | yes | yes | no | READY | None |
+| Brazos | brazos | 48041 | yes | yes | yes | yes | yes | no | READY | None |
+| Grimes | grimes | 48185 | yes | yes | yes | yes | yes | no | READY | None |
+| Wharton | wharton | 48481 | yes | yes | yes | yes | yes | no | READY | None |
+| Colorado | colorado | 48089 | yes | yes | yes | yes | yes | no | READY | None |
+| Fayette | fayette | 48149 | yes | yes | yes | yes | yes | no | READY | None |
+| Lavaca | lavaca | 48285 | yes | yes | yes | yes | yes | no | READY | None |
+| Jackson | jackson | 48239 | yes | yes | yes | yes | yes | no | READY | None |
+| Matagorda | matagorda | 48321 | yes | yes | yes | yes | yes | no | READY | None |
+| Calhoun | calhoun | 48057 | yes | yes | yes | yes | yes | no | READY | None |
 
 ## Quick Summary
 
-V811 adds a deterministic, read-only county expansion inventory for the current 28 Gridly-supported counties. The framework confirms Liberty, Montgomery, San Jacinto, Chambers, and Jefferson remain the only operational counties, identifies 0 non-operational counties as READY, and blocks 23 future counties because canonical V809/V810 boundary requirements are incomplete.
+V811 adds a deterministic, read-only county expansion inventory for the current 28 Gridly-supported counties. The framework confirms Liberty, Montgomery, San Jacinto, Chambers, and Jefferson remain the only operational counties, identifies 23 non-operational counties as READY, and blocks 0 future counties because canonical V809/V810 boundary requirements are incomplete.
 
 ## Files Modified
 
