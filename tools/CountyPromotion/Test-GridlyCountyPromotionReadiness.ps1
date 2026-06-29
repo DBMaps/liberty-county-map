@@ -103,6 +103,8 @@ $certificationCandidates = @(
 )
 $certificationEvidencePresent = @($certificationCandidates | Where-Object { Test-PathRelative $_ }).Count -gt 0
 
+$enabledOperational = $operational -and $searchEnabled -and $awarenessEnabled -and $consumerEnabled
+
 $checks = @(
     New-Check "Community Package" $communityExists $CommunityManifest
     New-Check "Crossing Package" $crossingExists $CrossingManifest
@@ -110,14 +112,13 @@ $checks = @(
     New-Check "Production Manifest" $productionManifestEntryExists $ProductionManifest
     New-Check "Application Assets" $applicationAssetsPresent $ApplicationAssetRoot
     New-Check "Runtime Registered" $runtimeRegistered "Registry reference found: $runtimeRegistered"
-    New-Check "Search Enabled" (-not $searchEnabled) "Expected disabled before controlled promotion; enabled=$searchEnabled"
-    New-Check "Awareness Enabled" (-not $awarenessEnabled) "Expected disabled before controlled promotion; enabled=$awarenessEnabled"
-    New-Check "Consumer Enabled" (-not $consumerEnabled) "Expected disabled before controlled promotion; enabled=$consumerEnabled"
+    New-Check "Search Enabled" $(if ($enabledOperational) { $searchEnabled } else { -not $searchEnabled }) $(if ($enabledOperational) { "Expected enabled after controlled promotion; enabled=$searchEnabled" } else { "Expected disabled before controlled promotion; enabled=$searchEnabled" })
+    New-Check "Awareness Enabled" $(if ($enabledOperational) { $awarenessEnabled } else { -not $awarenessEnabled }) $(if ($enabledOperational) { "Expected enabled after controlled promotion; enabled=$awarenessEnabled" } else { "Expected disabled before controlled promotion; enabled=$awarenessEnabled" })
+    New-Check "Consumer Enabled" $(if ($enabledOperational) { $consumerEnabled } else { -not $consumerEnabled }) $(if ($enabledOperational) { "Expected enabled after controlled promotion; enabled=$consumerEnabled" } else { "Expected disabled before controlled promotion; enabled=$consumerEnabled" })
     New-Check "Certification Evidence" $certificationEvidencePresent "Optional certification evidence discovered: $certificationEvidencePresent" "warn"
 )
 
 $requiredFailures = @($checks | Where-Object { $_.severity -eq "required" -and -not $_.pass })
-$enabledOperational = $operational -and $searchEnabled -and $awarenessEnabled -and $consumerEnabled
 $promotionPrereqsReady = $communityExists -and $crossingExists -and $productionPackageExists -and $productionManifestEntryExists -and $applicationAssetsPresent -and $runtimeRegistered
 
 if ($enabledOperational) {

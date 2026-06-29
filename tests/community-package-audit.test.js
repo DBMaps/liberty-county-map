@@ -40,9 +40,9 @@ assert.strictEqual(regionalAudit.operationalRegionId, "operational-region.southe
 assert.strictEqual(regionalAudit.operationalRegionName, "Southeast Texas Operational Region");
 assert.strictEqual(regionalAudit.blueprintAmendmentAlignment, true);
 assert.strictEqual(regionalAudit.registryDrivenMembership, true);
-assert.strictEqual(JSON.stringify(regionalAudit.activeCommunityPackages), JSON.stringify(["liberty-tx"]));
+assert.strictEqual(JSON.stringify(regionalAudit.activeCommunityPackages), JSON.stringify(["liberty-tx", "chambers-tx"]));
 assert.strictEqual(JSON.stringify(regionalAudit.operationalMaintenanceCommunityPackages), JSON.stringify(["montgomery-tx", "san-jacinto-tx"]));
-assert.strictEqual(JSON.stringify(regionalAudit.plannedCommunityPackages), JSON.stringify(["chambers-tx", "jefferson-tx", "hardin-tx", "orange-tx", "polk-tx", "tyler-tx", "walker-tx", "harris-tx"]));
+assert.strictEqual(JSON.stringify(regionalAudit.plannedCommunityPackages), JSON.stringify(["jefferson-tx", "hardin-tx", "orange-tx", "polk-tx", "tyler-tx", "walker-tx", "harris-tx"]));
 assert.strictEqual(regionalAudit.libertyReferenceImplementation, true);
 assert.strictEqual(regionalAudit.montgomeryOperationalMaintenance, true);
 assert.strictEqual(regionalAudit.sanJacintoOperationalMaintenance, true);
