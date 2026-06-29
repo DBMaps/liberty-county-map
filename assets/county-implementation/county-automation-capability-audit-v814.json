@@ -1,0 +1,1466 @@
+{
+  "milestone": "V814",
+  "title": "County Automation Capability Audit",
+  "mission": "Know Before You Go — Awareness Platform First, Route Intelligence Second",
+  "scope": "Read-only automation capability audit; no county preparation, activation, runtime behavior changes, or protected-system changes.",
+  "nonGoals": [
+    "Do not prepare counties.",
+    "Do not activate counties.",
+    "Do not modify runtime behavior.",
+    "Do not modify protected systems.",
+    "Do not modify Awareness, Reporting, Route Watch, Alerts, Crossings, Supabase synchronization, Community Intelligence, or user-facing UI."
+  ],
+  "generatedAt": "2026-06-29T14:17:05.078Z",
+  "inputs": {
+    "v812Path": "assets/county-implementation/county-readiness-gap-resolver-v812.json",
+    "v812Read": true,
+    "v813Path": "assets/county-implementation/county-preparation-planner-v813.json",
+    "v813Read": true
+  },
+  "inspectedPaths": [
+    {
+      "path": "Gridly-Source-Data",
+      "present": true,
+      "type": "directory",
+      "fileCount": 5,
+      "sampleFiles": [
+        "Gridly-Source-Data/Census/chambers-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/jefferson-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/montgomery-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson"
+      ]
+    },
+    {
+      "path": "Tools/Build-Scripts",
+      "present": false,
+      "type": "missing",
+      "fileCount": 0,
+      "sampleFiles": []
+    },
+    {
+      "path": "Community-Packages",
+      "present": true,
+      "type": "directory",
+      "fileCount": 33,
+      "sampleFiles": [
+        "Community-Packages/austin/package-manifest.json",
+        "Community-Packages/brazoria/package-manifest.json",
+        "Community-Packages/brazos/package-manifest.json",
+        "Community-Packages/BUILD-SYSTEM-STATUS.md",
+        "Community-Packages/calhoun/package-manifest.json",
+        "Community-Packages/chambers/package-manifest.json",
+        "Community-Packages/colorado/package-manifest.json",
+        "Community-Packages/COMMUNITY-PACKAGE-SPEC.md",
+        "Community-Packages/county-manifest.json",
+        "Community-Packages/fayette/package-manifest.json",
+        "Community-Packages/fort-bend/package-manifest.json",
+        "Community-Packages/galveston/package-manifest.json"
+      ]
+    },
+    {
+      "path": "Crossing-Packages",
+      "present": true,
+      "type": "directory",
+      "fileCount": 89,
+      "sampleFiles": [
+        "Crossing-Packages/austin/austin-crossings.geojson",
+        "Crossing-Packages/austin/package-manifest.json",
+        "Crossing-Packages/brazoria/brazoria-crossings.geojson",
+        "Crossing-Packages/brazoria/package-manifest.json",
+        "Crossing-Packages/brazos/brazos-crossings.geojson",
+        "Crossing-Packages/brazos/package-manifest.json",
+        "Crossing-Packages/calhoun/calhoun-crossings.geojson",
+        "Crossing-Packages/calhoun/package-manifest.json",
+        "Crossing-Packages/chambers/chambers-crossings.geojson",
+        "Crossing-Packages/chambers/package-manifest.json",
+        "Crossing-Packages/colorado/colorado-crossings.geojson",
+        "Crossing-Packages/colorado/package-manifest.json"
+      ]
+    },
+    {
+      "path": "Gridly-Source-Data/Census",
+      "present": true,
+      "type": "directory",
+      "fileCount": 5,
+      "sampleFiles": [
+        "Gridly-Source-Data/Census/chambers-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/jefferson-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/montgomery-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson"
+      ]
+    },
+    {
+      "path": "assets/county-implementation",
+      "present": true,
+      "type": "directory",
+      "fileCount": 149,
+      "sampleFiles": [
+        "assets/county-implementation/county-automation-capability-audit-v814.json",
+        "assets/county-implementation/county-preparation-planner-v813.json",
+        "assets/county-implementation/county-readiness-gap-resolver-v812.json",
+        "assets/county-implementation/montgomery/README.md",
+        "assets/county-implementation/multi-county-asset-package-manifest-v601.5.json"
+      ]
+    }
+  ],
+  "availableTools": [
+    {
+      "script": "Acquire-ArcGISDataset.ps1",
+      "path": "Tools/Build-Scripts/Acquire-ArcGISDataset.ps1",
+      "purpose": "boundary source acquisition support",
+      "present": false
+    },
+    {
+      "script": "Add-CountiesToManifest.ps1",
+      "path": "Tools/Build-Scripts/Add-CountiesToManifest.ps1",
+      "purpose": "county manifest update support",
+      "present": false
+    },
+    {
+      "script": "Build-CommunityPackage.ps1",
+      "path": "Tools/Build-Scripts/Build-CommunityPackage.ps1",
+      "purpose": "roads/community package build support",
+      "present": false
+    },
+    {
+      "script": "Build-RegionalExpansion.ps1",
+      "path": "Tools/Build-Scripts/Build-RegionalExpansion.ps1",
+      "purpose": "regional expansion build support",
+      "present": false
+    },
+    {
+      "script": "Get-BuildInventory.ps1",
+      "path": "Tools/Build-Scripts/Get-BuildInventory.ps1",
+      "purpose": "build inventory reporting support",
+      "present": false
+    },
+    {
+      "script": "Get-CountyInventory.ps1",
+      "path": "Tools/Build-Scripts/Get-CountyInventory.ps1",
+      "purpose": "county inventory reporting support",
+      "present": false
+    },
+    {
+      "script": "Get-FraInventory.ps1",
+      "path": "Tools/Build-Scripts/Get-FraInventory.ps1",
+      "purpose": "FRA inventory reporting support",
+      "present": false
+    },
+    {
+      "script": "gridly-gis-env.ps1",
+      "path": "Tools/Build-Scripts/gridly-gis-env.ps1",
+      "purpose": "GIS build environment support",
+      "present": false
+    },
+    {
+      "script": "Test-CommunityPackage.ps1",
+      "path": "Tools/Build-Scripts/Test-CommunityPackage.ps1",
+      "purpose": "package validation/testing support",
+      "present": false
+    },
+    {
+      "script": "Update-FraDataset.ps1",
+      "path": "Tools/Build-Scripts/Update-FraDataset.ps1",
+      "purpose": "FRA update support",
+      "present": false
+    },
+    {
+      "script": "Watch-CommunityPackage.ps1",
+      "path": "Tools/Build-Scripts/Watch-CommunityPackage.ps1",
+      "purpose": "watcher support",
+      "present": false
+    }
+  ],
+  "capabilities": [
+    {
+      "key": "boundarySourcePreparation",
+      "label": "Boundary source preparation",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Census source directory present: true",
+        "Acquire-ArcGISDataset.ps1 present: false"
+      ]
+    },
+    {
+      "key": "runtimeBoundaryPreparation",
+      "label": "Runtime boundary preparation",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "County implementation workspace present: true",
+        "Canonical Census GeoJSON sources present: true",
+        "No activation/runtime mutation tool is used by V814."
+      ]
+    },
+    {
+      "key": "roadsCommunityPackageBuilding",
+      "label": "Roads/community package building",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Build-CommunityPackage.ps1 present: false",
+        "Community packages present: true"
+      ]
+    },
+    {
+      "key": "crossingPackageBuilding",
+      "label": "Crossing package building",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Crossing package directory/packages present: true",
+        "No dedicated crossing package builder was listed or found."
+      ]
+    },
+    {
+      "key": "fraInventoryUpdateSupport",
+      "label": "FRA inventory/update support",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Get-FraInventory.ps1 present: false",
+        "Update-FraDataset.ps1 present: false",
+        "Texas FRA package present: true"
+      ]
+    },
+    {
+      "key": "countyManifestUpdates",
+      "label": "County manifest updates",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Add-CountiesToManifest.ps1 present: false",
+        "Manifest files present: true"
+      ]
+    },
+    {
+      "key": "regionalExpansionBuilding",
+      "label": "Regional expansion building",
+      "classification": "UNAVAILABLE",
+      "evidence": [
+        "Build-RegionalExpansion.ps1 present: false"
+      ]
+    },
+    {
+      "key": "packageValidationTesting",
+      "label": "Package validation/testing",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Test-CommunityPackage.ps1 present: false"
+      ]
+    },
+    {
+      "key": "buildInventoryReporting",
+      "label": "Build inventory reporting",
+      "classification": "PARTIALLY_AUTOMATED",
+      "evidence": [
+        "Get-BuildInventory.ps1 present: false",
+        "Get-CountyInventory.ps1 present: false"
+      ]
+    },
+    {
+      "key": "watcherSupport",
+      "label": "Watcher support",
+      "classification": "UNAVAILABLE",
+      "evidence": [
+        "Watch-CommunityPackage.ps1 present: false"
+      ]
+    }
+  ],
+  "counties": [
+    {
+      "county": "Harris",
+      "countySlug": "harris",
+      "geoid": "48201",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/harris/boundary/harris-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for harris-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include harris-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Polk",
+      "countySlug": "polk",
+      "geoid": "48373",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/polk/boundary/polk-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for polk-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include polk-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Austin",
+      "countySlug": "austin",
+      "geoid": "48015",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/austin/boundary/austin-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for austin-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for austin."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/austin/runtime-assets/austin-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include austin-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Brazoria",
+      "countySlug": "brazoria",
+      "geoid": "48039",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for brazoria-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for brazoria."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/brazoria/runtime-assets/brazoria-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include brazoria-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Brazos",
+      "countySlug": "brazos",
+      "geoid": "48041",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for brazos-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for brazos."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/brazos/runtime-assets/brazos-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include brazos-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Calhoun",
+      "countySlug": "calhoun",
+      "geoid": "48057",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for calhoun-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for calhoun."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/calhoun/runtime-assets/calhoun-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include calhoun-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Colorado",
+      "countySlug": "colorado",
+      "geoid": "48089",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for colorado-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for colorado."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/colorado/runtime-assets/colorado-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include colorado-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Fayette",
+      "countySlug": "fayette",
+      "geoid": "48149",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for fayette-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for fayette."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/fayette/runtime-assets/fayette-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include fayette-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Fort Bend",
+      "countySlug": "fort-bend",
+      "geoid": "48157",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for fort-bend-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for fort-bend."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/fort-bend/runtime-assets/fort-bend-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include fort-bend-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Galveston",
+      "countySlug": "galveston",
+      "geoid": "48167",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for galveston-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for galveston."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/galveston/runtime-assets/galveston-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include galveston-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Grimes",
+      "countySlug": "grimes",
+      "geoid": "48185",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for grimes-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for grimes."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/grimes/runtime-assets/grimes-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include grimes-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Hardin",
+      "countySlug": "hardin",
+      "geoid": "48199",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for hardin-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for hardin."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/hardin/runtime-assets/hardin-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include hardin-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Jackson",
+      "countySlug": "jackson",
+      "geoid": "48239",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for jackson-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for jackson."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/jackson/runtime-assets/jackson-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include jackson-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Jasper",
+      "countySlug": "jasper",
+      "geoid": "48241",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for jasper-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for jasper."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/jasper/runtime-assets/jasper-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include jasper-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Lavaca",
+      "countySlug": "lavaca",
+      "geoid": "48285",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for lavaca-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for lavaca."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/lavaca/runtime-assets/lavaca-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include lavaca-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Matagorda",
+      "countySlug": "matagorda",
+      "geoid": "48321",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for matagorda-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for matagorda."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/matagorda/runtime-assets/matagorda-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include matagorda-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Newton",
+      "countySlug": "newton",
+      "geoid": "48351",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/newton/boundary/newton-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for newton-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for newton."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/newton/runtime-assets/newton-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include newton-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Orange",
+      "countySlug": "orange",
+      "geoid": "48361",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/orange/boundary/orange-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for orange-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for orange."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/orange/runtime-assets/orange-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include orange-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Tyler",
+      "countySlug": "tyler",
+      "geoid": "48457",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for tyler-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for tyler."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/tyler/runtime-assets/tyler-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include tyler-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Walker",
+      "countySlug": "walker",
+      "geoid": "48471",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/walker/boundary/walker-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for walker-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for walker."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/walker/runtime-assets/walker-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include walker-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Waller",
+      "countySlug": "waller",
+      "geoid": "48473",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/waller/boundary/waller-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for waller-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for waller."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/waller/runtime-assets/waller-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include waller-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Washington",
+      "countySlug": "washington",
+      "geoid": "48477",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/washington/boundary/washington-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for washington-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for washington."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/washington/runtime-assets/washington-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include washington-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Wharton",
+      "countySlug": "wharton",
+      "geoid": "48481",
+      "currentGaps": [
+        {
+          "category": "missing_boundary_source",
+          "evidence": "No canonical boundary asset exists at assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson."
+        },
+        {
+          "category": "missing_runtime_boundary",
+          "evidence": "No runtime registration exists for wharton-tx; runtime boundary cannot resolve."
+        },
+        {
+          "category": "missing_roads_package",
+          "evidence": "No road package or road source directory found for wharton."
+        },
+        {
+          "category": "missing_crossings_package",
+          "evidence": "No rail crossing package exists at assets/county-implementation/wharton/runtime-assets/wharton-county-rail-crossings.geojson."
+        },
+        {
+          "category": "missing_runtime_registration",
+          "evidence": "js/app.js does not include wharton-tx in GRIDLY_COUNTY_REGISTRY."
+        }
+      ],
+      "automatedActionsAvailable": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Use existing source-data/boundary acquisition evidence to acquire or stage canonical boundary source."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Build or inventory community/roads package from existing package tooling/assets."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Derive county crossing package from existing Crossing-Packages/FRA package assets, then validate manually."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare non-operational runtime boundary inputs in a future authorized preparation milestone; keep activation false."
+        }
+      ],
+      "manualActionsRequired": [],
+      "unknownActions": [],
+      "safeForBulkAutomation": true,
+      "safeToActivate": false
+    }
+  ],
+  "supportedCountyCount": 28,
+  "operationalCountyCount": 5,
+  "blockedCountyCount": 23,
+  "automatedCapabilityCount": 0,
+  "partialCapabilityCount": 8,
+  "manualCapabilityCount": 0,
+  "unavailableCapabilityCount": 2,
+  "countiesSafeForBulkAutomation": 23,
+  "countiesRequiringManualWork": 0,
+  "overallDetermination": "AUTOMATION_CAPABILITY_AUDIT_COMPLETE"
+}
