@@ -1,0 +1,33 @@
+{
+  "milestone": "V802 County Boundary Manufacturing System",
+  "countyName": "Jefferson",
+  "countySlug": "jefferson",
+  "state": "TX",
+  "GEOID": "48245",
+  "manufacturedBoundaryPath": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+  "authoritativeSource": "county_sources/census-tiger-2025/tl_2025_us_county.shp",
+  "source": "Census TIGER/Line 2025 county shapefile",
+  "extractionKey": "GEOID",
+  "extractionValue": "48245",
+  "manualCoordinateEdits": false,
+  "bboxFallbackUsed": false,
+  "validation": {
+    "command": "node scripts/v802-county-boundary-validation.mjs --county jefferson",
+    "validGeoJson": true,
+    "coordinateCountGreaterThan50": true,
+    "geoidMatchesExpected": true,
+    "bboxPlausibleForCounty": true,
+    "noBboxFallback": true,
+    "manufacturedSourceFieldsPresent": true
+  },
+  "runtimeRegistration": {
+    "countyId": "jefferson-tx",
+    "boundarySource": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+    "auditFunction": "window.gridlyCountyBoundaryOverlayAudit?.()"
+  },
+  "visualEvidenceChecklist": [
+    "Set runtime context with window.gridlySetActiveCountyContext?.(\"jefferson-tx\")",
+    "Confirm the boundary contains Beaumont, Port Arthur, Nederland, and Port Neches",
+    "Confirm no bbox placeholder or statewide coarse fallback is rendered"
+  ]
+}

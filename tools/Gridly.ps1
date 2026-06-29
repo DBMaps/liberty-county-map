@@ -51,6 +51,7 @@ while ($true) {
         "tools\Release\New-GridlyHandoff.ps1",
         "tools\CountyPromotion\Test-GridlyCountyPromotionReadiness.ps1",
         "tools\ProductionPackages\Build-GridlyProductionPackages.ps1",
+        "tools\BoundaryPackages\Build-GridlyCountyBoundaryPackage.ps1",
         "tools\CountyPromotion\Promote-GridlyCounty.ps1"
     )
 
@@ -99,6 +100,7 @@ else {
     Write-Host "8. County Promotion Readiness"
     Write-Host "9. Production Package Manufacturing"
     Write-Host "10. County Promotion Automation"
+    Write-Host "11. Boundary Package Manufacturing"
     Write-Host "0. Exit"
     Write-Host ""
 
@@ -207,6 +209,37 @@ else {
                     powershell -ExecutionPolicy Bypass -File $Tool -County $County
                 }
                 else {
+                    powershell -ExecutionPolicy Bypass -File $Tool -County $County -WhatIf
+                }
+            }
+
+            Write-Host ""
+            Read-Host "Press ENTER to return to Command Center" | Out-Null
+
+        }
+
+        "11" {
+
+            Clear-Host
+            Write-Host "Boundary Package Manufacturing" -ForegroundColor Cyan
+            Write-Host "1. All supported counties"
+            Write-Host "2. One county"
+            Write-Host "3. WhatIf/preflight for one county"
+            $BoundaryChoice = Read-Host "Select"
+            $Tool = Join-Path (Get-Location) "tools\BoundaryPackages\Build-GridlyCountyBoundaryPackage.ps1"
+
+            if ($BoundaryChoice -eq "1") {
+                powershell -ExecutionPolicy Bypass -File $Tool -All -Force
+            }
+            elseif ($BoundaryChoice -eq "2") {
+                $County = Read-Host "County name"
+                if (-not [string]::IsNullOrWhiteSpace($County)) {
+                    powershell -ExecutionPolicy Bypass -File $Tool -County $County -Force
+                }
+            }
+            elseif ($BoundaryChoice -eq "3") {
+                $County = Read-Host "County name"
+                if (-not [string]::IsNullOrWhiteSpace($County)) {
                     powershell -ExecutionPolicy Bypass -File $Tool -County $County -WhatIf
                 }
             }

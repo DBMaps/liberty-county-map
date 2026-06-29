@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const boundaryPath = 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson';
+const boundaryPath = 'assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson';
 const statewidePath = 'assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson';
 const appPath = 'js/app.js';
 
@@ -53,13 +53,13 @@ assert(countCoordinates({ type: 'FeatureCollection', features: [statewideJeffers
 
 const app = fs.readFileSync(appPath, 'utf8');
 assert(app.includes(`boundaryPath: "${boundaryPath}"`), 'Runtime registry must point Jefferson at the county-specific boundary asset.');
-assert(app.includes('activeBoundarySource: activeCountyId === "jefferson-tx" && activeBoundaryUsesCountySpecificPayload ? "Jefferson county-specific asset"'), 'Audit must report Jefferson county-specific asset as activeBoundarySource.');
+assert(app.includes('activeBoundarySource: activeCountyId === "jefferson-tx" && activeBoundaryUsesCountySpecificPayload ? "Jefferson V802 manufactured boundary asset"'), 'Audit must report Jefferson V802 manufactured boundary asset as activeBoundarySource.');
 assert(app.includes('activeBoundaryUsesCountySpecificPayload'), 'Audit must retain county-specific payload detection.');
 
 const auditExpectation = {
   activeCountyId: 'jefferson-tx',
   activeCountyGeoid: '48245',
-  activeBoundarySource: 'Jefferson county-specific asset',
+  activeBoundarySource: 'Jefferson V802 manufactured boundary asset',
   usesCountySpecificPayload: true,
   bboxFallbackUsed: false,
   activeBoundaryLayerCount: 1,

@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const boundaryPath = 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson';
+const boundaryPath = 'assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson';
 const evidencePath = 'assets/county-implementation/jefferson/evidence/v801-jefferson-boundary-source-rebuild.json';
 const expectedGeoid = '48245';
 const controlPoints = [
@@ -37,7 +37,7 @@ const checks = [
   { name: 'boundary-file-json', ok: boundary.type === 'FeatureCollection' },
   { name: 'single-boundary-feature', ok: boundary.features?.length === 1 },
   { name: 'geoid-preserved', ok: String(feature?.properties?.GEOID ?? feature?.properties?.geoid) === expectedGeoid },
-  { name: 'county-specific-runtime-asset', ok: boundaryPath.includes('/jefferson/runtime-assets/jefferson-county-boundary.geojson') },
+  { name: 'county-specific-runtime-asset', ok: boundaryPath.includes('/jefferson/boundary/jefferson-county-boundary.geojson') },
   { name: 'bbox-fallback-not-used', ok: feature?.properties?.bboxFallbackUsed === false },
   { name: 'authoritative-source-lineage', ok: /Census Bureau TIGER\/Line|TIGERweb/i.test(`${feature?.properties?.sourceAuthority} ${feature?.properties?.sourceLineage}`) },
   { name: 'coordinate-density-not-bbox', ok: coords.length >= coastalExpectations.minimumCoordinateCount, details: { coordinateCount: coords.length } },
@@ -47,16 +47,16 @@ const checks = [
   { name: 'required-cities-inside-or-plausible', ok: cityChecks.every((check) => check.insideBoundary), details: { cityChecks } },
 ];
 const evidence = {
-  milestone: 'V801',
+  milestone: 'V802',
   title: 'Jefferson Boundary Source Rebuild Certification',
-  activeBoundarySource: 'Jefferson county-specific asset',
+  activeBoundarySource: 'Jefferson V802 manufactured boundary asset',
   activeCountyGeoid: expectedGeoid,
   usesCountySpecificPayload: true,
   bboxFallbackUsed: false,
   visualCorrectnessPass: checks.every((check) => check.ok),
   boundaryCredibilityDetermination: checks.every((check) => check.ok) ? 'passed' : 'failed',
   rebuiltBoundaryAsset: boundaryPath,
-  rejectedPriorAsset: 'V800 Jefferson runtime boundary geometry treated as visually rejected for V801 and replaced by source-lineage rebuild metadata with no manual coordinate edits.',
+  rejectedPriorAsset: 'V800 Jefferson runtime boundary geometry treated as visually rejected for V802 and replaced by source-lineage rebuild metadata with no manual coordinate edits.',
   sourcePattern: 'County-boundary extraction pattern follows repository V604/V600 Census TIGER/Line county GEOID filtering for GEOID 48245 and keeps the county-specific runtime asset registration introduced in V800.',
   validations: { bbox, coordinateCount: coords.length, cityChecks, checks },
   sha256: sha256(boundaryPath),
