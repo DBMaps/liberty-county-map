@@ -1,0 +1,3654 @@
+{
+  "milestone": "V816",
+  "title": "Bulk County Preparation WhatIf",
+  "mission": "Know Before You Go — Awareness Platform First, Route Intelligence Second",
+  "generatedAt": "2026-06-29T14:30:18.747Z",
+  "mode": "WHATIF_DRY_RUN_VALIDATION_ONLY_NO_COUNTY_PREPARATION",
+  "inputs": {
+    "v815": {
+      "path": "assets/county-implementation/bulk-county-preparation-plan-v815.json",
+      "read": true
+    },
+    "v814": {
+      "path": "assets/county-implementation/county-automation-capability-audit-v814.json",
+      "read": true
+    },
+    "v813": {
+      "path": "assets/county-implementation/county-preparation-planner-v813.json",
+      "read": true
+    },
+    "v812": {
+      "path": "assets/county-implementation/county-readiness-gap-resolver-v812.json",
+      "read": true
+    },
+    "v811": {
+      "path": "assets/county-implementation/county-expansion-framework-v811.json",
+      "read": false
+    }
+  },
+  "guardrails": {
+    "noFilesCreatedExceptV816Artifacts": true,
+    "noRuntimeFilesModified": true,
+    "noCountyPrepared": true,
+    "noCountyActivated": true,
+    "protectedSystemsUnchanged": true,
+    "safeToActivateForcedFalse": true
+  },
+  "blockedCountyCount": 23,
+  "countiesSimulated": 23,
+  "countiesSafeForFutureWriteMode": 23,
+  "countiesBlocked": 23,
+  "countiesManualReviewRequired": 23,
+  "expectedCreateCount": 65,
+  "expectedModifyCount": 0,
+  "protectedSystemTouchCount": 0,
+  "countiesSafeToActivate": 0,
+  "overallDetermination": "BULK_PREPARATION_WHATIF_COMPLETE",
+  "actionClassificationLegend": [
+    "SAFE_DRY_RUN",
+    "SAFE_FUTURE_WRITE",
+    "MANUAL_REQUIRED",
+    "BLOCKED",
+    "PROTECTED_SYSTEM_DO_NOT_TOUCH"
+  ],
+  "counties": [
+    {
+      "county": "Harris",
+      "countySlug": "harris",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/harris/boundary/harris-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/harris/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/harris/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/harris/harris-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/harris/boundary/harris-county-boundary.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/harris/boundary/harris-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Polk",
+      "countySlug": "polk",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/polk/boundary/polk-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/polk/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/polk/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/polk/polk-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/polk/boundary/polk-county-boundary.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/polk/boundary/polk-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Austin",
+      "countySlug": "austin",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/austin/boundary/austin-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/austin/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/austin/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/austin/austin-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+        "assets/county-implementation/austin/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/austin/runtime-assets/austin-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/austin/boundary/austin-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Brazoria",
+      "countySlug": "brazoria",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/brazoria/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/brazoria/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/brazoria/brazoria-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+        "assets/county-implementation/brazoria/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/brazoria/runtime-assets/brazoria-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Brazos",
+      "countySlug": "brazos",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/brazos/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/brazos/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/brazos/brazos-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+        "assets/county-implementation/brazos/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/brazos/runtime-assets/brazos-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Calhoun",
+      "countySlug": "calhoun",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/calhoun/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/calhoun/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/calhoun/calhoun-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+        "assets/county-implementation/calhoun/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/calhoun/runtime-assets/calhoun-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Colorado",
+      "countySlug": "colorado",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/colorado/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/colorado/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/colorado/colorado-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+        "assets/county-implementation/colorado/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/colorado/runtime-assets/colorado-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Fayette",
+      "countySlug": "fayette",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/fayette/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/fayette/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/fayette/fayette-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+        "assets/county-implementation/fayette/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/fayette/runtime-assets/fayette-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Fort Bend",
+      "countySlug": "fort-bend",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/fort-bend/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/fort-bend/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/fort-bend/fort-bend-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+        "assets/county-implementation/fort-bend/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/fort-bend/runtime-assets/fort-bend-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Galveston",
+      "countySlug": "galveston",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/galveston/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/galveston/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/galveston/galveston-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+        "assets/county-implementation/galveston/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/galveston/runtime-assets/galveston-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Grimes",
+      "countySlug": "grimes",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/grimes/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/grimes/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/grimes/grimes-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+        "assets/county-implementation/grimes/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/grimes/runtime-assets/grimes-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Hardin",
+      "countySlug": "hardin",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/hardin/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/hardin/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/hardin/hardin-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+        "assets/county-implementation/hardin/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/hardin/runtime-assets/hardin-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Jackson",
+      "countySlug": "jackson",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/jackson/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/jackson/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/jackson/jackson-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+        "assets/county-implementation/jackson/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/jackson/runtime-assets/jackson-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Jasper",
+      "countySlug": "jasper",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/jasper/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/jasper/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/jasper/jasper-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+        "assets/county-implementation/jasper/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/jasper/runtime-assets/jasper-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Lavaca",
+      "countySlug": "lavaca",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/lavaca/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/lavaca/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/lavaca/lavaca-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+        "assets/county-implementation/lavaca/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/lavaca/runtime-assets/lavaca-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Matagorda",
+      "countySlug": "matagorda",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/matagorda/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/matagorda/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/matagorda/matagorda-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+        "assets/county-implementation/matagorda/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/matagorda/runtime-assets/matagorda-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Newton",
+      "countySlug": "newton",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/newton/boundary/newton-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/newton/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/newton/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/newton/newton-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+        "assets/county-implementation/newton/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/newton/runtime-assets/newton-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/newton/boundary/newton-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Orange",
+      "countySlug": "orange",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/orange/boundary/orange-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/orange/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/orange/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/orange/orange-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+        "assets/county-implementation/orange/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/orange/runtime-assets/orange-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/orange/boundary/orange-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Tyler",
+      "countySlug": "tyler",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/tyler/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/tyler/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/tyler/tyler-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+        "assets/county-implementation/tyler/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/tyler/runtime-assets/tyler-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Walker",
+      "countySlug": "walker",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/walker/boundary/walker-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/walker/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/walker/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/walker/walker-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+        "assets/county-implementation/walker/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/walker/runtime-assets/walker-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/walker/boundary/walker-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Waller",
+      "countySlug": "waller",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/waller/boundary/waller-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/waller/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/waller/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/waller/waller-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+        "assets/county-implementation/waller/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/waller/runtime-assets/waller-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/waller/boundary/waller-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Washington",
+      "countySlug": "washington",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/washington/boundary/washington-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/washington/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/washington/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/washington/washington-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+        "assets/county-implementation/washington/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/washington/runtime-assets/washington-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/washington/boundary/washington-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    },
+    {
+      "county": "Wharton",
+      "countySlug": "wharton",
+      "plannedActions": [
+        {
+          "gap": "missing_boundary_source",
+          "action": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson under V809/V810 canonical boundary rules.",
+          "classification": "MANUAL_REQUIRED",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "action": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        },
+        {
+          "gap": "missing_roads_package",
+          "action": "Place or generate the county road package in the canonical runtime-assets path during a future authorized preparation milestone.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_crossings_package",
+          "action": "Acquire, filter, validate, and place county rail crossings in the canonical runtime-assets path.",
+          "classification": "SAFE_FUTURE_WRITE",
+          "whatIfResult": "Reported as a future candidate only; V816 performs no county preparation writes."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "action": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized.",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "whatIfResult": "Reported only; V816 will not plan a runtime or protected-system write."
+        }
+      ],
+      "existingToolsRequired": [
+        {
+          "key": "boundarySourceInventory",
+          "name": "Census boundary source inventory",
+          "command": "read Gridly-Source-Data/Census/*.geojson",
+          "path": "Gridly-Source-Data/Census",
+          "purpose": "Discover whether a canonical county boundary source is already staged.",
+          "order": 10,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "boundaryValidationHarness",
+          "name": "County boundary validation harness",
+          "command": "node scripts/v802-county-boundary-validation.mjs",
+          "path": "scripts/v802-county-boundary-validation.mjs",
+          "purpose": "Validate county boundary artifacts when they exist; does not activate counties.",
+          "order": 20,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "communityPackageInventory",
+          "name": "Community package inventory",
+          "command": "read Community-Packages/<county>/package-manifest.json",
+          "path": "Community-Packages",
+          "purpose": "Detect existing community package manifests before any build step.",
+          "order": 30,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "crossingPackageInventory",
+          "name": "Crossing package inventory",
+          "command": "read Crossing-Packages/<county>/package-manifest.json and <county>-crossings.geojson",
+          "path": "Crossing-Packages",
+          "purpose": "Detect existing county crossing packages before any derivation step.",
+          "order": 40,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "fraInventorySource",
+          "name": "FRA Texas inventory source",
+          "command": "read Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "purpose": "Use the staged FRA inventory as the source for future county-contained crossing package derivation.",
+          "order": 45,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyReadinessResolver",
+          "name": "V812 county readiness gap resolver",
+          "command": "node scripts/v812-county-readiness-gap-resolver.mjs --json",
+          "path": "scripts/v812-county-readiness-gap-resolver.mjs",
+          "purpose": "Recalculate blocked-county gaps without runtime activation.",
+          "order": 70,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "countyPreparationPlanner",
+          "name": "V813 county preparation planner",
+          "command": "node scripts/v813-county-preparation-planner.mjs --json",
+          "path": "scripts/v813-county-preparation-planner.mjs",
+          "purpose": "Refresh preparation tiers and manual-action recommendations.",
+          "order": 80,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        },
+        {
+          "key": "automationCapabilityAudit",
+          "name": "V814 automation capability audit",
+          "command": "node scripts/v814-county-automation-capability-audit.mjs --json",
+          "path": "scripts/v814-county-automation-capability-audit.mjs",
+          "purpose": "Refresh build-tool capability classification.",
+          "order": 90,
+          "invocationMode": "dry_run_or_read_only_plan_only"
+        }
+      ],
+      "sourceAssetsRequired": {
+        "boundaryCandidates": [],
+        "communityPackageManifest": "Community-Packages/wharton/package-manifest.json",
+        "crossingPackageManifest": "Crossing-Packages/wharton/package-manifest.json",
+        "crossingGeojson": "Crossing-Packages/wharton/wharton-crossings.geojson",
+        "fraTexasInventory": "Crossing-Packages/Texas/fra-crossings-tx.geojson"
+      },
+      "expectedFilesToCreate": [
+        "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+        "assets/county-implementation/wharton/runtime-assets/source/<county-road-source-files>",
+        "assets/county-implementation/wharton/runtime-assets/wharton-county-rail-crossings.geojson"
+      ],
+      "expectedFilesToModify": [],
+      "expectedFilesToLeaveUnchanged": [
+        "js/app.js",
+        "assets/package-registry/runtime-package-registry.json",
+        "Awareness",
+        "Reporting",
+        "Route Watch",
+        "Alerts",
+        "Crossings runtime",
+        "Supabase synchronization",
+        "Community Intelligence",
+        "user-facing UI"
+      ],
+      "blockers": [
+        {
+          "gap": "missing_boundary_source",
+          "classification": "MANUAL_REQUIRED",
+          "reason": "Acquire, extract, validate, and promote a county-owned boundary to assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson under V809/V810 canonical boundary rules."
+        },
+        {
+          "gap": "missing_runtime_boundary",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a runtime boundary registration only after the canonical boundary source is present and validated; do not activate the county."
+        },
+        {
+          "gap": "missing_runtime_registration",
+          "classification": "PROTECTED_SYSTEM_DO_NOT_TOUCH",
+          "reason": "Prepare a non-operational runtime registration after asset prerequisites are complete; keep operational, productionEnabled, selectable, and safeToActivate false until separately authorized."
+        },
+        {
+          "gap": "canonical_county_boundary_source",
+          "classification": "BLOCKED",
+          "reason": "Required source asset is not currently staged."
+        }
+      ],
+      "manualReviewRequired": true,
+      "safeForFutureWriteMode": true,
+      "safeToActivate": false
+    }
+  ]
+}
