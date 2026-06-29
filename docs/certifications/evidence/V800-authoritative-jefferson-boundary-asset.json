@@ -1,0 +1,48 @@
+{
+  "milestone": "V800",
+  "title": "Authoritative Jefferson Boundary Asset",
+  "countyId": "jefferson-tx",
+  "activeCountyGeoid": "48245",
+  "boundaryAsset": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson",
+  "activeBoundarySource": "Jefferson county-specific asset",
+  "sourceLineage": "Repository-available statewide payload feature metadata identifies tl_2025_us_county GEOID 48245; V800 copied that feature into a county-specific runtime asset before reverting the statewide Jefferson hand edit.",
+  "statewideAssetRollback": {
+    "path": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+    "jeffersonFeature": "reverted to pre-V799 placeholder geometry",
+    "runtimeRenderingDependsOnStatewideJeffersonFeature": false
+  },
+  "geometryEvidence": {
+    "type": "MultiPolygon",
+    "coordinateCount": 325,
+    "bbox": {
+      "west": -94.722849,
+      "south": 29.47979,
+      "east": -93.837002,
+      "north": 30.351183
+    },
+    "bboxFallbackUsed": false,
+    "visualCorrectnessPass": true
+  },
+  "expectedBoundaryAudit": {
+    "activeCountyId": "jefferson-tx",
+    "activeCountyGeoid": "48245",
+    "activeBoundarySource": "Jefferson county-specific asset",
+    "usesCountySpecificPayload": true,
+    "bboxFallbackUsed": false,
+    "activeBoundaryLayerCount": 1,
+    "passiveCountyBoundaryRendered": 0,
+    "visualCorrectnessPass": true
+  },
+  "validationCommand": "node scripts/v800-jefferson-boundary-asset-validation.mjs",
+  "protectedSystemsUnchanged": [
+    "promotion tooling",
+    "crossing package contents",
+    "production package contents",
+    "Shared Reports",
+    "Route Watch",
+    "Awareness Filtering",
+    "Hazard Lifecycle",
+    "Alert Generation",
+    "Supabase Sync"
+  ]
+}
