@@ -6,12 +6,25 @@ param(
     [string[]]$County,
     [switch]$All,
     [switch]$Force,
-    [switch]$Json
+    [switch]$Json,
+    [string]$SourceShapefile
 )
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
-$SourceShapefile = Join-Path $RepoRoot "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+$DefaultSourceShapefile = Join-Path $RepoRoot "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+$FallbackSourceShapefile = "C:\GitHub\Gridly-Source-Data\Census\tl_2025_us_county\tl_2025_us_county.shp"
+$DefaultSourceShapefileMetadataPath = "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+$SourceShapefileWasProvided = -not [string]::IsNullOrWhiteSpace($SourceShapefile)
+$SourceShapefileFallbackUsed = $false
+if (!$SourceShapefileWasProvided) {
+    $SourceShapefile = $DefaultSourceShapefile
+    if (!(Test-Path $SourceShapefile) -and (Test-Path $FallbackSourceShapefile)) {
+        $SourceShapefile = $FallbackSourceShapefile
+        $SourceShapefileFallbackUsed = $true
+    }
+}
+$ManufacturedBoundarySourcePath = if (!$SourceShapefileWasProvided -and !$SourceShapefileFallbackUsed) { $DefaultSourceShapefileMetadataPath } else { $SourceShapefile }
 $SourceLabel = "Census TIGER/Line 2025 county shapefile"
 
 $SupportedCounties = @{
@@ -84,7 +97,7 @@ foreach ($target in $Targets) {
         $feature.properties | Add-Member -Force NoteProperty generatedAt ([DateTime]::UtcNow.ToString("o"))
         $feature.properties | Add-Member -Force NoteProperty bboxFallbackUsed $false
         $feature.properties | Add-Member -Force NoteProperty boundaryManufacturingSystem "V802 County Boundary Manufacturing System"
-        $feature.properties | Add-Member -Force NoteProperty manufacturedBoundarySourcePath "county_sources/census-tiger-2025/tl_2025_us_county.shp"
+        $feature.properties | Add-Member -Force NoteProperty manufacturedBoundarySourcePath $ManufacturedBoundarySourcePath
         $feature.properties | Add-Member -Force NoteProperty manufacturedBoundaryOutputPath $relativeOutput
         $geojson | Add-Member -Force NoteProperty source $SourceLabel
         $geojson | ConvertTo-Json -Depth 100 -Compress | Set-Content -Path $output -Encoding UTF8

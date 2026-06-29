@@ -1,0 +1,34 @@
+{
+  "milestone": "V804 Boundary Manufacturing Source Path Support",
+  "scope": "Adds explicit and fallback TIGER/Line source shapefile path resolution to the county boundary manufacturing script without changing boundary geometry, promotion tooling, or V802/V803 validation behavior.",
+  "script": "tools/BoundaryPackages/Build-GridlyCountyBoundaryPackage.ps1",
+  "sourcePathSupport": {
+    "explicitParameter": "-SourceShapefile",
+    "preservedDefaultSource": "county_sources/census-tiger-2025/tl_2025_us_county.shp",
+    "fallbackSource": "C:\\GitHub\\Gridly-Source-Data\\Census\\tl_2025_us_county\\tl_2025_us_county.shp",
+    "fallbackBehavior": "When -SourceShapefile is omitted, the script first attempts the existing repository-relative default path and only falls back to the canonical Gridly-Source-Data path if the default is absent and the fallback exists."
+  },
+  "constraints": {
+    "manualCoordinateEdits": false,
+    "promotionToolingChanged": false,
+    "v802ManufacturingBehaviorPreserved": true,
+    "v803PowerShellInterpolationFixPreserved": true
+  },
+  "validation": [
+    {
+      "command": "node tools/Validation/Test-PowerShellInterpolationSafety.mjs tools/BoundaryPackages/Build-GridlyCountyBoundaryPackage.ps1",
+      "result": "passed",
+      "purpose": "Confirm V803 interpolation safety remains intact after adding source path handling."
+    },
+    {
+      "command": "node scripts/v802-county-boundary-validation.mjs --county jefferson",
+      "result": "passed",
+      "purpose": "Confirm existing Jefferson V802 manufactured boundary package remains valid after source path support changes."
+    },
+    {
+      "command": "pwsh -NoProfile -File tools/BoundaryPackages/Build-GridlyCountyBoundaryPackage.ps1 -County Jefferson -Force -SourceShapefile \"C:\\GitHub\\Gridly-Source-Data\\Census\\tl_2025_us_county\\tl_2025_us_county.shp\"",
+      "result": "not-run-in-container",
+      "purpose": "Required local manufacturing command for Windows canonical source path; not executed in this Linux container because PowerShell and the Windows C:\\ source tree are unavailable here."
+    }
+  ]
+}
