@@ -1,0 +1,1316 @@
+{
+  "audit": "V820 Regional Runtime Certification",
+  "generatedAt": "2026-06-29T16:26:54.925Z",
+  "operationalCountyCount": 28,
+  "countiesPassed": [
+    "liberty-tx",
+    "montgomery-tx",
+    "san-jacinto-tx",
+    "chambers-tx",
+    "jefferson-tx",
+    "hardin-tx",
+    "polk-tx",
+    "walker-tx",
+    "harris-tx",
+    "orange-tx",
+    "jasper-tx",
+    "newton-tx",
+    "tyler-tx",
+    "galveston-tx",
+    "brazoria-tx",
+    "fort-bend-tx",
+    "waller-tx",
+    "austin-tx",
+    "washington-tx",
+    "brazos-tx",
+    "grimes-tx",
+    "wharton-tx",
+    "colorado-tx",
+    "fayette-tx",
+    "lavaca-tx",
+    "jackson-tx",
+    "matagorda-tx",
+    "calhoun-tx"
+  ],
+  "countiesWarned": [
+    "montgomery-tx",
+    "hardin-tx",
+    "walker-tx",
+    "orange-tx",
+    "jasper-tx",
+    "newton-tx",
+    "tyler-tx",
+    "galveston-tx",
+    "brazoria-tx",
+    "fort-bend-tx",
+    "waller-tx",
+    "austin-tx",
+    "washington-tx",
+    "brazos-tx",
+    "grimes-tx",
+    "wharton-tx",
+    "colorado-tx",
+    "fayette-tx",
+    "lavaca-tx",
+    "jackson-tx",
+    "matagorda-tx",
+    "calhoun-tx"
+  ],
+  "countiesFailed": [],
+  "warnings": [
+    {
+      "countyId": "montgomery-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at null."
+    },
+    {
+      "countyId": "hardin-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/hardin/runtime-assets/source/tl_2025_48199_roads.shp."
+    },
+    {
+      "countyId": "walker-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/walker/runtime-assets/source/tl_2025_48471_roads.shp."
+    },
+    {
+      "countyId": "orange-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/orange/runtime-assets/source/tl_2025_48361_roads.shp."
+    },
+    {
+      "countyId": "jasper-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/jasper/runtime-assets/source/tl_2025_48241_roads.shp."
+    },
+    {
+      "countyId": "newton-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/newton/runtime-assets/source/tl_2025_48351_roads.shp."
+    },
+    {
+      "countyId": "tyler-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/tyler/runtime-assets/source/tl_2025_48457_roads.shp."
+    },
+    {
+      "countyId": "galveston-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/galveston/runtime-assets/source/tl_2025_48167_roads.shp."
+    },
+    {
+      "countyId": "brazoria-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/brazoria/runtime-assets/source/tl_2025_48039_roads.shp."
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/fort-bend/runtime-assets/source/tl_2025_48157_roads.shp."
+    },
+    {
+      "countyId": "waller-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/waller/runtime-assets/source/tl_2025_48473_roads.shp."
+    },
+    {
+      "countyId": "austin-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/austin/runtime-assets/source/tl_2025_48015_roads.shp."
+    },
+    {
+      "countyId": "washington-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/washington/runtime-assets/source/tl_2025_48477_roads.shp."
+    },
+    {
+      "countyId": "brazos-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/brazos/runtime-assets/source/tl_2025_48041_roads.shp."
+    },
+    {
+      "countyId": "grimes-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/grimes/runtime-assets/source/tl_2025_48185_roads.shp."
+    },
+    {
+      "countyId": "wharton-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/wharton/runtime-assets/source/tl_2025_48481_roads.shp."
+    },
+    {
+      "countyId": "colorado-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/colorado/runtime-assets/source/tl_2025_48089_roads.shp."
+    },
+    {
+      "countyId": "fayette-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/fayette/runtime-assets/source/tl_2025_48149_roads.shp."
+    },
+    {
+      "countyId": "lavaca-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/lavaca/runtime-assets/source/tl_2025_48285_roads.shp."
+    },
+    {
+      "countyId": "jackson-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/jackson/runtime-assets/source/tl_2025_48239_roads.shp."
+    },
+    {
+      "countyId": "matagorda-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/matagorda/runtime-assets/source/tl_2025_48321_roads.shp."
+    },
+    {
+      "countyId": "calhoun-tx",
+      "check": "roadSourcePresentWhenExpected",
+      "message": "Roads are expected but no local road source file exists at assets/county-implementation/calhoun/runtime-assets/source/tl_2025_48057_roads.shp."
+    }
+  ],
+  "failures": [],
+  "results": [
+    {
+      "countyId": "liberty-tx",
+      "countyName": "Liberty County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 2255,
+        "runtimeGeoid": null,
+        "boundaryGeoid": "48291"
+      },
+      "roads": {
+        "expected": true,
+        "source": "data/liberty-county-road-segments.geojson",
+        "present": true
+      },
+      "crossings": {
+        "source": "data/liberty-county-rail-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "montgomery-tx",
+      "countyName": "Montgomery County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 6828,
+        "runtimeGeoid": null,
+        "boundaryGeoid": "48339"
+      },
+      "roads": {
+        "expected": true,
+        "source": null,
+        "present": false
+      },
+      "crossings": {
+        "source": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-rail-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "operational-maintenance"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "montgomery-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at null."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "countyName": "San Jacinto County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3226,
+        "runtimeGeoid": "48407",
+        "boundaryGeoid": "48407"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson",
+        "present": true
+      },
+      "crossings": {
+        "source": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-rail-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "operational-maintenance"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "chambers-tx",
+      "countyName": "Chambers County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 6402,
+        "runtimeGeoid": "48071",
+        "boundaryGeoid": "48071"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/chambers/runtime-assets/source/tl_2025_48071_roads.shp",
+        "present": true
+      },
+      "crossings": {
+        "source": "assets/county-implementation/chambers/runtime-assets/chambers-county-rail-crossings.geojson",
+        "present": true,
+        "unavailable": true
+      },
+      "package": {
+        "manifestStatus": "roads_extracted",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "jefferson-tx",
+      "countyName": "Jefferson County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3841,
+        "runtimeGeoid": "48245",
+        "boundaryGeoid": "48245"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/jefferson/runtime-assets/source/tl_2025_48245_roads.shp",
+        "present": true
+      },
+      "crossings": {
+        "source": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson",
+        "present": true,
+        "unavailable": true
+      },
+      "package": {
+        "manifestStatus": "building",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "hardin-tx",
+      "countyName": "Hardin County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 5441,
+        "runtimeGeoid": "48199",
+        "boundaryGeoid": "48199"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/hardin/runtime-assets/source/tl_2025_48199_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/hardin/hardin-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "hardin-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/hardin/runtime-assets/source/tl_2025_48199_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "polk-tx",
+      "countyName": "Polk County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3530,
+        "runtimeGeoid": "48373",
+        "boundaryGeoid": "48373"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/polk/runtime-assets/source/tl_2025_48373_roads.shp",
+        "present": true
+      },
+      "crossings": {
+        "source": "Crossing-Packages/polk/polk-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "walker-tx",
+      "countyName": "Walker County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3349,
+        "runtimeGeoid": "48471",
+        "boundaryGeoid": "48471"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/walker/runtime-assets/source/tl_2025_48471_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/walker/walker-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "walker-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/walker/runtime-assets/source/tl_2025_48471_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "harris-tx",
+      "countyName": "Harris County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 12788,
+        "runtimeGeoid": "48201",
+        "boundaryGeoid": "48201"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/harris/runtime-assets/source/tl_2025_48201_roads.shp",
+        "present": true
+      },
+      "crossings": {
+        "source": "Crossing-Packages/harris/harris-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": false,
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "countyId": "orange-tx",
+      "countyName": "Orange County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 2436,
+        "runtimeGeoid": "48361",
+        "boundaryGeoid": "48361"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/orange/runtime-assets/source/tl_2025_48361_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/orange/orange-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "orange-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/orange/runtime-assets/source/tl_2025_48361_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "jasper-tx",
+      "countyName": "Jasper County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 4481,
+        "runtimeGeoid": "48241",
+        "boundaryGeoid": "48241"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/jasper/runtime-assets/source/tl_2025_48241_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/jasper/jasper-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "jasper-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/jasper/runtime-assets/source/tl_2025_48241_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "newton-tx",
+      "countyName": "Newton County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3541,
+        "runtimeGeoid": "48351",
+        "boundaryGeoid": "48351"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/newton/runtime-assets/source/tl_2025_48351_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/newton/newton-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "newton-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/newton/runtime-assets/source/tl_2025_48351_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "tyler-tx",
+      "countyName": "Tyler County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3107,
+        "runtimeGeoid": "48457",
+        "boundaryGeoid": "48457"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/tyler/runtime-assets/source/tl_2025_48457_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/tyler/tyler-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "tyler-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/tyler/runtime-assets/source/tl_2025_48457_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "galveston-tx",
+      "countyName": "Galveston County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 6062,
+        "runtimeGeoid": "48167",
+        "boundaryGeoid": "48167"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/galveston/runtime-assets/source/tl_2025_48167_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/galveston/galveston-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "galveston-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/galveston/runtime-assets/source/tl_2025_48167_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "brazoria-tx",
+      "countyName": "Brazoria County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 5504,
+        "runtimeGeoid": "48039",
+        "boundaryGeoid": "48039"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/brazoria/runtime-assets/source/tl_2025_48039_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/brazoria/brazoria-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "brazoria-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/brazoria/runtime-assets/source/tl_2025_48039_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "countyName": "Fort Bend County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 5692,
+        "runtimeGeoid": "48157",
+        "boundaryGeoid": "48157"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/fort-bend/runtime-assets/source/tl_2025_48157_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/fort-bend/fort-bend-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "fort-bend-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/fort-bend/runtime-assets/source/tl_2025_48157_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "waller-tx",
+      "countyName": "Waller County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 2954,
+        "runtimeGeoid": "48473",
+        "boundaryGeoid": "48473"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/waller/runtime-assets/source/tl_2025_48473_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/waller/waller-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "waller-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/waller/runtime-assets/source/tl_2025_48473_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "austin-tx",
+      "countyName": "Austin County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 5598,
+        "runtimeGeoid": "48015",
+        "boundaryGeoid": "48015"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/austin/runtime-assets/source/tl_2025_48015_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/austin/austin-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "austin-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/austin/runtime-assets/source/tl_2025_48015_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "washington-tx",
+      "countyName": "Washington County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 5559,
+        "runtimeGeoid": "48477",
+        "boundaryGeoid": "48477"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/washington/runtime-assets/source/tl_2025_48477_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/washington/washington-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "washington-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/washington/runtime-assets/source/tl_2025_48477_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "brazos-tx",
+      "countyName": "Brazos County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 6639,
+        "runtimeGeoid": "48041",
+        "boundaryGeoid": "48041"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/brazos/runtime-assets/source/tl_2025_48041_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/brazos/brazos-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "brazos-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/brazos/runtime-assets/source/tl_2025_48041_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "grimes-tx",
+      "countyName": "Grimes County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3421,
+        "runtimeGeoid": "48185",
+        "boundaryGeoid": "48185"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/grimes/runtime-assets/source/tl_2025_48185_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/grimes/grimes-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "grimes-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/grimes/runtime-assets/source/tl_2025_48185_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "wharton-tx",
+      "countyName": "Wharton County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 4132,
+        "runtimeGeoid": "48481",
+        "boundaryGeoid": "48481"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/wharton/runtime-assets/source/tl_2025_48481_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/wharton/wharton-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "wharton-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/wharton/runtime-assets/source/tl_2025_48481_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "colorado-tx",
+      "countyName": "Colorado County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3433,
+        "runtimeGeoid": "48089",
+        "boundaryGeoid": "48089"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/colorado/runtime-assets/source/tl_2025_48089_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/colorado/colorado-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "colorado-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/colorado/runtime-assets/source/tl_2025_48089_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "fayette-tx",
+      "countyName": "Fayette County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 1244,
+        "runtimeGeoid": "48149",
+        "boundaryGeoid": "48149"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/fayette/runtime-assets/source/tl_2025_48149_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/fayette/fayette-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "fayette-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/fayette/runtime-assets/source/tl_2025_48149_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "lavaca-tx",
+      "countyName": "Lavaca County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 1056,
+        "runtimeGeoid": "48285",
+        "boundaryGeoid": "48285"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/lavaca/runtime-assets/source/tl_2025_48285_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/lavaca/lavaca-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "lavaca-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/lavaca/runtime-assets/source/tl_2025_48285_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "jackson-tx",
+      "countyName": "Jackson County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 1924,
+        "runtimeGeoid": "48239",
+        "boundaryGeoid": "48239"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/jackson/runtime-assets/source/tl_2025_48239_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/jackson/jackson-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "jackson-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/jackson/runtime-assets/source/tl_2025_48239_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "matagorda-tx",
+      "countyName": "Matagorda County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 2871,
+        "runtimeGeoid": "48321",
+        "boundaryGeoid": "48321"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/matagorda/runtime-assets/source/tl_2025_48321_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/matagorda/matagorda-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "matagorda-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/matagorda/runtime-assets/source/tl_2025_48321_roads.shp."
+        }
+      ],
+      "failures": []
+    },
+    {
+      "countyId": "calhoun-tx",
+      "countyName": "Calhoun County",
+      "runtime": {
+        "operational": true,
+        "selectable": true,
+        "productionEnabled": true
+      },
+      "boundary": {
+        "path": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+        "exists": true,
+        "parseable": true,
+        "featureCount": 1,
+        "coordinateCount": 3055,
+        "runtimeGeoid": "48057",
+        "boundaryGeoid": "48057"
+      },
+      "roads": {
+        "expected": true,
+        "source": "assets/county-implementation/calhoun/runtime-assets/source/tl_2025_48057_roads.shp",
+        "present": false
+      },
+      "crossings": {
+        "source": "Crossing-Packages/calhoun/calhoun-crossings.geojson",
+        "present": true,
+        "unavailable": false
+      },
+      "package": {
+        "manifestStatus": "operational",
+        "registryStatus": "active"
+      },
+      "passed": true,
+      "warned": true,
+      "warnings": [
+        {
+          "countyId": "calhoun-tx",
+          "check": "roadSourcePresentWhenExpected",
+          "message": "Roads are expected but no local road source file exists at assets/county-implementation/calhoun/runtime-assets/source/tl_2025_48057_roads.shp."
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "overallDetermination": "REGIONAL_RUNTIME_CERTIFIED_WITH_WARNINGS"
+}
