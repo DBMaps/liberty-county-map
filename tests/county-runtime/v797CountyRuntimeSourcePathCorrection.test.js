@@ -14,7 +14,7 @@ sandbox.window.GRIDLY_ACTIVE_COUNTY_ID = 'jefferson-tx';
 const activeSources = sandbox.api.gridlyGetActiveCountyRuntimeSources();
 
 assert.strictEqual(activeSources.countyId, 'jefferson-tx', 'Jefferson remains the active runtime source county');
-assert.strictEqual(activeSources.boundarySource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-boundary.geojson', 'Jefferson uses the county-specific boundary source');
+assert.strictEqual(activeSources.boundarySource, 'assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson', 'Jefferson uses the county-specific boundary source');
 assert.strictEqual(activeSources.crossingSource, 'assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson', 'Jefferson crossing source stays Jefferson-owned');
 assert.strictEqual(activeSources.roadSource, null, 'Jefferson road source reports unavailable when no loadable Jefferson GeoJSON exists');
 assert.strictEqual(activeSources.roadSourceLoadable, false, 'Jefferson road source is not marked loadable without GeoJSON');
@@ -38,5 +38,11 @@ assert.ok(appSource.includes('activeRuntimeCrossingSource'), 'boundary overlay a
 const bridgeSource = fs.readFileSync('js/gridlyRuntimeSourceBridgeActivation.js', 'utf8');
 assert.ok(bridgeSource.includes('runtimeSources.countyId'), 'package bridge keys overrides by active county id instead of defaulting to Liberty');
 assert.ok(bridgeSource.includes('packageSources.roadSource && /\\.geojson'), 'package bridge only overrides roads with loadable GeoJSON');
+
+assert.ok(appSource.includes('boundaryArchitecture'), 'boundary overlay audit exposes boundaryArchitecture');
+assert.ok(appSource.includes('authoritativeBoundarySourceLibrary'), 'boundary overlay audit exposes authoritativeBoundarySourceLibrary');
+assert.ok(appSource.includes('duplicateBoundaryRuntimeAssetsDetected'), 'boundary overlay audit exposes duplicateBoundaryRuntimeAssetsDetected');
+assert.ok(appSource.includes('staleBoundaryRuntimeAssetPaths'), 'boundary overlay audit exposes staleBoundaryRuntimeAssetPaths');
+assert.ok(appSource.includes('activeCountyBoundarySourcePath'), 'boundary overlay audit exposes activeCountyBoundarySourcePath');
 
 console.log('v797CountyRuntimeSourcePathCorrection.test.js passed');
