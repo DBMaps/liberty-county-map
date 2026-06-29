@@ -1,0 +1,69 @@
+{
+  "milestone": "V787",
+  "title": "County Promotion Toolkit Foundation",
+  "scope": "audit/preflight only",
+  "filesAdded": [
+    "tools/CountyPromotion/Test-GridlyCountyPromotionReadiness.ps1",
+    "docs/Standards/GRIDLY-COUNTY-PROMOTION-TOOLKIT.md",
+    "docs/certifications/V787-COUNTY-PROMOTION-TOOLKIT.md",
+    "docs/certifications/evidence/V787-county-promotion-toolkit.json"
+  ],
+  "filesModified": [
+    "tools/Gridly.ps1"
+  ],
+  "readinessScriptBehavior": {
+    "acceptsCountyParameter": true,
+    "supportsJsonOutput": true,
+    "readOnly": true,
+    "copiesFiles": false,
+    "registersCounty": false,
+    "enablesCounty": false,
+    "promotesCounty": false,
+    "checks": [
+      "Community package exists",
+      "Crossing package exists",
+      "Production package exists",
+      "Production manifest entry exists",
+      "Application assets/package present",
+      "Runtime registration/reference status",
+      "Search enabled status",
+      "Awareness enabled status",
+      "Consumer enabled status",
+      "Certification evidence when available",
+      "Known remaining gaps"
+    ]
+  },
+  "commandCenterIntegration": {
+    "file": "tools/Gridly.ps1",
+    "menuOption": "County Promotion Readiness",
+    "promotesCounty": false
+  },
+  "protectedSystemVerification": {
+    "sharedReports": "unchanged",
+    "routeWatch": "unchanged",
+    "awarenessFiltering": "unchanged",
+    "hazardLifecycle": "unchanged",
+    "alertGeneration": "unchanged",
+    "supabaseSynchronization": "unchanged",
+    "productionCrossingRuntime": "unchanged",
+    "communityPackagePipeline": "unchanged",
+    "developerToolkitExistingCommands": "unchanged except additive County Promotion Readiness menu option"
+  },
+  "testingResults": {
+    "powershellAvailable": false,
+    "powershellLimitation": "No powershell or pwsh executable was available in the execution environment.",
+    "commandsPlanned": [
+      "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Test-GridlyCountyPromotionReadiness.ps1 -County Chambers",
+      "powershell -ExecutionPolicy Bypass -File .\\tools\\CountyPromotion\\Test-GridlyCountyPromotionReadiness.ps1 -County Chambers -Json",
+      "powershell -ExecutionPolicy Bypass -File .\\tools\\Validation\\Test-GridlyToolkit.ps1",
+      "powershell -ExecutionPolicy Bypass -File .\\tools\\Runtime\\Invoke-GridlyProductionReadiness.ps1"
+    ],
+    "jsonEvidenceValidated": true,
+    "jsonEvidenceValidationCommand": "python3 -m json.tool docs/certifications/evidence/V787-county-promotion-toolkit.json"
+  },
+  "chambers": {
+    "role": "first expected test candidate",
+    "promotedByV787": false,
+    "enabledByV787": false
+  }
+}
