@@ -1,0 +1,855 @@
+{
+  "audit": "V784 Regional Enablement Audit",
+  "generatedAt": "2026-06-29T00:00:00Z",
+  "scope": "Documentation/inventory only; no runtime behavior changes.",
+  "regionalSummary": {
+    "totalCounties": 28,
+    "operationalCounties": 3,
+    "productionCrossingPackages": 4,
+    "productionCrossingCount": 312,
+    "runtimeEnabledCounties": 3,
+    "communityPackages": 28,
+    "readyForEnablementCount": 1,
+    "requiresConfigurationCount": 0,
+    "deferredCount": 24
+  },
+  "counties": [
+    {
+      "county": "Austin",
+      "slug": "austin",
+      "population": null,
+      "communityPackage": "Community-Packages/austin/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 101,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/austin/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/austin/package-manifest.json"
+      }
+    },
+    {
+      "county": "Brazoria",
+      "slug": "brazoria",
+      "population": null,
+      "communityPackage": "Community-Packages/brazoria/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 157,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/brazoria/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/brazoria/package-manifest.json"
+      }
+    },
+    {
+      "county": "Brazos",
+      "slug": "brazos",
+      "population": null,
+      "communityPackage": "Community-Packages/brazos/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 86,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/brazos/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/brazos/package-manifest.json"
+      }
+    },
+    {
+      "county": "Calhoun",
+      "slug": "calhoun",
+      "population": null,
+      "communityPackage": "Community-Packages/calhoun/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 74,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/calhoun/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/calhoun/package-manifest.json"
+      }
+    },
+    {
+      "county": "Chambers",
+      "slug": "chambers",
+      "population": null,
+      "communityPackage": "Community-Packages/chambers/package-manifest.json",
+      "communityPackageStatus": "roads_extracted",
+      "productionCrossingPackage": "Crossing-Packages\\chambers\\Production\\chambers-production-crossings.geojson",
+      "productionPackageManifest": "Crossing-Packages/production-crossing-manifest.json",
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 15,
+      "manufacturedCrossingCount": 15,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Ready for Enablement",
+      "remainingWork": [
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/chambers/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/chambers/package-manifest.json"
+      }
+    },
+    {
+      "county": "Colorado",
+      "slug": "colorado",
+      "population": null,
+      "communityPackage": "Community-Packages/colorado/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 109,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/colorado/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/colorado/package-manifest.json"
+      }
+    },
+    {
+      "county": "Fayette",
+      "slug": "fayette",
+      "population": null,
+      "communityPackage": "Community-Packages/fayette/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 152,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/fayette/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/fayette/package-manifest.json"
+      }
+    },
+    {
+      "county": "Fort Bend",
+      "slug": "fort-bend",
+      "population": null,
+      "communityPackage": "Community-Packages/fort-bend/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 175,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/fort-bend/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/fort-bend/package-manifest.json"
+      }
+    },
+    {
+      "county": "Galveston",
+      "slug": "galveston",
+      "population": null,
+      "communityPackage": "Community-Packages/galveston/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 144,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/galveston/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/galveston/package-manifest.json"
+      }
+    },
+    {
+      "county": "Grimes",
+      "slug": "grimes",
+      "population": null,
+      "communityPackage": "Community-Packages/grimes/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 109,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/grimes/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/grimes/package-manifest.json"
+      }
+    },
+    {
+      "county": "Hardin",
+      "slug": "hardin",
+      "population": null,
+      "communityPackage": "Community-Packages/hardin/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 82,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/hardin/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/hardin/package-manifest.json"
+      }
+    },
+    {
+      "county": "Harris",
+      "slug": "harris",
+      "population": null,
+      "communityPackage": "Community-Packages/harris/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 1159,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/harris/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/harris/package-manifest.json"
+      }
+    },
+    {
+      "county": "Jackson",
+      "slug": "jackson",
+      "population": null,
+      "communityPackage": "Community-Packages/jackson/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 74,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/jackson/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/jackson/package-manifest.json"
+      }
+    },
+    {
+      "county": "Jasper",
+      "slug": "jasper",
+      "population": null,
+      "communityPackage": "Community-Packages/jasper/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 106,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/jasper/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/jasper/package-manifest.json"
+      }
+    },
+    {
+      "county": "Jefferson",
+      "slug": "jefferson",
+      "population": null,
+      "communityPackage": "Community-Packages/jefferson/package-manifest.json",
+      "communityPackageStatus": "building",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": false,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 378,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory",
+        "Road dataset"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/jefferson/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/jefferson/package-manifest.json"
+      }
+    },
+    {
+      "county": "Lavaca",
+      "slug": "lavaca",
+      "population": null,
+      "communityPackage": "Community-Packages/lavaca/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 39,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/lavaca/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/lavaca/package-manifest.json"
+      }
+    },
+    {
+      "county": "Liberty",
+      "slug": "liberty",
+      "population": null,
+      "communityPackage": "Community-Packages/liberty/package-manifest.json",
+      "communityPackageStatus": "operational",
+      "productionCrossingPackage": "Crossing-Packages\\liberty\\Production\\liberty-production-crossings.geojson",
+      "productionPackageManifest": "Crossing-Packages/production-crossing-manifest.json",
+      "runtimeRegistered": true,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 115,
+      "manufacturedCrossingCount": 115,
+      "communityTownInventoryPresent": true,
+      "searchEnabled": true,
+      "awarenessAreaEnabled": true,
+      "overallStatus": "Operational",
+      "remainingWork": [
+        "None identified"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/liberty/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/liberty/package-manifest.json"
+      }
+    },
+    {
+      "county": "Matagorda",
+      "slug": "matagorda",
+      "population": null,
+      "communityPackage": "Community-Packages/matagorda/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 80,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/matagorda/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/matagorda/package-manifest.json"
+      }
+    },
+    {
+      "county": "Montgomery",
+      "slug": "montgomery",
+      "population": null,
+      "communityPackage": "Community-Packages/montgomery/package-manifest.json",
+      "communityPackageStatus": "operational",
+      "productionCrossingPackage": "Crossing-Packages\\montgomery\\Production\\montgomery-production-crossings.geojson",
+      "productionPackageManifest": "Crossing-Packages/production-crossing-manifest.json",
+      "runtimeRegistered": true,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 170,
+      "manufacturedCrossingCount": 170,
+      "communityTownInventoryPresent": true,
+      "searchEnabled": true,
+      "awarenessAreaEnabled": true,
+      "overallStatus": "Operational",
+      "remainingWork": [
+        "None identified"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/montgomery/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/montgomery/package-manifest.json"
+      }
+    },
+    {
+      "county": "Newton",
+      "slug": "newton",
+      "population": null,
+      "communityPackage": "Community-Packages/newton/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 26,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/newton/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/newton/package-manifest.json"
+      }
+    },
+    {
+      "county": "Orange",
+      "slug": "orange",
+      "population": null,
+      "communityPackage": "Community-Packages/orange/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 149,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/orange/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/orange/package-manifest.json"
+      }
+    },
+    {
+      "county": "Polk",
+      "slug": "polk",
+      "population": null,
+      "communityPackage": "Community-Packages/polk/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 64,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/polk/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/polk/package-manifest.json"
+      }
+    },
+    {
+      "county": "San Jacinto",
+      "slug": "san-jacinto",
+      "population": null,
+      "communityPackage": "Community-Packages/san-jacinto/package-manifest.json",
+      "communityPackageStatus": "operational",
+      "productionCrossingPackage": "Crossing-Packages\\san-jacinto\\Production\\san-jacinto-production-crossings.geojson",
+      "productionPackageManifest": "Crossing-Packages/production-crossing-manifest.json",
+      "runtimeRegistered": true,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 12,
+      "manufacturedCrossingCount": 12,
+      "communityTownInventoryPresent": true,
+      "searchEnabled": true,
+      "awarenessAreaEnabled": true,
+      "overallStatus": "Operational",
+      "remainingWork": [
+        "None identified"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/san-jacinto/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/san-jacinto/package-manifest.json"
+      }
+    },
+    {
+      "county": "Tyler",
+      "slug": "tyler",
+      "population": null,
+      "communityPackage": "Community-Packages/tyler/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 0,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/tyler/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/tyler/package-manifest.json"
+      }
+    },
+    {
+      "county": "Walker",
+      "slug": "walker",
+      "population": null,
+      "communityPackage": "Community-Packages/walker/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 36,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/walker/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/walker/package-manifest.json"
+      }
+    },
+    {
+      "county": "Waller",
+      "slug": "waller",
+      "population": null,
+      "communityPackage": "Community-Packages/waller/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 46,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/waller/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/waller/package-manifest.json"
+      }
+    },
+    {
+      "county": "Washington",
+      "slug": "washington",
+      "population": null,
+      "communityPackage": "Community-Packages/washington/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 41,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/washington/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/washington/package-manifest.json"
+      }
+    },
+    {
+      "county": "Wharton",
+      "slug": "wharton",
+      "population": null,
+      "communityPackage": "Community-Packages/wharton/package-manifest.json",
+      "communityPackageStatus": "roads_complete",
+      "productionCrossingPackage": null,
+      "productionPackageManifest": null,
+      "runtimeRegistered": false,
+      "boundaryPresent": true,
+      "roadDatasetPresent": true,
+      "productionCrossingCount": 0,
+      "manufacturedCrossingCount": 72,
+      "communityTownInventoryPresent": false,
+      "searchEnabled": false,
+      "awarenessAreaEnabled": false,
+      "overallStatus": "Deferred",
+      "remainingWork": [
+        "Production crossing package/manifest",
+        "Runtime registration",
+        "Awareness configuration",
+        "Search integration",
+        "Community inventory"
+      ],
+      "evidence": {
+        "communityManifest": "Community-Packages/wharton/package-manifest.json",
+        "crossingManifest": "Crossing-Packages/wharton/package-manifest.json"
+      }
+    }
+  ],
+  "protectedSystems": {
+    "Shared Reports": "unchanged - no files modified outside V784 docs/evidence",
+    "Route Watch": "unchanged - no files modified outside V784 docs/evidence",
+    "Awareness Filtering": "unchanged - no files modified outside V784 docs/evidence",
+    "Hazard Lifecycle": "unchanged - no files modified outside V784 docs/evidence",
+    "Alert Generation": "unchanged - no files modified outside V784 docs/evidence",
+    "Supabase Synchronization": "unchanged - no files modified outside V784 docs/evidence",
+    "Production Crossing Runtime": "unchanged - no files modified outside V784 docs/evidence",
+    "Community Package Pipeline": "unchanged - no files modified outside V784 docs/evidence",
+    "Developer Toolkit": "unchanged - no files modified outside V784 docs/evidence"
+  },
+  "testing": [
+    {
+      "name": "Production Readiness",
+      "command": "pwsh -NoProfile -File tools/Runtime/Invoke-GridlyProductionReadiness.ps1",
+      "result": "BLOCKED",
+      "observation": "pwsh: command not found; exit 127"
+    },
+    {
+      "name": "Runtime Validation",
+      "command": "pwsh -NoProfile -File tools/Runtime/Invoke-GridlyRuntimeValidation.ps1",
+      "result": "BLOCKED",
+      "observation": "pwsh: command not found; exit 127"
+    },
+    {
+      "name": "Smoke Test",
+      "command": "pwsh -NoProfile -File tools/Validation/Invoke-GridlySmokeTest.ps1",
+      "result": "BLOCKED",
+      "observation": "pwsh: command not found; exit 127"
+    },
+    {
+      "name": "Toolkit Self-Test",
+      "command": "pwsh -NoProfile -File tools/Validation/Test-GridlyToolkit.ps1",
+      "result": "BLOCKED",
+      "observation": "pwsh: command not found; exit 127"
+    }
+  ]
+}
