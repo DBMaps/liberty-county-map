@@ -22076,10 +22076,13 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
 }
 
 #gridlyPortraitV2 .gridly-brief-foundation-handle {
-  display: inline-flex;
+  box-sizing: border-box;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  width: 100%;
+  max-width: none;
   min-height: 42px;
   padding: 11px 16px;
   border: 1px solid rgba(42, 222, 232, 0.18);
@@ -22090,6 +22093,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
   font: 850 0.9rem/1.1 var(--gridly-font, Inter, system-ui, sans-serif);
   letter-spacing: -0.01em;
   text-transform: none;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
   pointer-events: auto;
   opacity: 1;
   cursor: pointer;
@@ -22110,7 +22115,13 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
   background: linear-gradient(90deg, rgba(42, 232, 220, 0.86), rgba(42, 232, 220, 0));
 }
 
-#gridlyPortraitV2 .gridly-brief-foundation-handle span {
+#gridlyPortraitV2 .gridly-brief-foundation-handle-label,
+#gridlyPortraitV2 .gridly-brief-foundation-handle-icon {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+#gridlyPortraitV2 .gridly-brief-foundation-handle-icon {
   color: rgba(230, 246, 255, 0.88);
   font-size: 0.86rem;
   transform: translateY(-1px);
