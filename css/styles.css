@@ -22769,3 +22769,50 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="exp
     border-top: 1px solid rgba(61, 213, 230, 0.22);
   }
 }
+
+/* V862.10 — keep Travel Status fully contained above the filter strip. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-brief-interaction-extra: clamp(264px, 36vh, 356px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    max-height: 376px;
+    padding-top: clamp(15px, 3.5vw, 20px);
+    padding-bottom: clamp(18px, 4vw, 24px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-hero {
+    padding-bottom: clamp(10px, 2.7vw, 14px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-flow {
+    margin-top: clamp(10px, 2.8vw, 14px);
+    gap: clamp(9px, 2.7vw, 13px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-section-outlook {
+    padding-bottom: clamp(9px, 2.7vw, 13px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-outlook {
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-outlook-row {
+    min-height: 31px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-travel-card {
+    margin-top: 7px;
+    padding-top: 9px;
+    padding-bottom: 11px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-travel-status {
+    line-height: 1.08;
+  }
+}
