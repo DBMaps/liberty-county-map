@@ -22168,3 +22168,144 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
   position: relative;
   z-index: 1;
 }
+
+/* V861.2 — Gridly Brief containment: compact, dismissible support card. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+  gap: 7px;
+  min-height: 0;
+  max-height: 164px;
+  overflow: hidden;
+  padding: 12px 42px 12px 14px;
+  position: relative;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[hidden] {
+  display: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-collapse {
+  align-items: center;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(210, 236, 255, 0.22);
+  border-radius: 999px;
+  color: rgba(238, 247, 255, 0.9);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 17px;
+  font-weight: 780;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 28px;
+  z-index: 2;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-collapse:focus-visible,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-pill:focus-visible {
+  outline: 2px solid rgba(143, 224, 255, 0.95);
+  outline-offset: 2px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-pill {
+  appearance: none;
+  background: linear-gradient(135deg, rgba(23, 63, 94, 0.92), rgba(10, 22, 35, 0.9));
+  border: 1px solid rgba(143, 224, 255, 0.32);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  color: rgba(238, 248, 255, 0.94);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 820;
+  letter-spacing: 0.02em;
+  margin: 8px 0 0;
+  padding: 8px 14px;
+  width: fit-content;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-pill[hidden] {
+  display: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context {
+  border-bottom: 0;
+  gap: 2px;
+  padding-bottom: 0;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefLocation {
+  font-size: clamp(15px, 4vw, 17px);
+  line-height: 1.12;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefWeather {
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-label,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-section-label {
+  display: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-section {
+  gap: 3px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-primary-situation {
+  border-bottom: 0;
+  gap: 2px;
+  padding: 0;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card strong,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] strong {
+  font-size: clamp(16px, 4.4vw, 19px);
+  line-height: 1.12;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-primary-situation-context,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line {
+  color: rgba(214, 232, 246, 0.84);
+  font-size: clamp(12px, 3.35vw, 14px);
+  line-height: 1.22;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context {
+  gap: 3px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line {
+  padding-left: 0;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary::before,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line::before {
+  content: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-travel-status {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-top: 0;
+  padding: 0;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2TravelStatus {
+  color: rgba(246, 251, 255, 0.95);
+  font-size: clamp(13px, 3.55vw, 15px);
+  font-weight: 790;
+  line-height: 1.2;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+  margin-top: 10px;
+}
