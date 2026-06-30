@@ -22035,26 +22035,47 @@ body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foun
   display: none;
 }
 
-/* V862.1 — Gridly Brief interaction: inline expansion between Awareness Brief and map. */
+/* V862.1R — Gridly Brief interaction: contained full-width stack. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2 {
     --gridly-brief-interaction-extra: 0px;
-    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 162px + var(--gridly-brief-interaction-extra));
-    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 208px + var(--gridly-brief-interaction-extra));
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 174px + var(--gridly-brief-interaction-extra));
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 220px + var(--gridly-brief-interaction-extra));
     --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 12px);
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
-    --gridly-brief-interaction-extra: 146px;
+    --gridly-brief-interaction-extra: 154px;
   }
 }
 
-#gridlyPortraitV2 .gridly-brief-foundation-handle {
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
   position: fixed;
-  top: calc(var(--gridly-v2-awareness-card-top, 66px) + 108px);
-  left: calc(18px + env(safe-area-inset-left, 0px));
-  right: calc(18px + env(safe-area-inset-right, 0px));
+  top: var(--gridly-v2-awareness-card-top, 66px);
+  left: var(--gridly-v2-command-left, calc(10px + env(safe-area-inset-left, 0px)));
+  right: var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px)));
   z-index: 24;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  pointer-events: none;
+}
+
+#gridlyPortraitV2 .gridly-v2-brief-stack .gridly-v2-awareness-brief-card,
+#gridlyPortraitV2 .gridly-v2-brief-stack .gridly-v2-segments,
+#gridlyPortraitV2 .gridly-v2-brief-stack .gridly-brief-foundation-handle,
+#gridlyPortraitV2 .gridly-v2-brief-stack .gridly-brief-interaction-panel {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100%;
+  min-width: 0;
+  transform: none !important;
+}
+
+#gridlyPortraitV2 .gridly-brief-foundation-handle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22074,7 +22095,7 @@ body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foun
   pointer-events: auto;
   opacity: 1;
   cursor: pointer;
-  transition: color 280ms ease-in-out, border-color 280ms ease-in-out, transform 280ms ease-in-out;
+  transition: color 280ms ease-in-out, border-color 280ms ease-in-out;
 }
 
 #gridlyPortraitV2 .gridly-brief-foundation-handle span {
@@ -22088,11 +22109,6 @@ body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foun
 }
 
 #gridlyPortraitV2 .gridly-brief-interaction-panel {
-  position: fixed;
-  top: calc(var(--gridly-v2-awareness-card-top, 66px) + 141px);
-  left: calc(18px + env(safe-area-inset-left, 0px));
-  right: calc(18px + env(safe-area-inset-right, 0px));
-  z-index: 23;
   max-height: 0;
   overflow: hidden;
   padding: 0 14px;
@@ -22100,8 +22116,8 @@ body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foun
   color: rgba(232, 246, 255, 0.94);
   background: linear-gradient(180deg, rgba(7, 18, 32, 0.94), rgba(7, 18, 32, 0.82));
   opacity: 0;
-  transform: translateY(-6px);
-  transition: max-height 280ms ease-in-out, padding 280ms ease-in-out, opacity 280ms ease-in-out, transform 280ms ease-in-out;
+  pointer-events: auto;
+  transition: max-height 280ms ease-in-out, padding 280ms ease-in-out, opacity 280ms ease-in-out;
 }
 
 #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
@@ -22109,7 +22125,6 @@ body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foun
   padding-top: 9px;
   padding-bottom: 11px;
   opacity: 1;
-  transform: translateY(0);
 }
 
 #gridlyPortraitV2 .gridly-brief-interaction-panel p {

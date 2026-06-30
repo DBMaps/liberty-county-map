@@ -682,31 +682,33 @@
         <div class="gridly-v2-watch" aria-hidden="true"><span id="gridlyV2AwarenessGreeting">Good morning</span></div>
       </div>
     </div>
-    <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Your town awareness briefing">
-      <strong id="gridlyV2TopStatusPrimary">Your area is clear right now</strong>
-      <span id="gridlyV2TopStatusSecondary">No active community reports need attention.</span>
-      <small id="gridlyV2TopStatusTrust" class="gridly-v2-awareness-trust-line">Monitoring nearby conditions</small>
-    </div>
-    <button type="button" class="gridly-brief-foundation-handle" id="gridlyBriefFoundationHandle" aria-expanded="false" aria-controls="gridlyBriefInteractionPanel" data-gridly-brief-foundation-handle>Know Before You Go <span aria-hidden="true">▼</span></button>
-    <section class="gridly-brief-interaction-panel" id="gridlyBriefInteractionPanel" data-gridly-brief-panel aria-label="Know Before You Go briefing" hidden>
-      <p class="gridly-brief-greeting" id="gridlyBriefGreeting">Good afternoon</p>
-      <p class="gridly-brief-location" id="gridlyBriefLocation">Dayton, Texas</p>
-      <p class="gridly-brief-weather" id="gridlyBriefWeather" hidden></p>
-      <div class="gridly-brief-flow">
-        <p class="gridly-brief-section-label">Today's Outlook</p>
-        <p class="gridly-brief-outlook" id="gridlyBriefOutlook">Local conditions look calm around Dayton.</p>
-        <p class="gridly-brief-context" id="gridlyBriefContext">Use the map below for nearby community reports and area context.</p>
-        <p class="gridly-brief-section-label">Travel Status</p>
-        <p class="gridly-brief-travel-status" id="gridlyBriefTravelStatus" data-gridly-brief-travel-status>Today looks good for local travel.</p>
+    <div class="gridly-v2-brief-stack" data-gridly-brief-stack>
+      <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Your town awareness briefing">
+        <strong id="gridlyV2TopStatusPrimary">Your area is clear right now</strong>
+        <span id="gridlyV2TopStatusSecondary">No active community reports need attention.</span>
+        <small id="gridlyV2TopStatusTrust" class="gridly-v2-awareness-trust-line">Monitoring nearby conditions</small>
       </div>
-    </section>
-    <div class="gridly-v2-participation-ack" id="gridlyV2ParticipationAcknowledgement" role="status" aria-live="polite" hidden></div>
-    <div class="gridly-v2-segments" role="tablist" aria-label="Briefing filters">
-      <button class="is-active" type="button" data-v2-filter="nearby" data-geo-filter="nearby">Nearby</button>
-      <button type="button" data-v2-filter="route" data-geo-filter="town">Area</button>
-      <button type="button" data-v2-filter="town" data-geo-filter="county">County</button>
-      <button type="button" data-v2-filter="delays" data-geo-filter="active-delays">Delays</button>
-      <button type="button" data-v2-filter="all" data-geo-filter="all">All</button>
+      <button type="button" class="gridly-brief-foundation-handle" id="gridlyBriefFoundationHandle" aria-expanded="false" aria-controls="gridlyBriefInteractionPanel" data-gridly-brief-foundation-handle>Know Before You Go <span aria-hidden="true">▼</span></button>
+      <section class="gridly-brief-interaction-panel" id="gridlyBriefInteractionPanel" data-gridly-brief-panel aria-label="Know Before You Go briefing" hidden>
+        <p class="gridly-brief-greeting" id="gridlyBriefGreeting">Good afternoon</p>
+        <p class="gridly-brief-location" id="gridlyBriefLocation">Dayton, Texas</p>
+        <p class="gridly-brief-weather" id="gridlyBriefWeather" hidden></p>
+        <div class="gridly-brief-flow">
+          <p class="gridly-brief-section-label">Today's Outlook</p>
+          <p class="gridly-brief-outlook" id="gridlyBriefOutlook">Local conditions look calm around Dayton.</p>
+          <p class="gridly-brief-context" id="gridlyBriefContext">Use the map below for nearby community reports and area context.</p>
+          <p class="gridly-brief-section-label">Travel Status</p>
+          <p class="gridly-brief-travel-status" id="gridlyBriefTravelStatus" data-gridly-brief-travel-status>Today looks good for local travel.</p>
+        </div>
+      </section>
+      <div class="gridly-v2-participation-ack" id="gridlyV2ParticipationAcknowledgement" role="status" aria-live="polite" hidden></div>
+      <div class="gridly-v2-segments" role="tablist" aria-label="Briefing filters">
+        <button class="is-active" type="button" data-v2-filter="nearby" data-geo-filter="nearby">Nearby</button>
+        <button type="button" data-v2-filter="route" data-geo-filter="town">Area</button>
+        <button type="button" data-v2-filter="town" data-geo-filter="county">County</button>
+        <button type="button" data-v2-filter="delays" data-geo-filter="active-delays">Delays</button>
+        <button type="button" data-v2-filter="all" data-geo-filter="all">All</button>
+      </div>
     </div>
     <div class="gridly-v2-control-rail" aria-label="Map controls">
       <button type="button" data-v2-control="layers" aria-label="Layers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.6 20 8.5 12 12.4 4 8.5 12 4.6Z"/><path d="M6.2 11.9 12 14.8l5.8-2.9"/><path d="M6.2 15.6 12 18.5l5.8-2.9"/></svg></button>
@@ -1328,7 +1330,6 @@
     <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
 </body>
 </html>
-
 
 
 
