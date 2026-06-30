@@ -22116,3 +22116,55 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2TravelStatus {
     text-align: left;
   }
 }
+
+/* V861.1 — Gridly Brief visual repair: premium card spacing and separated filter strip. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+  gap: 16px;
+  min-height: 320px;
+  padding: 24px 20px 22px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-primary-situation {
+  gap: 7px;
+  padding: 12px 0 14px;
+  border-bottom: 1px solid rgba(169, 216, 255, 0.16);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-primary-situation-context {
+  color: rgba(199, 222, 240, 0.84);
+  font-size: clamp(14px, 3.8vw, 16px);
+  font-weight: 720;
+  line-height: 1.25;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context {
+  gap: 8px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line {
+  color: rgba(219, 234, 246, 0.88);
+  font-size: clamp(13px, 3.55vw, 15px);
+  line-height: 1.35;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-travel-status {
+  margin-top: 4px;
+  padding: 14px 14px 15px;
+  border: 1px solid rgba(143, 224, 255, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(49, 137, 191, 0.2), rgba(16, 31, 49, 0.42));
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2TravelStatus {
+  display: block;
+  font-size: clamp(17px, 4.7vw, 20px);
+  line-height: 1.28;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
+}
