@@ -20643,15 +20643,48 @@ body[data-layout-mode="portrait"] #map .leaflet-control-zoom a {
 }
 
 
-/* V856.2 Startup choreography prototype: presentation-only first-paint rhythm */
+/* V856.3 stable first-paint guard: initial hide is in index.html so it applies before CSS download completes. */
 :root {
-  --gridly-startup-brief-in: 180ms;
-  --gridly-startup-map-in: 620ms;
-  --gridly-startup-secondary-in: 980ms;
-  --gridly-startup-support-in: 1280ms;
+  --gridly-startup-brief-in: 80ms;
+  --gridly-startup-map-in: 540ms;
+  --gridly-startup-secondary-in: 820ms;
+  --gridly-startup-support-in: 980ms;
 }
 
-body::before {
+body.gridly-startup-guard {
+  background: #020812;
+}
+
+body.gridly-startup-guard .app-header,
+body.gridly-startup-guard .mobile-live-brand,
+body.gridly-startup-guard .desktop-left-rail,
+body.gridly-startup-guard .driver-hero,
+body.gridly-startup-guard .command-summary-grid,
+body.gridly-startup-guard .destination-hero-card,
+body.gridly-startup-guard .mobile-premium-header,
+body.gridly-startup-guard .mobile-home-cards,
+body.gridly-startup-guard .command-center,
+body.gridly-startup-guard .map-tools-overlay,
+body.gridly-startup-guard .community-pulse-surface,
+body.gridly-startup-guard .geo-filter-status,
+body.gridly-startup-guard .side-panel,
+body.gridly-startup-guard .mobile-bottom-nav {
+  opacity: 0;
+  visibility: hidden;
+}
+
+body.gridly-startup-guard::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(67, 230, 160, 0.14), transparent 28%),
+    linear-gradient(180deg, rgba(3, 6, 10, 0.98), rgba(4, 7, 11, 0.94));
+}
+
+body.gridly-first-paint-ready::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -20660,52 +20693,44 @@ body::before {
   background:
     radial-gradient(circle at 50% 18%, rgba(67, 230, 160, 0.14), transparent 28%),
     linear-gradient(180deg, rgba(3, 6, 10, 0.98), rgba(4, 7, 11, 0.92));
-  animation: gridlyStableFirstPaint 920ms cubic-bezier(0.2, 0.72, 0.16, 1) forwards;
+  animation: gridlyStableFirstPaint 620ms cubic-bezier(0.2, 0.72, 0.16, 1) forwards;
 }
 
-.app-header,
-.mobile-live-brand,
-.desktop-left-rail,
-.driver-hero,
-.command-summary-grid,
-.destination-hero-card,
-.mobile-premium-header,
-.mobile-home-cards,
-.command-center,
-.map-tools-overlay,
-.community-pulse-surface,
-.geo-filter-status,
-.side-panel {
+body.gridly-first-paint-ready .app-header,
+body.gridly-first-paint-ready .mobile-live-brand,
+body.gridly-first-paint-ready .desktop-left-rail,
+body.gridly-first-paint-ready .driver-hero,
+body.gridly-first-paint-ready .command-summary-grid,
+body.gridly-first-paint-ready .destination-hero-card,
+body.gridly-first-paint-ready .mobile-premium-header,
+body.gridly-first-paint-ready .mobile-home-cards,
+body.gridly-first-paint-ready .command-center,
+body.gridly-first-paint-ready .map-tools-overlay,
+body.gridly-first-paint-ready .community-pulse-surface,
+body.gridly-first-paint-ready .geo-filter-status,
+body.gridly-first-paint-ready .side-panel,
+body.gridly-first-paint-ready .mobile-bottom-nav {
   animation-fill-mode: both;
   will-change: opacity, transform, filter;
 }
 
-.app-header,
-.mobile-live-brand,
-.desktop-left-rail {
-  animation-name: gridlyStartupChromeReveal;
-  animation-duration: 520ms;
-  animation-delay: 80ms;
-  animation-timing-function: cubic-bezier(0.2, 0.72, 0.16, 1);
+body.gridly-first-paint-ready .app-header,
+body.gridly-first-paint-ready .mobile-live-brand,
+body.gridly-first-paint-ready .desktop-left-rail {
+  animation: gridlyStartupChromeReveal 420ms cubic-bezier(0.2, 0.72, 0.16, 1) 40ms both;
 }
 
-.driver-hero {
+body.gridly-first-paint-ready .driver-hero {
   isolation: isolate;
-  animation-name: gridlyAwarenessBriefReveal;
-  animation-duration: 640ms;
-  animation-delay: var(--gridly-startup-brief-in);
-  animation-timing-function: cubic-bezier(0.17, 0.84, 0.2, 1);
+  animation: gridlyAwarenessBriefReveal 520ms cubic-bezier(0.17, 0.84, 0.2, 1) var(--gridly-startup-brief-in) both;
 }
 
-.driver-hero .habit-status-strip {
-  animation: gridlyBriefPulseSettle 1100ms ease-out 560ms both;
+body.gridly-first-paint-ready .driver-hero .habit-status-strip {
+  animation: gridlyBriefPulseSettle 900ms ease-out 420ms both;
 }
 
-.command-center {
-  animation-name: gridlyMapSurfaceReveal;
-  animation-duration: 740ms;
-  animation-delay: var(--gridly-startup-map-in);
-  animation-timing-function: cubic-bezier(0.18, 0.8, 0.22, 1);
+body.gridly-first-paint-ready .command-center {
+  animation: gridlyMapSurfaceReveal 620ms cubic-bezier(0.18, 0.8, 0.22, 1) var(--gridly-startup-map-in) both;
 }
 
 .map-card {
@@ -20717,7 +20742,8 @@ body::before {
   overflow: hidden;
 }
 
-.map-frame::after {
+body.gridly-first-paint-ready .map-frame::after,
+body.gridly-startup-guard .map-frame::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -20725,39 +20751,37 @@ body::before {
   pointer-events: none;
   border-radius: 20px;
   background:
-    linear-gradient(135deg, rgba(3, 9, 14, 0.86), rgba(5, 11, 16, 0.64)),
+    linear-gradient(135deg, rgba(3, 9, 14, 0.92), rgba(5, 11, 16, 0.72)),
     radial-gradient(circle at 28% 22%, rgba(67, 230, 160, 0.12), transparent 34%);
-  animation: gridlyMapReadinessVeil 1180ms cubic-bezier(0.2, 0.72, 0.16, 1) 460ms forwards;
 }
 
-.map-tools-overlay,
-.community-pulse-surface,
-.geo-filter-status {
-  animation-name: gridlySecondarySurfaceReveal;
-  animation-duration: 560ms;
-  animation-delay: var(--gridly-startup-secondary-in);
-  animation-timing-function: ease-out;
+body.gridly-first-paint-ready .map-frame::after {
+  animation: gridlyMapReadinessVeil 900ms cubic-bezier(0.2, 0.72, 0.16, 1) 220ms forwards;
 }
 
-.side-panel,
-.mobile-home-card,
-.command-summary-grid,
-.destination-hero-card,
-.mobile-premium-header,
-.mobile-home-cards {
-  animation-name: gridlySupportSurfaceReveal;
-  animation-duration: 620ms;
-  animation-delay: var(--gridly-startup-support-in);
-  animation-timing-function: cubic-bezier(0.18, 0.8, 0.22, 1);
+body.gridly-first-paint-ready .map-tools-overlay,
+body.gridly-first-paint-ready .community-pulse-surface,
+body.gridly-first-paint-ready .geo-filter-status {
+  animation: gridlySecondarySurfaceReveal 480ms ease-out var(--gridly-startup-secondary-in) both;
 }
 
-.mobile-home-card:nth-child(1) { animation-delay: 1080ms; }
-.mobile-home-card:nth-child(2) { animation-delay: 1180ms; }
-.mobile-home-card:nth-child(3) { animation-delay: 1280ms; }
-.mobile-home-card:nth-child(n + 4) { animation-delay: 1380ms; }
+body.gridly-first-paint-ready .side-panel,
+body.gridly-first-paint-ready .mobile-home-card,
+body.gridly-first-paint-ready .command-summary-grid,
+body.gridly-first-paint-ready .destination-hero-card,
+body.gridly-first-paint-ready .mobile-premium-header,
+body.gridly-first-paint-ready .mobile-home-cards,
+body.gridly-first-paint-ready .mobile-bottom-nav {
+  animation: gridlySupportSurfaceReveal 520ms cubic-bezier(0.18, 0.8, 0.22, 1) var(--gridly-startup-support-in) both;
+}
+
+body.gridly-first-paint-ready .mobile-home-card:nth-child(1) { animation-delay: 760ms; }
+body.gridly-first-paint-ready .mobile-home-card:nth-child(2) { animation-delay: 860ms; }
+body.gridly-first-paint-ready .mobile-home-card:nth-child(3) { animation-delay: 960ms; }
+body.gridly-first-paint-ready .mobile-home-card:nth-child(n + 4) { animation-delay: 1060ms; }
 
 @keyframes gridlyStableFirstPaint {
-  0%, 48% { opacity: 1; }
+  0%, 35% { opacity: 1; }
   100% { opacity: 0; visibility: hidden; }
 }
 
@@ -20798,32 +20822,36 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::before,
-  .app-header,
-  .mobile-live-brand,
-  .desktop-left-rail,
-  .driver-hero,
-  .driver-hero .habit-status-strip,
-  .command-summary-grid,
-  .destination-hero-card,
-  .mobile-premium-header,
-  .mobile-home-cards,
-  .mobile-home-card,
-  .command-center,
-  .map-tools-overlay,
-  .community-pulse-surface,
-  .geo-filter-status,
-  .side-panel,
-  .map-frame::after {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-    visibility: visible !important;
+  html.gridly-prepaint-lock body::before,
+  body.gridly-startup-guard::before {
+    background: #020812;
   }
 
-  body::before,
-  .map-frame::after {
+  body.gridly-first-paint-ready::before,
+  body.gridly-first-paint-ready .app-header,
+  body.gridly-first-paint-ready .mobile-live-brand,
+  body.gridly-first-paint-ready .desktop-left-rail,
+  body.gridly-first-paint-ready .driver-hero,
+  body.gridly-first-paint-ready .driver-hero .habit-status-strip,
+  body.gridly-first-paint-ready .command-summary-grid,
+  body.gridly-first-paint-ready .destination-hero-card,
+  body.gridly-first-paint-ready .mobile-premium-header,
+  body.gridly-first-paint-ready .mobile-home-cards,
+  body.gridly-first-paint-ready .mobile-home-card,
+  body.gridly-first-paint-ready .command-center,
+  body.gridly-first-paint-ready .map-tools-overlay,
+  body.gridly-first-paint-ready .community-pulse-surface,
+  body.gridly-first-paint-ready .geo-filter-status,
+  body.gridly-first-paint-ready .side-panel,
+  body.gridly-first-paint-ready .mobile-bottom-nav,
+  body.gridly-first-paint-ready .map-frame::after {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  body.gridly-first-paint-ready::before,
+  body.gridly-first-paint-ready .map-frame::after {
     content: none;
   }
 }

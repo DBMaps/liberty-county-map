@@ -1,13 +1,71 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="gridly-prepaint-lock">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
 
   <title>Gridly | Know Before You Go</title>
 
+  <style id="gridly-prepaint-startup-guard">
+    html.gridly-prepaint-lock body {
+      margin: 0;
+      background: #020812;
+    }
+
+    html.gridly-prepaint-lock body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(67, 230, 160, 0.16), transparent 30%),
+        linear-gradient(180deg, #020812 0%, #04070b 100%);
+    }
+
+    html.gridly-prepaint-lock .app-header,
+    html.gridly-prepaint-lock .mobile-live-brand,
+    html.gridly-prepaint-lock .app-shell,
+    html.gridly-prepaint-lock .mobile-bottom-nav,
+    html.gridly-prepaint-lock .gridly-desktop-gate,
+    html.gridly-prepaint-lock .tactical-landscape-gate {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+  </style>
+  <script>
+    document.documentElement.classList.add("gridly-prepaint-lock");
+    (function gridlyReleasePrepaintLock() {
+      var released = false;
+      function release() {
+        if (released) return;
+        released = true;
+        document.documentElement.classList.remove("gridly-prepaint-lock");
+        if (document.body) {
+          document.body.classList.remove("gridly-startup-guard");
+          document.body.classList.add("gridly-first-paint-ready");
+        }
+      }
+      function scheduleRelease() {
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            window.setTimeout(release, 180);
+          });
+        });
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", scheduleRelease, { once: true });
+      } else {
+        scheduleRelease();
+      }
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) release();
+      });
+      window.setTimeout(release, 1400);
+    })();
+  </script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="css/styles.css?v=130" />
+  <link rel="stylesheet" href="css/styles.css?v=131" />
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/store/icons/gridly-icon-master-1024.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/store/icons/gridly-icon-master-1024.png">
@@ -22,7 +80,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
-<body>
+<body class="gridly-startup-guard">
   <header class="app-header">
     <div class="brand-wrap">
       <div class="brand-logo-frame">
@@ -1242,7 +1300,7 @@
 <script src="js/gridlyPackageLoader.js"></script>
     <script src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
 
-  <script src="js/app.js?v=1713"></script>
+  <script src="js/app.js?v=1714"></script>
   <script src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
 
     <script src="js/gridlyRuntimeSourceComparisonAudit.js"></script>
