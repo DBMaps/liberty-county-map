@@ -21998,3 +21998,38 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
     padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* V862 — Gridly Brief foundation: tiny inert handle only, no panel/state. */
+#gridlyPortraitV2 .gridly-brief-foundation-handle {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 14px;
+  padding: 1px 9px 2px;
+  border: 1px solid rgba(247, 251, 255, 0.18);
+  border-radius: 999px;
+  color: rgba(210, 230, 244, 0.72);
+  background: linear-gradient(180deg, rgba(8, 24, 39, 0.86), rgba(2, 8, 18, 0.92));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(247, 251, 255, 0.06);
+  font: 700 0.54rem/1 var(--gridly-font, Inter, system-ui, sans-serif);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: auto;
+  opacity: 0.82;
+  z-index: 1;
+}
+
+#gridlyPortraitV2 .gridly-brief-foundation-handle:focus-visible {
+  outline: 2px solid rgba(0, 245, 240, 0.7);
+  outline-offset: 2px;
+}
+
+body[data-layout-mode="desktop"] #gridlyPortraitV2 .gridly-brief-foundation-handle,
+body[data-layout-mode="tactical-landscape"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+  display: none;
+}
