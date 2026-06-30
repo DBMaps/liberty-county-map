@@ -679,18 +679,28 @@
         <img src="assets/store/branding/Logos/gridly-logo-horizontal.png" alt="Gridly" decoding="async" fetchpriority="high">
       </div></div>
       <div class="gridly-v2-header-region gridly-v2-header-center">
-        <div class="gridly-v2-watch" aria-hidden="true"><span id="gridlyV2AwarenessGreeting">Good morning</span></div>
+        <div class="gridly-v2-watch" aria-hidden="true"><span id="gridlyV2AwarenessGreeting">Good Morning</span></div>
       </div>
     </div>
-    <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Daily Brief: know before you go">
-      <span class="gridly-v2-daily-brief-label">Know Before You Go</span>
-      <div class="gridly-v2-daily-brief-context" aria-label="Briefing location and weather context">
+    <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Gridly Brief: know before you go">
+      <div class="gridly-v2-daily-brief-context" aria-label="Briefing location">
         <span id="gridlyV2DailyBriefLocation">Dayton, Texas</span>
-        <span id="gridlyV2DailyBriefWeather">Weather context unavailable</span>
+        <span id="gridlyV2DailyBriefWeather" hidden></span>
       </div>
-      <strong id="gridlyV2TopStatusPrimary">Your area is clear right now</strong>
-      <span id="gridlyV2TopStatusSecondary">No active community reports need attention.</span>
-      <small id="gridlyV2TopStatusTrust" class="gridly-v2-awareness-trust-line">Monitoring nearby conditions</small>
+      <span class="gridly-v2-daily-brief-label">Know Before You Go</span>
+      <div class="gridly-v2-daily-brief-section gridly-v2-primary-situation" aria-label="Primary situation">
+        <span class="gridly-v2-brief-section-label">Primary Situation</span>
+        <strong id="gridlyV2TopStatusPrimary">Your area is clear right now</strong>
+      </div>
+      <div class="gridly-v2-daily-brief-section gridly-v2-supporting-context" aria-label="Supporting context">
+        <span class="gridly-v2-brief-section-label">Supporting Context</span>
+        <span id="gridlyV2TopStatusSecondary">No active community reports need attention.</span>
+        <small id="gridlyV2TopStatusTrust" class="gridly-v2-awareness-trust-line">Monitoring nearby conditions</small>
+      </div>
+      <div class="gridly-v2-daily-brief-section gridly-v2-travel-status" aria-label="Travel status">
+        <span class="gridly-v2-brief-section-label">Travel Status</span>
+        <span id="gridlyV2TravelStatus">Today looks good for local travel.</span>
+      </div>
     </div>
     <div class="gridly-v2-participation-ack" id="gridlyV2ParticipationAcknowledgement" role="status" aria-live="polite" hidden></div>
     <div class="gridly-v2-segments" role="tablist" aria-label="Briefing filters">
