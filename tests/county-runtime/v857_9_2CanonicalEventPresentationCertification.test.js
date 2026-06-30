@@ -24,6 +24,10 @@ includes('data-gridly-event-layer-1="primaryEvent"', 'alert cards mark primary e
 includes('data-gridly-event-layer-2="locationContext"', 'alert cards mark location context layer');
 includes('data-gridly-event-layer-3="evidence"', 'alert cards mark evidence layer');
 includes('const canonicalEventPresentation = buildGridlyCanonicalEventPresentationModel(subtypeAwareAlert', 'alert renderer consumes canonical model');
+includes('const alertsPanelCanonicalPresentation = headerLeadAlert', 'alerts summary header builds from canonical presentation model');
+includes('data-gridly-alerts-panel-heading-location="true"', 'alerts summary header renders canonical location layer separately');
+includes('data-gridly-alerts-panel-heading-evidence="true"', 'alerts summary header renders canonical evidence layer separately');
+includes('alertsPanelCanonicalPresentation.primaryEvent', 'alerts summary header consumes canonical primary event layer');
 includes('routeWatchLogicModified: false', 'Route Watch logic remains protected');
 includes('presentationCompositionOnly: true', 'regression certification declares presentation-only scope');
 
