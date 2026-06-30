@@ -77,3 +77,23 @@ One command:
 tools\Gridly.ps1
 
 should provide everything needed to determine if Gridly is healthy and ready for production.
+
+---
+
+## V860 Roadmap — Weather Briefing Integration into the Awareness Brief
+
+Weather belongs in the first useful Home / Daily Brief moment. It should strengthen the existing Awareness Brief by helping people understand what to know before they leave, not by creating a separate weather application inside Gridly.
+
+Future V860 weather briefing work should support the product promise of **Know Before You Go** by combining concise local weather context with transportation-aware status lines. Weather should remain a supporting signal within the Awareness Brief, alongside road, crossing, construction, and community-report context.
+
+Example future copy:
+
+```text
+Good Afternoon
+Dayton, Texas
+91°
+Construction on US 90 west of Dayton
+No active railroad crossing delays
+```
+
+V859R does not implement weather data, weather fetching, weather rendering, alerts, providers, polling, storage, or a standalone weather surface.
