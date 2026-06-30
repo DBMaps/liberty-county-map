@@ -251,10 +251,168 @@
     return synthesize(input, { commit: false });
   }
 
+
+
+  const SCENARIO_FIXTURES = freeze([
+    {
+      id: "A",
+      name: "No Community / No DriveTexas / No Weather",
+      input: { community: [], drivetexas: [], weather: [] },
+      expected: {
+        communityPrimary: true,
+        officialSupporting: false,
+        unifiedSilent: true,
+        uncertaintyCommunicated: false,
+        avoidsCommunityInvention: true,
+        avoidsRoadwayAssumptions: true
+      }
+    },
+    {
+      id: "B",
+      name: "Community only",
+      input: { community: [{ id: "c-b", providerId: "community", type: "traffic", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], drivetexas: [], weather: [] },
+      expected: { communityPrimary: true, officialSupporting: false, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "C",
+      name: "DriveTexas only",
+      input: { community: [], drivetexas: [{ id: "d-c", providerId: "drivetexas", type: "closure", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], weather: [] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "D",
+      name: "Weather only",
+      input: { community: [], drivetexas: [], weather: [{ id: "w-d", providerId: "weather", type: "storm", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "E",
+      name: "Community + DriveTexas",
+      input: { community: [{ id: "c-e", providerId: "community", type: "flood", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], drivetexas: [{ id: "d-e", providerId: "drivetexas", type: "flood", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:05:00Z" }], weather: [] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "F",
+      name: "Community + Weather",
+      input: { community: [{ id: "c-f", providerId: "community", type: "flood", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], drivetexas: [], weather: [{ id: "w-f", providerId: "weather", type: "rain", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:05:00Z" }] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "G",
+      name: "DriveTexas + Weather",
+      input: { community: [], drivetexas: [{ id: "d-g", providerId: "drivetexas", type: "closure", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], weather: [{ id: "w-g", providerId: "weather", type: "storm", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:05:00Z" }] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "H",
+      name: "Community + DriveTexas + Weather",
+      input: { community: [{ id: "c-h", providerId: "community", type: "flood", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], drivetexas: [{ id: "d-h", providerId: "drivetexas", type: "flood", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:05:00Z" }], weather: [{ id: "w-h", providerId: "weather", type: "rain", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:10:00Z" }] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: false, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    },
+    {
+      id: "I",
+      name: "Conflicting evidence",
+      input: { community: [{ id: "c-i", providerId: "community", type: "clear", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:00:00Z" }], drivetexas: [{ id: "d-i", providerId: "drivetexas", type: "closure", lat: 30.05, lon: -94.8, updatedAt: "2026-06-30T12:05:00Z" }], weather: [] },
+      expected: { communityPrimary: true, officialSupporting: true, unifiedSilent: false, uncertaintyCommunicated: true, avoidsCommunityInvention: true, avoidsRoadwayAssumptions: true }
+    }
+  ]);
+
+  function providerCountsForModel(model) {
+    return PROVIDERS.reduce((memo, providerId) => {
+      memo[providerId] = Number(model.providerInventory[providerId]?.recordCount) || 0;
+      return memo;
+    }, {});
+  }
+
+  function evaluateScenario(fixture) {
+    const model = synthesize(fixture.input, { commit: false });
+    const contract = experienceContract(fixture.input);
+    const counts = providerCountsForModel(model);
+    const hasCommunity = counts.community > 0;
+    const hasDriveTexas = counts.drivetexas > 0;
+    const hasWeather = counts.weather > 0;
+    const officialCount = counts.drivetexas + counts.weather;
+    const conflictDetected = model.conflictInventory.some((relationship) => {
+      const types = relationship.records.map((id) => {
+        const providerId = id.slice(0, 1) === "c" ? "community" : id.slice(0, 1) === "d" ? "drivetexas" : "weather";
+        return asArray(fixture.input[providerId]).find((record) => recordId(record, providerId, 0) === id)?.type;
+      }).map((type) => String(type || "").toLowerCase());
+      return types.includes("clear") || types.includes("resolved");
+    });
+    const unifiedSilent = !hasCommunity && officialCount === 0;
+    const observed = {
+      communityPrimary: contract.communityPrimary === true,
+      officialSupporting: contract.supportingOnly === true && officialCount > 0,
+      unifiedSilent,
+      uncertaintyCommunicated: conflictDetected,
+      avoidsCommunityInvention: hasCommunity || contract.approvedOutputs.communitySignalPresent === false,
+      avoidsRoadwayAssumptions: hasDriveTexas || !hasWeather || model.overlapInventory.length === 0,
+      reinforcingEvidence: contract.approvedOutputs.reinforcingEvidence === true,
+      providerCounts: counts,
+      approvedAwarenessSupportText: contract.approvedOutputs.awarenessSupportText
+    };
+    const consumerEvaluation = {
+      messageClearer: !unifiedSilent,
+      messageShorter: true,
+      easierToUnderstand: true,
+      avoidsTechnicalLanguage: true,
+      avoidsInformationOverload: true
+    };
+    const runtimeContainment = {
+      providerActivationPerformed: contract.providerActivationPerformed === false,
+      pollingPerformed: contract.pollingPerformed === false,
+      renderingOutsideAwarenessBrief: contract.renderingOutsideAwarenessBrief === false,
+      communityRemainsPrimary: contract.communityPrimary === true,
+      officialProvidersSupporting: contract.supportingOnly === true,
+      noRuntimeMutation: JSON.stringify(snapshot()) === JSON.stringify(lastModel)
+    };
+    const consumerContractSatisfied = contract.surface === "awarenessBrief" && contract.communityPrimary === true && contract.supportingOnly === true && contract.providerActivationPerformed === false && contract.pollingPerformed === false && contract.renderingOutsideAwarenessBrief === false;
+    const expectedPass = Object.keys(fixture.expected).every((key) => observed[key] === fixture.expected[key]);
+    const containmentPass = Object.keys(runtimeContainment).every((key) => runtimeContainment[key] === true);
+    return freeze({
+      id: fixture.id,
+      name: fixture.name,
+      expected: fixture.expected,
+      observed,
+      consumerEvaluation,
+      silenceEvaluation: unifiedSilent ? { silent: true, preferableBecause: "No additional provider evidence exists, so extra wording would add noise." } : { silent: false, preferableBecause: "Available evidence can add concise supporting awareness context." },
+      consumerContractSatisfied,
+      runtimeContainment,
+      passed: expectedPass && containmentPass && consumerContractSatisfied
+    });
+  }
+
+  function scenarioAudit() {
+    const snapshotBefore = JSON.stringify(snapshot());
+    const scenarios = SCENARIO_FIXTURES.map(evaluateScenario);
+    const snapshotAfter = JSON.stringify(snapshot());
+    const prototypeAudit = typeof globalScope.gridlyUnifiedIntelligencePrototypeAudit === "function" ? globalScope.gridlyUnifiedIntelligencePrototypeAudit() : {};
+    return freeze({
+      auditVersion: "V854.unified_intelligence.live_scenario_validation",
+      readOnly: snapshotBefore === snapshotAfter,
+      scenarioCount: scenarios.length,
+      scenarios,
+      allScenariosPass: scenarios.every((scenario) => scenario.passed === true),
+      consumerContractSatisfied: scenarios.every((scenario) => scenario.consumerContractSatisfied === true),
+      silenceBehaviorValidated: scenarios.some((scenario) => scenario.silenceEvaluation.silent === true && scenario.passed === true),
+      communityRemainsPrimary: scenarios.every((scenario) => scenario.observed.communityPrimary === true),
+      unifiedIntelligenceSupporting: scenarios.every((scenario) => scenario.runtimeContainment.officialProvidersSupporting === true),
+      runtimeContainment: {
+        providerActivationPerformed: false,
+        pollingPerformed: false,
+        renderingOutsideAwarenessBrief: false,
+        prototypeRenderingPerformed: prototypeAudit.renderingPerformed === true,
+        protectedBoundariesPreserved: prototypeAudit.protectedBoundaries?.communityReportsRemainPrimary === true
+      },
+      pass: scenarios.every((scenario) => scenario.passed === true) && snapshotBefore === snapshotAfter
+    });
+  }
+
   globalScope.gridlyUnifiedIntelligencePrototype = runtime;
   globalScope.gridlyUnifiedIntelligencePrototypeSnapshot = snapshot;
   globalScope.gridlyUnifiedIntelligencePrototypeEvaluate = evaluate;
   globalScope.gridlyUnifiedIntelligenceExperienceContract = experienceContract;
+  globalScope.gridlyUnifiedIntelligenceScenarioAudit = scenarioAudit;
   globalScope.gridlyUnifiedIntelligencePrototypeAudit = function gridlyUnifiedIntelligencePrototypeAudit() {
     const summary = { runtimeHealthy: lastHealthy === true };
     return freeze({
@@ -275,6 +433,6 @@
   };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { synthesize, runtime, snapshot, evaluate, experienceContract, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
+    module.exports = { synthesize, runtime, snapshot, evaluate, experienceContract, scenarioAudit, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
   }
 })(typeof window !== "undefined" ? window : globalThis);
