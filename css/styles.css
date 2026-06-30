@@ -21861,19 +21861,11 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   gap: 12px;
 }
 
-.gridly-v858-brand-mark {
-  display: grid;
-  width: 50px;
-  height: 50px;
-  place-items: center;
-  border: 1px solid rgba(142, 230, 255, 0.36);
-  border-radius: 18px;
-  background: linear-gradient(145deg, rgba(37, 178, 255, 0.95), rgba(20, 79, 203, 0.92));
-  box-shadow: 0 16px 38px rgba(30, 144, 255, 0.34);
-  color: white;
-  font-size: 1.35rem;
+.gridly-v858-brand-name {
+  color: #f8fbff;
+  font-size: 1rem;
   font-weight: 900;
-  letter-spacing: -0.06em;
+  letter-spacing: 0.02em;
 }
 
 .gridly-v858-brand-line {
@@ -21985,6 +21977,28 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   min-height: 1.35em;
   color: rgba(154, 217, 255, 0.92) !important;
   font-size: 0.9rem !important;
+}
+
+.gridly-v859-completion-visible .gridly-v858-first-run-card {
+  min-height: 420px;
+  place-items: center;
+}
+
+.gridly-v859-completion-moment {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.gridly-v859-completion-moment h2 {
+  font-size: clamp(2.4rem, 11vw, 3.25rem);
+}
+
+.gridly-v859-completion-moment p:last-child {
+  color: rgba(222, 236, 249, 0.9);
+  font-weight: 760;
 }
 
 @media (max-width: 520px) {
