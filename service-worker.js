@@ -1,9 +1,9 @@
-const GRIDLY_PWA_CACHE_NAME = "gridly-pwa-shell-v278-1b";
+const GRIDLY_PWA_CACHE_NAME = "gridly-pwa-shell-v279-v856-3";
 const GRIDLY_PWA_SHELL_URLS = [
   "./",
   "./index.html",
-  "./css/styles.css?v=129",
-  "./js/app.js?v=1711",
+  "./css/styles.css?v=131",
+  "./js/app.js?v=1714",
   "./js/gridlyTxdotService.js?v=1710",
   "./manifest.json",
   "./assets/favicon-32.png",
