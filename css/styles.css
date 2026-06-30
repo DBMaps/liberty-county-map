@@ -21999,32 +21999,33 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   }
 }
 
-/* V860 — Daily Brief primary consumer experience (presentation-only). */
+/* V861 — The Gridly Brief signature consumer experience (presentation-only). */
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
-  gap: 7px;
-  min-height: 138px;
-  max-height: 164px;
-  padding: 15px 16px 14px;
+  gap: 12px;
+  min-height: 245px;
+  max-height: none;
+  padding: 20px 18px 18px;
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-label {
   display: block;
-  color: rgba(143, 224, 255, 0.88);
-  font-size: 0.62rem;
-  font-weight: 820;
-  letter-spacing: 0.16em;
+  color: rgba(143, 224, 255, 0.92);
+  font-size: 0.68rem;
+  font-weight: 860;
+  letter-spacing: 0.2em;
   line-height: 1;
+  margin-top: 2px;
   text-transform: uppercase;
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(169, 216, 255, 0.13);
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(169, 216, 255, 0.16);
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context span {
@@ -22032,27 +22033,76 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-conte
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: rgba(225, 239, 252, 0.9);
-  font-size: 0.72rem;
-  font-weight: 720;
+  color: rgba(225, 239, 252, 0.92);
+  font-size: 0.88rem;
+  font-weight: 760;
   line-height: 1.2;
 }
 
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefLocation {
+  font-size: clamp(16px, 4.5vw, 19px);
+  font-weight: 820;
+}
+
 body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefWeather {
-  flex: 0 1 auto;
-  color: rgba(188, 217, 239, 0.78);
-  font-weight: 650;
-  text-align: right;
+  color: rgba(188, 217, 239, 0.8);
+  font-size: 0.75rem;
+  font-weight: 680;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefWeather[hidden] {
+  display: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-section {
+  display: grid;
+  gap: 5px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-section-label {
+  color: rgba(188, 217, 239, 0.68);
+  font-size: 0.58rem;
+  font-weight: 840;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card strong,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] strong {
-  font-size: clamp(19px, 5.35vw, 23px);
+  font-size: clamp(22px, 6.2vw, 27px);
+  line-height: 1.06;
 }
 
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card > #gridlyV2TopStatusSecondary,
 body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] > #gridlyV2TopStatusSecondary {
   -webkit-line-clamp: 2;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line {
+  padding-left: 14px;
+  position: relative;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context #gridlyV2TopStatusSecondary::before,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-supporting-context .gridly-v2-awareness-trust-line::before {
+  content: "•";
+  left: 0;
+  position: absolute;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-travel-status {
+  margin-top: 2px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(169, 216, 255, 0.14);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2TravelStatus {
+  color: rgba(246, 251, 255, 0.96);
+  font-size: clamp(15px, 4.2vw, 18px);
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 @media (max-width: 380px) and (orientation: portrait) {
