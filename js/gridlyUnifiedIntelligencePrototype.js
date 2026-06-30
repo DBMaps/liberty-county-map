@@ -109,7 +109,9 @@
     };
   }
 
-  function synthesize(input) {
+  function synthesize(input, options) {
+    const shouldCommit = !options || options.commit !== false;
+    const previousHealthy = lastHealthy;
     lastHealthy = true;
     const recordsByProvider = coerceInput(input);
     const model = buildEmptyModel();
@@ -158,8 +160,13 @@
     model.strongestEvidenceGroups = model.geographicObservations.filter((group) => group.providerCount > 1).sort((a, b) => b.recordCount - a.recordCount);
     model.relationshipClusters = model.overlapInventory.concat(model.complementInventory);
 
-    lastModel = freeze(model);
-    return lastModel;
+    const frozenModel = freeze(model);
+    if (shouldCommit) {
+      lastModel = frozenModel;
+      return lastModel;
+    }
+    lastHealthy = previousHealthy;
+    return frozenModel;
   }
 
   function countsByProvider() {
@@ -200,9 +207,19 @@
     return false;
   }
 
+  function snapshot() {
+    return freeze(clone(lastModel) || buildEmptyModel());
+  }
+
+  function evaluate(input) {
+    return synthesize(input, { commit: false });
+  }
+
   globalScope.gridlyUnifiedIntelligencePrototype = runtime;
+  globalScope.gridlyUnifiedIntelligencePrototypeSnapshot = snapshot;
+  globalScope.gridlyUnifiedIntelligencePrototypeEvaluate = evaluate;
   globalScope.gridlyUnifiedIntelligencePrototypeAudit = function gridlyUnifiedIntelligencePrototypeAudit() {
-    const summary = runtime();
+    const summary = { runtimeHealthy: lastHealthy === true };
     return freeze({
       prototypeExists: typeof globalScope.gridlyUnifiedIntelligencePrototype === "function",
       providersAvailable: PROVIDERS.reduce((memo, providerId) => { memo[providerId] = providerAvailable(providerId); return memo; }, {}),
@@ -221,6 +238,6 @@
   };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { synthesize, runtime, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
+    module.exports = { synthesize, runtime, snapshot, evaluate, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
   }
 })(typeof window !== "undefined" ? window : globalThis);
