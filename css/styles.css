@@ -21998,3 +21998,71 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
     padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* V860 — Daily Brief primary consumer experience (presentation-only). */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+  gap: 7px;
+  min-height: 138px;
+  max-height: 164px;
+  padding: 15px 16px 14px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-label {
+  display: block;
+  color: rgba(143, 224, 255, 0.88);
+  font-size: 0.62rem;
+  font-weight: 820;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(169, 216, 255, 0.13);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(225, 239, 252, 0.9);
+  font-size: 0.72rem;
+  font-weight: 720;
+  line-height: 1.2;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefWeather {
+  flex: 0 1 auto;
+  color: rgba(188, 217, 239, 0.78);
+  font-weight: 650;
+  text-align: right;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card strong,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] strong {
+  font-size: clamp(19px, 5.35vw, 23px);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card > #gridlyV2TopStatusSecondary,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] > #gridlyV2TopStatusSecondary {
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 380px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-daily-brief-context {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyV2DailyBriefWeather {
+    text-align: left;
+  }
+}
