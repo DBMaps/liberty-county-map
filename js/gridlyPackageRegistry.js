@@ -233,7 +233,7 @@
   const SOUTHEAST_TEXAS_OPERATIONAL_REGION = Object.freeze({
     id: "operational-region.southeast-texas",
     name: "Southeast Texas Operational Region",
-    blueprintAmendment: "Blueprint Amendment 002 â€” Operational Region",
+    blueprintAmendment: "Blueprint Amendment 002 — Operational Region",
     geographicRole: "highest-geographic-organizing-unit",
     constitutionalAuthority: "Blueprint",
     runtimeRegistrationAuthority: "Package Registry"

@@ -1,6 +1,6 @@
 {
   "program": "Gridly Regional Expansion Program",
-  "phase": "Phase 2 â€” Community Package Manufacturing",
+  "phase": "Phase 2 — Community Package Manufacturing",
   "state": "TX",
   "sourceDatasets": {
     "osm": "OpenStreetMap/Regional/texas-260625.osm.pbf",

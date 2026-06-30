@@ -137,7 +137,6 @@
     <div class="gridly-search-card" role="dialog" aria-modal="false" aria-labelledby="gridlySearchTitle" aria-describedby="gridlySearchSubtitle">
       <div class="gridly-search-header">
         <div class="gridly-search-heading">
-          <span class="gridly-search-kicker">Destination Search</span>
           <label id="gridlySearchTitle" class="gridly-search-label" for="gridlyAddressSearchInput">Where are you going?</label>
           <p id="gridlySearchSubtitle" class="gridly-search-subtitle">Pick a saved place or search nearby destinations before you leave.</p>
         </div>
@@ -151,7 +150,7 @@
           autocomplete="off"
           placeholder="Search address or place"
         />
-        <button id="gridlySearchClearBtn" class="gridly-search-clear-btn" type="button" aria-label="Clear search">
+        <button id="gridlySearchClearBtn" class="gridly-search-clear-btn is-clear-hidden" type="button" aria-label="Clear search" aria-hidden="true" tabindex="-1">
           Reset
         </button>
       </div>
@@ -210,7 +209,7 @@
 
           <div class="habit-status-strip" id="habitStatusStrip">
             <span id="habitStatusPill">Community check</span>
-            <strong id="habitStatusHeadline">Building your townâ€™s awareness briefing...</strong>
+            <strong id="habitStatusHeadline">Building your town’s awareness briefing...</strong>
             <p id="habitStatusDetail">Gridly is scanning active community reports, locations, and freshness before you go.</p>
           </div>
 
@@ -993,7 +992,7 @@
             <section class="settings-pwa-install-card" data-gridly-pwa-install-card hidden aria-label="Install Gridly">
               <div class="settings-pwa-install-copy">
                 <strong>Install Gridly</strong>
-                <p>Add Gridly to your phoneâ€™s home screen for quick access.</p>
+                <p>Add Gridly to your phone’s home screen for quick access.</p>
                 <p class="settings-placeholder-note settings-pwa-install-status" data-gridly-pwa-install-status aria-live="polite"></p>
               </div>
               <button type="button" class="primary-btn compact-btn settings-pwa-install-button" id="settingsPwaInstallBtn" data-gridly-pwa-install-button>Install</button>
@@ -1114,7 +1113,7 @@
           <p class="eyebrow">Before you leave</p>
           <h2 id="gridlyWelcomeTitle">Before you leave...</h2>
           <div class="gridly-welcome-hero-copy" id="gridlyWelcomeCopy">
-            <p class="gridly-welcome-tagline">Know whatâ€™s happening ahead.</p>
+            <p class="gridly-welcome-tagline">Know what’s happening ahead.</p>
             <p>Blocked crossings. Road hazards. Community reports.</p>
           </div>
           <p>Before they become your problem.</p>
