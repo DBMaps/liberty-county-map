@@ -690,15 +690,23 @@
       </div>
       <button type="button" class="gridly-brief-foundation-handle" id="gridlyBriefFoundationHandle" aria-expanded="false" aria-controls="gridlyBriefInteractionPanel" data-gridly-brief-foundation-handle>Know Before You Go <span aria-hidden="true">▼</span></button>
       <section class="gridly-brief-interaction-panel" id="gridlyBriefInteractionPanel" data-gridly-brief-panel aria-label="Know Before You Go briefing" hidden>
-        <p class="gridly-brief-greeting" id="gridlyBriefGreeting">Good afternoon</p>
-        <p class="gridly-brief-location" id="gridlyBriefLocation">Dayton, Texas</p>
-        <p class="gridly-brief-weather" id="gridlyBriefWeather" hidden></p>
+        <div class="gridly-brief-hero">
+          <div class="gridly-brief-identity">
+            <p class="gridly-brief-greeting" id="gridlyBriefGreeting">Good afternoon</p>
+            <p class="gridly-brief-location" id="gridlyBriefLocation">Dayton, Texas</p>
+          </div>
+          <p class="gridly-brief-weather" id="gridlyBriefWeather" hidden></p>
+        </div>
         <div class="gridly-brief-flow">
-          <p class="gridly-brief-section-label">Today's Outlook</p>
-          <p class="gridly-brief-outlook" id="gridlyBriefOutlook">Local conditions look calm around Dayton.</p>
-          <p class="gridly-brief-context" id="gridlyBriefContext">Use the map below for nearby community reports and area context.</p>
-          <p class="gridly-brief-section-label">Travel Status</p>
-          <p class="gridly-brief-travel-status" id="gridlyBriefTravelStatus" data-gridly-brief-travel-status>Today looks good for local travel.</p>
+          <div class="gridly-brief-section gridly-brief-section-outlook">
+            <p class="gridly-brief-section-label">Today's Outlook</p>
+            <p class="gridly-brief-outlook" id="gridlyBriefOutlook">Local conditions look calm around Dayton.</p>
+            <p class="gridly-brief-context" id="gridlyBriefContext">Use the map below for nearby community reports and area context.</p>
+          </div>
+          <div class="gridly-brief-section gridly-brief-section-travel">
+            <p class="gridly-brief-section-label">Travel Status</p>
+            <p class="gridly-brief-travel-status" id="gridlyBriefTravelStatus" data-gridly-brief-travel-status>Today looks good for local travel.</p>
+          </div>
         </div>
       </section>
       <div class="gridly-v2-participation-ack" id="gridlyV2ParticipationAcknowledgement" role="status" aria-live="polite" hidden></div>
