@@ -154,12 +154,50 @@
     try { return connector.getNormalizedRecords(); } catch (error) { return []; }
   }
 
+  function geographicCoverage(records) {
+    const points = records.map(coords).filter(Boolean);
+    const namedAreas = Array.from(new Set(records.flatMap((record) => {
+      const areas = Array.isArray(record.affectedAreas) ? record.affectedAreas : [];
+      return areas.concat([record.county, record.region, record.location]).filter(Boolean).map(String);
+    }))).sort();
+    if (!points.length) return freeze({ pointCount: 0, boundingBox: null, namedAreas: freeze(namedAreas) });
+    return freeze({
+      pointCount: points.length,
+      boundingBox: freeze({
+        minLatitude: Math.min(...points.map((point) => point.lat)),
+        maxLatitude: Math.max(...points.map((point) => point.lat)),
+        minLongitude: Math.min(...points.map((point) => point.lon)),
+        maxLongitude: Math.max(...points.map((point) => point.lon))
+      }),
+      namedAreas: freeze(namedAreas)
+    });
+  }
+
+  function timeCoverage(records) {
+    const ranges = records.map(timeRange);
+    const starts = ranges.map((range) => range.start).filter((value) => value != null);
+    const ends = ranges.map((range) => range.end).filter((value) => value != null);
+    const durations = ranges.map((range) => range.start != null && range.end != null ? range.end - range.start : null).filter((value) => value != null && value >= 0);
+    return freeze({
+      recordsWithStart: starts.length,
+      recordsWithEnd: ends.length,
+      earliestStart: starts.length ? new Date(Math.min(...starts)).toISOString() : null,
+      latestStart: starts.length ? new Date(Math.max(...starts)).toISOString() : null,
+      earliestEnd: ends.length ? new Date(Math.min(...ends)).toISOString() : null,
+      latestEnd: ends.length ? new Date(Math.max(...ends)).toISOString() : null,
+      shortestDurationMinutes: durations.length ? Math.round(Math.min(...durations) / 60000) : null,
+      longestDurationMinutes: durations.length ? Math.round(Math.max(...durations) / 60000) : null
+    });
+  }
+
   function inventoryFor(records, available) {
     return freeze({
       available: available === true,
       recordCount: records.length,
       categories: freeze(Array.from(new Set(records.map(getCategory))).sort()),
       normalizedModelReady: records.length === 0 ? available === true : records.every((record) => Boolean(getCategory(record) && providerId(record, ""))),
+      geographicCoverage: geographicCoverage(records),
+      timeCoverage: timeCoverage(records),
       rawPayloadExposed: records.some((record) => record.rawPayloadExposed === true || Object.prototype.hasOwnProperty.call(record, "properties") || Object.prototype.hasOwnProperty.call(record, "geometry"))
     });
   }
@@ -176,6 +214,33 @@
       noProviderActivationOccurred: drive.providerActivated !== true && wx.providerActivated !== true,
       noAutomaticPollingOccurred: drive.automaticPolling !== true && wx.automaticPolling !== true
     });
+  }
+
+  function relationshipKey(records) {
+    const ids = Array.from(new Set(records.map((record) => record.providerId))).sort();
+    return ids.join(":");
+  }
+
+  function summarizeRelationships(candidates) {
+    const summary = { communityDrivetexas: 0, drivetexasWeather: 0, communityWeather: 0, threeProvider: 0, representativeExamples: freeze(candidates.slice(0, 5)) };
+    candidates.forEach((item) => {
+      const key = relationshipKey(item.records || []);
+      if (key === "community:drivetexas") summary.communityDrivetexas += 1;
+      else if (key === "drivetexas:weather") summary.drivetexasWeather += 1;
+      else if (key === "community:weather") summary.communityWeather += 1;
+    });
+    return freeze(summary);
+  }
+
+  function threeProviderRelationships(byProvider) {
+    const relationships = [];
+    byProvider.community.forEach((community) => byProvider.drivetexas.forEach((drive) => byProvider.weather.forEach((wx) => {
+      const communityDrive = timeOverlaps(community, drive) && categorySimilar(community, drive) && (near(community, drive, PROXIMITY_KM) || routeSimilar(community, drive));
+      const driveWeather = timeOverlaps(drive, wx) && categorySimilar(drive, wx) && (near(drive, wx, PROXIMITY_KM) || routeSimilar(drive, wx));
+      const communityWeather = timeOverlaps(community, wx) && categorySimilar(community, wx) && (near(community, wx, PROXIMITY_KM) || routeSimilar(community, wx));
+      if (communityDrive && driveWeather && communityWeather) relationships.push(freeze({ records: freeze([summarize(community), summarize(drive), summarize(wx)]), reason: "Three-provider relationship candidate based on shared time, category, and geography/route signals." }));
+    })));
+    return freeze(relationships);
   }
 
   function audit() {
@@ -216,6 +281,13 @@
       duplicateCandidates: freeze(duplicateCandidates),
       complementCandidates: freeze(complementCandidates),
       conflictCandidates: freeze(conflictCandidates),
+      relationshipAnalysis: freeze({
+        overlap: summarizeRelationships(overlapCandidates),
+        duplicate: summarizeRelationships(duplicateCandidates),
+        complement: summarizeRelationships(complementCandidates),
+        conflict: summarizeRelationships(conflictCandidates),
+        threeProvider: threeProviderRelationships(byProvider)
+      }),
       runtimeContainment: runtimeContainment()
     });
   }
