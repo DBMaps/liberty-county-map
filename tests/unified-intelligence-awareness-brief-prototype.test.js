@@ -19,7 +19,7 @@ assert(!appSource.includes("gridlyUnifiedIntelligenceAwarenessPrototypeAlert"), 
 assert(!appSource.includes("gridlyUnifiedIntelligenceAwarenessPrototypeCommunityPulse"), "Community Pulse is not modified by the prototype");
 assert(!appSource.includes("gridlyUnifiedIntelligenceAwarenessPrototypeRouteWatch"), "Route Watch is not modified by the prototype");
 assert(indexSource.includes("js/gridlyUnifiedIntelligencePrototype.js?v=853"), "prototype script version is loaded");
-assert(indexSource.includes("js/app.js?v=1713"), "app script version is loaded");
+assert(indexSource.includes("js/app.js?v=1714"), "app script version is loaded");
 
 const context = { window: {}, globalThis: {}, console };
 context.window = context;
