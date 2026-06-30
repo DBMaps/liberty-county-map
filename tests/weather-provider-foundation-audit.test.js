@@ -41,16 +41,25 @@ assert.strictEqual(context.gridlyIntelligenceProviders.weather, provider);
 [
   "Flash Flood Warning",
   "Flood Warning",
+  "Flood Advisory",
   "Severe Thunderstorm Warning",
+  "Severe Thunderstorm Watch",
   "Tornado Warning",
+  "Tornado Watch",
+  "Special Weather Statement",
+  "High Wind Warning",
+  "Wind Advisory",
+  "Dense Fog Advisory",
+  "Heat Advisory",
+  "Excessive Heat Warning",
+  "Fire Weather Watch",
+  "Red Flag Warning",
+  "Air Quality Alert",
+  "Coastal Flood Warning",
+  "Rip Current Statement",
   "Tropical Storm",
   "Hurricane",
-  "Dense Fog",
-  "High Wind",
-  "Winter Weather",
-  "Extreme Heat",
-  "Fire Weather",
-  "Air Quality"
+  "Winter Weather"
 ].forEach((category) => assert(provider.categories.includes(category), `${category} is normalized`));
 
 const normalized = provider.normalizeRecords({
@@ -64,6 +73,10 @@ const normalized = provider.normalizeRecords({
       areaDesc: "Liberty; Montgomery",
       effective: "2026-06-30T00:00:00Z",
       expires: "2026-06-30T02:00:00Z"
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [-94.7955, 30.05799]
     }
   }]
 });
@@ -72,6 +85,10 @@ assert.strictEqual(normalized.length, 1);
 assert.strictEqual(normalized[0].provider, "Weather");
 assert.strictEqual(normalized[0].providerId, "weather");
 assert.strictEqual(normalized[0].category, "Flash Flood Warning");
+assert.strictEqual(normalized[0].latitude, 30.05799);
+assert.strictEqual(normalized[0].longitude, -94.7955);
+assert.strictEqual(normalized[0].effectiveTime, "2026-06-30T00:00:00Z");
+assert.strictEqual(normalized[0].expirationTime, "2026-06-30T02:00:00Z");
 assert.deepStrictEqual(Array.from(normalized[0].affectedAreas), ["Liberty", "Montgomery"]);
 assert.strictEqual(normalized[0].rawPayloadExposed, false);
 assert.strictEqual(Object.prototype.hasOwnProperty.call(normalized[0], "properties"), false);
