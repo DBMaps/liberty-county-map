@@ -22270,12 +22270,23 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
   padding-top: 1px;
 }
 
-#gridlyPortraitV2 .gridly-brief-weather-temp {
+#gridlyPortraitV2 .gridly-brief-weather-temp,
+#gridlyPortraitV2 .gridly-brief-weather-alert-title {
   color: #fff;
   font-size: clamp(1.54rem, 6.2vw, 2.12rem);
   font-weight: 940;
   line-height: 0.95;
   letter-spacing: -0.055em;
+}
+
+#gridlyPortraitV2 .gridly-brief-weather-alert-title {
+  font-size: clamp(1.02rem, 4.1vw, 1.2rem);
+  letter-spacing: -0.025em;
+}
+
+#gridlyPortraitV2 .gridly-brief-weather[data-weather-hero-mode="alert"] {
+  max-width: 38%;
+  gap: 4px;
 }
 
 #gridlyPortraitV2 .gridly-brief-weather-summary {
