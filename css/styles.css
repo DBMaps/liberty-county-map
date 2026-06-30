@@ -21437,7 +21437,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awarenes
 .gridly-search-heading {
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 0;
 }
 
 .gridly-search-kicker {
@@ -21459,9 +21459,10 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awarenes
 .gridly-search-subtitle {
   margin: 0;
   max-width: 34rem;
-  color: rgba(226, 241, 255, 0.7);
+  color: rgba(226, 241, 255, 0.62);
   font-size: 0.9rem;
-  line-height: 1.38;
+  line-height: 1.34;
+  font-weight: 500;
 }
 
 .gridly-search-shell .gridly-search-close-btn {
@@ -21563,11 +21564,11 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awarenes
 }
 
 .gridly-search-shell .gridly-search-result-item {
-  min-height: 64px;
+  min-height: 68px;
   border-radius: 18px;
   border-color: rgba(222, 241, 255, 0.12);
   background: rgba(247, 251, 255, 0.055);
-  padding: 13px 14px;
+  padding: 15px 14px;
   box-shadow: inset 0 1px 0 rgba(247, 251, 255, 0.05);
 }
 
@@ -21612,4 +21613,11 @@ body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-searc
 
 body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row {
   flex-wrap: nowrap;
+}
+
+/* V857.2.2 — Search Baseline V1 lock certification route preview polish. */
+body[data-layout-mode="portrait"] .mobile-destination-command .destination-route-impact-line:not(:empty),
+body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty) {
+  text-transform: none;
+  letter-spacing: -0.005em;
 }
