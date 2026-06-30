@@ -9,31 +9,50 @@
   const NORMALIZED_CATEGORIES = Object.freeze([
     "Flash Flood Warning",
     "Flood Warning",
+    "Flood Advisory",
     "Severe Thunderstorm Warning",
+    "Severe Thunderstorm Watch",
     "Tornado Warning",
-    "Tropical Storm",
-    "Hurricane",
-    "Dense Fog",
-    "High Wind",
+    "Tornado Watch",
+    "Special Weather Statement",
+    "High Wind Warning",
+    "Wind Advisory",
+    "Dense Fog Advisory",
     "Winter Weather",
-    "Extreme Heat",
-    "Fire Weather",
-    "Air Quality"
+    "Heat Advisory",
+    "Excessive Heat Warning",
+    "Fire Weather Watch",
+    "Red Flag Warning",
+    "Air Quality Alert",
+    "Coastal Flood Warning",
+    "Rip Current Statement",
+    "Tropical Storm",
+    "Hurricane"
   ]);
 
   const CATEGORY_PATTERNS = Object.freeze([
-    { category: "Flash Flood Warning", pattern: /flash flood/i },
-    { category: "Flood Warning", pattern: /flood/i },
-    { category: "Severe Thunderstorm Warning", pattern: /severe thunderstorm/i },
-    { category: "Tornado Warning", pattern: /tornado/i },
+    { category: "Flash Flood Warning", pattern: /flash flood warning/i },
+    { category: "Flood Warning", pattern: /flood warning/i },
+    { category: "Flood Advisory", pattern: /flood advisory/i },
+    { category: "Severe Thunderstorm Warning", pattern: /severe thunderstorm warning/i },
+    { category: "Severe Thunderstorm Watch", pattern: /severe thunderstorm watch/i },
+    { category: "Tornado Warning", pattern: /tornado warning/i },
+    { category: "Tornado Watch", pattern: /tornado watch/i },
+    { category: "Special Weather Statement", pattern: /special weather statement/i },
+    { category: "High Wind Warning", pattern: /high wind warning/i },
+    { category: "Wind Advisory", pattern: /wind advisory/i },
+    { category: "Dense Fog Advisory", pattern: /dense fog advisory|dense fog|fog/i },
+    { category: "Heat Advisory", pattern: /heat advisory/i },
+    { category: "Excessive Heat Warning", pattern: /excessive heat warning|extreme heat warning/i },
+    { category: "Fire Weather Watch", pattern: /fire weather watch/i },
+    { category: "Red Flag Warning", pattern: /red flag warning/i },
+    { category: "Air Quality Alert", pattern: /air quality alert|air quality|ozone|particulate/i },
+    { category: "Coastal Flood Warning", pattern: /coastal flood warning/i },
+    { category: "Rip Current Statement", pattern: /rip current statement/i },
     { category: "Tropical Storm", pattern: /tropical storm/i },
     { category: "Hurricane", pattern: /hurricane/i },
-    { category: "Dense Fog", pattern: /dense fog|fog/i },
-    { category: "High Wind", pattern: /high wind|wind advisory|wind warning/i },
     { category: "Winter Weather", pattern: /winter|ice storm|snow|sleet|freeze|blizzard/i },
-    { category: "Extreme Heat", pattern: /extreme heat|excessive heat|heat advisory/i },
-    { category: "Fire Weather", pattern: /fire weather|red flag/i },
-    { category: "Air Quality", pattern: /air quality|ozone|particulate/i }
+    { category: "Flood Warning", pattern: /flood/i }
   ]);
 
   function freeze(value) {
@@ -132,6 +151,48 @@
     return freeze(areaDescription.split(/[;,]/).map((area) => area.trim()).filter(Boolean));
   }
 
+  function collectCoordinates(geometry, points) {
+    if (!geometry || typeof geometry !== "object") return;
+    if (geometry.type === "Point" && Array.isArray(geometry.coordinates)) {
+      points.push(geometry.coordinates);
+      return;
+    }
+    if (Array.isArray(geometry.coordinates)) {
+      const visit = (value) => {
+        if (!Array.isArray(value)) return;
+        if (typeof value[0] === "number" && typeof value[1] === "number") {
+          points.push(value);
+          return;
+        }
+        value.forEach(visit);
+      };
+      visit(geometry.coordinates);
+    }
+  }
+
+  function normalizeCoordinates(record) {
+    const rawLatitude = readFirst(record, ["latitude", "lat"]);
+    const rawLongitude = readFirst(record, ["longitude", "lon", "lng"]);
+    const explicitLatitude = rawLatitude === "" ? NaN : Number(rawLatitude);
+    const explicitLongitude = rawLongitude === "" ? NaN : Number(rawLongitude);
+    if (Number.isFinite(explicitLatitude) && Number.isFinite(explicitLongitude)) {
+      return { latitude: explicitLatitude, longitude: explicitLongitude };
+    }
+
+    const points = [];
+    collectCoordinates(record.__geometry, points);
+    if (!points.length) return { latitude: null, longitude: null };
+    const totals = points.reduce((acc, point) => {
+      acc.longitude += Number(point[0]) || 0;
+      acc.latitude += Number(point[1]) || 0;
+      return acc;
+    }, { latitude: 0, longitude: 0 });
+    return {
+      latitude: Number((totals.latitude / points.length).toFixed(6)),
+      longitude: Number((totals.longitude / points.length).toFixed(6))
+    };
+  }
+
   function normalizeRecord(record, index) {
     if (!record || typeof record !== "object") return null;
     const category = normalizeCategory(record);
@@ -140,6 +201,7 @@
     const description = toSafeString(readFirst(record, ["description", "summary", "instruction"]));
     const startTime = toSafeString(readFirst(record, ["effective", "onset", "startTime", "sent", "start"]));
     const endTime = toSafeString(readFirst(record, ["expires", "ends", "endTime", "end"]));
+    const coordinates = normalizeCoordinates(record);
 
     return freeze({
       id: sourceId || `weather-foundation-${index}`,
@@ -148,8 +210,12 @@
       category,
       title: headline || category,
       description,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
       severity: normalizeSeverity(record),
       affectedAreas: normalizeAreas(record),
+      effectiveTime: startTime || null,
+      expirationTime: endTime || null,
       startTime: startTime || null,
       endTime: endTime || null,
       sourceTrace: freeze({ provider: PROVIDER_NAME, sourceId: sourceId || null }),
@@ -236,7 +302,7 @@
       registered: runtime.registered === true,
       enabled: runtime.enabled === true,
       connected: runtime.connected === true,
-      normalizedModelReady: runtime.normalizedModelReady === true && NORMALIZED_CATEGORIES.length === 12,
+      normalizedModelReady: runtime.normalizedModelReady === true && NORMALIZED_CATEGORIES.length >= 20,
       runtimeHealthy: runtime.runtimeHealthy === true,
       uiOwnership: false,
       safeForActivation: runtime.registered === true && runtime.normalizedModelReady === true && runtime.runtimeHealthy === true && runtime.uiOwnership === false
