@@ -20924,3 +20924,76 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 {
   --gridly-v2-filter-strip-top: calc(174px + env(safe-area-inset-top, 0px));
   --gridly-v2-filter-strip-bottom: calc(220px + env(safe-area-inset-top, 0px));
 }
+
+/* V856.5B — quiet-state confidence and presentation rhythm refinement. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] {
+  padding: 14px 14px 12px;
+  border-color: rgba(125, 211, 252, 0.42);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(45, 212, 191, 0.18), transparent 36%),
+    linear-gradient(165deg, rgba(7, 21, 36, 0.96) 0%, rgba(3, 12, 24, 0.97) 68%, rgba(2, 8, 18, 0.99) 100%);
+  box-shadow: var(--gridly-depth-shadow), inset 0 1px 0 rgba(247, 251, 255, 0.12), 0 0 30px rgba(45, 212, 191, 0.12);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"]::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin: 0 7px 7px 1px;
+  border-radius: 999px;
+  background: #4dffd6;
+  box-shadow: 0 0 14px rgba(77, 255, 214, 0.55);
+  vertical-align: middle;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] strong {
+  display: inline;
+  vertical-align: middle;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] > span {
+  display: block;
+  margin-top: 7px;
+  color: rgba(226, 240, 252, 0.9);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] .gridly-v2-awareness-trust-line {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top-color: rgba(125, 211, 252, 0.18);
+  color: rgba(173, 230, 252, 0.92);
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+  gap: 4px;
+  padding: 11px 13px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-meta {
+  max-width: 92%;
+}
+
+.community-pulse-surface {
+  border-color: rgba(125, 211, 252, 0.26);
+  background:
+    radial-gradient(circle at 4% 50%, rgba(45, 212, 191, 0.1), transparent 34%),
+    linear-gradient(135deg, rgba(9, 23, 40, 0.78), rgba(8, 17, 30, 0.68));
+}
+
+.community-pulse-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 10px rgba(142, 239, 255, 0.5);
+  vertical-align: 1px;
+}
+
+.gridly-alerts-active .gridly-alert-row:has(.gridly-alert-title:only-child),
+.gridly-alerts-active .gridly-alert-row:has(.gridly-alert-subtitle:empty) {
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.055), rgba(255, 255, 255, 0.018));
+}
