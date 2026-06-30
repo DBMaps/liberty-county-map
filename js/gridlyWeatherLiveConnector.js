@@ -138,6 +138,12 @@
     }
   }
 
+  function notifyBriefWeatherRefresh() {
+    if (typeof globalScope.gridlyRefreshBriefWeather === "function") {
+      try { globalScope.gridlyRefreshBriefWeather(); } catch (error) {}
+    }
+  }
+
   async function fetchNow() {
     state.networkingAvailable = typeof globalScope.fetch === "function";
     state.lastRequestAt = new Date().toISOString();
@@ -154,6 +160,7 @@
           state.lastFetchSucceeded = true;
           state.normalizedRecordCount = normalizedRecords.length;
           state.lastError = null;
+          notifyBriefWeatherRefresh();
           return freeze({ connected: true, normalizedRecordCount: normalizedRecords.length });
         } catch (error) {
           lastError = error;
@@ -168,6 +175,7 @@
       state.lastFetchSucceeded = false;
       state.normalizedRecordCount = 0;
       state.lastError = error instanceof Error ? error.message : String(error);
+      notifyBriefWeatherRefresh();
       return freeze({ connected: false, normalizedRecordCount: 0, error: state.lastError });
     }
   }
