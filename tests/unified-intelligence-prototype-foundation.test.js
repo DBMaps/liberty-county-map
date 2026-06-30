@@ -24,8 +24,8 @@ function loadContext() {
 }
 
 const indexSource = fs.readFileSync("index.html", "utf8");
-assert(indexSource.includes("js/gridlyUnifiedIntelligencePrototype.js?v=848"));
-assert(indexSource.indexOf("js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847") < indexSource.indexOf("js/gridlyUnifiedIntelligencePrototype.js?v=848"));
+assert(indexSource.includes("js/gridlyUnifiedIntelligencePrototype.js?v=853"));
+assert(indexSource.indexOf("js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847") < indexSource.indexOf("js/gridlyUnifiedIntelligencePrototype.js?v=853"));
 
 const context = loadContext();
 const driveAuditBefore = context.gridlyDriveTexasConnectorRuntimeAudit();

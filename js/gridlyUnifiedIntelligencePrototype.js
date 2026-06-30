@@ -187,6 +187,42 @@
     };
   }
 
+  function experienceContract(input) {
+    const model = synthesize(input, { commit: false });
+    const communityCount = Number(model.providerInventory.community?.recordCount) || 0;
+    const officialContextCount = (Number(model.providerInventory.drivetexas?.recordCount) || 0) + (Number(model.providerInventory.weather?.recordCount) || 0);
+    const reinforcingEvidence = model.strongestEvidenceGroups.length > 0 || model.overlapInventory.length > 0 || model.complementInventory.length > 0;
+    const supportingContextAvailable = officialContextCount > 0 || reinforcingEvidence;
+    const awarenessSupportText = communityCount > 0 && supportingContextAvailable
+      ? "Community reports and official road information indicate travel may be affected."
+      : communityCount > 0
+        ? "Community reports indicate travel may be affected."
+        : supportingContextAvailable
+          ? "Official context may support local awareness, but community reports remain primary."
+          : "Community awareness remains primary.";
+    return freeze({
+      contractVersion: "V853.awareness_brief.consumer_experience",
+      surface: "awarenessBrief",
+      available: true,
+      communityPrimary: true,
+      supportingOnly: true,
+      providerActivationPerformed: false,
+      pollingPerformed: false,
+      renderingOutsideAwarenessBrief: false,
+      exposesRawProviderRecords: false,
+      exposesSourceTrace: false,
+      exposesNormalizedRecords: false,
+      exposesRuntimeDiagnostics: false,
+      exposesProviderMetadata: false,
+      approvedOutputs: {
+        awarenessSupportText,
+        supportingContextAvailable,
+        reinforcingEvidence,
+        communitySignalPresent: communityCount > 0
+      }
+    });
+  }
+
   function runtime(input) {
     synthesize(input);
     return freeze({
@@ -218,6 +254,7 @@
   globalScope.gridlyUnifiedIntelligencePrototype = runtime;
   globalScope.gridlyUnifiedIntelligencePrototypeSnapshot = snapshot;
   globalScope.gridlyUnifiedIntelligencePrototypeEvaluate = evaluate;
+  globalScope.gridlyUnifiedIntelligenceExperienceContract = experienceContract;
   globalScope.gridlyUnifiedIntelligencePrototypeAudit = function gridlyUnifiedIntelligencePrototypeAudit() {
     const summary = { runtimeHealthy: lastHealthy === true };
     return freeze({
@@ -238,6 +275,6 @@
   };
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { synthesize, runtime, snapshot, evaluate, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
+    module.exports = { synthesize, runtime, snapshot, evaluate, experienceContract, audit: globalScope.gridlyUnifiedIntelligencePrototypeAudit };
   }
 })(typeof window !== "undefined" ? window : globalThis);
