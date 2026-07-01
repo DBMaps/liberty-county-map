@@ -24159,3 +24159,82 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-c
   font-size: .72rem;
   line-height: 1.25;
 }
+
+/* V882 — Reporting Experience Polish (presentation only) */
+#gridlyHazardPanel.gridly-hazard-panel {
+  padding: 14px 14px 12px;
+}
+#gridlyHazardPanel .hazard-panel-header {
+  min-height: 48px;
+  padding: 8px 12px;
+  margin: -14px -14px 10px;
+}
+#gridlyHazardPanel .hazard-panel-header strong {
+  font-size: 1rem;
+  letter-spacing: 0.005em;
+}
+#gridlyHazardPanel.gridly-hazard-panel > p {
+  margin: 0 0 12px;
+  color: rgba(222, 237, 252, 0.84);
+  font-size: 0.84rem;
+}
+#gridlyHazardPanel .hazard-choice-grid {
+  gap: 9px;
+  padding-bottom: 10px;
+}
+#gridlyHazardPanel .hazard-choice-grid button,
+#gridlyHazardPanel .hazard-subtype-grid button {
+  min-height: 46px;
+  padding: 12px 13px;
+  border-radius: 14px;
+  line-height: 1.2;
+  text-transform: none;
+  letter-spacing: 0.005em;
+}
+#gridlyHazardPanel .hazard-choice-grid button.selected,
+#gridlyHazardPanel .hazard-subtype-grid button.selected,
+#gridlyHazardPanel .hazard-subtype-grid button[aria-pressed="true"] {
+  border-color: rgba(124, 211, 255, 0.82);
+  background: rgba(58, 143, 206, 0.28);
+  outline: 2px solid rgba(124, 211, 255, 0.26);
+}
+#gridlyHazardPanel .hazard-subtype-panel {
+  margin-top: 10px;
+  padding: 10px;
+}
+#gridlyHazardPanel .hazard-panel-placement-actions {
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+#gridlyHazardPanel .hazard-panel-placement-actions button,
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-ctas .primary-btn,
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-ctas .secondary-btn {
+  min-height: 46px;
+  border-radius: 14px;
+  text-transform: none;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-picker {
+  gap: 12px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-prompt {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 2px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-prompt span {
+  color: rgba(204, 224, 244, 0.8);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-action {
+  min-height: 52px;
+  padding: 14px 13px;
+  border-radius: 15px;
+}
+#reportConfirmation.success,
+#reportConfirmation.info,
+#reportConfirmation.error {
+  line-height: 1.35;
+  border-radius: 14px;
+}
