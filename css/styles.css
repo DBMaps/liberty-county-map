@@ -24409,3 +24409,74 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-
     touch-action: manipulation;
   }
 }
+
+/* =========================================================
+   V890R — Android Portrait Map Breathing Room
+   Purpose: use dynamic viewport sizing and slightly slimmer portrait
+   chrome so Android Chrome keeps more usable map surface without
+   changing Home ownership, the layer button, dock, or V890 hitboxes.
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] {
+    --gridly-v890r-viewport-height: 100vh;
+    --gridly-v890r-viewport-height: 100svh;
+    --gridly-v890r-viewport-height: 100dvh;
+    --gridly-v890r-map-min-height: max(540px, calc(var(--gridly-visual-vh, var(--gridly-v890r-viewport-height)) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)));
+  }
+
+  body[data-layout-mode="portrait"] #map,
+  body[data-layout-mode="portrait"] .map-frame,
+  body[data-layout-mode="portrait"] .map-card {
+    min-height: var(--gridly-v890r-map-min-height) !important;
+  }
+
+  body[data-layout-mode="portrait"] #map {
+    height: var(--gridly-visual-vh, var(--gridly-v890r-viewport-height)) !important;
+    max-height: var(--gridly-visual-vh, var(--gridly-v890r-viewport-height)) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v890r-protected-systems-unchanged: true;
+    --gridly-v890r-layer-button-preserved: true;
+    --gridly-v2-top-fallback-gap: 8px;
+    --gridly-v2-header-top: max(var(--gridly-v2-top-fallback-gap), calc(env(safe-area-inset-top, 0px) + 6px));
+    --gridly-v2-awareness-card-top: calc(var(--gridly-v2-header-top) + 42px);
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 142px);
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 184px);
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 8px);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    min-height: 36px;
+    padding-block: 6px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+    min-height: 96px !important;
+    padding-block: 12px !important;
+    gap: 5px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    padding: 3px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 34px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+    padding-block: 9px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 7px;
+    gap: 7px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 46px;
+  }
+}
