@@ -24238,3 +24238,78 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBody .gridly-v2-report-a
   line-height: 1.35;
   border-radius: 14px;
 }
+
+/* V887 — Settings Experience Refinement */
+.gridly-settings-sheet.settings-list-experience {
+  gap: 10px;
+}
+
+.gridly-settings-sheet .settings-list-section {
+  scroll-margin-top: 12px;
+}
+
+.gridly-settings-sheet .settings-list-summary {
+  min-height: 60px;
+}
+
+.gridly-settings-sheet .settings-list-title {
+  letter-spacing: -0.015em;
+}
+
+.gridly-settings-sheet .settings-list-meta {
+  max-width: 100%;
+}
+
+.gridly-settings-sheet .settings-list-detail {
+  gap: 11px;
+}
+
+.gridly-settings-sheet .settings-placeholder-note {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.gridly-settings-sheet .settings-toggle-row,
+.gridly-settings-sheet .settings-select-grid label,
+.gridly-settings-sheet .settings-place-card,
+.gridly-settings-sheet .gridly-v2-tile {
+  min-height: 44px;
+}
+
+.gridly-settings-sheet .settings-toggle-row {
+  padding-inline: 12px;
+}
+
+.gridly-settings-sheet .settings-toggle-row span,
+.gridly-settings-sheet .settings-select-grid label {
+  text-transform: none;
+}
+
+.gridly-settings-sheet .settings-notification-notice {
+  border: 1px solid rgba(142, 239, 255, 0.16);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(142, 239, 255, 0.055);
+}
+
+.gridly-settings-sheet .settings-section-support .gridly-v2-tile,
+.gridly-settings-sheet .settings-section-travel .settings-place-action {
+  min-height: 44px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-summary {
+  min-height: 62px;
+  padding-block: 11px;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail {
+  gap: 10px;
+  padding-bottom: 14px !important;
+}
+
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-toggle-row,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid label,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-place-card,
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-v2-tile {
+  min-height: 46px;
+}
