@@ -23331,3 +23331,27 @@ body.gridly-brief-is-expanded .gridly-v2-control-rail,
     place-items: center;
   }
 }
+
+/* V864.1 — keep Portrait V2 map controls visible when no runtime map overlay owns them. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 > .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 > .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] > .gridly-v2-control-rail {
+    position: fixed !important;
+    top: var(--gridly-v2-control-rail-top, 188px) !important;
+    right: var(--gridly-v2-control-rail-right, calc(10px + env(safe-area-inset-right, 0px))) !important;
+    left: auto !important;
+    bottom: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+    width: 38px !important;
+    max-width: 38px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    z-index: 545 !important;
+    overflow: visible !important;
+  }
+}
