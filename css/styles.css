@@ -15488,6 +15488,8 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
   inset: 0;
   z-index: 10000;
   display: grid;
+  pointer-events: auto;
+  touch-action: manipulation;
   place-items: end center;
   padding: 18px;
   min-height: 100dvh;
@@ -15496,6 +15498,8 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
 .gridly-welcome-backdrop {
   position: absolute;
   inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background:
     radial-gradient(circle at 50% 10%, rgba(74, 164, 255, 0.18), transparent 34%),
     linear-gradient(180deg, rgba(3, 8, 18, 0.62), rgba(3, 8, 18, 0.9));
@@ -15503,6 +15507,8 @@ body.gridly-theme-light .settings-place-card .gridly-v2-tile.settings-place-acti
 }
 .gridly-welcome-sheet {
   position: relative;
+  z-index: 2;
+  pointer-events: auto;
   width: min(100%, 520px);
   max-height: min(94dvh, 700px);
   overflow-y: auto;
@@ -21830,6 +21836,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
 
 .gridly-v858-first-run-card {
   position: relative;
+  isolation: isolate;
+  pointer-events: auto;
   display: grid;
   gap: 24px;
   padding: clamp(30px, 7.5vw, 44px);
@@ -21893,7 +21901,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
 
 .gridly-v858-location-panel {
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  pointer-events: auto;
   display: grid;
   gap: 16px;
   padding: 18px;
@@ -21909,6 +21918,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   position: relative;
   z-index: 2;
   touch-action: manipulation;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  user-select: none;
   -webkit-tap-highlight-color: rgba(142, 230, 255, 0.18);
   min-height: 52px;
   width: 100%;
