@@ -22894,3 +22894,34 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="exp
     line-height: 1.12;
   }
 }
+
+/* V862.13 — final Gridly Brief visual containment breathing room. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-brief-interaction-extra: clamp(282px, 37vh, 374px);
+  }
+
+  #gridlyPortraitV2 .gridly-v2-brief-stack {
+    gap: 12px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
+    padding-bottom: clamp(20px, 4.7vw, 28px);
+  }
+
+  #gridlyPortraitV2 .gridly-brief-travel-card {
+    margin-bottom: 2px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-weather[data-weather-hero-mode="alert"] {
+    gap: 2px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  #gridlyPortraitV2 .gridly-brief-weather[data-weather-hero-mode="alert"] .gridly-brief-weather-summary {
+    max-width: 8.4rem;
+    font-size: 0.72rem;
+    line-height: 1.08;
+  }
+}
