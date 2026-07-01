@@ -14,8 +14,8 @@ includes(appSource, 'bindGridlyV872FirstRunActivation(continueButton, "continue"
 includes(appSource, 'bindGridlyV872FirstRunActivation(useLocationButton, "use-location"', 'Use My Location button has pointerup/touchend/click activation');
 includes(appSource, 'window.gridlyFirstRunTapDiagnostic = gridlyFirstRunTapDiagnostic', 'First-run tap diagnostic is exposed for real-device blocker diagnosis');
 includes(appSource, 'manualForm?.addEventListener("submit"', 'Manual ZIP/community form submit path is preserved');
-includes(appSource, 'Location is not available here. Enter a ZIP code or town name to get started.', 'Use My Location unavailable path uses friendly consumer wording');
-includes(appSource, 'That took too long. Enter a ZIP code or town name to get started.', 'Use My Location timeout path uses friendly consumer wording');
+includes(appSource, 'Location is not available here. Enter a ZIP code or town name to choose your watch area.', 'Use My Location unavailable path uses friendly consumer wording');
+includes(appSource, 'That took too long. Enter a ZIP code or town name to choose your watch area.', 'Use My Location timeout path uses friendly consumer wording');
 includes(appSource, 'Gridly is not available for that area yet. Try a nearby ZIP code or town name.', 'Unsupported location path uses friendly consumer wording');
 includes(appSource, 'resolveGridlyV858NearestAwarenessArea(0, 0, { requireSupportedArea: true, allowFallback: false }) === null', 'Audit verifies unsupported-area behavior without replacing lookup logic');
 includes(appSource, 'zipCommunityInputOperational: inputOperational', 'First-run audit verifies ZIP/community input operation');
