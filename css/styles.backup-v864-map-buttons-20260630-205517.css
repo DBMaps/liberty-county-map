@@ -23355,19 +23355,3 @@ body.gridly-brief-is-expanded .gridly-v2-control-rail,
     overflow: visible !important;
   }
 }
-
-/* =========================================================
-   V864.x — Minor Map Button Downshift
-   Purpose: keep right-side map controls from covering the All filter.
-   ========================================================= */
-
-#gridlyPortraitV2 .gridly-v2-control-rail {
-  top: 290px !important;
-}
-
-body.gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-[data-gridly-brief-state="expanded"] #gridlyPortraitV2 .gridly-v2-control-rail {
-  top: 515px !important;
-}
-
