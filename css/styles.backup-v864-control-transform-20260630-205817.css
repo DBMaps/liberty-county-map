@@ -23371,20 +23371,3 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
   top: 515px !important;
 }
 
-
-/* =========================================================
-   V864.x — Keep all map controls, visually offset rail below All
-   ========================================================= */
-
-#gridlyPortraitV2 .gridly-v2-control-rail {
-  margin-top: 42px !important;
-  transform: translateY(42px) !important;
-}
-
-body.gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-[data-gridly-brief-state="expanded"] #gridlyPortraitV2 .gridly-v2-control-rail {
-  margin-top: 42px !important;
-  transform: translateY(42px) !important;
-}
-
