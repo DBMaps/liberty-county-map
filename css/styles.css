@@ -23259,3 +23259,75 @@ body.gridly-brief-is-expanded .gridly-v2-control-rail,
   color: transparent !important;
 }
 
+
+/* V864 — Portrait command-region ownership over actual runtime DOM. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    left: var(--gridly-v2-command-left, calc(10px + env(safe-area-inset-left, 0px))) !important;
+    right: var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px))) !important;
+    display: grid;
+    gap: 10px;
+    inline-size: auto !important;
+    max-inline-size: calc(100vw - var(--gridly-v2-command-left, calc(10px + env(safe-area-inset-left, 0px))) - var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px)))) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-awareness-brief-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-brief-foundation-handle,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-brief-interaction-panel,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-segments {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-self: stretch;
+    box-sizing: border-box;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-segments {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    margin: 0 !important;
+    padding: 5px;
+    background: linear-gradient(180deg, rgba(5, 16, 30, 0.88), rgba(4, 11, 22, 0.82)) !important;
+    border: 1px solid rgba(95, 178, 238, 0.22) !important;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  body[data-layout-mode="portrait"] .map-frame {
+    position: relative;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 540 !important;
+    pointer-events: none;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay > :not(.gridly-v2-control-rail) {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail {
+    position: absolute !important;
+    top: 18px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    z-index: 545 !important;
+    max-width: 38px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail button {
+    display: grid !important;
+    place-items: center;
+  }
+}
