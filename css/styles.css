@@ -23548,3 +23548,20 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
     pointer-events: auto !important;
   }
 }
+
+/* V866S — add portrait breathing room between filter strip and map ownership region. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-segments {
+    margin-block-end: 18px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame {
+    margin-block-start: 18px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-is-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail {
+    top: 22px !important;
+  }
+}
