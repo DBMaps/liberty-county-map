@@ -23499,3 +23499,52 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
     opacity: 1 !important;
   }
 }
+
+/* V866R — restore visible map-control ownership inside the map canvas. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-is-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail {
+    position: absolute !important;
+    top: 18px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+    inline-size: 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    block-size: auto !important;
+    min-height: 173px !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 560 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail button,
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail .gridly-v2-map-control,
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail [role="button"] {
+    display: grid !important;
+    place-items: center;
+    visibility: visible !important;
+    opacity: 1 !important;
+    inline-size: 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    block-size: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    pointer-events: auto !important;
+  }
+}
