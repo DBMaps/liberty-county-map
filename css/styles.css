@@ -23019,3 +23019,17 @@ body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridl
     max-inline-size: none;
   }
 }
+
+/* V862.19 — small portrait map-control rail offset below Brief filters. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-collapsed #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="collapsed"] .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + 28px) !important;
+  }
+
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + 32px) !important;
+  }
+}
