@@ -23616,3 +23616,29 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
     pointer-events: auto !important;
   }
 }
+
+/* V869R — allow active top-awareness titles to wrap without clipping. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-awareness-brief-card {
+    align-content: start !important;
+    min-height: 104px !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-block: 13px 12px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card strong,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state] strong {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    font-size: clamp(17px, 4.65vw, 21px) !important;
+    line-height: 1.12 !important;
+  }
+}
