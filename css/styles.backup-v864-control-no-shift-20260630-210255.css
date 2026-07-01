@@ -23408,21 +23408,3 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
   opacity: 0.45 !important;
 }
 
-
-/* =========================================================
-   V864.x — Lock map control rail position across Brief states
-   Purpose: no shifting between collapsed and expanded Brief.
-   ========================================================= */
-
-#gridlyPortraitV2 .gridly-v2-control-rail,
-body.gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
-[data-gridly-brief-state="expanded"] #gridlyPortraitV2 .gridly-v2-control-rail,
-[data-gridly-brief-state="collapsed"] #gridlyPortraitV2 .gridly-v2-control-rail {
-  top: auto !important;
-  right: 10px !important;
-  margin-top: 34px !important;
-  transform: translateY(34px) !important;
-  opacity: 1 !important;
-}
-
