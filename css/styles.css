@@ -23426,3 +23426,76 @@ body.gridly-brief-is-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
   opacity: 1 !important;
 }
 
+
+/* =========================================================
+   V866 — Portrait Spatial Ownership
+   Runtime owners: .gridly-v2-brief-stack, .gridly-v2-segments,
+   .map-frame, .map-tools-overlay, .map-toolbar-main-row,
+   .map-tools-section, .geo-filter-shell, .gridly-v2-control-rail.
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-segments {
+    position: static !important;
+    isolation: isolate;
+    z-index: 620 !important;
+    margin-block: 0 10px !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame {
+    position: relative !important;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 545 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .map-toolbar-main-row,
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .map-toolbar-meta-row,
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .map-tools-section,
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .geo-filter-shell {
+    display: none !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded .map-frame .map-tools-overlay .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] ~ .map-frame .map-tools-overlay .gridly-v2-control-rail {
+    position: absolute !important;
+    top: 18px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+    width: 38px !important;
+    max-width: 38px !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 550 !important;
+  }
+
+  body[data-layout-mode="portrait"] .map-frame .map-tools-overlay .gridly-v2-control-rail button {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 > .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 > .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] > .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="collapsed"] > .gridly-v2-control-rail {
+    top: var(--gridly-v2-control-rail-top, 188px) !important;
+    right: var(--gridly-v2-control-rail-right, 10px) !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
