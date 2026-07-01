@@ -22987,3 +22987,16 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="exp
     display: none !important;
   }
 }
+
+/* V862.17 — Expanded Brief focused reading state coordination. */
+body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(8px, 0, 0);
+  transition: opacity 180ms ease, visibility 180ms ease, transform 180ms ease;
+}
+
+body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-bottom-dock {
+  opacity: 0.88;
+}
