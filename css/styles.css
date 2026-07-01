@@ -24128,3 +24128,34 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-c
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
+/* V881R — Hard block stale Community Pulse top-status first paint. */
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"] {
+  position: relative;
+}
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"] > strong,
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"] > span {
+  color: transparent !important;
+  text-shadow: none !important;
+}
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"]::before,
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"]::after {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  pointer-events: none;
+}
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"]::before {
+  content: "Loading community pulse...";
+  top: 10px;
+  color: #f2f8ff;
+  font: inherit;
+  font-weight: 800;
+}
+.gridly-v2-awareness-brief-card[data-gridly-first-paint-guard="placeholder"]::after {
+  content: "Checking current local signals.";
+  top: 32px;
+  color: rgba(222,236,250,.84);
+  font-size: .72rem;
+  line-height: 1.25;
+}
