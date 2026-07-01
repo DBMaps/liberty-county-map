@@ -21892,6 +21892,8 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
 }
 
 .gridly-v858-location-panel {
+  position: relative;
+  z-index: 2;
   display: grid;
   gap: 16px;
   padding: 18px;
@@ -21904,6 +21906,10 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
 .gridly-v858-first-run-card .primary-btn,
 .gridly-v858-first-run-card .secondary-btn,
 .gridly-v858-manual-location input {
+  position: relative;
+  z-index: 2;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(142, 230, 255, 0.18);
   min-height: 52px;
   width: 100%;
   border-radius: 16px;
@@ -21931,6 +21937,9 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
 }
 
 .gridly-v858-manual-location input {
+  -webkit-user-select: text;
+  user-select: text;
+  pointer-events: auto;
   border: 1px solid rgba(158, 211, 249, 0.3);
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
