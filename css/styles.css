@@ -22955,3 +22955,52 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="exp
     z-index: 9502;
   }
 }
+
+/* V862.15 — expanded Brief map-control reposition strategy. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-expanded-control-rail-bottom: calc(214px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail {
+    top: auto !important;
+    bottom: var(--gridly-expanded-control-rail-bottom) !important;
+    right: calc(10px + env(safe-area-inset-right, 0px)) !important;
+    left: auto !important;
+    display: grid !important;
+    gap: 9px;
+    padding: 7px;
+    border: 1px solid rgba(166, 226, 255, 0.34);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(73, 220, 235, 0.16), transparent 58%),
+      linear-gradient(180deg, rgba(5, 18, 32, 0.9), rgba(4, 13, 25, 0.94));
+    box-shadow:
+      0 18px 36px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    z-index: 10040;
+  }
+
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail button,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail button {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background: linear-gradient(168deg, rgba(10, 27, 46, 0.94), rgba(6, 17, 31, 0.98));
+    border-color: rgba(188, 226, 255, 0.38);
+  }
+
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-brief-stack {
+    right: calc(var(--gridly-v2-command-right, 10px) + 64px);
+  }
+
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-location-awareness-panel,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-location-awareness-panel {
+    right: calc(12px + env(safe-area-inset-right, 0px) + 64px) !important;
+  }
+}
