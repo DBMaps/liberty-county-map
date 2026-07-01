@@ -124,6 +124,11 @@
     const primary = document.getElementById("gridlyV2TopStatusPrimary");
     const secondary = document.getElementById("gridlyV2TopStatusSecondary");
     if (!primary || !secondary) return false;
+    if (typeof window.gridlyCanWriteCommunityPulseTopStatus === "function") {
+      const primaryAllowed = window.gridlyCanWriteCommunityPulseTopStatus("gridlyApplyDirectionalAwarenessCards", "gridlyV2TopStatusPrimary", state.cards[0].header, { path: "js/gridlyDirectionalAwarenessLayer.js:renderTopAwareness" });
+      const secondaryAllowed = window.gridlyCanWriteCommunityPulseTopStatus("gridlyApplyDirectionalAwarenessCards", "gridlyV2TopStatusSecondary", state.cards[0].body, { path: "js/gridlyDirectionalAwarenessLayer.js:renderTopAwareness" });
+      if (!primaryAllowed || !secondaryAllowed) return false;
+    }
     primary.textContent = state.cards[0].header;
     secondary.textContent = state.cards[0].body;
     primary.setAttribute("data-gridly-directional-awareness", "true");
