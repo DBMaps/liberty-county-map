@@ -24313,3 +24313,99 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-
 body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-v2-tile {
   min-height: 46px;
 }
+
+/* =========================================================
+   V890 — Mobile Map Thumb Navigation Fix
+   Purpose: preserve one-thumb map pan/pinch by keeping portrait chrome
+   hitboxes contained and allowing Leaflet to own direct map gestures.
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body,
+  #map,
+  #map .leaflet-container,
+  #map .leaflet-map-pane,
+  #map .leaflet-pane {
+    overscroll-behavior: none;
+  }
+
+  body[data-layout-mode="portrait"] #map,
+  body[data-layout-mode="portrait"] #map .leaflet-container,
+  body[data-layout-mode="portrait"] #map .leaflet-map-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-tile-pane,
+  body[data-layout-mode="portrait"] #map .leaflet-tile-container {
+    touch-action: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    pointer-events: none;
+    touch-action: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-interaction-panel,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBackdrop {
+    pointer-events: auto;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    inline-size: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    min-height: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail button,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail .gridly-v2-map-control,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail [role="button"] {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-region {
+    pointer-events: none !important;
+    touch-action: none;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[hidden],
+  body[data-layout-mode="portrait"] #gridlyPortraitV2SheetBackdrop[hidden] {
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control-container,
+  body[data-layout-mode="portrait"] #map .leaflet-top,
+  body[data-layout-mode="portrait"] #map .leaflet-bottom,
+  body[data-layout-mode="portrait"] #map .gridly-mobile-control-rail {
+    pointer-events: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #map .leaflet-control,
+  body[data-layout-mode="portrait"] #map .leaflet-control a,
+  body[data-layout-mode="portrait"] #map .gridly-mobile-layer-menu,
+  body[data-layout-mode="portrait"] #map .gridly-mobile-layer-menu button,
+  body[data-layout-mode="portrait"] #map .leaflet-marker-icon,
+  body[data-layout-mode="portrait"] #map .leaflet-interactive,
+  body[data-layout-mode="portrait"] #map .leaflet-popup,
+  body[data-layout-mode="portrait"] #map .leaflet-popup * {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+}
