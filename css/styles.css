@@ -23033,3 +23033,69 @@ body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridl
     top: calc(var(--gridly-v2-filter-strip-bottom) + 32px) !important;
   }
 }
+
+/* V863 — Portrait spatial harmony ownership rules. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-map-canvas-breathing-gap: 18px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack *,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-interaction-panel,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-interaction-panel * {
+    box-sizing: border-box;
+    max-inline-size: 100%;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    inline-size: auto;
+    max-inline-size: calc(100vw - var(--gridly-v2-command-left, calc(10px + env(safe-area-inset-left, 0px))) - var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px))));
+    overflow: visible;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-interaction-panel {
+    inline-size: 100%;
+    overflow-x: clip;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-hero,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-flow,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-section,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-travel-card,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-travel-copy,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-outlook-row {
+    min-inline-size: 0;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-greeting,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-location,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-outlook,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-travel-status,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-travel-support,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-weather-summary {
+    overflow-wrap: anywhere;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-collapsed #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="collapsed"] .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + var(--gridly-v2-map-canvas-breathing-gap)) !important;
+    right: var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px))) !important;
+    bottom: auto !important;
+    left: auto !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-control-rail button:not([data-v2-control="zoom-in"]):not([data-v2-control="zoom-out"]),
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail button:not([data-v2-control="zoom-in"]):not([data-v2-control="zoom-out"]) {
+    display: grid !important;
+  }
+}
