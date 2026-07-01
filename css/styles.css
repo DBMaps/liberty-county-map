@@ -23000,3 +23000,22 @@ body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridl
 body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-bottom-dock {
   opacity: 0.88;
 }
+
+/* V862.18 — preserve Gridly Brief width across collapsed and expanded states. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"].gridly-brief-collapsed #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="collapsed"] .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"].gridly-brief-expanded #gridlyPortraitV2 .gridly-v2-brief-stack,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-brief-stack {
+    right: var(--gridly-v2-command-right, calc(10px + env(safe-area-inset-right, 0px)));
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack .gridly-brief-foundation-handle,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack .gridly-brief-interaction-panel {
+    box-sizing: border-box;
+    justify-self: stretch;
+    inline-size: 100%;
+    max-inline-size: none;
+  }
+}
