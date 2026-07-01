@@ -22925,3 +22925,33 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="exp
     line-height: 1.08;
   }
 }
+
+/* V862.14 — expanded Brief map-control clearance and bottom map breathing room. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-brief-interaction-extra: clamp(300px, 39vh, 396px);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + 20px) !important;
+    right: calc(var(--gridly-v2-command-right, 12px) + 2px) !important;
+    z-index: 10040;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail {
+    top: calc(var(--gridly-v2-filter-strip-bottom) + 24px) !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    right: calc(var(--gridly-v2-command-right, 10px) + 54px);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-brief-stack {
+    gap: 14px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    right: calc(12px + env(safe-area-inset-right, 0px) + 54px) !important;
+    z-index: 9502;
+  }
+}
