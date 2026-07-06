@@ -24851,3 +24851,57 @@ button[aria-disabled="true"] {
   }
 
 }
+
+/* V898 — Beta presentation refinement: keep awareness primary and quiet states intentional. */
+.future-map-hero {
+  opacity: 0.86;
+}
+.future-map-hero .future-route,
+.future-map-hero .floating-route-status {
+  opacity: 0.58;
+}
+.hero-command-card .route-status-card,
+.desktop-route-watch-strip {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 42px rgba(2, 8, 18, 0.24);
+}
+.mobile-home-card.mobile-route-decision-card {
+  border-color: rgba(67, 230, 160, 0.22);
+}
+.mobile-home-card.mobile-fast-report-card,
+.gridly-alert-empty-state,
+.alert-item:not(.intelligence-row) {
+  background: linear-gradient(180deg, rgba(9, 24, 42, 0.94), rgba(5, 14, 26, 0.96));
+  border-color: rgba(255, 255, 255, 0.10);
+}
+.gridly-v2-status-pill,
+.gridly-brief-interaction-panel,
+.settings-modal-card,
+.mobile-native-surface-sheet,
+.gridly-destination-impact-card {
+  letter-spacing: -0.01em;
+}
+.gridly-v2-status-pill strong,
+.gridly-brief-outlook,
+.mobile-native-surface-card > strong,
+.settings-list-title {
+  line-height: 1.12;
+}
+.mobile-native-surface-card p,
+.settings-placeholder-note,
+.gridly-brief-context,
+.gridly-brief-travel-support {
+  line-height: 1.45;
+}
+body[data-layout-mode="portrait"] .future-map-hero,
+body[data-layout-mode="portrait"] .desktop-route-watch-strip,
+body[data-layout-mode="portrait"] .desktop-route-setup {
+  display: none;
+}
+body[data-layout-mode="portrait"] .gridly-v2-segments {
+  gap: 7px;
+}
+body[data-layout-mode="portrait"] .gridly-v2-segments button {
+  min-height: 36px;
+  font-weight: 800;
+}

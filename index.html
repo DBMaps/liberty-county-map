@@ -183,7 +183,7 @@
       </div>
 
       <div class="future-hero-overlay">
-        <p class="eyebrow">Movement intelligence</p>
+        <p class="eyebrow">Local awareness</p>
         <h1 class="future-metric-headline">2 crossings active</h1>
         <p class="future-hero-subtext">Premium live rail and roadway intelligence layered over your route decisions in real time.</p>
         <div class="future-hero-actions">
@@ -193,7 +193,7 @@
       </div>
 
       <article class="floating-route-status" aria-label="Route status">
-        <span>Route Confidence</span>
+        <span>Trip context</span>
         <strong>US 90 corridor</strong>
         <p>1 delay · 1 clear · reroute ready</p>
       </article>
@@ -214,23 +214,23 @@
           </div>
 
           <div class="trust-row">
-            <span id="lastUpdated">Reports: checking freshness…</span>
-            <span id="dataStatus">Crossings: loading baseline data…</span>
-            <span id="syncStatus">Live sync: connecting…</span>
+            <span id="lastUpdated">Reports: checking now…</span>
+            <span id="dataStatus">Crossings: getting local status…</span>
+            <span id="syncStatus">Live updates: connecting…</span>
           </div>
         </div>
 
         <div class="hero-command-card">
           <div class="route-status-card delayed" id="routeStatusCard" role="button" tabindex="0" aria-label="Set or review route">
-            <span class="status-label" id="routeCardLabel">Supporting Route Watch</span>
+            <span class="status-label" id="routeCardLabel">Awareness first</span>
             <strong id="routeStatus">Checking…</strong>
-            <span id="routeEta">ETA calculating</span>
+            <span id="routeEta">Trip details pending</span>
             <button type="button" class="route-edit-link" id="mobileEditRouteBtn" aria-label="Edit saved route">Edit Route</button>
           </div>
 
           <div class="hero-actions">
-            <button class="primary-btn hero-route-btn" id="desktopReportNearMeBtn" data-section-jump="routes">Open Route Watch</button>
-            <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Live Feed</button>
+            <button class="primary-btn hero-route-btn" id="desktopReportNearMeBtn" data-section-jump="routes">Check a Route</button>
+            <button class="secondary-btn hero-alerts-btn" data-section-jump="alerts">Alerts</button>
           </div>
         </div>
       </div>
@@ -272,15 +272,15 @@
           <strong id="delayRisk">Community quiet</strong>
           <p id="delayReason">Community reports are being checked for what happened, where, and how recent the signal is.</p>
           <div class="mobile-route-priority-actions">
-            <button class="primary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">View Route</button>
-            <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Start Route Watch</button>
+            <button class="primary-btn mobile-commute-cta" id="mobileCommuteRouteBtn" type="button" data-section-jump="map">Open Map</button>
+            <button class="secondary-btn" id="mobileQuickRouteBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Watch a Route</button>
           </div>
         </article>
 
         <article class="mobile-home-card mobile-fast-report-card live-status-card mobile-priority-card">
           <span>Fast Report</span>
-          <strong>Report to network</strong>
-          <p>Share a live delay in seconds so nearby drivers can reroute quickly.</p>
+          <strong>Help nearby drivers</strong>
+          <p>Share what you see in seconds so nearby drivers can make better choices.</p>
           <div class="mobile-route-priority-actions">
             <button class="primary-btn mobile-hero-map-cta" id="mobileQuickReportBtn" type="button">Report Hazard</button>
             <button class="secondary-btn" id="mobileQuickClearedBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Mark Cleared</button>
@@ -308,7 +308,7 @@
         </article>
 
         <article class="mobile-home-card mobile-corridor-intel-card">
-          <span>Movement intelligence</span>
+          <span>Local awareness</span>
           <strong id="mobileCorridorSummaryHeadline">No live corridor data yet</strong>
           <p id="mobileCorridorSummaryDetail">Community reports will appear here when corridors are linked.</p>
           <div id="mobileCorridorBadges" class="corridor-badge-row"></div>
@@ -316,10 +316,10 @@
 
         <article class="mobile-home-card mobile-premium-status-bar">
           <div>
-            <span>Live Now · Rail + Road Intelligence</span>
-            <strong id="liveOpsStatus">Live Operations</strong>
+            <span>Live now · Local awareness</span>
+            <strong id="liveOpsStatus">Watching nearby</strong>
           </div>
-          <p id="liveOpsDetail">Real-time community visibility for rail crossing delays, clears, and route risk.</p>
+          <p id="liveOpsDetail">Community reports help you spot delays, clears, and hazards before you leave.</p>
         </article>
       </div>
 
@@ -353,8 +353,8 @@
       <div class="setup-card desktop-route-setup" id="setupCard">
         <div class="setup-copy">
           <p class="eyebrow">Route Watch</p>
-          <h2>Set up Route Watch</h2>
-          <p>Save common destinations and pick one for today's Route Watch.</p>
+          <h2>Set up a saved trip</h2>
+          <p>Save everyday places when you want Gridly to check a trip.</p>
         </div>
 
         <div class="setup-grid">
@@ -422,7 +422,7 @@
 
         <article class="mobile-live-command" aria-label="Live commute status">
           <div class="mobile-live-command-copy">
-            <span class="eyebrow">Live Commute State</span>
+            <span class="eyebrow">Before you go</span>
             <span class="mobile-live-status-pill" id="mobileLiveStatusPill">CLEAR</span>
             <strong id="mobileLiveRouteStatus">CLEAR TO LEAVE</strong>
             <p id="mobileLiveRouteMeta">Route clear · watching delay pressure live</p>
@@ -433,16 +433,16 @@
           <div class="route-watch-strip-copy">
             <div class="route-watch-heading-row">
               <p class="eyebrow">Route Watch</p>
-              <span class="route-watch-live-pill" id="routeWatchLivePill">Monitoring Off</span>
+              <span class="route-watch-live-pill" id="routeWatchLivePill">Not watching yet</span>
             </div>
             <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">→</span><span id="desktopRouteWork">Route Watch</span></strong>
             <div class="route-ownership-summary" aria-label="Route details">
               <span><b>From:</b> <em id="routeOwnershipOrigin">Not selected</em></span>
               <span><b>To:</b> <em id="routeOwnershipDestination">Not selected</em></span>
-              <span><b>Status:</b> <em id="routeOwnershipMonitoring">Preview Only</em></span>
+              <span><b>Status:</b> <em id="routeOwnershipMonitoring">Preview only</em></span>
             </div>
-            <p id="desktopRouteStatus">Select a saved route to begin monitoring.</p>
-            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Start Route Watch</p>
+            <p id="desktopRouteStatus">Choose a saved trip when you want route context.</p>
+            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Watch a Route</p>
             <div class="route-watch-metrics" aria-label="Route watch intelligence">
               <span><b>Freshness:</b> <em id="routeFreshness">Unknown</em></span>
               <span><b>Monitoring:</b> <em id="routeConfidence">--</em></span>
@@ -459,7 +459,7 @@
               <span>Destination</span>
               <select id="routeWatchDestinationSelect"></select>
             </label>
-            <button id="routeWatchStartBtn" class="primary-btn compact-btn route-watch-start-btn" type="button">Start Route Watch</button>
+            <button id="routeWatchStartBtn" class="primary-btn compact-btn route-watch-start-btn" type="button">Watch a Route</button>
             <button id="showFullRouteBtn" class="secondary-btn compact-btn" type="button">Show Full Route</button>
             <button id="stopRouteWatchBtn" class="secondary-btn compact-btn" type="button">Stop Route Watch</button>
             <button id="clearRouteBtn" class="secondary-btn compact-btn" type="button">Clear Route</button>
@@ -470,8 +470,8 @@
 
         <div class="section-header map-header">
           <div>
-            <p class="eyebrow">Live Mobility Map</p>
-            <h2>Movement Command Map</h2>
+            <p class="eyebrow">Community Map</p>
+            <h2>What drivers are seeing nearby</h2>
             <p class="map-note" id="mapTrustNote">Know before you go: scan route impact, community confirmations, and recent clears before you leave.</p>
           </div>
 
@@ -492,7 +492,7 @@
         <div class="map-frame">
           <div class="map-tools-overlay" aria-label="Map controls">
             <div class="map-toolbar-main-row">
-              <p class="map-view-label">Intelligence View</p>
+              <p class="map-view-label">Map View</p>
               <section class="map-tools-section" aria-label="Incident filters">
                 <p class="map-tools-section-label">Incidents:</p>
                 <div class="crossing-status-legend desktop-map-legend-row" aria-label="Crossing status legend">
@@ -515,7 +515,7 @@
               </section>
             </div>
             <div class="map-toolbar-meta-row">
-              <p class="map-tools-status" id="desktopMapOpsStatus">Status: scanning active reports</p>
+              <p class="map-tools-status" id="desktopMapOpsStatus">Checking nearby reports</p>
               <details class="all-crossings-advanced"><summary>Advanced</summary><label class="all-crossings-toggle"><input id="allCrossingsLayerToggle" type="checkbox" /> Show all crossings layer</label></details>
             </div>
           </div>
@@ -524,7 +524,7 @@
         </div>
 
         <div class="geo-filter-status" id="geoFilterStatus" role="status" aria-live="polite" aria-atomic="true">
-          Live scan active
+          Checking nearby reports
         </div>
       </section>
 
@@ -536,7 +536,7 @@
             <div class="combined-module-block">
               <h3>Trending Now</h3>
               <div id="trendingList" class="trending-list">
-                <div class="trend-item muted">Live monitoring active nearby.</div>
+                <div class="trend-item muted">Gridly is checking nearby reports.</div>
               </div>
             </div>
             <div class="combined-module-block">
@@ -590,18 +590,18 @@
       <div class="mobile-daily-panel-body" id="mobileDailyPanelBody" hidden>
         <div class="mobile-daily-panel-actions" role="tablist" aria-label="Daily Panel shortcuts">
           <button class="secondary-btn" type="button" data-mobile-panel-jump="routes">Route Watch</button>
-          <button class="secondary-btn" type="button" data-mobile-panel-jump="alerts">Operational Feed</button>
+          <button class="secondary-btn" type="button" data-mobile-panel-jump="alerts">Alerts</button>
           <button class="secondary-btn" type="button" data-mobile-panel-jump="report">Report</button>
         </div>
-        <p class="mobile-daily-panel-note">Use shortcuts to open existing Route Watch, Operational Feed, and Report surfaces.</p>
+        <p class="mobile-daily-panel-note">Use shortcuts to open existing Route Watch, Alerts, and Report surfaces.</p>
       </div>
     </section>
 
 
     <details class="report-card report-drawer" id="reportSection">
-      <summary class="report-drawer-summary"><span class="eyebrow">Report Center</span><h2>Live Reporting</h2></summary>
+      <summary class="report-drawer-summary"><span class="eyebrow">Report</span><h2>Help nearby drivers</h2></summary>
       <div class="report-copy">
-        <p><strong>Fast flow:</strong> Tap <strong>Report Near Me</strong>, then tap one marker.</p>
+        <p><strong>Quick report:</strong> Tap <strong>Report Near Me</strong>, then tap one marker.</p>
 
         <div class="confirmation-box" id="reportConfirmation">
           Reports, confirmations, and clears help nearby drivers know before they go.
@@ -622,8 +622,8 @@
 
 
         <div class="mobile-report-mode-card" id="mobileReportModeCard">
-          <span>Report Mode</span>
-          <p>Pick type, then tap map.</p>
+          <span>What do you see?</span>
+          <p>Pick a type, then tap the map.</p>
           <div class="mobile-report-mode-actions">
             <button id="mobileCrossingReportBtn" class="secondary-btn active" type="button" aria-pressed="true">Railroad Crossing Report</button>
             <button id="mobileHazardReportBtn" class="secondary-btn" type="button" aria-pressed="false">Report Road Hazard</button>
@@ -784,7 +784,7 @@
         <button type="button" class="secondary-btn gridly-destination-impact-show-full-route mobile-route-exit-control" id="gridlyDestinationImpactShowFullRouteBtn" hidden>Show Full Route</button>
         <button type="button" class="secondary-btn gridly-destination-impact-clear-route mobile-route-exit-control" id="gridlyDestinationImpactClearRouteBtn" hidden>Clear Route</button>
         <button type="button" class="secondary-btn gridly-destination-impact-stop-watch mobile-route-exit-control" id="gridlyDestinationImpactStopWatchBtn" hidden>Stop Route Watch</button>
-        <button type="button" class="secondary-btn gridly-destination-impact-manage-route" id="gridlyDestinationImpactManageRouteBtn" data-gridly-route-details-action="start-route-watch">Start Route Watch</button>
+        <button type="button" class="secondary-btn gridly-destination-impact-manage-route" id="gridlyDestinationImpactManageRouteBtn" data-gridly-route-details-action="start-route-watch">Watch a Route</button>
         <button type="button" class="secondary-btn gridly-destination-impact-done" id="gridlyDestinationImpactPaneDone">Close</button>
       </div>
     </article>
@@ -884,8 +884,8 @@
         <span class="eyebrow">Gridly Premium</span>
         <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">X</button>
       </div>
-      <h2 id="smartAlertsStatus">Premium Smart Alerts: Off</h2>
-      <p class="smart-alerts-subtitle">Choose what Gridly should watch for your saved route and nearby crossings.</p>
+      <h2 id="smartAlertsStatus">Alert preferences</h2>
+      <p class="smart-alerts-subtitle">Choose what Gridly should watch for you.</p>
       <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
       <div id="smartAlertsBanner" class="smart-alerts-banner" hidden></div>
       <div class="smart-alert-options-grid">
@@ -906,7 +906,7 @@
         <h2 id="settingsModalTitle">Settings</h2>
         <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">X</button>
       </div>
-      <p class="settings-modal-subtitle">Summary first. Expand a section when you need to change a saved preference.</p>
+      <p class="settings-modal-subtitle">Choose what Gridly watches and how it looks on this device.</p>
       <div class="settings-list-experience" data-gridly-settings-list-experience="true">
         <details class="settings-modal-section settings-list-section" id="settingsProfileAwarenessSection">
           <summary class="settings-list-summary">
@@ -935,7 +935,7 @@
 
         <details class="settings-modal-section settings-list-section" id="settingsSavedPlacesSection">
           <summary class="settings-list-summary">
-            <span class="settings-list-title">My Routes</span>
+            <span class="settings-list-title">Saved Trips</span>
             <span class="settings-list-meta">Home · Work · Saved Places</span>
           </summary>
           <div class="settings-list-detail">
@@ -971,10 +971,10 @@
           <div class="settings-list-detail">
             <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
             <div class="settings-toggle-grid">
-              <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Route Watch Alerts</span></label>
-              <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail Crossing Alerts</span></label>
-              <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road Hazard Alerts</span></label>
-              <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community Activity Alerts</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Saved trip updates</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail crossing updates</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsHazardAlertsToggle"><span>Road hazard updates</span></label>
+              <label class="settings-toggle-row"><input type="checkbox" id="settingsCommunityAlertsToggle"><span>Community activity updates</span></label>
             </div>
             <div class="settings-preferences-block" id="settingsDisplayPreferencesSection">
               <div class="settings-select-grid">
@@ -1120,9 +1120,9 @@
             <img src="assets/store/branding/Logos/gridly-logo-vertical.png" alt="Gridly logo" />
           </div>
           <p class="gridly-welcome-brand-promise">Know Before You Go</p>
-          <div class="gridly-welcome-signal" aria-label="Community awareness for your awareness area">
+          <div class="gridly-welcome-signal" aria-label="Community awareness for your area">
             <span class="gridly-welcome-mark" aria-hidden="true"><span></span></span>
-            <span>Community awareness for your awareness area</span>
+            <span>Community awareness for your area</span>
           </div>
         </div>
         <button class="gridly-welcome-skip" type="button" id="gridlyWelcomeSkipTopBtn">Skip</button>
@@ -1149,8 +1149,8 @@
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="1" hidden>
           <p class="eyebrow">Personalize</p>
-          <h2>Make Gridly Yours</h2>
-          <p>Gridly works best when it reflects your awareness area, routes, and preferences.</p>
+          <h2>Make Gridly yours</h2>
+          <p>Gridly works best when it knows your area and everyday places.</p>
           <p>Small personalization. Big awareness.</p>
           <div class="gridly-welcome-personalization-grid">
             <label>Theme
@@ -1213,9 +1213,9 @@
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="4" hidden>
           <p class="eyebrow">Daily route</p>
-          <h2>Set Your Daily Route</h2>
-          <p>The routes you travel most deserve the awareness you need most.</p>
-          <p>Gridly watches for crossings, hazards, and delays before they affect your drive.</p>
+          <h2>Add an everyday trip</h2>
+          <p>The trips you take most can get extra context when you want it.</p>
+          <p>Gridly can check crossings, hazards, and delays before you leave.</p>
           <div class="gridly-welcome-route-stack" aria-label="Daily route from Home to Work">
             <span><small>Start</small>HOME</span>
             <strong aria-hidden="true"></strong>
@@ -1235,14 +1235,14 @@
         </article>
         <article class="gridly-welcome-step" data-gridly-welcome-step="6" hidden>
           <p class="eyebrow">Ready</p>
-          <h2>You're Part of the Network</h2>
+          <h2>You're ready to go</h2>
           <p class="gridly-welcome-final-copy" id="gridlyWelcomeFinalCopy">
-            <span>Connected to the</span>
-            <strong>Local Awareness Network</strong>
+            <span>Connected to your</span>
+            <strong>local awareness area</strong>
           </p>
           <ul class="gridly-welcome-checklist" aria-label="Gridly setup coverage">
             <li>✓ <span>Your Town</span></li>
-            <li>✓ <span>Your Routes</span></li>
+            <li>✓ <span>Saved Trips</span></li>
             <li>✓ <span>Community Reports</span></li>
             <li>✓ <span>Local Alerts</span></li>
           </ul>
