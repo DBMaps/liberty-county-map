@@ -24774,3 +24774,59 @@ button[aria-disabled="true"] {
   border-color: rgba(0, 245, 240, 0.46) !important;
   box-shadow: 0 10px 24px rgba(0, 245, 240, 0.16);
 }
+
+/* V896 — Visual Quick Tour screenshot cards */
+.gridly-v894c2-tour-cards[data-gridly-visual-quick-tour] {
+  gap: 16px;
+}
+
+.gridly-v894c2-tour-card.gridly-v896-visual-tour-card {
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 14px;
+  border-color: rgba(158, 211, 249, 0.22);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.055));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.18);
+}
+
+.gridly-v894c2-tour-card.gridly-v896-visual-tour-card h3 {
+  font-size: clamp(1.08rem, 4vw, 1.22rem);
+  letter-spacing: -0.02em;
+}
+
+.gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(58vh, 520px);
+  object-fit: contain;
+  border-radius: 18px;
+  border: 1px solid rgba(158, 211, 249, 0.16);
+  background: rgba(3, 10, 19, 0.36);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.gridly-v894c2-tour-card.gridly-v896-visual-tour-card p {
+  grid-column: auto;
+  color: rgba(226, 240, 252, 0.88) !important;
+  font-size: 0.98rem !important;
+  line-height: 1.45 !important;
+}
+
+@media (max-width: 520px) {
+  .gridly-v894c2-tour-cards[data-gridly-visual-quick-tour] {
+    gap: 14px;
+  }
+
+  .gridly-v894c2-tour-card.gridly-v896-visual-tour-card {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
+    max-height: min(54vh, 460px);
+    border-radius: 16px;
+  }
+}
