@@ -21827,6 +21827,7 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   justify-self: center;
   width: min(438px, calc(100vw - 28px));
   max-width: 100%;
+  max-height: min(92dvh, calc(100svh - 28px));
   padding: 0 !important;
   border: 1px solid rgba(158, 211, 249, 0.18) !important;
   border-radius: 32px !important;
@@ -21839,8 +21840,11 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   isolation: isolate;
   pointer-events: auto;
   display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 24px;
+  max-height: min(92dvh, calc(100svh - 28px));
   padding: clamp(30px, 7.5vw, 44px);
+  overflow: hidden;
   background:
     radial-gradient(circle at 18% 0%, rgba(92, 214, 255, 0.28), transparent 34%),
     radial-gradient(circle at 88% 8%, rgba(36, 111, 255, 0.28), transparent 30%),
@@ -21925,6 +21929,21 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   border-color: rgba(255, 255, 255, 0.38) !important;
   background: rgba(255, 255, 255, 0.12) !important;
   color: #f7fbff !important;
+}
+
+.gridly-v894c3-tour-scroll {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 22px;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+  padding-right: 2px;
+  padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
 }
 
 .gridly-v894c2-tour-cards {
@@ -22087,12 +22106,35 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
     justify-self: center;
     width: min(438px, calc(100vw - 20px));
     max-width: calc(100vw - 20px);
+    max-height: min(94dvh, calc(100svh - 16px));
     border-radius: 30px !important;
   }
 
   .gridly-v858-first-run-card {
-    gap: 22px;
-    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    gap: 18px;
+    max-height: min(94dvh, calc(100svh - 16px));
+    padding: 24px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gridly-v894c3-tour-scroll {
+    gap: 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gridly-v894c2-tour-actions {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 10px;
+  }
+
+  .gridly-v894c2-tour-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 520px) and (orientation: portrait) {
+  .gridly-v858-first-run-sheet,
+  .gridly-v858-first-run-card {
+    max-height: min(94dvh, calc(100svh - 12px));
   }
 }
 

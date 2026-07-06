@@ -20,6 +20,14 @@ Provide a lightweight, friendly, skippable **Quick Tour** for beta testers so th
 - **Finish** is clearly visible after the cards and persists completion.
 - The optional location/watch-area setup remains available without changing reporting, alerts, hazard lifecycle, Route Watch, awareness filtering, weather, or Supabase behavior.
 
+## V894C3 mobile portrait scroll fix
+
+- The Quick Tour sheet and card now use viewport-safe maximum heights so the modal fits within mobile portrait screens.
+- The inner Quick Tour content area scrolls vertically when the cards, Finish action, and optional watch-area setup exceed the available height.
+- **Skip** and **Start Tour** remain in the visible action row, while **Finish** remains reachable inside the scrollable content area without clipping at the bottom.
+- The background app can remain dimmed/blurred; this update only changes first-run Quick Tour layout and scrolling.
+- V894C1/V894C2 completion, reset, skip, finish, and Settings replay behavior are preserved.
+
 ## Corrected V894C1 state model retained
 
 - The canonical completion source is `gridlyBetaFirstRunWalkthroughCompleteV894C`.
@@ -69,6 +77,10 @@ The audit reports:
 - `oneIdeaPerScreen`
 - `skipPersistsCompletion`
 - `finishPersistsCompletion`
+- `quickTourScrollEnabled`
+- `quickTourViewportSafe`
+- `quickTourActionsReachable`
+- `noQuickTourContentClipping`
 - `restartFromSettingsWorks`
 - `noOrphanedLocalStorageKeys`
 - `completedStateDetected`
@@ -81,4 +93,4 @@ The audit reports:
 
 ## Protected systems
 
-No Supabase schema, hazard lifecycle, alert generation, awareness filtering, Route Watch logic, report acceptance logic, clearing logic, weather logic, or protected system behavior was changed. This is a presentation-only Quick Tour polish update that preserves V894C1 completion and reset behavior.
+No Supabase schema, hazard lifecycle, alert generation, awareness filtering, Route Watch logic, report acceptance logic, clearing logic, weather logic, or protected system behavior was changed. This is a presentation-only Quick Tour polish and mobile scroll update that preserves V894C1 completion and reset behavior.
