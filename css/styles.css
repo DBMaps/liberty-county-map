@@ -24776,14 +24776,22 @@ button[aria-disabled="true"] {
 }
 
 /* V896 — Visual Quick Tour screenshot cards */
+.gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+  width: min(560px, calc(100vw - 20px));
+}
+
+.gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+  padding-inline: clamp(16px, 4vw, 28px);
+}
+
 .gridly-v894c2-tour-cards[data-gridly-visual-quick-tour] {
-  gap: 16px;
+  gap: 14px;
 }
 
 .gridly-v894c2-tour-card.gridly-v896-visual-tour-card {
-  grid-template-columns: 1fr;
-  gap: 12px;
-  padding: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px;
   border-color: rgba(158, 211, 249, 0.22);
   border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.055));
@@ -24797,11 +24805,13 @@ button[aria-disabled="true"] {
 
 .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
   display: block;
+  inline-size: 100%;
   width: 100%;
   max-width: 100%;
   height: auto;
-  max-height: min(58vh, 520px);
+  max-height: min(64vh, 620px);
   object-fit: contain;
+  object-position: center;
   border-radius: 18px;
   border: 1px solid rgba(158, 211, 249, 0.16);
   background: rgba(3, 10, 19, 0.36);
@@ -24811,22 +24821,31 @@ button[aria-disabled="true"] {
 .gridly-v894c2-tour-card.gridly-v896-visual-tour-card p {
   grid-column: auto;
   color: rgba(226, 240, 252, 0.88) !important;
-  font-size: 0.98rem !important;
-  line-height: 1.45 !important;
+  font-size: 0.96rem !important;
+  line-height: 1.35 !important;
 }
 
 @media (max-width: 520px) {
+  .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+    width: min(100vw - 12px, 520px);
+    max-width: calc(100vw - 12px);
+  }
+
+  .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+    padding-inline: 12px;
+  }
+
   .gridly-v894c2-tour-cards[data-gridly-visual-quick-tour] {
-    gap: 14px;
+    gap: 12px;
   }
 
   .gridly-v894c2-tour-card.gridly-v896-visual-tour-card {
-    padding: 12px;
+    padding: 8px;
     border-radius: 20px;
   }
 
   .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
-    max-height: min(54vh, 460px);
+    max-height: min(60vh, 540px);
     border-radius: 16px;
   }
 }
