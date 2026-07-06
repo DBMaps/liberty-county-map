@@ -16193,7 +16193,7 @@ body[data-layout-mode="portrait"] .gridly-v2-control-rail {
   }
 
   body[data-layout-mode="portrait"] .map-card > .mobile-destination-command .destination-route-impact-line:not(:empty)::after {
-    content: "â€º";
+    content: ">";
     position: absolute;
     right: 2px;
     top: 50%;
@@ -20054,7 +20054,7 @@ body {
 }
 
 .settings-about-gridly-accordion-item[open] .settings-about-gridly-item-summary::after {
-  content: "âˆ’";
+  content: "-";
 }
 
 .settings-about-gridly-item-panel {
