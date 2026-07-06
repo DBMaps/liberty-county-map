@@ -20,6 +20,14 @@ V896 keeps the existing first-run onboarding shell, actions, and completion beha
 4. **Report** — “Help other drivers by reporting what you encounter.”
 5. **Settings** — “Choose where Gridly keeps watch for you.”
 
+Each card now adds a lightweight markup/CSS-only hotspot overlay on top of the existing screenshot, without editing or generating image files:
+
+- **Awareness** highlights the Know Before You Go / briefing area with a small `Briefing` pill.
+- **Map** highlights the Nearby / map awareness area with a small `Nearby` pill.
+- **Alerts** highlights the alerts sheet with a small `Alerts` pill.
+- **Report** highlights the report hazard choices with a small `Choices` pill.
+- **Settings** highlights the Awareness / Travel settings sections with a small `Watch areas` pill.
+
 The existing actions remain present and wired through the same first-run flow:
 
 - Skip
@@ -53,7 +61,7 @@ The screenshot is the primary teaching element on each card. Each card contains 
 2. Large product screenshot
 3. One short consumer sentence
 
-No arrows, callout circles, instructional overlays, or excessive text were added. Styling uses existing Gridly dark glass, cyan-blue accents, rounded cards, and compact mobile spacing language.
+No large arrows, callout circles, or excessive instructional text were added. The new hotspot pills use subtle Gridly turquoise outlines, glow, and pulse dots so the screenshots stay premium and clean while making the focal area understandable at a glance. Styling uses existing Gridly dark glass, cyan-blue accents, rounded cards, and compact mobile spacing language.
 
 ## Audit Helper
 
@@ -75,6 +83,7 @@ The audit reports:
   reportImageLoaded,
   settingsImageLoaded,
   cardsRenderCorrectly,
+  hotspotsDetected,
   imagesResponsive,
   onboardingLogicPreserved,
   visualQuickTourPass,
