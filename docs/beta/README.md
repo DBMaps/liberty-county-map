@@ -10,6 +10,13 @@ V900 is the controlled beta rollout operations package. It adds the process docu
 
 V900 does not certify a general-public launch, emergency-service readiness, or official-source reliability.
 
+
+## V901 Beta Infrastructure & Distribution Package
+
+V901 is the beta infrastructure and distribution package. It adds tester-facing specifications and lightweight release infrastructure for the landing page, install journey, What's New communication, support, versioning, and Denise's release checklist.
+
+V901 does not intentionally change runtime behavior, protected systems, application logic, reporting, awareness, or routing.
+
 ## Beta Documents
 
 - [Gridly Beta Tester Guide](GRIDLY-BETA-TESTER-GUIDE.md)
@@ -24,3 +31,10 @@ V900 does not certify a general-public launch, emergency-service readiness, or o
 - [GRIDLY BETA SUCCESS METRICS](GRIDLY-BETA-METRICS.md)
 - [GRIDLY BETA COMMUNICATION PLAN](GRIDLY-BETA-COMMUNICATION-PLAN.md)
 - [GRIDLY BETA OPERATIONS RUNBOOK](GRIDLY-BETA-OPERATIONS-RUNBOOK.md)
+
+- [Gridly Beta Landing Page Spec](GRIDLY-BETA-LANDING-PAGE-SPEC.md)
+- [Gridly Beta Install Experience](GRIDLY-BETA-INSTALL-EXPERIENCE.md)
+- [Gridly Beta What's New Strategy](GRIDLY-BETA-WHATS-NEW-STRATEGY.md)
+- [Gridly Beta Support Center](GRIDLY-BETA-SUPPORT-CENTER.md)
+- [Gridly Beta Versioning Standard](GRIDLY-BETA-VERSIONING-STANDARD.md)
+- [Gridly Beta Release Checklist](GRIDLY-BETA-RELEASE-CHECKLIST.md)
