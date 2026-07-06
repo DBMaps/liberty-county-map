@@ -17,6 +17,12 @@ V901 is the beta infrastructure and distribution package. It adds tester-facing 
 
 V901 does not intentionally change runtime behavior, protected systems, application logic, reporting, awareness, or routing.
 
+## V902 Mobile Beta Experience Package
+
+V902 is the mobile beta experience package. It documents the supported Mobile Portrait beta journey, install guidance, distribution guidance, tester checklist, screenshot standards, and mobile-first principles.
+
+V902 does not intentionally change runtime behavior, protected systems, application logic, reporting, awareness, routing, installation runtime, or onboarding persistence. Desktop and landscape remain intentionally gated.
+
 ## Beta Documents
 
 - [Gridly Beta Tester Guide](GRIDLY-BETA-TESTER-GUIDE.md)
@@ -38,3 +44,10 @@ V901 does not intentionally change runtime behavior, protected systems, applicat
 - [Gridly Beta Support Center](GRIDLY-BETA-SUPPORT-CENTER.md)
 - [Gridly Beta Versioning Standard](GRIDLY-BETA-VERSIONING-STANDARD.md)
 - [Gridly Beta Release Checklist](GRIDLY-BETA-RELEASE-CHECKLIST.md)
+
+- [Gridly Mobile Beta Experience](GRIDLY-MOBILE-BETA-EXPERIENCE.md)
+- [Gridly Mobile Install Guide](GRIDLY-MOBILE-INSTALL-GUIDE.md)
+- [Gridly Mobile Beta Distribution](GRIDLY-MOBILE-BETA-DISTRIBUTION.md)
+- [Gridly Mobile Tester Checklist](GRIDLY-MOBILE-TESTER-CHECKLIST.md)
+- [Gridly Mobile Screenshot Standards](GRIDLY-MOBILE-SCREENSHOT-STANDARDS.md)
+- [Gridly Mobile First Principles](GRIDLY-MOBILE-FIRST-PRINCIPLES.md)
