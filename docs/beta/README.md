@@ -23,6 +23,13 @@ V902 is the mobile beta experience package. It documents the supported Mobile Po
 
 V902 does not intentionally change runtime behavior, protected systems, application logic, reporting, awareness, routing, installation runtime, or onboarding persistence. Desktop and landscape remain intentionally gated.
 
+
+## V903 End-to-End Beta Experience Certification
+
+V903 is the end-to-end beta experience certification for controlled Mobile Portrait beta expansion. It reviews the QR-to-feedback tester journey, preserves desktop and landscape gates, and recommends **GO WITH OBSERVATIONS** pending required human validation.
+
+V903 does not certify public launch, emergency-service readiness, official-source reliability, desktop support, or landscape support.
+
 ## Beta Documents
 
 - [Gridly Beta Tester Guide](GRIDLY-BETA-TESTER-GUIDE.md)
