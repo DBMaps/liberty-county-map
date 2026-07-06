@@ -24606,3 +24606,171 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-
     min-height: 46px;
   }
 }
+
+/* V895 — Brand Identity & Action System: presentation-only action hierarchy */
+:root {
+  --gridly-action-primary: var(--gridly-cyan, #00f5f0);
+  --gridly-action-primary-hover: #44fffb;
+  --gridly-action-primary-pressed: #00d7d2;
+  --gridly-action-primary-text: #021216;
+  --gridly-action-secondary-bg: rgba(8, 24, 39, 0.86);
+  --gridly-action-secondary-hover: rgba(12, 35, 53, 0.94);
+  --gridly-action-secondary-pressed: rgba(4, 16, 28, 0.96);
+  --gridly-action-secondary-border: rgba(247, 251, 255, 0.16);
+  --gridly-action-radius: 999px;
+  --gridly-status-success: #3ddc84;
+  --gridly-status-warning: var(--warning, #ffbf47);
+  --gridly-status-critical: var(--danger, #ff5c3d);
+  --accent: var(--gridly-action-primary);
+}
+
+.primary-btn,
+.popup-report-btn:not(.is-success),
+.mobile-dock-btn.report,
+.mobile-dock-btn.route,
+.gridly-v2-report-ctas .primary-btn,
+.settings-pwa-install-button,
+#manualReportBtn,
+#quickClearBtn,
+#mobileQuickReportBtn,
+#routeWatchStartBtn,
+#gridlyWelcomeNextBtn,
+#gridlyWelcomeFinishBtn,
+#saveRouteBtn,
+#mobileSaveRouteBtn,
+#saveSmartAlertsBtn,
+#settingsSubmitFeedbackBtn {
+  min-height: 44px;
+  border: 1px solid rgba(179, 255, 253, 0.34);
+  border-radius: var(--gridly-action-radius);
+  background: linear-gradient(135deg, var(--gridly-action-primary), #39dff7) !important;
+  color: var(--gridly-action-primary-text) !important;
+  box-shadow: 0 12px 28px rgba(0, 245, 240, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  font-weight: 900;
+  letter-spacing: 0.005em;
+}
+
+.secondary-btn,
+.nav-btn,
+.gridly-search-close-btn,
+.gridly-search-clear-btn,
+.gridly-surface-close,
+#gridlyWelcomeSkipTopBtn,
+#gridlyPortraitV2SheetClose,
+.mobile-dock-btn.alerts,
+.mobile-dock-btn.area,
+.mobile-dock-btn.layers,
+.mobile-bottom-nav-btn,
+.rail-nav-btn,
+.geo-filter-pill,
+.legend-pill,
+.search-result-btn,
+.mobile-icon-btn,
+.mobile-avatar-btn,
+.mobile-location-chip {
+  border-radius: var(--gridly-action-radius);
+  background: var(--gridly-action-secondary-bg) !important;
+  color: rgba(235, 246, 255, 0.92) !important;
+  border: 1px solid var(--gridly-action-secondary-border) !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+  font-weight: 850;
+}
+
+@media (hover: hover) {
+  .primary-btn:hover,
+  .popup-report-btn:not(.is-success):hover,
+  #manualReportBtn:hover,
+  #quickClearBtn:hover,
+  #mobileQuickReportBtn:hover,
+  #routeWatchStartBtn:hover {
+    background: linear-gradient(135deg, var(--gridly-action-primary-hover), #66e8ff) !important;
+    border-color: rgba(209, 255, 254, 0.58);
+    box-shadow: 0 16px 34px rgba(0, 245, 240, 0.34);
+    transform: translateY(-2px);
+  }
+
+  .secondary-btn:hover,
+  .nav-btn:hover,
+  .gridly-surface-close:hover,
+  .gridly-search-close-btn:hover,
+  .gridly-search-clear-btn:hover,
+  .geo-filter-pill:hover,
+  .legend-pill:hover,
+  .search-result-btn:hover {
+    background: var(--gridly-action-secondary-hover) !important;
+    border-color: rgba(0, 245, 240, 0.36) !important;
+    color: #f7fbff !important;
+  }
+}
+
+.primary-btn:active,
+.popup-report-btn:not(.is-success):active,
+#manualReportBtn:active,
+#quickClearBtn:active,
+#mobileQuickReportBtn:active,
+#routeWatchStartBtn:active {
+  background: linear-gradient(135deg, var(--gridly-action-primary-pressed), #22c8df) !important;
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 8px 20px rgba(0, 245, 240, 0.2);
+}
+
+.secondary-btn:active,
+.nav-btn:active,
+.gridly-surface-close:active,
+.geo-filter-pill:active,
+.legend-pill:active,
+.search-result-btn:active {
+  background: var(--gridly-action-secondary-pressed) !important;
+  transform: translateY(1px) scale(0.99);
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled,
+.nav-btn:disabled,
+button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.48;
+  filter: saturate(0.72);
+  box-shadow: none;
+}
+
+.popup-report-btn.is-success,
+#mobileQuickClearedBtn,
+.alert-item.cleared,
+.legend-pill.cleared,
+.gridly-marker.cleared,
+.gridly-marker.state-cleared,
+.gridly-hazard-marker.state-cleared,
+.gridly-hazard-marker[data-state="cleared"],
+.route-status-card.cleared,
+.manage-places-save-status[data-state="success"],
+#reportConfirmation.success {
+  --accent: var(--gridly-status-success);
+}
+
+.alert-item.delayed,
+.legend-pill.delayed,
+.route-status-card.delayed,
+.route-watch-badge.route-amber {
+  --accent: var(--gridly-status-warning);
+}
+
+.alert-item.blocked,
+.legend-pill.blocked,
+.gridly-marker.alert,
+.gridly-hazard-marker[data-state="active"],
+.route-watch-badge.route-red,
+#reportConfirmation.error {
+  --accent: var(--gridly-status-critical);
+}
+
+.mobile-report-mode-actions .secondary-btn.active,
+.geo-filter-pill.selected,
+.nav-btn.active,
+.rail-nav-btn.active,
+.mobile-bottom-nav-btn.active {
+  background: rgba(0, 245, 240, 0.16) !important;
+  color: #dffffe !important;
+  border-color: rgba(0, 245, 240, 0.46) !important;
+  box-shadow: 0 10px 24px rgba(0, 245, 240, 0.16);
+}
