@@ -24803,6 +24803,15 @@ button[aria-disabled="true"] {
   letter-spacing: -0.02em;
 }
 
+.gridly-v896-shot-frame {
+  position: relative;
+  overflow: hidden;
+  inline-size: 100%;
+  border-radius: 18px;
+  background: rgba(3, 10, 19, 0.36);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
 .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
   display: block;
   inline-size: 100%;
@@ -24814,8 +24823,55 @@ button[aria-disabled="true"] {
   object-position: center;
   border-radius: 18px;
   border: 1px solid rgba(158, 211, 249, 0.16);
-  background: rgba(3, 10, 19, 0.36);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.gridly-v896-hotspot {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: min(48%, 180px);
+  padding: 5px 8px 5px 7px;
+  border: 1px solid rgba(80, 229, 218, 0.78);
+  border-radius: 999px;
+  color: rgba(226, 255, 252, 0.96);
+  background: rgba(2, 20, 30, 0.58);
+  box-shadow: 0 0 0 1px rgba(80, 229, 218, 0.16), 0 0 18px rgba(80, 229, 218, 0.24);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.gridly-v896-hotspot::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #50e5da;
+  box-shadow: 0 0 0 0 rgba(80, 229, 218, 0.42);
+  animation: gridly-v896-hotspot-pulse 2.6s ease-out infinite;
+}
+
+.gridly-v896-hotspot-briefing { inset: 16% auto auto 11%; }
+.gridly-v896-hotspot-nearby-map { inset: 45% 10% auto auto; }
+.gridly-v896-hotspot-alerts-sheet { inset: auto 10% 22% auto; }
+.gridly-v896-hotspot-hazard-choices { inset: 34% auto auto 12%; }
+.gridly-v896-hotspot-settings-sections { inset: 38% auto auto 12%; }
+
+@keyframes gridly-v896-hotspot-pulse {
+  0%, 60%, 100% { box-shadow: 0 0 0 0 rgba(80, 229, 218, 0.42); }
+  35% { box-shadow: 0 0 0 7px rgba(80, 229, 218, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridly-v896-hotspot::before {
+    animation: none;
+  }
 }
 
 .gridly-v894c2-tour-card.gridly-v896-visual-tour-card p {
@@ -24844,8 +24900,17 @@ button[aria-disabled="true"] {
     border-radius: 20px;
   }
 
+  .gridly-v896-shot-frame,
+  .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
+    border-radius: 16px;
+  }
+
   .gridly-v894c2-tour-card.gridly-v896-visual-tour-card img {
     max-height: min(60vh, 540px);
-    border-radius: 16px;
+  }
+
+  .gridly-v896-hotspot {
+    padding: 4px 7px 4px 6px;
+    font-size: 0.64rem;
   }
 }
