@@ -94,3 +94,20 @@ The audit reports:
 ## Protected systems
 
 No Supabase schema, hazard lifecycle, alert generation, awareness filtering, Route Watch logic, report acceptance logic, clearing logic, weather logic, or protected system behavior was changed. This is a presentation-only Quick Tour polish and mobile scroll update that preserves V894C1 completion and reset behavior.
+
+## V894C4 final Quick Tour mobile polish
+
+- The Quick Tour card now uses a bounded mobile portrait shell with a dedicated inner scroll region so the card list, Finish action, and optional location/home-area setup scroll inside the first-run card instead of being clipped by the modal shell.
+- The inner Quick Tour region is explicitly audit-detectable with scroll/no-clipping markers and keeps mobile momentum scrolling, safe-area bottom padding, scroll padding, and per-card scroll margins so cards are not partially hidden at the top or bottom of the scroll range.
+- The former persistent `Start Tour` link now presents a non-confusing `Tour Below` state while the tour cards are already visible, while Skip remains reachable in the top action row and Finish remains reachable near the final tour card.
+- Skip and Finish still use the existing V894C completion persistence paths, and the optional Use My Location/manual watch-area setup remains available after the Finish action.
+
+Expected final audit booleans:
+
+- `quickTourScrollEnabled: true`
+- `noQuickTourContentClipping: true`
+- `quickTourActionsReachable: true`
+- `startTourNotConfusingDuringTour: true`
+- `finishReachable: true`
+- `protectedSystemsUnchanged: true`
+- `safeForBeta: true`
