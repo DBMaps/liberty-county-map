@@ -14,7 +14,7 @@ assert(/@media \(max-width: 520px\)[\s\S]*max-height:\s*min\(94dvh,\s*calc\(100s
 assert(/@media \(max-width: 520px\) and \(orientation: portrait\)[\s\S]*max-height:\s*min\(94dvh,\s*calc\(100svh - 12px\)\)/.test(styleSource), 'mobile portrait has viewport-safe max height');
 assert(/\.gridly-v858-first-run-card[\s\S]*grid-template-rows:\s*auto auto minmax\(0, 1fr\)/.test(styleSource), 'card reserves remaining height for scrollable content');
 assert(/\.gridly-v858-first-run-card[\s\S]*overflow:\s*hidden/.test(styleSource), 'card clips only the shell while inner content scrolls');
-assert(/\.gridly-v894c3-tour-scroll[\s\S]*padding-bottom:\s*calc\(4px \+ env\(safe-area-inset-bottom, 0px\)\)/.test(styleSource), 'scroll region accounts for bottom safe area');
+assert(/\.gridly-v894c3-tour-scroll[\s\S]*padding-bottom:\s*calc\(20px \+ env\(safe-area-inset-bottom, 0px\)\)/.test(styleSource), 'scroll region accounts for bottom safe area');
 
 for (const selector of [
   'id="gridlyV894CFirstRunSkipBtn"',
