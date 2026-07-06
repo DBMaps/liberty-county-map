@@ -2,39 +2,49 @@
 
 ## Objective
 
-Add a lightweight, friendly, skippable first-run walkthrough for beta testers so they understand the major Gridly controls before testing.
+Provide a lightweight, friendly, skippable **Quick Tour** for beta testers so the first run feels like a welcome experience instead of documentation.
 
-## Corrected V894C1 state model
+## V894C2 polished Quick Tour behavior
+
+- The visible first action row now offers **Skip** and **Start Tour**.
+- The tour uses **Quick Tour** language instead of visible walkthrough copy.
+- The opening message is short and user-facing: **Welcome to Gridly**, **Know Before You Go.**, and “Gridly helps you see what’s happening nearby before you leave.”
+- Bullet-heavy setup documentation was replaced with compact visual cards.
+- Each card focuses on one idea:
+  - **Know Before You Go** — “Check your quick briefing before heading out.”
+  - **Map** — “See nearby reports, crossings, hazards, and conditions.”
+  - **Alerts** — “Open Alerts to see active reports in one place.”
+  - **Report** — “See something? Submit a report to help others.”
+  - **Search** — “Search a destination before you go.”
+  - **You’re Ready** — “Thanks for helping test Gridly.”
+- **Finish** is clearly visible after the cards and persists completion.
+- The optional location/watch-area setup remains available without changing reporting, alerts, hazard lifecycle, Route Watch, awareness filtering, weather, or Supabase behavior.
+
+## Corrected V894C1 state model retained
 
 - The canonical completion source is `gridlyBetaFirstRunWalkthroughCompleteV894C`.
 - `getGridlyFirstRunCompletionStorageKey()` returns the canonical completion source, and `isGridlyFirstRunWalkthroughComplete()` is the shared completion detector.
-- Skip, finish, and setup completion all call the same completion path, so walkthrough completion is stored once instead of partially synchronized across welcome/setup keys.
+- Skip, Finish, and setup completion all call the same persisted completion path, so first-run completion is stored once instead of partially synchronized across welcome/setup keys.
 - Legacy welcome/setup completion keys are treated as orphan-prone compatibility keys and are cleared when completion is stored or reset.
 - The legacy `gridlyWelcomeSeenV1` key is no longer written as a parallel completion source.
-- A fresh user has no canonical completion value, so the walkthrough appears.
-- Skip marks the canonical walkthrough completion source and the walkthrough does not appear again.
-- Finish/setup completion marks the canonical walkthrough completion source and the walkthrough does not appear again.
-- **Show walkthrough again** from Settings resets the canonical completion source, clears welcome/setup completion state owned by the walkthrough, and then reopens the walkthrough.
-- `window.gridlyResetFirstRunWalkthrough?.()` uses the same reset path and fully restores first-run walkthrough state.
+- A fresh user has no canonical completion value, so the Quick Tour appears.
+- **Skip** marks the canonical walkthrough completion source and the Quick Tour does not appear again.
+- **Finish** marks the canonical walkthrough completion source and the Quick Tour does not appear again.
+- Finish/setup completion through location or manual area setup still marks the same canonical source.
+- **Show walkthrough again** from Settings resets the canonical completion source, clears welcome/setup completion state owned by the tour, and then reopens the tour.
+- `window.gridlyResetFirstRunWalkthrough?.()` uses the same reset path and fully restores first-run tour state.
 
 ## Runtime behavior
 
-- The walkthrough uses local device storage only.
+- The Quick Tour uses local device storage only.
 - Completion is stored under `gridlyBetaFirstRunWalkthroughCompleteV894C`.
-- The first-run open path checks the canonical completion source before opening, so the walkthrough appears only when incomplete.
+- The first-run open path checks the canonical completion source before opening, so the tour appears only when incomplete.
 - Opening is scheduled with `requestAnimationFrame`, allowing the core app shell to render first.
-- The walkthrough can be skipped, completed through setup, or restarted from Settings with the **Show walkthrough again** action.
+- The tour can be skipped, finished, completed through setup, or restarted from Settings with the **Show walkthrough again** action.
 
-## Walkthrough coverage
+## V894C compatibility coverage
 
-The beta walkthrough uses consumer-facing language and explains:
-
-- `Know Before You Go / Awareness Brief` — the starting summary for what may affect a drive.
-- `Map` — nearby crossings, reports, and road conditions.
-- `Alerts` — important items in one list.
-- `Report` — how testers share a road hazard or crossing issue.
-- `Search` / destination awareness — check a destination before leaving.
-- `Awareness area` / `Home area` — the community Gridly watches first.
+The polished Quick Tour keeps the V894C coverage intent while simplifying the presentation: `Know Before You Go / Awareness Brief`, `Map`, `Alerts`, `Report`, `Search`, and `Awareness area / Home area` remain covered by the tour, optional watch-area setup, and Settings replay path.
 
 ## Console helpers
 
@@ -52,6 +62,11 @@ The audit reports:
 - `walkthroughCompletionStored`
 - `walkthroughCompletionDetected`
 - `resetFullyClearsCompletion`
+- `visibleSkipButtonDetected`
+- `simplifiedCopyDetected`
+- `bulletHeavyCopyRemoved`
+- `quickTourLanguageDetected`
+- `oneIdeaPerScreen`
 - `skipPersistsCompletion`
 - `finishPersistsCompletion`
 - `restartFromSettingsWorks`
@@ -66,4 +81,4 @@ The audit reports:
 
 ## Protected systems
 
-No Supabase schema, hazard lifecycle, alert generation, awareness filtering, Route Watch logic, report acceptance logic, clearing logic, weather logic, or protected system behavior was changed. This is a walkthrough state bug fix only.
+No Supabase schema, hazard lifecycle, alert generation, awareness filtering, Route Watch logic, report acceptance logic, clearing logic, weather logic, or protected system behavior was changed. This is a presentation-only Quick Tour polish update that preserves V894C1 completion and reset behavior.

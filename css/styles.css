@@ -21899,6 +21899,82 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="aler
   line-height: 1.52 !important;
 }
 
+
+.gridly-v858-first-run-tagline {
+  color: #f7fbff !important;
+  font-size: 1.18rem !important;
+  font-weight: 850;
+}
+
+.gridly-v894c2-tour-actions {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+}
+
+.gridly-v894c2-start-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.gridly-v894c2-skip-btn {
+  border-color: rgba(255, 255, 255, 0.38) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #f7fbff !important;
+}
+
+.gridly-v894c2-tour-cards {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+}
+
+.gridly-v894c2-tour-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid rgba(158, 211, 249, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.gridly-v894c2-tour-card span {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(142, 230, 255, 0.18);
+  color: #8ee6ff;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.gridly-v894c2-tour-card h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.gridly-v894c2-tour-card p {
+  grid-column: 2;
+  font-size: 0.94rem !important;
+  line-height: 1.42 !important;
+}
+
+.gridly-v894c2-finish-btn {
+  position: relative;
+  z-index: 2;
+}
+
 .gridly-v858-location-panel {
   position: relative;
   z-index: 3;
