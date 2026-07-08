@@ -24935,3 +24935,62 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   font-size: 0.9rem;
   font-weight: 800;
 }
+
+/* V904R — Gridly-styled hierarchical awareness native selects */
+.settings-awareness-select-label select.gridly-premium-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 48px;
+  border: 1px solid rgba(142, 239, 255, 0.32);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(12, 28, 50, 0.98), rgba(5, 13, 28, 0.96)) padding-box,
+    linear-gradient(135deg, rgba(142, 239, 255, 0.42), rgba(67, 230, 160, 0.22)) border-box;
+  color: #f8fbff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.18);
+  padding: 0 42px 0 15px;
+  line-height: 1.2;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(142, 239, 255, 0.95) 50%),
+    linear-gradient(135deg, rgba(142, 239, 255, 0.95) 50%, transparent 50%),
+    linear-gradient(135deg, rgba(12, 28, 50, 0.98), rgba(5, 13, 28, 0.96));
+  background-position:
+    calc(100% - 23px) 52%,
+    calc(100% - 16px) 52%,
+    0 0;
+  background-size: 7px 7px, 7px 7px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.settings-awareness-select-label select.gridly-premium-select:focus {
+  border-color: rgba(142, 239, 255, 0.72);
+  outline: 2px solid rgba(142, 239, 255, 0.22);
+  outline-offset: 2px;
+}
+
+.settings-awareness-select-label select.gridly-premium-select option {
+  color: #f8fbff;
+  background: #081624;
+}
+
+.gridly-welcome-select-label select.gridly-premium-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 48px;
+  border: 1px solid rgba(142, 239, 255, 0.32);
+  border-radius: 18px;
+  color: #f8fbff;
+  padding: 0 42px 0 15px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(142, 239, 255, 0.95) 50%),
+    linear-gradient(135deg, rgba(142, 239, 255, 0.95) 50%, transparent 50%),
+    linear-gradient(135deg, rgba(12, 28, 50, 0.98), rgba(5, 13, 28, 0.96));
+  background-position: calc(100% - 23px) 52%, calc(100% - 16px) 52%, 0 0;
+  background-size: 7px 7px, 7px 7px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.gridly-welcome-select-label select.gridly-premium-select option {
+  color: #f8fbff;
+  background: #081624;
+}

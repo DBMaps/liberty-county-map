@@ -72,3 +72,28 @@ Expected fields include selector detection, flat-list suppression, saved-area re
 
 ## Merge recommendation
 Merge after the static checks pass and mobile portrait human validation confirms the two-step selection flow persists correctly.
+
+## V904R repair note — Hierarchical Awareness Selection repair
+
+V904R repairs the visible hierarchical selector behavior before merge.
+
+### Visible community selector repair
+- County changes now rebuild the visible Community / Awareness Area `<select>` immediately from the selected county group.
+- Liberty County exposes the countywide option plus the configured Liberty awareness communities, including Dayton, Liberty, Cleveland, Hardin, Devers, Hull, Daisetta, Moss Hill, Raywood, Kenefick, and Tarkington.
+- Montgomery County exposes the countywide option plus the configured Montgomery awareness communities, including Conroe, The Woodlands, Willis, Magnolia, Montgomery, New Caney, Porter, and Splendora.
+- Harris County and future counties use configured community options when present.
+
+### Countywide fallback
+- Counties without configured town/community awareness options remain safe and visible by showing a `Countywide awareness` fallback option.
+- County-level saved values preselect the matching County and use the countywide option as the Community / Awareness Area selection instead of leaving the selector empty.
+
+### Audit correction
+- `window.gridlyHierarchicalAwarenessSelectionAudit?.()` now reports the selected county, selected community, visible community option labels, visible option count, useful-option detection, fallback usage, Gridly dropdown styling checks, and whether visible behavior matches the audit.
+- `safeForBeta` is now false if the visible community selector is missing, hidden, empty, stale, or not useful.
+
+### Styling correction
+- The hierarchical selector keeps native select behavior while applying Gridly dark mobile styling to the closed controls: dark gradient surface, rounded corners, readable text, stronger focus state, and comfortable tap targets.
+
+### V904R merge recommendation
+- Do not merge V904 without this V904R repair commit.
+- Merge only after static checks and phone validation confirm the Community selector visibly updates for Liberty, Montgomery, and any configured Harris communities.
