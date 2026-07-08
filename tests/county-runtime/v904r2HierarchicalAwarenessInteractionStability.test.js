@@ -15,7 +15,7 @@ assert(!saveFunction.includes('setGridlySettingsAwarenessChooserOpen(false);'), 
 
 const settingsBinding = source.match(/els\.settingsAwarenessAreaChooser\.addEventListener\("change", \(event\) => \{[\s\S]*?\n    \}\);\n  \}/)?.[0] || '';
 assert(settingsBinding.includes('updateGridlySettingsAwarenessCommunityOptions(els.settingsAwarenessAreaChooser, target.value);'), 'county changes may rebuild community options');
-assert(settingsBinding.includes('selectGridlySettingsAwarenessArea(target.value || "", "legacy_settings_awareness_area");'), 'community changes persist the selected community');
+assert(settingsBinding.includes('selectGridlySettingsAwarenessArea(target.value || "", "legacy_settings_awareness_area", els.settingsAwarenessAreaChooser);'), 'community changes persist the selected community');
 assert(!settingsBinding.includes('focus'), 'community focus/open path is not bound to selector rebuilds');
 assert(!settingsBinding.includes('click'), 'community click/tap path is not bound to selector rebuilds');
 
