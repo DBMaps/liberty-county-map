@@ -24905,3 +24905,33 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   min-height: 36px;
   font-weight: 800;
 }
+
+/* V904 — hierarchical awareness-area selector */
+.settings-awareness-hierarchical {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+.settings-awareness-select-label {
+  display: grid;
+  gap: 7px;
+  color: rgba(232, 241, 255, 0.82);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+.settings-awareness-select-label select {
+  min-height: 46px;
+  border: 1px solid rgba(142, 239, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(6, 16, 32, 0.92);
+  color: #f8fbff;
+  font: inherit;
+  font-size: 1rem;
+  padding: 0 14px;
+}
+.settings-awareness-summary {
+  margin: 0;
+  color: rgba(67, 230, 160, 0.92);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
