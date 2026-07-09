@@ -18,6 +18,9 @@ assert(appSource.includes('domReplacementDetected'), 'V918 audit reports DOM rep
 assert(appSource.includes('zIndexPromotionDetected'), 'V918 audit reports z-index promotion detection');
 assert(appSource.includes('flashObserved'), 'V918 audit reports flash observation');
 assert(appSource.includes('protectedSystemsUnchanged: true'), 'V918 audit confirms protected systems unchanged');
+assert(appSource.includes('duplicateOpenSuppressed'), 'V918 audit reports suppressed duplicate marker.openPopup attempts');
+assert(appSource.includes('retryOpenSkippedBecauseAlreadyVisible'), 'V918 audit reports visible popup retry skips');
+assert(appSource.includes('safeZoneRetryObserved'), 'V918 audit reports safe-zone visibility retry observation');
 
 const openingFunctionStart = appSource.indexOf('function openCrossingPopupFromMarkerInteraction');
 const openingFunctionEnd = appSource.indexOf('function getGridlyCrossingMarkerTouchPoint', openingFunctionStart);
@@ -27,6 +30,8 @@ assert(openingFunction.includes('marker.openPopup() owns any necessary replaceme
 assert(appSource.includes('gridlyCrossingPopupOpeningAuditState.renderDuringOpenCount += 1'), 'V918 instruments render attempts during popup opening');
 assert(appSource.includes('gridlyCrossingPopupOpeningAuditState.openPopupCallCount += 1'), 'V918 instruments marker.openPopup calls');
 assert(appSource.includes('gridlyCrossingPopupOpeningAuditState.popupCloseEventCount += 1'), 'V918 instruments popup close events');
+assert(appSource.includes('visibility-retry-already-visible'), 'V918 skips duplicate openPopup calls when a visibility retry finds the same popup already visible');
+assert(appSource.includes('completeVerifiedCrossingPopupOpen(marker, retrySession, retryReason)'), 'V918 completes the existing open lifecycle without a second marker.openPopup call');
 
 [
   'Executive summary',
