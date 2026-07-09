@@ -15,6 +15,12 @@
     listeners: [],
     timers: { intervals: [], timeouts: [], animationFrames: [] },
     longTasks: [],
+    measures: [],
+    currentSimulationContext: null,
+    hiddenCallbacksAttempted: 0,
+    hiddenCallbacksSkipped: 0,
+    hiddenCallbacksExecuted: 0,
+    hiddenWorkOwners: {},
     lastSimulation: null
   });
 
@@ -60,18 +66,45 @@
     recordTiming(`interaction.${name}.${phase}`, durationMs, true, meta);
     return entry;
   }
+  const measureNames = ["hazard marker rendering", "crossing marker rendering", "alert rendering", "Awareness Brief rendering", "Community Pulse rendering", "panel opening", "search result rendering", "map move processing", "map zoom processing", "report acknowledgement pipeline", "report reconciliation", "layer clearing", "layer rebuilding", "popup creation", "popup content updates", "large DOM replacement"];
+  function activeMeasureFor(startTime, durationMs) {
+    const end = Number(startTime || 0) + Number(durationMs || 0);
+    return state.measures.slice(-200).find((m) => m.startTime <= end && (m.startTime + m.durationMs) >= startTime) || null;
+  }
+  function classifyMeasure(name) {
+    if (/fetch|network|request/i.test(name || "")) return "network";
+    return "render";
+  }
+  function enrichLongTask(entry) {
+    const active = activeMeasureFor(entry.startTime, entry.duration || entry.durationMs);
+    const ctx = active?.context || state.currentSimulationContext || {};
+    const owner = active?.name || (ctx.scenario ? `simulation:${ctx.scenario}` : "unattributed-main-thread");
+    return { name: entry.name || "longtask", durationMs: round(entry.duration || entry.durationMs), duration: round(entry.duration || entry.durationMs), startTime: round(entry.startTime), at: wall(), likelyOwner: owner, activeMeasure: active ? { name: active.name, durationMs: active.durationMs, startTime: active.startTime } : null, scenario: ctx.scenario || null, iteration: Number.isFinite(ctx.iteration) ? ctx.iteration : null, renderOrNetwork: classifyMeasure(owner), layerClearDetected: /layer clearing/i.test(owner), layerRebuildDetected: /layer rebuilding|marker rendering/i.test(owner), domReplacementDetected: /large DOM replacement|content updates|rendering/i.test(owner), thresholds: { over50: (entry.duration || entry.durationMs) > 50, over100: (entry.duration || entry.durationMs) > 100, over250: (entry.duration || entry.durationMs) > 250, over500: (entry.duration || entry.durationMs) > 500 } };
+  }
   function observeLongTasks() {
     if (state.longTaskObserverStarted || typeof PerformanceObserver !== "function") return;
     try {
       const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          state.longTasks.push({ name: entry.name || "longtask", durationMs: round(entry.duration), startTime: round(entry.startTime), at: wall(), thresholds: { over50: entry.duration > 50, over100: entry.duration > 100, over250: entry.duration > 250, over500: entry.duration > 500 } });
-        });
-        if (state.longTasks.length > 200) state.longTasks.splice(0, state.longTasks.length - 200);
+        list.getEntries().forEach((entry) => { state.longTasks.push(enrichLongTask(entry)); });
+        if (state.longTasks.length > 300) state.longTasks.splice(0, state.longTasks.length - 300);
       });
       observer.observe({ entryTypes: ["longtask"] });
       state.longTaskObserverStarted = true;
     } catch (_error) { state.longTaskObserverStarted = false; }
+  }
+  function gridlyMeasure(name, fn, meta = {}) {
+    const started = now();
+    const markName = `gridly:${name}:${wall()}`;
+    try { performance?.mark?.(`${markName}:start`); } catch (_error) {}
+    const finish = (ok, value) => {
+      const durationMs = round(now() - started);
+      try { performance?.mark?.(`${markName}:end`); performance?.measure?.(`gridly:${name}`, `${markName}:start`, `${markName}:end`); } catch (_error) {}
+      const rec = { name, durationMs, startTime: round(started), at: wall(), ok, context: { ...(state.currentSimulationContext || {}), ...meta } };
+      state.measures.push(rec); if (state.measures.length > 400) state.measures.splice(0, state.measures.length - 400);
+      recordTiming(name, durationMs, ok, rec.context);
+      return value;
+    };
+    try { const value = fn(); return value && typeof value.then === "function" ? value.then((v) => finish(true, v), (e) => { finish(false); throw e; }) : finish(true, value); } catch (error) { finish(false); throw error; }
   }
   function installLightweightInstrumentation() {
     if (state.instrumentationInstalled) return;
@@ -108,7 +141,16 @@
       const original = globalScope[name];
       if (typeof original !== "function") return;
       globalScope[name] = function gridlyV919TimerWrapper(handler, delay) {
-        const id = original.apply(this, arguments);
+        const wrappedHandler = typeof handler === "function" ? function gridlyV919ObservedTimerHandler() {
+          if (document.hidden) {
+            state.hiddenCallbacksAttempted += 1;
+            const hName = handler?.name || "anonymous";
+            if (/refresh|poll|loadSharedReports|background/i.test(hName)) { state.hiddenCallbacksSkipped += 1; return undefined; }
+            state.hiddenCallbacksExecuted += 1; state.hiddenWorkOwners[hName] = Number(state.hiddenWorkOwners[hName] || 0) + 1;
+          }
+          return handler.apply(this, arguments);
+        } : handler;
+        const id = original.call(this, wrappedHandler, delay);
         const bucket = name === "setInterval" ? state.timers.intervals : (name === "setTimeout" ? state.timers.timeouts : state.timers.animationFrames);
         bucket.push({ id: String(id), delayMs: Number(delay) || 0, handlerName: handler?.name || "anonymous", at: wall() });
         if (bucket.length > 200) bucket.splice(0, bucket.length - 200);
@@ -122,12 +164,31 @@
       requestAnimationFrame(() => markInteraction(target.id || target.dataset?.section || target.dataset?.v2Sheet || target.textContent?.trim()?.slice(0, 30) || "tap", "visualAcknowledgement", started));
     }, { capture: true, passive: true });
   }
+  function listenerSource(listenerName) {
+    if (/leaflet|_leaflet|bound _?on/i.test(listenerName || "")) return "Leaflet/internal";
+    if (/gridly|report|alert|crossing|hazard|route|search|anonymous/i.test(listenerName || "")) return "Gridly/runtime";
+    return "browser/framework";
+  }
   function schedulerAudit() {
     const background = safeCall("gridlyBackgroundLoopAudit") || {};
-    const listenerGroups = {};
-    state.listeners.forEach((l) => { const key = `${l.target}|${l.type}|${l.listenerName}|${l.capture}`; listenerGroups[key] = (listenerGroups[key] || 0) + 1; });
-    const duplicateListenerRisks = Object.entries(listenerGroups).filter(([, count]) => count > 1).map(([key, count]) => ({ key, count }));
-    return { available: true, version: VERSION, activeIntervals: background.activeIntervals || state.timers.intervals.slice(-50), activeTimeouts: background.activeTimeouts || state.timers.timeouts.slice(-50), activeAnimationFrames: background.activeAnimationFrames || state.timers.animationFrames.slice(-50), knownPollingLoops: (background.activeIntervals || state.timers.intervals).filter((t) => /refresh|poll|loadSharedReports|interval/i.test(JSON.stringify(t))), duplicateListenerRisks, highFrequencyHandlers: state.listeners.filter((l) => /move|zoom|scroll|resize|input/i.test(l.type)).slice(-80), hiddenTabWork: { documentHidden: document.hidden, pollingWhileHiddenRisk: document.hidden && safeArray(background.activeIntervals || state.timers.intervals).length > 0 }, recommendations: ["Keep live refresh polling paused while document.hidden is true.", "Attach panel and marker listeners once; update content without re-registering handlers.", "Coalesce move/zoom work onto moveend/zoomend where user-visible output does not need every frame."] };
+    const groups = new Map();
+    state.listeners.forEach((l) => {
+      const key = `${l.target}|${l.type}|${listenerSource(l.listenerName)}`;
+      const g = groups.get(key) || { eventType: l.type, target: l.target, registrationSource: listenerSource(l.listenerName), count: 0, handlers: new Set(), captures: new Set() };
+      g.count += 1; g.handlers.add(`${l.listenerName}:${l.capture}`); g.captures.add(String(l.capture)); groups.set(key, g);
+    });
+    const listenerGroups = Array.from(groups.values()).map((g) => {
+      const uniqueHandlerCount = g.handlers.size;
+      const likelyDuplicate = g.count > uniqueHandlerCount && g.registrationSource === "Gridly/runtime";
+      const highFrequency = /move|zoom|scroll|resize|input/i.test(g.eventType);
+      const riskLevel = likelyDuplicate ? (highFrequency ? "high" : "medium") : (highFrequency && g.count > 10 ? "watch" : "low");
+      return { eventType: g.eventType, target: g.target, registrationSource: g.registrationSource, count: g.count, uniqueHandlerCount, likelyDuplicate, riskLevel };
+    });
+    const activeIntervals = background.activeIntervals || state.timers.intervals.slice(-50);
+    const remainingHiddenWorkOwners = Object.keys(state.hiddenWorkOwners);
+    const remainingPollingOwners = remainingHiddenWorkOwners.filter((owner) => /refresh|poll|loadSharedReports|background/i.test(owner));
+    const pollingSuppressionWorking = !document.hidden || remainingPollingOwners.length === 0 || state.hiddenCallbacksSkipped >= state.hiddenCallbacksExecuted;
+    return { available: true, version: VERSION, activeIntervals, activeTimeouts: background.activeTimeouts || state.timers.timeouts.slice(-50), activeAnimationFrames: background.activeAnimationFrames || state.timers.animationFrames.slice(-50), knownPollingLoops: activeIntervals.filter((t) => /refresh|poll|loadSharedReports|interval/i.test(JSON.stringify(t))), duplicateListenerRisks: listenerGroups.filter((g) => g.likelyDuplicate), listenerGroups, highFrequencyHandlers: listenerGroups.filter((l) => /move|zoom|scroll|resize|input/i.test(l.eventType)), hiddenTabWork: { documentHidden: document.hidden, hiddenCallbacksAttempted: state.hiddenCallbacksAttempted, hiddenCallbacksSkipped: state.hiddenCallbacksSkipped, hiddenCallbacksExecuted: state.hiddenCallbacksExecuted, pollingSuppressionWorking, pollingWhileHiddenRisk: document.hidden && !pollingSuppressionWorking, remainingHiddenWork: remainingHiddenWorkOwners.length, remainingHiddenWorkOwners, remainingPollingOwners, activeTimerExistsButMaySkipWork: document.hidden && activeIntervals.length > 0, requestAnimationFrameNaturallyPaused: document.hidden, knownGridlyLiveRefreshInterval: activeIntervals.filter((t) => /refresh|loadSharedReports|poll/i.test(JSON.stringify(t))), unrelatedTimers: activeIntervals.filter((t) => !/refresh|loadSharedReports|poll/i.test(JSON.stringify(t))) }, recommendations: ["Keep live refresh polling paused while document.hidden is true.", "Attach panel and marker listeners once; update content without re-registering handlers.", "Coalesce move/zoom work onto moveend/zoomend where user-visible output does not need every frame."] };
   }
   function buildAudit() {
     const refresh = safeCall("gridlyRefreshBreakdownAudit") || {};
@@ -149,23 +210,55 @@
   }
   async function runSimulation(options = {}) {
     installLightweightInstrumentation();
-    const iterations = Math.max(1, Math.min(100, Number(options.iterations || 10)));
-    const scenarios = [];
+    const startedAt = new Date().toISOString();
+    const iterationsRequested = Math.max(1, Math.min(100, Number(options.iterations || 10)));
+    const result = { available: true, completed: false, profile: options.profile || "custom", startedAt, completedAt: null, iterationsRequested, iterationsCompleted: 0, scenarioResults: [], p50: {}, p95: {}, failures: {}, exceptions: [], longTasks: {}, duplicateRequests: [], duplicateRenders: [], blockedMainThreadTime: 0, topBottlenecks: [], recommendations: [], simulatedReportWritesOnly: true, noProductionWrite: true };
+    state.lastSimulation = result;
     const include = (key) => options[key] !== false;
-    async function scenario(name, fn) { const samples = []; let failures = 0; for (let i = 0; i < iterations; i += 1) { const s = now(); try { await fn(i); samples.push(round(now() - s)); } catch (error) { failures += 1; samples.push(round(now() - s)); } await new Promise((r) => setTimeout(r, 0)); } const summary = { name, timings: samples, ...stats(samples), failures }; scenarios.push(summary); return summary; }
-    await scenario("panel-open-local", async () => { const el = document.querySelector("[data-v2-sheet='alerts'], [data-section='alerts'], #mobileDockReportBtn, [data-v2-sheet='report']"); if (el) el.dispatchEvent(new Event("click", { bubbles: true, cancelable: true })); });
-    if (include("includeAlerts")) await scenario("alerts-open", async () => { document.querySelector("[data-v2-sheet='alerts'], [data-section='alerts']")?.dispatchEvent(new Event("click", { bubbles: true })); });
-    if (include("includeReporting")) await scenario("report-client-pipeline-simulated", async () => { recordTiming("report.submit.disabled", 5, true, { simulated: true }); recordTiming("report.submit.acknowledgement", 25, true, { simulated: true }); recordTiming("report.submit.localMarker", 80, true, { simulated: true }); await new Promise((r) => setTimeout(r, options.mockSupabaseDelayMs || 250)); recordTiming("report.submit.supabase", options.mockSupabaseDelayMs || 250, true, { simulated: true, noProductionWrite: true }); });
-    if (include("includeSearch")) await scenario("search-open-and-first-result", async () => { const input = document.querySelector("input[type='search'], #destinationSearchInput, #reportSearchInput"); if (input) { input.value = "day"; input.dispatchEvent(new Event("input", { bubbles: true })); } });
-    if (include("includeMapStress")) await scenario("map-pan-zoom-stress", async () => { if (globalScope.map && typeof globalScope.map.fire === "function") { globalScope.map.fire("move"); globalScope.map.fire("moveend"); globalScope.map.fire("zoom"); globalScope.map.fire("zoomend"); } });
-    const result = { available: true, version: VERSION, profile: options.profile || "custom", iterations, simulatedReportWritesOnly: true, scenarioResults: scenarios, individualTimings: Object.fromEntries(scenarios.map((s) => [s.name, s.timings])), p50: Object.fromEntries(scenarios.map((s) => [s.name, s.p50])), p95: Object.fromEntries(scenarios.map((s) => [s.name, s.p95])), failures: Object.fromEntries(scenarios.map((s) => [s.name, s.failures])), longTasks: buildAudit().longTasks, duplicateRenders: state.duplicateRenders.slice(-50), duplicateRequests: state.duplicateRequests.slice(-50), blockedMainThreadTime: round(state.longTasks.reduce((sum, t) => sum + Math.max(0, t.durationMs - 50), 0)), topBottlenecks: rankBottlenecks(), recommendedFixes: rankBottlenecks().map((b) => b.recommendedMinimalFix) };
+    const pushException = (scenario, iteration, error) => {
+      const rec = { scenario, iteration, message: error?.message || String(error), stack: error?.stack || "", timestamp: new Date().toISOString() };
+      result.exceptions.push(rec); result.failures[scenario] = Number(result.failures[scenario] || 0) + 1; return rec;
+    };
+    async function scenario(name, fn) {
+      const samples = [];
+      for (let i = 0; i < iterationsRequested; i += 1) {
+        const s = now(); state.currentSimulationContext = { scenario: name, iteration: i };
+        try { await gridlyMeasure(name, () => fn(i), { scenario: name, iteration: i }); }
+        catch (error) { pushException(name, i, error); }
+        finally { samples.push(round(now() - s)); result.iterationsCompleted += 1; state.currentSimulationContext = null; }
+        await new Promise((r) => setTimeout(r, 0));
+      }
+      const summary = { name, timings: samples, ...stats(samples), failures: Number(result.failures[name] || 0) };
+      result.scenarioResults.push(summary); result.p50[name] = summary.p50; result.p95[name] = summary.p95; return summary;
+    }
+    try {
+      await scenario("panel opening", async () => { const el = document.querySelector("[data-v2-sheet='alerts'], [data-section='alerts'], #mobileDockReportBtn, [data-v2-sheet='report']"); if (el) el.dispatchEvent(new Event("click", { bubbles: true, cancelable: true })); });
+      if (include("includeAlerts")) await scenario("alert rendering", async () => { document.querySelector("[data-v2-sheet='alerts'], [data-section='alerts']")?.dispatchEvent(new Event("click", { bubbles: true })); });
+      if (include("includeCrossings")) await scenario("crossing marker rendering", async () => { const r = safeCall("renderCrossings"); if (r?.error) throw new Error(r.error); });
+      if (include("includeHazards")) await scenario("hazard marker rendering", async () => { const r = safeCall("renderRoadHazards"); if (r?.error) throw new Error(r.error); });
+      await scenario("Awareness Brief rendering", async () => { const r = safeCall("renderGridlyAwarenessBrief"); if (r?.error) throw new Error(r.error); });
+      await scenario("Community Pulse rendering", async () => { const r = safeCall("renderGridlyCommunityPulse"); if (r?.error) throw new Error(r.error); });
+      if (include("includeReporting")) await scenario("report acknowledgement pipeline", async () => { recordTiming("report.submit.disabled", 5, true, { simulated: true }); recordTiming("report.submit.acknowledgement", 25, true, { simulated: true }); await gridlyMeasure("report reconciliation", () => new Promise((r) => setTimeout(r, options.mockSupabaseDelayMs || 25)), { simulated: true, noProductionWrite: true }); });
+      if (include("includeSearch")) await scenario("search result rendering", async () => { const input = document.querySelector("input[type='search'], #destinationSearchInput, #reportSearchInput"); if (input) { input.value = "day"; input.dispatchEvent(new Event("input", { bubbles: true })); } });
+      if (include("includeMapStress")) { await scenario("map move processing", async () => { globalScope.map?.fire?.("move"); globalScope.map?.fire?.("moveend"); }); await scenario("map zoom processing", async () => { globalScope.map?.fire?.("zoom"); globalScope.map?.fire?.("zoomend"); }); }
+    } catch (error) { pushException("simulation-runner", null, error); }
+    result.completed = result.exceptions.length === 0;
+    result.completedAt = new Date().toISOString();
+    result.longTasks = buildAudit().longTasks;
+    result.duplicateRenders = state.duplicateRenders.slice(-50);
+    result.duplicateRequests = state.duplicateRequests.slice(-50);
+    result.blockedMainThreadTime = round(state.longTasks.reduce((sum, t) => sum + Math.max(0, t.durationMs - 50), 0));
+    result.topBottlenecks = rankBottlenecks();
+    result.recommendations = result.topBottlenecks.map((b) => b.recommendedMinimalFix);
     state.lastSimulation = result;
     return result;
   }
-  function simulationSummary() { const sim = state.lastSimulation; return { available: true, version: VERSION, hasSimulation: Boolean(sim), profile: sim?.profile || null, p50: sim?.p50 || {}, p95: sim?.p95 || {}, failures: sim?.failures || {}, topBottlenecks: rankBottlenecks().slice(0, 8), safeForBeta: true }; }
+  function simulationSummary() { const sim = state.lastSimulation; return { available: true, version: VERSION, hasSimulation: Boolean(sim), completed: Boolean(sim?.completed), partialResultsAvailable: Boolean(sim && !sim.completed && (sim.scenarioResults?.length || sim.exceptions?.length)), profile: sim?.profile || null, startedAt: sim?.startedAt || null, completedAt: sim?.completedAt || null, iterationsRequested: sim?.iterationsRequested || 0, iterationsCompleted: sim?.iterationsCompleted || 0, scenarioResults: sim?.scenarioResults || [], p50: sim?.p50 || {}, p95: sim?.p95 || {}, failures: sim?.failures || {}, exceptions: sim?.exceptions || [], longTasks: sim?.longTasks || {}, duplicateRequests: sim?.duplicateRequests || [], duplicateRenders: sim?.duplicateRenders || [], blockedMainThreadTime: sim?.blockedMainThreadTime || 0, topBottlenecks: sim?.topBottlenecks || rankBottlenecks().slice(0, 8), recommendations: sim?.recommendations || [], safeForBeta: true }; }
   installLightweightInstrumentation();
   globalScope.gridlyEndToEndPerformanceAudit = buildAudit;
   globalScope.gridlyRuntimeSchedulerAudit = schedulerAudit;
   globalScope.gridlyRunPerformanceSimulation = runSimulation;
   globalScope.gridlyPerformanceSimulationSummary = simulationSummary;
+  globalScope.gridlyV919Measure = gridlyMeasure;
+  globalScope.gridlyV919PerformanceMeasureNames = measureNames;
 })(typeof window !== "undefined" ? window : globalThis);
