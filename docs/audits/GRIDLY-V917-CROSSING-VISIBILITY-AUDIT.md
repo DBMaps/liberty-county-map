@@ -179,6 +179,23 @@ Expected configured-policy headline result:
 }
 ```
 
+
+## Street-zoom repopulation safeguard
+
+A follow-up V917 behavior fix now preserves certified public roadway crossings at the street-name and very-close zoom stages when the configured render policy allows markers. If the initial render cycle leaves both `crossingMarkers` and `crossingLayer` empty even though policy-scoped visible `PUBLIC_ROADWAY` and reportable crossings are present in the viewport, `renderCrossings()` immediately repopulates from that same policy-scoped visible crossing list.
+
+This safeguard is intentionally limited to street-name/very-close `viewport-all` policy stages, so lower-zoom decluttering remains unchanged. The repopulation list still requires `isGridlyReportableCrossing(crossing)`, `isGridlyPublicRoadwayCrossing(crossing)`, and active-county matching, so private, industrial, rail-yard, temporary-access, grade-separated, closed, or otherwise non-reportable crossings stay excluded.
+
+The live helper now exposes additional render diagnostics:
+
+- `candidateCrossingCount`
+- `skippedCandidateCount`
+- `skippedCandidateReasons`
+- `streetZoomRepopulationAttempted`
+- `streetZoomRepopulationSucceeded`
+
+Expected street-name zoom result after the safeguard is that policy-allowed nearby public roadway crossings have `renderedCrossingMarkerCount: 1`, `crossingLayerMarkerCount: 1`, `liveRenderMatchesPolicy: true`, `possibleLifecycleRefreshIssue: false`, and `streetZoomRepopulationSucceeded: true` when the fallback path was needed.
+
 ## Final recommendation
 
 Do **not** mark a behavior fix merge-ready from V917 alone. Merge the audit extension only if the live helper output can explain the screenshot-observed disappearance as policy threshold, viewport filtering, render lifecycle, layer ownership, or visual stacking. Keep production crossing runtime, community awareness, Story Engine, Evidence Experience, Route Watch, hazard lifecycle, alert generation, and Supabase synchronization unchanged until the live diagnosis is reviewed.
