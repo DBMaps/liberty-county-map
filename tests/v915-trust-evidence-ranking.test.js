@@ -10,6 +10,8 @@ assert.match(app, /window\.gridlyTrustEvidenceRankingAudit\s*=\s*gridlyTrustEvid
 assert.match(app, /singlePrimaryStoryPass/, 'V915 validates one primary story');
 assert.match(app, /reinforcingEvidencePass/, 'V915 validates reinforcing evidence');
 assert.match(app, /conflictingEvidencePass/, 'V915 validates conflicting evidence');
+assert.match(app, /recencyCapabilityCertification/, 'V915 exposes audit-only recency capability certification');
+assert.match(app, /requiresLiveProviderEvidence:\s*false/, 'V915 recency certification does not require live provider events');
 
 const sandbox = {
   window: {},
@@ -45,6 +47,9 @@ assert.strictEqual(audit.transportationRankingAvailable, true);
 assert.strictEqual(audit.railRankingAvailable, true);
 assert.strictEqual(audit.confidenceRankingPass, true);
 assert.strictEqual(audit.recencyRankingPass, true);
+assert.strictEqual(audit.recencyCapabilityCertification.communityRecencySignal, true);
+assert.strictEqual(audit.recencyCapabilityCertification.quietSuppressionSafe, true);
+assert.strictEqual(audit.recencyCapabilityCertification.requiresLiveProviderEvidence, false);
 assert.strictEqual(audit.reinforcingEvidencePass, true);
 assert.strictEqual(audit.conflictingEvidencePass, true);
 assert.strictEqual(audit.singlePrimaryStoryPass, true);
@@ -52,6 +57,10 @@ assert.strictEqual(audit.consumerLanguagePass, true);
 assert.strictEqual(audit.providerNamesSuppressed, true);
 assert.strictEqual(audit.technicalTermsSuppressed, true);
 assert.strictEqual(audit.protectedSystemsUnchanged, true);
+
+assert.strictEqual(sandbox.activeHazards.length, 0, 'recency certification does not require live active hazards');
+assert.strictEqual(sandbox.activeReports.length, 0, 'recency certification does not require live active reports');
+assert.deepStrictEqual(sandbox.window.gridlyDriveTexasConnector.getNormalizedRecords(), [], 'recency certification does not require live transportation records');
 
 for (const key of ['communityOnly', 'weatherOnly', 'transportationOnly', 'railOnly', 'communityWeather', 'communityTransportation', 'communityRail', 'weatherTransportation', 'transportationRail', 'communityWeatherTransportation', 'allEvidence']) {
   assert.ok(audit.scenarioTemplates[key], `scenario template exists: ${key}`);
