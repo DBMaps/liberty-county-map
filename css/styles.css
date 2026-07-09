@@ -25120,19 +25120,28 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 
 /* V911R2 — Evidence Experience mobile clipping fix.
    The Evidence Experience can add wrapped evidence copy after the Brief panel opens;
-   keep the expanded Know Before You Go container tall enough for visible evidence rows
-   instead of clipping the last line inside the parent panel. */
+   keep the expanded Know Before You Go shell within its existing mobile footprint and
+   let the briefing/evidence content scroll internally instead of pushing into the map. */
 @media (max-width: 760px) and (orientation: portrait) {
   body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
-    --gridly-brief-interaction-extra: clamp(380px, 54svh, 520px);
+    --gridly-brief-interaction-extra: clamp(300px, 39svh, 396px);
   }
 
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-interaction-panel[data-gridly-brief-expanded="true"] {
-    max-height: min(72svh, 520px);
-    overflow: visible;
+    max-height: min(58svh, 396px);
+    overflow: hidden;
   }
 
-  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-flow,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-flow {
+    min-height: 0;
+    max-height: clamp(188px, 31svh, 252px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 2px;
+  }
+
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-evidence-experience,
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-evidence-list,
   body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-evidence-item {
