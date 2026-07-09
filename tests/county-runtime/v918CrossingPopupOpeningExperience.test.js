@@ -50,7 +50,11 @@ assert(appSource.includes('GRIDLY_CROSSING_POPUP_CLICK_TRACE_LIMIT = 25'), 'V918
   'popup_opened',
   'safe_zone_positioning',
   'popup_closed',
-  'second_click_same_crossing'
+  'second_click_same_crossing',
+  'click-retargeted-to-touchstart',
+  'tapTargetMismatchDetected',
+  'safeZonePositioningAfterOpen',
+  'postOpenFlickerRisk'
 ].forEach((traceToken) => assert(appSource.includes(traceToken), `V918 click trace includes ${traceToken}`));
 
 const openingFunctionStart = appSource.indexOf('function openCrossingPopupFromMarkerInteraction');
@@ -65,7 +69,8 @@ assert(appSource.includes('openDirectlyOnClick("direct-click")'), 'V918 opens cr
 assert(appSource.includes('safeZonePositioningOnly'), 'V918 records safe-zone movement as positioning only after the direct open');
 assert(!openingFunction.includes('safe_zone_moveend'), 'V918 no longer uses safe-zone moveend as the routine first open trigger');
 assert(!openingFunction.includes('post-pan-fallback'), 'V918 no longer schedules routine delayed post-pan popup opens');
-assert(appSource.includes('visibility-retry-already-visible'), 'V918 keeps visible retry suppression only as a fallback if verification still needs it');
+assert(appSource.includes('popupDomExists'), 'V918 treats existing popup DOM as verified before scheduling fallback retry');
+assert(appSource.includes('lockedTapTarget?.crossingId'), 'V918 retargets overlapping marker clicks back to the touchstart crossing');
 
 [
   'Executive summary',

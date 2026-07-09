@@ -30,6 +30,12 @@ assert(appSource.includes('version: "V918-root-cause"'), 'V918 root-cause audit 
   'crossingRenderDuringClick',
   'mapMoveBeforeOpen',
   'safeZoneMoveBeforeOpen',
+  'tapTargetMismatchDetected',
+  'pointerDownCrossingId',
+  'touchStartCrossingId',
+  'clickCrossingId',
+  'safeZonePositioningAfterOpen',
+  'postOpenFlickerRisk',
   'rootCause',
   'recommendedFix',
   'protectedSystemsUnchanged'
@@ -45,7 +51,13 @@ assert(appSource.includes('version: "V918-root-cause"'), 'V918 root-cause audit 
   'popupDomExistsAfterOpenAttempt',
   'mapMovedBeforePopupAppeared',
   'markerWasRemovedOrRecreatedDuringClick',
-  'overlayElementAtTapPoint'
+  'overlayElementAtTapPoint',
+  'tapTargetMismatchDetected',
+  'pointerDownCrossingId',
+  'touchStartCrossingId',
+  'clickCrossingId',
+  'safeZonePositioningAfterOpen',
+  'postOpenFlickerRisk'
 ].forEach((token) => assert(appSource.includes(token), `click trace includes ${token}`));
 assert(auditDoc.includes('First-click failure investigation'), 'doc includes first-click failure investigation');
 assert(auditDoc.includes('Flicker investigation'), 'doc includes flicker investigation');
