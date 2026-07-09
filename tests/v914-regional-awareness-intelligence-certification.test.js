@@ -25,8 +25,11 @@ const sandbox = {
     safeForBeta: true,
     operationalCountyCount: 28,
     communityAwareCountyCount: 28,
+    configuredCommunityCount: 261,
     promotedCommunityCounts: { Liberty: 3, Hardin: 2, Jasper: 7, Newton: 5, Tyler: 7, Waller: 2, Austin: 2, Washington: 2, Brazos: 2, Grimes: 2, Wharton: 2, Colorado: 2, Fayette: 2, Lavaca: 2, Jackson: 2, Matagorda: 2, Calhoun: 2 }
   }),
+  gridlyPortraitStabilitySmokeAudit: () => ({ available: true, isStrictPortraitMobile: true, majorProblems: ['transient-dom-condition'] }),
+  gridlyPortraitSpatialOwnershipAudit: () => ({ available: true, pass: true, portraitSpatialOwnershipPass: true }),
   gridlyCommunityViewportCrossingStabilizationAudit: () => ({ safeForBeta: true })
 };
 sandbox.window = sandbox;
@@ -42,6 +45,7 @@ assert.strictEqual(audit.version, 'V914');
 assert.strictEqual(audit.safeForBeta, true);
 assert.strictEqual(audit.operationalCountyCount, 28);
 assert.strictEqual(audit.communityAwareCountyCount, 28);
+assert.strictEqual(audit.configuredCommunityCount, 261);
 assert.strictEqual(audit.storyEngineAvailable, true);
 assert.strictEqual(audit.evidenceExperienceAvailable, true);
 assert.strictEqual(audit.communityEvidenceAvailable, true);
