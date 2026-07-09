@@ -60,7 +60,12 @@ assert(appSource.includes('GRIDLY_CROSSING_POPUP_CLICK_TRACE_LIMIT = 25'), 'V918
   'popupOpenPending',
   'secondTapDuringPendingOpen',
   'secondTapSuppressedDuringPendingOpen',
-  'dom-click-fallback'
+  'dom-click-fallback',
+  'multipleEarlyTapOpenDetected',
+  'earlyTapOpenCandidateIds',
+  'lockedTapCrossingId',
+  'ignoredEarlyTapCrossingIds',
+  'early_tap_open_ignored'
 ].forEach((traceToken) => assert(appSource.includes(traceToken), `V918 click trace includes ${traceToken}`));
 
 const openingFunctionStart = appSource.indexOf('function openCrossingPopupFromMarkerInteraction');
@@ -79,6 +84,8 @@ assert(appSource.includes('popupDomExists'), 'V918 treats existing popup DOM as 
 assert(appSource.includes('lockedTapTarget?.crossingId'), 'V918 retargets overlapping marker clicks back to the touchstart crossing');
 assert(appSource.includes('markerElForDomClickFallback.addEventListener("click"'), 'V918 routes marker DOM clicks into the app crossing popup handler when Leaflet tap dispatch misses');
 assert(appSource.includes('secondTapSuppressedDuringPendingOpen: true'), 'V918 suppresses a second tap while the same crossing popup open is pending');
+assert(appSource.includes('rememberGridlyCrossingEarlyTapCandidate'), 'V918 locks a tap session to one early crossing popup candidate');
+assert(appSource.includes('getGridlyActiveCrossingTapLock'), 'V918 reuses the pointerdown/touchstart crossing lock for overlapping DOM handlers');
 
 [
   'Executive summary',
