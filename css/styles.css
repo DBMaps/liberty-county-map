@@ -25067,17 +25067,28 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   display: grid;
   gap: 0;
   padding: 0 15px 14px;
+  min-width: 0;
+  overflow: visible;
 }
 
 #gridlyPortraitV2 .gridly-evidence-item {
   padding: 12px 0;
   border-top: 1px solid rgba(150, 235, 229, 0.18);
+  min-width: 0;
+  max-height: none;
+  overflow: visible;
 }
 
 #gridlyPortraitV2 .gridly-evidence-item h4,
 #gridlyPortraitV2 .gridly-evidence-item p,
 #gridlyPortraitV2 .gridly-evidence-item small {
   margin: 0;
+  max-height: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 #gridlyPortraitV2 .gridly-evidence-item h4 {
@@ -25094,6 +25105,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   font-size: 0.94rem;
   font-weight: 740;
   line-height: 1.28;
+  overflow-wrap: anywhere;
 }
 
 #gridlyPortraitV2 .gridly-evidence-item small {
@@ -25103,4 +25115,5 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   font-size: 0.82rem;
   font-weight: 620;
   line-height: 1.28;
+  overflow-wrap: anywhere;
 }
