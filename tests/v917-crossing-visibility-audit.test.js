@@ -13,6 +13,9 @@ assert.match(app, /markersDisappearAtHighZoom/, 'V917 reports high-zoom disappea
 assert.match(app, /renderedCrossingMarkerCount/, 'V917 reports live rendered marker count');
 assert.match(app, /liveRenderMatchesPolicy/, 'V917 compares live render state with policy');
 assert.match(app, /possibleLifecycleRefreshIssue/, 'V917 reports lifecycle refresh diagnosis');
+assert.match(app, /crossingMarkerStreetZoomSizeApplied/, 'V917 reports street zoom marker size application');
+assert.match(app, /crossingMarkerVisualScale/, 'V917 reports marker visual scale');
+assert.match(app, /function getGridlyCrossingMarkerVisualScale/, 'V917 has a zoom-aware crossing marker visual scale helper');
 
 assert.match(app, /function getGridlyPolicyVisibleCrossings/, 'V917 lifecycle render path has a policy-scoped visible crossing helper');
 assert.match(app, /visibilityPolicy\.renderMode === "viewport-all"/, 'street zoom uses viewport-all policy source instead of geo-filter subset');
@@ -95,6 +98,8 @@ assert.strictEqual(audit.possibleViewportFilterIssue, false);
 assert.strictEqual(audit.markersDisappearObserved, false);
 assert.strictEqual(audit.streetZoomRepopulationAttempted, false);
 assert.strictEqual(audit.streetZoomRepopulationSucceeded, false);
+assert.strictEqual(audit.crossingMarkerStreetZoomSizeApplied, true);
+assert.strictEqual(audit.crossingMarkerVisualScale, 1.08);
 assert.strictEqual(audit.candidateCrossingCount, 0);
 assert.strictEqual(audit.likelyDisappearanceCause, 'not_reproduced_by_current_audit_sample');
 assert.ok(Array.isArray(audit.manualComparisonInstructions), 'manual comparison instructions are returned');
@@ -109,5 +114,7 @@ assert.ok(doc.includes('liveRenderMatchesPolicy'), 'doc includes live render pol
 assert.ok(doc.includes('markersDisappearObserved'), 'doc includes observed disappearance field');
 assert.ok(doc.includes('streetZoomRepopulationSucceeded'), 'doc includes repopulation success field');
 assert.ok(doc.includes('candidateCrossingCount'), 'doc includes candidate diagnostics');
+assert.ok(doc.includes('crossingMarkerStreetZoomSizeApplied'), 'doc includes street zoom marker size audit flag');
+assert.ok(doc.includes('crossingMarkerVisualScale'), 'doc includes marker visual scale audit field');
 
 console.log('V917 crossing visibility audit test passed');

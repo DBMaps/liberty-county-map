@@ -45,6 +45,7 @@ Screenshots show markers visible at a lower zoom and absent after zooming in whe
 - Configured first appearance: zoom **12** (`medium-zoom`).
 - Configured broader viewport-limited rendering: zoom **14** (`neighborhood-zoom`).
 - Configured street/high-zoom rendering: zoom **15+** (`street-zoom` / `very-close-zoom`).
+- V917 street-name readability refinement: zoom **16+** keeps the same visibility policy but applies a modest crossing marker visual scale (`crossingMarkerStreetZoomSizeApplied: true`, `crossingMarkerVisualScale: 1.08`).
 - Configured high-zoom maximum: **none** (`maximumVisibleZoom: null`).
 - Screenshot-observed disappearance after street labels appear is **not** explained by configured policy.
 - The helper must be run at both the visible zoom and disappeared zoom to determine whether live rendering drops to zero while policy still allows markers.
@@ -85,7 +86,7 @@ The helper flags `possibleLayerOwnershipIssue` when policy expects markers but `
 
 ## Render ownership
 
-`renderCrossings()` owns crossing marker creation, popup binding, marker click handling, production PNG assignment, route-impact styling, and marker lifecycle cleanup. V917 adds only audit diagnostics and documentation; it does not redesign render ownership.
+`renderCrossings()` owns crossing marker creation, popup binding, marker click handling, production PNG assignment, route-impact styling, and marker lifecycle cleanup. V917 adds audit diagnostics and a presentation-only street zoom marker size refinement; it does not redesign render ownership.
 
 The helper flags `possibleLifecycleRefreshIssue` when policy expects markers in the current area but no layer/DOM/marker-map evidence remains.
 
@@ -133,6 +134,8 @@ Compare:
 - `liveRenderMatchesPolicy`
 - `markersDisappearObserved`
 - `likelyDisappearanceCause`
+- `crossingMarkerStreetZoomSizeApplied`
+- `crossingMarkerVisualScale`
 
 ## Certified public roadway scope
 
@@ -174,6 +177,8 @@ Expected configured-policy headline result:
   renderPolicyAllowsCurrentZoom: true,
   renderedCrossingMarkerCount: 0, // example mismatch value when screenshot disappearance is reproduced
   liveRenderMatchesPolicy: false,
+  crossingMarkerStreetZoomSizeApplied: true,
+  crossingMarkerVisualScale: 1.08,
   markersDisappearObserved: true,
   likelyDisappearanceCause: "render_lifecycle_refresh" // or viewport/layer/visual-stacking depending on live evidence
 }

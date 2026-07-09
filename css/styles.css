@@ -19251,6 +19251,14 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   opacity: 0.82 !important;
 }
 
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap.gridly-crossing-street-zoom-marker-size,
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
+#map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+  width: 78px !important;
+  height: 78px !important;
+}
+
 @media (max-width: 640px) and (orientation: portrait) {
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon,
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap,
@@ -19258,6 +19266,14 @@ body[data-mobile-mode] .route-setup-modal-card[data-mode="manage"] > .route-setu
   #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
     width: 76px !important;
     height: 76px !important;
+  }
+
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size,
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon .gridly-marker-wrap.gridly-crossing-marker-wrap.gridly-crossing-street-zoom-marker-size,
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"],
+  #map .leaflet-marker-icon.gridly-crossing-production-marker-icon.gridly-crossing-infrastructure-marker-icon.gridly-crossing-street-zoom-marker-size .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+    width: 80px !important;
+    height: 80px !important;
   }
 }
 
