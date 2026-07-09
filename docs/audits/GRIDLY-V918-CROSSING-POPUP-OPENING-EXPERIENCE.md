@@ -87,3 +87,13 @@ Not yet confirmed in code. This update intentionally avoids another behavioral f
 ### Recommended minimal fix
 
 Use the `rootCause` and `recommendedFix` fields from `window.gridlyCrossingPopupRootCauseAudit?.()` after a first-click/second-click reproduction. If the helper reports overlay interception, the minimal fix should target pointer-events/stacking for that overlay. If it reports `marker.openPopup()` without popup DOM visibility, the minimal fix should preserve the first app click handler while preventing map movement/render/marker replacement until popup DOM is confirmed. Popup content, popup buttons, crossing inventory/classification/filtering, V917 marker visibility/size, and protected systems remain unchanged.
+
+## V918 follow-up — tap target mismatch and post-open flicker root cause
+
+Browser tracing confirmed a first-tap target mismatch where `pointerdown` and `touchstart` began on one visible crossing marker but the final synthetic `click` resolved to a nearby overlapping crossing marker. The confirmed cause is touch/click retargeting across tightly clustered Leaflet marker DOM. The fix records the crossing resolved at `pointerdown`/`touchstart`, treats it as the tap target lock for the same tap point, and retargets any overlapping marker click back to the locked crossing instead of allowing a nearby marker to steal the final click.
+
+The root-cause audit now exposes `tapTargetMismatchDetected`, `pointerDownCrossingId`, `touchStartCrossingId`, and `clickCrossingId` so one-tap browser evidence can prove whether all phases resolve to the same crossing. Expected stable evidence for a normal tap is matching crossing ids across `pointerdown`, `touchstart`, `click`, and `marker_click`.
+
+A second confirmed flicker risk came from the post-open safe-zone positioning verification path. The popup could already have DOM after `popup_opened`, but the verification path still armed retry/duplicate-open suppression lifecycle events during normal safe-zone movement. The fix treats existing popup DOM as verified, completes the open without rebuilding or reopening the popup, and records `safeZonePositioningAfterOpen` plus `postOpenFlickerRisk` so routine positioning can be distinguished from an actual missing-DOM fallback.
+
+Normal post-open safe-zone positioning should now produce `safe_zone_positioning` only. `retry_skipped_already_visible` and `duplicate_open_suppressed` should appear only when popup DOM is actually missing and the fallback retry path is required.
