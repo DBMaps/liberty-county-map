@@ -21,7 +21,7 @@ const sandbox = {
   safeDisplayText: (value, fallback = '') => String(value ?? fallback),
   getGridlyCanonicalAwarenessPresentationContext: () => ({ label: 'Liberty County' }),
   exposeGridlyAuditHelper: () => {},
-  gridlyBriefInteractionText: () => '',
+  gridlyBriefInteractionText: (selector) => selector === '#gridlyV2TopStatusPrimary' ? 'Your area is clear right now' : '',
   gridlyBriefInteractionWeatherBridge: () => null,
   gridlyCommunityCoverageCompletionAudit: () => ({ safeForBeta: true }),
   gridlyCommunityViewportCrossingStabilizationAudit: () => ({ safeForBeta: true }),
@@ -48,7 +48,7 @@ assert.strictEqual(audit.railRankingAvailable, true);
 assert.strictEqual(audit.confidenceRankingPass, true);
 assert.strictEqual(audit.recencyRankingPass, true);
 assert.strictEqual(audit.recencyCapabilityCertification.communityRecencySignal, true);
-assert.strictEqual(audit.recencyCapabilityCertification.quietSuppressionSafe, true);
+assert.strictEqual(audit.recencyCapabilityCertification.quietSuppressionSafe, true, 'quiet/routine suppression stays certified without live provider events');
 assert.strictEqual(audit.recencyCapabilityCertification.requiresLiveProviderEvidence, false);
 assert.strictEqual(audit.reinforcingEvidencePass, true);
 assert.strictEqual(audit.conflictingEvidencePass, true);
@@ -61,6 +61,7 @@ assert.strictEqual(audit.protectedSystemsUnchanged, true);
 assert.strictEqual(sandbox.activeHazards.length, 0, 'recency certification does not require live active hazards');
 assert.strictEqual(sandbox.activeReports.length, 0, 'recency certification does not require live active reports');
 assert.deepStrictEqual(sandbox.window.gridlyDriveTexasConnector.getNormalizedRecords(), [], 'recency certification does not require live transportation records');
+assert.strictEqual(audit.scenarioTemplates.routineSuppressed, 'no_active_concerns', 'test covers quiet no-live-provider state rather than a narrow quiet_conditions template');
 
 for (const key of ['communityOnly', 'weatherOnly', 'transportationOnly', 'railOnly', 'communityWeather', 'communityTransportation', 'communityRail', 'weatherTransportation', 'transportationRail', 'communityWeatherTransportation', 'allEvidence']) {
   assert.ok(audit.scenarioTemplates[key], `scenario template exists: ${key}`);
