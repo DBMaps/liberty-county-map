@@ -14,6 +14,14 @@ assert.match(app, /renderedCrossingMarkerCount/, 'V917 reports live rendered mar
 assert.match(app, /liveRenderMatchesPolicy/, 'V917 compares live render state with policy');
 assert.match(app, /possibleLifecycleRefreshIssue/, 'V917 reports lifecycle refresh diagnosis');
 
+assert.match(app, /function getGridlyPolicyVisibleCrossings/, 'V917 lifecycle render path has a policy-scoped visible crossing helper');
+assert.match(app, /visibilityPolicy\.renderMode === "viewport-all"/, 'street zoom uses viewport-all policy source instead of geo-filter subset');
+assert.match(app, /function isGridlyPublicRoadwayCrossing/, 'V917 preserves public-roadway-only crossing visibility');
+assert.match(app, /isGridlyReportableCrossing\(crossing\) \|\| !isGridlyPublicRoadwayCrossing\(crossing\)/, 'V917 render helper rejects non-reportable and non-public-roadway crossings');
+assert.match(app, /buildCrossingRenderSignature\(visibleCrossings = \[\], visibilityPolicy = null, bounds = null\)/, 'V917 render signature includes policy and viewport lifecycle inputs');
+assert.match(app, /visibilityPolicy\?\.renderMode \|\| "unknown"/, 'V917 render signature changes when zoom policy stage changes');
+assert.match(app, /boundsKey/, 'V917 render signature changes when viewport bounds change');
+
 const start = app.indexOf('function gridlyCrossingVisibilityAudit()');
 const end = app.indexOf('function shouldShowCrossingInfrastructureMarkers');
 assert.ok(start > -1 && end > start, 'V917 slice boundaries found');
