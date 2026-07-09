@@ -7,7 +7,8 @@ const doc = fs.readFileSync('docs/architecture/GRIDLY-WEATHER-EVIDENCE-PROMOTION
 
 assert.match(app, /function gridlyStoryWeatherMeaningfulImpact/, 'meaningful weather classifier exists');
 assert.match(app, /window\.gridlyWeatherEvidencePromotionAudit\s*=\s*gridlyWeatherEvidencePromotionAudit/, 'V912 audit helper is exposed');
-assert.match(app, /weatherSuppressedWhenIrrelevant/, 'audit reports irrelevant weather suppression');
+assert.match(app, /currentWeatherSuppressed/, 'audit reports current weather suppression');
+assert.match(app, /capabilityWeatherSuppressionPass/, 'audit reports capability weather suppression');
 assert.match(app, /providerNamesExposed/, 'audit reports provider name exposure');
 assert.match(app, /technicalTermsDetected/, 'audit reports technical term exposure');
 
@@ -46,15 +47,23 @@ assert.strictEqual(fog.recommendation, 'Allow extra travel time.');
 
 const audit = sandbox.gridlyWeatherEvidencePromotionAudit();
 assert.strictEqual(audit.available, true);
-assert.strictEqual(audit.version, 'V912');
+assert.strictEqual(audit.version, 'V912R1');
 assert.strictEqual(audit.safeForBeta, true);
+assert.strictEqual(audit.currentWeatherPromotedToStory, false);
+assert.strictEqual(audit.currentWeatherPromotedToEvidence, false);
+assert.strictEqual(audit.currentWeatherSuppressed, true);
+assert.strictEqual(audit.currentWeatherEvidence, null);
+assert.strictEqual(audit.capabilityWeatherPromotionPass, true);
+assert.strictEqual(audit.capabilityWeatherEvidencePass, true);
+assert.strictEqual(audit.capabilityWeatherSuppressionPass, true);
 assert.strictEqual(audit.weatherPromotedToStory, true);
 assert.strictEqual(audit.weatherPromotedToEvidence, true);
 assert.strictEqual(audit.weatherSuppressedWhenIrrelevant, true);
+assert.strictEqual(audit.legacyFieldsRepresentCapabilitySelfTest, true);
 assert.strictEqual(audit.providerNamesExposed.length, 0);
 assert.strictEqual(audit.technicalTermsDetected.length, 0);
 
-for (const section of ['Mission', 'Weather philosophy', 'Promotion rules', 'Suppression rules', 'Story examples', 'Evidence examples', 'Consumer wording', 'Future opportunities', 'Testing checklist', 'Merge placeholder']) {
+for (const section of ['Mission', 'Weather philosophy', 'Promotion rules', 'Suppression rules', 'Story examples', 'Evidence examples', 'Consumer wording', 'Audit state model', 'Current State', 'Capability Self-Test', 'Future opportunities', 'Testing checklist', 'Merge placeholder']) {
   assert.ok(doc.includes(section), `doc includes ${section}`);
 }
 

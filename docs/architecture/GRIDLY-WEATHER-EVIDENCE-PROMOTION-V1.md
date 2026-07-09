@@ -56,6 +56,45 @@ Approved language is plain and travel-focused:
 
 Do not expose provider names, API names, weather codes, payload terminology, connector details, or engineering language in consumer surfaces.
 
+
+## Audit state model
+
+`window.gridlyWeatherEvidencePromotionAudit?.()` reports two separate concepts so quiet live conditions do not look like an active weather story.
+
+### Current State
+
+Current-state fields describe what is visible in the live Story Engine story and the Evidence Experience at the time the audit runs:
+
+- `currentWeatherPromotedToStory`: whether the current Story Engine story includes weather evidence.
+- `currentWeatherPromotedToEvidence`: whether the current Evidence Experience model includes a Weather section.
+- `currentWeatherSuppressed`: whether weather is absent from both current surfaces.
+- `currentWeatherEvidence`: the current Story Engine weather evidence object, or `null` when weather is suppressed.
+
+For current quiet weather or no current weather impact, the expected audit shape is:
+
+```js
+{
+  currentWeatherPromotedToStory: false,
+  currentWeatherPromotedToEvidence: false,
+  currentWeatherSuppressed: true,
+  currentWeatherEvidence: null
+}
+```
+
+### Capability Self-Test
+
+Capability fields are fixture-based self-tests that confirm the V912 promotion and suppression rules still work without saying that weather is currently visible:
+
+```js
+{
+  capabilityWeatherPromotionPass: true,
+  capabilityWeatherEvidencePass: true,
+  capabilityWeatherSuppressionPass: true
+}
+```
+
+Legacy audit fields `weatherPromotedToStory`, `weatherPromotedToEvidence`, and `weatherSuppressedWhenIrrelevant` are retained as capability self-test aliases for compatibility. The `legacyFieldsRepresentCapabilitySelfTest` flag marks that they do not describe the current visible weather state.
+
 ## Future opportunities
 
 - Tune thresholds by county and season after beta observation.
@@ -71,7 +110,7 @@ Do not expose provider names, API names, weather codes, payload terminology, con
 - Run relevant weather evidence tests.
 - Run `git diff --cached --check` before commit.
 - Browser validation: hard refresh, confirm quiet weather is hidden, meaningful weather contributes to Situation, Recommendation, and Evidence.
-- Run `window.gridlyWeatherEvidencePromotionAudit?.()` and confirm `safeForBeta: true`.
+- Run `window.gridlyWeatherEvidencePromotionAudit?.()` and confirm `safeForBeta: true`, current weather fields match the live Story Engine evidence, and capability fields pass.
 - Verify prior audits remain `safeForBeta: true`: `window.gridlyEvidenceExperienceAudit?.()`, `window.gridlyStoryEngineAudit?.()`, and `window.gridlyCommunityCoverageCompletionAudit?.()`.
 
 ## Merge placeholder
