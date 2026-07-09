@@ -22,6 +22,35 @@ assert(appSource.includes('duplicateOpenSuppressed'), 'V918 audit reports suppre
 assert(appSource.includes('retryOpenSkippedBecauseAlreadyVisible'), 'V918 audit reports visible popup retry skips');
 assert(appSource.includes('safeZoneRetryObserved'), 'V918 audit reports safe-zone visibility retry observation');
 
+assert(appSource.includes('function gridlyCrossingPopupClickTrace()'), 'V918 exposes crossing popup click trace helper');
+assert(appSource.includes('window.gridlyCrossingPopupClickTrace = gridlyCrossingPopupClickTrace'), 'V918 click trace helper is available on window');
+assert(appSource.includes('window.gridlyResetCrossingPopupClickTrace = gridlyResetCrossingPopupClickTrace'), 'V918 click trace reset helper is available on window');
+assert(appSource.includes('GRIDLY_CROSSING_POPUP_CLICK_TRACE_LIMIT = 25'), 'V918 click trace is capped to 25 events');
+[
+  'timestamp',
+  'eventType',
+  'crossingId',
+  'clickCountForCrossing',
+  'openPopupCallCount',
+  'popupOpenEventCount',
+  'popupCloseEventCount',
+  'openReason',
+  'duplicateOpenSuppressed',
+  'retryOpenSkippedBecauseAlreadyVisible',
+  'safeZoneRetryObserved',
+  'markerDomPresent',
+  'popupDomPresent',
+  'flashObserved',
+  'marker_click',
+  'popup_open_requested',
+  'popup_opened',
+  'safe_zone_moveend',
+  'retry_skipped_already_visible',
+  'duplicate_open_suppressed',
+  'popup_closed',
+  'second_click_same_crossing'
+].forEach((traceToken) => assert(appSource.includes(traceToken), `V918 click trace includes ${traceToken}`));
+
 const openingFunctionStart = appSource.indexOf('function openCrossingPopupFromMarkerInteraction');
 const openingFunctionEnd = appSource.indexOf('function getGridlyCrossingMarkerTouchPoint', openingFunctionStart);
 const openingFunction = appSource.slice(openingFunctionStart, openingFunctionEnd);

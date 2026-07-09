@@ -38,3 +38,11 @@ V918 removes the explicit `map.closePopup()` from `openCrossingPopupFromMarkerIn
 
 ## Final recommendation
 Merge V918 as a polish-only correction. Validate in the browser by clicking a crossing marker and running `window.gridlyCrossingPopupOpeningAudit?.()`. Expected stable result: no marker recreation, no popup close-before-open, no repeated open cycle, no DOM replacement, no observed flash, and `protectedSystemsUnchanged: true`.
+
+## Click trace diagnostics
+
+V918 now includes tracing-only diagnostics for comparing the first and second click on the same crossing without changing popup behavior. Use `window.gridlyResetCrossingPopupClickTrace?.()` before a browser validation pass, click a crossing once, inspect `window.gridlyCrossingPopupClickTrace?.()`, click the same crossing again, and inspect the trace again.
+
+The trace is capped to the most recent 25 lifecycle events and preserves event order. Each event includes `timestamp`, `eventType`, `crossingId`, `clickCountForCrossing`, `openPopupCallCount`, `popupOpenEventCount`, `popupCloseEventCount`, `openReason`, `duplicateOpenSuppressed`, `retryOpenSkippedBecauseAlreadyVisible`, `safeZoneRetryObserved`, `markerDomPresent`, `popupDomPresent`, and `flashObserved`.
+
+Trace event types include `marker_click`, `popup_open_requested`, `popup_opened`, `safe_zone_moveend`, `retry_skipped_already_visible`, `duplicate_open_suppressed`, `popup_closed`, and `second_click_same_crossing`. These diagnostics are intended to distinguish normal second-click behavior from an already-open reopen, a close/open toggle, safe-zone `moveend` retriggering, duplicate open calls, or flash-producing lifecycle churn.
