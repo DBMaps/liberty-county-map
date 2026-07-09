@@ -17,7 +17,12 @@ assert.match(app, /possibleLifecycleRefreshIssue/, 'V917 reports lifecycle refre
 assert.match(app, /function getGridlyPolicyVisibleCrossings/, 'V917 lifecycle render path has a policy-scoped visible crossing helper');
 assert.match(app, /visibilityPolicy\.renderMode === "viewport-all"/, 'street zoom uses viewport-all policy source instead of geo-filter subset');
 assert.match(app, /function isGridlyPublicRoadwayCrossing/, 'V917 preserves public-roadway-only crossing visibility');
-assert.match(app, /isGridlyReportableCrossing\(crossing\) \|\| !isGridlyPublicRoadwayCrossing\(crossing\)/, 'V917 render helper rejects non-reportable and non-public-roadway crossings');
+assert.match(app, /!crossing \|\| !isGridlyReportableCrossing\(crossing\) \|\| !isGridlyPublicRoadwayCrossing\(crossing\)/, 'V917 render helper rejects non-reportable and non-public-roadway crossings');
+assert.match(app, /const streetZoomRepopulationEligible = Boolean/, 'V917 has a same-cycle street zoom repopulation safeguard');
+assert.match(app, /renderCrossingMarkersFromList\(repopulationCrossings, \{ ignoreClusterHidden: true \}\)/, 'V917 repopulates from policy-scoped visible crossings when initial render is empty');
+assert.match(app, /streetZoomRepopulationSucceeded/, 'V917 reports street zoom repopulation success');
+assert.match(app, /candidateCrossingCount/, 'V917 reports candidate crossing count');
+assert.match(app, /skippedCandidateReasons/, 'V917 reports candidate skip reasons');
 assert.match(app, /buildCrossingRenderSignature\(visibleCrossings = \[\], visibilityPolicy = null, bounds = null\)/, 'V917 render signature includes policy and viewport lifecycle inputs');
 assert.match(app, /visibilityPolicy\?\.renderMode \|\| "unknown"/, 'V917 render signature changes when zoom policy stage changes');
 assert.match(app, /boundsKey/, 'V917 render signature changes when viewport bounds change');
@@ -88,6 +93,9 @@ assert.strictEqual(audit.possibleLifecycleRefreshIssue, false);
 assert.strictEqual(audit.possibleLayerOwnershipIssue, false);
 assert.strictEqual(audit.possibleViewportFilterIssue, false);
 assert.strictEqual(audit.markersDisappearObserved, false);
+assert.strictEqual(audit.streetZoomRepopulationAttempted, false);
+assert.strictEqual(audit.streetZoomRepopulationSucceeded, false);
+assert.strictEqual(audit.candidateCrossingCount, 0);
 assert.strictEqual(audit.likelyDisappearanceCause, 'not_reproduced_by_current_audit_sample');
 assert.ok(Array.isArray(audit.manualComparisonInstructions), 'manual comparison instructions are returned');
 
@@ -99,5 +107,7 @@ assert.ok(doc.includes('minimumVisibleZoom: 12'), 'doc includes expected first v
 assert.ok(doc.includes('maximumVisibleZoom: null'), 'doc includes expected no max zoom');
 assert.ok(doc.includes('liveRenderMatchesPolicy'), 'doc includes live render policy comparison');
 assert.ok(doc.includes('markersDisappearObserved'), 'doc includes observed disappearance field');
+assert.ok(doc.includes('streetZoomRepopulationSucceeded'), 'doc includes repopulation success field');
+assert.ok(doc.includes('candidateCrossingCount'), 'doc includes candidate diagnostics');
 
 console.log('V917 crossing visibility audit test passed');
