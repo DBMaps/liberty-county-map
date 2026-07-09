@@ -4,7 +4,7 @@
 V918 audits and stabilizes the railroad crossing popup opening path. The observed flash risk was traced to an explicit pre-open `map.closePopup()` call in the crossing marker interaction sequence. That call could remove the currently rendered popup shell before the selected crossing popup opened, creating a visible close/open flicker even when the selected marker and popup content were otherwise stable.
 
 ## Popup opening lifecycle
-Crossing markers bind popup content during marker creation. A marker click or early touch/pointer tap starts a popup pan session, records the selected crossing, optionally moves the camera to a safe popup anchor, and finalizes with one `marker.openPopup()` call. V918 instruments this lifecycle with `gridlyCrossingPopupOpeningAuditState` and exposes the browser helper `window.gridlyCrossingPopupOpeningAudit?.()`.
+Crossing markers bind popup content during marker creation. A marker click or early touch/pointer tap starts a popup pan session, records the selected crossing, finalizes with one direct `marker.openPopup()` call, and then performs any needed safe-zone camera positioning without using `moveend` as the visible open trigger. V918 instruments this lifecycle with `gridlyCrossingPopupOpeningAuditState` and exposes the browser helper `window.gridlyCrossingPopupOpeningAudit?.()`.
 
 ## Marker lifecycle
 `renderCrossings()` owns crossing marker creation, stores active handles in `crossingMarkers`, and renders those markers into `crossingLayer`. V918 does not change inventory selection, classification, PUBLIC_ROADWAY filtering, marker content, marker assets, popup content, or popup actions. The new audit records whether `renderCrossings()` runs while a popup opening session is still pending, because that would imply marker recreation during the open.
@@ -16,7 +16,7 @@ Before V918, the opening sequence explicitly called `map.closePopup()` before an
 The crossing popup audit checks the live popup element and content wrapper for computed CSS transition or animation values. The fix does not add popup styling or animation changes.
 
 ## Popup timing review
-The existing timing model remains: no-pan interactions open on the next animation frame; manual pan cases open after `moveend` or the existing fallback timeout. V918's smallest correction is limited to avoiding the intermediate close state before the final open.
+The V918 direct-open timing model is now: marker click calls `marker.openPopup()` once as the primary tap action. Manual safe-zone movement may still pan the map after the popup is opened, but `moveend` is recorded as positioning only and is not the routine visible open trigger. Visibility retry remains only as a fallback when a short post-open verification cannot find popup DOM.
 
 ## Z-index review
 The audit captures marker z-index before opening and compares it after verified open. A change is reported as `zIndexPromotionDetected`. V918 does not intentionally promote crossing marker z-index during popup opening.
@@ -45,4 +45,9 @@ V918 now includes tracing-only diagnostics for comparing the first and second cl
 
 The trace is capped to the most recent 25 lifecycle events and preserves event order. Each event includes `timestamp`, `eventType`, `crossingId`, `clickCountForCrossing`, `openPopupCallCount`, `popupOpenEventCount`, `popupCloseEventCount`, `openReason`, `duplicateOpenSuppressed`, `retryOpenSkippedBecauseAlreadyVisible`, `safeZoneRetryObserved`, `markerDomPresent`, `popupDomPresent`, and `flashObserved`.
 
-Trace event types include `marker_click`, `popup_open_requested`, `popup_opened`, `safe_zone_moveend`, `retry_skipped_already_visible`, `duplicate_open_suppressed`, `popup_closed`, and `second_click_same_crossing`. These diagnostics are intended to distinguish normal second-click behavior from an already-open reopen, a close/open toggle, safe-zone `moveend` retriggering, duplicate open calls, or flash-producing lifecycle churn.
+Trace event types include `marker_click`, `popup_open_requested`, `popup_opened`, optional `safe_zone_positioning`, fallback-only `retry_skipped_already_visible` / `duplicate_open_suppressed`, `popup_closed`, and `second_click_same_crossing`. These diagnostics are intended to distinguish normal second-click behavior from an already-open reopen, a close/open toggle, safe-zone `moveend` retriggering, duplicate open calls, or flash-producing lifecycle churn.
+
+
+## Direct-open follow-up
+
+Crossing popup opening now reports `opensDirectlyOnClick`, `safeZoneMoveBeforeOpen`, `safeZonePositioningOnly`, and `retryUsedAsFallbackOnly`. A normal click should show `marker_click`, `popup_open_requested`, and `popup_opened` with `openPopupCallCount: 1`; safe-zone work, when needed, is recorded as post-open positioning rather than as the open trigger.
