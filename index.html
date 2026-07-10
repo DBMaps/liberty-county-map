@@ -41,10 +41,10 @@
         if (released) return;
         released = true;
         document.documentElement.classList.remove("gridly-prepaint-lock");
-        window.gridlyStartupDiagnostics?.markPrepaintReleased?.("inline prepaint release");
+        (window.gridlyStartupDiagnostics?.markPrepaintReleased || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "prepaintReleased", reason: reason }); })("inline prepaint release");
         window.requestAnimationFrame(function () {
-          window.gridlyStartupDiagnostics?.markFirstVisibleFrame?.("first frame after prepaint release");
-          window.gridlyStartupDiagnostics?.markUiUsable?.("prepaint lock released and visible UI painted");
+          (window.gridlyStartupDiagnostics?.markFirstVisibleFrame || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "firstVisibleFrame", reason: reason }); })("first frame after prepaint release");
+          (window.gridlyStartupDiagnostics?.markUiUsable || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "uiUsable", reason: reason }); })("prepaint lock released and visible UI painted");
         });
         if (document.body) {
           document.body.classList.remove("gridly-startup-guard");
