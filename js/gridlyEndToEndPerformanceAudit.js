@@ -24,7 +24,10 @@
     lastSimulation: null,
     functionAttribution: {},
     listenerLifecycle: {},
-    overheadSamples: []
+    overheadSamples: [],
+    instrumentationOriginals: null,
+    pointerdownListener: null,
+    longTaskObserver: null
   });
 
   const now = () => (globalScope.performance && typeof globalScope.performance.now === "function" ? globalScope.performance.now() : Date.now());
@@ -138,13 +141,14 @@
     return { name: entry.name || "longtask", durationMs: round(entry.duration || entry.durationMs), duration: round(entry.duration || entry.durationMs), startTime: round(entry.startTime), at: wall(), likelyOwner: owner, activeMeasure: active ? { name: active.name, durationMs: active.durationMs, startTime: active.startTime } : null, scenario: ctx.scenario || null, iteration: Number.isFinite(ctx.iteration) ? ctx.iteration : null, renderOrNetwork: classifyMeasure(owner), layerClearDetected: /layer clearing/i.test(owner), layerRebuildDetected: /layer rebuilding|marker rendering/i.test(owner), domReplacementDetected: /large DOM replacement|content updates|rendering/i.test(owner), thresholds: { over50: (entry.duration || entry.durationMs) > 50, over100: (entry.duration || entry.durationMs) > 100, over250: (entry.duration || entry.durationMs) > 250, over500: (entry.duration || entry.durationMs) > 500 } };
   }
   function observeLongTasks() {
-    if (state.longTaskObserverStarted || typeof PerformanceObserver !== "function") return;
+    if (state.longTaskObserverStarted || state.longTaskObserver || typeof PerformanceObserver !== "function") return;
     try {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => { state.longTasks.push(enrichLongTask(entry)); });
         if (state.longTasks.length > 300) state.longTasks.splice(0, state.longTasks.length - 300);
       });
       observer.observe({ entryTypes: ["longtask"] });
+      state.longTaskObserver = observer;
       state.longTaskObserverStarted = true;
     } catch (_error) { state.longTaskObserverStarted = false; }
   }
@@ -162,11 +166,31 @@
     };
     try { const value = fn(); return value && typeof value.then === "function" ? value.then((v) => finish(true, v), (e) => { finish(false); throw e; }) : finish(true, value); } catch (error) { finish(false); throw error; }
   }
+  function isExplicitInstrumentationEnabled() {
+    try {
+      const params = new URLSearchParams(globalScope.location?.search || "");
+      if (["1", "true", "yes", "on"].includes(String(params.get("gridlyPerformanceAudit") || "").toLowerCase())) return true;
+      if (["1", "true", "yes", "on"].includes(String(params.get("gridlyV919Instrumentation") || "").toLowerCase())) return true;
+    } catch (_error) {}
+    try {
+      const storage = globalScope.localStorage;
+      return ["gridlyPerformanceAudit", "gridlyV919Instrumentation", "gridlyV919PerformanceAudit"].some((key) => ["1", "true", "yes", "on"].includes(String(storage?.getItem?.(key) || "").toLowerCase()));
+    } catch (_error) { return false; }
+  }
   function installLightweightInstrumentation() {
-    if (state.instrumentationInstalled) return;
+    if (globalScope.__gridlyV919InstrumentationInstalled || state.instrumentationInstalled) return { installed: false, alreadyInstalled: true };
+    state.instrumentationOriginals = {
+      fetch: globalScope.fetch,
+      setTimeout: globalScope.setTimeout,
+      setInterval: globalScope.setInterval,
+      requestAnimationFrame: globalScope.requestAnimationFrame,
+      addEventListener: typeof EventTarget !== "undefined" && EventTarget.prototype ? EventTarget.prototype.addEventListener : undefined,
+      removeEventListener: typeof EventTarget !== "undefined" && EventTarget.prototype ? EventTarget.prototype.removeEventListener : undefined
+    };
+    globalScope.__gridlyV919InstrumentationInstalled = true;
     state.instrumentationInstalled = true;
     observeLongTasks();
-    const originalFetch = globalScope.fetch;
+    const originalFetch = state.instrumentationOriginals.fetch;
     if (typeof originalFetch === "function") {
       globalScope.fetch = function gridlyV919Fetch(input, init) {
         const started = now();
@@ -186,8 +210,8 @@
       };
     }
     if (typeof EventTarget !== "undefined" && EventTarget.prototype && EventTarget.prototype.addEventListener) {
-      const add = EventTarget.prototype.addEventListener;
-      const remove = EventTarget.prototype.removeEventListener;
+      const add = state.instrumentationOriginals.addEventListener;
+      const remove = state.instrumentationOriginals.removeEventListener;
       EventTarget.prototype.addEventListener = function gridlyV920AddEventListener(type, listener, options) {
         const targetIdentity = this === globalScope ? "window" : (this === document ? "document" : (this && this.id ? `#${this.id}` : this?.tagName || "event-target"));
         const handlerIdentity = listener?.name || "anonymous";
@@ -210,7 +234,7 @@
       };
     }
     ["setInterval", "setTimeout", "requestAnimationFrame"].forEach((name) => {
-      const original = globalScope[name];
+      const original = state.instrumentationOriginals[name];
       if (typeof original !== "function") return;
       globalScope[name] = function gridlyV919TimerWrapper(handler, delay) {
         const wrappedHandler = typeof handler === "function" ? function gridlyV919ObservedTimerHandler() {
@@ -229,12 +253,40 @@
         return id;
       };
     });
-    document.addEventListener("pointerdown", (event) => {
+    state.pointerdownListener = function gridlyV919PointerdownCapture(event) {
       const started = now();
       const target = event.target && event.target.closest && event.target.closest("button,a,input,summary,[role='button'],[data-section],[data-v2-sheet]");
       if (!target) return;
       requestAnimationFrame(() => markInteraction(target.id || target.dataset?.section || target.dataset?.v2Sheet || target.textContent?.trim()?.slice(0, 30) || "tap", "visualAcknowledgement", started));
-    }, { capture: true, passive: true });
+    };
+    document.addEventListener("pointerdown", state.pointerdownListener, { capture: true, passive: true });
+    return { installed: true, alreadyInstalled: false };
+  }
+  function restoreV919Instrumentation() {
+    const originals = state.instrumentationOriginals;
+    if (state.pointerdownListener && typeof document !== "undefined" && document.removeEventListener) {
+      try { document.removeEventListener("pointerdown", state.pointerdownListener, true); } catch (_error) {}
+    }
+    state.pointerdownListener = null;
+    if (state.longTaskObserver && typeof state.longTaskObserver.disconnect === "function") {
+      try { state.longTaskObserver.disconnect(); } catch (_error) {}
+    }
+    state.longTaskObserver = null;
+    state.longTaskObserverStarted = false;
+    if (originals) {
+      if (typeof originals.fetch === "function") globalScope.fetch = originals.fetch;
+      if (typeof originals.setTimeout === "function") globalScope.setTimeout = originals.setTimeout;
+      if (typeof originals.setInterval === "function") globalScope.setInterval = originals.setInterval;
+      if (typeof originals.requestAnimationFrame === "function") globalScope.requestAnimationFrame = originals.requestAnimationFrame;
+      if (typeof EventTarget !== "undefined" && EventTarget.prototype) {
+        if (typeof originals.addEventListener === "function") EventTarget.prototype.addEventListener = originals.addEventListener;
+        if (typeof originals.removeEventListener === "function") EventTarget.prototype.removeEventListener = originals.removeEventListener;
+      }
+    }
+    state.instrumentationOriginals = null;
+    state.instrumentationInstalled = false;
+    globalScope.__gridlyV919InstrumentationInstalled = false;
+    return { restored: true };
   }
   function listenerSource(listenerName) {
     if (/leaflet|_leaflet|bound _?on/i.test(listenerName || "")) return "Leaflet/internal";
@@ -281,10 +333,12 @@
     return findings.sort((a, b) => ["P0", "P1", "P2", "P3"].indexOf(a.priority) - ["P0", "P1", "P2", "P3"].indexOf(b.priority));
   }
   async function runSimulation(options = {}) {
+    installLightweightInstrumentation();
     const startedAt = new Date().toISOString();
     const iterationsRequested = Math.max(1, Math.min(100, Number(options.iterations || 10)));
     const result = { available: true, completed: false, profile: options.profile || "custom", startedAt, completedAt: null, iterationsRequested, iterationsCompleted: 0, scenarioResults: [], p50: {}, p95: {}, failures: {}, exceptions: [], longTasks: {}, duplicateRequests: [], duplicateRenders: [], blockedMainThreadTime: 0, topBottlenecks: [], recommendations: [], simulatedReportWritesOnly: true, noProductionWrite: true };
     state.lastSimulation = result;
+    try {
     const include = (key) => options[key] !== false;
     const pushException = (scenario, iteration, error) => {
       const rec = { scenario, iteration, message: error?.message || String(error), stack: error?.stack || "", timestamp: new Date().toISOString() };
@@ -323,6 +377,7 @@
     result.recommendations = result.topBottlenecks.map((b) => b.recommendedMinimalFix);
     state.lastSimulation = result;
     return result;
+    } finally { restoreV919Instrumentation(); }
   }
   function simulationSummary() { const sim = state.lastSimulation; return { available: true, version: VERSION, hasSimulation: Boolean(sim), completed: Boolean(sim?.completed), partialResultsAvailable: Boolean(sim && !sim.completed && (sim.scenarioResults?.length || sim.exceptions?.length)), profile: sim?.profile || null, startedAt: sim?.startedAt || null, completedAt: sim?.completedAt || null, iterationsRequested: sim?.iterationsRequested || 0, iterationsCompleted: sim?.iterationsCompleted || 0, scenarioResults: sim?.scenarioResults || [], p50: sim?.p50 || {}, p95: sim?.p95 || {}, failures: sim?.failures || {}, exceptions: sim?.exceptions || [], longTasks: sim?.longTasks || {}, duplicateRequests: sim?.duplicateRequests || [], duplicateRenders: sim?.duplicateRenders || [], blockedMainThreadTime: sim?.blockedMainThreadTime || 0, topBottlenecks: sim?.topBottlenecks || rankBottlenecks().slice(0, 8), recommendations: sim?.recommendations || [], safeForBeta: true }; }
 
@@ -342,7 +397,10 @@
     state.overheadSamples.push(sample); if (state.overheadSamples.length > 20) state.overheadSamples.shift(); return { available: true, version: VERSION, ...sample, samples: state.overheadSamples.slice(-5) };
   }
 
-  installLightweightInstrumentation();
+  if (isExplicitInstrumentationEnabled()) installLightweightInstrumentation();
+  globalScope.gridlyInstallV919Instrumentation = installLightweightInstrumentation;
+  globalScope.gridlyRestoreV919Instrumentation = restoreV919Instrumentation;
+  globalScope.gridlyV919InstrumentationActivationAudit = () => ({ available: true, version: VERSION, installed: Boolean(globalScope.__gridlyV919InstrumentationInstalled), explicitActivationEnabled: isExplicitInstrumentationEnabled(), appBackgroundLoopAuditWrapperUnchanged: true });
   globalScope.gridlyEndToEndPerformanceAudit = buildAudit;
   globalScope.gridlyRuntimeSchedulerAudit = schedulerAudit;
   globalScope.gridlyRunPerformanceSimulation = runSimulation;
