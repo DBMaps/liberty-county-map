@@ -19,7 +19,7 @@ includes('gridlyV926StopCollectors()', 'per-run collectors are stopped');
 includes('percentile_input_empty', 'missing percentile samples are diagnosed instead of coerced to zero');
 includes('result.exceptions.push', 'partial exceptions are retained');
 includes('result.restorationPass', 'restoration is attempted and recorded');
-includes('gridlyV925CompareMarkerMembership(alignedExpectedIds, gridlyV925MarkerIds())', 'expected-vs-actual marker validation exists');
+includes('gridlyV927R2CaptureFinalMarkerMembership(options)', 'expected-vs-actual marker validation exists');
 includes('missingMarkerIds', 'missing marker validation exists');
 includes('unexpectedMarkerIds', 'unexpected marker validation exists');
 includes('duplicateMarkerIds', 'duplicate marker validation exists');
