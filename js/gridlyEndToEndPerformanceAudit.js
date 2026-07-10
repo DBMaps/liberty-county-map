@@ -1,6 +1,6 @@
 (function gridlyEndToEndPerformanceAuditModule(globalScope) {
   "use strict";
-  const VERSION = "V919-end-to-end-performance-audit";
+  const VERSION = "V920-main-thread-performance-repair";
   const sessionStartedAt = new Date().toISOString();
   const state = globalScope.__gridlyV919PerformanceState || (globalScope.__gridlyV919PerformanceState = {
     version: VERSION,
@@ -21,7 +21,10 @@
     hiddenCallbacksSkipped: 0,
     hiddenCallbacksExecuted: 0,
     hiddenWorkOwners: {},
-    lastSimulation: null
+    lastSimulation: null,
+    functionAttribution: {},
+    listenerLifecycle: {},
+    overheadSamples: []
   });
 
   const now = () => (globalScope.performance && typeof globalScope.performance.now === "function" ? globalScope.performance.now() : Date.now());
@@ -29,6 +32,59 @@
   const round = (value) => Number(Number(value || 0).toFixed(2));
   const safeArray = (value) => Array.isArray(value) ? value : [];
   const getPath = (value) => String(value || "unknown").slice(0, 160);
+
+  function percentile(values, p) {
+    const sorted = values.map(Number).filter(Number.isFinite).sort((a, b) => a - b);
+    if (!sorted.length) return 0;
+    return round(sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * p) - 1))]);
+  }
+  function recordFunctionAttribution(functionName, category, durationMs, meta = {}) {
+    const rec = state.functionAttribution[functionName] || (state.functionAttribution[functionName] = {
+      functionName, category, durations: [], callCount: 0, totalDuration: 0, largestItemCount: 0,
+      latestItemCount: 0, triggeredBy: "unknown", synchronous: true, layerClearDetected: false,
+      layerRebuildDetected: false, domReplacementDetected: false, listenerWiringDetected: false,
+      layoutReadAfterWriteDetected: false
+    });
+    rec.category = category || rec.category;
+    rec.callCount += 1;
+    rec.totalDuration += Number(durationMs) || 0;
+    rec.durations.push(round(durationMs));
+    if (rec.durations.length > 200) rec.durations.shift();
+    const itemCount = Number(meta.itemCount ?? meta.visibleCount ?? meta.count ?? 0) || 0;
+    rec.latestItemCount = itemCount;
+    rec.largestItemCount = Math.max(Number(rec.largestItemCount || 0), itemCount);
+    rec.triggeredBy = meta.triggeredBy || meta.reason || state.currentSimulationContext?.scenario || rec.triggeredBy || "unknown";
+    rec.synchronous = meta.synchronous !== false;
+    rec.layerClearDetected = Boolean(rec.layerClearDetected || meta.layerClearDetected || /clearLayers|layer clearing/i.test(functionName));
+    rec.layerRebuildDetected = Boolean(rec.layerRebuildDetected || meta.layerRebuildDetected || /rebuild|marker rendering|renderCrossings/i.test(functionName));
+    rec.domReplacementDetected = Boolean(rec.domReplacementDetected || meta.domReplacementDetected || /innerHTML|replaceChildren|DOM replacement|renderAlerts/i.test(functionName));
+    rec.listenerWiringDetected = Boolean(rec.listenerWiringDetected || meta.listenerWiringDetected || /listener|addEventListener|wiring/i.test(functionName));
+    rec.layoutReadAfterWriteDetected = Boolean(rec.layoutReadAfterWriteDetected || meta.layoutReadAfterWriteDetected || /getBoundingClientRect|layout/i.test(functionName));
+    return rec;
+  }
+  function gridlyV920MeasureFunction(functionName, category, fn, meta = {}) {
+    const started = now();
+    try { performance?.mark?.(`gridly-v920:${functionName}:start`); } catch (_error) {}
+    try { return fn(); }
+    finally {
+      const durationMs = round(now() - started);
+      try { performance?.mark?.(`gridly-v920:${functionName}:end`); performance?.measure?.(`gridly-v920:${functionName}`, `gridly-v920:${functionName}:start`, `gridly-v920:${functionName}:end`); } catch (_error) {}
+      recordFunctionAttribution(functionName, category, durationMs, meta);
+    }
+  }
+  function measuredFunctionRecords() {
+    return Object.values(state.functionAttribution).map((r) => ({
+      functionName: r.functionName, category: r.category, callCount: r.callCount,
+      totalDuration: round(r.totalDuration), averageDuration: round(r.totalDuration / Math.max(1, r.callCount)),
+      medianDuration: percentile(r.durations, 0.5), p95Duration: percentile(r.durations, 0.95),
+      maxDuration: round(Math.max(0, ...r.durations)), largestItemCount: r.largestItemCount,
+      latestItemCount: r.latestItemCount, triggeredBy: r.triggeredBy, synchronous: r.synchronous,
+      layerClearDetected: r.layerClearDetected, layerRebuildDetected: r.layerRebuildDetected,
+      domReplacementDetected: r.domReplacementDetected, listenerWiringDetected: r.listenerWiringDetected,
+      layoutReadAfterWriteDetected: r.layoutReadAfterWriteDetected
+    })).sort((a, b) => b.totalDuration - a.totalDuration);
+  }
+
   function recordTiming(name, duration, ok = true, meta = {}) {
     const list = state.timings[name] || (state.timings[name] = []);
     list.push({ durationMs: round(duration), at: wall(), ok: Boolean(ok), meta });
@@ -131,10 +187,26 @@
     }
     if (typeof EventTarget !== "undefined" && EventTarget.prototype && EventTarget.prototype.addEventListener) {
       const add = EventTarget.prototype.addEventListener;
-      EventTarget.prototype.addEventListener = function gridlyV919AddEventListener(type, listener, options) {
-        state.listeners.push({ target: this === globalScope ? "window" : (this === document ? "document" : (this && this.id ? `#${this.id}` : this?.tagName || "event-target")), type: String(type), listenerName: listener?.name || "anonymous", capture: Boolean(options && options.capture), at: wall() });
+      const remove = EventTarget.prototype.removeEventListener;
+      EventTarget.prototype.addEventListener = function gridlyV920AddEventListener(type, listener, options) {
+        const targetIdentity = this === globalScope ? "window" : (this === document ? "document" : (this && this.id ? `#${this.id}` : this?.tagName || "event-target"));
+        const handlerIdentity = listener?.name || "anonymous";
+        const lifecycleKey = `${targetIdentity}|${String(type)}|${handlerIdentity}|${Boolean(options && options.capture)}`;
+        const lifecycle = state.listenerLifecycle[lifecycleKey] || (state.listenerLifecycle[lifecycleKey] = { eventType: String(type), targetIdentity, handlerIdentity, registrations: 0, removals: 0, activeRegistrationCount: 0, repeatedRegistrationAttempts: 0, safelySuppressedRegistrations: 0, ownerFunction: state.currentSimulationContext?.scenario || handlerIdentity, firstRegisteredAt: wall(), lastRegisteredAt: wall() });
+        lifecycle.registrations += 1; lifecycle.lastRegisteredAt = wall();
+        if (lifecycle.activeRegistrationCount > 0) lifecycle.repeatedRegistrationAttempts += 1;
+        lifecycle.activeRegistrationCount += 1;
+        state.listeners.push({ target: targetIdentity, type: String(type), listenerName: handlerIdentity, capture: Boolean(options && options.capture), at: wall() });
         if (state.listeners.length > 500) state.listeners.splice(0, state.listeners.length - 500);
         return add.apply(this, arguments);
+      };
+      if (typeof remove === "function") EventTarget.prototype.removeEventListener = function gridlyV920RemoveEventListener(type, listener, options) {
+        const targetIdentity = this === globalScope ? "window" : (this === document ? "document" : (this && this.id ? `#${this.id}` : this?.tagName || "event-target"));
+        const handlerIdentity = listener?.name || "anonymous";
+        const lifecycleKey = `${targetIdentity}|${String(type)}|${handlerIdentity}|${Boolean(options && options.capture)}`;
+        const lifecycle = state.listenerLifecycle[lifecycleKey];
+        if (lifecycle) { lifecycle.removals += 1; lifecycle.activeRegistrationCount = Math.max(0, lifecycle.activeRegistrationCount - 1); }
+        return remove.apply(this, arguments);
       };
     }
     ["setInterval", "setTimeout", "requestAnimationFrame"].forEach((name) => {
@@ -209,7 +281,6 @@
     return findings.sort((a, b) => ["P0", "P1", "P2", "P3"].indexOf(a.priority) - ["P0", "P1", "P2", "P3"].indexOf(b.priority));
   }
   async function runSimulation(options = {}) {
-    installLightweightInstrumentation();
     const startedAt = new Date().toISOString();
     const iterationsRequested = Math.max(1, Math.min(100, Number(options.iterations || 10)));
     const result = { available: true, completed: false, profile: options.profile || "custom", startedAt, completedAt: null, iterationsRequested, iterationsCompleted: 0, scenarioResults: [], p50: {}, p95: {}, failures: {}, exceptions: [], longTasks: {}, duplicateRequests: [], duplicateRenders: [], blockedMainThreadTime: 0, topBottlenecks: [], recommendations: [], simulatedReportWritesOnly: true, noProductionWrite: true };
@@ -254,6 +325,23 @@
     return result;
   }
   function simulationSummary() { const sim = state.lastSimulation; return { available: true, version: VERSION, hasSimulation: Boolean(sim), completed: Boolean(sim?.completed), partialResultsAvailable: Boolean(sim && !sim.completed && (sim.scenarioResults?.length || sim.exceptions?.length)), profile: sim?.profile || null, startedAt: sim?.startedAt || null, completedAt: sim?.completedAt || null, iterationsRequested: sim?.iterationsRequested || 0, iterationsCompleted: sim?.iterationsCompleted || 0, scenarioResults: sim?.scenarioResults || [], p50: sim?.p50 || {}, p95: sim?.p95 || {}, failures: sim?.failures || {}, exceptions: sim?.exceptions || [], longTasks: sim?.longTasks || {}, duplicateRequests: sim?.duplicateRequests || [], duplicateRenders: sim?.duplicateRenders || [], blockedMainThreadTime: sim?.blockedMainThreadTime || 0, topBottlenecks: sim?.topBottlenecks || rankBottlenecks().slice(0, 8), recommendations: sim?.recommendations || [], safeForBeta: true }; }
+
+  function gridlyMainThreadAttributionAudit() {
+    const measuredFunctions = measuredFunctionRecords();
+    const by = (re) => measuredFunctions.filter((f) => re.test(`${f.category} ${f.functionName}`));
+    return { available: true, version: VERSION, measuredFunctions, totalMeasuredTime: round(measuredFunctions.reduce((s, f) => s + f.totalDuration, 0)), functionsOver50: measuredFunctions.filter((f) => f.maxDuration > 50), functionsOver100: measuredFunctions.filter((f) => f.maxDuration > 100), functionsOver250: measuredFunctions.filter((f) => f.maxDuration > 250), worstFunctions: measuredFunctions.slice(0, 10), renderOwners: by(/render|row|card/i), panelOwners: by(/panel|sheet|open/i), markerOwners: by(/marker|crossing|icon|popup|layer/i), mapOwners: by(/map|move|zoom|viewport/i), domOwners: by(/dom|innerHTML|replace/i), layoutOwners: by(/layout|getBoundingClientRect/i), recommendations: ["Open panel shells before heavy content.", "Reuse unchanged alert/crossing DOM and marker assets.", "Keep move/zoom handlers light; reconcile markers on coalesced terminal events."] };
+  }
+  function gridlyListenerLifecycleAudit() {
+    return { available: true, version: VERSION, listeners: Object.values(state.listenerLifecycle).map((l) => ({ ...l, target: l.targetIdentity, handler: l.handlerIdentity, likelyLeak: l.activeRegistrationCount > 1 && l.repeatedRegistrationAttempts > 0 })) };
+  }
+  function gridlyPerformanceInstrumentationOverheadAudit() {
+    const loops = 120;
+    const startDisabled = now(); for (let i = 0; i < loops; i += 1) { Math.sqrt(i); } const disabled = now() - startDisabled;
+    const startEnabled = now(); for (let i = 0; i < loops; i += 1) recordFunctionAttribution("instrumentation.overhead.sample", "instrumentation", 0.001, { itemCount: 1, synchronous: true }); const enabled = now() - startEnabled;
+    const sample = { instrumentationEnabledDuration: round(enabled), instrumentationDisabledDuration: round(disabled), wrapperOverhead: round(Math.max(0, enabled - disabled)), observerOverhead: state.longTaskObserverStarted ? "PerformanceObserver passive" : "not active", listenerTrackingOverhead: Object.keys(state.listenerLifecycle).length, timerTrackingOverhead: state.timers.intervals.length + state.timers.timeouts.length + state.timers.animationFrames.length, markMeasureOverhead: "sampled only around Gridly V920 measured functions", simulationOnlyOverhead: Boolean(state.currentSimulationContext), productionRuntimePerformance: "lightweight counters only unless simulation/audit is running", instrumentationOverheadAcceptable: Math.max(0, enabled - disabled) < 10 };
+    state.overheadSamples.push(sample); if (state.overheadSamples.length > 20) state.overheadSamples.shift(); return { available: true, version: VERSION, ...sample, samples: state.overheadSamples.slice(-5) };
+  }
+
   installLightweightInstrumentation();
   globalScope.gridlyEndToEndPerformanceAudit = buildAudit;
   globalScope.gridlyRuntimeSchedulerAudit = schedulerAudit;
@@ -261,4 +349,8 @@
   globalScope.gridlyPerformanceSimulationSummary = simulationSummary;
   globalScope.gridlyV919Measure = gridlyMeasure;
   globalScope.gridlyV919PerformanceMeasureNames = measureNames;
+  globalScope.gridlyV920MeasureFunction = gridlyV920MeasureFunction;
+  globalScope.gridlyMainThreadAttributionAudit = gridlyMainThreadAttributionAudit;
+  globalScope.gridlyListenerLifecycleAudit = gridlyListenerLifecycleAudit;
+  globalScope.gridlyPerformanceInstrumentationOverheadAudit = gridlyPerformanceInstrumentationOverheadAudit;
 })(typeof window !== "undefined" ? window : globalThis);
