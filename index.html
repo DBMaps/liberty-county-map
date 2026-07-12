@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
-  <title>Gridly — Beta Complete</title>
+  <title>Gridly — Beta Has Ended</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
   <meta name="theme-color" content="#06101f">
-  <meta name="description" content="Gridly beta is complete. Gridly is preparing for launch.">
+  <meta name="description" content="Gridly beta has ended. Gridly is preparing for launch.">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Gridly">
@@ -63,14 +63,14 @@
       display: grid;
       place-items: center;
       min-height: 100svh;
-      padding: max(22px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+      padding: max(18px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom));
     }
 
     .closure-card {
-      width: min(100%, 430px);
-      padding: 28px 22px 24px;
+      width: min(calc(100vw - 24px), 430px);
+      padding: 30px 20px 26px;
       border: 1px solid var(--gridly-line);
-      border-radius: 32px;
+      border-radius: 30px;
       background:
         linear-gradient(180deg, rgba(12, 35, 63, 0.88), rgba(3, 12, 24, 0.92)),
         var(--gridly-panel);
@@ -82,13 +82,14 @@
     .brand-mark {
       display: grid;
       place-items: center;
-      margin: 0 auto 20px;
-      width: min(245px, 72vw);
-      min-height: 72px;
-      padding: 12px 18px;
+      margin: 0 auto 24px;
+      width: min(252px, 74vw);
+      min-height: 70px;
+      padding: 13px 18px;
       border-radius: 24px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(119, 243, 201, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 42px rgba(0, 0, 0, 0.18);
     }
 
     .brand-mark img {
@@ -100,9 +101,9 @@
     }
 
     .eyebrow {
-      margin: 0 0 10px;
+      margin: 0 0 14px;
       color: var(--gridly-accent);
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       font-weight: 800;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -110,16 +111,17 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(2.5rem, 14vw, 4.4rem);
-      line-height: 0.92;
-      letter-spacing: -0.07em;
+      font-size: clamp(2.65rem, 12.4vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+      text-wrap: balance;
     }
 
     .tagline {
-      margin: 12px 0 0;
-      color: var(--gridly-muted);
-      font-size: 1.05rem;
-      font-weight: 700;
+      margin: 18px 0 0;
+      color: var(--gridly-text);
+      font-size: 1.12rem;
+      font-weight: 800;
       letter-spacing: 0.01em;
     }
 
@@ -128,8 +130,8 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin: 22px 0 0;
-      padding: 10px 14px;
+      margin: 20px 0 0;
+      padding: 10px 15px;
       border: 1px solid rgba(67, 230, 160, 0.35);
       border-radius: 999px;
       background: rgba(67, 230, 160, 0.1);
@@ -146,12 +148,12 @@
       height: 8px;
       border-radius: 999px;
       background: var(--gridly-accent);
-      box-shadow: 0 0 20px rgba(67, 230, 160, 0.8);
+      box-shadow: 0 0 14px rgba(67, 230, 160, 0.55);
     }
 
     .message {
-      margin: 24px 0 0;
-      padding: 20px;
+      margin: 22px 0 0;
+      padding: 22px 20px;
       border-radius: 24px;
       background: rgba(255, 255, 255, 0.045);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -159,40 +161,42 @@
     }
 
     .message h2 {
-      margin: 0 0 12px;
-      font-size: 1.25rem;
+      margin: 0 0 14px;
+      font-size: 1.22rem;
+      line-height: 1.2;
       letter-spacing: -0.02em;
     }
 
     .message p {
-      margin: 0 0 14px;
-      color: var(--gridly-muted);
+      margin: 0 0 16px;
+      color: rgba(238, 248, 255, 0.78);
       font-size: 1rem;
-      line-height: 1.55;
+      line-height: 1.62;
     }
 
     .message p:last-child { margin-bottom: 0; }
 
     .facebook-note {
-      margin-top: 20px;
+      margin: 22px 0 0;
       color: var(--gridly-muted);
-      font-size: 0.98rem;
-      line-height: 1.45;
+      font-size: 1rem;
+      line-height: 1.55;
     }
 
     .coming-soon {
-      margin: 22px 0 0;
+      margin: 24px 0 0;
       color: var(--gridly-blue);
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 900;
       letter-spacing: 0.22em;
       text-transform: uppercase;
     }
 
     .phase-label {
-      margin: 16px 0 0;
-      color: var(--gridly-soft);
-      font-size: 0.82rem;
+      margin: 10px 0 0;
+      color: rgba(238, 248, 255, 0.74);
+      font-size: 1rem;
+      font-weight: 700;
     }
 
     @media (min-width: 680px) {
@@ -207,9 +211,9 @@
         <img src="assets/store/branding/Logos/gridly-logo-horizontal.png" alt="Gridly" />
       </div>
       <p class="eyebrow">Know Before You Go</p>
-      <h1 id="closureTitle">Beta Complete</h1>
+      <h1 id="closureTitle">Beta Has Ended</h1>
       <p class="tagline">Thank You</p>
-      <div class="status-pill" aria-label="Gridly beta status">Gridly — Beta Complete</div>
+      <div class="status-pill" aria-label="Gridly beta status">Gridly Beta Concluded</div>
       <div class="message">
         <h2>The first Gridly beta has officially concluded.</h2>
         <p>To everyone who tested, reported issues, and shared feedback—thank you. Your participation helped shape the future of Gridly.</p>
@@ -217,7 +221,7 @@
       </div>
       <p class="facebook-note">Follow Gridly on Facebook for future announcements.</p>
       <p class="coming-soon">Coming Soon</p>
-      <p class="phase-label">Next phase: Launch Preparation</p>
+      <p class="phase-label">Preparing for Launch</p>
     </section>
   </main>
   <script>

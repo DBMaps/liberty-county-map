@@ -22,7 +22,12 @@ Gridly is now in Launch Preparation. The public URL communicates that the beta i
 
 ## User-visible Change
 
-Visitors now see a polished dark Gridly beta-closure page instead of the map application. The page includes the Gridly brand, "Know Before You Go," "Beta Complete," "Thank You," a launch-preparation statement, Facebook announcement text, and "Coming Soon."
+Visitors now see a polished dark Gridly beta-closure page instead of the map application. The page includes the Gridly brand, "Know Before You Go," "Beta Has Ended," "Thank You," a launch-preparation statement, Facebook announcement text, and "Coming Soon."
+
+
+## Visual Refinement Note
+
+The closure page presentation was refined before merge: the headline now reads "Beta Has Ended," the mobile layout uses more balanced spacing and hierarchy, the message card has improved readability, and the page communicates a launch transition without changing closure behavior.
 
 ## Files Changed
 
