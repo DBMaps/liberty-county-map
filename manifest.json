@@ -1,12 +1,12 @@
 {
-  "name": "Gridly",
+  "name": "Gridly \u2014 Beta Complete",
   "short_name": "Gridly",
-  "description": "Know Before You Go",
+  "description": "Gridly beta is complete. Gridly is preparing for launch.",
   "display": "standalone",
   "start_url": "./",
   "scope": "./",
-  "background_color": "#050505",
-  "theme_color": "#071426",
+  "background_color": "#020812",
+  "theme_color": "#06101f",
   "icons": [
     {
       "src": "./assets/icon-192.png",
