@@ -1,38 +1,38 @@
-const GRIDLY_PWA_CACHE_NAME = "gridly-pwa-shell-v929-startup-diagnostics";
-const GRIDLY_PWA_SHELL_URLS = [
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-beta-closure-v1";
+const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
-  "./css/styles.css?v=131",
-  "./js/app.js?v=1715",
-  "./js/gridlyStartupDiagnostics.js?v=929",
-  "./js/gridlyTxdotService.js?v=1710",
   "./manifest.json",
   "./assets/favicon-32.png",
   "./assets/icon-180.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
-  "./assets/store/icons/gridly-icon-master-1024.png",
-  "./assets/store/branding/Logos/gridly-logo-horizontal.png",
-  "./assets/store/branding/Logos/gridly-logo-vertical.png",
-  "./assets/store/branding/Splash/gridly-splash-portrait.png",
-  "./assets/store/branding/Splash/gridly-splash-landscape.png"
+  "./assets/store/branding/Logos/gridly-logo-horizontal.png"
 ];
+
+function isRecognizedOldGridlyCache(cacheName) {
+  return /^gridly-pwa-shell-/.test(cacheName)
+    || (/^gridly-beta-closure-/.test(cacheName) && cacheName !== GRIDLY_CLOSURE_CACHE_NAME);
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(GRIDLY_PWA_CACHE_NAME)
-      .then((cache) => cache.addAll(GRIDLY_PWA_SHELL_URLS))
-      .catch(() => undefined)
+    caches.open(GRIDLY_CLOSURE_CACHE_NAME)
+      .then((cache) => cache.addAll(GRIDLY_CLOSURE_URLS))
+      .then(() => self.skipWaiting())
+      .catch(() => self.skipWaiting())
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => Promise.all(
-      cacheNames
-        .filter((cacheName) => cacheName.startsWith("gridly-pwa-shell-") && cacheName !== GRIDLY_PWA_CACHE_NAME)
-        .map((cacheName) => caches.delete(cacheName))
-    ))
+    caches.keys()
+      .then((cacheNames) => Promise.all(
+        cacheNames
+          .filter(isRecognizedOldGridlyCache)
+          .map((cacheName) => caches.delete(cacheName))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -45,26 +45,33 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("./index.html"))
+      fetch(request, { cache: "no-store" })
+        .then((response) => {
+          if (response && response.ok) {
+            const responseCopy = response.clone();
+            caches.open(GRIDLY_CLOSURE_CACHE_NAME).then((cache) => cache.put("./index.html", responseCopy));
+          }
+          return response;
+        })
+        .catch(() => caches.match("./index.html"))
     );
     return;
   }
 
-  const shellUrl = GRIDLY_PWA_SHELL_URLS
+  const closureUrl = GRIDLY_CLOSURE_URLS
     .map((url) => new URL(url, self.location.href).href)
     .find((url) => url === requestUrl.href);
 
-  if (!shellUrl) return;
+  if (!closureUrl) return;
 
   event.respondWith(
-    fetch(request)
-      .then((response) => {
+    caches.match(request)
+      .then((cachedResponse) => cachedResponse || fetch(request).then((response) => {
         if (response && response.ok) {
           const responseCopy = response.clone();
-          caches.open(GRIDLY_PWA_CACHE_NAME).then((cache) => cache.put(request, responseCopy));
+          caches.open(GRIDLY_CLOSURE_CACHE_NAME).then((cache) => cache.put(request, responseCopy));
         }
         return response;
-      })
-      .catch(() => caches.match(request))
+      }))
   );
 });
