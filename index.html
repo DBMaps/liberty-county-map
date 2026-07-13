@@ -11,17 +11,6 @@
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
   <meta name="theme-color" content="#06101f">
   <meta name="description" content="Gridly beta has ended. Gridly is preparing for launch.">
-  <script>
-    (function gridlyLocalDevelopmentBetaClosureBypass() {
-      "use strict";
-      var isGridlyLocalDevelopment =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-      if (isGridlyLocalDevelopment) {
-        window.location.replace("local-app.html" + window.location.search + window.location.hash);
-      }
-    })();
-  </script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Gridly">
@@ -279,23 +268,10 @@
 
       window.gridlyBetaClosureAudit = function gridlyBetaClosureAudit() {
         var scripts = Array.prototype.slice.call(document.scripts || []).map(function(script) { return script.src || ""; });
-        var hostname = window.location.hostname;
-        var localDevelopmentDetected = hostname === "localhost" || hostname === "127.0.0.1";
-        var betaClosed = true;
-        var closurePageVisible = Boolean(document.querySelector("[data-gridly-beta-closure='true']"));
-        var localBypassApplied = betaClosed && localDevelopmentDetected;
-        var fullAppAllowed = localBypassApplied;
-        var productionClosurePreserved = betaClosed && !localDevelopmentDetected && closurePageVisible;
         return {
           available: true,
-          hostname: hostname,
-          localDevelopmentDetected: localDevelopmentDetected,
-          betaClosed: betaClosed,
-          closurePageVisible: closurePageVisible,
-          localBypassApplied: localBypassApplied,
-          fullAppAllowed: fullAppAllowed,
-          productionClosurePreserved: productionClosurePreserved,
-          safeForLaunchDevelopment: productionClosurePreserved || localBypassApplied,
+          betaClosed: true,
+          closurePageVisible: Boolean(document.querySelector("[data-gridly-beta-closure='true']")),
           appScriptLoaded: scripts.some(function(src) { return /js\/app\.js/i.test(src); }),
           mapRuntimeLoaded: Boolean(window.L || scripts.some(function(src) { return /leaflet/i.test(src); })),
           supabaseRuntimeLoaded: Boolean(window.supabase || scripts.some(function(src) { return /supabase/i.test(src); })),
