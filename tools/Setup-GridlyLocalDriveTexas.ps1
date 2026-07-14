@@ -31,8 +31,9 @@ if ($ignoreCheck.ExitCode -ne 0) {
   Write-Error "Refusing to continue: $localConfigRelativePath is not ignored by Git. Add it to .gitignore before storing a local DriveTexas key."
 }
 
-$trackedCheck = Invoke-Git -Arguments @("ls-files", "--error-unmatch", $localConfigRelativePath)
-if ($trackedCheck.ExitCode -eq 0) {
+$trackedCheck = Invoke-Git -Arguments @("ls-files", "--", $localConfigRelativePath)
+$trackedPath = $trackedCheck.Output | Select-Object -First 1
+if ($trackedCheck.ExitCode -eq 0 -and $trackedPath -eq $localConfigRelativePath) {
   Write-Error "Refusing to continue: $localConfigRelativePath is tracked by Git. Remove it from tracking before storing a local DriveTexas key."
 }
 
@@ -79,8 +80,9 @@ if ($finalIgnoreCheck.ExitCode -ne 0) {
   Write-Error "Refusing to keep the local config: $localConfigRelativePath is not ignored by Git. The file was removed."
 }
 
-$finalTrackedCheck = Invoke-Git -Arguments @("ls-files", "--error-unmatch", $localConfigRelativePath)
-if ($finalTrackedCheck.ExitCode -eq 0) {
+$finalTrackedCheck = Invoke-Git -Arguments @("ls-files", "--", $localConfigRelativePath)
+$finalTrackedPath = $finalTrackedCheck.Output | Select-Object -First 1
+if ($finalTrackedCheck.ExitCode -eq 0 -and $finalTrackedPath -eq $localConfigRelativePath) {
   Remove-Item -Path $localConfigPath -Force -ErrorAction SilentlyContinue
   Write-Error "Refusing to keep the local config: $localConfigRelativePath is tracked by Git. The file was removed."
 }
