@@ -98,9 +98,18 @@
       ? gridlyConfig.txdot
       : {};
 
+    const driveTexasApiKey = toSafeString(driveTexas.apiKey);
+    const legacyTxdotApiKey = toSafeString(legacyTxdot.apiKey);
+    const globalTxdotApiKey = toSafeString(globalScope.GRIDLY_TXDOT_API_KEY);
+    let configurationSource = "none";
+    if (driveTexasApiKey) configurationSource = "GRIDLY_CONFIG.driveTexas.apiKey";
+    else if (legacyTxdotApiKey) configurationSource = "GRIDLY_CONFIG.txdot.apiKey";
+    else if (globalTxdotApiKey) configurationSource = "GRIDLY_TXDOT_API_KEY";
+
     return {
       endpointTemplate: toSafeString(driveTexas.endpointTemplate) || toSafeString(legacyTxdot.endpointTemplate) || DEFAULT_ENDPOINT,
-      apiKey: toSafeString(driveTexas.apiKey) || toSafeString(legacyTxdot.apiKey) || toSafeString(globalScope.GRIDLY_TXDOT_API_KEY)
+      apiKey: driveTexasApiKey || legacyTxdotApiKey || globalTxdotApiKey,
+      configurationSource
     };
   }
 
@@ -259,7 +268,9 @@
       providerActivated: state.providerActivated === true,
       renderingPerformed: false,
       normalizedRecordCount: state.normalizedRecordCount,
-      refreshIntervalMs: REFRESH_INTERVAL_MS
+      refreshIntervalMs: REFRESH_INTERVAL_MS,
+      apiKeyConfigured: Boolean(getConnectorConfig().apiKey),
+      configurationSource: getConnectorConfig().configurationSource
     });
   }
 
