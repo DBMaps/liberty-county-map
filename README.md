@@ -40,3 +40,14 @@ Do not modify:
 
 ```text
 data/liberty-county-boundary.geojson
+```
+
+## Local DriveTexas API Key Setup
+
+For local DriveTexas testing, keep the real key on your machine only. Paste this one command into VS Code PowerShell from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\Setup-GridlyLocalDriveTexas.ps1
+```
+
+The setup script privately prompts for the DriveTexas API key, creates `js/gridly.local.js`, confirms that file is gitignored and untracked, and then tells you to refresh Gridly. The generated file configures both `window.GRIDLY_TXDOT_API_KEY` and `window.GRIDLY_CONFIG.txdot.apiKey`; never commit the generated local file.
