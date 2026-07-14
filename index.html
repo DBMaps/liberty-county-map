@@ -1300,6 +1300,10 @@
         enabled = window.GRIDLY_ENABLE_LOCAL_OVERRIDES === true;
       }
       if (!enabled) return;
+      if (document.currentScript) {
+        document.write('<script src="js/gridly.local.js" data-gridly-local="true"><\/script>');
+        return;
+      }
       var script = document.createElement("script");
       script.src = "js/gridly.local.js";
       script.async = false;

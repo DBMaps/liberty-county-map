@@ -27,6 +27,12 @@ function loadContext(fetchImpl) {
     triggerTimeout() {
       if (timeoutCallback) timeoutCallback();
     },
+    getGridlySelectedAwarenessArea() {
+      return { label: "Liberty County", countyId: "liberty-tx", lat: 30.0572, lng: -94.795, radiusMiles: 35, countyWide: true };
+    },
+    getDistanceMiles() {
+      return 1;
+    },
     GRIDLY_TXDOT_API_KEY: "test-key",
     GRIDLY_CONFIG: { driveTexas: { apiKey: "test-key" } },
     gridlyPackageRegistry: {
@@ -75,7 +81,10 @@ const sampleGeoJson = {
     automaticPolling: false,
     providerActivated: false,
     renderingPerformed: false,
-    normalizedRecordCount: 0
+    normalizedRecordCount: 0,
+    refreshIntervalMs: 180000,
+    apiKeyConfigured: true,
+    configurationSource: "GRIDLY_CONFIG.driveTexas.apiKey"
   }));
 
   const providerBefore = context.gridlyDriveTexasProvider.getRuntimeState();
