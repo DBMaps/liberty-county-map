@@ -714,26 +714,12 @@
           </div>
           <p class="gridly-brief-weather" id="gridlyBriefWeather" hidden></p>
         </div>
-        <div class="gridly-brief-flow">
-          <div class="gridly-brief-section gridly-brief-section-outlook">
-            <p class="gridly-brief-section-label">TODAY</p>
-            <p class="gridly-brief-outlook" id="gridlyBriefOutlook">Local conditions look calm around Dayton.</p>
-            <p class="gridly-brief-context" id="gridlyBriefContext">Use the map below for nearby community reports and area context.</p>
+        <div class="gridly-brief-flow gridly-travel-brief" data-gridly-travel-brief>
+          <div class="gridly-travel-brief-header">
+            <p class="gridly-brief-section-label">TRAVEL BRIEF</p>
+            <p class="gridly-brief-context" id="gridlyBriefContext">Why this matters before you go.</p>
           </div>
-          <div class="gridly-brief-section gridly-brief-section-travel">
-            <p class="gridly-brief-section-label">TRAVEL</p>
-            <div class="gridly-brief-travel-card">
-              <span class="gridly-brief-travel-icon" aria-hidden="true">✓</span>
-              <div class="gridly-brief-travel-copy">
-                <p class="gridly-brief-travel-status" id="gridlyBriefTravelStatus" data-gridly-brief-travel-status>Today looks good for local travel.</p>
-                <p class="gridly-brief-travel-support" id="gridlyBriefTravelSupport">No major impacts expected.</p>
-              </div>
-            </div>
-          </div>
-          <details class="gridly-evidence-experience" id="gridlyEvidenceExperience" data-gridly-evidence-experience>
-            <summary class="gridly-evidence-summary">Why Gridly says this</summary>
-            <div class="gridly-evidence-list" id="gridlyEvidenceExperienceList" data-gridly-evidence-list aria-live="polite"></div>
-          </details>
+          <div class="gridly-travel-brief-list" id="gridlyTravelBriefList" data-gridly-travel-brief-list aria-live="polite"></div>
         </div>
       </section>
       <div class="gridly-v2-participation-ack" id="gridlyV2ParticipationAcknowledgement" role="status" aria-live="polite" hidden></div>

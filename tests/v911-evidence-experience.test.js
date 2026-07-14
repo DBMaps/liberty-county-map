@@ -13,9 +13,9 @@ assert.match(app, /providerNamesExposed/, 'Audit reports provider-name exposure'
 assert.match(app, /technicalTermsDetected/, 'Audit reports technical term exposure');
 assert.match(app, /protectedSystemsUnchanged:\s*true/, 'Audit preserves protected-system declaration');
 
-assert.match(html, /data-gridly-evidence-experience/, 'Evidence experience is present in Know Before You Go markup');
-assert.match(html, /Why Gridly says this/, 'Consumer evidence title is present');
-assert.match(css, /V911 — Evidence Experience/, 'Evidence experience styling is present');
+assert.match(html, /data-gridly-travel-brief/, 'LP002A Travel Brief owns the expanded Know Before You Go presentation');
+assert.match(app, /function gridlyBuildTravelBriefModel/, 'Travel Brief presentation layer is present alongside preserved V911 model helpers');
+assert.match(css, /V911 — Evidence Experience/, 'Evidence experience styling remains available for preserved model compatibility');
 
 for (const forbidden of ['NOAA', 'TxDOT', 'FRA', 'Supabase']) {
   assert(!html.includes(forbidden), `HTML does not expose provider name ${forbidden}`);
