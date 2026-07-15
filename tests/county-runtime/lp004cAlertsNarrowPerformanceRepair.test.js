@@ -1,0 +1,27 @@
+const assert = require('assert');
+const fs = require('fs');
+const source = fs.readFileSync('js/app.js', 'utf8');
+const between = (start, end) => {
+  const startIndex = source.indexOf(start);
+  assert(startIndex >= 0, `${start} exists`);
+  const endIndex = source.indexOf(end, startIndex + start.length);
+  assert(endIndex >= 0, `${end} exists after ${start}`);
+  return source.slice(startIndex, endIndex);
+};
+const openAlerts = between('function openAlertsSurfaceFromDock()', '    if (typeof isGridlyExplicitDebugModeEnabled');
+const renderCard = between('const renderAlertCard = (alert, index, isHidden = false) => {', '};\n\n      const normalizeAlertPresentationKey');
+assert(openAlerts.includes('buildNarrowAlertTrustDisplayModel'), 'Alerts open computes a narrow trust/participation model');
+assert(openAlerts.includes('__gridlyNarrowConsumerCard'), 'per-open narrow trust model is attached to alert presentation records');
+assert(renderCard.includes('alert?.__gridlyNarrowConsumerCard ||'), 'renderAlertCard reuses the per-open trust model before resolving a fallback');
+assert(renderCard.includes('getNarrowAlertLocationLabel(alert, consumerCard)'), 'card location formatting uses the narrow event-centered location helper');
+assert(!renderCard.includes('chooseBestAlertLocationContext(alert)'), 'renderAlertCard does not invoke broad location intelligence');
+assert(!renderCard.includes('getGridlyAlertCardHistoricalContextLine(alert)'), 'renderAlertCard does not invoke broad historical/top-awareness context');
+assert(openAlerts.includes('const alertsPanelHeadingModel = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "outer sheet/header markup"'), 'Alerts header is built from the per-open presentation model');
+assert(!openAlerts.includes('resolveGridlyAlertsPanelHeadingCandidate({ snapshot'), 'Alerts open does not invoke broad panel heading helper');
+assert(!openAlerts.includes('buildGridlyCanonicalEventPresentationModel'), 'Alerts open header does not invoke canonical broad presentation synthesis');
+assert(openAlerts.includes('map/sheet synchronization scheduling'), 'map/sheet sync is scheduled after insertion');
+assert(!openAlerts.includes('runGridlyAlertLocationSyncAfterAlertRender("immediate_after_alert_render")'), 'Alerts open does not perform immediate map/sheet synchronization');
+const sheet = between('function openGridlyPortraitV2Sheet(sheetName, templateOverride = null)', '  function openPortraitV2Sheet');
+assert(!sheet.includes('runGridlyAlertLocationSyncAfterAlertRender("immediate_after_alert_render")'), 'shared sheet opener does not perform duplicate immediate Alerts map sync');
+assert(openAlerts.indexOf('window.openGridlyPortraitV2Sheet("alerts"') < openAlerts.indexOf('map/sheet synchronization scheduling'), 'sheet markup insertion occurs before deferred map sync scheduling');
+console.log('lp004cAlertsNarrowPerformanceRepair.test.js passed');
