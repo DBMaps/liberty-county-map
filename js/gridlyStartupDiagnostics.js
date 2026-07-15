@@ -5,6 +5,9 @@
   const WATCHDOG_MS = 30000;
   const SLOW_STARTUP_MS = 30000;
   const nowMs = () => (typeof performance !== "undefined" && performance.now ? performance.now() : Date.now());
+  const postPaintAuditState = {
+    available: true, architectureOnly: true, protectedSystemsChanged: false, scriptStartAt: nowMs(), domContentLoadedAt: null, mobilePortraitVisibleAt: null, dockHandlersInstalledAt: null, startupWorkCompletedAt: null, firstResponsiveInteractionAt: null, firstPointerEventTimestamp: null, firstPointerCaptureObservedAt: null, firstPointerHandlerEnteredAt: null, firstClickEventTimestamp: null, firstClickCaptureObservedAt: null, firstClickHandlerEnteredAt: null, firstSurfaceOpenAt: null, activeStage: null, activeFunction: null, phases: [], longTasks: []
+  };
   const isoNow = () => new Date().toISOString();
   const state = {
     available: true, version: VERSION, startupStartedAt: isoNow(), startupStartedAtMs: nowMs(), startupCompletedAt: null,
@@ -17,6 +20,48 @@
   function clone(x) { try { return JSON.parse(JSON.stringify(x)); } catch (_) { return x; } }
   function restoreState(snapshot) { Object.keys(state).forEach((key) => { delete state[key]; }); Object.assign(state, clone(snapshot)); }
   function push(list, item, cap) { list.push(item); if (list.length > cap) list.splice(0, list.length - cap); }
+  function markPostPaintLifecycle(name) {
+    const t = nowMs();
+    if (name === "domContentLoaded" && postPaintAuditState.domContentLoadedAt === null) postPaintAuditState.domContentLoadedAt = t;
+    if (name === "mobilePortraitVisible" && postPaintAuditState.mobilePortraitVisibleAt === null) postPaintAuditState.mobilePortraitVisibleAt = t;
+    if (name === "dockHandlersInstalled" && postPaintAuditState.dockHandlersInstalledAt === null) postPaintAuditState.dockHandlersInstalledAt = t;
+    if (name === "startupWorkCompleted" && postPaintAuditState.startupWorkCompletedAt === null) postPaintAuditState.startupWorkCompletedAt = t;
+    if (name === "firstResponsiveInteraction" && postPaintAuditState.firstResponsiveInteractionAt === null) postPaintAuditState.firstResponsiveInteractionAt = t;
+  }
+  function beginPostPaintPhase(name, activeFunction) {
+    const phase = { name, startedAt: nowMs(), endedAt: null, durationMs: null, occurredAfterVisiblePaint: Boolean(postPaintAuditState.mobilePortraitVisibleAt || state.firstVisibleFrame) };
+    postPaintAuditState.activeStage = name; postPaintAuditState.activeFunction = activeFunction || name;
+    postPaintAuditState.phases.push(phase); if (postPaintAuditState.phases.length > 160) postPaintAuditState.phases.splice(0, postPaintAuditState.phases.length - 160);
+    return phase;
+  }
+  function endPostPaintPhase(phase) {
+    if (!phase || phase.endedAt !== null) return phase;
+    phase.endedAt = nowMs(); phase.durationMs = Math.round((phase.endedAt - phase.startedAt) * 100) / 100;
+    postPaintAuditState.activeStage = null; postPaintAuditState.activeFunction = null; return phase;
+  }
+  function measurePostPaintPhase(name, activeFunction, work) { const p = beginPostPaintPhase(name, activeFunction); try { const result = work(); if (result && typeof result.finally === "function") return result.finally(() => endPostPaintPhase(p)); endPostPaintPhase(p); return result; } catch (error) { endPostPaintPhase(p); throw error; } }
+  function markInteractionProbe(kind, event) {
+    const t = nowMs(); const ts = Number(event?.timeStamp);
+    if (kind === "pointerCapture" && postPaintAuditState.firstPointerCaptureObservedAt === null) { postPaintAuditState.firstPointerCaptureObservedAt = t; postPaintAuditState.firstPointerEventTimestamp = Number.isFinite(ts) ? ts : null; }
+    if (kind === "clickCapture" && postPaintAuditState.firstClickCaptureObservedAt === null) { postPaintAuditState.firstClickCaptureObservedAt = t; postPaintAuditState.firstClickEventTimestamp = Number.isFinite(ts) ? ts : null; }
+    if (kind === "pointerHandler" && postPaintAuditState.firstPointerHandlerEnteredAt === null) postPaintAuditState.firstPointerHandlerEnteredAt = t;
+    if (kind === "clickHandler" && postPaintAuditState.firstClickHandlerEnteredAt === null) postPaintAuditState.firstClickHandlerEnteredAt = t;
+    if (kind === "surfaceOpen" && postPaintAuditState.firstSurfaceOpenAt === null) postPaintAuditState.firstSurfaceOpenAt = t;
+  }
+  function installPostPaintProbes() {
+    try {
+      document.addEventListener("pointerdown", (event) => markInteractionProbe("pointerCapture", event), { capture: true, passive: true });
+      document.addEventListener("click", (event) => markInteractionProbe("clickCapture", event), { capture: true, passive: true });
+      document.addEventListener("DOMContentLoaded", () => markPostPaintLifecycle("domContentLoaded"), { once: true });
+      if (typeof PerformanceObserver === "function") {
+        const observer = new PerformanceObserver((list) => {
+          list.getEntries().forEach((entry) => push(postPaintAuditState.longTasks, { startTime: Math.round(entry.startTime * 100) / 100, duration: Math.round(entry.duration * 100) / 100, activeStage: postPaintAuditState.activeStage || state.currentStage || null, activeFunction: postPaintAuditState.activeFunction || null }, 120));
+        });
+        observer.observe({ entryTypes: ["longtask"] });
+      }
+    } catch (_) {}
+  }
+  installPostPaintProbes();
   function findStage(name) { for (let i = state.stages.length - 1; i >= 0; i -= 1) if (state.stages[i].name === name) return state.stages[i]; return null; }
   function warn(stage, message, extra) { push(state.warnings, { stage, message, at: isoNow(), ...(extra || {}) }, 120); }
   function markDegraded(stage, message, extra) { state.degradedStartup = true; warn(stage, message, extra); }
@@ -51,9 +96,9 @@
     return stage;
   }
   function markPrepaintReleased(reason) { if (state.prepaintLockReleased) return; state.prepaintLockReleased = true; const s = beginStage("prepaint/startup lock released", { blocking: true }); endStage(s, "completed", { message: reason || "prepaint lock removed" }); }
-  function markFirstVisibleFrame(reason) { if (state.firstVisibleFrame) return; state.firstVisibleFrame = true; const s = beginStage("first visible Gridly frame", { blocking: true }); endStage(s, "completed", { message: reason || "visible frame painted" }); }
+  function markFirstVisibleFrame(reason) { if (state.firstVisibleFrame) return; state.firstVisibleFrame = true; markPostPaintLifecycle("mobilePortraitVisible"); const s = beginStage("first visible Gridly frame", { blocking: true }); endStage(s, "completed", { message: reason || "visible frame painted" }); }
   function markUiUsable(reason) { if (!state.prepaintLockReleased) return false; if (!state.uiUsable) { state.uiUsable = true; state.uiUsableAt = isoNow(); state.uiUsableAtMs = nowMs(); state.firstInteractiveUI = true; const stage = beginStage("first interactive UI", { blocking: true }); endStage(stage, "completed", { message: reason || "startup shell visible and usable" }); } state.watchdog.resolved = true; return true; }
-  function completeStartup() { if (state.startupCompleted) return; state.startupCompleted = true; state.startupCompletedAt = isoNow(); state.startupCompletedAtMs = nowMs(); const d = state.startupCompletedAtMs - state.startupStartedAtMs; if (d > state.slowStartupThresholdMs || state.watchdogTriggered) { state.slowStartup = true; state.previouslyStalled = state.watchdogTriggered || state.stalled; state.stalled = state.stalled || state.watchdogTriggered; state.degradedStartup = true; } state.watchdog.resolved = true; }
+  function completeStartup() { if (state.startupCompleted) return; markPostPaintLifecycle("startupWorkCompleted"); state.startupCompleted = true; state.startupCompletedAt = isoNow(); state.startupCompletedAtMs = nowMs(); const d = state.startupCompletedAtMs - state.startupStartedAtMs; if (d > state.slowStartupThresholdMs || state.watchdogTriggered) { state.slowStartup = true; state.previouslyStalled = state.watchdogTriggered || state.stalled; state.stalled = state.stalled || state.watchdogTriggered; state.degradedStartup = true; } state.watchdog.resolved = true; }
   async function runStage(name, work, options) { const stage = beginStage(name, options); let settled = false; let timeoutId = null; const timeoutMs = options?.timeoutMs; const timeout = timeoutMs ? new Promise((resolve) => { timeoutId = setTimeout(() => { if (settled) return; endStage(stage, "timed-out", { message: `${name} exceeded ${timeoutMs} ms startup timeout`, startupContinued: true }); resolve(options?.fallbackValue); }, timeoutMs); }) : null; const op = Promise.resolve().then(work).then((result) => { settled = true; if (timeoutId) clearTimeout(timeoutId); endStage(stage, "completed", options); return result; }, (error) => { settled = true; if (timeoutId) clearTimeout(timeoutId); endStage(stage, "failed", { error, startupContinued: options?.blocking === false }); if (options?.degradeOnFailure) return options?.fallbackValue; throw error; }); return timeout ? Promise.race([op, timeout]) : op; }
   function audit() { const duration = state.startupCompletedAtMs ? Math.round((state.startupCompletedAtMs - state.startupStartedAtMs) * 10) / 10 : Math.round((nowMs() - state.startupStartedAtMs) * 10) / 10; const stages = clone(state.stages); const timedOutStages = stages.filter(s => s.status === "timed-out"); return { available: true, version: VERSION, startupStartedAt: state.startupStartedAt, startupCompletedAt: state.startupCompletedAt, startupDurationMs: duration, startupCompleted: state.startupCompleted, completed: state.startupCompleted, uiUsable: state.uiUsable, uiUsableAt: state.uiUsableAt, uiUsableAtMs: state.uiUsableAtMs, prepaintLockReleased: state.prepaintLockReleased, firstVisibleFrame: state.firstVisibleFrame, firstInteractiveUI: state.firstInteractiveUI, degradedStartup: state.degradedStartup, stalled: state.stalled, previouslyStalled: state.previouslyStalled, watchdogTriggered: state.watchdogTriggered, watchdogTriggeredAt: state.watchdogTriggeredAt, watchdogStage: state.watchdogStage, slowStartup: state.slowStartup || duration > state.slowStartupThresholdMs || state.watchdogTriggered, slowStartupThresholdMs: state.slowStartupThresholdMs, maximumObservedBlockingStageMs: state.maximumObservedBlockingStageMs, lateCompletedStages: clone(state.lateCompletedStages), currentStage: state.currentStage, lastCompletedStage: state.lastCompletedStage, failedStage: state.failedStage, timedOutStages, failedStages: stages.filter(s => s.status === "failed"), blockingStages: stages.filter(s => s.blocking), nonBlockingStages: stages.filter(s => !s.blocking), networkStages: stages.filter(s => s.network), cacheOrFallbackUsed: state.cacheOrFallbackUsed || stages.some(s => s.cachedOrFallbackUsed), stages, warnings: clone(state.warnings), failures: clone(state.failures), recommendation: state.uiUsable ? (state.degradedStartup || timedOutStages.length ? "Startup is usable only in degraded mode; inspect timedOutStages, lateCompletedStages, and warnings." : "Startup completed without captured blocking failures.") : "Startup is not yet usable; the prepaint/startup lock or visible UI readiness is still pending.", safeForBeta: Boolean(state.uiUsable && !state.degradedStartup && !timedOutStages.length && !state.watchdogTriggered && !state.failures.some(f => /protected|write/i.test(f.message || ""))) }; }
   function summary() { const a = audit(); return { startupCompleted: a.startupCompleted, completed: a.completed, uiUsable: a.uiUsable, uiUsableAt: a.uiUsableAt, degradedStartup: a.degradedStartup, slowStartup: a.slowStartup, watchdogTriggered: a.watchdogTriggered, startupDurationMs: a.startupDurationMs, currentStage: a.currentStage, timedOutStages: a.timedOutStages.map(s => s.name), warnings: a.warnings, failures: a.failures }; }
@@ -69,7 +114,31 @@
       if (event?.type === "uiUsable") markUiUsable(event.reason);
     });
   }
-  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state };
+  function postPaintBlockingAudit() {
+    const visibleAt = postPaintAuditState.mobilePortraitVisibleAt;
+    const postPaintLongTasks = postPaintAuditState.longTasks.filter((task) => visibleAt === null || Number(task.startTime) >= Number(visibleAt));
+    const longest = postPaintLongTasks.slice().sort((a, b) => Number(b.duration || 0) - Number(a.duration || 0))[0] || null;
+    const total = postPaintLongTasks.reduce((sum, task) => sum + Number(task.duration || 0), 0);
+    const firstEventTs = postPaintAuditState.firstPointerEventTimestamp ?? postPaintAuditState.firstClickEventTimestamp;
+    const firstCaptureAt = postPaintAuditState.firstPointerCaptureObservedAt ?? postPaintAuditState.firstClickCaptureObservedAt;
+    const firstHandlerAt = postPaintAuditState.firstPointerHandlerEnteredAt ?? postPaintAuditState.firstClickHandlerEnteredAt;
+    const eventQueueDelayMs = Number.isFinite(firstEventTs) && Number.isFinite(firstCaptureAt) ? Math.max(0, Math.round((firstCaptureAt - firstEventTs) * 100) / 100) : null;
+    const handlerDispatchDelayMs = Number.isFinite(firstCaptureAt) && Number.isFinite(firstHandlerAt) ? Math.max(0, Math.round((firstHandlerAt - firstCaptureAt) * 100) / 100) : null;
+    const surfaceOpenDelayMs = Number.isFinite(firstHandlerAt) && Number.isFinite(postPaintAuditState.firstSurfaceOpenAt) ? Math.max(0, Math.round((postPaintAuditState.firstSurfaceOpenAt - firstHandlerAt) * 100) / 100) : null;
+    const topPhase = postPaintAuditState.phases.slice().sort((a, b) => Number(b.durationMs || 0) - Number(a.durationMs || 0))[0] || null;
+    return {
+      available: true, architectureOnly: true,
+      pageLifecycle: { scriptStartAt: postPaintAuditState.scriptStartAt, domContentLoadedAt: postPaintAuditState.domContentLoadedAt, mobilePortraitVisibleAt: postPaintAuditState.mobilePortraitVisibleAt, dockHandlersInstalledAt: postPaintAuditState.dockHandlersInstalledAt, startupWorkCompletedAt: postPaintAuditState.startupWorkCompletedAt, firstResponsiveInteractionAt: postPaintAuditState.firstResponsiveInteractionAt },
+      interactionLatency: { firstPointerEventTimestamp: postPaintAuditState.firstPointerEventTimestamp, firstPointerCaptureObservedAt: postPaintAuditState.firstPointerCaptureObservedAt, firstPointerHandlerEnteredAt: postPaintAuditState.firstPointerHandlerEnteredAt, firstClickEventTimestamp: postPaintAuditState.firstClickEventTimestamp, firstClickCaptureObservedAt: postPaintAuditState.firstClickCaptureObservedAt, firstClickHandlerEnteredAt: postPaintAuditState.firstClickHandlerEnteredAt, eventQueueDelayMs, handlerDispatchDelayMs, surfaceOpenDelayMs },
+      longTasks: postPaintAuditState.longTasks.slice(), phases: postPaintAuditState.phases.slice(), longestPostPaintTaskMs: longest ? longest.duration : null, totalPostPaintBlockingMs: Math.round(total * 100) / 100,
+      interactionBlockedWhileVisible: Boolean(visibleAt && firstEventTs && eventQueueDelayMs !== null && eventQueueDelayMs > 50),
+      likelyBlockingOwner: longest?.activeFunction || topPhase?.name || "unproven until browser validation captures post-paint long tasks",
+      likelyBlockingCallChain: longest?.activeStage || topPhase?.name || "Use Edge Performance Call Tree/Bottom-Up against these timestamps",
+      evidenceConfidence: longest ? "browser-measured-longtask" : "architecture-only-pending-browser-validation", protectedSystemsChanged: false
+    };
+  }
+  window.gridlyStartupDiagnostics = { beginStage, endStage, runStage, markUiUsable, markPrepaintReleased, markFirstVisibleFrame, completeStartup, state, markPostPaintLifecycle, beginPostPaintPhase, endPostPaintPhase, measurePostPaintPhase, markInteractionProbe };
+  window.gridlyPostPaintBlockingAudit = postPaintBlockingAudit;
   replayEarlyStartupEvents();
   window.gridlyStartupAudit = audit; window.gridlyStartupSummary = summary; window.gridlyRunStartupDiagnosticsValidation = validate; window.gridlyStartupDiagnosticsValidationSummary = async () => { const r = await validate(); return { safeForBeta: r.safeForBeta, failures: r.failures, warnings: r.warnings, timeoutCapture: r.timeoutCapture, timeoutStatusDurable: r.timeoutStatusDurable, noProductionWrites: r.noProductionWrites }; };
 }());
