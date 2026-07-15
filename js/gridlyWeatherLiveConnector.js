@@ -27,6 +27,7 @@
   let fetchInFlight = null;
 
   let normalizedRecords = [];
+  let lastRecordSignature = null;
 
   function freeze(value) {
     if (!value || typeof value !== "object") return value;
@@ -87,6 +88,37 @@
 
   function filterAwarenessRecords(records) {
     return (Array.isArray(records) ? records : []).filter((record) => isTravelImpacting(record) && matchesAwarenessArea(record));
+  }
+
+
+  function stableRecordValue(value) {
+    if (Array.isArray(value)) return value.map(stableRecordValue);
+    if (value && typeof value === "object") {
+      return Object.keys(value).sort().reduce((memo, key) => {
+        if (key === "raw" || key === "rawPayload" || key === "rawPayloadExposed") return memo;
+        const nextValue = value[key];
+        if (typeof nextValue === "function" || typeof nextValue === "undefined") return memo;
+        memo[key] = stableRecordValue(nextValue);
+        return memo;
+      }, {});
+    }
+    return value;
+  }
+
+  function buildRecordSignature(records) {
+    const stableRecords = (Array.isArray(records) ? records : []).map(stableRecordValue);
+    stableRecords.sort((left, right) => JSON.stringify(left).localeCompare(JSON.stringify(right)));
+    return `${PROVIDER_ID}:${stableRecords.length}:${JSON.stringify(stableRecords)}`;
+  }
+
+  function notifyOfficialProviderEvidence(signature, changed, reason) {
+    if (typeof globalScope.gridlyOfficialProviderConsumerRefresh === "function") {
+      globalScope.gridlyOfficialProviderConsumerRefresh({ providerId: PROVIDER_ID, signature, evidenceChanged: changed, reason });
+      return;
+    }
+    if (!changed) return;
+    try { if (typeof globalScope.gridlyRenderTravelBrief === "function") globalScope.gridlyRenderTravelBrief(); } catch (error) {}
+    try { if (typeof globalScope.gridlyUnifiedIntelligencePrototype?.runtime === "function") globalScope.gridlyUnifiedIntelligencePrototype.runtime(); } catch (error) {}
   }
 
   function getProvider() {
@@ -187,10 +219,8 @@
     }
   }
 
-  function notifyBriefWeatherRefresh() {
-    try { if (typeof globalScope.gridlyRefreshBriefWeather === "function") globalScope.gridlyRefreshBriefWeather(); } catch (error) {}
-    try { if (typeof globalScope.gridlyRenderTravelBrief === "function") globalScope.gridlyRenderTravelBrief(); } catch (error) {}
-    try { if (typeof globalScope.gridlyUnifiedIntelligencePrototype?.runtime === "function") globalScope.gridlyUnifiedIntelligencePrototype.runtime(); } catch (error) {}
+  function notifyBriefWeatherRefresh(signature, changed, reason) {
+    notifyOfficialProviderEvidence(signature, changed, reason || "weather-provider-evidence");
   }
 
   async function fetchNow() {
@@ -211,12 +241,15 @@
         try {
           const payload = await requestPayload(endpoint);
           normalizedRecords = filterAwarenessRecords(normalizePayload(payload));
+          const recordSignature = buildRecordSignature(normalizedRecords);
+          const evidenceChanged = recordSignature !== lastRecordSignature;
+          lastRecordSignature = recordSignature;
           state.connected = true;
           state.lastFetchSucceeded = true;
           state.normalizedRecordCount = normalizedRecords.length;
           state.lastError = null;
-          notifyBriefWeatherRefresh();
-          return freeze({ connected: true, normalizedRecordCount: normalizedRecords.length });
+          notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-success");
+          return freeze({ connected: true, normalizedRecordCount: normalizedRecords.length, evidenceChanged });
         } catch (error) {
           lastError = error;
           attempt += 1;
@@ -226,12 +259,15 @@
       throw lastError || new Error("Weather connector request failed");
     } catch (error) {
       normalizedRecords = [];
+      const recordSignature = buildRecordSignature(normalizedRecords);
+      const evidenceChanged = recordSignature !== lastRecordSignature;
+      lastRecordSignature = recordSignature;
       state.connected = false;
       state.lastFetchSucceeded = false;
       state.normalizedRecordCount = 0;
       state.lastError = error instanceof Error ? error.message : String(error);
-      notifyBriefWeatherRefresh();
-      return freeze({ connected: false, normalizedRecordCount: 0, error: state.lastError });
+      notifyBriefWeatherRefresh(recordSignature, evidenceChanged, "weather-fetch-failure");
+      return freeze({ connected: false, normalizedRecordCount: 0, error: state.lastError, evidenceChanged });
     }
   }
 
