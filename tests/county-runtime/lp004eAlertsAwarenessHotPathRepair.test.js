@@ -27,8 +27,8 @@ assert(openAlerts.includes('const eventType = arguments[0] || "click";') && open
 assert(openAlerts.includes('getGridlyAlertsPresentationCountModel(alertsForRender, { alertsOpenContext })'), 'presentation construction receives the scoped context');
 assert(resolveArea.includes('activeContext?.candidateLookup instanceof Map'), 'candidate lookup is reused from scoped context');
 assert(resolveArea.includes('candidateLookupReuseCount'), 'candidate lookup reuse is audited');
-assert(buildRoadContext.includes('gridlyActiveAlertsOpenContext?.roadEvaluationContext'), 'road evaluation context is reused from scoped context');
-assert(evaluateRoad.includes('gridlyActiveAlertsOpenContext?.roadEvaluationContext'), 'candidate evaluation reuses the scoped road context instead of broad awareness resolution');
+assert(!buildRoadContext.includes('return gridlyActiveAlertsOpenContext.roadEvaluationContext'), 'road evaluation context builder preserves default behavior outside explicit Alerts context');
+assert(!evaluateRoad.includes('gridlyActiveAlertsOpenContext?.roadEvaluationContext && !roadEvaluationContext'), 'candidate evaluation requires explicit context instead of global interception');
 assert(!dockBinding.includes('pointerover'), 'bottom dock binding does not open Alerts on pointerover');
 assert(dockBinding.includes("button.addEventListener('click'"), 'click/tap activation still opens Alerts');
 assert(openAlerts.includes('renderAlertCard(a, i, false)'), 'one construction presentation still renders alert cards');
