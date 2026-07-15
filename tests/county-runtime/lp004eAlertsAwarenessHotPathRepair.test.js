@@ -1,0 +1,41 @@
+const assert = require('assert');
+const fs = require('fs');
+const source = fs.readFileSync('js/app.js', 'utf8');
+const slice = (start, end) => {
+  const s = source.indexOf(start);
+  assert(s >= 0, `${start} exists`);
+  const e = source.indexOf(end, s + start.length);
+  assert(e >= 0, `${end} exists after ${start}`);
+  return source.slice(s, e);
+};
+const openAlerts = slice('function openAlertsSurfaceFromDock()', '    if (typeof isGridlyExplicitDebugModeEnabled');
+const contextFactory = slice('function gridlyCreateAlertsOpenContext(eventType = "manual")', 'function gridlyAlertsAwarenessHotPathAudit()');
+const auditHelper = slice('function gridlyAlertsAwarenessHotPathAudit()', 'const gridlyAlertsOpenPerformanceAuditState');
+const resolveArea = slice('function resolveGridlyAwarenessArea(value = "")', 'function resolveGridlyAwarenessAreaForCounty');
+const buildRoadContext = slice('function buildGridlyRoadEvaluationContext(options = {})', 'function gridlyIsInvalidCountyAwareRoadLabel');
+const evaluateRoad = slice('function evaluateRoadNameCandidate(value = "", roadEvaluationContext = null)', 'function normalizeRoadDisplayCase');
+const dockBinding = slice('function bindBottomDockRealButtons()', 'function setMobileUiMode');
+
+assert(contextFactory.includes('selectedAwarenessArea'), 'one scoped Alerts open context resolves selected awareness area');
+assert(contextFactory.includes('resolvedAwarenessArea'), 'one scoped Alerts open context resolves awareness area');
+assert(contextFactory.includes('normalizedSettings'), 'one scoped Alerts open context resolves settings');
+assert(contextFactory.includes('settingsPreferences'), 'one scoped Alerts open context stores preferences');
+assert(contextFactory.includes('normalizedHomeTown'), 'one scoped Alerts open context resolves hometown');
+assert(contextFactory.includes('candidateLookup: new Map()'), 'candidate lookup is scoped to one Alerts open');
+assert(contextFactory.includes('context.roadEvaluationContext = buildGridlyRoadEvaluationContext'), 'road evaluation context is built once for the scoped context');
+assert(openAlerts.includes('const eventType = arguments[0] || "click";') && openAlerts.includes('const alertsOpenContext = gridlyCreateAlertsOpenContext(eventType);'), 'Alerts open creates the scoped context before presentation construction');
+assert(openAlerts.includes('getGridlyAlertsPresentationCountModel(alertsForRender, { alertsOpenContext })'), 'presentation construction receives the scoped context');
+assert(resolveArea.includes('activeContext?.candidateLookup instanceof Map'), 'candidate lookup is reused from scoped context');
+assert(resolveArea.includes('candidateLookupReuseCount'), 'candidate lookup reuse is audited');
+assert(buildRoadContext.includes('gridlyActiveAlertsOpenContext?.roadEvaluationContext'), 'road evaluation context is reused from scoped context');
+assert(evaluateRoad.includes('gridlyActiveAlertsOpenContext?.roadEvaluationContext'), 'candidate evaluation reuses the scoped road context instead of broad awareness resolution');
+assert(!dockBinding.includes('pointerover'), 'bottom dock binding does not open Alerts on pointerover');
+assert(dockBinding.includes("button.addEventListener('click'"), 'click/tap activation still opens Alerts');
+assert(openAlerts.includes('renderAlertCard(a, i, false)'), 'one construction presentation still renders alert cards');
+assert(openAlerts.includes('presentationCountModel.alerts.length ? presentationCountModel.alerts : buildAlertPresentationGroups'), 'presentation grouping output remains owned by the existing model');
+assert(!openAlerts.includes('renderAlerts()'), 'Alerts open does not introduce desktop render dependency');
+assert(auditHelper.includes('window.gridlyAlertsAwarenessHotPathAudit'), 'required hot-path audit is exposed on window');
+['alertsOpenInvocationCount', 'activationEventTypes', 'candidateLookupBuildCount', 'roadEvaluationContextBuildCount', 'hotPathRepairPass'].forEach((key) => {
+  assert(auditHelper.includes(key), `audit returns ${key}`);
+});
+console.log('lp004eAlertsAwarenessHotPathRepair.test.js passed');
