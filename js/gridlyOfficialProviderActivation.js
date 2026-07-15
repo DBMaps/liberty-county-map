@@ -10,6 +10,8 @@
     lastActivationAt: null,
     lastDriveTexasSignature: null,
     lastWeatherSignature: null,
+    driveTexasRecordCount: 0,
+    weatherRecordCount: 0,
     providerEvidenceChanged: false,
     consumerRefreshRequested: false,
     consumerRefreshCoalesced: false,
@@ -50,14 +52,36 @@
     state.lastConsumerRefreshDurationMs = Number((nowMs() - startedAt).toFixed(2));
   }
 
+  function compactSignatureHash(signature) {
+    if (typeof signature !== "string") return null;
+    let hash = 2166136261;
+    for (let index = 0; index < signature.length; index += 1) {
+      hash ^= signature.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return `fnv1a32:${(hash >>> 0).toString(16).padStart(8, "0")}`;
+  }
+
+  function extractProviderRecordCount(signature) {
+    if (typeof signature !== "string") return 0;
+    const match = signature.match(/^[^:]+:(\d+):/);
+    return match ? Number(match[1]) || 0 : 0;
+  }
+
   function requestConsumerRefresh(options = {}) {
     const providerId = String(options.providerId || "official").toLowerCase();
     const signature = typeof options.signature === "string" ? options.signature : null;
     const previousSignature = providerId === "weather" ? state.lastWeatherSignature : providerId === "drivetexas" ? state.lastDriveTexasSignature : null;
     const changed = options.evidenceChanged === true || (signature !== null && signature !== previousSignature);
 
-    if (providerId === "weather" && signature !== null) state.lastWeatherSignature = signature;
-    if (providerId === "drivetexas" && signature !== null) state.lastDriveTexasSignature = signature;
+    if (providerId === "weather" && signature !== null) {
+      state.lastWeatherSignature = signature;
+      state.weatherRecordCount = extractProviderRecordCount(signature);
+    }
+    if (providerId === "drivetexas" && signature !== null) {
+      state.lastDriveTexasSignature = signature;
+      state.driveTexasRecordCount = extractProviderRecordCount(signature);
+    }
 
     state.providerEvidenceChanged = changed;
     if (!changed) {
@@ -109,8 +133,10 @@
       driveTexasRefreshIntervalMs: Number(globalScope.gridlyDriveTexasConnector?.refreshIntervalMs) || null,
       weatherRefreshIntervalMs: Number(globalScope.gridlyWeatherConnector?.refreshIntervalMs) || null,
       lastActivationAt: state.lastActivationAt,
-      lastDriveTexasSignature: state.lastDriveTexasSignature,
-      lastWeatherSignature: state.lastWeatherSignature,
+      lastDriveTexasSignatureHash: compactSignatureHash(state.lastDriveTexasSignature),
+      lastWeatherSignatureHash: compactSignatureHash(state.lastWeatherSignature),
+      driveTexasRecordCount: state.driveTexasRecordCount,
+      weatherRecordCount: state.weatherRecordCount,
       providerEvidenceChanged: state.providerEvidenceChanged === true,
       consumerRefreshRequested: state.consumerRefreshRequested === true,
       consumerRefreshCoalesced: state.consumerRefreshCoalesced === true,

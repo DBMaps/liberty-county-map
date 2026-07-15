@@ -41,6 +41,14 @@ assert.strictEqual(context.gridlyOfficialProviderActivationAudit().duplicateCons
 drainTimers();
 
 const audit = context.gridlyOfficialProviderActivationAudit();
+assert.strictEqual(audit.lastDriveTexasSignature, undefined, 'audit does not expose raw DriveTexas provider signatures');
+assert.strictEqual(audit.lastWeatherSignature, undefined, 'audit does not expose raw Weather provider signatures');
+assert.match(audit.lastDriveTexasSignatureHash, /^fnv1a32:[0-9a-f]{8}$/, 'audit exposes only a compact DriveTexas signature hash');
+assert.match(audit.lastWeatherSignatureHash, /^fnv1a32:[0-9a-f]{8}$/, 'audit exposes only a compact Weather signature hash');
+assert.strictEqual(audit.driveTexasRecordCount, 1, 'audit exposes safe DriveTexas record count');
+assert.strictEqual(audit.weatherRecordCount, 1, 'audit exposes safe Weather record count');
+assert.strictEqual(JSON.stringify(audit).includes('us90'), false, 'audit omits DriveTexas record IDs');
+assert.strictEqual(JSON.stringify(audit).includes('storm'), false, 'audit omits Weather record IDs');
 assert.strictEqual(audit.broadPortraitRefreshInvoked, false, 'diagnostics record no broad portrait invocation');
 assert.strictEqual(audit.consumerRefreshCoalesced, true, 'coalesced narrow refresh is recorded');
 assert.strictEqual(typeof audit.lastConsumerRefreshDurationMs, 'number', 'narrow consumer refresh duration is measured');

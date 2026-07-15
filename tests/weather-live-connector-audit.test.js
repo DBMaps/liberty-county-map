@@ -29,6 +29,7 @@ function loadContext(fetchImpl) {
       if (timeoutCallback) timeoutCallback();
     },
     GRIDLY_CONFIG: { weather: { enabled: false, endpointTemplate: "https://api.weather.gov/alerts/active?area=TX" } },
+    getGridlySelectedAwarenessArea() { return { label: "Liberty County", storageValue: "liberty-tx", countyId: "liberty-tx", countyWide: true }; },
     gridlyPackageRegistry: {
       getPackage(id) {
         return id === "intelligence.weather"
@@ -96,7 +97,8 @@ const sampleJsonLd = {
     automaticPolling: false,
     providerActivated: false,
     renderingPerformed: false,
-    normalizedRecordCount: 0
+    normalizedRecordCount: 0,
+    refreshIntervalMs: 120000
   }));
 
   const providerBefore = context.gridlyWeatherProvider.getRuntimeState();
