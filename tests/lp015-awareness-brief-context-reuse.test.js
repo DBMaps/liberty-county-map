@@ -4,9 +4,99 @@ const path = require('path');
 
 const app = fs.readFileSync(path.join(__dirname, '..', 'js', 'app.js'), 'utf8');
 
-const buildModel = app.match(/function gridlyBriefInteractionBuildModel\(\) \{[\s\S]*?\n\}/)?.[0] || '';
-const storyBuilder = app.match(/function buildGridlyAwarenessStory\(input = \{\}\) \{[\s\S]*?\n\}\n\nwindow\.buildGridlyAwarenessStory/)?.[0] || '';
-const initBrief = app.match(/function gridlyInitBriefInteraction\(\) \{[\s\S]*?\n\}\n\nif \(typeof document !== "undefined"\)/)?.[0] || '';
+function extractNamedFunction(source, name) {
+  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const declaration = new RegExp(`(?:async\\s+)?function\\s+${escapedName}\\s*\\(`);
+  const declarationMatch = declaration.exec(source);
+  assert(declarationMatch, `${name} declaration is present`);
+
+  const functionStart = declarationMatch.index;
+  let parameterDepth = 0;
+  let parameterEnd = -1;
+  for (let index = declarationMatch.index + declarationMatch[0].length - 1; index < source.length; index += 1) {
+    if (source[index] === '(') parameterDepth += 1;
+    if (source[index] === ')') {
+      parameterDepth -= 1;
+      if (parameterDepth === 0) {
+        parameterEnd = index;
+        break;
+      }
+    }
+  }
+  assert.notStrictEqual(parameterEnd, -1, `${name} parameter list closes`);
+  const bodyStart = source.indexOf('{', parameterEnd);
+  assert.notStrictEqual(bodyStart, -1, `${name} body starts with an opening brace`);
+
+  let depth = 0;
+  let state = 'code';
+  let escaped = false;
+  for (let index = bodyStart; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+
+    if (state === 'line-comment') {
+      if (char === '\n' || char === '\r') state = 'code';
+      continue;
+    }
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') {
+        state = 'code';
+        index += 1;
+      }
+      continue;
+    }
+    if (state === 'single-quote' || state === 'double-quote' || state === 'template') {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      if ((state === 'single-quote' && char === "'")
+        || (state === 'double-quote' && char === '"')
+        || (state === 'template' && char === '`')) {
+        state = 'code';
+      }
+      continue;
+    }
+
+    if (char === '/' && next === '/') {
+      state = 'line-comment';
+      index += 1;
+      continue;
+    }
+    if (char === '/' && next === '*') {
+      state = 'block-comment';
+      index += 1;
+      continue;
+    }
+    if (char === "'") {
+      state = 'single-quote';
+      continue;
+    }
+    if (char === '"') {
+      state = 'double-quote';
+      continue;
+    }
+    if (char === '`') {
+      state = 'template';
+      continue;
+    }
+    if (char === '{') depth += 1;
+    if (char === '}') {
+      depth -= 1;
+      if (depth === 0) return source.slice(functionStart, index + 1);
+    }
+  }
+
+  assert.fail(`${name} body has a balanced closing brace`);
+}
+
+const buildModel = extractNamedFunction(app, 'gridlyBriefInteractionBuildModel');
+const storyBuilder = extractNamedFunction(app, 'buildGridlyAwarenessStory');
+const initBrief = extractNamedFunction(app, 'gridlyInitBriefInteraction');
 
 assert(buildModel, 'Awareness Brief model builder is present');
 assert(storyBuilder, 'Story Engine builder is present');
