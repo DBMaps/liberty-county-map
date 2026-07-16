@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     "use strict";
 
     const AUDIT_VERSION = "GRIDLY_CROSSING_PROVIDER_PACKAGE_MODE_ACTIVATION_AUDIT_V1";
@@ -19,11 +19,9 @@
         }
 
         const originalMode = "legacy";
-
         const packageSet = provider.setMode("package");
         const packageGeojson = await window.gridlyGetActiveCountyCrossings?.();
         const packageCount = countFeatures(packageGeojson);
-
         const rollbackSet = provider.setMode(originalMode);
         const rollbackGeojson = await window.gridlyGetActiveCountyCrossings?.();
         const rollbackCount = countFeatures(rollbackGeojson);
@@ -39,27 +37,23 @@
         return {
             auditVersion: AUDIT_VERSION,
             generatedAt: new Date().toISOString(),
-
             packageActivation: {
                 setResult: packageSet,
                 featureCount: packageCount,
                 expectedFeatureCount: 115,
                 passed: packageCount === 115
             },
-
             rollbackValidation: {
                 setResult: rollbackSet,
                 featureCount: rollbackCount,
                 expectedFeatureCount: 5,
                 passed: rollbackCount === 5
             },
-
             activationScope: {
                 providerModeOnly: true,
                 runtimeCrossingSourceModified: false,
                 permanentActivation: false
             },
-
             protectedSystems: {
                 renderingModified: false,
                 mapBehaviorModified: false,
@@ -69,9 +63,7 @@
                 supabaseModified: false,
                 mobilePortraitModified: false
             },
-
             finalMode: "legacy",
-
             finalDetermination: passed
                 ? "PASS_PACKAGE_MODE_ACTIVATION_AND_ROLLBACK"
                 : "BLOCKED_PACKAGE_MODE_ACTIVATION_OR_ROLLBACK_FAILED"
@@ -84,19 +76,16 @@
 (function loadGridlyPublishedAwarenessAlertsConsumer() {
     "use strict";
 
-    const script = document.createElement("script");
-    script.src = "js/gridlyAlertsPublishedAwareness.js?v=1";
-    script.async = false;
-    script.dataset.gridlyAlertsPublishedAwareness = "true";
-    document.head.appendChild(script);
-})();
-
-(function loadGridlyAwarenessOfficialRoadwayPublisherRepair() {
-    "use strict";
-
-    const script = document.createElement("script");
-    script.src = "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js?v=1";
-    script.async = false;
-    script.dataset.gridlyAwarenessOfficialRoadwayPublisherRepair = "true";
-    document.head.appendChild(script);
+    const compatibilityScript = document.createElement("script");
+    compatibilityScript.src = "js/gridlyAlertsPublishedAwarenessCompat.js?v=1";
+    compatibilityScript.async = false;
+    compatibilityScript.dataset.gridlyAlertsPublishedAwarenessCompat = "true";
+    compatibilityScript.onload = () => {
+        const script = document.createElement("script");
+        script.src = "js/gridlyAlertsPublishedAwareness.js?v=2";
+        script.async = false;
+        script.dataset.gridlyAlertsPublishedAwareness = "true";
+        document.head.appendChild(script);
+    };
+    document.head.appendChild(compatibilityScript);
 })();
