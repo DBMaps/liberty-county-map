@@ -73,6 +73,58 @@
     window.gridlyCrossingProviderActivationAudit = audit;
 })();
 
+(function installGridlyAwarenessLookupNormalizationCache() {
+    "use strict";
+
+    const original = window.normalizeGridlyAwarenessAreaLookupText;
+    if (typeof original !== "function" || original.__gridlyMemoized === true) return;
+
+    const cache = new Map();
+    const CACHE_LIMIT = 512;
+    const state = {
+        installed: true,
+        hits: 0,
+        misses: 0,
+        evictions: 0,
+        cacheLimit: CACHE_LIMIT
+    };
+
+    function memoizedNormalizeGridlyAwarenessAreaLookupText(value) {
+        const key = String(value == null ? "" : value);
+        if (cache.has(key)) {
+            state.hits += 1;
+            return cache.get(key);
+        }
+
+        state.misses += 1;
+        const normalized = original.call(this, value);
+        cache.set(key, normalized);
+
+        if (cache.size > CACHE_LIMIT) {
+            const oldestKey = cache.keys().next().value;
+            cache.delete(oldestKey);
+            state.evictions += 1;
+        }
+
+        return normalized;
+    }
+
+    memoizedNormalizeGridlyAwarenessAreaLookupText.__gridlyMemoized = true;
+    memoizedNormalizeGridlyAwarenessAreaLookupText.__gridlyOriginal = original;
+    window.normalizeGridlyAwarenessAreaLookupText = memoizedNormalizeGridlyAwarenessAreaLookupText;
+
+    window.gridlyAwarenessLookupNormalizationCacheAudit = function () {
+        return {
+            available: true,
+            ...state,
+            cacheSize: cache.size,
+            hitRate: state.hits + state.misses
+                ? Number((state.hits / (state.hits + state.misses)).toFixed(4))
+                : 0
+        };
+    };
+})();
+
 (function loadGridlyPublishedAwarenessRuntime() {
     "use strict";
 
