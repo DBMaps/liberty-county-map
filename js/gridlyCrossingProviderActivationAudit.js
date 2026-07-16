@@ -76,16 +76,9 @@
 (function loadGridlyPublishedAwarenessAlertsConsumer() {
     "use strict";
 
-    const compatibilityScript = document.createElement("script");
-    compatibilityScript.src = "js/gridlyAlertsPublishedAwarenessCompat.js?v=1";
-    compatibilityScript.async = false;
-    compatibilityScript.dataset.gridlyAlertsPublishedAwarenessCompat = "true";
-    compatibilityScript.onload = () => {
-        const script = document.createElement("script");
-        script.src = "js/gridlyAlertsPublishedAwareness.js?v=2";
-        script.async = false;
-        script.dataset.gridlyAlertsPublishedAwareness = "true";
-        document.head.appendChild(script);
-    };
-    document.head.appendChild(compatibilityScript);
+    const script = document.createElement("script");
+    script.src = "js/gridlyAlertsPublishedAwareness.js?v=1";
+    script.async = false;
+    script.dataset.gridlyAlertsPublishedAwareness = "true";
+    document.head.appendChild(script);
 })();
