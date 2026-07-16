@@ -76,8 +76,14 @@
 (function loadGridlyPublishedAwarenessAlertsConsumer() {
     "use strict";
 
+    if (typeof window.cleanDisplayValue !== "function") {
+        window.cleanDisplayValue = function cleanDisplayValue(value) {
+            return String(value == null ? "" : value).replace(/\s+/g, " ").trim();
+        };
+    }
+
     const script = document.createElement("script");
-    script.src = "js/gridlyAlertsPublishedAwareness.js?v=1";
+    script.src = "js/gridlyAlertsPublishedAwareness.js?v=2";
     script.async = false;
     script.dataset.gridlyAlertsPublishedAwareness = "true";
     document.head.appendChild(script);
