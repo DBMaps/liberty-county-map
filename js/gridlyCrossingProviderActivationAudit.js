@@ -90,3 +90,13 @@
     script.dataset.gridlyAlertsPublishedAwareness = "true";
     document.head.appendChild(script);
 })();
+
+(function loadGridlyAwarenessOfficialRoadwayPublisherRepair() {
+    "use strict";
+
+    const script = document.createElement("script");
+    script.src = "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js?v=1";
+    script.async = false;
+    script.dataset.gridlyAwarenessOfficialRoadwayPublisherRepair = "true";
+    document.head.appendChild(script);
+})();
