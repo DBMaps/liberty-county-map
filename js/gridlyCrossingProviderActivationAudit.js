@@ -82,8 +82,19 @@
         };
     }
 
+    if (typeof window.esc !== "function") {
+        window.esc = function esc(value) {
+            return String(value == null ? "" : value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        };
+    }
+
     const script = document.createElement("script");
-    script.src = "js/gridlyAlertsPublishedAwareness.js?v=2";
+    script.src = "js/gridlyAlertsPublishedAwareness.js?v=3";
     script.async = false;
     script.dataset.gridlyAlertsPublishedAwareness = "true";
     document.head.appendChild(script);
