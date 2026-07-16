@@ -13,7 +13,11 @@
     originalConsumerRefresh: null,
     lastSuccessfulRecords: [],
     lastSuccessfulAt: null,
-    lastEnrichment: null
+    lastEnrichment: null,
+    initialConnectorSyncStarted: false,
+    initialConnectorSyncCompleted: false,
+    initialConnectorSyncAttempts: 0,
+    initialConnectorSyncReason: null
   };
 
   function cloneRecords(records) {
@@ -183,6 +187,67 @@
     } catch (_error) {}
   }
 
+  function rebuildSharedAwarenessAfterInitialConnector(reason) {
+    const refresh = globalScope.refreshGridlyCommunityPulseSharedModel;
+    if (typeof refresh !== "function") {
+      enrichPublishedState();
+      return Promise.resolve(null);
+    }
+
+    try {
+      return Promise.resolve(refresh({
+        reason: reason || "initial-drivetexas-publication",
+        topAwarenessMicrolineReadOnly: true
+      })).catch(() => null).then((result) => {
+        enrichPublishedState();
+        return result;
+      });
+    } catch (_error) {
+      enrichPublishedState();
+      return Promise.resolve(null);
+    }
+  }
+
+  function startInitialConnectorSynchronization() {
+    if (state.initialConnectorSyncStarted) return;
+    state.initialConnectorSyncStarted = true;
+
+    const intervalId = globalScope.setInterval(() => {
+      state.initialConnectorSyncAttempts += 1;
+
+      const connectorRecords = readProviderRecords("gridlyDriveTexasConnector");
+      let runtime = null;
+      try {
+        runtime = typeof globalScope.gridlyDriveTexasConnectorRuntimeAudit === "function"
+          ? globalScope.gridlyDriveTexasConnectorRuntimeAudit()
+          : null;
+      } catch (_error) {}
+
+      const connectorCompleted = Boolean(
+        connectorRecords.length || runtime?.connected === true
+      );
+      const timedOut = state.initialConnectorSyncAttempts >= 50;
+
+      if (!connectorCompleted && !timedOut) return;
+
+      globalScope.clearInterval(intervalId);
+      state.initialConnectorSyncCompleted = true;
+      state.initialConnectorSyncReason = connectorRecords.length
+        ? "records-available"
+        : runtime?.connected === true
+          ? "successful-empty-response"
+          : "timeout";
+
+      if (connectorRecords.length) {
+        rememberSuccessfulConnectorRecords(connectorRecords);
+      }
+
+      rebuildSharedAwarenessAfterInitialConnector(
+        `initial-drivetexas-${state.initialConnectorSyncReason}`
+      );
+    }, 200);
+  }
+
   function installConsumerRefreshBridge() {
     const currentRefresh = globalScope.gridlyOfficialProviderConsumerRefresh;
     if (typeof currentRefresh !== "function") return false;
@@ -213,6 +278,7 @@
   function install() {
     if (state.installed) {
       installConsumerRefreshBridge();
+      startInitialConnectorSynchronization();
       return true;
     }
     const builder = globalScope.buildGridlyCommunityAwarenessIntelligenceSummary;
@@ -226,6 +292,7 @@
     installConsumerRefreshBridge();
     state.installed = true;
     enrichPublishedState();
+    startInitialConnectorSynchronization();
     return true;
   }
 
@@ -249,7 +316,11 @@
       lastSuccessfulAt: state.lastSuccessfulAt,
       consumerRefreshBridgeInstalled: Boolean(
         globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
-      )
+      ),
+      initialConnectorSyncStarted: state.initialConnectorSyncStarted,
+      initialConnectorSyncCompleted: state.initialConnectorSyncCompleted,
+      initialConnectorSyncAttempts: state.initialConnectorSyncAttempts,
+      initialConnectorSyncReason: state.initialConnectorSyncReason
     };
   };
 })(window);
