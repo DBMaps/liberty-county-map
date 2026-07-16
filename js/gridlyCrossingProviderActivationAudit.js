@@ -73,7 +73,7 @@
     window.gridlyCrossingProviderActivationAudit = audit;
 })();
 
-(function loadGridlyPublishedAwarenessAlertsConsumer() {
+(function loadGridlyPublishedAwarenessRuntime() {
     "use strict";
 
     if (typeof window.cleanDisplayValue !== "function") {
@@ -93,9 +93,60 @@
         };
     }
 
-    const script = document.createElement("script");
-    script.src = "js/gridlyAlertsPublishedAwareness.js?v=3";
-    script.async = false;
-    script.dataset.gridlyAlertsPublishedAwareness = "true";
-    document.head.appendChild(script);
+    function loadAlertsConsumer() {
+        if (document.querySelector('script[data-gridly-alerts-published-awareness="true"]')) return;
+        const alertsScript = document.createElement("script");
+        alertsScript.src = "js/gridlyAlertsPublishedAwareness.js?v=4";
+        alertsScript.async = false;
+        alertsScript.dataset.gridlyAlertsPublishedAwareness = "true";
+        document.head.appendChild(alertsScript);
+    }
+
+    async function publishDriveTexasAwareness() {
+        try {
+            if (typeof window.gridlyDriveTexasConnector?.fetchNow === "function") {
+                await window.gridlyDriveTexasConnector.fetchNow();
+            }
+
+            if (typeof window.refreshGridlyCommunityPulseSharedModel === "function") {
+                await window.refreshGridlyCommunityPulseSharedModel({
+                    reason: "startup-drivetexas-authoritative-publication",
+                    topAwarenessMicrolineReadOnly: true
+                });
+            }
+
+            if (typeof window.refreshPortraitV2LocalizedIntelligence === "function") {
+                window.refreshPortraitV2LocalizedIntelligence();
+            }
+        } catch (error) {
+            console.warn("Gridly DriveTexas startup publication deferred", error);
+        }
+    }
+
+    function afterPublisherLoaded() {
+        publishDriveTexasAwareness();
+        loadAlertsConsumer();
+    }
+
+    if (window.gridlyAwarenessOfficialRoadwayPublisherRepairAudit?.().installed === true) {
+        afterPublisherLoaded();
+        return;
+    }
+
+    const existingPublisherScript = document.querySelector(
+        'script[data-gridly-awareness-official-roadway-publisher="true"]'
+    );
+
+    if (existingPublisherScript) {
+        existingPublisherScript.addEventListener("load", afterPublisherLoaded, { once: true });
+        return;
+    }
+
+    const publisherScript = document.createElement("script");
+    publisherScript.src = "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js?v=6";
+    publisherScript.async = false;
+    publisherScript.dataset.gridlyAwarenessOfficialRoadwayPublisher = "true";
+    publisherScript.onload = afterPublisherLoaded;
+    publisherScript.onerror = loadAlertsConsumer;
+    document.head.appendChild(publisherScript);
 })();
