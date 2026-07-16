@@ -10,8 +10,19 @@
   const state = {
     installed: false,
     originalBuilder: null,
+    originalConsumerRefresh: null,
+    lastSuccessfulRecords: [],
+    lastSuccessfulAt: null,
     lastEnrichment: null
   };
+
+  function cloneRecords(records) {
+    try {
+      return JSON.parse(JSON.stringify(Array.isArray(records) ? records : []));
+    } catch (_error) {
+      return [];
+    }
+  }
 
   function readProviderRecords(apiName) {
     try {
@@ -73,14 +84,45 @@
     }
   }
 
+  function rememberSuccessfulConnectorRecords(records) {
+    state.lastSuccessfulRecords = cloneRecords(records);
+    state.lastSuccessfulAt = new Date().toISOString();
+  }
+
+  function readOfficialSourceRecords() {
+    const connectorRecords = readProviderRecords("gridlyDriveTexasConnector");
+    if (connectorRecords.length) {
+      rememberSuccessfulConnectorRecords(connectorRecords);
+      return {
+        records: connectorRecords,
+        source: "gridlyDriveTexasConnector",
+        retainedLastSuccessful: false
+      };
+    }
+
+    const providerRecords = readProviderRecords("gridlyDriveTexasProvider");
+    if (providerRecords.length) {
+      return {
+        records: providerRecords,
+        source: "gridlyDriveTexasProvider",
+        retainedLastSuccessful: false
+      };
+    }
+
+    return {
+      records: cloneRecords(state.lastSuccessfulRecords),
+      source: state.lastSuccessfulRecords.length
+        ? "gridlyDriveTexasConnector_last_successful"
+        : "gridlyDriveTexasProvider",
+      retainedLastSuccessful: state.lastSuccessfulRecords.length > 0
+    };
+  }
+
   function enrichSummary(summary) {
     if (!summary || typeof summary !== "object") return summary;
 
-    const connectorRecords = readProviderRecords("gridlyDriveTexasConnector");
-    const providerRecords = connectorRecords.length
-      ? []
-      : readProviderRecords("gridlyDriveTexasProvider");
-    const sourceRecords = connectorRecords.length ? connectorRecords : providerRecords;
+    const officialSource = readOfficialSourceRecords();
+    const sourceRecords = officialSource.records;
     const officialRecords = lifecycleActive(normalizeOfficialRecords(sourceRecords));
 
     const selectedArea = summary.selectedAwarenessArea ||
@@ -105,11 +147,11 @@
     summary.sourceBreakdown.activeHazards = {
       ...(summary.sourceBreakdown.activeHazards || {}),
       source: "activeHazards_plus_officialRoadways",
-      officialRoadwaySource: connectorRecords.length
-        ? "gridlyDriveTexasConnector"
-        : "gridlyDriveTexasProvider",
+      officialRoadwaySource: officialSource.source,
       officialRoadwayCount: officialRecords.length,
       matchedOfficialRoadwayCount: officialInArea.length,
+      retainedLastSuccessful: officialSource.retainedLastSuccessful,
+      lastSuccessfulAt: state.lastSuccessfulAt,
       activeConsidered: summary.activeHazardsInArea.length,
       matchedInArea: summary.activeHazardsInArea.length
     };
@@ -119,7 +161,10 @@
       sourceRecordCount: sourceRecords.length,
       officialActiveCount: officialRecords.length,
       officialMatchedCount: officialInArea.length,
-      recordsAdded: added.length
+      recordsAdded: added.length,
+      officialRoadwaySource: officialSource.source,
+      retainedLastSuccessful: officialSource.retainedLastSuccessful,
+      lastSuccessfulAt: state.lastSuccessfulAt
     };
 
     return summary;
@@ -139,8 +184,38 @@
     } catch (_error) {}
   }
 
+  function installConsumerRefreshBridge() {
+    const currentRefresh = globalScope.gridlyOfficialProviderConsumerRefresh;
+    if (typeof currentRefresh !== "function") return false;
+    if (currentRefresh.__gridlyOfficialRoadwayRetentionBridge === true) return true;
+
+    state.originalConsumerRefresh = currentRefresh;
+    const wrappedRefresh = function (options = {}) {
+      const providerId = String(options?.providerId || "").toLowerCase();
+      const reason = String(options?.reason || "").toLowerCase();
+
+      if (providerId === "drivetexas" && reason.includes("fetch-success")) {
+        rememberSuccessfulConnectorRecords(readProviderRecords("gridlyDriveTexasConnector"));
+      }
+
+      const result = state.originalConsumerRefresh.apply(this, arguments);
+
+      if (providerId === "drivetexas") {
+        globalScope.setTimeout(enrichPublishedState, 0);
+      }
+
+      return result;
+    };
+    wrappedRefresh.__gridlyOfficialRoadwayRetentionBridge = true;
+    globalScope.gridlyOfficialProviderConsumerRefresh = wrappedRefresh;
+    return true;
+  }
+
   function install() {
-    if (state.installed) return true;
+    if (state.installed) {
+      installConsumerRefreshBridge();
+      return true;
+    }
     const builder = globalScope.buildGridlyCommunityAwarenessIntelligenceSummary;
     if (typeof builder !== "function") return false;
 
@@ -149,6 +224,7 @@
       const summary = state.originalBuilder.apply(this, arguments);
       return enrichSummary(summary);
     };
+    installConsumerRefreshBridge();
     state.installed = true;
     enrichPublishedState();
     return true;
@@ -169,7 +245,12 @@
       installed: state.installed,
       lastEnrichment: state.lastEnrichment,
       providerAvailable: Boolean(globalScope.gridlyDriveTexasProvider),
-      connectorAvailable: Boolean(globalScope.gridlyDriveTexasConnector)
+      connectorAvailable: Boolean(globalScope.gridlyDriveTexasConnector),
+      lastSuccessfulRecordCount: state.lastSuccessfulRecords.length,
+      lastSuccessfulAt: state.lastSuccessfulAt,
+      consumerRefreshBridgeInstalled: Boolean(
+        globalScope.gridlyOfficialProviderConsumerRefresh?.__gridlyOfficialRoadwayRetentionBridge
+      )
     };
   };
 })(window);
