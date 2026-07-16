@@ -13,13 +13,30 @@ function gridlyGetPublishedCommunityAwarenessSummaryForAlerts() {
   const topAwarenessSummary = typeof window !== "undefined"
     ? window.gridlyTopAwarenessMicrolineState?.communityAwarenessSummary
     : null;
-  const candidates = [communityPulseSummary, topAwarenessSummary];
 
-  return candidates.find((summary) => (
-    summary
-    && typeof isGridlyCachedAwarenessSummaryForCurrentArea === "function"
-    && isGridlyCachedAwarenessSummaryForCurrentArea(summary)
-  )) || null;
+  const validCandidates = [communityPulseSummary, topAwarenessSummary]
+    .filter((summary) => (
+      summary
+      && typeof isGridlyCachedAwarenessSummaryForCurrentArea === "function"
+      && isGridlyCachedAwarenessSummaryForCurrentArea(summary)
+    ));
+
+  if (!validCandidates.length) return null;
+
+  return validCandidates.sort((left, right) => {
+    const leftCount =
+      (Array.isArray(left?.activeHazardsInArea) ? left.activeHazardsInArea.length : 0) +
+      (Array.isArray(left?.activeReportsInArea) ? left.activeReportsInArea.length : 0);
+    const rightCount =
+      (Array.isArray(right?.activeHazardsInArea) ? right.activeHazardsInArea.length : 0) +
+      (Array.isArray(right?.activeReportsInArea) ? right.activeReportsInArea.length : 0);
+
+    if (rightCount !== leftCount) return rightCount - leftCount;
+
+    const leftUpdatedAt = Date.parse(left?.lastUpdated || left?.generatedAt || left?.updatedAt || 0) || 0;
+    const rightUpdatedAt = Date.parse(right?.lastUpdated || right?.generatedAt || right?.updatedAt || 0) || 0;
+    return rightUpdatedAt - leftUpdatedAt;
+  })[0];
 }
 
 function gridlyPublishedAwarenessRecordIsActive(record = {}) {
