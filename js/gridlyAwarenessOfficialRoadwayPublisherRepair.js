@@ -125,10 +125,9 @@
     const sourceRecords = officialSource.records;
     const officialRecords = lifecycleActive(normalizeOfficialRecords(sourceRecords));
 
-    const selectedArea = summary.selectedAwarenessArea ||
-      (typeof globalScope.getGridlySelectedAwarenessArea === "function"
-        ? globalScope.getGridlySelectedAwarenessArea()
-        : null);
+    const selectedArea = typeof globalScope.getGridlySelectedAwarenessArea === "function"
+      ? globalScope.getGridlySelectedAwarenessArea()
+      : summary.selectedAwarenessArea || null;
 
     const officialInArea = officialRecords.filter((record) => inAwarenessArea(record, selectedArea));
     const existing = Array.isArray(summary.activeHazardsInArea)
