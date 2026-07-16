@@ -125,6 +125,79 @@
     };
 })();
 
+(function installGridlyValidatedCorridorInventoryTurnCache() {
+    "use strict";
+
+    const original = window.getGridlyValidatedPrimaryCorridorInventory;
+    if (typeof original !== "function" || original.__gridlyTurnCached === true) return;
+
+    const state = {
+        installed: true,
+        builds: 0,
+        turnCacheHits: 0,
+        reentrantBypasses: 0,
+        clears: 0,
+        active: false,
+        cacheAvailable: false,
+        lastInventorySize: 0
+    };
+
+    let cachedInventory;
+    let building = false;
+    let clearScheduled = false;
+
+    function scheduleTurnClear() {
+        if (clearScheduled) return;
+        clearScheduled = true;
+        setTimeout(function clearGridlyValidatedCorridorInventoryTurnCache() {
+            cachedInventory = undefined;
+            clearScheduled = false;
+            state.cacheAvailable = false;
+            state.active = false;
+            state.clears += 1;
+        }, 0);
+    }
+
+    function getGridlyValidatedPrimaryCorridorInventoryTurnCached() {
+        if (cachedInventory !== undefined) {
+            state.turnCacheHits += 1;
+            return cachedInventory;
+        }
+
+        if (building) {
+            state.reentrantBypasses += 1;
+            return [];
+        }
+
+        building = true;
+        state.active = true;
+        try {
+            cachedInventory = original.apply(this, arguments);
+            state.builds += 1;
+            state.cacheAvailable = true;
+            state.lastInventorySize = Array.isArray(cachedInventory)
+                ? cachedInventory.length
+                : 0;
+            scheduleTurnClear();
+            return cachedInventory;
+        } finally {
+            building = false;
+        }
+    }
+
+    getGridlyValidatedPrimaryCorridorInventoryTurnCached.__gridlyTurnCached = true;
+    getGridlyValidatedPrimaryCorridorInventoryTurnCached.__gridlyOriginal = original;
+    window.getGridlyValidatedPrimaryCorridorInventory =
+        getGridlyValidatedPrimaryCorridorInventoryTurnCached;
+
+    window.gridlyValidatedCorridorInventoryTurnCacheAudit = function () {
+        return {
+            available: true,
+            ...state
+        };
+    };
+})();
+
 (function loadGridlyPublishedAwarenessRuntime() {
     "use strict";
 
