@@ -80,3 +80,13 @@
 
     window.gridlyCrossingProviderActivationAudit = audit;
 })();
+
+(function loadGridlyPublishedAwarenessAlertsConsumer() {
+    "use strict";
+
+    const script = document.createElement("script");
+    script.src = "js/gridlyAlertsPublishedAwareness.js?v=1";
+    script.async = false;
+    script.dataset.gridlyAlertsPublishedAwareness = "true";
+    document.head.appendChild(script);
+})();
