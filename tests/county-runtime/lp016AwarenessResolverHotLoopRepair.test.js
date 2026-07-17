@@ -38,7 +38,9 @@ assert(saveBody.includes('invalidateGridlySelectedAwarenessAreaResolutionCache?.
 
 const repairAuditBody = bodyOf('gridlyLp016AwarenessResolverHotLoopRepairAudit');
 assert(repairAuditBody.includes('startupResolverCallCount'), 'repair audit reports startup resolver call count');
-assert(repairAuditBody.includes('hotLoopEliminated'), 'repair audit reports hot-loop elimination');
+assert(repairAuditBody.includes('hotLoopEliminated: status.hotLoopEliminated'), 'repair audit reports truthful hot-loop elimination from shared status');
+assert(repairAuditBody.includes('safeForMerge: status.safeForMerge'), 'repair audit reports merge readiness separately from browser validation safety');
+assert(repairAuditBody.includes('counterConsistencyValid: status.counterConsistencyValid'), 'repair audit reports counter consistency');
 assert(repairAuditBody.includes('awarenessSelectionPreserved'), 'repair audit verifies awareness selection preservation');
 assert(repairAuditBody.includes('auditInstrumentationInflationDetected'), 'repair audit reports instrumentation recursion/inflation status');
 assert(repairAuditBody.includes('protectedSystemsPreserved'), 'repair audit reports protected systems preservation');
