@@ -273,9 +273,15 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
       const id = cleanDisplayValue(
         record?.id ||
           record?.reportId ||
+          record?.incidentId ||
           record?.uuid ||
           `published-awareness-${index}`
       );
+      const lat = Number(record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat);
+      const lng = Number(record?.lng ?? record?.lon ?? record?.longitude ?? record?.rawLng ?? record?.raw?.lng ?? record?.raw?.lon ?? record?.source?.lng ?? record?.source?.lon);
+      const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng)
+        ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"`
+        : "";
 
       return `
         <div
@@ -284,6 +290,9 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
           data-gridly-alert-id="${esc(id)}"
           data-gridly-alert-title="${esc(title)}"
           data-gridly-alert-location="${esc(location)}"
+          data-gridly-alert-hazard-type="${esc(record?.hazardType || record?.type || record?.category || record?.providerId || "")}"
+          data-gridly-alert-crossing-id="${esc(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || "")}"
+          ${coordAttrs}
           style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:8px;"
         >
           <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
@@ -339,6 +348,7 @@ function openAlertsSurfaceFromDock() {
 
   const publishedSummary = gridlyGetPublishedCommunityAwarenessSummaryForAlerts();
   const publishedRecords = gridlyGetPublishedAwarenessAlertRecordsForCurrentArea(publishedSummary);
+  window.__gridlyLatestAlertsForRender = Array.isArray(publishedRecords) ? publishedRecords : [];
   const initialContentSource = publishedRecords === null
     ? "shared-summary-unavailable"
     : (publishedRecords.length ? "published-awareness-summary" : "consumer-empty-state");
@@ -354,6 +364,7 @@ function openAlertsSurfaceFromDock() {
       : false);
 
   const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
+  if (typeof window.gridlyLp019BindAlertFocusHandlers === "function") window.setTimeout(() => window.gridlyLp019BindAlertFocusHandlers(document), 0);
   gridlyInstantAlertsSheetAuditState.lastOpen = {
     handlerEnteredAt,
     sheetInsertedAt,
