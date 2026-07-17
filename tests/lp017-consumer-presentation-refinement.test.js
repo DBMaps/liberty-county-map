@@ -92,3 +92,59 @@ assert(!/canonicalDisplayLocation|structuredDisplayLocation|canonicalLocationPhr
 
 assert(source.includes('canonicalDisplayLocation') && source.includes('structuredDisplayLocation') && source.includes('canonicalLocationPhrase'), 'technical metadata audit covers raw location field names');
 console.log('LP017 consumer presentation refinement regression passed');
+
+const publishedAwarenessSource = fs.readFileSync('js/gridlyAlertsPublishedAwareness.js', 'utf8');
+const publishedAwarenessSandbox = {
+  window: {},
+  console,
+  normalizeGridlyCountyAwareDisplayText: (value) => {
+    if (value && typeof value === 'object') return value.canonicalDisplayLocation || value.phrasing || '';
+    return String(value || '').trim();
+  },
+  cleanDisplayValue: (value) => String(value || '').trim(),
+  esc: (value) => String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;'),
+  gridlyBuildNeutralAlertsSheetMarkup: () => '<div>neutral</div>',
+  formatGridlyAlertsFreshnessLine: () => 'Updated 35 minutes ago',
+  formatGridlyAlertsTrustLine: () => 'Awaiting additional reports',
+  buildGridlyAlertCardConsumerModel: undefined,
+  isGridlyCachedAwarenessSummaryForCurrentArea: () => true,
+  gridlyCommunityPulseAuditState: null,
+  gridlyLP012RecordAlertsClick: () => {},
+  gridlyAlertsOpenRefreshFixNow: () => 0,
+  gridlyBeginAlertsSheetLifecycle: () => 1,
+  gridlyBeginAlertsOpenRefreshFixTiming: () => {},
+  gridlyRecordAlertsOpenRefreshFixTiming: () => {},
+  gridlyInstantAlertsSheetAuditState: {},
+  gridlyAlertsSheetLifecycleState: { lateResultIgnoredCount: 0 }
+};
+vm.createContext(publishedAwarenessSandbox);
+vm.runInContext(publishedAwarenessSource, publishedAwarenessSandbox);
+
+const publishedAwarenessRecord = {
+  id: 'lp017-published-disabled-vehicle',
+  title: 'Disabled Vehicle',
+  locationLabel: 'Polk County',
+  canonicalDisplayLocation: '1 mile south of Livingston',
+  canonicalLocationPhrase: 'near 1 mile south of Livingston',
+  authoritativeLocationLabel: 'Polk County',
+  structuredDisplayLocation: { phrasing: '1 mile south of Livingston' },
+  summary: 'Shared report: disabled vehicle may slow travel. (future_source: txdot_incident) gridly_structured={"canonicalDisplayLocation":"1 mile south of Livingston","canonicalLocationPhrase":"near 1 mile south of Livingston","structuredDisplayLocation":{"phrasing":"1 mile south of Livingston"},"authoritativeLocationLabel":"Polk County","submittedCoordinate":{"lat":30.7},"county_id":"polk","countyId":"polk"}',
+  details: 'Shared report: disabled vehicle may slow travel.',
+  future_source: 'txdot_incident'
+};
+
+const publishedAwarenessHtml = publishedAwarenessSandbox.gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords([
+  publishedAwarenessRecord
+]);
+const publishedAwarenessVisibleText = publishedAwarenessHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+assert(publishedAwarenessVisibleText.includes('Disabled Vehicle'), 'published-awareness builder keeps Disabled Vehicle title');
+assert(publishedAwarenessVisibleText.includes('1 mile south of Livingston'), 'published-awareness builder uses specific consumer location');
+assert(!/Polk County/.test(publishedAwarenessVisibleText.split('Shared report')[0]), 'published-awareness builder does not use Polk County as the primary location when specific location exists');
+assert(publishedAwarenessVisibleText.includes('35 minutes ago'), 'published-awareness builder keeps freshness line');
+assert(publishedAwarenessVisibleText.includes('Awaiting additional reports'), 'published-awareness builder keeps trust copy');
+assert(!/future_source|txdot_incident|gridly_structured|canonicalDisplayLocation|canonicalLocationPhrase|structuredDisplayLocation|authoritativeLocationLabel|submittedCoordinate|county_id|countyId|\[object Object\]|\{\s*"|\}/.test(publishedAwarenessVisibleText), 'published-awareness visible output does not leak metadata or JSON-like content');
