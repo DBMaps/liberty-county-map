@@ -27,12 +27,15 @@ const nearestBody = bodyOf('resolveNearestRoadName');
 const collectBody = bodyOf('collectNearbyRoadCandidates');
 const statusBody = bodyOf('gridlyLp016BuildSelectedAreaLoopStatus');
 const callerAuditBody = bodyOf('gridlyLp016SelectedAreaCallerAudit');
+const payloadBody = bodyOf('resolveIncidentRoadLookupPayload');
+const nearbyBody = bodyOf('resolveNearbyKnownLocation');
+const isResolvableBody = bodyOf('isResolvableRoadNameCandidate');
 
 assert(operationBody.includes('roadEvaluationOperationCount'), 'road-evaluation operations are counted once per logical lookup');
 assert(operationBody.includes('const selectedAwarenessArea = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;'), 'operation context resolves selected awareness once');
 assert(operationBody.includes('gridlyGetActiveCountyId(selectedAwarenessArea)'), 'operation context resolves active county with pre-resolved awareness');
 assert(operationBody.includes('gridlyGetCountyDisplayContext({}, { selectedAwarenessArea, activeCountyId, countyId: activeCountyId })'), 'operation context resolves county display context with pre-resolved awareness/county');
-assert(operationBody.includes('return buildGridlyRoadEvaluationContext({ selectedAwarenessArea, activeCountyId, countyDisplayContext });'), 'operation context builds one immutable road evaluation context');
+assert(operationBody.includes('return buildGridlyRoadEvaluationContext({ selectedAwarenessArea, activeCountyId, countyDisplayContext, operationScoped: true });'), 'operation context builds one immutable attributed road evaluation context');
 
 assert(source.includes('function gridlyGetActiveCountyId(preResolvedAwarenessArea)'), 'active county helper accepts optional pre-resolved awareness');
 assert(activeCountyBody.includes('if (preResolvedAwarenessArea?.countyId) return gridlyNormalizeCountyId(preResolvedAwarenessArea.countyId);'), 'active county helper avoids selected-awareness getter when supplied');
@@ -41,11 +44,18 @@ assert(displayBody.includes('options.activeCountyId'), 'county display helper ac
 
 assert(nearestBody.includes('const roadEvaluationContext = buildGridlyRoadEvaluationOperationContext();'), 'nearest-road operation builds operation-scoped context once after cache miss');
 assert(collectBody.includes('const evaluationContext = roadEvaluationContext || buildGridlyRoadEvaluationContext();'), 'candidate loop reuses a supplied context and only falls back for older callers');
+assert(payloadBody.includes('const roadEvaluationContext = buildGridlyRoadEvaluationOperationContext();'), 'incident road payload builds one context at the logical operation boundary');
+assert(payloadBody.includes('resolveNearbyKnownLocation(incident?.lat, incident?.lng, { roadEvaluationContext })'), 'nested nearby-known lookup receives supplied context');
+assert(payloadBody.includes('isResolvableRoadNameCandidate(value, roadEvaluationContext)'), 'candidate validation receives supplied context in repeated payload loops');
+assert(source.includes('const evaluation = evaluateRoadNameCandidate(nearest?.name || "", roadEvaluationContext);'), 'nearby-known fallback accepts and reuses supplied context');
+assert(isResolvableBody.includes('evaluateRoadNameCandidate(value, roadEvaluationContext)'), 'standalone candidate validity helper forwards supplied context');
 assert(!collectBody.includes('getGridlySelectedAwarenessArea('), 'candidate loop does not resolve selected awareness per candidate');
 assert(!collectBody.includes('gridlyGetActiveCountyId('), 'candidate loop does not resolve active county per candidate');
 
 assert(statusBody.includes('roadEvaluationContextHoisted'), 'audit computes road evaluation context hoist status');
 assert(statusBody.includes('roadContextBuildsPerCandidate'), 'audit reports context builds per candidate');
+assert(statusBody.includes('roadContextBuildAttributedCount'), 'audit reports direct build-caller attribution totals');
+assert(statusBody.includes('roadEvaluationUnexpectedFallbackCount'), 'audit reports unexpected fallback construction');
 assert(statusBody.includes('roadEvaluationContextHoisted &&'), 'hot-loop eliminated remains false when context builds stay per candidate');
 assert(callerAuditBody.includes('roadEvaluationOperationCount: status.roadEvaluationOperationCount'), 'caller audit reports operation count');
 assert(callerAuditBody.includes('roadEvaluationContextHoisted: status.roadEvaluationContextHoisted'), 'caller audit reports hoist status');
