@@ -25375,3 +25375,24 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .gridly-alert-row .gridly-alert-situation-summary {
   display: none;
 }
+
+/* LP021 repair — responsive popup actions at narrow mobile widths. */
+.gridly-popup.gridly-premium-popup .popup-report-grid {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  align-items: stretch;
+}
+.gridly-popup.gridly-premium-popup .popup-report-btn {
+  min-width: 0;
+  min-height: 36px;
+  white-space: normal;
+  overflow-wrap: normal;
+  text-transform: none;
+  font-size: 0.76rem;
+  line-height: 1.15;
+  padding: 8px 9px;
+}
+@media (max-width: 380px) {
+  #map .leaflet-popup-content .gridly-popup.gridly-premium-popup .popup-report-grid {
+    grid-template-columns: 1fr;
+  }
+}
