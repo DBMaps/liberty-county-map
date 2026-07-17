@@ -49,7 +49,7 @@ assert(pairBody.includes('const evaluationContext = roadEvaluationContext || bui
 assert(pairBody.includes('collectNearbyRoadCandidates(coords.lat, coords.lng, 0.45, 8, evaluationContext)'), 'hot nearby-pair lookup passes the hoisted context into the candidate loop');
 
 const nearestBody = bodyOf('resolveNearestRoadName');
-assert(nearestBody.includes('const roadEvaluationContext = buildGridlyRoadEvaluationContext();'), 'resolveNearestRoadName builds one road evaluation context per road lookup');
+assert(nearestBody.includes('const roadEvaluationContext = buildGridlyRoadEvaluationOperationContext();'), 'resolveNearestRoadName builds one road evaluation context per road lookup');
 assert(nearestBody.includes('resolveNearbyRoadPair(coords.lat, coords.lng, selectedSegment.normalized, roadEvaluationContext)'), 'nearest-road segment path reuses the lookup context for pair resolution');
 assert(nearestBody.includes('resolveNearbyRoadPair(coords.lat, coords.lng, selected.normalized, roadEvaluationContext)'), 'nearest-road crossing path reuses the lookup context for pair resolution');
 

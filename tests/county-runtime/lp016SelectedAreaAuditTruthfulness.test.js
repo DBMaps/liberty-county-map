@@ -28,10 +28,12 @@ const samplerBody = bodyOf('gridlyRecordSelectedAwarenessAreaGetterCaller');
 const activeCountyBody = bodyOf('gridlyGetActiveCountyId');
 const driveTexasSource = fs.readFileSync(path.join(__dirname, '..', '..', 'js', 'gridlyDriveTexasLiveConnector.js'), 'utf8');
 
-assert(resolverBody.includes('underlyingResolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0) + 1'), 'underlyingResolverCalls increments in canonical uncached resolver');
+assert(resolverBody.includes('actualResolverMisses = Number(gridlySelectedAwarenessAreaResolutionCache.actualResolverMisses || 0) + 1'), 'canonical uncached resolver increments actual resolver misses');
+assert(resolverBody.includes('underlyingResolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.actualResolverMisses || 0)'), 'underlyingResolverCalls mirrors actual resolver misses');
 assert(!getterBody.includes('underlyingResolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0) + 1'), 'selected-area getter does not increment underlyingResolverCalls on entry, hit, or return');
-assert(getterBody.includes('gridlySelectedAwarenessAreaResolutionCache.resolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0);'), 'resolverCalls mirrors canonical resolver count instead of double-counting a miss');
-assert(statusBody.includes('underlyingResolverCalls <= Math.max(0, totalGetterCalls - cacheHits)'), 'counter consistency rejects resolver counts above actual cache misses');
+assert(getterBody.includes('gridlySelectedAwarenessAreaResolutionCache.resolverCalls = Number(gridlySelectedAwarenessAreaResolutionCache.underlyingResolverCalls || 0);'), 'getter preserves resolverCalls as canonical resolver count after a miss');
+assert(statusBody.includes('const actualResolverMisses = Math.max(0, totalGetterCalls - cacheHits);'), 'status derives actual misses from total getter calls minus cache hits');
+assert(statusBody.includes('underlyingResolverCalls === actualResolverMisses'), 'counter consistency requires underlying resolver calls to equal actual cache misses');
 assert(statusBody.includes('resolverCalls === underlyingResolverCalls'), 'counter consistency rejects alias/canonical double counting');
 assert(statusBody.includes('totalGetterCalls <= GRIDLY_LP016_SELECTED_AREA_GETTER_VOLUME_BOUND'), 'getter volume must be bounded before hotLoopEliminated can pass');
 assert(statusBody.includes('safeForMerge: hotLoopEliminated'), 'safeForMerge remains false until the overall hot loop is eliminated');
