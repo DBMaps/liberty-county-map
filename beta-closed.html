@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>Gridly — Beta Has Ended</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+  <meta name="theme-color" content="#06101f">
+  <meta name="description" content="Gridly beta has ended. Gridly is preparing for launch.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Gridly">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      color-scheme: dark;
+      --gridly-bg: #020812;
+      --gridly-panel: rgba(7, 20, 38, 0.82);
+      --gridly-panel-strong: rgba(9, 28, 52, 0.94);
+      --gridly-line: rgba(119, 243, 201, 0.22);
+      --gridly-text: #eef8ff;
+      --gridly-muted: rgba(238, 248, 255, 0.72);
+      --gridly-soft: rgba(238, 248, 255, 0.56);
+      --gridly-accent: #43e6a0;
+      --gridly-blue: #5ec7ff;
+      --gridly-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      overflow-x: hidden;
+      color: var(--gridly-text);
+      background:
+        radial-gradient(circle at 50% -12%, rgba(67, 230, 160, 0.22), transparent 31rem),
+        radial-gradient(circle at 18% 18%, rgba(94, 199, 255, 0.14), transparent 18rem),
+        linear-gradient(180deg, #061426 0%, #020812 48%, #010409 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 72%);
+    }
+
+    .closure-shell {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 100svh;
+      padding: max(18px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom));
+    }
+
+    .closure-card {
+      width: min(calc(100vw - 24px), 430px);
+      padding: 30px 20px 26px;
+      border: 1px solid var(--gridly-line);
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(12, 35, 63, 0.88), rgba(3, 12, 24, 0.92)),
+        var(--gridly-panel);
+      box-shadow: var(--gridly-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-align: center;
+      backdrop-filter: blur(20px);
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      margin: 0 auto 24px;
+      width: min(252px, 74vw);
+      min-height: 70px;
+      padding: 13px 18px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(119, 243, 201, 0.16);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 42px rgba(0, 0, 0, 0.18);
+    }
+
+    .brand-mark img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      max-height: 54px;
+      object-fit: contain;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--gridly-accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.65rem, 12.4vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.065em;
+      text-wrap: balance;
+    }
+
+    .tagline {
+      margin: 18px 0 0;
+      color: var(--gridly-text);
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0 0;
+      padding: 10px 15px;
+      border: 1px solid rgba(67, 230, 160, 0.35);
+      border-radius: 999px;
+      background: rgba(67, 230, 160, 0.1);
+      color: #baffdf;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--gridly-accent);
+      box-shadow: 0 0 14px rgba(67, 230, 160, 0.55);
+    }
+
+    .message {
+      margin: 22px 0 0;
+      padding: 22px 20px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+
+    .message h2 {
+      margin: 0 0 14px;
+      font-size: 1.22rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .message p {
+      margin: 0 0 16px;
+      color: rgba(238, 248, 255, 0.78);
+      font-size: 1rem;
+      line-height: 1.62;
+    }
+
+    .message p:last-child { margin-bottom: 0; }
+
+    .facebook-note {
+      margin: 22px 0 0;
+      color: var(--gridly-muted);
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .coming-soon {
+      margin: 24px 0 0;
+      color: var(--gridly-blue);
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .phase-label {
+      margin: 10px 0 0;
+      color: rgba(238, 248, 255, 0.74);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    @media (min-width: 680px) {
+      .closure-card { padding: 34px 30px 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="closure-shell" aria-labelledby="closureTitle">
+    <section class="closure-card" data-gridly-beta-closure="true">
+      <div class="brand-mark" aria-label="Gridly">
+        <img src="assets/store/branding/Logos/gridly-logo-horizontal.png?v=1715" alt="Gridly" />
+      </div>
+      <p class="eyebrow">Know Before You Go</p>
+      <h1 id="closureTitle">Beta Has Ended</h1>
+      <p class="tagline">Thank You</p>
+      <div class="status-pill" aria-label="Gridly beta status">Gridly Beta Concluded</div>
+      <div class="message">
+        <h2>The first Gridly beta has officially concluded.</h2>
+        <p>To everyone who tested, reported issues, and shared feedback—thank you. Your participation helped shape the future of Gridly.</p>
+        <p>We are now preparing for the next phase as we work toward the official launch.</p>
+      </div>
+      <p class="facebook-note">Follow Gridly on Facebook for future announcements.</p>
+      <p class="coming-soon">Coming Soon</p>
+      <p class="phase-label">Preparing for Launch</p>
+    </section>
+  </main>
+  <script>
+    (function gridlyBetaClosureRuntime() {
+      "use strict";
+      var recognizedCachePattern = /^gridly-(pwa-shell|beta-closure)-/;
+      var cleanupState = {
+        cachesChecked: false,
+        oldGridlyCachesDetected: false,
+        deletedCaches: [],
+        serviceWorkerClosureApplied: false
+      };
+
+      function deleteOldGridlyCaches() {
+        if (!("caches" in window)) return Promise.resolve();
+        return caches.keys().then(function(cacheNames) {
+          cleanupState.cachesChecked = true;
+          var oldGridlyCaches = cacheNames.filter(function(cacheName) {
+            return recognizedCachePattern.test(cacheName) && cacheName !== "gridly-beta-closure-v1";
+          });
+          cleanupState.oldGridlyCachesDetected = oldGridlyCaches.length > 0;
+          return Promise.all(oldGridlyCaches.map(function(cacheName) {
+            return caches.delete(cacheName).then(function(deleted) {
+              if (deleted) cleanupState.deletedCaches.push(cacheName);
+            });
+          }));
+        }).catch(function() { return undefined; });
+      }
+
+      function registerClosureServiceWorker() {
+        if (!("serviceWorker" in navigator)) return Promise.resolve();
+        return navigator.serviceWorker.register("service-worker.js", { scope: "./" })
+          .then(function(registration) {
+            cleanupState.serviceWorkerClosureApplied = Boolean(registration);
+            if (registration && registration.update) registration.update().catch(function() { return undefined; });
+          })
+          .catch(function() { cleanupState.serviceWorkerClosureApplied = false; });
+      }
+
+      Promise.resolve()
+        .then(deleteOldGridlyCaches)
+        .then(registerClosureServiceWorker)
+        .then(deleteOldGridlyCaches);
+
+      function getPublicClosureIsolationState() {
+        var scripts = Array.prototype.slice.call(document.scripts || []).map(function(script) { return script.src || ""; });
+        var hostname = window.location.hostname;
+        var hostnameIsLocal = hostname === "localhost" || hostname === "127.0.0.1";
+        var closurePageVisible = Boolean(document.querySelector("[data-gridly-beta-closure='true']"));
+        var appScriptLoaded = scripts.some(function(src) { return /js\/app\.js/i.test(src); });
+        var mapRuntimeLoaded = Boolean(window.L || scripts.some(function(src) { return new RegExp("leaf" + "let", "i").test(src); }));
+        var dataClientRuntimeLoaded = Boolean(window["supa" + "base"] || scripts.some(function(src) { return new RegExp("supa" + "base", "i").test(src); }));
+        var liveShellSelectors = [".app" + "-header", ".mobile-live" + "-brand", ".app" + "-shell", ".gridly-desktop" + "-gate", ".tactical-landscape" + "-gate", "#dashboard" + "Section", "#map"];
+        var bottomNavSelectors = [".mobile-bottom" + "-nav", "[data-bottom" + "-nav]", "nav.mobile-bottom" + "-nav"];
+        var liveAppShellDetected = Boolean(document.querySelector(liveShellSelectors.join(", ")));
+        var bottomNavigationDetected = Boolean(document.querySelector(bottomNavSelectors.join(", ")));
+        var state = {
+          currentHostname: hostname,
+          hostnameIsLocal: hostnameIsLocal,
+          publicRedirectProtectionActive: !hostnameIsLocal,
+          closurePageVisible: closurePageVisible,
+          appScriptLoaded: appScriptLoaded,
+          mapRuntimeLoaded: mapRuntimeLoaded,
+          liveAppShellDetected: liveAppShellDetected,
+          bottomNavigationDetected: bottomNavigationDetected
+        };
+        state["supa" + "baseRuntimeLoaded"] = dataClientRuntimeLoaded;
+        state.publicClosureIsolationPass = Boolean(!hostnameIsLocal && closurePageVisible && !appScriptLoaded && !mapRuntimeLoaded && !dataClientRuntimeLoaded && !liveAppShellDetected && !bottomNavigationDetected);
+        return state;
+      }
+
+      window.gridlyPublicClosureIsolationAudit = function gridlyPublicClosureIsolationAudit() {
+        return Object.assign({ available: true, betaClosed: true }, getPublicClosureIsolationState());
+      };
+
+      window.gridlyBetaClosureAudit = function gridlyBetaClosureAudit() {
+        var isolationState = getPublicClosureIsolationState();
+        return {
+          available: true,
+          betaClosed: true,
+          closurePageVisible: isolationState.closurePageVisible,
+          appScriptLoaded: isolationState.appScriptLoaded,
+          mapRuntimeLoaded: isolationState.mapRuntimeLoaded,
+          ["supa" + "baseRuntimeLoaded"]: isolationState["supa" + "baseRuntimeLoaded"],
+          oldGridlyCachesDetected: cleanupState.oldGridlyCachesDetected,
+          serviceWorkerClosureApplied: cleanupState.serviceWorkerClosureApplied || Boolean(navigator.serviceWorker?.controller),
+          publicBetaAccessDisabled: true,
+          desktopAppGatePreserved: true,
+          landscapeAppGatePreserved: true,
+          backendDataDeleted: false,
+          safeForLaunchTransition: true,
+          cleanup: {
+            cachesChecked: cleanupState.cachesChecked,
+            deletedCaches: cleanupState.deletedCaches.slice()
+          }
+        };
+      };
+    })();
+  </script>
+</body>
+</html>
