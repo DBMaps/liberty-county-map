@@ -36,7 +36,7 @@ assert(statusBody.includes('const actualResolverMisses = Math.max(0, totalGetter
 assert(statusBody.includes('underlyingResolverCalls === actualResolverMisses'), 'counter consistency requires underlying resolver calls to equal actual cache misses');
 assert(statusBody.includes('resolverCalls === underlyingResolverCalls'), 'counter consistency rejects alias/canonical double counting');
 assert(statusBody.includes('roadContextBuildCountMatchesOperations'), 'getter volume bounded is derived from operation-scoped road-context evidence instead of cumulative getter volume');
-assert(statusBody.includes('const safeForMerge = Boolean(hotLoopEliminated && awarenessSwitchSafe);'), 'safeForMerge requires hot-loop elimination and awareness-switch safety');
+assert(statusBody.includes('const safeForMerge = Boolean(hotLoopEliminated && awarenessSwitchSafe && protectedSystemsPreserved);'), 'safeForMerge requires hot-loop elimination, awareness-switch safety, and protected-system preservation');
 assert(statusBody.includes('remainingCallsExplainedReason'), 'hot-loop success includes a reason explaining runtime counter reconciliation');
 assert(statusBody.includes('driveTexasAwarenessLookupHoisted &&'), 'hot-loop success still requires DriveTexas operation-scoped hoist');
 assert(callerAuditBody.includes('safeForBrowserValidation: awarenessSelectionPreserved && status.instrumentationDistortionRemoved'), 'browser validation safety is separate from merge safety');
