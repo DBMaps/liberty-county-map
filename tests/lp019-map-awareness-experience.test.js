@@ -30,10 +30,19 @@ assert(app.includes('mapRef.invalidateSize'), 'LP019 invalidates Leaflet size af
 assert(app.includes('gridlyLp019UsableViewportOffset'), 'LP019 derives usable portrait viewport offset from visible DOM surfaces');
 assert(app.includes('gridlyLp019ConditionFocusZoom'), 'LP019 uses a deterministic condition-view zoom helper');
 assert(app.includes('Math.max(current'), 'LP019 condition zoom avoids zooming out when already closer');
-assert(app.includes('finishAfterMove') && app.includes('finalCenterDeltaMeters'), 'LP019 records map completion via move events or already-near target fallback');
+assert(app.includes('finishAfterMove') && app.includes('finishAfterPanSettle'), 'LP019 waits for flyTo/setView and post-panBy settlement before completion');
+assert(app.includes('latLngToContainerPoint') && app.includes('intendedViewportTargetPoint') && app.includes('finalViewportPixelDelta'), 'LP019 measures viewport-offset focus completion in container pixels');
+assert(app.includes('viewportCenteringCompleted') && app.includes('viewportCompletionThresholdPx'), 'LP019 has a UI-derived pixel threshold for focus completion');
+assert(!/finalCenterDeltaMeters[\s\S]{0,120}<= 160/.test(app.match(/safeForMerge:[\s\S]*?reasons:/)?.[0] || ''), 'LP019 merge gate no longer fails offset focus on raw map-center meters');
 assert(app.includes('popupRequested: Boolean(marker') && app.includes('if (marker && debug.mapMovementCompleted)'), 'LP019 requests popup only after matching marker resolution');
 assert(app.includes('duplicateAlertFocusBindings'), 'LP019 repeated Alerts opens remain audited for one delegated binding');
 assert(app.includes('driveTexasPerRecordAwarenessLookupCount') && app.includes('=== 0'), 'LP016 zero per-record awareness lookup invariant remains in merge gate');
+assert(app.includes('gridlyLp019ReadCrossingVisibilitySnapshot'), 'LP019 audits active crossing records against rendered markers');
+assert(app.includes('crossingVisibilityBeforeOfficialRefresh') && app.includes('crossingVisibilityAfterOfficialRefresh'), 'LP019 captures crossing visibility around DriveTexas refresh');
+assert(app.includes('crossingVisibilityBeforeFocus') && app.includes('crossingVisibilityAfterFocus'), 'LP019 captures crossing visibility around alert focus');
+assert(app.includes('driveTexasLayerIsolated') && app.includes('crossingMarkerRegressionDetected'), 'LP019 merge gate audits DriveTexas isolation and crossing marker regressions');
+assert(app.match(/gridlyDriveTexasOfficialLayer\.removeLayer\(marker\)/), 'DriveTexas refresh removes only official DriveTexas markers from its own layer');
+assert(!/gridlyDriveTexasOfficialLayer[\s\S]{0,400}(crossingLayer\.clearLayers|crossingMarkers\.clear|unifiedIncidentLayer\.clearLayers)/.test(app), 'DriveTexas official layer lifecycle does not clear crossing, crossing registry, or unified incident layers');
 assert(!/future_source|gridly_structured|rawPayload|providerCode/.test(app.match(/function gridlyLp019OfficialPopupHtml[\s\S]*?function renderGridlyDriveTexasOfficialMarkers/)?.[0] || ''), 'LP018 consumer-language official popup remains protected');
 
 console.log('LP019 map awareness experience static checks passed');
