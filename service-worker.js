@@ -2,6 +2,8 @@ const GRIDLY_CLOSURE_CACHE_NAME = "gridly-beta-closure-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
+  "./beta-closed.html",
+  "./beta-closure.html",
   "./manifest.json",
   "./assets/favicon-32.png",
   "./assets/icon-180.png",
