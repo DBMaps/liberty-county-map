@@ -45,5 +45,8 @@ assert(repairAuditBody.includes('awarenessSelectionPreserved'), 'repair audit ve
 assert(repairAuditBody.includes('auditInstrumentationInflationDetected'), 'repair audit reports instrumentation recursion/inflation status');
 assert(repairAuditBody.includes('protectedSystemsPreserved'), 'repair audit reports protected systems preservation');
 includes('window.gridlyLp016AwarenessResolverHotLoopRepairAudit = gridlyLp016AwarenessResolverHotLoopRepairAudit', 'repair audit is exposed for browser validation');
+assert(repairAuditBody.includes('invalidRoadLabelContextAudit: status.invalidRoadLabelContextAudit'), 'repair audit exposes invalid road label context counters');
+assert(repairAuditBody.includes('resolverCalls: status.resolverCalls'), 'repair audit exposes canonical resolverCalls alias');
+includes('window.gridlyLp016AwarenessSwitchRefreshAudit = gridlyLp016AwarenessSwitchRefreshAudit', 'awareness switch refresh audit is exposed for browser validation');
 
 console.log('LP016 awareness resolver hot-loop repair static checks passed');

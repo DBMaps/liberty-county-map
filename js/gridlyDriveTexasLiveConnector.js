@@ -80,12 +80,15 @@
   }
 
   function filterAwarenessRecords(records) {
+    if (typeof globalScope.gridlyLp016RecordAwarenessSwitchEvent === "function") globalScope.gridlyLp016RecordAwarenessSwitchEvent("driveTexasRefreshStarted", {});
     const awareness = activeAwarenessArea();
     if (globalScope.gridlySelectedAwarenessAreaResolutionCache && typeof globalScope.gridlySelectedAwarenessAreaResolutionCache === "object") {
       globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasFilterOperationCount = Number(globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasFilterOperationCount || 0) + 1;
       globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasPerRecordAwarenessLookupCount = Number(globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasPerRecordAwarenessLookupCount || 0);
     }
-    return (Array.isArray(records) ? records : []).filter((record) => matchesAwarenessArea(record, awareness));
+    const filteredRecords = (Array.isArray(records) ? records : []).filter((record) => matchesAwarenessArea(record, awareness));
+    if (typeof globalScope.gridlyLp016RecordAwarenessSwitchEvent === "function") globalScope.gridlyLp016RecordAwarenessSwitchEvent("driveTexasRefreshCompleted", { recordCount: filteredRecords.length });
+    return filteredRecords;
   }
 
 

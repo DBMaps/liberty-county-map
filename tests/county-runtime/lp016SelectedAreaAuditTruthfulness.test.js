@@ -35,13 +35,15 @@ assert(getterBody.includes('gridlySelectedAwarenessAreaResolutionCache.resolverC
 assert(statusBody.includes('const actualResolverMisses = Math.max(0, totalGetterCalls - cacheHits);'), 'status derives actual misses from total getter calls minus cache hits');
 assert(statusBody.includes('underlyingResolverCalls === actualResolverMisses'), 'counter consistency requires underlying resolver calls to equal actual cache misses');
 assert(statusBody.includes('resolverCalls === underlyingResolverCalls'), 'counter consistency rejects alias/canonical double counting');
-assert(statusBody.includes('totalGetterCalls <= GRIDLY_LP016_SELECTED_AREA_GETTER_VOLUME_BOUND'), 'getter volume must be bounded before hotLoopEliminated can pass');
-assert(statusBody.includes('safeForMerge: hotLoopEliminated'), 'safeForMerge remains false until the overall hot loop is eliminated');
-assert(statusBody.includes('remainingCallsExplained'), 'hot-loop success requires explained remaining calls');
+assert(statusBody.includes('roadContextBuildCountMatchesOperations'), 'getter volume bounded is derived from operation-scoped road-context evidence instead of cumulative getter volume');
+assert(statusBody.includes('const safeForMerge = Boolean(hotLoopEliminated && awarenessSwitchSafe);'), 'safeForMerge requires hot-loop elimination and awareness-switch safety');
+assert(statusBody.includes('remainingCallsExplainedReason'), 'hot-loop success includes a reason explaining runtime counter reconciliation');
 assert(statusBody.includes('driveTexasAwarenessLookupHoisted &&'), 'hot-loop success still requires DriveTexas operation-scoped hoist');
 assert(callerAuditBody.includes('safeForBrowserValidation: awarenessSelectionPreserved && status.instrumentationDistortionRemoved'), 'browser validation safety is separate from merge safety');
 assert(callerAuditBody.includes('const underlyingResolverCalls = Math.max(0, totalGetterCalls - cacheHits);'), 'caller audit exposes the authoritative cache-miss resolver count');
 assert(callerAuditBody.includes('roadContextBuildCounterConsistencyValid: status.roadContextBuildCounterConsistencyValid'), 'caller audit exposes build-caller counter consistency');
+assert(callerAuditBody.includes('invalidRoadLabelContextAudit: status.invalidRoadLabelContextAudit'), 'caller audit exposes invalid road label context counters');
+assert(callerAuditBody.includes('resolverCalls: status.resolverCalls'), 'caller audit exposes canonical resolverCalls alias');
 assert(samplerBody.includes('callNumber % GRIDLY_LP016_SELECTED_AREA_CALLER_PERIODIC_INTERVAL === 0'), 'periodic sampling captures calls beyond the initial sample');
 assert(samplerBody.includes('cache.sampledStackCount >= GRIDLY_LP016_SELECTED_AREA_CALLER_SAMPLE_LIMIT'), 'stack sampling remains bounded');
 assert(cacheLiteral.includes('callsByInstrumentedCallSite'), 'deterministic call-site attribution counters are stored');
