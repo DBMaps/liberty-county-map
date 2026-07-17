@@ -19,4 +19,21 @@ assert(published.includes('data-gridly-alert-lat'), 'published-awareness cards c
 assert(published.includes('window.__gridlyLatestAlertsForRender = Array.isArray(publishedRecords) ? publishedRecords : []'), 'published-awareness open path preserves source records for tap resolution');
 assert(published.includes('gridlyLp019BindAlertFocusHandlers'), 'published-awareness open path binds alert focus handler');
 
+assert(app.includes('function gridlyLp019IdentityCandidates'), 'LP019 resolves alert and marker IDs through shared real-record aliases');
+['incidentId', 'reportId', 'alertId', 'sourceId', 'crossingId', 'providerRecordId', 'canonicalIncidentId'].forEach((alias) => {
+  assert(app.includes(alias), `LP019 identity lookup includes ${alias}`);
+});
+assert(app.includes('markerMatchMethod = "bounded_coordinate"') || app.includes('markerMatchMethod: "bounded_coordinate"'), 'LP019 has a bounded coordinate fallback for same-condition marker matching');
+assert(app.includes('coordinate_focus_completed_without_matching_marker'), 'LP019 coordinate-only fallback records a clear completion reason without fabricating a marker');
+assert(app.includes('gridlyLp019WaitForLayoutSettle'), 'LP019 focus sequence waits for sheet/layout close before positioning');
+assert(app.includes('mapRef.invalidateSize'), 'LP019 invalidates Leaflet size after closing alert surfaces');
+assert(app.includes('gridlyLp019UsableViewportOffset'), 'LP019 derives usable portrait viewport offset from visible DOM surfaces');
+assert(app.includes('gridlyLp019ConditionFocusZoom'), 'LP019 uses a deterministic condition-view zoom helper');
+assert(app.includes('Math.max(current'), 'LP019 condition zoom avoids zooming out when already closer');
+assert(app.includes('finishAfterMove') && app.includes('finalCenterDeltaMeters'), 'LP019 records map completion via move events or already-near target fallback');
+assert(app.includes('popupRequested: Boolean(marker') && app.includes('if (marker && debug.mapMovementCompleted)'), 'LP019 requests popup only after matching marker resolution');
+assert(app.includes('duplicateAlertFocusBindings'), 'LP019 repeated Alerts opens remain audited for one delegated binding');
+assert(app.includes('driveTexasPerRecordAwarenessLookupCount') && app.includes('=== 0'), 'LP016 zero per-record awareness lookup invariant remains in merge gate');
+assert(!/future_source|gridly_structured|rawPayload|providerCode/.test(app.match(/function gridlyLp019OfficialPopupHtml[\s\S]*?function renderGridlyDriveTexasOfficialMarkers/)?.[0] || ''), 'LP018 consumer-language official popup remains protected');
+
 console.log('LP019 map awareness experience static checks passed');
