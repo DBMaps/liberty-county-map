@@ -6,6 +6,77 @@
  */
 "use strict";
 
+
+const GRIDLY_PUBLISHED_AWARENESS_TECHNICAL_METADATA_PATTERN = /(?:\b(?:future_source|txdot_incident|gridly_structured|canonicalDisplayLocation|canonicalLocationPhrase|structuredDisplayLocation|authoritativeLocationLabel|submittedCoordinate|county_id|countyId)\b|\[object Object\]|\{[^}]*\})/i;
+
+function gridlyPublishedAwarenessCleanConsumerText(value = "") {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "object") return "";
+
+  const text = String(value).replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  if (GRIDLY_PUBLISHED_AWARENESS_TECHNICAL_METADATA_PATTERN.test(text)) return "";
+
+  return text;
+}
+
+function gridlyPublishedAwarenessReadPath(record = {}, path = []) {
+  return path.reduce((current, key) => (
+    current && typeof current === "object" ? current[key] : undefined
+  ), record);
+}
+
+function gridlyGetPublishedAwarenessConsumerLocation(record = {}, fallback = "Nearby") {
+  const candidatePaths = [
+    ["canonicalDisplayLocation"],
+    ["canonicalLocationPhrase"],
+    ["structuredDisplayLocation", "phrasing"],
+    ["authoritativeLocationLabel"],
+    ["strongestLocationLabel"],
+    ["displayLocation"],
+    ["knownLocation"],
+    ["locationLabel"],
+    ["resolvedLocationLabel"],
+    ["nearbyLocationPhrase"],
+    ["roadName"],
+    ["primaryRoad"],
+    ["route"],
+    ["area"],
+    ["city"]
+  ];
+
+  const normalizedCandidates = candidatePaths
+    .map((path) => gridlyPublishedAwarenessReadPath(record, path))
+    .map((value) => (
+      typeof normalizeGridlyCountyAwareDisplayText === "function"
+        ? normalizeGridlyCountyAwareDisplayText(value, record)
+        : value
+    ))
+    .map(gridlyPublishedAwarenessCleanConsumerText)
+    .filter(Boolean);
+
+  return normalizedCandidates[0] || gridlyPublishedAwarenessCleanConsumerText(fallback) || "Nearby";
+}
+
+function gridlyGetPublishedAwarenessConsumerSummary(record = {}, title = "Travel Alert") {
+  const candidates = [
+    record?.summary,
+    record?.description,
+    record?.details
+  ];
+
+  const safeSummary = candidates
+    .map((value) => (
+      typeof normalizeGridlyCountyAwareDisplayText === "function"
+        ? normalizeGridlyCountyAwareDisplayText(value, record)
+        : value
+    ))
+    .map(gridlyPublishedAwarenessCleanConsumerText)
+    .find(Boolean);
+
+  return safeSummary || `${title} affecting nearby travel.`;
+}
+
 function gridlyGetPublishedCommunityAwarenessSummaryForAlerts() {
   const communityPulseSummary = typeof gridlyCommunityPulseAuditState !== "undefined"
     ? gridlyCommunityPulseAuditState?.communityAwarenessSummary
@@ -126,26 +197,14 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
         record
       );
 
-      const location = normalizeGridlyCountyAwareDisplayText(
-        consumerCard?.locationLabel ||
-          consumerCard?.locationLine ||
-          record?.locationLabel ||
-          record?.roadName ||
-          record?.primaryRoad ||
-          record?.route ||
-          record?.area ||
-          record?.city ||
-          "Nearby",
-        record
+      const location = gridlyGetPublishedAwarenessConsumerLocation(
+        record,
+        consumerCard?.locationLabel || consumerCard?.locationLine || "Nearby"
       );
 
-      const summary = normalizeGridlyCountyAwareDisplayText(
-        record?.summary ||
-          record?.description ||
-          record?.details ||
-          consumerCard?.summary ||
-          `${title} affecting nearby travel.`,
-        record
+      const summary = gridlyGetPublishedAwarenessConsumerSummary(
+        record,
+        title
       );
 
       const freshness =
