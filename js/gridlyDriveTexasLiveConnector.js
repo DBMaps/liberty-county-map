@@ -58,8 +58,7 @@
     return [record?.title, record?.description, record?.routeName, record?.locality, record?.city, record?.county, record?.affectedAreas].flat().map(toSafeString).filter(Boolean).join(" ").toLowerCase();
   }
 
-  function matchesAwarenessArea(record) {
-    const awareness = activeAwarenessArea();
+  function matchesAwarenessArea(record, awareness) {
     if (!awareness) return false;
     const rawLat = record?.latitude;
     const rawLng = record?.longitude;
@@ -81,7 +80,12 @@
   }
 
   function filterAwarenessRecords(records) {
-    return (Array.isArray(records) ? records : []).filter(matchesAwarenessArea);
+    const awareness = activeAwarenessArea();
+    if (globalScope.gridlySelectedAwarenessAreaResolutionCache && typeof globalScope.gridlySelectedAwarenessAreaResolutionCache === "object") {
+      globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasFilterOperationCount = Number(globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasFilterOperationCount || 0) + 1;
+      globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasPerRecordAwarenessLookupCount = Number(globalScope.gridlySelectedAwarenessAreaResolutionCache.driveTexasPerRecordAwarenessLookupCount || 0);
+    }
+    return (Array.isArray(records) ? records : []).filter((record) => matchesAwarenessArea(record, awareness));
   }
 
 
