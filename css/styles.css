@@ -25233,67 +25233,105 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 }
 
 /* LP020 — Premium awareness popup and official roadway marker polish */
-#map .leaflet-popup-content-wrapper {
-  border-radius: 18px;
-}
+#map .leaflet-popup-content-wrapper { border-radius: 18px; }
+#map .leaflet-popup-content { margin: 11px 13px; }
 .gridly-popup.gridly-premium-popup,
 .gridly-official-roadway-popup {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  min-width: 238px;
-  color: #dbeafe;
-  line-height: 1.35;
+  gap: 4px;
+  min-width: 218px;
+  max-width: 268px;
+  color: #eaf2ff;
+  line-height: 1.25;
 }
 .gridly-popup.gridly-premium-popup strong,
 .gridly-official-roadway-popup strong {
   display: block;
-  color: #f8fbff;
-  font-size: 0.94rem;
-  font-weight: 760;
-  letter-spacing: 0.004em;
-  margin: 0 18px 1px 0;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 840;
+  letter-spacing: 0.002em;
+  margin: 0 18px 0 0;
 }
 .gridly-popup.gridly-premium-popup span,
 .gridly-official-roadway-popup span {
   display: block;
-  color: rgba(203, 218, 238, 0.92);
-  font-size: 0.76rem;
-  line-height: 1.35;
+  color: rgba(218, 230, 246, 0.94);
+  font-size: 0.78rem;
+  line-height: 1.28;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-location,
+.gridly-official-roadway-popup .gridly-popup-location {
+  color: #f8fbff;
+  font-size: 0.86rem;
+  font-weight: 720;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-freshness {
+  color: rgba(189, 204, 224, 0.86);
+  font-size: 0.72rem;
+  font-weight: 620;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-trust {
+  color: rgba(156, 255, 231, 0.82);
+  font-size: 0.73rem;
+  font-weight: 680;
 }
 .gridly-popup.gridly-premium-popup .popup-report-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 9px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(148, 163, 184, 0.22);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 7px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.20);
 }
 .gridly-popup.gridly-premium-popup .popup-report-btn {
-  min-height: 32px;
+  min-height: 30px;
   border-radius: 10px;
-  padding: 7px 9px;
-  font-size: 0.68rem;
-  letter-spacing: 0.018em;
+  padding: 6px 7px;
+  font-size: 0.66rem;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  white-space: nowrap;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
 }
 .gridly-official-roadway-popup {
-  border-left: 3px solid rgba(125, 211, 252, 0.72);
-  padding-left: 10px;
+  border-left: 0;
+  padding: 2px 0 2px 11px;
+  position: relative;
 }
-.gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] {
-  color: rgba(147, 197, 253, 0.96);
-  font-weight: 680;
-}
-#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker {
-  background: radial-gradient(circle at 35% 30%, rgba(219, 234, 254, 0.98), rgba(37, 99, 145, 0.88) 44%, rgba(15, 65, 105, 0.86)) !important;
-  border: 2px solid rgba(219, 234, 254, 0.98) !important;
-  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.55), 0 6px 14px rgba(14, 116, 144, 0.24) !important;
-}
-#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker::before {
+.gridly-official-roadway-popup::before {
   content: "";
   position: absolute;
-  inset: 5px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.42);
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #67e8f9, #2563eb);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.35);
+}
+.gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] { color: rgba(147, 197, 253, 0.98); }
+#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 8px 8px 11px 11px !important;
+  background: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 46%, #0f4f83 100%) !important;
+  border: 2px solid #f8fbff !important;
+  box-shadow: 0 0 0 2px rgba(8, 20, 38, 0.62), 0 7px 15px rgba(14, 116, 144, 0.28) !important;
+}
+#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker::before {
+  content: "i";
+  position: absolute;
+  inset: 4px 6px 6px;
+  border-radius: 999px;
+  color: #07304f;
+  background: rgba(255,255,255,0.88);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 14px;
+  text-align: center;
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }
