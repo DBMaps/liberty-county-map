@@ -9,9 +9,19 @@
         hostname === "localhost" ||
         hostname === "127.0.0.1";
 
-      if (!isLocalHost) {
-        window.location.replace("beta-closure.html");
+      if (isLocalHost) return;
+
+      var target = "./beta-closed.html";
+      var search = window.location.search || "";
+
+      if (
+        search &&
+        !/[?&](?:redirect|next|return|url)=/i.test(search)
+      ) {
+        target += search;
       }
+
+      window.location.replace(target);
     })();
   </script>
   <meta charset="UTF-8" />
