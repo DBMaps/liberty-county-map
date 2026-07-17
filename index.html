@@ -1,15 +1,27 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="gridly-prepaint-lock">
 <head>
 
   <script>
     (function gridlyHostnameGate() {
       var hostname = window.location.hostname;
-      var isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+      var isLocalHost =
+        hostname === "localhost" ||
+        hostname === "127.0.0.1";
+
       if (isLocalHost) return;
-      document.open();
-      document.write('<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8" />\n  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />\n  <title>Gridly — Beta Has Ended</title>\n  <link rel="manifest" href="manifest.json">\n  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">\n  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">\n  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">\n  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">\n  <meta name="theme-color" content="#06101f">\n  <meta name="description" content="Gridly beta has ended. Gridly is preparing for launch.">\n  <meta name="mobile-web-app-capable" content="yes">\n  <meta name="apple-mobile-web-app-capable" content="yes">\n  <meta name="apple-mobile-web-app-title" content="Gridly">\n  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n  <style>\n    :root {\n      color-scheme: dark;\n      --gridly-bg: #020812;\n      --gridly-panel: rgba(7, 20, 38, 0.82);\n      --gridly-panel-strong: rgba(9, 28, 52, 0.94);\n      --gridly-line: rgba(119, 243, 201, 0.22);\n      --gridly-text: #eef8ff;\n      --gridly-muted: rgba(238, 248, 255, 0.72);\n      --gridly-soft: rgba(238, 248, 255, 0.56);\n      --gridly-accent: #43e6a0;\n      --gridly-blue: #5ec7ff;\n      --gridly-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);\n      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n    }\n\n    * { box-sizing: border-box; }\n\n    html, body { min-height: 100%; }\n\n    body {\n      margin: 0;\n      min-height: 100svh;\n      overflow-x: hidden;\n      color: var(--gridly-text);\n      background:\n        radial-gradient(circle at 50% -12%, rgba(67, 230, 160, 0.22), transparent 31rem),\n        radial-gradient(circle at 18% 18%, rgba(94, 199, 255, 0.14), transparent 18rem),\n        linear-gradient(180deg, #061426 0%, #020812 48%, #010409 100%);\n    }\n\n    body::before {\n      content: "";\n      position: fixed;\n      inset: 0;\n      pointer-events: none;\n      background-image:\n        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),\n        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);\n      background-size: 28px 28px;\n      mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 72%);\n    }\n\n    .closure-shell {\n      position: relative;\n      display: grid;\n      place-items: center;\n      min-height: 100svh;\n      padding: max(18px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom));\n    }\n\n    .closure-card {\n      width: min(calc(100vw - 24px), 430px);\n      padding: 30px 20px 26px;\n      border: 1px solid var(--gridly-line);\n      border-radius: 30px;\n      background:\n        linear-gradient(180deg, rgba(12, 35, 63, 0.88), rgba(3, 12, 24, 0.92)),\n        var(--gridly-panel);\n      box-shadow: var(--gridly-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);\n      text-align: center;\n      backdrop-filter: blur(20px);\n    }\n\n    .brand-mark {\n      display: grid;\n      place-items: center;\n      margin: 0 auto 24px;\n      width: min(252px, 74vw);\n      min-height: 70px;\n      padding: 13px 18px;\n      border-radius: 24px;\n      background: rgba(255, 255, 255, 0.055);\n      border: 1px solid rgba(119, 243, 201, 0.16);\n      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 42px rgba(0, 0, 0, 0.18);\n    }\n\n    .brand-mark img {\n      display: block;\n      max-width: 100%;\n      height: auto;\n      max-height: 54px;\n      object-fit: contain;\n    }\n\n    .eyebrow {\n      margin: 0 0 14px;\n      color: var(--gridly-accent);\n      font-size: 0.78rem;\n      font-weight: 800;\n      letter-spacing: 0.22em;\n      text-transform: uppercase;\n    }\n\n    h1 {\n      margin: 0;\n      font-size: clamp(2.65rem, 12.4vw, 4rem);\n      line-height: 0.98;\n      letter-spacing: -0.065em;\n      text-wrap: balance;\n    }\n\n    .tagline {\n      margin: 18px 0 0;\n      color: var(--gridly-text);\n      font-size: 1.12rem;\n      font-weight: 800;\n      letter-spacing: 0.01em;\n    }\n\n    .status-pill {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      gap: 8px;\n      margin: 20px 0 0;\n      padding: 10px 15px;\n      border: 1px solid rgba(67, 230, 160, 0.35);\n      border-radius: 999px;\n      background: rgba(67, 230, 160, 0.1);\n      color: #baffdf;\n      font-size: 0.82rem;\n      font-weight: 900;\n      letter-spacing: 0.13em;\n      text-transform: uppercase;\n    }\n\n    .status-pill::before {\n      content: "";\n      width: 8px;\n      height: 8px;\n      border-radius: 999px;\n      background: var(--gridly-accent);\n      box-shadow: 0 0 14px rgba(67, 230, 160, 0.55);\n    }\n\n    .message {\n      margin: 22px 0 0;\n      padding: 22px 20px;\n      border-radius: 24px;\n      background: rgba(255, 255, 255, 0.045);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      text-align: left;\n    }\n\n    .message h2 {\n      margin: 0 0 14px;\n      font-size: 1.22rem;\n      line-height: 1.2;\n      letter-spacing: -0.02em;\n    }\n\n    .message p {\n      margin: 0 0 16px;\n      color: rgba(238, 248, 255, 0.78);\n      font-size: 1rem;\n      line-height: 1.62;\n    }\n\n    .message p:last-child { margin-bottom: 0; }\n\n    .facebook-note {\n      margin: 22px 0 0;\n      color: var(--gridly-muted);\n      font-size: 1rem;\n      line-height: 1.55;\n    }\n\n    .coming-soon {\n      margin: 24px 0 0;\n      color: var(--gridly-blue);\n      font-size: 0.84rem;\n      font-weight: 900;\n      letter-spacing: 0.22em;\n      text-transform: uppercase;\n    }\n\n    .phase-label {\n      margin: 10px 0 0;\n      color: rgba(238, 248, 255, 0.74);\n      font-size: 1rem;\n      font-weight: 700;\n    }\n\n    @media (min-width: 680px) {\n      .closure-card { padding: 34px 30px 28px; }\n    }\n  </style>\n</head>\n<body>\n  <main class="closure-shell" aria-labelledby="closureTitle">\n    <section class="closure-card" data-gridly-beta-closure="true">\n      <div class="brand-mark" aria-label="Gridly">\n        <img src="assets/store/branding/Logos/gridly-logo-horizontal.png?v=1715" alt="Gridly" />\n      </div>\n      <p class="eyebrow">Know Before You Go</p>\n      <h1 id="closureTitle">Beta Has Ended</h1>\n      <p class="tagline">Thank You</p>\n      <div class="status-pill" aria-label="Gridly beta status">Gridly Beta Concluded</div>\n      <div class="message">\n        <h2>The first Gridly beta has officially concluded.</h2>\n        <p>To everyone who tested, reported issues, and shared feedback—thank you. Your participation helped shape the future of Gridly.</p>\n        <p>We are now preparing for the next phase as we work toward the official launch.</p>\n      </div>\n      <p class="facebook-note">Follow Gridly on Facebook for future announcements.</p>\n      <p class="coming-soon">Coming Soon</p>\n      <p class="phase-label">Preparing for Launch</p>\n    </section>\n  </main>\n  <script>\n    (function gridlyBetaClosureRuntime() {\n      "use strict";\n      var recognizedCachePattern = /^gridly-(pwa-shell|beta-closure)-/;\n      var cleanupState = {\n        cachesChecked: false,\n        oldGridlyCachesDetected: false,\n        deletedCaches: [],\n        serviceWorkerClosureApplied: false\n      };\n\n      function deleteOldGridlyCaches() {\n        if (!("caches" in window)) return Promise.resolve();\n        return caches.keys().then(function(cacheNames) {\n          cleanupState.cachesChecked = true;\n          var oldGridlyCaches = cacheNames.filter(function(cacheName) {\n            return recognizedCachePattern.test(cacheName) && cacheName !== "gridly-beta-closure-v1";\n          });\n          cleanupState.oldGridlyCachesDetected = oldGridlyCaches.length > 0;\n          return Promise.all(oldGridlyCaches.map(function(cacheName) {\n            return caches.delete(cacheName).then(function(deleted) {\n              if (deleted) cleanupState.deletedCaches.push(cacheName);\n            });\n          }));\n        }).catch(function() { return undefined; });\n      }\n\n      function registerClosureServiceWorker() {\n        if (!("serviceWorker" in navigator)) return Promise.resolve();\n        return navigator.serviceWorker.register("service-worker.js", { scope: "./" })\n          .then(function(registration) {\n            cleanupState.serviceWorkerClosureApplied = Boolean(registration);\n            if (registration && registration.update) registration.update().catch(function() { return undefined; });\n          })\n          .catch(function() { cleanupState.serviceWorkerClosureApplied = false; });\n      }\n\n      Promise.resolve()\n        .then(deleteOldGridlyCaches)\n        .then(registerClosureServiceWorker)\n        .then(deleteOldGridlyCaches);\n\n      window.gridlyBetaClosureAudit = function gridlyBetaClosureAudit() {\n        var scripts = Array.prototype.slice.call(document.scripts || []).map(function(script) { return script.src || ""; });\n        return {\n          available: true,\n          betaClosed: true,\n          closurePageVisible: Boolean(document.querySelector("[data-gridly-beta-closure=\'true\']")),\n          appScriptLoaded: scripts.some(function(src) { return /js\\/app\\.js/i.test(src); }),\n          mapRuntimeLoaded: Boolean(window.L || scripts.some(function(src) { return /leaflet/i.test(src); })),\n          supabaseRuntimeLoaded: Boolean(window.supabase || scripts.some(function(src) { return /supabase/i.test(src); })),\n          oldGridlyCachesDetected: cleanupState.oldGridlyCachesDetected,\n          serviceWorkerClosureApplied: cleanupState.serviceWorkerClosureApplied || Boolean(navigator.serviceWorker?.controller),\n          publicBetaAccessDisabled: true,\n          desktopAppGatePreserved: true,\n          landscapeAppGatePreserved: true,\n          backendDataDeleted: false,\n          safeForLaunchTransition: true,\n          cleanup: {\n            cachesChecked: cleanupState.cachesChecked,\n            deletedCaches: cleanupState.deletedCaches.slice()\n          }\n        };\n      };\n    })();\n  <\/script>\n</body>\n</html>\n');
-      document.close();
+
+      var target = "./beta-closed.html";
+      var search = window.location.search || "";
+
+      if (
+        search &&
+        !/[?&](?:redirect|next|return|url)=/i.test(search)
+      ) {
+        target += search;
+      }
+
+      window.location.replace(target);
     })();
   </script>
   <meta charset="UTF-8" />
@@ -106,7 +118,7 @@
     </div>
 
     <nav class="top-nav command-top-nav">
-      <button class="live-data-pill top-command-btn" id="desktopLiveDataBtn" type="button">● Live Data</button>
+      <button class="live-data-pill top-command-btn" id="desktopLiveDataBtn" type="button">â— Live Data</button>
       <button class="nav-btn" data-section="alerts">Alerts</button>
       <button class="nav-btn" data-section="report">Reports</button>
       <button class="nav-btn" data-section="settings">Settings</button>
@@ -120,7 +132,7 @@
       </div>
     </div>
     <div class="mobile-live-brand-status-wrap">
-      <button id="mobileHeaderSettingsBtn" class="secondary-btn compact-btn mobile-header-settings-btn" type="button" aria-label="Open Settings">⚙</button>
+      <button id="mobileHeaderSettingsBtn" class="secondary-btn compact-btn mobile-header-settings-btn" type="button" aria-label="Open Settings">âš™</button>
       <div class="mobile-live-brand-status">
         <strong id="mobileWatchLabel">WATCHING</strong>
         <span id="mobileWatchArea">Liberty County</span>
@@ -156,7 +168,7 @@
           <label id="gridlySearchTitle" class="gridly-search-label" for="gridlyAddressSearchInput">Where are you going?</label>
           <p id="gridlySearchSubtitle" class="gridly-search-subtitle">Pick a saved place or search nearby destinations before you leave.</p>
         </div>
-        <button id="gridlySearchCloseBtn" class="gridly-search-close-btn" type="button" aria-label="Close destination search">×</button>
+        <button id="gridlySearchCloseBtn" class="gridly-search-close-btn" type="button" aria-label="Close destination search">Ã—</button>
       </div>
       <div class="gridly-search-input-row">
         <input
@@ -195,7 +207,7 @@
         <span class="pulse-dot dot-b"></span>
         <span class="pulse-dot dot-c"></span>
         <div class="hero-floating-badge live-chip">Live Rail Pulse</div>
-        <div class="hero-floating-badge county-chip">Liberty County · Active Feed</div>
+        <div class="hero-floating-badge county-chip">Liberty County Â· Active Feed</div>
       </div>
 
       <div class="future-hero-overlay">
@@ -211,7 +223,7 @@
       <article class="floating-route-status" aria-label="Route status">
         <span>Trip context</span>
         <strong>US 90 corridor</strong>
-        <p>1 delay · 1 clear · reroute ready</p>
+        <p>1 delay Â· 1 clear Â· reroute ready</p>
       </article>
     </section>
 
@@ -225,21 +237,21 @@
 
           <div class="habit-status-strip" id="habitStatusStrip">
             <span id="habitStatusPill">Community check</span>
-            <strong id="habitStatusHeadline">Building your town’s awareness briefing…</strong>
+            <strong id="habitStatusHeadline">Building your townâ€™s awareness briefingâ€¦</strong>
             <p id="habitStatusDetail">Gridly is scanning active community reports, locations, and freshness before you go.</p>
           </div>
 
           <div class="trust-row">
-            <span id="lastUpdated">Reports: checking now…</span>
-            <span id="dataStatus">Crossings: getting local status…</span>
-            <span id="syncStatus">Live updates: connecting…</span>
+            <span id="lastUpdated">Reports: checking nowâ€¦</span>
+            <span id="dataStatus">Crossings: getting local statusâ€¦</span>
+            <span id="syncStatus">Live updates: connectingâ€¦</span>
           </div>
         </div>
 
         <div class="hero-command-card">
           <div class="route-status-card delayed" id="routeStatusCard" role="button" tabindex="0" aria-label="Set or review route">
             <span class="status-label" id="routeCardLabel">Awareness first</span>
-            <strong id="routeStatus">Checking…</strong>
+            <strong id="routeStatus">Checkingâ€¦</strong>
             <span id="routeEta">Trip details pending</span>
             <button type="button" class="route-edit-link" id="mobileEditRouteBtn" aria-label="Edit saved route">Edit Route</button>
           </div>
@@ -318,7 +330,7 @@
         </article>
 
         <article class="mobile-home-card mobile-community-card">
-          <span><span aria-hidden="true">👥</span> Community Impact</span>
+          <span><span aria-hidden="true">ðŸ‘¥</span> Community Impact</span>
           <strong data-bind-text="communityTrust">Building signal</strong>
           <p data-bind-text="communityTrustReason">Shared reports become stronger when more drivers confirm them.</p>
         </article>
@@ -332,7 +344,7 @@
 
         <article class="mobile-home-card mobile-premium-status-bar">
           <div>
-            <span>Live now · Local awareness</span>
+            <span>Live now Â· Local awareness</span>
             <strong id="liveOpsStatus">Watching nearby</strong>
           </div>
           <p id="liveOpsDetail">Community reports help you spot delays, clears, and hazards before you leave.</p>
@@ -342,7 +354,7 @@
       <div class="command-summary-grid desktop-command-strip">
         <article class="growth-card">
           <span>What you should do now</span>
-          <strong data-bind-text="routeRecommendation">Checking local crossings…</strong>
+          <strong data-bind-text="routeRecommendation">Checking local crossingsâ€¦</strong>
           <p data-bind-text="routeRecommendationReason">Gridly is watching live reports and crossing risk.</p>
         </article>
 
@@ -423,7 +435,7 @@
       <section class="map-card">
         <article class="mobile-destination-command is-command-card-suppressed" aria-label="Destination route command" aria-hidden="true" hidden>
           <div class="mobile-destination-command-copy">
-            <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">Location Context • Selected County</span>
+            <span class="mobile-awareness-panel-kicker" id="mobileAwarenessPanelKicker">Location Context â€¢ Selected County</span>
             <strong id="mobileDestinationCommandTitle">Destination</strong>
             <p id="mobileDestinationCommandMeta">Choose where you're going</p>
             <p class="mobile-awareness-panel-crossings" id="mobileAwarenessPanelCrossings" hidden></p>
@@ -441,7 +453,7 @@
             <span class="eyebrow">Before you go</span>
             <span class="mobile-live-status-pill" id="mobileLiveStatusPill">CLEAR</span>
             <strong id="mobileLiveRouteStatus">CLEAR TO LEAVE</strong>
-            <p id="mobileLiveRouteMeta">Route clear · watching delay pressure live</p>
+            <p id="mobileLiveRouteMeta">Route clear Â· watching delay pressure live</p>
           </div>
           <button class="secondary-btn compact-btn" id="mobileLiveRouteActionBtn" type="button">Leave now</button>
         </article>
@@ -451,14 +463,14 @@
               <p class="eyebrow">Route Watch</p>
               <span class="route-watch-live-pill" id="routeWatchLivePill">Not watching yet</span>
             </div>
-            <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">→</span><span id="desktopRouteWork">Route Watch</span></strong>
+            <strong class="route-watch-status-line"><span id="desktopRouteHome">No destination selected</span><span class="route-watch-arrow" aria-hidden="true">â†’</span><span id="desktopRouteWork">Route Watch</span></strong>
             <div class="route-ownership-summary" aria-label="Route details">
               <span><b>From:</b> <em id="routeOwnershipOrigin">Not selected</em></span>
               <span><b>To:</b> <em id="routeOwnershipDestination">Not selected</em></span>
               <span><b>Status:</b> <em id="routeOwnershipMonitoring">Preview only</em></span>
             </div>
             <p id="desktopRouteStatus">Choose a saved trip when you want route context.</p>
-            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home · 2. Add Work · 3. Watch a Route</p>
+            <p class="route-watch-setup-hint" id="routeWatchSetupHint">1. Add Home Â· 2. Add Work Â· 3. Watch a Route</p>
             <div class="route-watch-metrics" aria-label="Route watch intelligence">
               <span><b>Freshness:</b> <em id="routeFreshness">Unknown</em></span>
               <span><b>Monitoring:</b> <em id="routeConfidence">--</em></span>
@@ -499,7 +511,7 @@
         <article class="community-pulse-surface" id="gridlyCommunityPulseSurface" aria-label="Community Pulse" aria-live="polite" hidden>
           <div class="community-pulse-kicker">Community Pulse</div>
           <div class="community-pulse-copy">
-            <strong id="gridlyCommunityPulseHeadline">Loading Community Pulse…</strong>
+            <strong id="gridlyCommunityPulseHeadline">Loading Community Pulseâ€¦</strong>
             <p id="gridlyCommunityPulseSubline">Checking current local signals.</p>
             <p id="gridlyCommunityPulseHistoricalContext" class="community-pulse-historical-context" hidden></p>
           </div>
@@ -582,7 +594,7 @@
           <summary class="drawer-summary"><span class="eyebrow">Saved Route</span><h2>Route Watch</h2></summary>
           <div class="drawer-body">
             <div class="route-summary route-summary-inline">
-              <p><strong id="savedHome">Not saved</strong> → <strong id="savedWork">Not saved</strong></p>
+              <p><strong id="savedHome">Not saved</strong> â†’ <strong id="savedWork">Not saved</strong></p>
               <p class="route-watch-secondary-note" id="sideRouteWatchHint">Primary route watch is pinned above the live map.</p>
             </div>
           </div>
@@ -600,7 +612,7 @@
         <span class="mobile-daily-panel-grip" aria-hidden="true"></span>
         <span class="mobile-daily-panel-handle-row">
           <strong>Daily Panel</strong>
-          <span>Route · Alerts · Report</span>
+          <span>Route Â· Alerts Â· Report</span>
         </span>
       </button>
       <div class="mobile-daily-panel-body" id="mobileDailyPanelBody" hidden>
@@ -649,13 +661,13 @@
       <details class="report-tools-advanced"><summary>Manual / advanced reporting</summary><div class="report-tools">
         <label>
           <span id="reportSearchLabel">Search crossing</span>
-          <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroad…" />
+          <input id="crossingSearch" type="text" placeholder="Search street, crossing, or railroadâ€¦" />
         </label>
 
         <label>
           <span id="reportSelectLabel">Manual crossing</span>
           <select id="crossingSelect">
-            <option value="">Loading crossings…</option>
+            <option value="">Loading crossingsâ€¦</option>
           </select>
         </label>
 
@@ -700,11 +712,11 @@
     </div>
     <div class="gridly-v2-brief-stack" data-gridly-brief-stack>
       <div class="gridly-v2-status-pill gridly-v2-awareness-brief-card" aria-label="Your town awareness briefing" data-gridly-first-paint-guard="placeholder">
-        <strong id="gridlyV2TopStatusPrimary">Loading Community Pulse…</strong>
+        <strong id="gridlyV2TopStatusPrimary">Loading Community Pulseâ€¦</strong>
         <span id="gridlyV2TopStatusSecondary">Checking current local signals.</span>
         <small id="gridlyV2TopStatusTrust" class="gridly-v2-awareness-trust-line">Community Pulse</small>
       </div>
-      <button type="button" class="gridly-brief-foundation-handle" id="gridlyBriefFoundationHandle" aria-expanded="false" aria-controls="gridlyBriefInteractionPanel" data-gridly-brief-foundation-handle><span class="gridly-brief-foundation-handle-label">Current Conditions</span><span class="gridly-brief-foundation-handle-icon" aria-hidden="true">▼</span></button>
+      <button type="button" class="gridly-brief-foundation-handle" id="gridlyBriefFoundationHandle" aria-expanded="false" aria-controls="gridlyBriefInteractionPanel" data-gridly-brief-foundation-handle><span class="gridly-brief-foundation-handle-label">Current Conditions</span><span class="gridly-brief-foundation-handle-icon" aria-hidden="true">â–¼</span></button>
       <section class="gridly-brief-interaction-panel" id="gridlyBriefInteractionPanel" data-gridly-brief-panel aria-label="Current Conditions" hidden>
         <div class="gridly-brief-hero">
           <div class="gridly-brief-identity">
@@ -772,7 +784,7 @@
       </header>
       <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle">Live route context.</p>
       <div class="gridly-current-route-details" id="gridlyCurrentRouteDetailsBlock" aria-label="Current route summary">
-        <strong id="gridlyCurrentRouteLine">Current Location → Destination</strong>
+        <strong id="gridlyCurrentRouteLine">Current Location â†’ Destination</strong>
         <span id="gridlyCurrentRouteMeta">ETA and distance pending</span>
       </div>
       <section class="gridly-destination-impact-body" aria-label="Why Gridly is showing this route awareness summary">
@@ -917,7 +929,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsProfileAwarenessSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">My Area</span>
-            <span class="settings-list-meta">Awareness Area · Preferred Name</span>
+            <span class="settings-list-meta">Awareness Area Â· Preferred Name</span>
           </summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
@@ -942,7 +954,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsSavedPlacesSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">Saved Trips</span>
-            <span class="settings-list-meta">Home · Work · Saved Places</span>
+            <span class="settings-list-meta">Home Â· Work Â· Saved Places</span>
           </summary>
           <div class="settings-list-detail">
             <div class="settings-place-grid" aria-label="Route Watch saved places">
@@ -972,7 +984,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsAlertPreferencesSection">
           <summary class="settings-list-summary">
             <span class="settings-list-title">Preferences</span>
-            <span class="settings-list-meta">Alerts · Map · Display · Location</span>
+            <span class="settings-list-meta">Alerts Â· Map Â· Display Â· Location</span>
           </summary>
           <div class="settings-list-detail">
             <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
@@ -1019,7 +1031,7 @@
         <details class="settings-modal-section settings-list-section" id="settingsAboutSection" data-gridly-about>
           <summary class="settings-list-summary">
             <span class="settings-list-title">About &amp; Support</span>
-            <span class="settings-list-meta">Version · Help</span>
+            <span class="settings-list-meta">Version Â· Help</span>
           </summary>
           <div class="settings-list-detail">
             <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
@@ -1027,7 +1039,7 @@
             <section class="settings-pwa-install-card" data-gridly-pwa-install-card hidden aria-label="Install Gridly">
               <div class="settings-pwa-install-copy">
                 <strong>Install Gridly</strong>
-                <p>Add Gridly to your phone’s home screen for quick access.</p>
+                <p>Add Gridly to your phoneâ€™s home screen for quick access.</p>
                 <p class="settings-placeholder-note settings-pwa-install-status" data-gridly-pwa-install-status aria-live="polite"></p>
               </div>
               <button type="button" class="primary-btn compact-btn settings-pwa-install-button" id="settingsPwaInstallBtn" data-gridly-pwa-install-button>Install</button>
@@ -1114,7 +1126,7 @@
   </div>
 
   <footer class="app-footer" data-gridly-county-owned="app-footer-county">
-    Gridly Beta • Liberty County
+    Gridly Beta â€¢ Liberty County
   </footer>
 
   <div class="gridly-welcome-overlay" id="gridlyWelcomeOnboarding" hidden aria-hidden="true">
@@ -1146,9 +1158,9 @@
       <div class="gridly-welcome-steps" id="gridlyWelcomeSteps">
         <article class="gridly-welcome-step" data-gridly-welcome-step="0">
           <p class="eyebrow">Before you leave</p>
-          <h2 id="gridlyWelcomeTitle">Before you leave…</h2>
+          <h2 id="gridlyWelcomeTitle">Before you leaveâ€¦</h2>
           <div class="gridly-welcome-hero-copy" id="gridlyWelcomeCopy">
-            <p class="gridly-welcome-tagline">Know what’s happening ahead.</p>
+            <p class="gridly-welcome-tagline">Know whatâ€™s happening ahead.</p>
             <p>Blocked crossings. Road hazards. Community reports.</p>
           </div>
           <p>Before they become your problem.</p>
@@ -1247,10 +1259,10 @@
             <strong>local awareness area</strong>
           </p>
           <ul class="gridly-welcome-checklist" aria-label="Gridly setup coverage">
-            <li>✓ <span>Your Town</span></li>
-            <li>✓ <span>Saved Trips</span></li>
-            <li>✓ <span>Community Reports</span></li>
-            <li>✓ <span>Local Alerts</span></li>
+            <li>âœ“ <span>Your Town</span></li>
+            <li>âœ“ <span>Saved Trips</span></li>
+            <li>âœ“ <span>Community Reports</span></li>
+            <li>âœ“ <span>Local Alerts</span></li>
           </ul>
           <p class="gridly-welcome-final-note">Every report helps someone know before they go.</p>
         </article>
@@ -1357,6 +1369,7 @@
     <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
 </body>
 </html>
+
 
 
 
