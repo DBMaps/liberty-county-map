@@ -20,6 +20,27 @@ function gridlyPublishedAwarenessCleanConsumerText(value = "") {
   return text;
 }
 
+
+function gridlyPublishedAwarenessCrossingClassificationLabel(value = "") {
+  const text = String(value || "").replace(/[\s_-]+/g, " ").trim();
+  if (/^private(?: road)?$/i.test(text)) return "Private Crossing";
+  if (/^restricted(?: access)?$/i.test(text)) return "Restricted Access Crossing";
+  if (/^(?:public roadway|temporary access|rail yard|industrial|unknown)$/i.test(text)) return "";
+  return text;
+}
+
+function gridlyPublishedAwarenessIsSuppressedCrossingClassification(value = "") {
+  const text = String(value || "").replace(/[\s_-]+/g, " ").trim();
+  return /^(?:public roadway|temporary access|rail yard|industrial|unknown)$/i.test(text);
+}
+
+function gridlyPublishedAwarenessCleanCrossingLocationCandidate(value = "") {
+  const cleanText = gridlyPublishedAwarenessCleanConsumerText(value);
+  if (!cleanText) return "";
+  if (gridlyPublishedAwarenessIsSuppressedCrossingClassification(cleanText)) return "";
+  return gridlyPublishedAwarenessCrossingClassificationLabel(cleanText);
+}
+
 function gridlyPublishedAwarenessReadPath(record = {}, path = []) {
   return path.reduce((current, key) => (
     current && typeof current === "object" ? current[key] : undefined
@@ -27,7 +48,12 @@ function gridlyPublishedAwarenessReadPath(record = {}, path = []) {
 }
 
 function gridlyGetPublishedAwarenessConsumerLocation(record = {}, fallback = "Nearby") {
-  const candidatePaths = [
+  const meaningfulLocationPaths = [
+    ["crossingName"],
+    ["crossing_name"],
+    ["resolvedCrossingName"],
+    ["crossingRoad"],
+    ["crossingLabel"],
     ["canonicalDisplayLocation"],
     ["canonicalLocationPhrase"],
     ["structuredDisplayLocation", "phrasing"],
@@ -45,17 +71,29 @@ function gridlyGetPublishedAwarenessConsumerLocation(record = {}, fallback = "Ne
     ["city"]
   ];
 
-  const normalizedCandidates = candidatePaths
+  const normalizedCandidates = meaningfulLocationPaths
     .map((path) => gridlyPublishedAwarenessReadPath(record, path))
     .map((value) => (
       typeof normalizeGridlyCountyAwareDisplayText === "function"
         ? normalizeGridlyCountyAwareDisplayText(value, record)
         : value
     ))
-    .map(gridlyPublishedAwarenessCleanConsumerText)
+    .map(gridlyPublishedAwarenessCleanCrossingLocationCandidate)
     .filter(Boolean);
 
-  return normalizedCandidates[0] || gridlyPublishedAwarenessCleanConsumerText(fallback) || "Nearby";
+  if (normalizedCandidates.length) return normalizedCandidates[0];
+
+  const classificationCandidates = [
+    record?.crossingClassification,
+    record?.crossingType,
+    record?.classification
+  ]
+    .map(gridlyPublishedAwarenessCleanCrossingLocationCandidate)
+    .filter(Boolean);
+
+  if (classificationCandidates.length) return classificationCandidates[0];
+
+  return gridlyPublishedAwarenessCleanCrossingLocationCandidate(fallback) || "Nearby";
 }
 
 function gridlyGetPublishedAwarenessConsumerSummary(record = {}, title = "Travel Alert") {
