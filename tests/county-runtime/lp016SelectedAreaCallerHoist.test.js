@@ -25,8 +25,18 @@ assert(!countSyncBody.includes('getGridlySelectedAwarenessArea()?.label || getGr
 
 const callerAuditBody = bodyOf('gridlyLp016SelectedAreaCallerAudit');
 assert(callerAuditBody.includes('totalGetterCalls'), 'caller census exposes total getter calls');
-assert(callerAuditBody.includes('callsByCaller'), 'caller census exposes calls by caller');
+assert(callerAuditBody.includes('callsByActualCaller'), 'caller census exposes sampled actual direct callers');
+assert(callerAuditBody.includes('sampledStackCount'), 'caller census exposes the bounded stack sample count');
+assert(callerAuditBody.includes('topActualCallerPercentage'), 'caller census reports the dominant caller percentage from sampled stacks');
 assert(callerAuditBody.includes('doubleCountingDetected'), 'caller census reconciles double counting');
+assert(callerAuditBody.includes('instrumentationDistortionRemoved'), 'caller census reports whether resolver wrapper distortion has been removed');
+assert(callerAuditBody.includes('safeForPatch'), 'caller census only marks the result safe for patch after a dominant direct caller is proven');
 assert(source.includes('window.gridlyLp016SelectedAreaCallerAudit = gridlyLp016SelectedAreaCallerAudit'), 'caller census is exposed for browser validation');
+
+const resolverBody = bodyOf('resolveGridlyAwarenessArea');
+assert(!resolverBody.includes('gridlyLp016AlertsPostPaintDelayMeasure("resolveGridlyAwarenessArea"'), 'canonical resolver is no longer wrapped by the post-paint timing audit');
+
+const selectedBody = bodyOf('getGridlySelectedAwarenessArea');
+assert(selectedBody.includes('gridlyRecordSelectedAwarenessAreaGetterCaller();'), 'selected-area getter records a bounded actual caller census directly');
 
 console.log('LP016 selected-area caller hoist static checks passed');
