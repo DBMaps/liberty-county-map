@@ -25335,3 +25335,43 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   text-align: center;
   font-family: ui-sans-serif, system-ui, sans-serif;
 }
+
+/* LP021 — Premium information architecture hierarchy */
+.gridly-popup.gridly-premium-popup,
+.gridly-official-roadway-popup {
+  gap: 3px;
+}
+.gridly-popup.gridly-premium-popup strong,
+.gridly-official-roadway-popup strong {
+  font-size: 1.04rem;
+  line-height: 1.18;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-location,
+.gridly-official-roadway-popup .gridly-popup-location {
+  margin-top: 1px;
+  font-size: 0.88rem;
+  line-height: 1.22;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-freshness,
+.gridly-official-roadway-popup .gridly-popup-freshness,
+.gridly-popup.gridly-premium-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-meta {
+  color: rgba(189, 204, 224, 0.78);
+  font-size: 0.71rem;
+  font-weight: 610;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-trust {
+  margin-top: 1px;
+  color: rgba(156, 255, 231, 0.76);
+}
+.gridly-popup.gridly-premium-popup .popup-report-grid {
+  margin-top: 5px;
+  padding-top: 7px;
+}
+.gridly-popup.gridly-premium-popup .popup-report-btn {
+  opacity: 0.9;
+  font-weight: 760;
+}
+.gridly-alert-row .gridly-alert-situation-summary {
+  display: none;
+}
