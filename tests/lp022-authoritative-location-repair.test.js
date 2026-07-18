@@ -6,6 +6,13 @@ const source = fs.readFileSync('js/app.js', 'utf8');
 assert(source.includes('function gridlyResolveAuthoritativeLocationPresentation(record = {}, options = {})'), 'shared authoritative resolver exists');
 assert(source.includes('window.gridlyLp022AuthoritativeLocationAudit = gridlyLp022AuthoritativeLocationAudit;'), 'LP022 browser audit is exposed');
 
+const auditStart = source.indexOf('function gridlyLp022AuthoritativeLocationAudit');
+const auditEnd = source.indexOf('window.gridlyLp022AuthoritativeLocationAudit = gridlyLp022AuthoritativeLocationAudit;', auditStart);
+const auditBody = source.slice(auditStart, auditEnd);
+assert(!auditBody.includes('buildAlertsSurfaceHtml'), 'LP022 audit does not depend on private Alerts renderer');
+assert(auditBody.includes('auditErrors'), 'LP022 audit reports auditErrors');
+assert(auditBody.includes('inspectSection'), 'LP022 audit wraps optional runtime inspections independently');
+
 const resolverStart = source.indexOf('function gridlyResolveAuthoritativeLocationPresentation');
 const resolverEnd = source.indexOf('function gridlyLp022InvalidLocationCompositionFlags', resolverStart);
 const resolverBody = source.slice(resolverStart, resolverEnd);
