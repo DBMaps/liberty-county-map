@@ -5,6 +5,7 @@ const source = fs.readFileSync('js/app.js', 'utf8');
 
 assert(source.includes('function gridlyResolveAuthoritativeLocationPresentation(record = {}, options = {})'), 'shared authoritative resolver exists');
 assert(source.includes('window.gridlyLp022AuthoritativeLocationAudit = gridlyLp022AuthoritativeLocationAudit;'), 'LP022 browser audit is exposed');
+assert(source.includes('window.gridlyLp022LiveLocationPipelineAudit = gridlyLp022LiveLocationPipelineAudit;'), 'LP022 live pipeline audit is exposed');
 
 const auditStart = source.indexOf('function gridlyLp022AuthoritativeLocationAudit');
 const auditEnd = source.indexOf('window.gridlyLp022AuthoritativeLocationAudit = gridlyLp022AuthoritativeLocationAudit;', auditStart);
@@ -48,7 +49,12 @@ assert(resolverBody.includes('registryCounty = gridlyLp022ResolveRegistryIdentif
 assert(!resolverBody.includes('record?.county || record?.countyName || record?.county_name || record?.countyId || record?.county_id'), 'countyId is no longer accepted directly in county display text fallback');
 assert(resolverBody.includes('locationDescription') && resolverBody.includes('sourceLocationDescription') && resolverBody.includes('normalizedDescription'), 'official location detail fields are preserved before roadway fallback');
 assert(resolverBody.includes('`${roadForOfficialDetail}, ${label}`'), 'direction-distance detail is composed with official roadway when both are trusted');
+assert(auditBody.includes('rawCountyIdDisplayed') && auditBody.includes('registryResolvedCountyDisplayed') && auditBody.includes('countyFallbackUsedDespiteStrongerLocation'), 'LP022 audit distinguishes raw county IDs from registry county fallback display');
 assert(auditBody.includes('internalIdentifierDisplayed') && auditBody.includes('officialRoadwayOnlyFallbackCount'), 'LP022 audit reports internal identifier and roadway-only official fallback fields');
+assert(source.includes('parsedStructuredMetadata = extractOtherHazardStructuredMetadata(row)'), 'normalizeReports parses gridly_structured metadata for all hazard types');
+assert(source.includes('canonicalDisplayLocation: otherHazardMetadata?.canonicalDisplayLocation'), 'normalizeReports preserves structured canonical live report location fields');
+assert(source.includes('function gridlyLp022LiveLocationPipelineAudit'), 'LP022 live pipeline audit exists');
+assert(source.includes('firstDetailLossStage') && source.includes('strongestLocationEverAvailableStage'), 'LP022 live pipeline audit reports detail loss stages');
 assert(source.includes('internalIdentifierUsedAsLocation') && source.includes('officialLocationDetailDiscarded'), 'LP021 corruption audit detects identifier leaks and discarded official detail');
 
 console.log('LP022 authoritative location repair static checks passed');
