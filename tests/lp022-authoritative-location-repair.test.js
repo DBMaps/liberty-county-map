@@ -41,4 +41,14 @@ assert(source.includes('gridlyLp021ResolvedLocationPresentation(alert'), 'alert 
 assert(source.includes('const lp021LocationPresentation = gridlyLp021ResolvedLocationPresentation(record'), 'official popups consume shared resolver adapter');
 assert(source.includes('travelBrief: typeof gridlyResolveAuthoritativeLocationPresentation === "function"'), 'audit tracks Travel Brief resolver availability');
 
+assert(source.includes('function gridlyLp022InternalIdentifierAnalysis'), 'LP022 reusable internal identifier validator exists');
+assert(source.includes('function gridlyLp022ClassifyLocationInput'), 'LP022 resolver classifies location field semantics');
+assert(source.includes('function gridlyLp022ResolveRegistryIdentifierLabel'), 'LP022 resolver can convert confirmed registry identifiers only');
+assert(resolverBody.includes('registryCounty = gridlyLp022ResolveRegistryIdentifierLabel(rawCountyId)'), 'county_id is resolved through registry before county fallback display');
+assert(!resolverBody.includes('record?.county || record?.countyName || record?.county_name || record?.countyId || record?.county_id'), 'countyId is no longer accepted directly in county display text fallback');
+assert(resolverBody.includes('locationDescription') && resolverBody.includes('sourceLocationDescription') && resolverBody.includes('normalizedDescription'), 'official location detail fields are preserved before roadway fallback');
+assert(resolverBody.includes('`${roadForOfficialDetail}, ${label}`'), 'direction-distance detail is composed with official roadway when both are trusted');
+assert(auditBody.includes('internalIdentifierDisplayed') && auditBody.includes('officialRoadwayOnlyFallbackCount'), 'LP022 audit reports internal identifier and roadway-only official fallback fields');
+assert(source.includes('internalIdentifierUsedAsLocation') && source.includes('officialLocationDetailDiscarded'), 'LP021 corruption audit detects identifier leaks and discarded official detail');
+
 console.log('LP022 authoritative location repair static checks passed');
