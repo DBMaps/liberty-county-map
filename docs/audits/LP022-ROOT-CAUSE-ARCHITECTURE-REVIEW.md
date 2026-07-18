@@ -219,3 +219,31 @@ Create a documentation/test-only location contract milestone before production r
 * Revert/replace: any LP022 or official-situation behavior that treats `locationDescription`, `sourceLocationDescription`, `normalizedDescription`, or `description` as authoritative for DriveTexas without a source-specific schema guarantee.
 * Replace: universal best-available resolver authority with source-specific adapters, then canonical incident-owned typed location.
 * Do not add: resolver fallback fields or new promotions into `canonicalDisplayLocation`.
+
+## Addendum: community-relative location correction and historical findings
+
+This addendum resolves the follow-up conflict without replacing the original LP022 root-cause architecture review above. It preserves the investigation-only scope and records the corrected interpretation of community-relative location evidence.
+
+### Correction
+
+The phrase `1 mile north of Goodrich` must not be treated as a location that the current ordinary community-report pipeline can generate or guarantee. The current community submission path can preserve submitted coordinates, supported-county context, and a trusted road label when road-aware placement supplies one. It does not perform a trusted nearest-community lookup or deterministic distance/bearing formatting from the submitted coordinate to a named community.
+
+Therefore, for the historical LP022 scenario, the corrected expected behavior is:
+
+* If a trusted road-aware label is available, consumer presentation may use that road label, such as `US 59`.
+* If only coordinates and county context are available, consumer presentation may truthfully use area context such as `Polk County`, while treating the record as lacking precise consumer location detail.
+* It must not synthesize `Near Livingston`, `Goodrich`, or `1 mile north of Goodrich` unless a future source-specific geospatial adapter provides provenance for that community-relative phrase.
+
+### Historical findings
+
+The follow-up investigation found that the Goodrich wording was audit/sample evidence rather than a proven output of the live community reporting path. The earlier expectation conflated desired future enrichment with currently available authoritative fields. That made the follow-up branch independently add a narrower addendum file while the base branch already contained the complete architecture review from PR #2466.
+
+The resolved document intentionally keeps the complete base-branch review and appends this correction so reviewers can see both the original architecture diagnosis and the updated historical interpretation in one place.
+
+### Protected-system confirmation
+
+This addendum is documentation-only. It does not modify production JavaScript, CSS, Supabase schema or queries, DriveTexas ingestion, reporting behavior, marker rendering, focus handling, clearing workflow, crossing workflow, Story Engine behavior, awareness-cache behavior, or runtime-refresh behavior.
+
+### Implementation guidance retained for future work
+
+Future repair work should preserve the architecture recommendation above: use source-specific location adapters before presentation. For community reports, a community adapter should explicitly distinguish accepted road labels, coordinate-only records, county context, and any future trusted community-relative enrichment. Direction-distance phrases should be introduced only with deterministic geospatial provenance and fixture coverage.
