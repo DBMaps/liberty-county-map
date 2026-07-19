@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Safely validates and uploads LP030 roadway GeoJSON packages to Supabase Storage REST.
 
@@ -114,11 +114,110 @@ function Get-Lp030EntryValue {
     foreach ($name in $Names) { if ($Entry.PSObject.Properties.Name -contains $name -and $null -ne $Entry.$name) { return [string]$Entry.$name } }
     return $null
 }
+function ConvertTo-Lp030SanitizedText {
+    param([string]$Value)
+    if (-not $Value) { return '' }
+    $sanitized = $Value
+    if ($env:GRIDLY_ROADWAY_STORAGE_TOKEN) { $sanitized = $sanitized.Replace($env:GRIDLY_ROADWAY_STORAGE_TOKEN, '[redacted]') }
+    if ($sanitized.Length -gt 1000) { $sanitized = $sanitized.Substring(0, 1000) + '...[truncated]' }
+    return $sanitized
+}
+# Verifies remote Content-Length by downloading the public object; curl replacement for legacy Invoke-WebRequest InFile = $InFile binary upload contract
+function Invoke-Lp030CurlRequest {
+    param(
+        [ValidateNotNullOrEmpty()][string]$Method,
+        [ValidateNotNullOrEmpty()][string]$Url,
+        [hashtable]$Headers,
+        [string]$InFile,
+        [string]$ContentType = 'application/geo+json'
+    )
+    $curlPath = 'curl.exe'
+    $curlCommand = Get-Command -Name $curlPath -CommandType Application -ErrorAction SilentlyContinue
+    if (-not $curlCommand) { $curlPath = 'curl' }
+    $tempBody = [System.IO.Path]::GetTempFileName()
+    $tempError = [System.IO.Path]::GetTempFileName()
+    try {
+        $curlArgs = @('--silent', '--show-error', '--location', '--request', $Method.ToUpperInvariant(), '--output', $tempBody, '--write-out', '%{http_code}', '--url', $Url)
+        if ($Headers) {
+            foreach ($headerName in @($Headers.Keys | Sort-Object)) {
+                $headerValue = [string]$Headers[$headerName]
+                $curlArgs += @('--header', ("${headerName}: $headerValue"))
+            }
+        }
+        if ($InFile) {
+            $absoluteInFile = Resolve-Lp030Path $InFile
+            $curlArgs += @('--header', ("Content-Type: $ContentType"), '--data-binary', ('@' + $absoluteInFile))
+        }
+        $errorText = ''
+        $statusText = & $curlPath @curlArgs 2> $tempError
+        $exitCode = $LASTEXITCODE
+        if (Test-Path -LiteralPath $tempError -PathType Leaf) { $errorText = Get-Content -Raw -LiteralPath $tempError }
+        $bodyText = ''
+        if (Test-Path -LiteralPath $tempBody -PathType Leaf) { $bodyText = Get-Content -Raw -LiteralPath $tempBody }
+        $httpStatus = 0
+        if (-not [int]::TryParse(([string]$statusText).Trim(), [ref]$httpStatus)) { $httpStatus = 0 }
+        return [pscustomobject]@{
+            StatusCode = $httpStatus
+            Body = $bodyText
+            ErrorText = $errorText
+            ExitCode = $exitCode
+            Succeeded = ($exitCode -eq 0 -and $httpStatus -ge 200 -and $httpStatus -lt 300)
+        }
+    } finally {
+        if (Test-Path -LiteralPath $tempBody) { Remove-Item -LiteralPath $tempBody -Force -ErrorAction SilentlyContinue }
+        if (Test-Path -LiteralPath $tempError) { Remove-Item -LiteralPath $tempError -Force -ErrorAction SilentlyContinue }
+    }
+}
 function Invoke-Lp030StorageRequest {
-    param([string]$Method, [string]$Url, [hashtable]$Headers, [string]$InFile)
-    $requestParameters = @{ Method = $Method; Uri = $Url; Headers = $Headers; UseBasicParsing = $true }
-    if ($InFile) { $args.InFile = $InFile; $args.ContentType = 'application/geo+json' }
-    try { Invoke-WebRequest @requestParameters } catch { if ($_.Exception.Response) { return $_.Exception.Response }; throw }
+    param(
+        [ValidateNotNullOrEmpty()][string]$Method,
+        [ValidateNotNullOrEmpty()][string]$Url,
+        [hashtable]$Headers,
+        [string]$InFile,
+        [string]$CountyId,
+        [string]$ObjectPath,
+        [switch]$AllowNotFound
+    )
+    $response = Invoke-Lp030CurlRequest -Method $Method -Url $Url -Headers $Headers -InFile $InFile
+    if ($response.ExitCode -ne 0) {
+        throw "Storage request failed for county '$CountyId' object '$ObjectPath' with curl exit code $($response.ExitCode), HTTP $($response.StatusCode): $(ConvertTo-Lp030SanitizedText ($response.ErrorText + $response.Body))"
+    }
+    if ($AllowNotFound -and $response.StatusCode -eq 404) { return $response }
+    if ($response.StatusCode -lt 200 -or $response.StatusCode -ge 300) {
+        throw "Storage request failed for county '$CountyId' object '$ObjectPath' with HTTP $($response.StatusCode): $(ConvertTo-Lp030SanitizedText ($response.ErrorText + $response.Body))"
+    }
+    return $response
+}
+function Remove-Lp030ProbeObject {
+    param([string]$BaseUrl, [string]$Bucket, [hashtable]$Headers)
+    $probeUrl = "$BaseUrl/storage/v1/object/$Bucket/probe.json"
+    $response = Invoke-Lp030StorageRequest -Method 'Delete' -Url $probeUrl -Headers $Headers -CountyId 'probe' -ObjectPath 'probe.json' -AllowNotFound
+    return [pscustomobject]@{ objectPath = 'probe.json'; httpStatus = [int]$response.StatusCode; removed = ($response.StatusCode -ge 200 -and $response.StatusCode -lt 300); alreadyAbsent = ($response.StatusCode -eq 404) }
+}
+function Save-Lp030PublicObjectForVerification {
+    param([string]$Url, [string]$CountyId, [string]$ObjectPath)
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    $curlPath = 'curl.exe'
+    if (-not (Get-Command -Name $curlPath -CommandType Application -ErrorAction SilentlyContinue)) { $curlPath = 'curl' }
+    $tempError = [System.IO.Path]::GetTempFileName()
+    try {
+        $curlArgs = @('--silent', '--show-error', '--location', '--output', $tempFile, '--write-out', '%{http_code}', '--url', $Url)
+        $statusText = & $curlPath @curlArgs 2> $tempError
+        $exitCode = $LASTEXITCODE
+        $errorText = Get-Content -Raw -LiteralPath $tempError
+        $httpStatus = 0
+        if (-not [int]::TryParse(([string]$statusText).Trim(), [ref]$httpStatus)) { $httpStatus = 0 }
+        if ($exitCode -ne 0 -or $httpStatus -lt 200 -or $httpStatus -ge 300) {
+            throw "Public verification download failed for county '$CountyId' object '$ObjectPath' with curl exit code $exitCode, HTTP ${httpStatus}: $(ConvertTo-Lp030SanitizedText $errorText)"
+        }
+        $downloadInfo = Get-Item -LiteralPath $tempFile
+        return [pscustomobject]@{ Path = $tempFile; HttpStatus = $httpStatus; ByteLength = [int64]$downloadInfo.Length; Sha256 = (Get-FileHash -LiteralPath $tempFile -Algorithm SHA256).Hash.ToLowerInvariant() }
+    } catch {
+        if (Test-Path -LiteralPath $tempFile) { Remove-Item -LiteralPath $tempFile -Force -ErrorAction SilentlyContinue }
+        throw
+    } finally {
+        if (Test-Path -LiteralPath $tempError) { Remove-Item -LiteralPath $tempError -Force -ErrorAction SilentlyContinue }
+    }
 }
 function Test-Lp030TransientStatus { param([int]$StatusCode) return ($StatusCode -eq 408 -or $StatusCode -eq 429 -or ($StatusCode -ge 500 -and $StatusCode -lt 600)) }
 
@@ -231,6 +330,8 @@ if (-not $bucket) { $bucket = 'dry-run' }
 $baseUrl = $baseUrl.TrimEnd('/')
 
 $headers = @{ Authorization = "Bearer $token"; apikey = $token; 'x-upsert' = ($(if ($AllowOverwrite) { 'true' } else { 'false' })) }
+if ($Execute) { $probeDeletion = Remove-Lp030ProbeObject -BaseUrl $baseUrl -Bucket $bucket -Headers $headers } else { $probeDeletion = [pscustomobject]@{ objectPath = 'probe.json'; httpStatus = $null; removed = $false; alreadyAbsent = $false } }
+
 $results = foreach ($county in $ExpectedCounties) {
     $file = $filesByCounty[$county.id].file
     $sha = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -238,25 +339,30 @@ $results = foreach ($county in $ExpectedCounties) {
     $encodedObjectPath = ($objectPath -split '/' | ForEach-Object { [Uri]::EscapeDataString($_) }) -join '/'
     $objectUrl = "$baseUrl/storage/v1/object/$bucket/$encodedObjectPath"
     $publicUrl = "$baseUrl/storage/v1/object/public/$bucket/$encodedObjectPath"
-    $status = if ($Execute) { 'pending' } else { 'dry-run' }; $httpStatus = $null; $errorText = $null; $remoteLength = $null; $verification = 'not-attempted'; $verified = $false
+    $status = if ($Execute) { 'pending' } else { 'dry-run' }; $httpStatus = $null; $errorText = $null; $remoteLength = $null; $remoteSha = $null; $verification = 'not-attempted'; $verified = $false
     if ($Execute) {
-        $head = Invoke-Lp030StorageRequest -Method 'Head' -Url $objectUrl -Headers $headers
+        $head = Invoke-Lp030StorageRequest -Method 'Head' -Url $objectUrl -Headers $headers -CountyId $county.id -ObjectPath $objectPath -AllowNotFound
         if ($head.StatusCode -ge 200 -and $head.StatusCode -lt 300 -and -not $AllowOverwrite) { throw "Remote object exists and -AllowOverwrite was not supplied: $objectPath" }
         for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
-            $response = Invoke-Lp030StorageRequest -Method 'Post' -Url $objectUrl -Headers $headers -InFile $file.FullName
+            $response = Invoke-Lp030StorageRequest -Method 'Post' -Url $objectUrl -Headers $headers -InFile $file.FullName -CountyId $county.id -ObjectPath $objectPath
             $httpStatus = [int]$response.StatusCode
             if (($httpStatus -ge 200 -and $httpStatus -lt 300) -or -not (Test-Lp030TransientStatus $httpStatus) -or $attempt -eq $MaxAttempts) { break }
             Start-Sleep -Seconds ([Math]::Min(8, [Math]::Pow(2, $attempt)))
         }
         $status = if ($httpStatus -ge 200 -and $httpStatus -lt 300) { 'uploaded' } else { 'failed' }
-        $verifyResponse = Invoke-Lp030StorageRequest -Method 'Head' -Url $publicUrl -Headers @{}
-        $verification = if ($verifyResponse.StatusCode -ge 200 -and $verifyResponse.StatusCode -lt 300) { 'accessible' } else { 'failed' }
-        if ($verifyResponse.Headers['Content-Length']) { $remoteLength = [int64]$verifyResponse.Headers['Content-Length'] }
-        $verified = ($verification -eq 'accessible' -and ($null -eq $remoteLength -or $remoteLength -eq $file.Length))
+        $download = Save-Lp030PublicObjectForVerification -Url $publicUrl -CountyId $county.id -ObjectPath $objectPath
+        try {
+            $remoteLength = [int64]$download.ByteLength
+            $remoteSha = [string]$download.Sha256
+            $verification = if ($remoteLength -eq $file.Length -and $remoteSha -eq $sha) { 'verified' } else { 'failed' }
+            $verified = ($verification -eq 'verified')
+        } finally {
+            if ($download -and $download.Path -and (Test-Path -LiteralPath $download.Path)) { Remove-Item -LiteralPath $download.Path -Force -ErrorAction SilentlyContinue }
+        }
     }
-    [pscustomobject]@{ countyId=$county.id; countyName=$county.name; localPath=$file.FullName; fileName=$file.Name; objectPath=$objectPath; publicUrl=$publicUrl; version=$Version; sha256=$sha; localByteLength=$file.Length; remoteByteLength=$remoteLength; uploadAttempted=[bool]$Execute; uploadStatus=$status; httpStatus=$httpStatus; verificationStatus=$verification; verified=$verified; error=$errorText }
+    [pscustomobject]@{ countyId=$county.id; countyName=$county.name; sourcePath=$file.FullName; localPath=$file.FullName; fileName=$file.Name; objectPath=$objectPath; publicUrl=$publicUrl; version=$Version; localSha256=$sha; sha256=$sha; localByteLength=$file.Length; remoteByteLength=$remoteLength; remoteSha256=$remoteSha; uploadAttempted=[bool]$Execute; uploadStatus=$status; httpStatus=$httpStatus; verificationStatus=$verification; verified=$verified; error=$errorText }
 }
-$result = [ordered]@{ contractVersion='LP030.2'; generatedAtUtc=(Get-Date -Format 'o'); execute=[bool]$Execute; allowOverwrite=[bool]$AllowOverwrite; sourceDirectory=$sourceFullPath; runtimeAssetsManifestPath=$manifestFullPath; protectedDataRoadSegmentsModified=$false; countyCount=$results.Count; results=$results }
+$result = [ordered]@{ contractVersion='LP030.2'; generatedAtUtc=(Get-Date -Format 'o'); execute=[bool]$Execute; allowOverwrite=[bool]$AllowOverwrite; sourceDirectory=$sourceFullPath; runtimeAssetsManifestPath=$manifestFullPath; protectedDataRoadSegmentsModified=$false; dryRun=(-not [bool]$Execute); countyCount=$results.Count; uploadedCount=@($results | Where-Object { $_.uploadStatus -eq 'uploaded' }).Count; verifiedCount=@($results | Where-Object { $_.verificationStatus -eq 'verified' }).Count; failedCount=@($results | Where-Object { $_.uploadStatus -eq 'failed' -or $_.verificationStatus -eq 'failed' }).Count; probeDeletion=$probeDeletion; results=$results }
 $resultParent = Split-Path -Parent $resultFullPath
 if ($resultParent -and -not (Test-Path -LiteralPath $resultParent -PathType Container)) { New-Item -ItemType Directory -Path $resultParent -Force | Out-Null }
 $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $resultFullPath -Encoding utf8
