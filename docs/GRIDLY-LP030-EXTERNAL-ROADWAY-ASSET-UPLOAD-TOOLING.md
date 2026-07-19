@@ -1,10 +1,10 @@
-# GRIDLY LP030.4 External Roadway Asset Upload Tooling
+# GRIDLY LP030.5 External Roadway Asset Upload Tooling
 
-LP030.4 replaces the LP030.1 local-staging-only workflow with safe external roadway asset upload tooling. The script reads the protected source directory, validates the approved county inventory and LP028 runtime asset metadata, and uploads through Supabase Storage REST only when explicitly requested.
+LP030.5 corrects and preserves the LP030.1 local-staging-only workflow with safe external roadway asset upload tooling. The script reads the protected source directory, validates the approved county inventory and LP028 runtime asset metadata, and uploads through Supabase Storage REST only when explicitly requested.
 
 ## Windows PowerShell 5.1 and real LP028 manifest repair
 
-LP030.4 repairs Windows PowerShell 5.1 runtime defects found after LP030.2 static validation. Repository-relative defaults are now resolved after `param()` from the actual deployment script path, preserving normal default use of `data/road-segments/` without relying on `$PSScriptRoot` during parameter default evaluation. The validation harness now runs the deployment script in a child PowerShell process, checks the native exit code, captures both stdout and stderr, verifies the 23-county missing-inventory fixture, and cleans temporary fixtures in `finally`. LP030.4 also preserves Strict Mode-safe manifest property checks through `PSObject.Properties.Name -contains`, normalizes every manifest county value through `ConvertTo-Lp030CountyId`, and accepts the real 28-entry LP028 manifest shape: 24 upload-ready counties plus Liberty, Montgomery, San Jacinto, and Harris as blocked manifest-only counties.
+LP030.5 corrects the LP030.4 manifest-contract assumption after the real Windows dry run proved the LP028 counts. Repository-relative defaults are now resolved after `param()` from the actual deployment script path, preserving normal default use of `data/road-segments/` without relying on `$PSScriptRoot` during parameter default evaluation. The validation harness now runs the deployment script in a child PowerShell process, checks the native exit code, captures both stdout and stderr, verifies the 23-county missing-inventory fixture, and cleans temporary fixtures in `finally`. LP030.5 also preserves Strict Mode-safe manifest property checks through `PSObject.Properties.Name -contains`, normalizes every manifest county value through `ConvertTo-Lp030CountyId`, and accepts the real 28-entry LP028 manifest shape: 24 external-upload counties, Liberty/Montgomery/San Jacinto as local runtime manifest-only counties, and Harris as the only blocked county. The validated top-level counts are coveredCountyCount = 28, runtimeReadyCountyCount = 27, and blockedCountyCount = 1; blockedCounties must normalize to Harris only.
 
 ## Protected source directory
 
@@ -14,11 +14,11 @@ Source assets remain in `data/road-segments/`. The tooling may enumerate files, 
 
 Exactly 24 county GeoJSON packages are allowed: Austin, Brazoria, Brazos, Calhoun, Chambers, Colorado, Fayette, Fort Bend, Galveston, Grimes, Hardin, Jackson, Jasper, Jefferson, Lavaca, Matagorda, Newton, Orange, Polk, Tyler, Walker, Waller, Washington, and Wharton.
 
-Liberty, Montgomery, San Jacinto, and Harris are not uploaded. Harris is rejected explicitly if a Harris package is detected.
+Liberty, Montgomery, and San Jacinto are local-runtime counties that must appear in the LP028 manifest without requiring upload files and must not appear in LP030 dry-run upload results. Harris must appear in the LP028 manifest and blockedCounties without requiring an upload file. Liberty, Montgomery, San Jacinto, and Harris packages are rejected if present in the upload source inventory; Harris remains explicitly rejected.
 
 ## Deployment architecture
 
-`scripts/Deploy-Lp030RoadwayAssets.ps1` defaults to dry-run and requires `-Execute` for network upload. It validates source inventory, rejects missing or extra counties, rejects non-GeoJSON packages, compares the 24 upload files with `data/road-segments/lp028-roadway-runtime-assets.json`, calculates SHA-256 with `Get-FileHash`, and uses streamed upload bodies (`Invoke-WebRequest -InFile`) so roadway GeoJSON packages are not parsed into memory.
+`scripts/Deploy-Lp030RoadwayAssets.ps1` defaults to dry-run and requires `-Execute` for network upload. It validates source inventory, rejects missing or extra counties, rejects non-GeoJSON packages, compares file names, byte lengths, and SHA-256 checks only for the 24 external-upload files from `data/road-segments/lp028-roadway-runtime-assets.json`, calculates SHA-256 with `Get-FileHash`, and uses streamed upload bodies (`Invoke-WebRequest -InFile`) so roadway GeoJSON packages are not parsed into memory.
 
 Real uploads use Supabase Storage REST with stable object paths:
 
@@ -74,4 +74,4 @@ node tests/lp030-2-roadway-upload-tooling-static.test.js
 
 Each county result contains `countyId`, `countyName`, `localPath`, `fileName`, `objectPath`, `publicUrl`, `version`, `sha256`, `localByteLength`, `remoteByteLength`, `uploadAttempted`, `uploadStatus`, `httpStatus`, `verificationStatus`, `verified`, and `error`.
 
-The deployment result is for later runtime manifest registration. LP030.4 does not modify `data/roadway-runtime-manifest.json`.
+The deployment result is for later runtime manifest registration. LP030.5 does not modify `data/roadway-runtime-manifest.json`.

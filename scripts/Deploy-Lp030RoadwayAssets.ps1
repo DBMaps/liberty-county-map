@@ -54,7 +54,8 @@ $ExpectedCounties = @(
     @{ id = 'walker-tx'; name = 'Walker' }, @{ id = 'waller-tx'; name = 'Waller' },
     @{ id = 'washington-tx'; name = 'Washington' }, @{ id = 'wharton-tx'; name = 'Wharton' }
 )
-$BlockedCountyIds = @('liberty-tx', 'montgomery-tx', 'san-jacinto-tx', 'harris-tx')
+$LocalRuntimeCountyIds = @('liberty-tx', 'montgomery-tx', 'san-jacinto-tx')
+$BlockedCountyIds = @('harris-tx')
 
 
 function Resolve-Lp030ScriptPath {
@@ -144,6 +145,7 @@ foreach ($file in $geoJsonFiles) {
     $countyName = Get-Lp030CountyNameFromFileName $file.Name
     $countyId = ConvertTo-Lp030CountyId $countyName
     if ($countyId -eq 'harris-tx') { throw 'Harris roadway package is explicitly rejected.' }
+    if ($LocalRuntimeCountyIds -contains $countyId) { throw "Local runtime county package present: $countyId" }
     if ($BlockedCountyIds -contains $countyId) { throw "Blocked county package present: $countyId" }
     $filesByCounty[$countyId] = @{ file = $file; countyName = $countyName }
 }
@@ -157,11 +159,11 @@ if ($geoJsonFiles.Count -ne 24 -or $actualIds.Count -ne 24) { throw "Expected ex
 
 $manifest = Get-Lp030RuntimeAssetsManifest $manifestFullPath
 $manifestEntries = Get-Lp030ManifestEntries $manifest
-$allowedManifestIds = @($expectedIds + $BlockedCountyIds)
+$allowedManifestIds = @($expectedIds + $LocalRuntimeCountyIds + $BlockedCountyIds)
 foreach ($propertyCheck in @(
     @{ name = 'coveredCountyCount'; value = 28 },
-    @{ name = 'runtimeReadyCountyCount'; value = 24 },
-    @{ name = 'blockedCountyCount'; value = 4 }
+    @{ name = 'runtimeReadyCountyCount'; value = 27 },
+    @{ name = 'blockedCountyCount'; value = 1 }
 )) {
     if ($manifest.PSObject.Properties.Name -contains $propertyCheck.name) {
         $actualPropertyValue = $manifest.PSObject.Properties[$propertyCheck.name].Value
@@ -192,14 +194,17 @@ if ($manifest.PSObject.Properties.Name -contains 'blockedCounties') {
     })
     $unknownBlocked = @($manifestBlockedIds | Where-Object { $BlockedCountyIds -notcontains $_ })
     if ($unknownBlocked.Count -gt 0) { throw ('Expected manifest disagrees: blockedCounties contains unexpected county ' + ($unknownBlocked -join ', ')) }
+    $missingBlockedMetadata = @($BlockedCountyIds | Where-Object { $manifestBlockedIds -notcontains $_ })
+    if ($missingBlockedMetadata.Count -gt 0) { throw ('Expected manifest disagrees: blockedCounties missing ' + ($missingBlockedMetadata -join ', ')) }
+    if ($manifestBlockedIds.Count -ne $BlockedCountyIds.Count) { throw 'Expected manifest disagrees: blockedCounties must contain Harris only' }
 } else {
     $manifestBlockedIds = @()
 }
-if ($manifest.PSObject.Properties.Name -contains 'blockedCountyCount' -and [int]$manifest.blockedCountyCount -eq 4) {
-    foreach ($id in $BlockedCountyIds) {
-        if (-not $manifestByCounty.ContainsKey($id)) { throw "Expected manifest disagrees: missing blocked county $id" }
-        if ($manifestBlockedIds.Count -gt 0 -and $manifestBlockedIds -notcontains $id) { throw "Expected manifest disagrees: blockedCounties missing $id" }
-    }
+foreach ($id in @($LocalRuntimeCountyIds + $BlockedCountyIds)) {
+    if (-not $manifestByCounty.ContainsKey($id)) { throw "Expected manifest disagrees: missing county $id" }
+}
+foreach ($id in $LocalRuntimeCountyIds) {
+    if ($manifestBlockedIds -contains $id) { throw "Expected manifest disagrees: local runtime county cannot be blocked $id" }
 }
 foreach ($id in $expectedIds) {
     if (-not $manifestByCounty.ContainsKey($id)) { throw "Expected manifest disagrees: missing $id" }

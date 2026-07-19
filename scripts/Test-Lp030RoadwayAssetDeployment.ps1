@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Self-contained validation for LP030.3 roadway asset upload tooling.
+Self-contained validation for LP030.5 roadway asset upload tooling.
 #>
 [CmdletBinding()]
 param()
@@ -17,18 +17,20 @@ $stderrPath = Join-Path $tempRoot 'child-stderr.txt'
 New-Item -ItemType Directory -Path $sourceDir -Force | Out-Null
 
 $countyNames = @('Austin','Brazoria','Brazos','Calhoun','Chambers','Colorado','Fayette','Fort Bend','Galveston','Grimes','Hardin','Jackson','Jasper','Jefferson','Lavaca','Matagorda','Newton','Orange','Polk','Tyler','Walker','Waller','Washington','Wharton')
-$blockedCountyNames = @('Liberty','Montgomery','San Jacinto','Harris')
+$localRuntimeCountyNames = @('Liberty','Montgomery','San Jacinto')
+$blockedCountyNames = @('Harris')
 function ConvertTo-TestCountyId { param([string]$Name) (($Name.ToLowerInvariant() -replace '[^a-z0-9]+','-') -replace '(^-|-$)','') + '-tx' }
 function Write-TestManifest {
     param(
         [string[]]$UploadNames = $countyNames,
+        [string[]]$LocalRuntimeNames = $localRuntimeCountyNames,
         [string[]]$BlockedNames = $blockedCountyNames,
         [string[]]$ExtraNames = @(),
         [switch]$DuplicateWashington,
         [switch]$OmitBlockedMetadata
     )
     $entries = @()
-    foreach ($name in ($UploadNames + $BlockedNames + $ExtraNames)) {
+    foreach ($name in ($UploadNames + $LocalRuntimeNames + $BlockedNames + $ExtraNames)) {
         $id = ConvertTo-TestCountyId $name
         $fileName = "$id-road-segments.geojson"
         $entry = [ordered]@{ county = $name }
@@ -48,8 +50,8 @@ function Write-TestManifest {
         generatedAt = '2026-07-19T00:00:00.0000000Z'
         branch = 'LP028'
         coveredCountyCount = 28
-        runtimeReadyCountyCount = 24
-        blockedCountyCount = 4
+        runtimeReadyCountyCount = 27
+        blockedCountyCount = 1
         blockedCounties = $blockedMetadata
         totalRuntimeAssetBytes = 0
         totalRuntimeAssetSizeMB = 0
@@ -123,18 +125,34 @@ try {
 
     if ($result.results.Count -ne 24) { throw 'Dry run must produce 24 result entries.' }
     if (-not ($result.results | Where-Object { $_.countyId -eq 'washington-tx' })) { throw 'Plain Washington county name was not normalized.' }
+    foreach ($localName in $localRuntimeCountyNames) {
+        $localId = ConvertTo-TestCountyId $localName
+        if ($result.results | Where-Object { $_.countyId -eq $localId }) { throw "Local runtime county $localId must not be included in upload results." }
+    }
+    $manifest = Get-Content -Raw -LiteralPath (Join-Path $sourceDir 'lp028-roadway-runtime-assets.json') | ConvertFrom-Json
+    foreach ($acceptedName in @($localRuntimeCountyNames + $blockedCountyNames)) {
+        if (-not ($manifest.counties | Where-Object { $_.county -eq $acceptedName })) { throw "Manifest fixture missing accepted non-upload county $acceptedName." }
+    }
 
     Write-TestInventory $countyNames
     Write-TestManifest -ExtraNames @('Dallas')
     Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'extra county dallas-tx'
 
     Write-TestInventory $countyNames
+    (Get-Content -Raw -LiteralPath (Join-Path $sourceDir 'lp028-roadway-runtime-assets.json')).Replace('"runtimeReadyCountyCount": 27','"runtimeReadyCountyCount": 26') | Set-Content -LiteralPath (Join-Path $sourceDir 'lp028-roadway-runtime-assets.json') -Encoding utf8
+    Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'runtimeReadyCountyCount must be 27'
+
+    Write-TestInventory $countyNames
+    (Get-Content -Raw -LiteralPath (Join-Path $sourceDir 'lp028-roadway-runtime-assets.json')).Replace('"blockedCountyCount": 1','"blockedCountyCount": 2') | Set-Content -LiteralPath (Join-Path $sourceDir 'lp028-roadway-runtime-assets.json') -Encoding utf8
+    Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'blockedCountyCount must be 1'
+
+    Write-TestInventory $countyNames
     Write-TestManifest -UploadNames @($countyNames | Where-Object { $_ -ne 'Austin' })
     Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'missing austin-tx'
 
     Write-TestInventory $countyNames
-    Write-TestManifest -BlockedNames @('Liberty','Montgomery','San Jacinto')
-    Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'missing blocked county harris-tx'
+    Write-TestManifest -BlockedNames @()
+    Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'missing county harris-tx'
 
     Write-TestInventory $countyNames
     Write-TestManifest -OmitBlockedMetadata
@@ -144,8 +162,10 @@ try {
     Write-TestManifest -DuplicateWashington
     Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'duplicate county washington-tx'
 
-    Write-TestInventory ($countyNames + @('Harris'))
-    Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) 'Harris'
+    foreach ($rejectedName in @('Harris','Liberty','Montgomery','San Jacinto')) {
+        Write-TestInventory ($countyNames + @($rejectedName))
+        Assert-ChildFails @('-SourceDirectory',$sourceDir,'-ResultOutputPath',$resultPath) $rejectedName
+    }
     $missingCountyNames = @($countyNames | Where-Object { $_ -ne 'Austin' })
     if ($missingCountyNames.Count -ne 23 -or ($missingCountyNames -contains 'Austin')) { throw 'Missing-county fixture must omit exactly Austin and contain 23 counties.' }
     Write-TestInventory $missingCountyNames
@@ -165,7 +185,7 @@ try {
     if ($deployText -match 'Write-(Host|Output)\s+\$token') { throw 'Token redaction check failed.' }
     if ($deployText -notmatch 'Remote object exists and -AllowOverwrite was not supplied') { throw 'Overwrite protection check failed.' }
 
-    Write-Host 'LP030.4 roadway asset deployment tooling tests passed'
+    Write-Host 'LP030.5 roadway asset deployment tooling tests passed'
 } finally {
     $env:GRIDLY_ROADWAY_STORAGE_BASE_URL = $null
     if (Test-Path -LiteralPath $tempRoot) { Remove-Item -LiteralPath $tempRoot -Recurse -Force }
