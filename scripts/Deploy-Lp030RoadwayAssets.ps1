@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Safely validates and uploads LP030 roadway GeoJSON packages to Supabase Storage REST.
 
@@ -100,9 +100,9 @@ function Test-Lp030SafeBaseUrl {
 function Get-Lp030ManifestEntries {
     param([string]$ManifestPath)
     $manifest = Get-Content -Raw -LiteralPath $ManifestPath | ConvertFrom-Json
-    if ($manifest.assets) { return @($manifest.assets) }
-    if ($manifest.counties) { return @($manifest.counties) }
-    if ($manifest.roadwayAssets) { return @($manifest.roadwayAssets) }
+    if ($manifest.PSObject.Properties.Name -contains 'assets') { return @($manifest.assets) }
+    if ($manifest.PSObject.Properties.Name -contains 'counties') { return @($manifest.counties) }
+    if ($manifest.PSObject.Properties.Name -contains 'roadwayAssets') { return @($manifest.roadwayAssets) }
     throw 'lp028-roadway-runtime-assets.json must contain assets, counties, or roadwayAssets.'
 }
 function Get-Lp030EntryValue {
@@ -217,3 +217,4 @@ $resultParent = Split-Path -Parent $resultFullPath
 if ($resultParent -and -not (Test-Path -LiteralPath $resultParent -PathType Container)) { New-Item -ItemType Directory -Path $resultParent -Force | Out-Null }
 $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $resultFullPath -Encoding utf8
 $result | ConvertTo-Json -Depth 8
+
