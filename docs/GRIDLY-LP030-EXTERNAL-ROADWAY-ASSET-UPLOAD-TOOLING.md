@@ -1,6 +1,10 @@
-# GRIDLY LP030.2 External Roadway Asset Upload Tooling
+# GRIDLY LP030.3 External Roadway Asset Upload Tooling
 
-LP030.2 replaces the LP030.1 local-staging-only workflow with safe external roadway asset upload tooling. The script reads the protected source directory, validates the approved county inventory and LP028 runtime asset metadata, and uploads through Supabase Storage REST only when explicitly requested.
+LP030.3 replaces the LP030.1 local-staging-only workflow with safe external roadway asset upload tooling. The script reads the protected source directory, validates the approved county inventory and LP028 runtime asset metadata, and uploads through Supabase Storage REST only when explicitly requested.
+
+## Windows PowerShell 5.1 runtime repair
+
+LP030.3 repairs Windows PowerShell 5.1 runtime defects found after LP030.2 static validation. Repository-relative defaults are now resolved after `param()` from the actual deployment script path, preserving normal default use of `data/road-segments/` without relying on `$PSScriptRoot` during parameter default evaluation. The validation harness now runs the deployment script in a child PowerShell process, checks the native exit code, captures both stdout and stderr, verifies the 23-county missing-inventory fixture, and cleans temporary fixtures in `finally`.
 
 ## Protected source directory
 
@@ -70,4 +74,4 @@ node tests/lp030-2-roadway-upload-tooling-static.test.js
 
 Each county result contains `countyId`, `countyName`, `localPath`, `fileName`, `objectPath`, `publicUrl`, `version`, `sha256`, `localByteLength`, `remoteByteLength`, `uploadAttempted`, `uploadStatus`, `httpStatus`, `verificationStatus`, `verified`, and `error`.
 
-The deployment result is for later runtime manifest registration. LP030.2 does not modify `data/roadway-runtime-manifest.json`.
+The deployment result is for later runtime manifest registration. LP030.3 does not modify `data/roadway-runtime-manifest.json`.

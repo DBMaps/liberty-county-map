@@ -11,16 +11,16 @@ full GeoJSON files into memory.
 [CmdletBinding()]
 param(
     [Parameter()]
-    [ValidateNotNullOrEmpty()]
-    [string]$SourceDirectory = (Join-Path (Split-Path -Parent $PSScriptRoot) 'data/road-segments'),
+    [AllowEmptyString()]
+    [string]$SourceDirectory,
 
     [Parameter()]
     [ValidateNotNullOrEmpty()]
     [string]$RuntimeAssetsManifestPath,
 
     [Parameter()]
-    [ValidateNotNullOrEmpty()]
-    [string]$ResultOutputPath = (Join-Path (Join-Path (Split-Path -Parent $PSScriptRoot) 'lp030-roadway-upload-results') ('lp030-roadway-assets-' + (Get-Date -Format 'yyyyMMddTHHmmssZ') + '.json')),
+    [AllowEmptyString()]
+    [string]$ResultOutputPath,
 
     [Parameter()]
     [ValidateNotNullOrEmpty()]
@@ -55,6 +55,28 @@ $ExpectedCounties = @(
     @{ id = 'washington-tx'; name = 'Washington' }, @{ id = 'wharton-tx'; name = 'Wharton' }
 )
 $BlockedCountyIds = @('liberty-tx', 'montgomery-tx', 'san-jacinto-tx', 'harris-tx')
+
+
+function Resolve-Lp030ScriptPath {
+    param($Invocation)
+    $candidate = $null
+    if ($Invocation -and $Invocation.MyCommand -and $Invocation.MyCommand.Path) { $candidate = $Invocation.MyCommand.Path }
+    if (-not $candidate -and (Get-Variable -Name PSScriptRoot -Scope Script -ErrorAction SilentlyContinue) -and $PSScriptRoot) {
+        $candidate = Join-Path $PSScriptRoot 'Deploy-Lp030RoadwayAssets.ps1'
+    }
+    if (-not $candidate) { throw 'Unable to resolve deployment script file path for repository-relative defaults.' }
+    $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($candidate)
+    if (-not $resolved -or -not (Test-Path -LiteralPath $resolved -PathType Leaf)) { throw "Unable to resolve deployment script file path: $candidate" }
+    return $resolved
+}
+function Resolve-Lp030RepositoryRoot {
+    param([string]$ScriptPath)
+    $scriptDirectory = Split-Path -Parent $ScriptPath
+    if (-not $scriptDirectory) { throw "Unable to resolve deployment script directory from: $ScriptPath" }
+    $repoRoot = Split-Path -Parent $scriptDirectory
+    if (-not $repoRoot) { throw "Unable to resolve repository root from deployment script path: $ScriptPath" }
+    return $repoRoot
+}
 
 function Resolve-Lp030Path { param([string]$Path) $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path) }
 function ConvertTo-Lp030CountyId {
@@ -96,6 +118,13 @@ function Invoke-Lp030StorageRequest {
 }
 function Test-Lp030TransientStatus { param([int]$StatusCode) return ($StatusCode -eq 408 -or $StatusCode -eq 429 -or ($StatusCode -ge 500 -and $StatusCode -lt 600)) }
 
+$scriptPath = Resolve-Lp030ScriptPath $MyInvocation
+$repoRoot = Resolve-Lp030RepositoryRoot $scriptPath
+if (-not $SourceDirectory) { $SourceDirectory = Join-Path $repoRoot 'data/road-segments' }
+if (-not $ResultOutputPath) {
+    $resultOutputDirectory = Join-Path $repoRoot 'lp030-roadway-upload-results'
+    $ResultOutputPath = Join-Path $resultOutputDirectory ('lp030-roadway-assets-' + (Get-Date -Format 'yyyyMMddTHHmmssZ') + '.json')
+}
 $sourceFullPath = Resolve-Lp030Path $SourceDirectory
 if (-not $RuntimeAssetsManifestPath) { $RuntimeAssetsManifestPath = Join-Path $sourceFullPath 'lp028-roadway-runtime-assets.json' }
 $manifestFullPath = Resolve-Lp030Path $RuntimeAssetsManifestPath
