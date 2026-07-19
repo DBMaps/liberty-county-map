@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Safely validates and uploads LP030 roadway GeoJSON packages to Supabase Storage REST.
 
@@ -97,12 +97,15 @@ function Test-Lp030SafeBaseUrl {
     if ($uri.Scheme -eq 'https') { return $true }
     return ($uri.Scheme -eq 'http' -and ($uri.Host -eq 'localhost' -or $uri.Host -eq '127.0.0.1' -or $uri.Host -eq '::1'))
 }
-function Get-Lp030ManifestEntries {
+function Get-Lp030RuntimeAssetsManifest {
     param([string]$ManifestPath)
-    $manifest = Get-Content -Raw -LiteralPath $ManifestPath | ConvertFrom-Json
-    if ($manifest.PSObject.Properties.Name -contains 'assets') { return @($manifest.assets) }
-    if ($manifest.PSObject.Properties.Name -contains 'counties') { return @($manifest.counties) }
-    if ($manifest.PSObject.Properties.Name -contains 'roadwayAssets') { return @($manifest.roadwayAssets) }
+    return (Get-Content -Raw -LiteralPath $ManifestPath | ConvertFrom-Json)
+}
+function Get-Lp030ManifestEntries {
+    param($Manifest)
+    if ($Manifest.PSObject.Properties.Name -contains 'assets') { return @($Manifest.assets) }
+    if ($Manifest.PSObject.Properties.Name -contains 'counties') { return @($Manifest.counties) }
+    if ($Manifest.PSObject.Properties.Name -contains 'roadwayAssets') { return @($Manifest.roadwayAssets) }
     throw 'lp028-roadway-runtime-assets.json must contain assets, counties, or roadwayAssets.'
 }
 function Get-Lp030EntryValue {
@@ -152,16 +155,52 @@ if ($missing.Count -gt 0) { throw ('Missing expected county package(s): ' + ($mi
 if ($extra.Count -gt 0) { throw ('Extra county package(s): ' + ($extra -join ', ')) }
 if ($geoJsonFiles.Count -ne 24 -or $actualIds.Count -ne 24) { throw "Expected exactly 24 county packages; found $($geoJsonFiles.Count) file(s) and $($actualIds.Count) county id(s)." }
 
-$manifestEntries = Get-Lp030ManifestEntries $manifestFullPath
+$manifest = Get-Lp030RuntimeAssetsManifest $manifestFullPath
+$manifestEntries = Get-Lp030ManifestEntries $manifest
+$allowedManifestIds = @($expectedIds + $BlockedCountyIds)
+foreach ($propertyCheck in @(
+    @{ name = 'coveredCountyCount'; value = 28 },
+    @{ name = 'runtimeReadyCountyCount'; value = 24 },
+    @{ name = 'blockedCountyCount'; value = 4 }
+)) {
+    if ($manifest.PSObject.Properties.Name -contains $propertyCheck.name) {
+        $actualPropertyValue = $manifest.PSObject.Properties[$propertyCheck.name].Value
+        if ([int]$actualPropertyValue -ne $propertyCheck.value) {
+            throw "Expected manifest disagrees: $($propertyCheck.name) must be $($propertyCheck.value); found $actualPropertyValue"
+        }
+    }
+}
 $manifestByCounty = @{}
 foreach ($entry in $manifestEntries) {
-    $entryCountyId = Get-Lp030EntryValue $entry @('countyId','id','county')
-    if (-not $entryCountyId) { $entryCountyId = ConvertTo-Lp030CountyId (Get-Lp030EntryValue $entry @('countyName','name')) }
+    $entryCountyValue = Get-Lp030EntryValue $entry @('countyId','id','county','countyName','name')
+    if (-not $entryCountyValue) { throw 'Expected manifest disagrees: entry missing county identifier.' }
+    $entryCountyId = ConvertTo-Lp030CountyId $entryCountyValue
+    if ($manifestByCounty.ContainsKey($entryCountyId)) { throw "Expected manifest disagrees: duplicate county $entryCountyId" }
     $manifestByCounty[$entryCountyId] = $entry
 }
-$manifestExtra = @($manifestByCounty.Keys | Where-Object { $expectedIds -notcontains $_ })
-if ($manifestByCounty.ContainsKey('harris-tx')) { throw 'Expected manifest disagrees: Harris is explicitly rejected.' }
+$manifestExtra = @($manifestByCounty.Keys | Where-Object { $allowedManifestIds -notcontains $_ })
 if ($manifestExtra.Count -gt 0) { throw ('Expected manifest disagrees: extra county ' + ($manifestExtra -join ', ')) }
+if ($manifest.PSObject.Properties.Name -contains 'blockedCounties') {
+    $manifestBlockedIds = @($manifest.blockedCounties | ForEach-Object {
+        if ($null -eq $_) { $null }
+        elseif ($_.PSObject.Properties.Name -contains 'countyId') { ConvertTo-Lp030CountyId ([string]$_.countyId) }
+        elseif ($_.PSObject.Properties.Name -contains 'id') { ConvertTo-Lp030CountyId ([string]$_.id) }
+        elseif ($_.PSObject.Properties.Name -contains 'county') { ConvertTo-Lp030CountyId ([string]$_.county) }
+        elseif ($_.PSObject.Properties.Name -contains 'countyName') { ConvertTo-Lp030CountyId ([string]$_.countyName) }
+        elseif ($_.PSObject.Properties.Name -contains 'name') { ConvertTo-Lp030CountyId ([string]$_.name) }
+        else { ConvertTo-Lp030CountyId ([string]$_) }
+    })
+    $unknownBlocked = @($manifestBlockedIds | Where-Object { $BlockedCountyIds -notcontains $_ })
+    if ($unknownBlocked.Count -gt 0) { throw ('Expected manifest disagrees: blockedCounties contains unexpected county ' + ($unknownBlocked -join ', ')) }
+} else {
+    $manifestBlockedIds = @()
+}
+if ($manifest.PSObject.Properties.Name -contains 'blockedCountyCount' -and [int]$manifest.blockedCountyCount -eq 4) {
+    foreach ($id in $BlockedCountyIds) {
+        if (-not $manifestByCounty.ContainsKey($id)) { throw "Expected manifest disagrees: missing blocked county $id" }
+        if ($manifestBlockedIds.Count -gt 0 -and $manifestBlockedIds -notcontains $id) { throw "Expected manifest disagrees: blockedCounties missing $id" }
+    }
+}
 foreach ($id in $expectedIds) {
     if (-not $manifestByCounty.ContainsKey($id)) { throw "Expected manifest disagrees: missing $id" }
     $entry = $manifestByCounty[$id]

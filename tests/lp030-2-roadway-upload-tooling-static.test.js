@@ -11,7 +11,8 @@ assert.match(deploy, /\$Execute\) \{[\s\S]*GRIDLY_ROADWAY_STORAGE_BASE_URL[\s\S]
 assert.match(deploy, /Get-FileHash[\s\S]*SHA256/, 'uses Get-FileHash SHA256');
 assert(!/Get-Content\s+-Raw\s+-LiteralPath\s+\$file\.FullName\s*\|\s*ConvertFrom-Json/.test(deploy), 'deployment path must not parse GeoJSON bodies with ConvertFrom-Json');
 assert.match(deploy, /InFile\s*=\s*\$InFile/, 'upload uses streamed InFile where supported');
-assert.match(deploy, /Harris roadway package is explicitly rejected/, 'Harris must be explicitly rejected');
+assert.match(deploy, /Harris roadway package is explicitly rejected/, 'Harris package must be explicitly rejected');
+assert(!/Expected manifest disagrees: Harris is explicitly rejected/.test(deploy), 'Harris manifest entry must be accepted');
 assert.match(deploy, /Expected exactly 24 county packages/, 'validates exact 24-county inventory');
 assert.match(deploy, /Non-GeoJSON package present/, 'rejects non-GeoJSON packages');
 assert.match(deploy, /Storage base URL must use HTTPS except localhost/, 'rejects unsafe URLs');
@@ -41,6 +42,18 @@ for (const { pattern, name } of ps7OnlyPatterns) {
   assert(!pattern.test(harness), `test harness must not use PowerShell 7-only ${name}`);
 }
 
+assert.match(harness, /coveredCountyCount\s*=\s*28[\s\S]*runtimeReadyCountyCount\s*=\s*24[\s\S]*blockedCountyCount\s*=\s*4/, 'test harness must build a real 28-county LP028 fixture');
+assert.match(harness, /counties\s*=\s*\$entries/, 'test harness must use real counties manifest property');
+assert.match(harness, /county\s*=\s*\$name/, 'test harness must use plain county names in manifest entries');
+for (const blocked of ['Liberty','Montgomery','San Jacinto','Harris']) assert(harness.includes(blocked), `missing blocked fixture county ${blocked}`);
+assert.match(harness, /ExtraNames @\('Dallas'\)[\s\S]*extra county dallas-tx/, 'unknown 29th manifest county must be rejected');
+assert.match(harness, /OmitBlockedMetadata[\s\S]*blockedCounties missing harris-tx/, 'missing blocked county metadata must be rejected');
+assert.match(harness, /DuplicateWashington[\s\S]*duplicate county washington-tx/, 'duplicate normalized county ID must be rejected');
+assert.match(harness, /Dry run must produce 24 result entries/, 'dry run must produce 24 results');
+assert.match(deploy, /PSObject\.Properties\.Name\s+-contains\s+'assets'[\s\S]*PSObject\.Properties\.Name\s+-contains\s+'counties'[\s\S]*PSObject\.Properties\.Name\s+-contains\s+'roadwayAssets'/, 'manifest entry selection must use Strict Mode-safe property checks');
+assert.match(deploy, /ConvertTo-Lp030CountyId\s+\$entryCountyValue/, 'manifest county values must be normalized uniformly');
+assert.match(deploy, /duplicate county \$entryCountyId/, 'duplicate normalized manifest county IDs must be rejected');
+assert.match(deploy, /allowedManifestIds\s*=\s*@\(\$expectedIds \+ \$BlockedCountyIds\)/, 'manifest allows exactly upload plus blocked counties');
 assert.match(harness, /Start-Process[\s\S]*-PassThru[\s\S]*-RedirectStandardOutput[\s\S]*-RedirectStandardError/, 'test harness must capture native child-process stdout and stderr');
 assert.match(harness, /ExitCode\s*-ne\s*0/, 'test harness must verify successful child process exit codes');
 assert.match(harness, /ExitCode\s*-eq\s*0/, 'test harness must verify failing child process exit codes');
@@ -50,5 +63,5 @@ assert.match(harness, /\$missingCountyNames\s+-contains\s+'Austin'/, 'missing-co
 assert(!/Remove-Item\s+-LiteralPath\s+\(Join-Path\s+\$sourceDir\s+'\*'\)/.test(harness), 'test harness must not attempt wildcard cleanup through -LiteralPath');
 assert.match(harness, /finally\s*\{[\s\S]*Remove-Item\s+-LiteralPath\s+\$tempRoot\s+-Recurse\s+-Force/, 'test harness must clean temporary fixtures in finally');
 
-assert(docs.includes('LP030.3'), 'docs describe LP030.3 runtime repair');
+assert(docs.includes('LP030.4'), 'docs describe LP030.4 manifest contract repair');
 console.log('LP030.3 roadway upload tooling static tests passed');
