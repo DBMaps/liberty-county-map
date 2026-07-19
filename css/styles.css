@@ -25231,3 +25231,168 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   line-height: 1.24;
   overflow-wrap: anywhere;
 }
+
+/* LP020 — Premium awareness popup and official roadway marker polish */
+#map .leaflet-popup-content-wrapper { border-radius: 18px; }
+#map .leaflet-popup-content { margin: 11px 13px; }
+.gridly-popup.gridly-premium-popup,
+.gridly-official-roadway-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 218px;
+  max-width: 268px;
+  color: #eaf2ff;
+  line-height: 1.25;
+}
+.gridly-popup.gridly-premium-popup strong,
+.gridly-official-roadway-popup strong {
+  display: block;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 840;
+  letter-spacing: 0.002em;
+  margin: 0 18px 0 0;
+}
+.gridly-popup.gridly-premium-popup span,
+.gridly-official-roadway-popup span {
+  display: block;
+  color: rgba(218, 230, 246, 0.94);
+  font-size: 0.78rem;
+  line-height: 1.28;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-location,
+.gridly-official-roadway-popup .gridly-popup-location {
+  color: #f8fbff;
+  font-size: 0.86rem;
+  font-weight: 720;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-freshness {
+  color: rgba(189, 204, 224, 0.86);
+  font-size: 0.72rem;
+  font-weight: 620;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-trust {
+  color: rgba(156, 255, 231, 0.82);
+  font-size: 0.73rem;
+  font-weight: 680;
+}
+.gridly-popup.gridly-premium-popup .popup-report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 7px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.20);
+}
+.gridly-popup.gridly-premium-popup .popup-report-btn {
+  min-height: 30px;
+  border-radius: 10px;
+  padding: 6px 7px;
+  font-size: 0.66rem;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+}
+.gridly-official-roadway-popup {
+  border-left: 0;
+  padding: 2px 0 2px 11px;
+  position: relative;
+}
+.gridly-official-roadway-popup::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #67e8f9, #2563eb);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.35);
+}
+.gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] { color: rgba(147, 197, 253, 0.98); }
+#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 8px 8px 11px 11px !important;
+  background: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 46%, #0f4f83 100%) !important;
+  border: 2px solid #f8fbff !important;
+  box-shadow: 0 0 0 2px rgba(8, 20, 38, 0.62), 0 7px 15px rgba(14, 116, 144, 0.28) !important;
+}
+#map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker::before {
+  content: "i";
+  position: absolute;
+  inset: 4px 6px 6px;
+  border-radius: 999px;
+  color: #07304f;
+  background: rgba(255,255,255,0.88);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 14px;
+  text-align: center;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* LP021 — Premium information architecture hierarchy */
+.gridly-popup.gridly-premium-popup,
+.gridly-official-roadway-popup {
+  gap: 3px;
+}
+.gridly-popup.gridly-premium-popup strong,
+.gridly-official-roadway-popup strong {
+  font-size: 1.04rem;
+  line-height: 1.18;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-location,
+.gridly-official-roadway-popup .gridly-popup-location {
+  margin-top: 1px;
+  font-size: 0.88rem;
+  line-height: 1.22;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-freshness,
+.gridly-official-roadway-popup .gridly-popup-freshness,
+.gridly-popup.gridly-premium-popup .gridly-popup-meta,
+.gridly-official-roadway-popup .gridly-popup-meta {
+  color: rgba(189, 204, 224, 0.78);
+  font-size: 0.71rem;
+  font-weight: 610;
+}
+.gridly-popup.gridly-premium-popup .gridly-popup-trust {
+  margin-top: 1px;
+  color: rgba(156, 255, 231, 0.76);
+}
+.gridly-popup.gridly-premium-popup .popup-report-grid {
+  margin-top: 5px;
+  padding-top: 7px;
+}
+.gridly-popup.gridly-premium-popup .popup-report-btn {
+  opacity: 0.9;
+  font-weight: 760;
+}
+.gridly-alert-row .gridly-alert-situation-summary {
+  display: none;
+}
+
+/* LP021 repair — responsive popup actions at narrow mobile widths. */
+.gridly-popup.gridly-premium-popup .popup-report-grid {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  align-items: stretch;
+}
+.gridly-popup.gridly-premium-popup .popup-report-btn {
+  min-width: 0;
+  min-height: 36px;
+  white-space: normal;
+  overflow-wrap: normal;
+  text-transform: none;
+  font-size: 0.76rem;
+  line-height: 1.15;
+  padding: 8px 9px;
+}
+@media (max-width: 380px) {
+  #map .leaflet-popup-content .gridly-popup.gridly-premium-popup .popup-report-grid {
+    grid-template-columns: 1fr;
+  }
+}

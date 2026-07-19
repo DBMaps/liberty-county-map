@@ -1,0 +1,240 @@
+{
+  "contractVersion": "LP028.4",
+  "generatedAt": null,
+  "provider": "external_static_assets",
+  "allowedStatuses": [
+    "local_runtime",
+    "external_runtime",
+    "pending_external_upload",
+    "blocked_partition_required",
+    "blocked_missing_asset",
+    "disabled"
+  ],
+  "counties": {
+    "liberty-tx": {
+      "status": "local_runtime",
+      "url": "data/liberty-county-road-segments.geojson",
+      "version": "legacy",
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "montgomery-tx": {
+      "status": "local_runtime",
+      "url": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "version": "legacy",
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "san-jacinto-tx": {
+      "status": "local_runtime",
+      "url": "assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson",
+      "version": "legacy",
+      "sha256": null,
+      "featureCount": 3906,
+      "lineGeometryCount": 3906
+    },
+    "chambers-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "jefferson-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "hardin-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "polk-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": 7318,
+      "lineGeometryCount": 7317
+    },
+    "walker-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "orange-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "jasper-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "newton-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "tyler-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "galveston-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "brazoria-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "fort-bend-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "waller-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "austin-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "washington-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "brazos-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "grimes-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "wharton-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "colorado-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "fayette-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "lavaca-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "jackson-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "matagorda-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "calhoun-tx": {
+      "status": "pending_external_upload",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": null,
+      "lineGeometryCount": null
+    },
+    "harris-tx": {
+      "status": "blocked_partition_required",
+      "url": null,
+      "version": null,
+      "sha256": null,
+      "featureCount": 470275,
+      "lineGeometryCount": 470275,
+      "blockReason": "Source package requires optimization or geographic partitioning."
+    }
+  }
+}
