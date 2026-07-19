@@ -182,17 +182,47 @@ function Invoke-Lp030StorageRequest {
     if ($response.ExitCode -ne 0) {
         throw "Storage request failed for county '$CountyId' object '$ObjectPath' with curl exit code $($response.ExitCode), HTTP $($response.StatusCode): $(ConvertTo-Lp030SanitizedText ($response.ErrorText + $response.Body))"
     }
-    if ($AllowNotFound -and $response.StatusCode -eq 404) { return $response }
+    if ($AllowNotFound -and (Test-Lp030StorageNotFoundResponse -StatusCode $response.StatusCode -Body $response.Body)) { return $response }
     if ($response.StatusCode -lt 200 -or $response.StatusCode -ge 300) {
         throw "Storage request failed for county '$CountyId' object '$ObjectPath' with HTTP $($response.StatusCode): $(ConvertTo-Lp030SanitizedText ($response.ErrorText + $response.Body))"
     }
     return $response
 }
+
+function Test-Lp030StorageNotFoundResponse {
+    param(
+        [int]$StatusCode,
+        [string]$Body
+    )
+    if ($StatusCode -eq 404) { return $true }
+    if ($StatusCode -ne 400 -or -not $Body) { return $false }
+
+    $textValues = @($Body)
+    try {
+        $parsed = $Body | ConvertFrom-Json -ErrorAction Stop
+        foreach ($name in @('statusCode', 'error', 'errorCode', 'code', 'message', 'msg')) {
+            if ($parsed.PSObject.Properties.Name -contains $name -and $null -ne $parsed.$name) {
+                $textValues += [string]$parsed.$name
+            }
+        }
+    } catch {
+        # Non-JSON error bodies are evaluated as plain text below.
+    }
+
+    $combined = ($textValues -join ' ').ToLowerInvariant()
+    return (
+        $combined -match 'not[ -]?found' -or
+        $combined -match 'does not exist' -or
+        $combined -match 'no such (key|object|file)' -or
+        $combined -match 'object not found'
+    )
+}
+
 function Remove-Lp030ProbeObject {
     param([string]$BaseUrl, [string]$Bucket, [hashtable]$Headers)
     $probeUrl = "$BaseUrl/storage/v1/object/$Bucket/probe.json"
     $response = Invoke-Lp030StorageRequest -Method 'Delete' -Url $probeUrl -Headers $Headers -CountyId 'probe' -ObjectPath 'probe.json' -AllowNotFound
-    return [pscustomobject]@{ objectPath = 'probe.json'; httpStatus = [int]$response.StatusCode; removed = ($response.StatusCode -ge 200 -and $response.StatusCode -lt 300); alreadyAbsent = ($response.StatusCode -eq 404) }
+    return [pscustomobject]@{ objectPath = 'probe.json'; httpStatus = [int]$response.StatusCode; removed = ($response.StatusCode -ge 200 -and $response.StatusCode -lt 300); alreadyAbsent = (Test-Lp030StorageNotFoundResponse -StatusCode $response.StatusCode -Body $response.Body) }
 }
 function Save-Lp030PublicObjectForVerification {
     param([string]$Url, [string]$CountyId, [string]$ObjectPath)
@@ -341,8 +371,10 @@ $results = foreach ($county in $ExpectedCounties) {
     $publicUrl = "$baseUrl/storage/v1/object/public/$bucket/$encodedObjectPath"
     $status = if ($Execute) { 'pending' } else { 'dry-run' }; $httpStatus = $null; $errorText = $null; $remoteLength = $null; $remoteSha = $null; $verification = 'not-attempted'; $verified = $false
     if ($Execute) {
-        $head = Invoke-Lp030StorageRequest -Method 'Head' -Url $objectUrl -Headers $headers -CountyId $county.id -ObjectPath $objectPath -AllowNotFound
-        if ($head.StatusCode -ge 200 -and $head.StatusCode -lt 300 -and -not $AllowOverwrite) { throw "Remote object exists and -AllowOverwrite was not supplied: $objectPath" }
+        if (-not $AllowOverwrite) {
+            $head = Invoke-Lp030StorageRequest -Method 'Head' -Url $objectUrl -Headers $headers -CountyId $county.id -ObjectPath $objectPath -AllowNotFound
+            if ($head.StatusCode -ge 200 -and $head.StatusCode -lt 300) { throw "Remote object exists and -AllowOverwrite was not supplied: $objectPath" }
+        }
         for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
             $response = Invoke-Lp030StorageRequest -Method 'Post' -Url $objectUrl -Headers $headers -InFile $file.FullName -CountyId $county.id -ObjectPath $objectPath
             $httpStatus = [int]$response.StatusCode
