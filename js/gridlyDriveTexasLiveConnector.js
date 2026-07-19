@@ -439,6 +439,124 @@
     });
   }
 
+  function lp029DistanceMiles(aLat, aLng, bLat, bLng) {
+    const lat1 = Number(aLat);
+    const lng1 = Number(aLng);
+    const lat2 = Number(bLat);
+    const lng2 = Number(bLng);
+    if (![lat1, lng1, lat2, lng2].every(Number.isFinite)) return null;
+    if (typeof globalScope.getDistanceMiles === "function") return globalScope.getDistanceMiles(lat1, lng1, lat2, lng2);
+    const toRad = (value) => value * Math.PI / 180;
+    const radiusMiles = 3958.7613;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return radiusMiles * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function lp029BuildCounts(records, selector) {
+    return records.reduce((memo, record) => {
+      const key = toSafeString(selector(record)) || "(missing)";
+      memo[key] = (memo[key] || 0) + 1;
+      return memo;
+    }, {});
+  }
+
+  function lp029ConfiguredEndpointContract() {
+    const config = getConnectorConfig();
+    const template = toSafeString(config.endpointTemplate) || DEFAULT_ENDPOINT;
+    let parsed = null;
+    try { parsed = new URL(template.replace("{api_key}", "__GRIDLY_REDACTED_API_KEY__")); } catch (error) {}
+    const params = parsed ? Array.from(parsed.searchParams.keys()).reduce((memo, key) => {
+      memo[key] = key.toLowerCase() === "key" ? "{api_key_redacted}" : parsed.searchParams.get(key);
+      return memo;
+    }, {}) : {};
+    return freeze({
+      method: "GET",
+      endpointTemplate: template.replace(/key=([^&]*)/i, "key={api_key_redacted}"),
+      baseUrl: parsed ? `${parsed.protocol}//${parsed.host}` : "https://api.drivetexas.org",
+      endpointPath: parsed ? parsed.pathname : "/api/conditions.geojson",
+      queryParameters: freeze(params),
+      apiKeyHandling: "Resolved from GRIDLY_CONFIG.driveTexas.apiKey, GRIDLY_CONFIG.txdot.apiKey, or GRIDLY_TXDOT_API_KEY and URL-encoded into the key query parameter; never returned by this audit.",
+      requestHeaders: freeze({ explicitHeadersConfigured: false }),
+      cachePolicy: "fetch cache: no-store",
+      timeoutMs: TIMEOUT_MS,
+      maxAttempts: MAX_ATTEMPTS,
+      retryBehavior: "Retry once only for transient 408, 429, 5xx, timeout, or network failures; no retry for other 4xx/schema failures.",
+      paginationParametersConfigured: false,
+      boundingParametersConfigured: false,
+      districtParametersConfigured: false,
+      categoryParametersConfigured: false,
+      statusParametersConfigured: false,
+      dateTimeParametersConfigured: false,
+      maximumResultParametersConfigured: false
+    });
+  }
+
+  function lp029ProximityCounts(records, point, radii) {
+    return radii.reduce((memo, radius) => {
+      memo[`${radius}mi`] = records.filter((record) => {
+        const miles = lp029DistanceMiles(point.lat, point.lng, record.latitude, record.longitude);
+        return Number.isFinite(miles) && miles <= radius;
+      }).length;
+      return memo;
+    }, {});
+  }
+
+  function lp029ProviderCompletenessAudit() {
+    const records = allNormalizedRecords.map(clone).filter(Boolean);
+    const validCoordinateCount = records.filter((record) => Number.isFinite(Number(record.latitude)) && Number.isFinite(Number(record.longitude))).length;
+    const ids = records.map((record) => toSafeString(record.id)).filter(Boolean);
+    const uniqueIds = new Set(ids);
+    const starts = records.map((record) => toSafeString(record.startTime)).filter(Boolean).sort();
+    const ends = records.map((record) => toSafeString(record.endTime)).filter(Boolean).sort();
+    const conroe = { lat: 30.3119, lng: -95.4558 };
+    const routePatternCountsNearConroe = [
+      ["IH0045 / I-45", /\b(?:ih\s*0*45|i[- ]?45|interstate\s*45)\b/i],
+      ["SH0105 / SH 105", /\b(?:sh\s*0*105|state highway\s*105|sh[- ]?105)\b/i],
+      ["SL0336 / Loop 336", /\b(?:sl\s*0*336|loop\s*336|lp\s*336)\b/i],
+      ["FM1488", /\bfm\s*1488\b/i],
+      ["FM2854", /\bfm\s*2854\b/i]
+    ].reduce((memo, entry) => {
+      const [label, pattern] = entry;
+      memo[label] = records.filter((record) => pattern.test([record.routeName, record.title, record.description].map(toSafeString).join(" ")) && Number(lp029DistanceMiles(conroe.lat, conroe.lng, record.latitude, record.longitude)) <= 50).length;
+      return memo;
+    }, {});
+
+    return freeze({
+      auditName: "LP029 DriveTexas Provider Completeness Passive Audit",
+      passive: true,
+      fetchPerformed: false,
+      mutatesConnectorState: false,
+      endpointContract: lp029ConfiguredEndpointContract(),
+      rawResponseCount: null,
+      normalizedCompleteCount: records.length,
+      normalizationDropCount: null,
+      duplicateIdCount: ids.length - uniqueIds.size,
+      categoryCounts: freeze(lp029BuildCounts(records, (record) => record.category)),
+      routeCounts: freeze(lp029BuildCounts(records, (record) => record.routeName)),
+      recordsWithValidCoordinates: validCoordinateCount,
+      recordsWithoutValidCoordinates: records.length - validCoordinateCount,
+      coordinateCoveragePercent: records.length ? Number(((validCoordinateCount / records.length) * 100).toFixed(2)) : 0,
+      earliestStartTimestamp: starts[0] || null,
+      latestEndTimestamp: ends[ends.length - 1] || null,
+      recordsWithUnknownCategory: records.filter((record) => !toSafeString(record.category)).length,
+      recordsWithMissingRoute: records.filter((record) => !toSafeString(record.routeName)).length,
+      recordsWithMissingCoordinates: records.length - validCoordinateCount,
+      knownTopLevelResponseMetadata: null,
+      paginationMetadata: null,
+      responseHeaders: null,
+      providerTotalCount: null,
+      currentResultCapDetectable: false,
+      conroeProximityCounts: freeze(lp029ProximityCounts(records, conroe, [10, 15, 25, 35, 50])),
+      daytonProximityCounts: freeze(lp029ProximityCounts(records, { lat: 30.0466, lng: -94.8852 }, [10, 15, 25, 35, 50])),
+      livingstonProximityCounts: freeze(lp029ProximityCounts(records, { lat: 30.7110, lng: -94.9329 }, [10, 15, 25, 35, 50])),
+      conroeRouteCountsWithin50Miles: freeze(routePatternCountsNearConroe),
+      sourceCompletenessClassification: records.length > 0 ? "J_UNABLE_TO_CERTIFY_PROVIDER_CONTRACT_FROM_PASSIVE_NORMALIZED_CACHE_ONLY" : "J_UNABLE_TO_CERTIFY_NO_RETAINED_RUNTIME_SOURCE_RECORDS",
+      firstSuspectedTruncationStage: null
+    });
+  }
+
   function runtimeAudit() {
     return freeze({
       connected: state.connected === true,
@@ -470,6 +588,7 @@
   });
   globalScope.gridlyDriveTexasConnectorRuntimeAudit = runtimeAudit;
   globalScope.gridlyLp028DriveTexasAreaLifecycleAudit = areaLifecycleAudit;
+  globalScope.gridlyLp029DriveTexasProviderCompletenessAudit = lp029ProviderCompletenessAudit;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = globalScope.gridlyDriveTexasConnector;
