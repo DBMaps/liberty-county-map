@@ -1,62 +1,73 @@
-# GRIDLY LP030.1 External Roadway Asset Upload Tooling
+# GRIDLY LP030.2 External Roadway Asset Upload Tooling
 
-## Purpose
+LP030.2 replaces the LP030.1 local-staging-only workflow with safe external roadway asset upload tooling. The script reads the protected source directory, validates the approved county inventory and LP028 runtime asset metadata, and uploads through Supabase Storage REST only when explicitly requested.
 
-LP030.1 adds operator tooling for staging externally hosted roadway GeoJSON assets without changing Gridly production runtime behavior. The tooling is intentionally limited to validation, copy/staging, checksum generation, and deployment-manifest creation for assets that will be hosted outside the app repository.
+## Protected source directory
 
-## Scope controls
+Source assets remain in `data/road-segments/`. The tooling may enumerate files, read files, calculate SHA-256 hashes, stream file contents for upload, and read `lp028-roadway-runtime-assets.json`. It must not modify, rewrite, copy over, rename, move, delete, stage, commit, ignore, clean, or reset that directory.
 
-This milestone does **not** continue LP029, does **not** modify DriveTexas, does **not** modify production runtime behavior, and does **not** modify `data/road-segments/`.
+## Expected upload inventory
 
-Created files:
+Exactly 24 county GeoJSON packages are allowed: Austin, Brazoria, Brazos, Calhoun, Chambers, Colorado, Fayette, Fort Bend, Galveston, Grimes, Hardin, Jackson, Jasper, Jefferson, Lavaca, Matagorda, Newton, Orange, Polk, Tyler, Walker, Waller, Washington, and Wharton.
 
-- `scripts/Deploy-Lp030RoadwayAssets.ps1`
-- `scripts/Test-Lp030RoadwayAssetDeployment.ps1`
-- `docs/GRIDLY-LP030-EXTERNAL-ROADWAY-ASSET-UPLOAD-TOOLING.md`
+Liberty, Montgomery, San Jacinto, and Harris are not uploaded. Harris is rejected explicitly if a Harris package is detected.
 
-## Deployment script
+## Deployment architecture
 
-`Deploy-Lp030RoadwayAssets.ps1` stages one or more `.geojson` files from a caller-provided source directory to a caller-provided external asset staging directory. It writes a JSON deployment manifest containing:
+`scripts/Deploy-Lp030RoadwayAssets.ps1` defaults to dry-run and requires `-Execute` for network upload. It validates source inventory, rejects missing or extra counties, rejects non-GeoJSON packages, compares files with `data/road-segments/lp028-roadway-runtime-assets.json`, calculates SHA-256 with `Get-FileHash`, and uses streamed upload bodies (`Invoke-WebRequest -InFile`) so roadway GeoJSON packages are not parsed into memory.
 
-- LP030.1 contract version
-- UTC generation timestamp
-- asset file name
-- optional county ID
-- package version
-- optional externally hosted URL
-- SHA-256 checksum
-- byte size
-- GeoJSON feature count
-- source path and staged path
-- explicit flags confirming production runtime, DriveTexas, and `data/road-segments/` were not modified
+Real uploads use Supabase Storage REST with stable object paths:
 
-Example:
-
-```powershell
-pwsh ./scripts/Deploy-Lp030RoadwayAssets.ps1 `
-  -SourceDirectory ./external-roadway-build-output/liberty `
-  -DestinationDirectory ./external-roadway-upload-staging/lp030/liberty `
-  -ManifestOutputPath ./external-roadway-upload-staging/lp030/liberty-manifest.json `
-  -BaseUrl https://static-assets.example/gridly/roadways/lp030/liberty `
-  -CountyId liberty-tx `
-  -PackageVersion lp030.1-20260719
+```text
+roadways/{county-id}/{version}/{filename}
 ```
 
-Use `-WhatIf` for a no-write review of copy and manifest operations. Use `-Force` only when intentionally replacing an existing staged artifact.
+The script requires HTTPS storage URLs except localhost, refuses remote overwrite unless `-AllowOverwrite` is supplied, retries bounded transient failures, verifies remote accessibility after upload, verifies remote byte length when the server exposes `Content-Length`, and writes machine-readable JSON outside `data/road-segments/`.
 
-## Validation script
+## Environment variables
 
-`Test-Lp030RoadwayAssetDeployment.ps1` creates a temporary GeoJSON fixture, runs the deployment script, verifies that the staged copy and manifest were produced, validates the feature count and SHA-256 checksum, and confirms the `data/road-segments/` protection guard rejects protected destinations.
+Real upload requires:
 
-Run:
+- `GRIDLY_ROADWAY_STORAGE_BASE_URL` — Supabase project/storage base URL, for example `https://example.supabase.co`.
+- `GRIDLY_ROADWAY_STORAGE_BUCKET` — target Supabase Storage bucket.
+- `GRIDLY_ROADWAY_STORAGE_TOKEN` — bearer/API token. The script never prints this token.
+
+## Dry-run command
 
 ```powershell
-pwsh ./scripts/Test-Lp030RoadwayAssetDeployment.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\Deploy-Lp030RoadwayAssets.ps1 `
+  -ResultOutputPath .\lp030-roadway-upload-results\lp030-dry-run.json `
+  -Version lp030
 ```
 
-## Operational notes
+## Execute command
 
-- Source assets must be GeoJSON `FeatureCollection` files.
-- The script only processes files ending in `.geojson` in the top level of the source directory.
-- HTTP upload to a cloud provider is intentionally not embedded in this milestone so credentials, bucket naming, cache policy, CDN invalidation, and promotion rules can remain outside the app repository.
-- Generated manifests are review artifacts for external asset deployment; they are not wired into the production runtime by this milestone.
+```powershell
+$env:GRIDLY_ROADWAY_STORAGE_BASE_URL = 'https://YOUR-PROJECT.supabase.co'
+$env:GRIDLY_ROADWAY_STORAGE_BUCKET = 'YOUR-BUCKET'
+$env:GRIDLY_ROADWAY_STORAGE_TOKEN = 'YOUR-TOKEN'
+powershell -ExecutionPolicy Bypass -File .\scripts\Deploy-Lp030RoadwayAssets.ps1 `
+  -Execute `
+  -ResultOutputPath .\lp030-roadway-upload-results\lp030-execute.json `
+  -Version lp030
+```
+
+Add `-AllowOverwrite` only for an intentional replacement deployment.
+
+## Verification command
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\Test-Lp030RoadwayAssetDeployment.ps1
+```
+
+Codex/static validation can also run:
+
+```bash
+node tests/lp030-2-roadway-upload-tooling-static.test.js
+```
+
+## Result schema
+
+Each county result contains `countyId`, `countyName`, `localPath`, `fileName`, `objectPath`, `publicUrl`, `version`, `sha256`, `localByteLength`, `remoteByteLength`, `uploadAttempted`, `uploadStatus`, `httpStatus`, `verificationStatus`, `verified`, and `error`.
+
+The deployment result is for later runtime manifest registration. LP030.2 does not modify `data/roadway-runtime-manifest.json`.
