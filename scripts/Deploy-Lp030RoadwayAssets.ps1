@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Safely validates and uploads LP030 roadway GeoJSON packages to Supabase Storage REST.
 
@@ -116,9 +116,9 @@ function Get-Lp030EntryValue {
 }
 function Invoke-Lp030StorageRequest {
     param([string]$Method, [string]$Url, [hashtable]$Headers, [string]$InFile)
-    $args = @{ Method = $Method; Uri = $Url; Headers = $Headers; UseBasicParsing = $true }
+    $requestParameters = @{ Method = $Method; Uri = $Url; Headers = $Headers; UseBasicParsing = $true }
     if ($InFile) { $args.InFile = $InFile; $args.ContentType = 'application/geo+json' }
-    try { Invoke-WebRequest @args } catch { if ($_.Exception.Response) { return $_.Exception.Response }; throw }
+    try { Invoke-WebRequest @requestParameters } catch { if ($_.Exception.Response) { return $_.Exception.Response }; throw }
 }
 function Test-Lp030TransientStatus { param([int]$StatusCode) return ($StatusCode -eq 408 -or $StatusCode -eq 429 -or ($StatusCode -ge 500 -and $StatusCode -lt 600)) }
 
@@ -261,4 +261,5 @@ $resultParent = Split-Path -Parent $resultFullPath
 if ($resultParent -and -not (Test-Path -LiteralPath $resultParent -PathType Container)) { New-Item -ItemType Directory -Path $resultParent -Force | Out-Null }
 $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $resultFullPath -Encoding utf8
 $result | ConvertTo-Json -Depth 8
+
 
