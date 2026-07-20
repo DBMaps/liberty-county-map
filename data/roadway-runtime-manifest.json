@@ -233,12 +233,12 @@
       "lineGeometryCount": null
     },
     "harris-tx": {
-      "status": "partition_runtime_integrated",
-      "runtimeClassification": "partition_runtime_integrated",
+      "status": "partition_runtime_ready",
+      "runtimeClassification": "partition_runtime_ready",
       "runtimeType": "partitioned_adaptive_spatial_packages",
       "partitionRuntimeType": "harris_lp032_adaptive_spatial_runtime",
-      "integrationGateEnabled": true,
-      "activationState": "browser_certification_pending",
+      "integrationGateEnabled": false,
+      "activationState": "production_active",
       "url": null,
       "manifestUrl": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/harris-tx/lp032.2/manifest.json",
       "packageObjectPrefix": "roadways/harris-tx/lp032.2",
