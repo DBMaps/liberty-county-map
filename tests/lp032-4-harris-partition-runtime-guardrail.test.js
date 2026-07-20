@@ -20,6 +20,17 @@ assert.ok(app.includes('state.packageCache.size <= GRIDLY_HARRIS_PARTITION_RUNTI
 assert.ok(app.includes('!protectedIds.has(entry.packageId)') && app.includes('Number(a.lastUsed || 0) - Number(b.lastUsed || 0)'), 'inactive LRU eviction remains present while protected packages are retained');
 assert.ok(app.includes('state.queue.sort((a, b) => a.priority - b.priority)'), 'request queue prioritizes visible packages');
 assert.ok(app.includes('state.activeGeneration') && app.includes('staleRequestSuppressions'), 'stale-request protection exists');
+assert.ok(app.includes('function gridlyCompleteHarrisPackageRequest(request, text, features)'), 'successful package completion is centralized for authoritative cache updates');
+assert.ok(app.includes('status: "loaded", features, featureCount: features.length, byteLength: text.length'), 'successful fetch stores parsed features, featureCount, and byteLength on the authoritative cache entry');
+assert.ok(app.includes('gridlyCompleteHarrisPackageRequest(request, text, features); }).catch'), 'queued to loading to loaded transition is wired from the package fetch worker');
+assert.ok(app.includes('function gridlyFailHarrisPackageRequest(request, error)'), 'failed package completion is centralized for authoritative cache updates');
+assert.ok(app.includes('status: "failed", featureCount: 0, features: []'), 'failed fetch transitions authoritative cache entry to failed and clears parsed features');
+assert.ok(app.includes('state.inFlight.delete(request.packageId); state.requestHistory.push({ ...request, completedAt'), 'in-flight cleanup and completion recording occur after both success and failure paths');
+assert.ok(app.includes('gridlyEvictHarrisPackageCache(); gridlyAssembleHarrisActiveGeometry(); gridlyPumpHarrisPackageQueue();'), 'active geometry assembly is invoked after package completion before queue pumping continues');
+assert.ok(app.includes('gridlyGetActiveCountyId() !== GRIDLY_HARRIS_PARTITION_RUNTIME_COUNTY_ID || request.generation !== state.activeGeneration'), 'stale completion cannot activate Harris geometry after county switch generation changes');
+assert.ok(app.includes('state.packageCache.delete(request.packageId); return false;'), 'stale completions do not leave completed requests permanently loading');
+assert.ok(app.includes('packageCompletionStatePass'), 'audit exposes the package completion state contract');
+assert.ok(app.includes('entry.status === "loading" && completedRequestPackageIds.has(entry.packageId)'), 'package completion contract rejects completed requests that remain loading');
 assert.ok(app.includes('gridlyGetHarrisSegmentId') && app.includes('stableSegmentId'), 'stable segment-ID deduplication exists');
 assert.ok(app.includes('gridlyHarrisPackageOwnsSegment') && app.includes('canonicalOwnerPackageId'), 'canonical ownership is respected');
 assert.ok(app.includes('gridlyScheduleHarrisPartitionVisibleBoundsLoad'), 'visible-bounds loader is installed');
