@@ -10,5 +10,10 @@
   },
   "devDependencies": {
     "@capacitor/cli": "8.3.4"
+  },
+  "scripts": {
+    "build:county-geometry": "node tools/build-gridly-authoritative-county-geometry.js",
+    "verify:county-geometry-deterministic": "node tools/build-gridly-authoritative-county-geometry.js --verify-deterministic",
+    "copy:county-geometry:android": "node tools/copy-gridly-runtime-county-geometry-to-android.js"
   }
 }

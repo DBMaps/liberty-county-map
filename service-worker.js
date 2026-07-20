@@ -9,7 +9,13 @@ const GRIDLY_CLOSURE_URLS = [
   "./assets/icon-180.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
-  "./assets/store/branding/Logos/gridly-logo-horizontal.png"
+  "./assets/store/branding/Logos/gridly-logo-horizontal.png",
+  "./js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"
+];
+
+const GRIDLY_LP0361C_RUNTIME_COUNTY_GEOMETRY_URLS = [
+  "./assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+  "./assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json"
 ];
 
 function isRecognizedOldGridlyCache(cacheName) {
@@ -63,6 +69,24 @@ self.addEventListener("fetch", (event) => {
   const closureUrl = GRIDLY_CLOSURE_URLS
     .map((url) => new URL(url, self.location.href).href)
     .find((url) => url === requestUrl.href);
+
+  const lp0361cGeometryUrl = GRIDLY_LP0361C_RUNTIME_COUNTY_GEOMETRY_URLS
+    .map((url) => new URL(url, self.location.href).href)
+    .find((url) => url === requestUrl.href);
+
+  if (lp0361cGeometryUrl) {
+    event.respondWith(
+      caches.match(request)
+        .then((cachedResponse) => cachedResponse || fetch(request).then((response) => {
+          if (response && response.ok) {
+            const responseCopy = response.clone();
+            caches.open(GRIDLY_CLOSURE_CACHE_NAME).then((cache) => cache.put(request, responseCopy));
+          }
+          return response;
+        }))
+    );
+    return;
+  }
 
   if (!closureUrl) return;
 

@@ -15,3 +15,7 @@ assets/county-sources/montgomery/census-tiger-2025/
 assets/county-implementation/*/generated/local-normalization-staging/
 # V604 local generated county boundary staging outputs.
 assets/county-implementation/*/generated/boundary-staging/
+# LP036.1C generated runtime county geometry package; build locally when needed.
+assets/location-resolution/gridly-authoritative-county-geometry-v1.json
+android/app/src/main/assets/public/assets/location-resolution/gridly-authoritative-county-geometry-v1.json
+android/app/src/main/assets/public/assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json
