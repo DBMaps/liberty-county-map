@@ -12,11 +12,25 @@ assert(source.includes('reportRegionOwnershipAvailable: true'), 'LP035.1 exposes
 assert(source.includes('officialIncidentRegionOwnershipAvailable: true'), 'LP035.1 exposes official incident region ownership support');
 assert(source.includes('houstonWideFallbackAvailable: Boolean(harrisAreas.includes("Houston"))'), 'Houston-wide fallback remains tied to existing Houston selection');
 assert(source.includes('harrisCountyFallbackAvailable: Boolean(harrisAreas.includes("Harris County"))'), 'Harris county fallback remains tied to existing county selection');
+assert(source.includes('preferredRegionZoom'), 'audit exposes the selected Houston region preferred zoom');
+assert(source.includes('actualRegionZoom'), 'audit exposes the actual map zoom for selected Houston regions');
+assert(source.includes('regionSeedCoordinate'), 'audit exposes the selected Houston region seed coordinate');
+assert(source.includes('zoomSource'), 'audit identifies the source of the selected Houston region zoom');
 
 const idMatches = [...source.matchAll(/id: "(houston-[^"]+)"/g)].map((match) => match[1]);
 const uniqueIds = new Set(idMatches);
 assert.strictEqual(idMatches.length, 15, 'LP035 recommends a manageable 15-region model');
 assert.strictEqual(uniqueIds.size, idMatches.length, 'Houston region IDs are stable and unique');
+
+const regionModelBlock = source.slice(
+  source.indexOf('const GRIDLY_LP035_HOUSTON_REGION_MODEL = Object.freeze(['),
+  source.indexOf('const GRIDLY_LP035_HOUSTON_REGION_LOOKUP')
+);
+assert(!/startupZoom: 12/.test(regionModelBlock), 'broader Houston regions no longer open at the too-wide zoom 12 view');
+assert.strictEqual((regionModelBlock.match(/startupZoom: 13/g) || []).length, 5, 'only the five broadest Houston regions use zoom 13 after the one-level refinement');
+assert.strictEqual((regionModelBlock.match(/startupZoom: 14/g) || []).length, 10, 'the ten more compact Houston regions use zoom 14 after the one-level refinement');
+assert(/id: "houston-med-center-rice"[^\n]+startupZoom: 14/.test(regionModelBlock), 'Medical Center / Rice starts at a more local zoom');
+assert(/id: "houston-downtown-midtown"[^\n]+startupZoom: 14/.test(regionModelBlock), 'Downtown / Midtown starts at a more local zoom');
 
 for (const community of ['Kingwood', 'Clear Lake', 'Pasadena', 'Baytown', 'Humble', 'Katy', 'Cypress', 'Aldine', 'North Houston', 'Bellaire', 'West University Place']) {
   assert(source.includes(`"${community}"`), `separate Harris community ${community} remains documented`);
