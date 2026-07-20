@@ -25,14 +25,14 @@ assert.strictEqual(manifest.counties['montgomery-tx'].url, 'assets/county-implem
 assert.strictEqual(manifest.counties['san-jacinto-tx'].url, 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson');
 localRuntime.forEach((id) => assert.strictEqual(manifest.counties[id].status, 'local_runtime', `${id} remains local runtime`));
 pendingCopiedCountyIds.forEach((id) => {
-  assert.strictEqual(manifest.counties[id].status, 'pending_external_upload', `${id} remains pending external upload`);
-  assert.strictEqual(manifest.counties[id].url, null, `${id} has no placeholder URL`);
+  assert.strictEqual(manifest.counties[id].status, 'external_runtime', `${id} is externally uploaded`);
+  assert.ok(manifest.counties[id].url.includes(`/roadways/${id}/lp030-v1/`), `${id} has versioned external URL`);
 });
 assert.strictEqual(manifest.counties[harris].status, 'blocked_partition_required');
 assert.strictEqual(manifest.counties[harris].url, null);
 assert.ok(manifest.counties[harris].blockReason.includes('partitioning'));
 assert.ok(!/[A-Z]:\\/.test(manifestText), 'manifest does not contain Windows paths');
-assert.ok(!/(example\.com|placeholder|TODO|supabase\.co)/i.test(manifestText), 'manifest has no placeholder/vendor URLs');
+assert.ok(!/(example\.com|placeholder|TODO)/i.test(manifestText), 'manifest has no placeholder URLs');
 
 const cutoff = appSource.indexOf('const FRA_URL = gridlyGetActiveCountyRuntimeSources().remoteCrossingSource;');
 const noop = () => {};
@@ -53,7 +53,7 @@ api.gridlyInstallRoadwayRuntimeManifest(manifest);
 assert.strictEqual(api.gridlyGetCountyRuntimeSources('liberty-tx').roadSource, 'data/liberty-county-road-segments.geojson');
 assert.strictEqual(api.gridlyGetCountyRuntimeSources('montgomery-tx').roadSource, 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson');
 assert.strictEqual(api.gridlyGetCountyRuntimeSources('san-jacinto-tx').roadSource, 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson');
-assert.strictEqual(api.gridlyResolveRoadwayRuntimeSource('polk-tx').url, null, 'pending entries cannot resolve a fetch URL');
+assert.ok(api.gridlyResolveRoadwayRuntimeSource('polk-tx').url.includes('/roadways/polk-tx/lp030-v1/'), 'external entries resolve a fetch URL');
 assert.strictEqual(api.gridlyResolveRoadwayRuntimeSource('harris-tx').url, null, 'blocked Harris cannot resolve a fetch URL');
 assert.strictEqual(api.gridlyResolveRoadwayRuntimeSource('liberty-tx').cacheKey, 'liberty-tx::legacy::data/liberty-county-road-segments.geojson');
 
