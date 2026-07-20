@@ -44,13 +44,36 @@ function Read-Bytes { param([string]$Path) [System.IO.File]::ReadAllBytes($Execu
 function Get-ObjectUrl { param([string]$ObjectPath) "$($SupabaseUrl.TrimEnd('/'))/storage/v1/object/$Bucket/$ObjectPath" }
 function Get-PublicUrl { param([string]$ObjectPath) "$($SupabaseUrl.TrimEnd('/'))/storage/v1/object/public/$Bucket/$ObjectPath" }
 function Get-Headers { @{ Authorization = "Bearer $StorageToken"; apikey = $StorageToken } }
+function Get-WebExceptionResponseBody {
+    param([System.Net.WebException]$WebException)
+    if (-not $WebException.Response) { return $null }
+    $stream = $WebException.Response.GetResponseStream()
+    if (-not $stream) { return $null }
+    $reader = New-Object System.IO.StreamReader($stream)
+    try { return $reader.ReadToEnd() } finally { $reader.Dispose() }
+}
 function Invoke-StorageRequest {
     param([string]$Method, [string]$Url, [hashtable]$Headers, [byte[]]$Body, [string]$ContentType)
-    $parameters = @{ Method = $Method; Uri = $Url; Headers = $Headers; MaximumRedirection = 0; SkipHttpErrorCheck = $true }
+    $parameters = @{ Method = $Method; Uri = $Url; Headers = $Headers; MaximumRedirection = 0 }
     if ($Body) { $parameters.Body = $Body; $parameters.ContentType = $ContentType }
-    $response = Invoke-WebRequest @parameters
-    if ([int]$response.StatusCode -lt 200 -or [int]$response.StatusCode -ge 300) { throw "HTTP $($response.StatusCode) from $Method $Url`: $($response.Content)" }
-    return $response
+    try {
+        $response = Invoke-WebRequest @parameters
+        if ([int]$response.StatusCode -lt 200 -or [int]$response.StatusCode -ge 300) { throw "HTTP $($response.StatusCode) from $Method $Url`: $($response.Content)" }
+        return $response
+    } catch [System.Net.WebException] {
+        $webResponse = $_.Exception.Response
+        $statusCode = $null
+        $statusDescription = $null
+        if ($webResponse) {
+            $statusCode = [int]$webResponse.StatusCode
+            $statusDescription = $webResponse.StatusDescription
+        }
+        $responseBody = Get-WebExceptionResponseBody -WebException $_.Exception
+        if ($statusCode) {
+            throw "HTTP $statusCode $statusDescription from $Method $Url`: $responseBody"
+        }
+        throw "HTTP request failed from $Method $Url`: $($_.Exception.Message) $responseBody"
+    }
 }
 function Assert-ManifestPackage {
     param($Manifest, $Package, [string]$Root)
