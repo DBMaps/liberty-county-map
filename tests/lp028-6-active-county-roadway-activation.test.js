@@ -18,12 +18,12 @@ assert.ok(appSource.includes('gridlyRoadwayPackageRuntimeState.staleCompletionIg
 assert.ok(appSource.includes('gridlyGetActiveCountyId() === requestedCountyId && gridlyRoadwayPackageRuntimeState.activeActivationSequence === activationSequence'), 'late loads must still match active county before install');
 assert.ok(appSource.includes('roadwaySegmentFeatures = lineFeatures;'), 'valid active loads install line geometry once');
 assert.ok(appSource.includes('roadwaySegmentFeatures = [];\n      roadwayDatasetLoaded = false;'), 'unavailable/pending/blocked active counties clear stale geometry');
-assert.ok(appSource.includes('throw new Error("roadway_dataset_unavailable")'), 'pending and blocked counties fail safely without a URL fetch');
+assert.ok(appSource.includes('throw new Error("roadway_dataset_unavailable")'), 'blocked counties fail safely without a URL fetch');
 assert.strictEqual(manifest.counties['liberty-tx'].status, 'local_runtime');
 assert.strictEqual(manifest.counties['montgomery-tx'].status, 'local_runtime');
 assert.strictEqual(manifest.counties['san-jacinto-tx'].status, 'local_runtime');
-assert.strictEqual(manifest.counties['polk-tx'].status, 'pending_external_upload');
-assert.strictEqual(manifest.counties['polk-tx'].url, null);
+assert.strictEqual(manifest.counties['polk-tx'].status, 'external_runtime');
+assert.ok(manifest.counties['polk-tx'].url.includes('/roadways/polk-tx/lp030-v1/'));
 assert.strictEqual(manifest.counties['harris-tx'].status, 'blocked_partition_required');
 assert.strictEqual(manifest.counties['harris-tx'].url, null);
 ['activationRequestCount', 'lastRequestedCounty', 'lastCompletedCounty', 'staleCompletionIgnoredCount', 'countyActivationInProgress', 'activePackageMatchesSelectedCounty', 'countySwitchActivationHookInstalled'].forEach((field) => {
