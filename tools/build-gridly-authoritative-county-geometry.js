@@ -24,17 +24,99 @@ function sortStable(value) {
   }
   return value;
 }
-function extractRegistry() {
-  const text = readText(REGISTRY_SOURCE);
-  const start = text.indexOf('const GRIDLY_COUNTY_REGISTRY = Object.freeze({');
-  if (start < 0) fail('GRIDLY_COUNTY_REGISTRY not found');
-  const end = text.indexOf('\n\nconst GRIDLY_ROADWAY_RUNTIME_MANIFEST_URL', start);
-  if (end < 0) fail('GRIDLY_COUNTY_REGISTRY end marker not found');
-  const snippet = text.slice(start, end).replace('const GRIDLY_COUNTY_REGISTRY', 'var GRIDLY_COUNTY_REGISTRY');
-  const sandbox = { Object, GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx', GRIDLY_COUNTY_STAGE_OPERATIONAL: 'operational', GRIDLY_COUNTY_STAGE_RUNTIME_ONBOARDED: 'runtime_onboarded', GRIDLY_COUNTY_STAGE_VALIDATION_ONLY: 'validation_only', GRIDLY_COUNTY_STAGE_DISABLED: 'disabled', GRIDLY_MONTGOMERY_RUNTIME_GATE: Object.freeze({}) };
+function skipIgnorableSource(text, index) {
+  let i = index;
+  while (i < text.length) {
+    if (/\s/.test(text[i])) { i += 1; continue; }
+    if (text[i] === '/' && text[i + 1] === '/') {
+      i += 2;
+      while (i < text.length && text[i] !== '\n') i += 1;
+      continue;
+    }
+    if (text[i] === '/' && text[i + 1] === '*') {
+      i += 2;
+      while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i += 1;
+      if (i >= text.length) fail('Unterminated block comment while locating GRIDLY_COUNTY_REGISTRY');
+      i += 2;
+      continue;
+    }
+    break;
+  }
+  return i;
+}
+function findBalancedExpressionEnd(text, startIndex) {
+  const opener = text[startIndex];
+  const closer = opener === '(' ? ')' : opener === '{' ? '}' : opener === '[' ? ']' : null;
+  if (!closer) fail(`GRIDLY_COUNTY_REGISTRY expression must start with a balanced delimiter, found ${JSON.stringify(opener)}`);
+  const stack = [closer];
+  let state = 'code';
+  for (let i = startIndex + 1; i < text.length; i += 1) {
+    const ch = text[i];
+    const next = text[i + 1];
+    if (state === 'single') {
+      if (ch === '\\') { i += 1; continue; }
+      if (ch === "'") state = 'code';
+      continue;
+    }
+    if (state === 'double') {
+      if (ch === '\\') { i += 1; continue; }
+      if (ch === '"') state = 'code';
+      continue;
+    }
+    if (state === 'template') {
+      if (ch === '\\') { i += 1; continue; }
+      if (ch === '`') state = 'code';
+      continue;
+    }
+    if (state === 'lineComment') {
+      if (ch === '\n') state = 'code';
+      continue;
+    }
+    if (state === 'blockComment') {
+      if (ch === '*' && next === '/') { i += 1; state = 'code'; }
+      continue;
+    }
+    if (ch === "'") { state = 'single'; continue; }
+    if (ch === '"') { state = 'double'; continue; }
+    if (ch === '`') { state = 'template'; continue; }
+    if (ch === '/' && next === '/') { i += 1; state = 'lineComment'; continue; }
+    if (ch === '/' && next === '*') { i += 1; state = 'blockComment'; continue; }
+    if (ch === '(') { stack.push(')'); continue; }
+    if (ch === '{') { stack.push('}'); continue; }
+    if (ch === '[') { stack.push(']'); continue; }
+    if (ch === ')' || ch === '}' || ch === ']') {
+      const expected = stack.pop();
+      if (ch !== expected) fail(`Mismatched delimiter while extracting GRIDLY_COUNTY_REGISTRY: expected ${expected}, found ${ch}`);
+      if (stack.length === 0) return i + 1;
+    }
+  }
+  fail('Matching GRIDLY_COUNTY_REGISTRY closing delimiter not found');
+}
+function extractRegistryExpression(text) {
+  const declaration = /\b(?:const|let|var)\s+GRIDLY_COUNTY_REGISTRY\s*=/.exec(text);
+  if (!declaration) fail('GRIDLY_COUNTY_REGISTRY declaration not found');
+  let expressionStart = skipIgnorableSource(text, declaration.index + declaration[0].length);
+  if (text.startsWith('Object.freeze', expressionStart)) {
+    expressionStart = skipIgnorableSource(text, expressionStart + 'Object.freeze'.length);
+  }
+  const expressionEnd = findBalancedExpressionEnd(text, expressionStart);
+  const expression = text.slice(skipIgnorableSource(text, declaration.index + declaration[0].length), expressionEnd);
+  return expression;
+}
+function extractRegistry(sourceText = readText(REGISTRY_SOURCE)) {
+  const expression = extractRegistryExpression(sourceText);
+  const sandbox = { Object, GRIDLY_DEFAULT_COUNTY_ID: 'liberty-tx', GRIDLY_COUNTY_STAGE_OPERATIONAL: 'operational', GRIDLY_COUNTY_STAGE_RUNTIME_ONBOARDED: 'runtime-onboarded', GRIDLY_COUNTY_STAGE_VALIDATION_ONLY: 'validation-only', GRIDLY_COUNTY_STAGE_DISABLED: 'disabled-staged', GRIDLY_MONTGOMERY_RUNTIME_GATE: true };
   vm.createContext(sandbox);
-  vm.runInContext(snippet, sandbox, { filename: REGISTRY_SOURCE });
+  sandbox.GRIDLY_COUNTY_REGISTRY = vm.runInContext(`(${expression})`, sandbox, { filename: REGISTRY_SOURCE });
+  validateRegistryShape(sandbox.GRIDLY_COUNTY_REGISTRY);
   return sandbox.GRIDLY_COUNTY_REGISTRY;
+}
+function validateRegistryShape(registry) {
+  if (!registry || typeof registry !== 'object' || Array.isArray(registry)) fail('GRIDLY_COUNTY_REGISTRY must evaluate to an object');
+  for (const [countyId, cfg] of Object.entries(registry)) {
+    if (!cfg || typeof cfg !== 'object' || Array.isArray(cfg)) fail(`${countyId} registry entry must be an object`);
+    if (cfg.id && cfg.id !== countyId) fail(`${countyId} registry entry id mismatch: ${cfg.id}`);
+  }
 }
 function ringCoords(ring, ctx, stats, bounds) {
   if (!Array.isArray(ring) || ring.length < 4) fail(`${ctx} ring must contain at least four positions`);
@@ -148,7 +230,32 @@ function runPointCertification(counties) {
   return { passed, boundaryHandling: 'inclusive-deterministic-lowest-county-id', polygonSupported, multiPolygonSupported, holesSupported, checks };
 }
 
+function runRegistryExtractionFixtures() {
+  const source = `
+const BEFORE = true;
+const GRIDLY_COUNTY_REGISTRY
+  =
+  Object.freeze({
+    "fixture-tx": Object.freeze({
+      id: "fixture-tx",
+      operational: true,
+      boundaryPath: "assets/{literal}/fixture.geojson",
+      nested: Object.freeze({ values: ["}", "[", "/* not a comment */"], label: ` + '`template { braces } [ kept ]`' + ` }),
+      note: 'single quoted } brace',
+      other: "double quoted ] bracket" // following delimiters } ] ) are ignored
+    })
+    /* block comment with }]) */
+  })
+const RENAMED_FOLLOWING_DECLARATION = { ignored: true };
+`;
+  const registry = extractRegistry(source);
+  const fixture = registry["fixture-tx"];
+  const passed = Boolean(fixture?.operational === true && fixture.boundaryPath === "assets/{literal}/fixture.geojson" && fixture.nested.values[0] === "}");
+  if (!passed) fail('Registry extraction fixture failed');
+  return { registryExtractionFixturePassed: true };
+}
 function runFixtureValidation() {
+  const registryExtraction = runRegistryExtractionFixtures();
   const polygonStats = { positions: 0 };
   const bounds = { west: Infinity, south: Infinity, east: -Infinity, north: -Infinity };
   let invalidGeometryPassed = false;
@@ -161,9 +268,9 @@ function runFixtureValidation() {
     if (!fs.existsSync(missing)) missingSourcePassed = true;
   } catch (_error) { missingSourcePassed = false; }
   const deterministic = verifyDeterministic();
-  const passed = invalidGeometryPassed && invalidCoordinatePassed && missingSourcePassed && deterministic.deterministicBuildPassed === true;
-  if (!passed) fail(`Fixture validation failed: ${JSON.stringify({ invalidGeometryPassed, invalidCoordinatePassed, missingSourcePassed, deterministic })}`);
-  return { fixtureValidationPassed: true, invalidGeometryPassed, invalidCoordinatePassed, missingSourcePassed, deterministicSerializationPassed: true, operationalCountyCount: loadCounties().length };
+  const passed = registryExtraction.registryExtractionFixturePassed === true && invalidGeometryPassed && invalidCoordinatePassed && missingSourcePassed && deterministic.deterministicBuildPassed === true;
+  if (!passed) fail(`Fixture validation failed: ${JSON.stringify({ registryExtraction, invalidGeometryPassed, invalidCoordinatePassed, missingSourcePassed, deterministic })}`);
+  return { fixtureValidationPassed: true, ...registryExtraction, invalidGeometryPassed, invalidCoordinatePassed, missingSourcePassed, deterministicSerializationPassed: true, operationalCountyCount: loadCounties().length };
 }
 
 function writeOutputs() {
@@ -197,4 +304,4 @@ if (require.main === module) {
     console.log(JSON.stringify(result, null, 2));
   } catch (error) { console.error(`[LP036.1C] ${error.message}`); process.exit(1); }
 }
-module.exports = { buildPackage, verifyDeterministic, stableJson, loadCounties, containsGeom, runFixtureValidation };
+module.exports = { buildPackage, verifyDeterministic, stableJson, loadCounties, containsGeom, runFixtureValidation, extractRegistryExpression, extractRegistry };
