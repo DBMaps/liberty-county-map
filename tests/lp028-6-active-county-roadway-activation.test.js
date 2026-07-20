@@ -24,7 +24,7 @@ assert.strictEqual(manifest.counties['montgomery-tx'].status, 'local_runtime');
 assert.strictEqual(manifest.counties['san-jacinto-tx'].status, 'local_runtime');
 assert.strictEqual(manifest.counties['polk-tx'].status, 'external_runtime');
 assert.ok(manifest.counties['polk-tx'].url.includes('/roadways/polk-tx/lp030-v1/'));
-assert.strictEqual(manifest.counties['harris-tx'].status, 'partition_runtime_integrated');
+assert.strictEqual(manifest.counties['harris-tx'].status, 'partition_runtime_ready');
 assert.strictEqual(manifest.counties['harris-tx'].url, null);
 ['activationRequestCount', 'lastRequestedCounty', 'lastCompletedCounty', 'staleCompletionIgnoredCount', 'countyActivationInProgress', 'activePackageMatchesSelectedCounty', 'countySwitchActivationHookInstalled'].forEach((field) => {
   assert.ok(appSource.includes(field), `audit exposes ${field}`);
