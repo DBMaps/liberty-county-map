@@ -28,10 +28,10 @@ pendingCopiedCountyIds.forEach((id) => {
   assert.strictEqual(manifest.counties[id].status, 'external_runtime', `${id} is externally uploaded`);
   assert.ok(manifest.counties[id].url.includes(`/roadways/${id}/lp030-v1/`), `${id} has versioned external URL`);
 });
-assert.strictEqual(manifest.counties[harris].status, 'partition_runtime_integrated');
+assert.strictEqual(manifest.counties[harris].status, 'partition_runtime_ready');
 assert.strictEqual(manifest.counties[harris].url, null);
 assert.ok(manifest.counties[harris].blockReason.includes('Partition runtime integrated'));
-assert.strictEqual(manifest.counties[harris].integrationGateEnabled, true);
+assert.strictEqual(manifest.counties[harris].integrationGateEnabled, false);
 assert.ok(manifest.counties[harris].manifestUrl.includes('/roadways/harris-tx/lp032.2/manifest.json'));
 assert.ok(!/[A-Z]:\\/.test(manifestText), 'manifest does not contain Windows paths');
 assert.ok(!/(example\.com|placeholder|TODO)/i.test(manifestText), 'manifest has no placeholder URLs');
