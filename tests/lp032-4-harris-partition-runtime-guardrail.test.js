@@ -38,6 +38,17 @@ assert.ok(app.includes('prefetchReasonByPackage') && app.includes('neighbors'), 
 assert.ok(!/manifest\.packages\.forEach\(\s*\(?packageId|manifest\.packages\.forEach\(\s*\(?pkg[\s\S]{0,160}gridlyQueueHarrisPackage/.test(app), 'no all-package preload behavior is introduced');
 assert.ok(app.includes('gridlyLp032HarrisPartitionRuntimeAudit'), 'audit helper is exposed');
 assert.ok(app.includes('window.gridlyLp032HarrisPartitionRuntimeAudit = gridlyLp032HarrisPartitionRuntimeAudit'), 'browser audit helper is attached');
+assert.ok(app.includes('function gridlyDeactivateHarrisPartitionRuntimeState'), 'county-switch deactivation helper is implemented');
+assert.ok(app.includes('entry.activeGeometryState = "inactive"'), 'county-switch deactivation marks cached Harris geometry inactive without deleting loaded cache entries');
+assert.ok(app.includes('state.activePackageIds = []'), 'county-switch deactivation clears active Harris package IDs');
+assert.ok(app.includes('state.activeFeatureCount = 0'), 'county-switch deactivation clears active Harris feature count');
+assert.ok(app.includes('state.lastAssemblySignature = ""'), 'county-switch deactivation resets assembly signature');
+assert.ok(app.includes('state.loadStatus = "partition_runtime_inactive"'), 'county-switch deactivation transitions Harris load status inactive');
+assert.ok(app.includes('function gridlyGetHarrisPartitionInactiveStatePass'), 'inactive state audit boolean is implemented');
+assert.ok(app.includes('activeGeometryEntries.length === 0') && app.includes('state.activePackageIds.length === 0'), 'cleanup pass rejects active Harris package geometry after leaving Harris');
+assert.ok(app.includes('activeGeometryState = activePackageIds.has(packageId) ? "visible" : "inactive"'), 'returning to Harris reactivates selected cached packages while leaving unneeded cache inactive');
+assert.ok(app.includes('cached?.status === "loaded"') && app.includes('state.duplicateRequestSuppressions += 1'), 'valid cached Harris packages are reused without weakening duplicate/stale request protection');
+assert.ok(app.includes('activeAssemblyState'), 'debug helper exposes current authoritative active assembly state');
 assert.ok(!/harris-tx[\s\S]{0,220}data\/liberty-county-road-segments\.geojson/.test(app), 'no Liberty fallback is introduced for Harris');
 assert.ok(!/service_role|service-role|SUPABASE_SERVICE_ROLE|sb_secret|supabase[^\n]{0,120}Authorization\s*:/i.test(app + manifestText), 'no Supabase credentials or authorization secret are embedded');
 assert.ok(!/storage\/v1\/object\/(?:upload|sign|move|copy)|createSignedUrl|upload\(/i.test(app), 'no Supabase upload code is added to browser runtime');
