@@ -10,7 +10,7 @@ const manifest = JSON.parse(manifestText);
   assert.ok(manifest.counties[countyId].url.includes(`/roadways/${countyId}/lp030-v1/`), `${countyId} resolves a versioned package URL`);
 });
 assert.strictEqual(manifest.counties['liberty-tx'].url, 'data/liberty-county-road-segments.geojson');
-assert.strictEqual(manifest.counties['harris-tx'].status, 'blocked_partition_required');
+assert.strictEqual(manifest.counties['harris-tx'].status, 'partition_runtime_integrated');
 assert.strictEqual(manifest.counties['harris-tx'].url, null);
 
 const resolverStart = appSource.indexOf('function gridlyResolveRoadwayRuntimeSource');
@@ -38,8 +38,7 @@ const auditBody = appSource.slice(auditStart, appSource.indexOf('function findNe
   'loadStatus', 'loadedCountyId', 'featureCount', 'geometryTypes', 'cacheHit', 'requestStarted', 'requestCompleted',
   'staleRequestSuppressed', 'fallbackUsed', 'legacyLibertyPathUsedForNonLiberty', 'lastError', 'pass'
 ].forEach((field) => assert.ok(auditBody.includes(field), `LP031 audit exposes ${field}`));
-assert.ok(auditBody.includes('activeCountyId === "harris-tx"'), 'LP031 audit preserves explicit Harris blocked pass logic');
-assert.ok(auditBody.includes('resolvedSource?.status === "blocked_partition_required" ? "blocked"'), 'LP031 audit reports blocked load status');
+assert.ok(appSource.includes('gridlyLp032HarrisPartitionRuntimeAudit'), 'LP032 audit handles Harris partition runtime separately');
 assert.ok(!auditBody.includes('fetch('), 'LP031 audit is passive and does not fetch');
 
 const nonLibertyManifest = Object.entries(manifest.counties).filter(([id]) => id !== 'liberty-tx');
