@@ -7,9 +7,9 @@ const manifest = JSON.parse(manifestText);
 const harris = manifest.counties['harris-tx'];
 const originalExternalCounties = ['chambers-tx', 'jefferson-tx', 'hardin-tx', 'polk-tx', 'walker-tx', 'orange-tx', 'jasper-tx', 'newton-tx', 'tyler-tx', 'galveston-tx', 'brazoria-tx', 'fort-bend-tx', 'waller-tx', 'austin-tx', 'washington-tx', 'brazos-tx', 'grimes-tx', 'wharton-tx', 'colorado-tx', 'fayette-tx', 'lavaca-tx', 'jackson-tx', 'matagorda-tx', 'calhoun-tx'];
 
-assert.strictEqual(harris.status, 'partition_runtime_integrated', 'Harris uses partition runtime integration state');
+assert.strictEqual(harris.status, 'partition_runtime_ready', 'Harris uses partition runtime production-ready state');
 assert.strictEqual(harris.url, null, 'Harris does not use a single county package URL');
-assert.strictEqual(harris.integrationGateEnabled, true, 'Harris integration gate remains enabled');
+assert.strictEqual(harris.integrationGateEnabled, false, 'Harris integration gate is disabled for production activation');
 assert.strictEqual(harris.packageVersion, 'lp032.2', 'Harris package version is LP032.2');
 assert.ok(harris.manifestUrl.endsWith('/roadways/harris-tx/lp032.2/manifest.json'), 'Harris uses a partition manifest URL');
 assert.ok(app.includes('GRIDLY_HARRIS_PARTITION_RUNTIME_COUNTY_ID = "harris-tx"'), 'runtime is explicitly Harris-only');

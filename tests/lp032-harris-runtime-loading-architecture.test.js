@@ -6,7 +6,7 @@ const manifest = JSON.parse(fs.readFileSync('data/roadway-runtime-manifest.json'
 const app = fs.readFileSync('js/app.js', 'utf8');
 const analyzer = fs.readFileSync('scripts/Analyze-HarrisRoadwayPartitioning.ps1', 'utf8');
 
-assert.equal(manifest.counties['harris-tx'].status, 'partition_runtime_integrated', 'Harris partition runtime is integrated behind a gate.');
+assert.equal(manifest.counties['harris-tx'].status, 'partition_runtime_ready', 'Harris partition runtime is production active.');
 assert.equal(manifest.counties['harris-tx'].url, null, 'Harris URL must remain null.');
 assert.match(app, /function gridlyResolveRoadwayRuntimeSource/, 'LP031 single-package resolver must remain present.');
 assert.match(app, /gridlyLp032HarrisPartitionRuntimeAudit/, 'LP032 Harris partition runtime audit is implemented.');

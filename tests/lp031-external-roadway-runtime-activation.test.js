@@ -10,7 +10,7 @@ const manifest = JSON.parse(manifestText);
   assert.ok(manifest.counties[countyId].url.includes(`/roadways/${countyId}/lp030-v1/`), `${countyId} resolves a versioned package URL`);
 });
 assert.strictEqual(manifest.counties['liberty-tx'].url, 'data/liberty-county-road-segments.geojson');
-assert.strictEqual(manifest.counties['harris-tx'].status, 'partition_runtime_integrated');
+assert.strictEqual(manifest.counties['harris-tx'].status, 'partition_runtime_ready');
 assert.strictEqual(manifest.counties['harris-tx'].url, null);
 
 const resolverStart = appSource.indexOf('function gridlyResolveRoadwayRuntimeSource');
