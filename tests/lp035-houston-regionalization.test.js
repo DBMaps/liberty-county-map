@@ -6,10 +6,10 @@ const doc = fs.readFileSync('docs/LP035-HOUSTON-AWARENESS-REGIONALIZATION.md', '
 
 assert(source.includes('const GRIDLY_LP035_HOUSTON_REGION_MODEL = Object.freeze(['), 'LP035 region model is present');
 assert(source.includes('window.gridlyLp035HoustonRegionalizationAudit = function gridlyLp035HoustonRegionalizationAudit()'), 'passive browser audit is exposed');
-assert(source.includes('certificationStatus: "investigation_complete_lp035_1_required"'), 'audit truthfully reports LP035.1 requirement');
-assert(source.includes('regionSelectionAvailable: false'), 'LP035 does not claim activated region selection');
-assert(source.includes('reportRegionOwnershipAvailable: false'), 'LP035 does not claim report region ownership activation');
-assert(source.includes('officialIncidentRegionOwnershipAvailable: false'), 'LP035 does not claim official region ownership activation');
+assert(source.includes('certificationStatus: unresolvedOwnershipFindings.length ? "implementation_ready_with_findings" : "implementation_ready"'), 'audit now reports LP035.1 implementation readiness truthfully');
+assert(source.includes('regionSelectionAvailable: regionAreaCount === GRIDLY_LP035_HOUSTON_REGION_MODEL.length'), 'LP035.1 activates region selection only when every region is registered');
+assert(source.includes('reportRegionOwnershipAvailable: true'), 'LP035.1 exposes report region ownership support');
+assert(source.includes('officialIncidentRegionOwnershipAvailable: true'), 'LP035.1 exposes official incident region ownership support');
 assert(source.includes('houstonWideFallbackAvailable: Boolean(harrisAreas.includes("Houston"))'), 'Houston-wide fallback remains tied to existing Houston selection');
 assert(source.includes('harrisCountyFallbackAvailable: Boolean(harrisAreas.includes("Harris County"))'), 'Harris county fallback remains tied to existing county selection');
 
