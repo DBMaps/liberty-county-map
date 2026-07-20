@@ -7,6 +7,11 @@
     "external_runtime",
     "pending_external_upload",
     "blocked_partition_required",
+    "partition_runtime_integrated",
+    "partition_runtime_loading",
+    "partition_runtime_partial",
+    "partition_runtime_ready",
+    "partition_runtime_failed",
     "blocked_missing_asset",
     "disabled"
   ],
@@ -228,13 +233,21 @@
       "lineGeometryCount": null
     },
     "harris-tx": {
-      "status": "blocked_partition_required",
+      "status": "partition_runtime_integrated",
+      "runtimeClassification": "partition_runtime_integrated",
+      "runtimeType": "partitioned_adaptive_spatial_packages",
+      "partitionRuntimeType": "harris_lp032_adaptive_spatial_runtime",
+      "integrationGateEnabled": true,
+      "activationState": "browser_certification_pending",
       "url": null,
-      "version": null,
+      "manifestUrl": "https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-roadways/roadways/harris-tx/lp032.2/manifest.json",
+      "packageObjectPrefix": "roadways/harris-tx/lp032.2",
+      "version": "lp032.2",
+      "packageVersion": "lp032.2",
       "sha256": null,
       "featureCount": 470275,
       "lineGeometryCount": 470275,
-      "blockReason": "Source package requires optimization or geographic partitioning."
+      "blockReason": "Partition runtime integrated behind LP032.4 browser-certification gate; no single county package URL is allowed."
     }
   }
 }
