@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)]
   [string]$SourcePath,
@@ -79,11 +79,25 @@ function Get-TargetSizeEstimate {
   }
 }
 
+
+function Get-FirstNonNullValue {
+    param(
+        [object[]]$Values
+    )
+
+    foreach ($Value in $Values) {
+        if ($null -ne $Value) {
+            return $Value
+        }
+    }
+
+    return $null
+}
 function Add-NameFieldCount {
   param([hashtable]$Counts, [string]$Field, $Value)
   if ([string]::IsNullOrWhiteSpace($Field)) { return }
   if ($null -ne $Value -and -not [string]::IsNullOrWhiteSpace([string]$Value)) {
-    $Counts[$Field] = 1 + [int]($Counts[$Field] ?? 0)
+    $Counts[$Field] = 1 + [int](Get-FirstNonNullValue -Values @($Counts[$Field], 0))
   }
 }
 
@@ -139,10 +153,10 @@ for ($i = 0; $i -lt $geojson.features.Count; $i++) {
   $serializedBytes = [Text.Encoding]::UTF8.GetByteCount(($feature | ConvertTo-Json -Depth 100 -Compress))
   if ($null -eq $geometry) { $nullGeometryCount++; $invalidGeometryCount++; continue }
   $geometryType = [string]$geometry.type
-  $geometryCounts[$geometryType] = 1 + [int]($geometryCounts[$geometryType] ?? 0)
+  $geometryCounts[$geometryType] = 1 + [int](Get-FirstNonNullValue -Values @($geometryCounts[$geometryType], 0))
   if ($feature.properties) {
     foreach ($prop in $feature.properties.PSObject.Properties) {
-      $propertyFieldCounts[$prop.Name] = 1 + [int]($propertyFieldCounts[$prop.Name] ?? 0)
+      $propertyFieldCounts[$prop.Name] = 1 + [int](Get-FirstNonNullValue -Values @($propertyFieldCounts[$prop.Name], 0))
       if ($nameCandidates -contains $prop.Name) { Add-NameFieldCount -Counts $roadNameFields -Field $prop.Name -Value $prop.Value }
     }
   }
@@ -152,8 +166,8 @@ for ($i = 0; $i -lt $geojson.features.Count; $i++) {
   if ($null -eq $countyBounds.maxX -or $bounds.MaxX -gt $countyBounds.maxX) { $countyBounds.maxX = $bounds.MaxX }
   if ($null -eq $countyBounds.minY -or $bounds.MinY -lt $countyBounds.minY) { $countyBounds.minY = $bounds.MinY }
   if ($null -eq $countyBounds.maxY -or $bounds.MaxY -gt $countyBounds.maxY) { $countyBounds.maxY = $bounds.MaxY }
-  $dupKey = "$geometryType|$($bounds.MinX),$($bounds.MinY),$($bounds.MaxX),$($bounds.MaxY)|$($feature.properties.name ?? $feature.properties.LINEARID ?? $feature.id ?? '')"
-  $duplicateKeys[$dupKey] = 1 + [int]($duplicateKeys[$dupKey] ?? 0)
+  $dupKey = "$geometryType|$($bounds.MinX),$($bounds.MinY),$($bounds.MaxX),$($bounds.MaxY)|$((Get-FirstNonNullValue -Values @($feature.properties.name, $feature.properties.LINEARID, $feature.id, '')))"
+  $duplicateKeys[$dupKey] = 1 + [int](Get-FirstNonNullValue -Values @($duplicateKeys[$dupKey], 0))
   $featureSummaries.Add([ordered]@{ index = $i; geometryType = $geometryType; byteLength = $serializedBytes; bounds = $bounds }) | Out-Null
 }
 
