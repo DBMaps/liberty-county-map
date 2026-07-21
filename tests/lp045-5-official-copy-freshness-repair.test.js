@@ -58,11 +58,13 @@ assert.strictEqual(result.freshnessUnitClassification, 'epoch_milliseconds', 'ep
 assert.strictEqual(result.calculatedAgeMinutes, 30);
 result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: 42 }, now);
 assert.strictEqual(result.freshnessUnitClassification, 'non_date_numeric_rejected', 'minute counts are not mistaken for timestamps');
-assert.strictEqual(result.renderedFreshnessLine, 'Updated recently');
+assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable');
+assert.strictEqual(result.freshnessFallbackReason, 'invalid_or_unknown');
 result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: 'not a date' }, now);
-assert.strictEqual(result.renderedFreshnessLine, 'Updated recently', 'invalid timestamps fall back safely');
+assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable', 'invalid timestamps fall back safely');
 result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: '2020-01-01T00:00:00Z' }, now);
-assert.strictEqual(result.renderedFreshnessLine, 'Updated recently', 'implausibly old timestamps fall back safely');
+assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable', 'implausibly old timestamps fall back safely');
+assert.strictEqual(result.freshnessFallbackReason, 'implausibly_old');
 assert(!/754673 minutes ago|NaN minutes ago|Invalid Date|undefined/.test(result.renderedFreshnessLine), 'unsafe freshness copy is not rendered');
 
 assert(!/community[^\n]{0,120}gridlySanitizeOfficialConsumerProse/i.test(app), 'community alert cards are not globally sanitized');
