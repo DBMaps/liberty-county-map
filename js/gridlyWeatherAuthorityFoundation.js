@@ -73,23 +73,29 @@
     const areaName = lower(awarenessName(selectedArea));
     const county = awarenessCounty(selectedArea);
     if (!areaName && !county && !selectedArea?.geometry) return { belongs: false, method: "unknown_ownership", locality: null, fallbackReason: "missing_awareness_area" };
-    if (geometryContains(record.__geometry || record.geometry || record.alertPolygon, coordinate(record))) return { belongs: true, method: "alert_polygon", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null };
+    if (geometryContains(record.__geometry || record.geometry || record.alertPolygon, coordinate(record))) return { belongs: true, method: "alert_polygon", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null, confidence: "high", fallbackUsed: false, sourceGeographyAvailable: true, sourceGeographyType: "polygon_or_geometry", selectedAwarenessMatch: true };
     const zone = lower(recordZone(record));
-    if (zone && asArray(selectedArea?.forecastZones || selectedArea?.zones).map(lower).includes(zone)) return { belongs: true, method: "forecast_zone", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null };
+    if (zone && asArray(selectedArea?.forecastZones || selectedArea?.zones).map(lower).includes(zone)) return { belongs: true, method: "forecast_zone", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null, confidence: "high", fallbackUsed: false, sourceGeographyAvailable: true, sourceGeographyType: "zone", selectedAwarenessMatch: true };
     const areas = recordAreas(record).map(lower);
-    if ((county && (lower(recordCounty(record)).includes(county) || areas.some((area) => area.includes(county)))) || (areaName && areas.some((area) => area.includes(areaName)))) return { belongs: true, method: "county", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null };
-    if (geometryContains(selectedArea?.geometry, coordinate(record))) return { belongs: true, method: "awareness_geometry", locality: awarenessName(selectedArea), fallbackReason: null };
+    if ((county && (lower(recordCounty(record)).includes(county) || areas.some((area) => area.includes(county)))) || (areaName && areas.some((area) => area.includes(areaName)))) return { belongs: true, method: "county", locality: recordLocality(record) || awarenessName(selectedArea), fallbackReason: null, confidence: "medium", fallbackUsed: false, sourceGeographyAvailable: true, sourceGeographyType: "county_or_text", selectedAwarenessMatch: true };
+    if (geometryContains(selectedArea?.geometry, coordinate(record))) return { belongs: true, method: "awareness_geometry", locality: awarenessName(selectedArea), fallbackReason: null, confidence: "medium", fallbackUsed: false, sourceGeographyAvailable: Boolean(record?.latitude != null && record?.longitude != null), sourceGeographyType: "coordinate", selectedAwarenessMatch: true };
     const locality = lower(recordLocality(record));
-    if (locality && (locality === areaName || locality.includes(areaName) || areaName.includes(locality))) return { belongs: true, method: "fallback_locality", locality: recordLocality(record), fallbackReason: "locality_fallback_used" };
-    return { belongs: false, method: "outside_authority", locality: recordLocality(record) || null, fallbackReason: locality ? "failed_locality" : "unknown_ownership" };
+    if (locality && (locality === areaName || locality.includes(areaName) || areaName.includes(locality))) return { belongs: true, method: "fallback_locality", locality: recordLocality(record), fallbackReason: "locality_fallback_used", confidence: "low", fallbackUsed: true, sourceGeographyAvailable: false, sourceGeographyType: "text", selectedAwarenessMatch: true };
+    return { belongs: false, method: "outside_authority", locality: recordLocality(record) || null, fallbackReason: locality ? "failed_locality" : "unknown_ownership", confidence: "none", fallbackUsed: Boolean(locality), sourceGeographyAvailable: Boolean(record?.sourceGeographyAvailable), sourceGeographyType: record?.sourceGeographyType || "unknown", selectedAwarenessMatch: false };
   }
 
   function freshness(record, options) {
+    if (record?.sourceFreshnessStatus === "expired") return "expired";
+    if (record?.sourceFreshnessStatus === "stale") return "stale";
+    if (record?.sourceFreshnessStatus === "future_effective") return "future_effective";
+    if (record?.sourceFreshnessStatus === "missing_timestamp") return "missing_timestamp";
     const now = nowMs(options);
     const expires = timestamp(record?.expirationTime || record?.expires || record?.endTime);
     if (expires != null && expires < now) return "expired";
     const observed = timestamp(record?.effectiveTime || record?.startTime || record?.updatedTime || record?.updatedAt || record?.sent);
-    if (observed != null && now - observed > Number(options?.freshnessMs || FRESH_MS)) return "stale";
+    if (observed == null) return "fresh";
+    if (observed > now) return "future_effective";
+    if (now - observed > Number(options?.freshnessMs || FRESH_MS)) return "stale";
     return "fresh";
   }
 
@@ -119,13 +125,13 @@
       if (seen.has(key)) { duplicate.push(record); return; }
       seen.add(key);
       if (age === "expired") { expired.push(record); return; }
-      if (age === "stale") { stale.push(record); return; }
+      if (age === "stale" || age === "future_effective" || age === "missing_timestamp") { stale.push(Object.assign({}, record, { sourceFreshnessStatus: age })); return; }
       if (!owned.belongs || !isMeaningful(record)) return;
       localityOwner = localityOwner || owned.locality || awarenessName(selectedAwarenessArea) || null;
       ownershipMethod = ownershipMethod || owned.method;
       fallbackReason = fallbackReason || owned.fallbackReason;
       situations.add(situationKey(record, owned));
-      eligible.push(Object.assign({}, record, { authority: { consumerEligible: true, ownershipMethod: owned.method, localityOwner: owned.locality || null, freshness: age } }));
+      eligible.push(Object.assign({}, record, { authority: { consumerEligible: true, ownershipMethod: owned.method, ownershipConfidence: owned.confidence || "unknown", fallbackUsed: owned.fallbackUsed === true, fallbackReason: owned.fallbackReason || null, sourceGeographyAvailable: owned.sourceGeographyAvailable === true, sourceGeographyType: owned.sourceGeographyType || record.sourceGeographyType || "unknown", selectedAwarenessMatch: owned.selectedAwarenessMatch === true, localityOwner: owned.locality || null, freshness: age } }));
     });
 
     if (expired.length) freshnessOwner = "expired_records_excluded";
