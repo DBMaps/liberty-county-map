@@ -90,6 +90,32 @@ assert(negativeLongitudeResult.geometryEvaluation.segmentsEvaluated > 0, 'negati
 const multiResult = select([rec('multi-cross-regression', { sourceGeometry: { type: 'MultiLineString', coordinates: [[[-94.2, 30.6], [-94.1, 30.7]], [[-95.2, 30.0466], [-94.4, 30.0466]]] } })]);
 assert(multiResult.geometryEvaluation.segmentsEvaluated > 0, 'MultiLineString segment evaluation executes');
 assert(!('fetch' in sandbox && sandbox.fetch.called), 'no extra network fetch');
+
+const alpha = { id: 'alpha', label: 'Alpha', lat: 30.0466, lng: -94.8852, radiusMiles: 5 };
+const beta = { id: 'beta', label: 'Beta', lat: 30.0466, lng: -94.70, radiusMiles: 5 };
+const gamma = { id: 'gamma', label: 'Gamma', lat: 30.30, lng: -94.30, radiusMiles: 5 };
+const multiCommunity = rec('provider:multi-community', { latitude: null, longitude: null, sourceGeometry: { type: 'LineString', coordinates: [[-94.8852, 30.0466], [-94.70, 30.0466]] } });
+const alphaConsumer = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: [multiCommunity], selectedAwarenessArea: alpha, nowMs: now });
+const betaConsumer = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: [multiCommunity], selectedAwarenessArea: beta, nowMs: now });
+const gammaConsumer = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: [multiCommunity], selectedAwarenessArea: gamma, nowMs: now });
+assert.strictEqual(alphaConsumer.consumerVisibleSituationCount, 1, 'same geometry record is visible when first intersected community is active');
+assert.strictEqual(betaConsumer.consumerVisibleSituationCount, 1, 'same geometry record is visible when second intersected community is active');
+assert.strictEqual(gammaConsumer.consumerVisibleSituationCount, 0, 'same geometry record is excluded for non-intersected community');
+assert.strictEqual(alphaConsumer.consumerVisibleSituations[0].providerId, 'provider:multi-community', 'provider-prefixed canonical identity survives consumer projection');
+assert.strictEqual(alphaConsumer.consumerVisibleSituations[0].consumerSituationId, 'drivetexas:provider:multi-community', 'consumer situation id uses canonical authority identity without double-prefixing');
+const noRepresentative = alphaConsumer.consumerVisibleSituations[0];
+assert.strictEqual(noRepresentative.sourceCoordinates, null, 'geometry-qualified consumer visibility does not require representative coordinates');
+const completeCacheRecord = rec('provider:complete-cache-line', { latitude: 31.0, longitude: -96.0, sourceGeometry: { type: 'LineString', coordinates: [[-94.8852, 30.0466], [-94.70, 30.0466]] } });
+sandbox.gridlyDriveTexasConnector = {
+  getAllNormalizedRecords: () => [completeCacheRecord],
+  getNormalizedRecords: () => [],
+  areaLifecycleAudit: () => ({ retainedDataReused: false })
+};
+sandbox.getGridlySelectedAwarenessArea = () => alpha;
+const completeCacheConsumer = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ nowMs: now });
+assert.strictEqual(completeCacheConsumer.consumerVisibleSituationCount, 1, 'complete normalized cache feeds authority even when connector awareness-filtered cache is empty');
+assert.strictEqual(completeCacheConsumer.consumerVisibleSituations[0].providerId, 'provider:complete-cache-line', 'complete-cache projection preserves provider-prefixed identity');
+
 assert.strictEqual(typeof sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit, 'function', 'LP043 audit exported');
 const geometryFieldOnlyResult = select([rec('geometry-field-only-authority', { geometry: { type: 'LineString', coordinates: [[-95.2, 30.0466], [-94.4, 30.0466]] }, sourceGeometry: null })]);
 assert.strictEqual(geometryFieldOnlyResult.geometryEvaluation.recordsReachingSegmentLoop, 1, 'production authority uses preserved geometry field when sourceGeometry is not present');
@@ -98,7 +124,7 @@ const audit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ record
 assert.strictEqual(audit.geometryAuthorityCertified, true, 'LP043 audit certifies authority contract from fixtures');
 assert.strictEqual(audit.consumerProjection.visibleCount, 1, 'LP043 audit sees consumer projection');
 assert.strictEqual(audit.nearestGeometryCandidates.length, 1, 'LP043 audit exposes nearest geometry candidates instead of first geometry sample');
-assert.strictEqual(audit.nearestGeometryCandidates[0].sourceId, 'crossing', 'LP043 nearest geometry candidate exposes source id');
+assert.strictEqual(audit.nearestGeometryCandidates[0].sourceId, 'provider:crossing', 'LP043 nearest geometry candidate exposes source id');
 assert.strictEqual(audit.nearestGeometryCandidates[0].route, 'State Route Fixture', 'LP043 nearest geometry candidate exposes route');
 assert.strictEqual(audit.nearestGeometryCandidates[0].category, 'Road Closure', 'LP043 nearest geometry candidate exposes category');
 assert.strictEqual(audit.nearestGeometryCandidates[0].geometryType, 'LineString', 'LP043 nearest geometry candidate exposes geometry type');
@@ -121,7 +147,7 @@ const bulkGeometryRecords = Array.from({ length: 30 }, (_, i) => rec(`bulk-${i}`
 const bulkAudit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ records: bulkGeometryRecords.reverse(), selectedAwarenessArea: dayton, nowMs: now });
 assert.strictEqual(bulkAudit.nearestGeometryCandidates.length, 25, 'LP043 nearest geometry candidates are bounded to 25');
 assert(bulkAudit.nearestGeometryCandidates.every((candidate, index, list) => index === 0 || list[index - 1].nearestGeometryDistanceMiles <= candidate.nearestGeometryDistanceMiles), 'LP043 nearest geometry candidates are sorted by distance');
-assert.strictEqual(bulkAudit.nearestGeometryCandidates[0].sourceId, 'bulk-0', 'LP043 nearest geometry sorting ignores provider order');
+assert.strictEqual(bulkAudit.nearestGeometryCandidates[0].sourceId, 'provider:bulk-0', 'LP043 nearest geometry sorting ignores provider order');
 assert(bulkAudit.nearestGeometryDistanceBuckets.within10Miles >= 10, 'LP043 distance buckets count nearby preserved geometries');
 
 assert.strictEqual(typeof sandbox.gridlyLp043TraceSingleAuthorityRecord, 'function', 'LP043 single-record trace helper exists');
@@ -132,7 +158,7 @@ assert.strictEqual(trace.passive, true, 'single-record trace is passive');
 assert.strictEqual(trace.noFetches, true, 'single-record trace performs no fetches');
 assert.strictEqual(trace.noWrites, true, 'single-record trace performs no writes');
 assert.strictEqual(trace.noMapMovement, true, 'single-record trace performs no map movement');
-assert.strictEqual(trace.sourceId, 'crossing', 'single-record trace uses the real source id');
+assert.strictEqual(trace.sourceId, 'provider:crossing', 'single-record trace uses the real source id');
 assert.strictEqual(trace.providerNormalization.entered, true, 'single-record trace enters provider normalization stage from loaded record');
 assert.strictEqual(trace.lp0392Adaptation.entered, true, 'single-record trace enters LP039.2 adaptation stage');
 assert.strictEqual(trace.buildEligibilityProof.entered, true, 'single-record trace enters buildEligibilityProof');

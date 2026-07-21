@@ -58,7 +58,7 @@ assert.strictEqual(selector.consumerVisibleSituationCount, 10, 'only unique acti
 assert.strictEqual(selector.uniqueSituationCount, selector.consumerVisibleSituationCount, 'visible count owns unique situations');
 assert(selector.consumerVisibleSituations.every((s) => s.sourceCoordinates && s.freshnessStatus === 'active'), 'visible situations expose certified coordinates and active freshness');
 assert(!selector.consumerVisibleSituations.some((s) => /expired|stale|future|missing|invalid|outside|route only|text only/i.test(s.headline)), 'excluded lifecycle/location/text-only records cannot bypass authority');
-assert.strictEqual(selector.consumerVisibleSituations.filter((s) => s.providerId === 'crash-1').length, 1, 'duplicate provider IDs are not double counted');
+assert.strictEqual(selector.consumerVisibleSituations.filter((s) => s.providerId === 'provider:crash-1').length, 1, 'duplicate provider IDs are not double counted');
 assert.strictEqual(selector.consumerVisibleSituations.filter((s) => /Duplicate event/.test(s.headline)).length, 1, 'duplicate event IDs are not double counted');
 assert.strictEqual(selector.consumerVisibleSituations.filter((s) => s.headline === 'Same title').length, 2, 'distinct same-title records remain distinct');
 
@@ -106,21 +106,21 @@ const daytonRecords = [
 ];
 const daytonSelector = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
 const daytonIds = daytonSelector.consumerVisibleSituations.map((s) => s.providerId).sort();
-assert(daytonIds.includes('one-mile'), 'record one mile from Dayton appears');
-assert(daytonIds.includes('seven-mile'), 'record seven miles from Dayton appears');
-assert(daytonIds.includes('missing-roadway'), 'missing optional roadway fields do not reject valid geographic ownership');
-assert(!daytonIds.includes('nine-mile'), 'record nine miles from Dayton does not appear');
-assert(!daytonIds.includes('stale-dayton'), 'stale record inside Dayton remains excluded');
+assert(daytonIds.includes('provider:one-mile'), 'record one mile from Dayton appears');
+assert(daytonIds.includes('provider:seven-mile'), 'record seven miles from Dayton appears');
+assert(daytonIds.includes('provider:missing-roadway'), 'missing optional roadway fields do not reject valid geographic ownership');
+assert(!daytonIds.includes('provider:nine-mile'), 'record nine miles from Dayton does not appear');
+assert(!daytonIds.includes('provider:stale-dayton'), 'stale record inside Dayton remains excluded');
 assert(daytonSelector.consumerVisibleSituations.every((s) => s.recordProof && s.eligibleRecordProof), 'recordProof and eligibleRecordProof survive into consumer projection');
 assert(daytonSelector.consumerVisibleSituations.every((s) => s.sourceCoordinates && typeof s.sourceCoordinates.latitude === 'number' && typeof s.sourceCoordinates.longitude === 'number'), 'sourceCoordinates survive unchanged as application lat/lng');
 assert(daytonSelector.consumerVisibleSituations.every((s) => s.selectedAwarenessRadiusMiles === 8), 'Dayton eight-mile radius survives through selector');
-assert(daytonSelector.consumerVisibleSituations.some((s) => s.providerId === 'seven-mile'), 'low roadway confidence does not replace point-in-radius authority');
+assert(daytonSelector.consumerVisibleSituations.some((s) => s.providerId === 'provider:seven-mile'), 'low roadway confidence does not replace point-in-radius authority');
 const daytonSnap = sandbox.gridlyGetDriveTexasAuthoritySnapshot({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
 assert.strictEqual(daytonSnap.selectedAwarenessArea.id, 'dayton', 'Dayton selected awareness survives snapshot');
 assert.strictEqual(daytonSnap.selectedAwarenessRadiusMiles, 8, 'Dayton radius remains eight miles in snapshot');
 assert.strictEqual(daytonSnap.authority.activeRecordCount + daytonSnap.authority.staleRecordCount + daytonSnap.authority.expiredRecordCount + daytonSnap.authority.futureEffectiveRecordCount + daytonSnap.authority.missingTimestampRecordCount, daytonSnap.authority.freshnessEvaluatedRecordCount, 'active and stale counts reconcile with canonical freshness totals');
 assert.strictEqual(daytonSnap.authority.freshnessCountsReconciled, true, 'freshness counts are reconciled');
-assert.strictEqual(daytonSnap.authority.eligibleRecordProof.some((p) => p.sourceId === 'nine-mile'), false, 'LP039.2 rejected record remains rejected');
+assert.strictEqual(daytonSnap.authority.eligibleRecordProof.some((p) => p.sourceId === 'provider:nine-mile'), false, 'LP039.2 rejected record remains rejected');
 assert.strictEqual(daytonSnap.authority.consumerEligibleSituations.length, daytonSelector.lp0393ConsumerProjectionInputCount, 'LP039.2 eligible set feeds LP039.3 projection');
 assert.deepStrictEqual(daytonSelector.markerInputSituations, daytonSelector.consumerVisibleSituations, 'marker input receives certified consumer situation set');
 assert.deepStrictEqual(daytonSelector.alertInputSituations, daytonSelector.consumerVisibleSituations, 'alert input receives certified consumer situation set');
