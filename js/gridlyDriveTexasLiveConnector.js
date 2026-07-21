@@ -557,6 +557,83 @@
     });
   }
 
+  function lp040CountBy(records, selector) {
+    return (Array.isArray(records) ? records : []).reduce((memo, record) => {
+      const key = toSafeString(selector(record)) || "(missing)";
+      memo[key] = (memo[key] || 0) + 1;
+      return memo;
+    }, {});
+  }
+
+  function lp040RecordFieldInventory(records) {
+    const fields = ["id", "provider", "providerId", "category", "title", "description", "routeName", "latitude", "longitude", "startTime", "endTime", "sourceTrace", "rawPayloadExposed"];
+    return fields.reduce((memo, field) => {
+      memo[field] = freeze({
+        normalizedField: field,
+        status: "preserved-or-derived-in-normalized-model",
+        presentCount: records.filter((record) => record && record[field] != null && record[field] !== "").length
+      });
+      return memo;
+    }, {
+      geometry: freeze({ normalizedFields: ["latitude", "longitude"], status: "transformed-to-point-only", note: "Point geometry is reduced to latitude/longitude; LineString is reduced to midpoint; full provider geometry is not preserved in normalized records." }),
+      limits: freeze({ normalizedFields: [], status: "not-loaded", note: "No normalized limit, from-limit, to-limit, start-coordinate, end-coordinate, or roadway-extent fields exist." }),
+      county: freeze({ normalizedFields: [], status: "ignored-or-discarded", note: "Provider county-like fields are not copied by normalizeRecord." }),
+      city: freeze({ normalizedFields: [], status: "ignored-or-discarded", note: "Provider city/locality-like fields are not copied by normalizeRecord." }),
+      district: freeze({ normalizedFields: [], status: "ignored-or-discarded", note: "Provider district-like fields are not copied by normalizeRecord." }),
+      metadata: freeze({ normalizedFields: ["sourceTrace.sourceId"], status: "mostly-discarded", note: "Only provider/sourceId lineage is preserved; raw provider metadata is not exposed or retained in the normalized model." })
+    });
+  }
+
+  function lp040DriveTexasProviderCompletenessAudit() {
+    const records = allNormalizedRecords.map(clone).filter(Boolean);
+    const awarenessRecords = awarenessNormalizedRecords.map(clone).filter(Boolean);
+    const ids = records.map((record) => toSafeString(record.id)).filter(Boolean);
+    const uniqueIds = new Set(ids);
+    const validGeometryCount = records.filter((record) => Number.isFinite(Number(record.latitude)) && Number.isFinite(Number(record.longitude))).length;
+    const endpointContract = lp029ConfiguredEndpointContract();
+    const filters = freeze([
+      { stage: "provider-request", removesRecords: "unknown-provider-side", evidence: "Single conditions.geojson GET with only key query parameter; no Gridly bounding, county, category, status, date, active, or pagination parameters are configured." },
+      { stage: "download", removesRecords: false, evidence: "requestPayload returns response.json() after HTTP/schema success; no array truncation in download code." },
+      { stage: "connector-schema-validation", removesRecords: "all-on-invalid-schema", evidence: "validateGeoJson requires FeatureCollection with features array; invalid schema fails closed and preserves prior retained records." },
+      { stage: "provider-extractRawRecords", removesRecords: "invalid-feature-objects", evidence: "GeoJSON features are mapped to properties plus __geometry; null/non-object features are filtered." },
+      { stage: "provider-normalizeRecords", removesRecords: "invalid-normalized-null-only", evidence: "normalizeRecord returns null only for missing/non-object records; normalized records are filter(Boolean)." },
+      { stage: "deduplication", removesRecords: false, evidence: "No deduplication stage removes retained provider records; duplicate count is reported only." },
+      { stage: "expiration-retention", removesRecords: false, evidence: "No start/end expiration, stale-retention, or long-duration construction removal exists before authority input." },
+      { stage: "authority-input", removesRecords: true, evidence: "filterAwarenessRecords derives the current awareness view from retained complete source records using point-radius or text fallback." },
+      { stage: "consumer", removesRecords: "downstream-out-of-scope", evidence: "LP040 certifies provider-to-authority input only; consumer visibility is reported as unavailable from this passive helper." }
+    ]);
+    const hardLimits = freeze([
+      { item: "TIMEOUT_MS", value: TIMEOUT_MS, completenessRisk: "request-abort" },
+      { item: "MAX_ATTEMPTS", value: MAX_ATTEMPTS, completenessRisk: "limited-retry-window" },
+      { item: "REFRESH_INTERVAL_MS", value: REFRESH_INTERVAL_MS, completenessRisk: "staleness-between-polls" },
+      { item: "fetch cache", value: "no-store", completenessRisk: "none-cache-bypass" },
+      { item: "pagination parameters", value: "none", completenessRisk: "possible-first-page-only-if-provider-paginates-by-default" },
+      { item: "array truncation", value: "none detected in connector/provider", completenessRisk: "none-repository-side" }
+    ]);
+    return freeze({
+      auditName: "LP040 DriveTexas Provider Completeness Certification",
+      passive: true,
+      fetchPerformed: false,
+      writesPerformed: false,
+      pollingStarted: false,
+      storageChanged: false,
+      providerEndpoints: freeze([freeze(Object.assign({ apiType: "GeoJSON over HTTPS JSON", url: endpointContract.endpointTemplate, arcgisFeatureService: false, restQuery: false, paginationSupport: "not evidenced in repository", maxRecordLimits: "not evidenced in repository", transferLimits: "not evidenced in repository", geometryOptions: "default provider GeoJSON geometry only", supportedQueryParameters: "not evidenced in repository", defaultQueryParameters: endpointContract.queryParameters }, endpointContract))]),
+      providerRequests: endpointContract,
+      pagination: freeze({ configured: false, implemented: false, multiplePagesRequested: false, currentPageSize: null, maximumRecords: null, resultOffsetConfigured: false, resultRecordCountConfigured: false, firstPageOnlyRisk: "unknown until official provider contract or live response metadata is captured" }),
+      recordCounts: freeze({ providerReportedCount: null, downloadedCount: null, parsedCount: null, normalizedCount: records.length, loadedCount: records.length, authorityInputCount: awarenessRecords.length, consumerEligibleCount: null, consumerVisibleCount: null, duplicateIdCount: ids.length - uniqueIds.size, countDivergence: "Provider/download/parsed counts are not retained by production runtime; normalized-to-loaded matches retained records." }),
+      fieldInventory: freeze(lp040RecordFieldInventory(records)),
+      categoryInventory: freeze({ configuredCategories: ["Road Closure", "Flooding", "Construction", "Lane Closure", "Crash", "Bridge Restriction", "Travel Advisory"], observedCounts: freeze(lp040CountBy(records, (record) => record.category)), handling: "Categories are inferred by regex from condition/type/category plus description/title text; unmatched records collapse to Travel Advisory." }),
+      filterInventory: filters,
+      hardLimits,
+      constructionHandling: freeze({ categoryConfigured: true, filteredDifferentlyBeforeAuthority: false, refreshDiffers: false, retentionDiffers: false, expirationDiffers: false, longDurationExpirationRisk: "No repository-side expiration found before authority; completeness still depends on provider endpoint including construction records." }),
+      geometryPreservation: freeze({ pointCoordinatesPreserved: true, lineGeometryPreserved: false, lineGeometryTreatment: "LineString midpoint only", limitsPreserved: false, startEndCoordinatesPreserved: false, roadwayExtentPreserved: false, validCoordinateCount: validGeometryCount, missingCoordinateCount: records.length - validGeometryCount }),
+      providerCompleteness: freeze({ providerReachability: state.lastFetchSucceeded === true ? "PASS" : "UNKNOWN", pagination: "UNABLE_TO_CERTIFY", providerCountMatch: "UNABLE_TO_CERTIFY", normalizationCountMatch: "UNABLE_TO_CERTIFY_RAW_COUNT_NOT_RETAINED", categoryCompleteness: "UNABLE_TO_CERTIFY", constructionCompleteness: "UNABLE_TO_CERTIFY", geometryPreservation: "FAIL_FULL_GEOMETRY_NOT_PRESERVED", providerMetadataPreservation: "FAIL_METADATA_MOSTLY_DISCARDED", overallProviderCompleteness: "FAIL_UNABLE_TO_CERTIFY_COMPLETE_OFFICIAL_PROVIDER_SET" }),
+      rootCause: "Gridly requests a single conditions.geojson feed and retains normalized records, but it does not retain provider-reported totals, raw downloaded counts, pagination metadata, full geometry, limits, county/city/district fields, or raw metadata needed to prove complete provider ingestion before authority filtering.",
+      recommendedNextMilestone: "LP041 — sanctioned live DriveTexas contract capture and raw-to-normalized count instrumentation in audit-only diagnostics.",
+      publicWebsiteComparison: "Not possible from repository evidence alone; this passive audit performs no fetches and the repository does not include a current public DriveTexas website export."
+    });
+  }
+
   function runtimeAudit() {
     return freeze({
       connected: state.connected === true,
@@ -589,6 +666,7 @@
   globalScope.gridlyDriveTexasConnectorRuntimeAudit = runtimeAudit;
   globalScope.gridlyLp028DriveTexasAreaLifecycleAudit = areaLifecycleAudit;
   globalScope.gridlyLp029DriveTexasProviderCompletenessAudit = lp029ProviderCompletenessAudit;
+  globalScope.gridlyLp040DriveTexasProviderCompletenessAudit = lp040DriveTexasProviderCompletenessAudit;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = globalScope.gridlyDriveTexasConnector;
