@@ -95,4 +95,21 @@ assert.strictEqual(geometryFieldOnlyResult.authorityEligibleRecordCount, 1, 'pre
 const audit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ records: [crossing], selectedAwarenessArea: dayton, nowMs: now });
 assert.strictEqual(audit.geometryAuthorityCertified, true, 'LP043 audit certifies authority contract from fixtures');
 assert.strictEqual(audit.consumerProjection.visibleCount, 1, 'LP043 audit sees consumer projection');
+assert.strictEqual(audit.sampleSourceId, 'crossing', 'LP043 audit exposes representative geometry source id');
+assert.strictEqual(audit.sampleGeometryType, 'LineString', 'LP043 audit exposes representative geometry type');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.sampleGeometryBounds)), { minLongitude: -95.2, maxLongitude: -94.4, minLatitude: 30.0466, maxLatitude: 30.0466 }, 'LP043 audit exposes representative geometry bounds');
+assert(audit.sampleAwarenessBounds.minLongitude < dayton.lng && audit.sampleAwarenessBounds.maxLongitude > dayton.lng, 'LP043 audit exposes representative awareness longitude bounds');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.sampleOverlapComparisons)), {
+  geometryMaxLongitudeGteAwarenessMinLongitude: true,
+  geometryMinLongitudeLteAwarenessMaxLongitude: true,
+  geometryMaxLatitudeGteAwarenessMinLatitude: true,
+  geometryMinLatitudeLteAwarenessMaxLatitude: true
+}, 'LP043 audit exposes each broad-phase comparison result');
+assert.strictEqual(audit.sampleOverallOverlap, true, 'LP043 audit exposes representative overall overlap');
+assert.strictEqual(audit.geometryEvaluation.sample.coordinateCount, 2, 'LP043 geometry evaluation sample includes coordinate count');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.firstCoordinate)), [-95.2, 30.0466], 'LP043 geometry evaluation sample includes first coordinate');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.lastCoordinate)), [-94.4, 30.0466], 'LP043 geometry evaluation sample includes last coordinate');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.normalizedMidpoint)), { longitude: -94.4, latitude: 30.0466 }, 'LP043 geometry evaluation sample includes normalized midpoint');
+assert.strictEqual(audit.geometryEvaluation.sample.selectedAwareness, 'Generic Awareness', 'LP043 geometry evaluation sample includes selected awareness');
+assert.strictEqual(audit.geometryEvaluation.sample.selectedCounty, null, 'LP043 geometry evaluation sample includes selected county');
 console.log('LP043 DriveTexas geometry preservation and authority repair checks passed');
