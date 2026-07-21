@@ -599,6 +599,59 @@
     return freeze({ passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, selectedAwarenessArea: dayton, loadedRecordCount: a.rawRecordCount || 0, nearestRecords: arr(a.records).map((r, i) => { const id = r.authorityIdentity || r.sourceId || r.providerId || r.id; const p = proofById.get(id) || {}; const cp = coordinateProof(r); const included = consumerIds.has(r.sourceId || r.providerId || r.id); const reasons = arr(p.ineligibilityReasons); return { sourceId: r.sourceId || r.providerId || r.id || null, category: r.category || null, headline: r.headline || r.title || null, routeName: r.routeName || r.roadway || null, coordinates: cp.coordinates, coordinateShape: Array.isArray(r.coordinates) ? "array" : (r.coordinates && typeof r.coordinates === "object" ? "object" : (Number.isFinite(Number(r.latitude)) && Number.isFinite(Number(r.longitude)) ? "lat_lng_fields" : "missing")), coordinateOrderUsed: cp.coordinateOrderUsed, coordinateValid: cp.valid, distanceFromDaytonMiles: p.distanceFromSelectedAwarenessMiles, insideDaytonRadius: p.insideAwarenessRadius === true, LP0392OwnershipMethod: p.geographicOwnershipMethod || "not_established", LP0392SelectedAwarenessMatch: p.selectedAwarenessMatch === true, LP0392FreshnessStatus: p.freshnessStatus || "unavailable", LP0392IdentityMethod: p.identityMethod || r.identityMethod || null, LP0392FinalEligibility: p.finalEligibility === true, LP0393OwnershipMethod: included ? (p.geographicOwnershipMethod || "valid_source_point_inside_awareness_radius_miles") : "not_established", LP0393FinalEligibility: included, consumerSelectorIncluded: included, markerIncluded: included, alertIncluded: included, travelBriefIncluded: included, firstExclusionStage: included ? null : (eligibleIds.has(id) ? "lp0393_consumer_projection" : "lp0392_authority_eligibility"), exclusionReasons: included ? [] : reasons }; }).sort((x, y) => (x.distanceFromDaytonMiles ?? Infinity) - (y.distanceFromDaytonMiles ?? Infinity)).slice(0, 25) });
   }
 
+
+  function sourceIdForRecord(record) { return record?.authorityIdentity || record?.sourceId || record?.providerId || record?.id || null; }
+  function rejectionReasonForProof(proof) { return proof?.finalEligibility === true ? null : (arr(proof?.ineligibilityReasons)[0] || proof?.freshnessStatus || "not_eligible"); }
+  function buildNearestGeometryDiagnostics(records, proof, selected, consumer) {
+    const anchor = selectedAnchor(selected || {});
+    const awareness = anchor.valid ? awarenessBounds(anchor) : null;
+    const proofById = new Map(arr(proof).map((p) => [p.authorityIdentity || p.sourceId, p]));
+    const consumerIds = new Set(arr(consumer?.consumerVisibleSituations).flatMap((s) => [s?.authorityIdentity, s?.sourceId, s?.providerId, s?.id, s?.incidentId].filter(Boolean)));
+    const candidates = arr(records).map((record, index) => {
+      const id = sourceIdForRecord(record) || `record:${index}`;
+      const p = proofById.get(id) || proofById.get(record.sourceId) || {};
+      const geometry = cloneTrustedAuthorityGeometry(record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry || null);
+      if (!geometry) return null;
+      const midpoint = midpointCoordinate(geometry);
+      const distance = midpoint && anchor.valid ? Number(haversineMiles(anchor.lat, anchor.lng, midpoint[1], midpoint[0]).toFixed(3)) : null;
+      const gb = geometryBounds(geometry);
+      const broadPhase = finiteBounds(gb) && finiteBounds(awareness) ? boundsOverlap(gb, awareness) : false;
+      const reachedSegmentLoop = p.sourceGeometryType === geometry.type && Number.isFinite(p.closestGeometryDistanceToAwarenessMiles) && p.geographicOwnershipMethod !== "valid_source_point_inside_awareness_radius_miles";
+      const finalEligibility = p.finalEligibility === true;
+      const visible = finalEligibility && [id, record.sourceId, record.providerId, record.id, record.incidentId].some((candidateId) => candidateId && consumerIds.has(candidateId));
+      return freeze({
+        sourceId: record.sourceId || record.providerId || record.id || null,
+        route: record.routeName || record.roadway || record.canonicalRoad || null,
+        category: record.category || null,
+        geometryType: geometry.type,
+        midpointLatitude: midpoint ? midpoint[1] : null,
+        midpointLongitude: midpoint ? midpoint[0] : null,
+        nearestGeometryDistanceMiles: distance,
+        boundingBoxOverlapResult: broadPhase,
+        segmentEvaluationReached: reachedSegmentLoop === true,
+        segmentIntersectionResult: p.sourceGeometryIntersectsSelectedAwareness === true,
+        authorityOwnershipResult: p.geographicOwnershipMethod || "not_established",
+        finalEligibility,
+        consumerVisibility: visible,
+        rejectionReason: rejectionReasonForProof(p)
+      });
+    }).filter(Boolean).sort((a, b) => (a.nearestGeometryDistanceMiles ?? Infinity) - (b.nearestGeometryDistanceMiles ?? Infinity)).slice(0, 25);
+    const distances = arr(records).map((record) => {
+      const geometry = cloneTrustedAuthorityGeometry(record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry || null);
+      const midpoint = geometry ? midpointCoordinate(geometry) : null;
+      return midpoint && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, midpoint[1], midpoint[0]) : null;
+    }).filter(Number.isFinite);
+    return freeze({
+      nearestGeometryCandidates: freeze(candidates),
+      nearestGeometryDistanceMiles: candidates[0]?.nearestGeometryDistanceMiles ?? null,
+      nearestGeometryEvaluated: candidates.length,
+      nearestGeometryPassedBroadPhase: candidates.filter((c) => c.boundingBoxOverlapResult === true).length,
+      nearestGeometryReachedSegmentLoop: candidates.filter((c) => c.segmentEvaluationReached === true).length,
+      nearestGeometryQualified: candidates.filter((c) => c.finalEligibility === true).length,
+      nearestGeometryDistanceBuckets: freeze({ within10Miles: distances.filter((d) => d <= 10).length, within20Miles: distances.filter((d) => d <= 20).length, within30Miles: distances.filter((d) => d <= 30).length, within50Miles: distances.filter((d) => d <= 50).length, within100Miles: distances.filter((d) => d <= 100).length })
+    });
+  }
+
   function gridlyLp043DriveTexasGeometryAuthorityRepairAudit(input = {}) {
     const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot(input) : {};
     const authority = snap.authority || {};
@@ -610,14 +663,15 @@
     const geometryTypeCounts = countBy(records, (r) => r.sourceGeometryType || "none");
     const ownershipMethodCounts = authority.ownershipMethodCounts || counts(proof.map((p) => p.geographicOwnershipMethod));
     const routeDiagnostics = records.map((r) => ({ r, p: proof.find((p) => (p.authorityIdentity || p.sourceId) === (r.authorityIdentity || r.sourceId || r.providerId || r.id)) || {} })).filter((x) => /us\s*90/i.test(text(x.r.routeName || x.r.roadway || x.r.headline || x.r.title || x.r.description)));
+    const nearestGeometry = buildNearestGeometryDiagnostics(records, proof, selected, consumer);
     return freeze({
       available: true, milestone: "LP043", productionRepair: true, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, noUiMutation: true,
       selectedCounty: selected?.countyId || authority.activeCounty || null, selectedAwareness: selected?.label || selected?.id || authority.activeCommunity || null,
       normalizedSourceCount: authority.normalizedRecordCount || records.length, recordsWithTrustedGeometry: records.filter((r) => r.sourceGeometryValid === true).length, geometryTypeCounts, recordsWithValidPoint: proof.filter((p) => p.coordinateValidity === "valid_texas_point").length,
       authorityEligibleCount: authority.authorityEligibleRecordCount || 0, pointQualifiedCount: proof.filter((p) => p.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles" && p.finalEligibility).length, geometryQualifiedCount: proof.filter((p) => p.geographicOwnershipMethod === "trusted_source_geometry_intersects_awareness_radius" && p.finalEligibility).length, rejectedGeographicallyCount: proof.filter((p) => arr(p.ineligibilityReasons).includes("outside_awareness_radius_miles")).length, ownershipMethodCounts,
       selectedAwarenessGeometry: freeze({ method: "center_point_radius", anchor: anchor.valid ? freeze({ latitude: anchor.lat, longitude: anchor.lng }) : null, radiusMiles: anchor.radiusMiles }),
-      sampleGeometryBounds: authority.geometryEvaluation?.sampleGeometryBounds || null, sampleAwarenessBounds: authority.geometryEvaluation?.sampleAwarenessBounds || null, sampleOverlapComparisons: authority.geometryEvaluation?.sampleOverlapComparisons || null, sampleOverallOverlap: authority.geometryEvaluation?.sampleOverallOverlap ?? null, sampleSourceId: authority.geometryEvaluation?.sampleSourceId || null, sampleGeometryType: authority.geometryEvaluation?.sampleGeometryType || null,
-      geometryEvaluation: authority.geometryEvaluation || freeze({ recordsEvaluated: proof.length, geometryRecordsEvaluated: proof.filter((p) => p.sourceGeometryValid).length, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: proof.filter((p) => p.sourceGeometryIntersectsSelectedAwareness).length, durationMs: null }),
+      nearestGeometryCandidates: nearestGeometry.nearestGeometryCandidates, nearestGeometryDistanceMiles: nearestGeometry.nearestGeometryDistanceMiles, nearestGeometryEvaluated: nearestGeometry.nearestGeometryEvaluated, nearestGeometryPassedBroadPhase: nearestGeometry.nearestGeometryPassedBroadPhase, nearestGeometryReachedSegmentLoop: nearestGeometry.nearestGeometryReachedSegmentLoop, nearestGeometryQualified: nearestGeometry.nearestGeometryQualified, nearestGeometryDistanceBuckets: nearestGeometry.nearestGeometryDistanceBuckets,
+      geometryEvaluation: freeze(Object.assign({}, authority.geometryEvaluation || { recordsEvaluated: proof.length, geometryRecordsEvaluated: proof.filter((p) => p.sourceGeometryValid).length, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: proof.filter((p) => p.sourceGeometryIntersectsSelectedAwareness).length, durationMs: null }, nearestGeometry)),
       us90Diagnostic: freeze({ candidateCount: routeDiagnostics.length, pointQualifiedCount: routeDiagnostics.filter((x) => x.p.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles" && x.p.finalEligibility).length, geometryQualifiedCount: routeDiagnostics.filter((x) => x.p.geographicOwnershipMethod === "trusted_source_geometry_intersects_awareness_radius" && x.p.finalEligibility).length, consumerVisibleCount: arr(consumer.consumerVisibleSituations).filter((s) => /us\s*90/i.test(text(s.routeName || s.roadway || s.headline || s.description))).length, candidateRecords: freeze(routeDiagnostics.slice(0, 25).map((x) => freeze({ sourceId: x.r.sourceId || x.r.providerId || x.r.id || null, routeName: x.r.routeName || x.r.roadway || null, sourceGeometryType: x.r.sourceGeometryType || null, geographicOwnershipMethod: x.p.geographicOwnershipMethod || "not_established", finalEligibility: x.p.finalEligibility === true, closestGeometryDistanceToAwarenessMiles: x.p.closestGeometryDistanceToAwarenessMiles ?? null }))) }),
       consumerProjection: freeze({ inputCount: arr(authority.consumerEligibleSituations).length, visibleCount: consumer.consumerVisibleSituationCount || 0, markerCount: arr(consumer.markerInputSituations).length, alertRowCount: arr(consumer.alertInputSituations).length, travelBriefCount: arr(consumer.travelBriefInputSituations).length, quietStateActive: !consumer.consumerVisibleSituationCount }),
       switchingSafety: freeze({ recalculatesFromActiveAwareness: true, staleGeometryQualifiedResultsRetained: false, duplicateSituationCount: authority.duplicateRecordCount || 0 }),

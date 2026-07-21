@@ -95,21 +95,30 @@ assert.strictEqual(geometryFieldOnlyResult.authorityEligibleRecordCount, 1, 'pre
 const audit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ records: [crossing], selectedAwarenessArea: dayton, nowMs: now });
 assert.strictEqual(audit.geometryAuthorityCertified, true, 'LP043 audit certifies authority contract from fixtures');
 assert.strictEqual(audit.consumerProjection.visibleCount, 1, 'LP043 audit sees consumer projection');
-assert.strictEqual(audit.sampleSourceId, 'crossing', 'LP043 audit exposes representative geometry source id');
-assert.strictEqual(audit.sampleGeometryType, 'LineString', 'LP043 audit exposes representative geometry type');
-assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.sampleGeometryBounds)), { minLongitude: -95.2, maxLongitude: -94.4, minLatitude: 30.0466, maxLatitude: 30.0466 }, 'LP043 audit exposes representative geometry bounds');
-assert(audit.sampleAwarenessBounds.minLongitude < dayton.lng && audit.sampleAwarenessBounds.maxLongitude > dayton.lng, 'LP043 audit exposes representative awareness longitude bounds');
-assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.sampleOverlapComparisons)), {
-  geometryMaxLongitudeGteAwarenessMinLongitude: true,
-  geometryMinLongitudeLteAwarenessMaxLongitude: true,
-  geometryMaxLatitudeGteAwarenessMinLatitude: true,
-  geometryMinLatitudeLteAwarenessMaxLatitude: true
-}, 'LP043 audit exposes each broad-phase comparison result');
-assert.strictEqual(audit.sampleOverallOverlap, true, 'LP043 audit exposes representative overall overlap');
-assert.strictEqual(audit.geometryEvaluation.sample.coordinateCount, 2, 'LP043 geometry evaluation sample includes coordinate count');
-assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.firstCoordinate)), [-95.2, 30.0466], 'LP043 geometry evaluation sample includes first coordinate');
-assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.lastCoordinate)), [-94.4, 30.0466], 'LP043 geometry evaluation sample includes last coordinate');
-assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.sample.normalizedMidpoint)), { longitude: -94.4, latitude: 30.0466 }, 'LP043 geometry evaluation sample includes normalized midpoint');
-assert.strictEqual(audit.geometryEvaluation.sample.selectedAwareness, 'Generic Awareness', 'LP043 geometry evaluation sample includes selected awareness');
-assert.strictEqual(audit.geometryEvaluation.sample.selectedCounty, null, 'LP043 geometry evaluation sample includes selected county');
+assert.strictEqual(audit.nearestGeometryCandidates.length, 1, 'LP043 audit exposes nearest geometry candidates instead of first geometry sample');
+assert.strictEqual(audit.nearestGeometryCandidates[0].sourceId, 'crossing', 'LP043 nearest geometry candidate exposes source id');
+assert.strictEqual(audit.nearestGeometryCandidates[0].route, 'State Route Fixture', 'LP043 nearest geometry candidate exposes route');
+assert.strictEqual(audit.nearestGeometryCandidates[0].category, 'Road Closure', 'LP043 nearest geometry candidate exposes category');
+assert.strictEqual(audit.nearestGeometryCandidates[0].geometryType, 'LineString', 'LP043 nearest geometry candidate exposes geometry type');
+assert.deepStrictEqual({ latitude: audit.nearestGeometryCandidates[0].midpointLatitude, longitude: audit.nearestGeometryCandidates[0].midpointLongitude }, { latitude: 30.0466, longitude: -94.4 }, 'LP043 nearest geometry candidate exposes midpoint');
+assert.strictEqual(audit.nearestGeometryCandidates[0].boundingBoxOverlapResult, true, 'LP043 nearest geometry candidate exposes broad phase result');
+assert.strictEqual(audit.nearestGeometryCandidates[0].segmentEvaluationReached, true, 'LP043 nearest geometry candidate exposes segment loop reach');
+assert.strictEqual(audit.nearestGeometryCandidates[0].segmentIntersectionResult, true, 'LP043 nearest geometry candidate exposes segment intersection result');
+assert.strictEqual(audit.nearestGeometryCandidates[0].authorityOwnershipResult, 'trusted_source_geometry_intersects_awareness_radius', 'LP043 nearest geometry candidate exposes authority ownership');
+assert.strictEqual(audit.nearestGeometryCandidates[0].finalEligibility, true, 'LP043 nearest geometry candidate exposes final eligibility');
+assert.strictEqual(audit.nearestGeometryCandidates[0].consumerVisibility, true, 'LP043 nearest geometry candidate exposes consumer visibility');
+assert.strictEqual(audit.nearestGeometryCandidates[0].rejectionReason, null, 'LP043 nearest geometry candidate exposes rejection reason');
+assert.strictEqual(audit.nearestGeometryDistanceMiles, audit.nearestGeometryCandidates[0].nearestGeometryDistanceMiles, 'LP043 nearest distance mirrors nearest candidate');
+assert.strictEqual(audit.nearestGeometryEvaluated, 1, 'LP043 nearest geometry evaluated count exposed');
+assert.strictEqual(audit.nearestGeometryPassedBroadPhase, 1, 'LP043 nearest broad-phase pass count exposed');
+assert.strictEqual(audit.nearestGeometryReachedSegmentLoop, 1, 'LP043 nearest segment-loop count exposed');
+assert.strictEqual(audit.nearestGeometryQualified, 1, 'LP043 nearest qualified count exposed');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.nearestGeometryDistanceBuckets)), { within10Miles: 0, within20Miles: 0, within30Miles: 1, within50Miles: 1, within100Miles: 1 }, 'LP043 distance buckets are reported');
+assert.deepStrictEqual(JSON.parse(JSON.stringify(audit.geometryEvaluation.nearestGeometryDistanceBuckets)), JSON.parse(JSON.stringify(audit.nearestGeometryDistanceBuckets)), 'LP043 geometry evaluation carries nearest bucket diagnostics');
+const bulkGeometryRecords = Array.from({ length: 30 }, (_, i) => rec(`bulk-${i}`, { latitude: 30.8, longitude: -94.2, sourceGeometry: { type: 'LineString', coordinates: [[dayton.lng + ((i + 1) * 0.01), dayton.lat], [dayton.lng + ((i + 1) * 0.01) + 0.001, dayton.lat]] } }));
+const bulkAudit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ records: bulkGeometryRecords.reverse(), selectedAwarenessArea: dayton, nowMs: now });
+assert.strictEqual(bulkAudit.nearestGeometryCandidates.length, 25, 'LP043 nearest geometry candidates are bounded to 25');
+assert(bulkAudit.nearestGeometryCandidates.every((candidate, index, list) => index === 0 || list[index - 1].nearestGeometryDistanceMiles <= candidate.nearestGeometryDistanceMiles), 'LP043 nearest geometry candidates are sorted by distance');
+assert.strictEqual(bulkAudit.nearestGeometryCandidates[0].sourceId, 'bulk-0', 'LP043 nearest geometry sorting ignores provider order');
+assert(bulkAudit.nearestGeometryDistanceBuckets.within10Miles >= 10, 'LP043 distance buckets count nearby preserved geometries');
 console.log('LP043 DriveTexas geometry preservation and authority repair checks passed');
