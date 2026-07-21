@@ -16,7 +16,7 @@ assert(app.includes('Travel Brief'), 'Travel Brief remains present');
 
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 const cleanDisplayValue = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
-const sanitizerSource = app.match(/function gridlySanitizeOfficialConsumerProse[\s\S]*?\n}\n/)[0];
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const normalizeSource = app.match(/function gridlyLp0457NormalizeOfficialSummaryProse[\s\S]*?\n}\n/)[0];
 const finalBoundarySource = app.match(/function gridlyLp0458SanitizeOfficialAlertCardMarkup[\s\S]*?\n}\n/)[0];
 const context = { String, RegExp, esc, cleanDisplayValue };
@@ -53,8 +53,8 @@ const communityCard = `
 
 const visibleHtml = context.gridlyLp0458SanitizeOfficialAlertCardMarkup(`${constructionCard}${roadClosedCard}${communityCard}`);
 
-assert(visibleHtml.includes('US 59 main lanes not affected. Construction of safety improvement projects consisting of installing cable median barrier.'), 'live-shaped Construction location line is cleaned');
-assert(visibleHtml.includes('US 59 alternating lanes closed. Motorists should expect delays. For the construction of safety improvement projects consisting of installing cable median barrier.'), 'live-shaped Road Closed location line is cleaned');
+assert(visibleHtml.includes('US 59 Main lanes remain open. Crews are installing a cable median barrier.'), 'live-shaped Construction location line is cleaned');
+assert(visibleHtml.includes('US 59 Alternating lane closures. Expect delays. Crews are installing a cable median barrier.'), 'live-shaped Road Closed location line is cleaned');
 assert(!/<\s*br\s*\/?\s*>/i.test(visibleHtml), 'visible Alerts HTML contains no raw break tags for official cards');
 assert(!/&(?:amp;)?lt;\s*br\s*\/?\s*&(?:amp;)?gt;/i.test(visibleHtml.replace(communityCard, '')), 'official visible Alerts HTML contains no escaped break tags');
 assert(!/,\s*-/.test(visibleHtml), 'comma-hyphen artifacts are removed');

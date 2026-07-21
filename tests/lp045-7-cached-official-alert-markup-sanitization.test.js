@@ -24,7 +24,7 @@ assert(app.includes('focusPulseApplied'), 'marker focus and pulse auditing remai
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains unchanged');
 assert(app.includes('Travel Brief'), 'Travel Brief ownership remains unchanged');
 
-const sanitizerSource = app.match(/function gridlySanitizeOfficialConsumerProse[\s\S]*?\n}\n/)[0];
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const normalizeSource = app.match(/function gridlyLp0457NormalizeOfficialSummaryProse[\s\S]*?\n}\n/)[0];
 const detectionSource = app.match(/function gridlyLp0456OfficialSourceDetection[\s\S]*?function gridlyLp0456IsOfficialDriveTexasRecord[\s\S]*?\n}\n/)[0];
 const context = { String, RegExp };
@@ -47,7 +47,7 @@ for (const text of [location, summary]) {
   assert(!/,\s*-/.test(text), 'comma-hyphen artifacts are absent');
   assert(!/\.\s*\./.test(text), 'double punctuation is absent');
 }
-assert(/Construction of safety improvement projects/i.test(location), 'meaningful provider prose remains in location line');
+assert(/Crews are installing a cable median barrier/i.test(location), 'meaningful provider prose remains in consumer location line');
 assert(/cable median barrier/i.test(summary), 'meaningful provider prose remains in situation summary');
 
 const publishedAwarenessBlock = app.slice(app.indexOf('function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords'), app.indexOf('function openAlertsSurfaceFromDock'));

@@ -18,7 +18,7 @@ assert(app.includes('focusPulseApplied'), 'focus pulse remains audited');
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains present');
 assert(app.includes('Travel Brief'), 'Travel Brief ownership remains present');
 
-const sanitizerSource = app.match(/function gridlySanitizeOfficialConsumerProse[\s\S]*?\n}\n/)[0];
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const detectionSource = app.match(/function gridlyLp0456OfficialSourceDetection[\s\S]*?function gridlyLp0456IsOfficialDriveTexasRecord[\s\S]*?\n}\n/)[0];
 const freshnessSource = app.match(/function gridlyLp0455ParseOfficialFreshnessValue[\s\S]*?function gridlyLp0393OfficialPopupFreshnessLine/)[0].replace(/function gridlyLp0393OfficialPopupFreshnessLine$/, '');
 const context = {
@@ -51,7 +51,7 @@ const sanitized = context.gridlySanitizeOfficialConsumerProse(selected);
 assert(!/<\s*br\s*\/?\s*>/i.test(sanitized), 'literal break variants disappear');
 assert(!/&lt;\s*br\s*\/?\s*&gt;/i.test(sanitized), 'escaped break variants disappear');
 assert(!/(?:^|\s)[/|]+(?:\s|$)/.test(sanitized), 'slash-only separators disappear');
-assert(/Construction of safety improvements/i.test(sanitized), 'meaningful text remains');
+assert(/Crews are installing a cable median barrier/i.test(sanitized), 'meaningful consumer text remains');
 const laterFallback = sanitized || 'raw fallback';
 assert.strictEqual(laterFallback, sanitized, 'later fallback does not overwrite sanitized string');
 const community = 'Use <br> literally / if the neighbor typed it';
