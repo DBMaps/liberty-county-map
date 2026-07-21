@@ -20,3 +20,12 @@ assert(!/className:\s*["'](?:leaflet-)?(?:blue|info)|L\.circleMarker\(/.test(app
 assert(app.includes('if (crossingMarkers instanceof Map)') && app.includes('for (const [key, marker] of crossingMarkers.entries())'), 'community/crossing marker focus path remains present');
 
 console.log('LP045.1 official marker live runtime repair checks passed');
+
+assert(app.includes('const stableOfficialIdentity = String(debug.matchedRegistry === "gridlyDriveTexasOfficialMarkers"'), 'official deferred pulse records stable official marker identity');
+assert(app.includes('gridlyDriveTexasOfficialMarkers.get(stableOfficialIdentity) || marker'), 'deferred pulse resolves the current official marker from registry by stable identity');
+assert(app.includes('debug.focusPulseDeferred = true'), 'missing marker DOM schedules a bounded deferred pulse');
+assert(app.includes('debug.focusPulseSecondFrameScheduled = true'), 'deferred pulse retry count remains explicitly bounded to one extra frame');
+assert(app.includes('window.setTimeout(() =>') && app.includes('}, 1400);'), 'focused pulse cleanup is scheduled for natural 1400 ms expiration');
+assert(app.includes('const officialMarkerMatched = Boolean(marker && (debug.matchedRegistry === "gridlyDriveTexasOfficialMarkers"'), 'official marker focus pulse is allowed even when DOM appears after immediate map movement');
+assert(app.includes('marker?.options?.gridlyOfficialRoadway === true'), 'official focus pulse boundary is marker-owner scoped');
+assert(app.includes('if (crossingMarkers instanceof Map)') && app.indexOf('if (crossingMarkers instanceof Map)') < app.indexOf('if (gridlyDriveTexasOfficialMarkers instanceof Map)'), 'community/crossing marker focus priority remains unchanged');
