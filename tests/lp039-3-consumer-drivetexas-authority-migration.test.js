@@ -19,6 +19,7 @@ window.gridlySelectDriveTexasAuthority = gridlySelectDriveTexasAuthority;
 window.gridlyGetDriveTexasAuthoritySnapshot = gridlyGetDriveTexasAuthoritySnapshot;
 window.gridlyStoryTransportationConnectorRecords = gridlyStoryTransportationConnectorRecords;
 `, sandbox, { filename: 'lp039-3-foundation-stub.js' });
+vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
 vm.runInContext(fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
 
 function rec(id, category, title, lat, lon, extra = {}) {

@@ -10,6 +10,7 @@ sandbox.gridlySelectDriveTexasAuthority = (input = {}) => ({ selectedAwarenessAr
 sandbox.gridlyGetDriveTexasAuthoritySnapshot = (input = {}) => ({ selectedAwarenessArea: input.selectedAwarenessArea, authority: { consumerEligibleSituations: [] } });
 vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync('js/gridlyDriveTexasProvider.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasProvider.js' });
+vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
 vm.runInContext(fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
 
 const dayton = { id: 'generic-awareness', label: 'Generic Awareness', lat: 30.0466, lng: -94.8852, radiusMiles: 5 };

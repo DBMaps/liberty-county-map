@@ -17,6 +17,7 @@ function context(overrides = {}) {
   }, overrides.window || {});
   vm.createContext(sandbox);
   vm.runInContext(foundation, sandbox, { filename: 'lp0391-foundation.js' });
+  vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
   vm.runInContext(integration, sandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
   return sandbox.window;
 }

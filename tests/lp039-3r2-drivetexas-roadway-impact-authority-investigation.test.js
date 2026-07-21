@@ -13,6 +13,7 @@ function gridlyGetDriveTexasAuthoritySnapshot(input = {}) { const authority = gr
 window.gridlySelectDriveTexasAuthority = gridlySelectDriveTexasAuthority;
 window.gridlyGetDriveTexasAuthoritySnapshot = gridlyGetDriveTexasAuthoritySnapshot;
 `, sandbox);
+vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
 vm.runInContext(fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
 
 function rec(id, lat, lng, extra = {}) {
