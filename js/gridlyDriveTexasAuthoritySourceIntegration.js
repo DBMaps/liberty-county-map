@@ -37,7 +37,8 @@
   function adaptOne(record, index, options) {
     const r = clone(record) || {};
     const normalizedSourceGeometry = cloneTrustedAuthorityGeometry(first(r, FIELD_MAP.sourceGeometry));
-    const geometry = normalizedSourceGeometry || first(r, FIELD_MAP.geometry);
+    const normalizedFallbackGeometry = normalizedSourceGeometry || cloneTrustedAuthorityGeometry(first(r, FIELD_MAP.geometry));
+    const geometry = normalizedFallbackGeometry || first(r, FIELD_MAP.geometry);
     const lat = Number(r.latitude ?? r.lat ?? r.y);
     const lng = Number(r.longitude ?? r.lng ?? r.lon ?? r.x);
     const coords = first(r, FIELD_MAP.coordinates) || (Number.isFinite(lat) && Number.isFinite(lng) ? { latitude: lat, longitude: lng } : null);
@@ -67,11 +68,11 @@
       longitude: Number.isFinite(lng) ? lng : r.longitude,
       geometry: geometry || null,
       geometryType: geometry?.type || (coords ? "Point" : null),
-      sourceGeometry: normalizedSourceGeometry,
-      sourceGeometryType: normalizedSourceGeometry?.type || null,
-      sourceGeometryValid: Boolean(normalizedSourceGeometry),
-      sourceGeometryCoordinateCount: countGeometryCoordinates(normalizedSourceGeometry),
-      sourceGeometryProvenance: normalizedSourceGeometry ? (r.sourceGeometryProvenance || "trusted_drivetexas_provider_geojson_geometry") : null,
+      sourceGeometry: normalizedFallbackGeometry,
+      sourceGeometryType: normalizedFallbackGeometry?.type || null,
+      sourceGeometryValid: Boolean(normalizedFallbackGeometry),
+      sourceGeometryCoordinateCount: countGeometryCoordinates(normalizedFallbackGeometry),
+      sourceGeometryProvenance: normalizedFallbackGeometry ? (r.sourceGeometryProvenance || (normalizedSourceGeometry ? "trusted_drivetexas_provider_geojson_geometry" : "trusted_drivetexas_provider_geometry_field")) : null,
       routeName: first(r, FIELD_MAP.routeName), roadway: first(r, FIELD_MAP.roadway), canonicalRoad: first(r, FIELD_MAP.canonicalRoad), direction: first(r, FIELD_MAP.direction), county: first(r, FIELD_MAP.county), city: first(r, FIELD_MAP.city), district: first(r, FIELD_MAP.district), closureType: first(r, FIELD_MAP.closureType), laneImpact: first(r, FIELD_MAP.laneImpact), detour: first(r, FIELD_MAP.detour), travelImpact: first(r, FIELD_MAP.travelImpact), providerUrl: first(r, FIELD_MAP.providerUrl), sourceMetadata: first(r, FIELD_MAP.sourceMetadata),
       connectorRetained: options?.connectorRetained === true || r.connectorRetained === true,
       lastSuccessfulFallback: r.lastSuccessfulFallback === true,
@@ -192,13 +193,18 @@
   }
   function geometryIntersectionProof(geometry, anchor) {
     const valid = cloneTrustedAuthorityGeometry(geometry);
-    const stats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
-    if (!valid || !anchor.valid || valid.type === "Point") return { valid: Boolean(valid), intersects: false, closestDistanceMiles: null, geometryType: valid?.type || null, stats };
+    const stats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, geometryRecordsSkipped: 0, skipReasonCounts: {}, recordsReachingBroadPhase: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, recordsReachingSegmentLoop: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
+    const skip = (reason) => { stats.geometryRecordsSkipped = 1; stats.skipReasonCounts[reason] = 1; return { valid: Boolean(valid), intersects: false, closestDistanceMiles: null, geometryType: valid?.type || null, skipReason: reason, stats }; };
+    if (!valid) return skip("invalid_or_missing_trusted_geometry");
+    if (!anchor.valid) return skip("invalid_selected_awareness_anchor");
+    if (valid.type === "Point") return skip("point_geometry_uses_coordinate_authority");
     stats.geometryRecordsEvaluated = 1;
     const gb = geometryBounds(valid), ab = awarenessBounds(anchor);
+    stats.recordsReachingBroadPhase = 1;
     stats.boundingBoxesCreated = finiteBounds(gb) && finiteBounds(ab) ? 1 : 0;
     if (!boundsOverlap(gb, ab)) { stats.boundingBoxRejects = 1; return { valid: true, intersects: false, closestDistanceMiles: null, geometryType: valid.type, boundsRejected: true, geometryBounds: gb, awarenessBounds: ab, stats }; }
     stats.boundingBoxesPassed = 1;
+    stats.recordsReachingSegmentLoop = 1;
     let closest = Infinity, bestMemberIndex = null, bestSegmentIndex = null;
     iterateGeometrySegments(valid, (a, b, memberIndex, segmentIndex) => {
       if (closest <= anchor.radiusMiles) return;
@@ -239,11 +245,16 @@
       const id = record.authorityIdentity || identityFor(record, index).id, duplicate = seen.has(id); seen.add(id);
       const cp = coordinateProof(record), distance = cp.valid && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude) : null;
       const inside = Number.isFinite(distance) && distance <= anchor.radiusMiles;
-      const geometryProof = !inside && anchor.valid ? geometryIntersectionProof(record.sourceGeometry, anchor) : { valid: Boolean(record.sourceGeometryValid), intersects: false, closestDistanceMiles: null, geometryType: record.sourceGeometryType || null, stats: {} };
+      const authorityGeometry = record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry || null;
+      const geometryProof = !inside && anchor.valid ? geometryIntersectionProof(authorityGeometry, anchor) : { valid: Boolean(record.sourceGeometryValid), intersects: false, closestDistanceMiles: null, geometryType: record.sourceGeometryType || null, skipReason: inside ? "point_already_qualified" : "invalid_selected_awareness_anchor", stats: { geometryRecordsSkipped: record.sourceGeometryValid ? 1 : 0, skipReasonCounts: record.sourceGeometryValid ? { [inside ? "point_already_qualified" : "invalid_selected_awareness_anchor"]: 1 } : {} } };
       geometryStats.recordsEvaluated += 1;
       geometryStats.geometryRecordsEvaluated += geometryProof.stats?.geometryRecordsEvaluated || 0;
+      geometryStats.geometryRecordsSkipped += geometryProof.stats?.geometryRecordsSkipped || 0;
+      Object.entries(geometryProof.stats?.skipReasonCounts || {}).forEach(([reason, count]) => { geometryStats.skipReasonCounts[reason] = (geometryStats.skipReasonCounts[reason] || 0) + count; });
+      geometryStats.recordsReachingBroadPhase += geometryProof.stats?.recordsReachingBroadPhase || 0;
       geometryStats.boundingBoxesCreated += geometryProof.stats?.boundingBoxesCreated || 0;
       geometryStats.boundingBoxesPassed += geometryProof.stats?.boundingBoxesPassed || 0;
+      geometryStats.recordsReachingSegmentLoop += geometryProof.stats?.recordsReachingSegmentLoop || 0;
       geometryStats.segmentsEvaluated += geometryProof.stats?.segmentsEvaluated || 0;
       geometryStats.boundingBoxRejects += geometryProof.stats?.boundingBoxRejects || 0;
       geometryStats.intersectionsFound += geometryProof.stats?.intersectionsFound || 0;
@@ -296,7 +307,7 @@
     const baseInput = Object.assign({}, input, source, { records: adapted.records, providerAvailable: source.providerAvailable, connectorAvailable: source.connectorAvailable, fetchFailed: source.fetchFailed });
     const authorityBase = (typeof previousSelector === "function" ? previousSelector(baseInput) : { consumerEligibleSituations: [] });
     const geometryEvaluationStarted = Date.now();
-    const geometryEvaluationStats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
+    const geometryEvaluationStats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, geometryRecordsSkipped: 0, skipReasonCounts: {}, recordsReachingBroadPhase: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, recordsReachingSegmentLoop: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
     const recordProof = buildEligibilityProof(adapted.records, Object.assign({}, baseInput, { __lp043GeometryEvaluationStats: geometryEvaluationStats }), authorityBase);
     geometryEvaluationStats.durationMs = Date.now() - geometryEvaluationStarted;
     const eligibleRecordProof = recordProof.filter((p) => p.finalEligibility);

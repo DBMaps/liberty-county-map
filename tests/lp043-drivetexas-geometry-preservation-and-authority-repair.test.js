@@ -39,6 +39,8 @@ assert(Number.isFinite(normalized[1].latitude) && Number.isFinite(normalized[1].
 const adapted = sandbox.gridlyAdaptDriveTexasRecordsForAuthority(normalized).records;
 assert.strictEqual(adapted[1].sourceGeometryType, 'LineString', 'LP039.2 adapter preserves source geometry');
 assert.strictEqual(adapted[1].sourceGeometryValid, true, 'LP039.2 adapter marks trusted validated geometry');
+const adaptedFallbackGeometry = sandbox.gridlyAdaptDriveTexasRecordsForAuthority([rec('geometry-field-only', { geometry: { type: 'LineString', coordinates: [[-95.2, 30.0466], [-94.4, 30.0466]] }, sourceGeometry: null })]).records[0];
+assert.strictEqual(adaptedFallbackGeometry.sourceGeometryType, 'LineString', 'LP039.2 adapter promotes preserved geometry field into authority sourceGeometry when sourceGeometry is absent');
 
 assert.strictEqual(select([rec('inside', { latitude: 30.0467, longitude: -94.8852 })]).authorityEligibleRecordCount, 1, 'point inside radius qualifies');
 const outsidePoint = select([rec('outside-point')]);
@@ -65,11 +67,14 @@ const repeated = select([crossing, Object.assign({}, crossing)], dayton);
 assert.strictEqual(repeated.consumerEligibleSituations.length, 1, 'no duplicated visibility after repeated switches');
 assert(repeated.geometryEvaluation.boundingBoxRejects >= 0, 'performance stats include bounding-box rejections');
 assert.strictEqual(crossingResult.geometryEvaluation.boundingBoxesCreated, 1, 'bounding box diagnostics count created box');
+assert.strictEqual(crossingResult.geometryEvaluation.recordsReachingBroadPhase, 1, 'geometry record reaches broad phase');
 assert.strictEqual(crossingResult.geometryEvaluation.boundingBoxesPassed, 1, 'bounding-box overlap true passes to segment evaluation');
+assert.strictEqual(crossingResult.geometryEvaluation.recordsReachingSegmentLoop, 1, 'geometry record reaches segment loop');
 assert.strictEqual(crossingResult.geometryEvaluation.boundingBoxRejects, 0, 'crossing LineString is not rejected by broad bounding box');
 assert(crossingResult.geometryEvaluation.segmentsEvaluated > 0, 'segment evaluation executes after bounding-box pass');
 assert(crossingResult.geometryEvaluation.segmentsEvaluated <= 1, 'segment loop exits after accepted intersection');
 assert.strictEqual(crossingResult.geometryEvaluation.intersectionsFound, 1, 'segment intersection counted');
+assert.strictEqual(Object.keys(crossingResult.geometryEvaluation.skipReasonCounts).length, 0, 'no skip reasons reported for crossing geometry execution path');
 assert.strictEqual(crossingResult.geometryEvaluation.closestGeometryDistanceMiles, 0, 'closest geometry distance reported');
 const outsideLineResult = select([rec('outside-line-regression', { sourceGeometry: { type: 'LineString', coordinates: [[-94.2, 30.6], [-94.1, 30.7]] } })]);
 assert.strictEqual(outsideLineResult.geometryEvaluation.boundingBoxesCreated, 1, 'outside LineString creates bounding box');
@@ -84,6 +89,9 @@ const multiResult = select([rec('multi-cross-regression', { sourceGeometry: { ty
 assert(multiResult.geometryEvaluation.segmentsEvaluated > 0, 'MultiLineString segment evaluation executes');
 assert(!('fetch' in sandbox && sandbox.fetch.called), 'no extra network fetch');
 assert.strictEqual(typeof sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit, 'function', 'LP043 audit exported');
+const geometryFieldOnlyResult = select([rec('geometry-field-only-authority', { geometry: { type: 'LineString', coordinates: [[-95.2, 30.0466], [-94.4, 30.0466]] }, sourceGeometry: null })]);
+assert.strictEqual(geometryFieldOnlyResult.geometryEvaluation.recordsReachingSegmentLoop, 1, 'production authority uses preserved geometry field when sourceGeometry is not present');
+assert.strictEqual(geometryFieldOnlyResult.authorityEligibleRecordCount, 1, 'preserved geometry field can qualify through authority without midpoint forcing');
 const audit = sandbox.gridlyLp043DriveTexasGeometryAuthorityRepairAudit({ records: [crossing], selectedAwarenessArea: dayton, nowMs: now });
 assert.strictEqual(audit.geometryAuthorityCertified, true, 'LP043 audit certifies authority contract from fixtures');
 assert.strictEqual(audit.consumerProjection.visibleCount, 1, 'LP043 audit sees consumer projection');
