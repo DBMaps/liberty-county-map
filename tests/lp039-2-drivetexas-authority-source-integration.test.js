@@ -66,10 +66,16 @@ assert.strictEqual(authority.expiredRecordCount, 1);
 assert.strictEqual(authority.staleRecordCount, 1);
 assert.strictEqual(authority.futureEffectiveRecordCount, 1);
 assert.strictEqual(authority.missingTimestampRecordCount, 1);
-assert(authority.ownershipMethodsObserved.includes('exact_source_geometry'));
-assert(authority.ownershipMethodsObserved.includes('county_metadata'));
-assert(authority.fallbackMethodsObserved.includes('roadway_association'));
-assert(authority.fallbackMethodsObserved.includes('text_fallback'));
+assert(authority.ownershipMethodsObserved.includes('valid_source_point_inside_awareness_radius_miles'));
+assert(authority.ownershipMethodsObserved.includes('not_established'));
+assert.strictEqual(authority.fallbackMethodsObserved.length, 0);
+assert.strictEqual(authority.unprovenEligibleRecordCount, 0);
+assert.strictEqual(authority.authorityEligibilityCertified, true);
+assert.strictEqual(authority.allEligibleRecordsWithinAcceptedOwnership, true);
+assert.strictEqual(authority.allEligibleRecordsHaveFreshnessProof, true);
+assert.strictEqual(authority.allEligibleRecordsHaveIdentityProof, true);
+assert.strictEqual(Array.isArray(authority.eligibleRecordProof), true);
+assert.strictEqual(authority.ownershipMethodsObserved.length <= 2, true);
 assert(authority.sourceFieldsAvailable.includes('routeName'));
 
 w = context({ window: {
@@ -100,5 +106,56 @@ assert.strictEqual(empty.noStorageWrites, true);
 assert.strictEqual(empty.noMapMovement, true);
 assert.strictEqual(empty.implementationStatus, 'SOURCE_INTEGRATION_COMPLETE');
 assert.strictEqual(empty.recommendedNextMilestone, 'LP039.3');
+
+
+
+const woodville = { label: 'Woodville', storageValue: 'woodville-tx', countyId: 'tyler-tx', lat: 30.7752, lng: -94.4155, radiusMiles: 7 };
+const milesLat = 1 / 69;
+const deterministic = [
+  { id: 'one-mile', category: 'Crash', title: 'One mile', coordinates: { latitude: woodville.lat + milesLat, longitude: woodville.lng }, startTime: active },
+  { id: 'six-mile', category: 'Crash', title: 'Six miles', coordinates: { latitude: woodville.lat + 6 * milesLat, longitude: woodville.lng }, startTime: active },
+  { id: 'eight-mile', category: 'Crash', title: 'Eight miles', coordinates: { latitude: woodville.lat + 8 * milesLat, longitude: woodville.lng }, startTime: active },
+  { id: 'array-geojson', category: 'Flooding', title: 'Array geojson', coordinates: [woodville.lng, woodville.lat], startTime: active },
+  { id: 'array-app', category: 'Flooding', title: 'Array app', coordinates: [woodville.lat, woodville.lng], startTime: active },
+  { id: 'object-app', category: 'Flooding', title: 'Object app', coordinates: { latitude: woodville.lat, longitude: woodville.lng }, startTime: active },
+  { id: 'reversed', category: 'Crash', title: 'Reversed', coordinates: { latitude: woodville.lng, longitude: woodville.lat }, startTime: active },
+  { id: 'malformed', category: 'Crash', title: 'Malformed', coordinates: ['bad', null], startTime: active },
+  { id: 'missing-coords', category: 'Crash', title: 'Missing coords', startTime: active },
+  { id: 'route-only', category: 'Lane Closure', title: 'Route only', routeName: 'US 69', startTime: active },
+  { id: 'text-only-local', category: 'Travel Advisory', title: 'Woodville text', description: 'Woodville', startTime: active },
+  { id: 'retained-only', category: 'Crash', title: 'Retained only', connectorRetained: true, startTime: active },
+  { id: 'fresh-outside', category: 'Crash', title: 'Fresh outside', coordinates: { latitude: woodville.lat + 8 * milesLat, longitude: woodville.lng }, startTime: active, updateTime: active },
+  { id: 'stale-inside', category: 'Crash', title: 'Stale inside', coordinates: { latitude: woodville.lat, longitude: woodville.lng }, updateTime: '2026-07-20T00:00:00Z' },
+  { id: 'fresh-inside', category: 'Crash', title: 'Fresh inside', coordinates: { latitude: woodville.lat, longitude: woodville.lng }, updateTime: active },
+  { id: 'missing-time-inside', category: 'Crash', title: 'Missing timestamp inside', coordinates: { latitude: woodville.lat, longitude: woodville.lng } }
+];
+w = context({ window: { getGridlySelectedAwarenessArea: () => woodville } });
+const det = w.gridlySelectDriveTexasAuthority({ records: deterministic, selectedAwarenessArea: woodville, nowMs: now, sourceFallbackUsed: true });
+const byId = Object.fromEntries(det.recordProof.map((p) => [p.sourceId, p]));
+assert.strictEqual(byId['one-mile'].finalEligibility, true);
+assert.strictEqual(byId['six-mile'].finalEligibility, true);
+assert.strictEqual(byId['eight-mile'].finalEligibility, false);
+assert.strictEqual(byId['eight-mile'].insideAwarenessRadius, false);
+assert.strictEqual(byId['array-geojson'].coordinateOrderUsed, 'longitude_latitude_geojson_array');
+assert.strictEqual(byId['array-app'].coordinateOrderUsed, 'latitude_longitude_array');
+assert.strictEqual(byId['object-app'].coordinateOrderUsed, 'latitude_longitude_object');
+assert.strictEqual(byId.reversed.finalEligibility, false);
+assert(byId.reversed.ineligibilityReasons.includes('reversed_coordinate_suspect'));
+assert.strictEqual(byId.malformed.finalEligibility, false);
+assert.strictEqual(byId['missing-coords'].coordinateValidity, 'missing');
+assert.strictEqual(byId['route-only'].finalEligibility, false);
+assert.strictEqual(byId['text-only-local'].finalEligibility, false);
+assert.strictEqual(byId['retained-only'].finalEligibility, false);
+assert.strictEqual(byId['fresh-outside'].finalEligibility, false);
+assert.strictEqual(byId['stale-inside'].finalEligibility, false);
+assert.strictEqual(byId['fresh-inside'].finalEligibility, true);
+assert.strictEqual(byId['missing-time-inside'].finalEligibility, false);
+assert.strictEqual(det.selectedAwarenessRadiusMiles, 7);
+assert.strictEqual(det.unprovenEligibleRecordCount, 0);
+assert.strictEqual(det.authorityEligibilityCertified, true);
+assert.strictEqual(typeof det.identityMethodCounts, 'object');
+assert.strictEqual(det.ownershipMethodsObserved.length <= 2, true);
+assert(det.eligibleRecordProof.length > 0);
+assert.strictEqual(typeof w.gridlyLp0392DriveTexasEligibilityProofAudit, 'function');
 
 console.log('LP039.2 DriveTexas authority source integration tests passed');
