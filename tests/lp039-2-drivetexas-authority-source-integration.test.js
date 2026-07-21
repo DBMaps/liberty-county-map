@@ -75,7 +75,8 @@ assert.strictEqual(authority.allEligibleRecordsWithinAcceptedOwnership, true);
 assert.strictEqual(authority.allEligibleRecordsHaveFreshnessProof, true);
 assert.strictEqual(authority.allEligibleRecordsHaveIdentityProof, true);
 assert.strictEqual(Array.isArray(authority.eligibleRecordProof), true);
-assert.strictEqual(authority.ownershipMethodsObserved.length <= 2, true);
+assert(authority.ownershipMethodsObserved.includes('trusted_source_geometry_intersects_awareness_radius'));
+assert.strictEqual(authority.ownershipMethodsObserved.length <= 3, true);
 assert(authority.sourceFieldsAvailable.includes('routeName'));
 
 w = context({ window: {

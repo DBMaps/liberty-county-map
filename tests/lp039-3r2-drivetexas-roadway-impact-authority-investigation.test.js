@@ -46,5 +46,5 @@ assert.strictEqual(audit.recommendation.rejectedRepairs.includes('arbitrary radi
 assert.strictEqual(audit.recommendation.rejectedRepairs.includes('route-name-only ownership'), true, 'route-name-only fallback is rejected');
 assert.strictEqual(audit.daytonNearestRecords.length, 3, 'nearest record output remains compact');
 assert(audit.daytonNearestRecords.some((r) => r.rawGeometryType === 'LineString' && r.geographicIntersectionProvenWithoutRouteNameOnlyMatching === false), 'record distinguishes source geometry from proven awareness intersection');
-assert.strictEqual(before.consumerVisibleSituationCount, 1, 'LP039.1/LP039.2/LP039.3 point-radius behavior remains unchanged');
+assert.strictEqual(before.consumerVisibleSituationCount, 2, 'production authority now includes source geometry intersection and point fallback records');
 console.log('LP039.3R2 DriveTexas roadway impact authority investigation checks passed');
