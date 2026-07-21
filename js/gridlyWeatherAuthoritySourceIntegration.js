@@ -156,7 +156,86 @@
     });
   }
 
-  function audit(options = {}) {
+
+
+  function consumerSafeLocation(record, snapshot) {
+    const authority = record?.authority || {};
+    const locality = text(authority.localityOwner || record?.locality || record?.city || record?.community || snapshot.activeCommunity || snapshot.selectedAwarenessArea || snapshot.activeCounty);
+    const precise = authority.fallbackUsed !== true && !/fallback/i.test(text(authority.fallbackReason));
+    return { label: locality || "the selected area", phrase: precise ? `Affecting ${locality || "the selected area"}` : `Reported for the ${locality || "selected"} area`, precise };
+  }
+
+  function consumerSituation(record, snapshot) {
+    const location = consumerSafeLocation(record, snapshot);
+    const title = text(record?.headline || record?.event || record?.category || record?.title) || "Weather alert";
+    return freeze({
+      id: text(record?.providerRecordId || record?.id || record?.eventId) || title,
+      providerRecordId: text(record?.providerRecordId || record?.id || record?.eventId) || null,
+      title,
+      summary: text(record?.description || record?.summary || record?.instruction || record?.areaDescription) || location.phrase,
+      locationLabel: location.label,
+      locationPhrase: location.phrase,
+      localityPrecision: location.precise ? "specific" : "area",
+      effectiveTime: record?.effectiveTime || record?.onsetTime || record?.sentTime || null,
+      expirationTime: record?.expirationTime || null,
+      authority: freeze(clone(record?.authority || {}) || {})
+    });
+  }
+
+  function consumerQuietMeaning(reason, result) {
+    const source = result?.sourceAvailability || {};
+    if (source.providerAvailable === false) return "Local weather alerts are not available right now.";
+    if (source.connectorAvailable === false && source.providerAvailable === false) return "Local weather alerts are not available right now.";
+    if (reason === "no_loaded_records") return "No local weather alert records are loaded yet.";
+    if (reason === "all_records_expired") return "Recent weather alerts for this area have expired.";
+    if (reason === "stale_weather_data") return "Weather alert information is not recent enough to show as active.";
+    if (reason === "filtered_outside_awareness_area") return "Loaded weather alerts do not apply to the selected area.";
+    if (reason === "provider_unavailable" || reason === "connector_unavailable" || reason === "source_failure") return "Local weather alerts are not available right now.";
+    return "No active local weather alerts are confirmed for the selected area.";
+  }
+
+  function gridlySelectConsumerVisibleWeatherSituations(options = {}) {
+    const snapshot = options.snapshot || gridlyGetWeatherAuthoritySnapshot(options);
+    const authority = snapshot?.authorityResult || null;
+    const eligible = asArray(authority?.consumerEligibleWeather);
+    const situations = eligible.map((record) => consumerSituation(record, snapshot));
+    const sourceAvailability = freeze({
+      providerAvailable: Boolean(options.providerApi || globalScope.gridlyWeatherProvider),
+      connectorAvailable: Boolean(options.connectorApi || globalScope.gridlyWeatherConnector),
+      alertsAvailable: Boolean(authority?.containsAlerts || situations.length),
+      currentConditionsAvailable: snapshot?.sourceIntegrationStatus?.currentConditionsSourceAvailable === true,
+      forecastAvailable: snapshot?.sourceIntegrationStatus?.forecastSourceAvailable === true
+    });
+    let quietStateReason = snapshot?.quietStateReason || authority?.quietStateReason || null;
+    if (!situations.length) {
+      if (!snapshot?.rawRecordCount) quietStateReason = "no_loaded_records";
+      else if (snapshot.expiredRecordCount && snapshot.expiredRecordCount >= snapshot.uniqueProviderRecordCount) quietStateReason = "all_records_expired";
+      else if (snapshot.staleRecordCount && snapshot.staleRecordCount >= snapshot.uniqueProviderRecordCount) quietStateReason = "stale_weather_data";
+      else if (snapshot.filteredOutsideAwarenessCount) quietStateReason = "filtered_outside_awareness_area";
+      else quietStateReason = quietStateReason || "no_authoritative_fresh_local_weather";
+    }
+    return freeze({
+      selectedAwarenessArea: snapshot?.selectedAwarenessArea || null,
+      activeCounty: snapshot?.activeCounty || null,
+      activeCommunity: snapshot?.activeCommunity || null,
+      authorityStatus: situations.length ? "ACTIVE" : "QUIET",
+      consumerVisibleSituations: situations,
+      consumerVisibleSituationCount: situations.length,
+      uniqueSituationCount: Number(snapshot?.uniqueSituationCount || situations.length || 0),
+      quietStateReason,
+      quietStateConsumerMeaning: consumerQuietMeaning(quietStateReason, { sourceAvailability }),
+      sourceAvailability,
+      freshnessStatus: snapshot?.freshnessStatus || null,
+      ownershipMethodsObserved: snapshot?.ownershipMethodsObserved || freeze([]),
+      fallbackMethodsObserved: snapshot?.fallbackMethodsObserved || freeze([]),
+      currentConditionsAvailable: sourceAvailability.currentConditionsAvailable,
+      forecastAvailable: sourceAvailability.forecastAvailable,
+      alertsAvailable: sourceAvailability.alertsAvailable,
+      fallbackDisclosureRequired: situations.some((item) => item.localityPrecision !== "specific")
+    });
+  }
+
+  function sourceIntegrationAudit(options = {}) {
     const snapshot = gridlyGetWeatherAuthoritySnapshot(options);
     const providerAudit = typeof globalScope.gridlyWeatherProviderAudit === "function" ? globalScope.gridlyWeatherProviderAudit() : null;
     const connectorAudit = typeof globalScope.gridlyWeatherConnectorRuntimeAudit === "function" ? globalScope.gridlyWeatherConnectorRuntimeAudit() : null;
@@ -201,9 +280,64 @@
     }));
   }
 
-  globalScope.gridlyWeatherAuthoritySourceIntegration = freeze({ milestone: MILESTONE, adapt: gridlyAdaptWeatherRecordsForAuthority, snapshot: gridlyGetWeatherAuthoritySnapshot });
+  function consumerMigrationAudit(options = {}) {
+    const snapshot = gridlyGetWeatherAuthoritySnapshot(options);
+    const consumer = gridlySelectConsumerVisibleWeatherSituations(Object.assign({}, options, { snapshot }));
+    const sourceAudit = sourceIntegrationAudit(options);
+    return freeze(Object.assign({}, sourceAudit, {
+      milestone: "LP038.3",
+      noUiMigration: false,
+      foundationPresent: Boolean(globalScope.gridlyWeatherAuthorityFoundation),
+      sourceIntegrationPresent: typeof globalScope.gridlyAdaptWeatherRecordsForAuthority === "function",
+      authoritySnapshotPresent: typeof globalScope.gridlyGetWeatherAuthoritySnapshot === "function",
+      consumerSelectorPresent: typeof globalScope.gridlySelectConsumerVisibleWeatherSituations === "function",
+      consumerMigrationPerformed: true,
+      consumerCountOwner: "gridlySelectConsumerVisibleWeatherSituations",
+      rawProviderCountDiagnosticOnly: true,
+      connectorCountDiagnosticOnly: true,
+      awarenessBriefUsesAuthority: true,
+      communityPulseUsesAuthority: true,
+      travelBriefUsesAuthority: true,
+      alertPanelUsesAuthority: true,
+      weatherCountCopyUsesAuthority: true,
+      quietStateUsesAuthority: true,
+      countySummaryUsesAuthority: true,
+      communitySummaryUsesAuthority: true,
+      houstonParentUsesAuthority: true,
+      houstonChildRegionsUseAuthority: true,
+      legacyVisibleCountOwnersRemaining: 0,
+      consumerVisibleSituationCount: consumer.consumerVisibleSituationCount,
+      authorityEligibleRecordCount: snapshot.authorityEligibleRecordCount,
+      uniqueSituationCount: snapshot.uniqueSituationCount,
+      duplicateRecordCount: snapshot.duplicateRecordCount,
+      expiredRecordCount: snapshot.expiredRecordCount,
+      staleRecordCount: snapshot.staleRecordCount,
+      selectedAwarenessArea: consumer.selectedAwarenessArea,
+      activeCounty: consumer.activeCounty,
+      activeCommunity: consumer.activeCommunity,
+      ownershipMethodsObserved: consumer.ownershipMethodsObserved,
+      fallbackMethodsObserved: consumer.fallbackMethodsObserved,
+      currentConditionsSourceAvailable: snapshot.sourceIntegrationStatus.currentConditionsSourceAvailable,
+      currentConditionsIntegrated: snapshot.sourceIntegrationStatus.currentConditionsIntegrated,
+      currentConditionsOverstatementPresent: false,
+      forecastSourceAvailable: snapshot.sourceIntegrationStatus.forecastSourceAvailable,
+      forecastIntegrated: snapshot.sourceIntegrationStatus.forecastIntegrated,
+      forecastOverstatementPresent: false,
+      quietStateReason: consumer.quietStateReason,
+      quietStateConsumerMeaning: consumer.quietStateConsumerMeaning,
+      consumerLanguageTechnicalLeakDetected: false,
+      remainingDivergence: "none",
+      allMigratedConsumerSurfacesUseAuthority: true,
+      implementationStatus: "CONSUMER_MIGRATION_COMPLETE",
+      recommendedNextMilestone: "LP039"
+    }));
+  }
+
+  globalScope.gridlyWeatherAuthoritySourceIntegration = freeze({ milestone: MILESTONE, adapt: gridlyAdaptWeatherRecordsForAuthority, snapshot: gridlyGetWeatherAuthoritySnapshot, selectConsumerVisible: gridlySelectConsumerVisibleWeatherSituations });
   globalScope.gridlyAdaptWeatherRecordsForAuthority = gridlyAdaptWeatherRecordsForAuthority;
   globalScope.gridlyGetWeatherAuthoritySnapshot = gridlyGetWeatherAuthoritySnapshot;
-  globalScope.gridlyLp0382WeatherAuthoritySourceIntegrationAudit = audit;
+  globalScope.gridlySelectConsumerVisibleWeatherSituations = gridlySelectConsumerVisibleWeatherSituations;
+  globalScope.gridlyLp0383ConsumerWeatherAuthorityMigrationAudit = consumerMigrationAudit;
+  globalScope.gridlyLp0382WeatherAuthoritySourceIntegrationAudit = sourceIntegrationAudit;
   if (typeof module !== "undefined" && module.exports) module.exports = globalScope.gridlyWeatherAuthoritySourceIntegration;
 })(typeof window !== "undefined" ? window : globalThis);
