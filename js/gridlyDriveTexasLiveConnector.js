@@ -781,6 +781,55 @@
   }
 
 
+
+
+  function lp042RecordId(record, index) { return record?.sourceTrace?.sourceId || record?.id || `record:${index}`; }
+  function lp042NormText(value) { return String(value == null ? "" : value).replace(/<[^>]*>/g, " ").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  function lp042AwarenessContext() {
+    const context = lastFilterContext || awarenessContextFrom(activeAwarenessArea());
+    const lp039 = typeof globalScope.gridlyLp0393DaytonDriveTexasAuthorityTraceAudit === "function" ? globalScope.gridlyLp0393DaytonDriveTexasAuthorityTraceAudit() : null;
+    const lp039Area = lp039?.selectedAwarenessArea || lp039?.authority?.selectedAwarenessArea || null;
+    const same = lp039Area ? Math.abs(Number(lp039Area.lat ?? lp039Area.latitude) - Number(context?.lat)) < 0.000001 && Math.abs(Number(lp039Area.lng ?? lp039Area.longitude) - Number(context?.lng)) < 0.000001 : null;
+    return freeze({ countyId: context?.countyId || null, countyLabel: context?.countyId || null, awarenessId: context?.key || context?.storageValue || null, awarenessLabel: context?.label || context?.community || null, storageValue: context?.storageValue || null, anchor: context ? freeze({ latitude: context.lat, longitude: context.lng }) : null, radiusMiles: context?.radiusMiles ?? null, aliases: freeze([context?.label, context?.community, context?.storageValue, context?.key, context?.countyId].map(toSafeString).filter(Boolean)), textTokens: freeze((context?.textFallbackTerms || []).map(lp042NormText).filter(Boolean)), contextMatchesLp039: same });
+  }
+  function lp042Decision(record, index, context) {
+    const lat = record?.latitude == null || record?.latitude === "" ? NaN : Number(record.latitude);
+    const lng = record?.longitude == null || record?.longitude === "" ? NaN : Number(record.longitude);
+    const areaLat = Number(context?.anchor?.latitude), areaLng = Number(context?.anchor?.longitude);
+    const radius = Number(context?.radiusMiles);
+    const allowedMiles = !Number.isFinite(radius) ? 35 : radius + 2;
+    const distance = Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(areaLat) && Number.isFinite(areaLng) ? lp029DistanceMiles(areaLat, areaLng, lat, lng) : null;
+    const point = Number.isFinite(distance) && distance <= allowedMiles;
+    const fields = { title: record?.title || null, description: record?.description || null, routeName: record?.routeName || null, locality: record?.locality || null, city: record?.city || null, county: record?.county || null, affectedAreas: record?.affectedAreas || null };
+    const searchable = lp042NormText(Object.values(fields).flat().filter(Boolean).join(" "));
+    const tokens = context?.textTokens || [];
+    const matched = tokens.filter((t) => t && searchable.includes(t));
+    const text = Boolean(searchable && matched.length);
+    const reasons = [];
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) reasons.push("invalid_or_missing_midpoint_coordinate");
+    if (Number.isFinite(distance) && !point) reasons.push("midpoint_outside_awareness_radius_plus_connector_buffer");
+    if (!text) reasons.push("awareness_text_absent_from_normalized_provider_fields");
+    if (!point && !text) reasons.push("excluded_by_point_radius_and_text_fallback_union");
+    return freeze({ sourceId: lp042RecordId(record, index), route: record?.routeName || null, category: record?.category || null, rawGeometryType: null, rawGeometryCoordinateCount: null, extractedCoordinate: freeze({ latitude: Number.isFinite(lat) ? lat : null, longitude: Number.isFinite(lng) ? lng : null, provenance: "normalized latitude/longitude; provider LineString reduced to midpoint before connector filtering" }), distanceFromDayton: Number.isFinite(distance) ? Number(distance.toFixed(3)) : null, pointRadiusResult: point, textFieldsExamined: freeze(fields), normalizedSearchableText: searchable, awarenessTokens: freeze(tokens), matchedTokens: freeze(matched), failedTokens: freeze(tokens.filter((t) => !matched.includes(t))), textFallbackResult: text, connectorIncluded: point || text, exclusionReasons: freeze(reasons), fullGeometryIntersectionEvidence: "unavailable in normalized connector cache; LP041 retains bounded raw diagnostics only, not full payload geometry", firstRejectionBranch: point || text ? null : (Number.isFinite(distance) ? "point-radius-then-text-fallback" : "invalid-coordinate-then-text-fallback") });
+  }
+  function lp042TraceRecords(query) {
+    const q = lp042NormText(query || "US 90");
+    const context = lp042AwarenessContext();
+    const records = allNormalizedRecords.map(clone).filter(Boolean);
+    const filteredIds = new Set(awarenessNormalizedRecords.map((r, i) => lp042RecordId(r, i)));
+    return records.map((r, i) => ({ r, i })).filter(({ r }) => !q || lp042NormText([r.id, r.category, r.title, r.description, r.routeName, r.city, r.county, r.locality].join(" ")).includes(q) || lp041MatchesQuery(r, query)).slice(0, LP041_MAX_CANDIDATES).map(({ r, i }) => freeze(Object.assign({}, lp042Decision(r, i, context), { connectorIncluded: filteredIds.has(lp042RecordId(r, i)) || lp042Decision(r, i, context).connectorIncluded }))); }
+  function lp042CountReasons(traces) { return traces.reduce((m, t) => { (t.exclusionReasons || []).forEach((r) => { m[r] = (m[r] || 0) + 1; }); return m; }, {}); }
+  function lp042DriveTexasConnectorAwarenessFilterCertificationAudit() {
+    const context = lp042AwarenessContext();
+    const records = allNormalizedRecords.map(clone).filter(Boolean);
+    const allTraces = records.map((r, i) => lp042Decision(r, i, context));
+    const us90 = lp042TraceRecords("US 90");
+    const filterTrace = lp041LastFilterTrace || {};
+    const lp039Source = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot() : null;
+    return freeze({ available: true, milestone: "LP042", investigationOnly: true, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, selectedAwarenessContext: context, connectorFilterContract: freeze({ functionPresent: true, purposeClassification: "obsolete_pre_authority_scope_gate_for_LP039_path; diagnostic_or_legacy_view_only_should_be_future_contract", inputSource: "allNormalizedRecords complete normalized cache", inputCount: records.length, outputCount: awarenessNormalizedRecords.length, pointRadiusEnabled: true, textFallbackEnabled: true, fullGeometryUsed: false, midpointCoordinateUsed: true, awarenessBoundaryUsed: false, connectorOwnsAuthority: false, diagnosticOnly: true }), geographicDecisionTrace: freeze({ distanceFunction: "globalScope.getDistanceMiles via getDistanceMiles(areaLat, areaLng, recordLat, recordLng)", units: "miles", thresholdInclusive: "<= radiusMiles + 2 for area mode; <=35 for countyWide or missing radius", coordinateOrder: "latitude, longitude arguments; GeoJSON source coordinates are longitude, latitude before provider midpoint extraction", invalidCoordinateBehavior: "geographic branch false; text fallback may still include", missingAnchorBehavior: "geographic branch false; text fallback may still include", sourceGeometryIgnored: true, lineGeometryReducedToMidpoint: true, pointRadiusMatchCount: filterTrace.pointRadiusMatchCount ?? allTraces.filter((t) => t.pointRadiusResult).length, pointRadiusRejectCount: records.length - (filterTrace.pointRadiusMatchCount ?? allTraces.filter((t) => t.pointRadiusResult).length) }), textFallbackDecisionTrace: freeze({ sourceFields: freeze(["title", "description", "routeName", "locality", "city", "county", "affectedAreas"]), awarenessFields: freeze(["label", "storageValue", "key", "countyId"]), normalizationRules: "lowercase; connector text terms strip -tx and trailing county; LP042 diagnostic strips HTML/punctuation", htmlStripped: false, routeNormalization: "none in production filter; substring only", communityAliasesUsed: true, countyAliasesUsed: true, tokenMatchingMethod: "substring any awareness term", textFallbackMatchCount: filterTrace.textFallbackMatchCount ?? allTraces.filter((t) => t.textFallbackResult).length, textFallbackRejectCount: records.length - (filterTrace.textFallbackMatchCount ?? allTraces.filter((t) => t.textFallbackResult).length), providerShapeCompatible: false }), pipelineOwnership: freeze({ completeNormalizedCacheCount: records.length, connectorFilteredCount: awarenessNormalizedRecords.length, lp039AdapterInputSource: "gridlyDriveTexasConnector.getAllNormalizedRecords preferred over getNormalizedRecords", lp039AdapterInputCount: lp039Source?.counts?.rawRecordCount ?? records.length, completeCacheAvailableToLp039: true, filteredCacheUsedByLp039: false, firstPreAuthorityRemovalStage: records.length !== awarenessNormalizedRecords.length ? "connector-awareness-filter" : null, duplicateOwnershipDetected: true }), us90CandidateTrace: freeze(us90), exclusionReasonCounts: freeze(lp042CountReasons(allTraces)), zeroOutputRootCause: freeze({ classification: "mixed_root_cause: source_geometry_reduced_to_midpoint + full_geometry_ignored + awareness_text_absent_from_provider + connector_filter_is_obsolete_pre_authority_gate", supportingEvidence: freeze(["filterAwarenessRecords returns point-radius OR text fallback only", "provider normalizer reduces LineString to one midpoint coordinate", "LP041 live evidence reported 739 input and 0 output with 0 point/text matches", "LP039 source resolver prefers complete cache, but connector awareness view is still a separate pre-authority retained view"]), confidence: records.length ? "high for loaded runtime cache; live US 90 geometry intersection remains bounded-diagnostic dependent" : "repository-certified; awaiting live loaded records", unresolvedQuestions: freeze(["Full raw line intersection for each live US 90 candidate requires LP041 bounded raw geometry evidence or an approved geometry-retention diagnostic."]) }), architectureOptions: freeze({ keepCurrentGate: "Reject as final authority gate: midpoint/text false negatives are expected for LineString provider shape.", completeCacheToLp039: "Preferred future direction: LP039 should be sole selected-awareness authority gate over complete normalized source cache.", geometryAwareConnectorFilter: "Defer: duplicates authority logic and risks two ownership systems.", pointOnlyWithoutTextFallback: "Reject: still creates midpoint false negatives.", layeredSourceScoping: "Possible future broad non-authoritative optimization only if wider than final authority and traceable." }), recommendation: freeze({ conclusion: "E with B/C evidence: connector filtering is obsolete as an LP039 authority input gate; current filter is too narrow and text fallback is incompatible with provider fields when locality is absent.", currentFilterSafe: false, currentFilterTooNarrow: true, currentFilterObsoleteAsAuthorityGate: true, productionRepairRequired: true, minimumSafeRepair: "Future milestone should feed complete normalized source cache to LP039 and leave connector filtering diagnostic/legacy only.", rejectedRepairs: freeze(["radius widening", "Dayton/Liberty/US 90 hardcoding", "route-name-only authority", "duplicated geometry authority in connector during LP042"]), suggestedNextMilestone: "LP043 production repair contract for LP039 complete-cache input and connector filter demotion" }) });
+  }
+  function lp042DriveTexasConnectorFilterRecordTrace(query) { return freeze({ available: true, milestone: "LP042", passive: true, noFetches: true, noWrites: true, diagnosticOnly: true, query: toSafeString(query) || "US 90", results: freeze(lp042TraceRecords(query || "US 90")), boundedResultLimit: LP041_MAX_CANDIDATES, textMatchingDiagnosticOnly: true }); }
+
   function lp041RecordTrace(query) {
     const q = toSafeString(query) || "US 90";
     const latest = lp041LatestEvidence;
@@ -831,6 +880,8 @@
   globalScope.gridlyLp040DriveTexasProviderCompletenessAudit = lp040DriveTexasProviderCompletenessAudit;
   globalScope.gridlyLp041DriveTexasLiveProviderEvidenceAudit = lp041DriveTexasLiveProviderEvidenceAudit;
   globalScope.gridlyLp041DriveTexasProviderRecordTrace = lp041RecordTrace;
+  globalScope.gridlyLp042DriveTexasConnectorAwarenessFilterCertificationAudit = lp042DriveTexasConnectorAwarenessFilterCertificationAudit;
+  globalScope.gridlyLp042DriveTexasConnectorFilterRecordTrace = lp042DriveTexasConnectorFilterRecordTrace;
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = globalScope.gridlyDriveTexasConnector;
