@@ -56,6 +56,8 @@ assert.strictEqual(select([rec('multi-cross', { sourceGeometry: { type: 'MultiLi
 assert.strictEqual(select([rec('multi-out', { sourceGeometry: { type: 'MultiLineString', coordinates: [[[-94.2, 30.6], [-94.1, 30.7]]] } })]).authorityEligibleRecordCount, 0, 'MultiLineString entirely outside rejected');
 assert.strictEqual(select([rec('malformed', { sourceGeometry: { type: 'LineString', coordinates: [[-95, 30], ['bad', 30]] } })]).authorityEligibleRecordCount, 0, 'malformed geometry does not qualify');
 assert.strictEqual(select([rec('invalid-geometry-valid-point', { latitude: 30.0466, longitude: -94.8852, sourceGeometry: { type: 'LineString', coordinates: [[null, 30], [-94, 30]] } })]).authorityEligibleRecordCount, 1, 'invalid geometry does not defeat point containment');
+assert.strictEqual(select([rec('inside-point-outside-trusted-line', { latitude: 30.0466, longitude: -94.8852, sourceGeometry: { type: 'LineString', coordinates: [[-94.2, 30.6], [-94.1, 30.7]] } })]).authorityEligibleRecordCount, 0, 'trusted roadway geometry overrides representative point containment when geometry is outside');
+assert.strictEqual(select([rec('missing-point-crossing-line', { latitude: null, longitude: null, sourceGeometry: crossing.sourceGeometry })]).authorityEligibleRecordCount, 1, 'trusted roadway geometry qualifies without representative point coordinates');
 assert.strictEqual(select([rec('expired', { sourceGeometry: crossing.sourceGeometry, endTime: '2026-07-21T11:00:00Z' })]).authorityEligibleRecordCount, 0, 'geometry does not bypass freshness');
 assert.strictEqual(select([Object.assign({}, crossing, { sourceId: '', id: '', title: '', routeName: 'Route Only' })]).recordProof[0].identityMethod, 'deterministic_source_fallback', 'route-only identity remains fallback not promoted');
 assert.strictEqual(select([rec('bad-category', { sourceGeometry: crossing.sourceGeometry, category: 'Other' })]).authorityEligibleRecordCount, 0, 'geometry does not bypass category eligibility');
@@ -147,7 +149,7 @@ assert.strictEqual(trace.intersection, true, 'fixture trace reports intersection
 assert.strictEqual(trace.ownershipMethod, 'trusted_source_geometry_intersects_awareness_radius', 'fixture trace reports authority ownership method');
 assert.strictEqual(trace.finalEligibility, true, 'fixture trace reports final eligibility');
 assert.strictEqual(trace.consumerVisible, true, 'fixture trace reports consumer visibility');
-assert.strictEqual(trace.exit.condition, 'const ownershipMethod = inside ? "valid_source_point_inside_awareness_radius_miles" : (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established");', 'fixture trace reports exact ownership branch');
+assert.strictEqual(trace.exit.condition, 'const ownershipMethod = trustedRoadwayGeometryAvailable ? (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established") : (pointInside ? "valid_source_point_inside_awareness_radius_miles" : "not_established");', 'fixture trace reports exact ownership branch');
 const outsideTrace = sandbox.gridlyLp043TraceSingleAuthorityRecord('outside-line-regression');
 assert.strictEqual(outsideTrace.boundingBoxExecuted, true, 'outside trace executes bounding-box precheck');
 assert.strictEqual(outsideTrace.boundingBoxPassed, false, 'outside trace fails broad phase');
