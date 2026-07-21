@@ -132,7 +132,7 @@ const deterministic = [
 ];
 w = context({ window: { getGridlySelectedAwarenessArea: () => woodville } });
 const det = w.gridlySelectDriveTexasAuthority({ records: deterministic, selectedAwarenessArea: woodville, nowMs: now, sourceFallbackUsed: true });
-const byId = Object.fromEntries(det.recordProof.map((p) => [p.sourceId, p]));
+const byId = Object.fromEntries(det.recordProof.map((p) => [String(p.sourceId).replace(/^provider:/, ""), p]));
 assert.strictEqual(byId['one-mile'].finalEligibility, true);
 assert.strictEqual(byId['six-mile'].finalEligibility, true);
 assert.strictEqual(byId['eight-mile'].finalEligibility, false);

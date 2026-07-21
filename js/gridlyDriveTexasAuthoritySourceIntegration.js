@@ -20,11 +20,17 @@
   function selectedArea(input) { return input?.selectedAwarenessArea || (typeof globalScope.getGridlySelectedAwarenessArea === "function" ? globalScope.getGridlySelectedAwarenessArea() : null) || (typeof globalScope.getGridlyHomeTownAwarenessAnchor === "function" ? globalScope.getGridlyHomeTownAwarenessAnchor() : null); }
   function categoryName(c) { return DISPLAY_CATEGORY[c] || c || "unavailable"; }
 
+  function canonicalAuthorityId(prefix, value) {
+    const raw = text(value);
+    if (!raw) return null;
+    if (/^(event|provider|fallback):/i.test(raw)) return raw;
+    return `${prefix}:${raw}`;
+  }
   function identityFor(record, index) {
     const event = text(record.eventId || record.event_id);
-    if (event) return { id: `event:${event}`, method: "event_id" };
+    if (event) return { id: canonicalAuthorityId("event", event), method: "event_id" };
     const stable = text(record.sourceId || record.providerSourceId || record.globalId || record.GLOBALID || record.id || record.incidentId);
-    if (stable) return { id: `provider:${stable}`, method: "stable_provider_source_id" };
+    if (stable) return { id: canonicalAuthorityId("provider", stable), method: "stable_provider_source_id" };
     return { id: `fallback:${[record.category, record.headline || record.title, record.routeName, record.latitude, record.longitude, record.startTime].map(text).join("|") || index}`, method: "deterministic_source_fallback" };
   }
 
@@ -43,11 +49,13 @@
     const lng = Number(r.longitude ?? r.lng ?? r.lon ?? r.x);
     const coords = first(r, FIELD_MAP.coordinates) || (Number.isFinite(lat) && Number.isFinite(lng) ? { latitude: lat, longitude: lng } : null);
     const identity = identityFor(r, index);
+    const rawProviderRecordId = first(r, FIELD_MAP.sourceId) || first(r, FIELD_MAP.globalId) || first(r, FIELD_MAP.eventId) || null;
     const adapted = Object.assign({}, r, {
       provider: first(r, FIELD_MAP.provider) || "DriveTexas",
-      providerId: first(r, FIELD_MAP.sourceId) || first(r, FIELD_MAP.globalId) || first(r, FIELD_MAP.eventId) || null,
+      providerId: identity.id,
       sourceProviderId: r.providerId || "drivetexas",
-      sourceId: first(r, FIELD_MAP.sourceId),
+      sourceProviderRecordId: rawProviderRecordId,
+      sourceId: identity.id,
       globalId: first(r, FIELD_MAP.globalId),
       eventId: first(r, FIELD_MAP.eventId),
       originalId: first(r, FIELD_MAP.originalId),
@@ -408,10 +416,13 @@
       const category = categoryName(record.category || "Travel Advisory");
       const headline = text(record.headline || record.title) || `${category} reported`;
       const description = text(record.description || record.summary || record.advisory || record.travelImpact) || "Official roadway information may affect travel.";
-      const coords = proof.coordinates || record.coordinates || (Number.isFinite(Number(record.latitude)) && Number.isFinite(Number(record.longitude)) ? { latitude: Number(record.latitude), longitude: Number(record.longitude) } : null);
+      const rawCoords = proof.coordinates || record.coordinates || (Number.isFinite(Number(record.latitude)) && Number.isFinite(Number(record.longitude)) ? { latitude: Number(record.latitude), longitude: Number(record.longitude) } : null);
+      const coordLat = rawCoords ? Number(rawCoords.latitude ?? rawCoords.lat) : NaN;
+      const coordLng = rawCoords ? Number(rawCoords.longitude ?? rawCoords.lng ?? rawCoords.lon) : NaN;
+      const coords = Number.isFinite(coordLat) && Number.isFinite(coordLng) && coordLat !== 0 && coordLng !== 0 ? { latitude: coordLat, longitude: coordLng } : null;
       return freeze({
         consumerSituationId: `drivetexas:${key}`,
-        providerId: record.sourceId || record.providerId || record.id || null,
+        providerId: proof.authorityIdentity || record.authorityIdentity || record.sourceId || record.providerId || record.id || null,
         category,
         headline,
         description,
@@ -427,7 +438,7 @@
         freshnessTimestamp: proof.freshnessTimestampUsed || freshnessTimestamp(record),
         distanceFromAwarenessMiles: proof.distanceFromSelectedAwarenessMiles ?? null,
         selectedAwarenessRadiusMiles: proof.configuredAwarenessRadiusMiles ?? authority.selectedAwarenessRadiusMiles ?? null,
-        sourceCoordinates: coords ? freeze({ latitude: Number(coords.latitude ?? coords.lat), longitude: Number(coords.longitude ?? coords.lng ?? coords.lon) }) : null,
+        sourceCoordinates: coords ? freeze(coords) : null,
         roadwayEvidence: freeze({ routeName: record.routeName || null, roadway: record.roadway || null, canonicalRoad: record.canonicalRoad || null }),
         locationEvidence: freeze({ locationPhrase: situationLocation(record, proof), sourceCoordinatesPresent: Boolean(coords) }),
         recordProof: proof,
