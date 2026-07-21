@@ -18,7 +18,11 @@
   function first(record, keys) { for (const k of keys) if (record && record[k] != null && record[k] !== "") return record[k]; return null; }
   function has(record, keys) { return keys.some((k) => record && record[k] != null && record[k] !== ""); }
   function countBy(items, fn) { return items.reduce((m, item) => { const k = text(fn(item)) || "unavailable"; m[k] = (m[k] || 0) + 1; return m; }, {}); }
-  function selectedArea(input) { return input?.selectedAwarenessArea || (typeof globalScope.getGridlySelectedAwarenessArea === "function" ? globalScope.getGridlySelectedAwarenessArea() : null) || (typeof globalScope.getGridlyHomeTownAwarenessAnchor === "function" ? globalScope.getGridlyHomeTownAwarenessAnchor() : null); }
+  function selectedArea(input) {
+    if (input && Object.prototype.hasOwnProperty.call(input, "selectedAwarenessArea")) return input.selectedAwarenessArea || null;
+    if (input && Object.prototype.hasOwnProperty.call(input, "awarenessArea")) return input.awarenessArea || null;
+    return typeof globalScope.getGridlySelectedAwarenessArea === "function" ? globalScope.getGridlySelectedAwarenessArea() : null;
+  }
   function categoryName(c) { return DISPLAY_CATEGORY[c] || c || "unavailable"; }
 
   function canonicalAuthorityId(prefix, value) {
@@ -362,7 +366,8 @@
     const injected = Object.prototype.hasOwnProperty.call(input, "records") || Object.prototype.hasOwnProperty.call(input, "normalizedRecords");
     const source = injected ? { records: input.records || input.normalizedRecords, fallbackUsed: input.sourceFallbackUsed === true, lastRefresh: input.lastRefresh, providerAvailable: input.providerAvailable !== false, connectorAvailable: input.connectorAvailable !== false, fetchFailed: input.fetchFailed === true, providerEnabled: input.providerEnabled === true, connectorEnabled: input.connectorEnabled === true } : gridlyGetLoadedDriveTexasAuthoritySourceRecords();
     const adapted = gridlyAdaptDriveTexasRecordsForAuthority(source.records, source);
-    const baseInput = Object.assign({}, input, source, { records: adapted.records, providerAvailable: source.providerAvailable, connectorAvailable: source.connectorAvailable, fetchFailed: source.fetchFailed });
+    const activeAwarenessArea = selectedArea(input);
+    const baseInput = Object.assign({}, input, source, { selectedAwarenessArea: activeAwarenessArea, awarenessArea: activeAwarenessArea, activeCounty: activeAwarenessArea?.countyId || input.activeCounty || null, activeCommunity: activeAwarenessArea?.label || activeAwarenessArea?.storageValue || input.activeCommunity || null, records: adapted.records, providerAvailable: source.providerAvailable, connectorAvailable: source.connectorAvailable, fetchFailed: source.fetchFailed });
     const authorityBase = (typeof previousSelector === "function" ? previousSelector(baseInput) : { consumerEligibleSituations: [] });
     const geometryEvaluationStarted = Date.now();
     const geometryEvaluationStats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, geometryRecordsSkipped: 0, skipReasonCounts: {}, recordsReachingBroadPhase: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, recordsReachingSegmentLoop: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
