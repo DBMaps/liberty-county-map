@@ -13,7 +13,7 @@ assert(app.includes('focusPulseApplied'), 'focus pulse audit remains present');
 assert(app.includes('Travel Brief'), 'Travel Brief ownership text remains present');
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains present');
 
-const sanitizerSource = app.match(/function gridlySanitizeOfficialConsumerProse[\s\S]*?\n}\n/)[0];
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const freshnessSource = app.match(/const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES[\s\S]*?function gridlyLp0393OfficialPopupFreshnessLine[\s\S]*?\n}\n/)[0];
 const context = {
   Date,
@@ -37,8 +37,8 @@ const liveShape = 'US 59, MAIN LANES not affected.<br> /<br>Construction of safe
 const sanitized = context.gridlySanitizeOfficialConsumerProse(liveShape);
 assert(!/<\s*br\s*\/?\s*>/i.test(sanitized), 'literal <br> is removed');
 assert(!/(?:^|\s)[/|]+(?:\s|$)/.test(sanitized), 'slash-only separators are removed');
-assert(sanitized.includes('US 59, MAIN LANES not affected.'), 'meaningful route prose remains');
-assert(sanitized.includes('Construction of safety improvements'), 'meaningful construction prose remains');
+assert(sanitized.includes('US 59 Main lanes remain open.'), 'meaningful route and lane prose remains in consumer language');
+assert(sanitized.includes('Crews are installing a cable median barrier.'), 'meaningful construction prose remains in consumer language');
 
 ['A<br>B', 'A<br/>B', 'A<br />B', 'A&lt;br&gt;B', 'A<br><br/> /<br />B'].forEach((sample) => {
   const result = context.gridlySanitizeOfficialConsumerProse(sample);
