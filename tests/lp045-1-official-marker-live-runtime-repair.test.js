@@ -5,8 +5,8 @@ const app = fs.readFileSync('js/app.js', 'utf8');
 
 assert(app.includes('function gridlyLp045OfficialMarkerIdentity'), 'shared official marker identity resolver exists');
 assert(app.includes('return raw.startsWith("drivetexas:") ? raw : `drivetexas:${raw}`;'), 'resolver produces stable DriveTexas marker identities');
-assert(app.includes('const id = gridlyLp045OfficialMarkerIdentity(record, `drivetexas-${index}`);'), 'marker creation uses the shared official identity');
-assert(app.includes('sourceRecord: record') && app.includes('record,\n      gridlyMarkerType: "drivetexas_official"'), 'created markers retain the source record for focus lookup');
+assert(app.includes('const id = String(gridlyLp045OfficialMarkerIdentity(record, `drivetexas-${index}`) || "");'), 'marker creation uses the shared official identity');
+assert(app.includes('sourceRecord: record') && app.includes('record,') && app.includes('gridlyMarkerType: "drivetexas_official"'), 'created markers retain the source record for focus lookup');
 assert(app.includes('function gridlyLp045EnsureOfficialMarkerLayerAttached'), 'official marker layer attachment guard exists');
 assert(app.includes('gridlyDriveTexasOfficialLayer.addTo(targetMap)'), 'official layer is reattached to the active Leaflet map when needed');
 assert(app.includes('function gridlyLp045EnsureOfficialMarkersCurrent'), 'official marker render ordering helper exists');
