@@ -34,6 +34,37 @@ assert(selected.consumerEligibleSituations.some((r) => r.sourceId === 'provider:
 assert(!sandbox.gridlySelectDriveTexasAuthority({ records: [line], selectedAwarenessArea: far, nowMs }).consumerEligibleSituations.length, 'same record is excluded for non-intersected communities');
 assert.strictEqual(excluded.finalEligibility, false, 'outside-coverage record remains excluded');
 
+let activeSelection = alpha;
+const activeSandbox = { console, Date, Math, URLSearchParams, setTimeout() {}, clearTimeout() {}, window: null, getGridlySelectedAwarenessArea: () => activeSelection };
+activeSandbox.window = activeSandbox;
+vm.createContext(activeSandbox);
+vm.runInContext('function gridlySelectDriveTexasAuthority(input = {}) { return Object.freeze({ selectedAwarenessArea: input.selectedAwarenessArea, activeCounty: input.activeCounty || input.selectedAwarenessArea?.countyId || null, activeCommunity: input.activeCommunity || input.selectedAwarenessArea?.label || null, consumerEligibleSituations: [] }); } window.gridlySelectDriveTexasAuthority = gridlySelectDriveTexasAuthority;', activeSandbox);
+vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), activeSandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
+vm.runInContext(fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8'), activeSandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
+vm.runInContext(fs.readFileSync('js/gridlyLp044DriveTexasCommunityAuthorityInventory.js', 'utf8'), activeSandbox, { filename: 'js/gridlyLp044DriveTexasCommunityAuthorityInventory.js' });
+
+const alphaLp039 = activeSandbox.gridlySelectDriveTexasAuthority({ records: [line], nowMs });
+const alphaProof = alphaLp039.recordProof[0];
+const alphaLp044 = activeSandbox.gridlyBuildLp044DriveTexasCommunityAuthorityInventory({ records: [line], communities, counties, nowMs }).records[0];
+assert.strictEqual(alphaLp039.selectedAwarenessArea, alpha, 'LP039 passes the current active awareness object when no injected selection is provided');
+assert.strictEqual(alphaProof.finalEligibility, true, 'LP039 qualifies active Alpha geometry');
+assert.strictEqual(alphaLp044.currentLp039Eligibility, alphaProof.finalEligibility, 'LP044 current LP039 projection uses the same active awareness object');
+assert.strictEqual(alphaLp044.currentOwnershipMethod, alphaProof.geographicOwnershipMethod, 'LP044 and LP039 ownership methods match for active Alpha');
+assert.strictEqual(alphaLp044.currentRejectionReason, null, 'LP044 and LP039 rejection reasons match for active Alpha');
+
+activeSelection = far;
+const farLp039 = activeSandbox.gridlySelectDriveTexasAuthority({ records: [line], nowMs });
+const farProof = farLp039.recordProof[0];
+const farLp044 = activeSandbox.gridlyBuildLp044DriveTexasCommunityAuthorityInventory({ records: [line], communities, counties, nowMs }).records[0];
+assert.strictEqual(farLp039.selectedAwarenessArea, far, 'LP039 observes an active community change instead of stale Alpha awareness');
+assert.strictEqual(farProof.finalEligibility, false, 'LP039 rejects the same geometry after active community changes to Far');
+assert.strictEqual(farProof.geographicOwnershipMethod, 'not_established', 'LP039 ownership changes with the active community');
+assert.strictEqual(farProof.ineligibilityReasons.includes('trusted_geometry_outside_selected_awareness'), true, 'LP039 rejection reason changes with the active community');
+assert.strictEqual(farLp044.currentLp039Eligibility, farProof.finalEligibility, 'LP044 current projection changes identically with active community');
+assert.strictEqual(farLp044.currentOwnershipMethod, farProof.geographicOwnershipMethod, 'LP044 ownership changes identically with active community');
+assert.strictEqual(farLp044.currentRejectionReason, farProof.ineligibilityReasons.join('; '), 'LP044 rejection reason changes identically with active community');
+assert.strictEqual(activeSandbox.gridlySelectDriveTexasAuthority({ records: [line], selectedAwarenessArea: null, nowMs }).recordProof[0].finalEligibility, false, 'LP039 does not use home-town fallback awareness when active awareness is explicitly unavailable');
+
 const lp039Source = fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8');
 const lp044Source = fs.readFileSync('js/gridlyLp044DriveTexasCommunityAuthorityInventory.js', 'utf8');
 assert(lp039Source.includes('gridlyQualifyDriveTexasGeometryAuthority(record'), 'LP039 calls the shared geometry authority implementation');
