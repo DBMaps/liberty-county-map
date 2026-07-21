@@ -52,6 +52,12 @@ assert.strictEqual(alphaLp044.currentLp039Eligibility, alphaProof.finalEligibili
 assert.strictEqual(alphaLp044.currentOwnershipMethod, alphaProof.geographicOwnershipMethod, 'LP044 and LP039 ownership methods match for active Alpha');
 assert.strictEqual(alphaLp044.currentRejectionReason, null, 'LP044 and LP039 rejection reasons match for active Alpha');
 
+assert.strictEqual(alphaLp044.globallyRelevant, true, 'LP044 reports global geographic relevance separately from active visibility');
+assert.strictEqual(alphaLp044.activeConsumerVisible, true, 'LP044 active visibility matches runtime truth for an intersected active community');
+assert.strictEqual(alphaLp044.currentConsumerVisible, alphaLp044.activeConsumerVisible, 'legacy current visibility is an explicit active-visibility alias');
+assert.strictEqual(alphaLp044.visibleForIntersectedCommunity, true, 'LP044 reports visibility for at least one intersected community');
+assert.notStrictEqual(alphaLp044.discrepancyClassification, 'GEOGRAPHICALLY_RELEVANT_BUT_NOT_VISIBLE', 'LP044 does not classify globally relevant records as invisible when an intersected active selection displays them');
+
 activeSelection = far;
 const farLp039 = activeSandbox.gridlySelectDriveTexasAuthority({ records: [line], nowMs });
 const farProof = farLp039.recordProof[0];
@@ -63,6 +69,12 @@ assert.strictEqual(farProof.ineligibilityReasons.includes('trusted_geometry_outs
 assert.strictEqual(farLp044.currentLp039Eligibility, farProof.finalEligibility, 'LP044 current projection changes identically with active community');
 assert.strictEqual(farLp044.currentOwnershipMethod, farProof.geographicOwnershipMethod, 'LP044 ownership changes identically with active community');
 assert.strictEqual(farLp044.currentRejectionReason, farProof.ineligibilityReasons.join('; '), 'LP044 rejection reason changes identically with active community');
+
+assert.strictEqual(farLp044.globallyRelevant, true, 'LP044 keeps global relevance true when the active community is not intersected');
+assert.strictEqual(farLp044.activeConsumerVisible, false, 'LP044 active visibility is false for a non-intersected active community');
+assert.strictEqual(farLp044.activeAwarenessIntersectsRecord, false, 'LP044 identifies that the current active awareness does not intersect the record');
+assert.strictEqual(farLp044.visibleForIntersectedCommunity, true, 'LP044 still reports that the record is visible under an appropriate intersected community selection');
+assert.notStrictEqual(farLp044.discrepancyClassification, 'GEOGRAPHICALLY_RELEVANT_BUT_NOT_VISIBLE', 'runtime truth and LP044 inventory no longer contradict each other for inactive selections');
 assert.strictEqual(activeSandbox.gridlySelectDriveTexasAuthority({ records: [line], selectedAwarenessArea: null, nowMs }).recordProof[0].finalEligibility, false, 'LP039 does not use home-town fallback awareness when active awareness is explicitly unavailable');
 
 const lp039Source = fs.readFileSync('js/gridlyDriveTexasAuthoritySourceIntegration.js', 'utf8');
