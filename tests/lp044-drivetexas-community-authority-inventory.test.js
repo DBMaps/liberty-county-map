@@ -13,13 +13,13 @@ const counties = [
   { countyId: 'county-c', countyName: 'County C' }
 ];
 function line(id, coords, extra = {}) { return { sourceId: id, category: 'Crash', routeName: `Route ${id}`, geometry: { type: 'LineString', coordinates: coords }, ...extra }; }
-function multi(id) { return { sourceId: id, category: 'Construction', geometry: { type: 'MultiLineString', coordinates: [[[-95.0,30.0],[-94.99,30.0]],[[-94.88,30.0],[-94.87,30.0]]] } }; }
+function multi(id) { return { sourceId: id, category: 'Construction', geometry: { type: 'MultiLineString', coordinates: [[[-95.0, 30.0], [-94.99, 30.0]], [[-94.88, 30.0], [-94.87, 30.0]]] } }; }
 function point(id, lat, lng) { return { sourceId: id, category: 'Flooding', latitude: lat, longitude: lng, geometry: { type: 'Point', coordinates: [lng, lat] } }; }
 
 const records = [
-  line('001', [[-95.08,30],[-95.0,30],[-94.94,30],[-94.88,30]]),
+  line('001', [[-95.08, 30], [-95.0, 30], [-94.94, 30], [-94.88, 30]]),
   multi('002'),
-  line('003', [[-95.3,30],[-95.2,30]], { latitude: 30, longitude: -95.0 }),
+  line('003', [[-95.3, 30], [-95.2, 30]], { latitude: 30, longitude: -95.0 }),
   point('004', 31.5, -96.5),
   { sourceId: '005', category: 'Other' }
 ];
@@ -27,17 +27,61 @@ const productionSnapshot = { recordProof: [{ sourceId: '001', finalEligibility: 
 const result = build({ records, communities, counties, productionSnapshot });
 
 assert.strictEqual(result.records.length, records.length, 'every normalized record produces one row');
-assert.deepStrictEqual(result.records.map(r => r.sourceId), ['001','002','003','004','005'], 'output ordering is deterministic');
-assert(result.records.find(r => r.sourceId === '001').communityIdsIntersected.includes('alpha'), 'LineString uses complete segment geometry');
-assert(result.records.find(r => r.sourceId === '002').communityIdsIntersected.includes('gamma'), 'MultiLineString evaluates every component');
-assert.strictEqual(result.records.find(r => r.sourceId === '003').communityIntersectionCount, 0, 'midpoint/representative point alone does not assign community ownership when geometry exists');
-assert(result.records.find(r => r.sourceId === '001').crossesMultipleCommunities, 'one record can intersect multiple communities');
-assert(result.records.find(r => r.sourceId === '001').crossesMultipleCounties, 'one record can intersect multiple counties');
-assert(result.records.find(r => r.sourceId === '003').nearestCommunityId, 'nearest community is retained as informational evidence');
-assert(!result.records.find(r => r.sourceId === '003').insideGridlyCoverage, 'nearest community does not assign ownership');
+assert.strictEqual(result.completeRecordRows, result.records, 'records and completeRecordRows point to the same complete row array');
+assert.deepStrictEqual(result.records.map(r => r.sourceId), ['provider:001', 'provider:002', 'provider:003', 'provider:004', 'provider:005'], 'output ordering is deterministic after canonical identity resolution');
+assert(result.records.find(r => r.sourceId === 'provider:001').communityIdsIntersected.includes('alpha'), 'LineString uses complete segment geometry');
+assert(result.records.find(r => r.sourceId === 'provider:002').communityIdsIntersected.includes('gamma'), 'MultiLineString evaluates every component');
+assert.strictEqual(result.records.find(r => r.sourceId === 'provider:003').communityIntersectionCount, 0, 'midpoint/representative point alone does not assign community ownership when geometry exists');
+assert(result.records.find(r => r.sourceId === 'provider:001').crossesMultipleCommunities, 'one record can intersect multiple communities');
+assert(result.records.find(r => r.sourceId === 'provider:001').crossesMultipleCounties, 'one record can intersect multiple counties');
+assert(result.records.find(r => r.sourceId === 'provider:003').nearestCommunityId, 'nearest community is retained as informational evidence');
+assert(!result.records.find(r => r.sourceId === 'provider:003').insideGridlyCoverage, 'nearest community does not assign ownership');
 assert(result.communitySummaries.some(s => s.communityId === 'zero' && s.intersectingDriveTexasRecordCount === 0), 'communities with zero records remain in summary');
-assert.strictEqual(result.records.find(r => r.sourceId === '001').discrepancyClassification, 'GEOGRAPHICALLY_RELEVANT_BUT_NOT_VISIBLE', 'current LP039 visibility discrepancies are classified');
+assert.strictEqual(result.records.find(r => r.sourceId === 'provider:001').discrepancyClassification, 'GEOGRAPHICALLY_RELEVANT_BUT_NOT_VISIBLE', 'current LP039 visibility discrepancies are classified');
 assert.strictEqual(result.noFetches && result.noPolling && result.noWrites && result.noStorageWrites && result.noMapMovement, true, 'helper contract is passive');
+assert.deepStrictEqual(Object.keys(result.registryStatus).sort(), ['communityCount', 'communityRegistryAvailable', 'countyCount', 'countyRegistryAvailable', 'recordCount', 'recordSourceAvailable'].sort(), 'registryStatus exposes required availability contract');
+
+const manyUuidRecords = Array.from({ length: 250 }, (_, index) => ({ sourceMetadata: { GLOBALID: `550e8400-e29b-41d4-a716-${String(index).padStart(12, '0')}` }, category: 'Crash', latitude: 30, longitude: -95 }));
+const manyResult = build({ records: manyUuidRecords, communities, counties });
+assert.strictEqual(manyResult.recordCount, manyUuidRecords.length, 'hundreds of UUID records are preserved');
+assert.strictEqual(manyResult.uniqueSourceIdCount, manyUuidRecords.length, 'hundreds of UUID records remain unique through nested provider identity');
+assert.strictEqual(manyResult.duplicateSourceIdInstances.length, 0, 'unique UUID records are not classified as duplicates');
+
+const missingIdentity = build({ records: [
+  { category: 'Crash', headline: 'A', routeName: 'One', latitude: 30.01, longitude: -95.01 },
+  { category: 'Crash', headline: 'B', routeName: 'Two', latitude: 30.02, longitude: -95.02 }
+], communities, counties });
+assert.strictEqual(missingIdentity.uniqueSourceIdCount, 2, 'missing preferred source ID fields do not collapse unrelated records');
+assert(missingIdentity.records.every(r => r.dataQualityFlags.includes('missing_source_identity')), 'missing preferred source identity is explicitly flagged');
+
+const duplicateIdentity = build({ records: [line('repeat', [[-95, 30], [-94.99, 30]]), line('repeat', [[-95, 30], [-94.99, 30]])], communities, counties });
+assert.strictEqual(duplicateIdentity.uniqueSourceIdCount, 1, 'genuinely repeated canonical identities share one identity');
+assert.strictEqual(duplicateIdentity.duplicateSourceIdInstances.length, 2, 'duplicate classification applies only after canonical identity resolution');
+
+const eventIdentity = build({ records: [{ event_id: 'evt-1', sourceId: 'src-1', globalId: 'gid-1' }], communities, counties });
+assert.strictEqual(eventIdentity.records[0].sourceId, 'event:evt-1', 'canonical identity precedence matches the DriveTexas authority event-id-first contract');
+assert.strictEqual(eventIdentity.records[0].sourceIdentityMethod, 'event_id', 'identity method records production authority contract');
+
+const oldGlobal = {
+  gridlyGetCountyGroupedAwarenessOptions: globalThis.gridlyGetCountyGroupedAwarenessOptions,
+  resolveGridlyAwarenessArea: globalThis.resolveGridlyAwarenessArea
+};
+globalThis.gridlyGetCountyGroupedAwarenessOptions = () => [{ countyLabel: 'Runtime County', countyId: 'runtime-county', countyValue: 'runtime-county', communities: [{ key: 'runtime-alpha', label: 'Runtime Alpha', value: 'Runtime Alpha' }, { key: 'runtime-zero', label: 'Runtime Zero', value: 'Runtime Zero' }, { key: 'runtime-countywide', label: 'Countywide awareness', value: 'Runtime County', countyWide: true }] }];
+globalThis.resolveGridlyAwarenessArea = (value) => value === 'Runtime Alpha'
+  ? { key: 'runtime-alpha', label: 'Runtime Alpha', countyId: 'runtime-county', lat: 30, lng: -95, radiusMiles: 5 }
+  : { key: 'runtime-zero', label: 'Runtime Zero', countyId: 'runtime-county', lat: 32, lng: -97, radiusMiles: 5 };
+const registryResult = build({ records: [point('runtime-1', 30, -95)], counties: [{ countyId: 'runtime-county', countyName: 'Runtime County' }] });
+assert.strictEqual(registryResult.registryStatus.communityRegistryAvailable, true, 'runtime Gridly community registry is available');
+assert.strictEqual(registryResult.communitySummaries.length, 2, 'real Gridly community registry produces non-empty community summaries without countywide placeholders');
+assert(registryResult.communitySummaries.some(s => s.communityId === 'runtime-zero' && s.intersectingDriveTexasRecordCount === 0), 'every configured runtime community appears, including zero-record communities');
+globalThis.gridlyGetCountyGroupedAwarenessOptions = oldGlobal.gridlyGetCountyGroupedAwarenessOptions;
+globalThis.resolveGridlyAwarenessArea = oldGlobal.resolveGridlyAwarenessArea;
+
+const registryFailure = build({ records: [point('failure-1', 30, -95)], counties });
+assert.strictEqual(registryFailure.registryStatus.communityRegistryAvailable, false, 'community registry failure is reported explicitly');
+assert.strictEqual(registryFailure.coverageCounts.outsideGridlyCoverage, 0, 'registry failure does not classify every record as outside coverage');
+assert.strictEqual(registryFailure.coverageCounts.registryUnavailable, 1, 'registry failure has a separate coverage state');
+assert.strictEqual(registryFailure.communitySummaries.length, 0, 'unavailable registry does not produce authoritative-looking pseudo-community summaries');
 
 const source = require('fs').readFileSync(require('path').join(__dirname, '../js/gridlyLp044DriveTexasCommunityAuthorityInventory.js'), 'utf8');
 assert(!/Houston|Dayton|Harris|Liberty|US\s*90|I-?10|I-?45|740|739/.test(source), 'implementation does not hardcode prohibited places, routes, or record counts');
