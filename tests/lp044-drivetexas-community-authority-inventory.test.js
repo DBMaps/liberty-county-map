@@ -26,6 +26,13 @@ const records = [
 const productionSnapshot = { recordProof: [{ sourceId: '001', finalEligibility: false, geographicOwnershipMethod: 'not_established', ineligibilityReasons: ['example'] }], consumerEligibleSituations: [] };
 const result = build({ records, communities, counties, productionSnapshot });
 
+function countRows(rows, predicate) { return rows.filter(predicate).length; }
+function expectedCoverage(rows) { return { insideGridlyCoverage: countRows(rows, r => r.insideGridlyCoverage === true), outsideGridlyCoverage: countRows(rows, r => r.geographicStatus === 'outside_gridly_coverage'), geographicallyUnresolved: countRows(rows, r => r.geographicStatus === 'geographically_unresolved'), malformed: countRows(rows, r => r.geographicStatus === 'malformed'), registryUnavailable: countRows(rows, r => r.geographicStatus === 'registry_unavailable') }; }
+function expectedDiscrepancyCounts(rows) { return rows.reduce((m, r) => { if (r.discrepancyClassification) m[r.discrepancyClassification] = (m[r.discrepancyClassification] || 0) + 1; return m; }, {}); }
+function expectedProductionDiscrepancies(rows) { return rows.filter(r => r.discrepancyClassification).map(r => ({ sourceId: r.sourceId, route: r.routeName, category: r.category, groundTruthCounties: r.countyNamesIntersected, groundTruthCommunities: r.communityNamesIntersected, currentOwnershipMethod: r.currentOwnershipMethod, currentEligibility: r.currentLp039Eligibility, currentRejectionReason: r.currentRejectionReason, classification: r.discrepancyClassification, firstProductionStageWhereCorrectGeographicRelationshipIsLost: r.firstProductionStageWhereLost })); }
+function expectedCommunitySummaries(rows, defs) { return defs.map(cm => { const hits = rows.filter(r => r.communityIdsIntersected.includes(cm.key)); return { county: cm.countyName || null, community: cm.label, communityId: cm.key, intersectingDriveTexasRecordCount: hits.length, pointAuthorityRecordCount: countRows(hits, r => r.geometryType === 'Point' || r.geographicResolutionMethod.includes('point')), lineStringAuthorityRecordCount: countRows(hits, r => r.geometryType === 'LineString'), multiLineStringAuthorityRecordCount: countRows(hits, r => r.geometryType === 'MultiLineString'), currentlyConsumerVisibleCount: countRows(hits, r => r.currentConsumerVisible === true), currentlyExcludedCount: countRows(hits, r => r.currentConsumerVisible !== true), categoriesRepresented: [...new Set(hits.map(r => r.category).filter(Boolean))].sort(), routesRepresented: [...new Set(hits.map(r => r.routeName).filter(Boolean))].sort(), sampleSourceIds: hits.slice(0, 10).map(r => r.sourceId) }; }); }
+function expectedCountySummaries(rows, countyDefs, communityDefs, communitySummaries) { return countyDefs.map(cy => { const hits = rows.filter(r => r.countyIdsIntersected.includes(cy.countyId)); return { countyId: cy.countyId, countyName: cy.countyName, registryAvailable: true, intersectingDriveTexasRecordCount: hits.length, recordsAssignedByGeometry: countRows(hits, r => r.geographicResolutionMethod === 'trusted_complete_roadway_geometry'), recordsAssignedByPointFallback: countRows(hits, r => r.geographicResolutionMethod === 'trusted_representative_point_fallback'), multiCountyRecordCount: countRows(hits, r => r.crossesMultipleCounties === true), currentlyConsumerVisibleCount: countRows(hits, r => r.currentConsumerVisible === true), currentlyExcludedCount: countRows(hits, r => r.currentConsumerVisible !== true), categoryCounts: hits.reduce((m, r) => (m[r.category || 'unavailable'] = (m[r.category || 'unavailable'] || 0) + 1, m), {}), communityCoverageCount: communitySummaries.filter(s => communityDefs.find(cm => cm.key === s.communityId)?.countyId === cy.countyId && s.intersectingDriveTexasRecordCount > 0).length, unresolvedRecordCount: countRows(hits, r => r.geographicStatus === 'geographically_unresolved') }; }); }
+
 assert.strictEqual(result.records.length, records.length, 'every normalized record produces one row');
 assert.strictEqual(result.completeRecordRows, result.records, 'records and completeRecordRows point to the same complete row array');
 assert.deepStrictEqual(result.records.map(r => r.sourceId), ['provider:001', 'provider:002', 'provider:003', 'provider:004', 'provider:005'], 'output ordering is deterministic after canonical identity resolution');
@@ -40,6 +47,22 @@ assert(result.communitySummaries.some(s => s.communityId === 'zero' && s.interse
 assert.strictEqual(result.records.find(r => r.sourceId === 'provider:001').discrepancyClassification, 'GEOGRAPHICALLY_RELEVANT_BUT_NOT_VISIBLE', 'current LP039 visibility discrepancies are classified');
 assert.strictEqual(result.noFetches && result.noPolling && result.noWrites && result.noStorageWrites && result.noMapMovement, true, 'helper contract is passive');
 assert.deepStrictEqual(Object.keys(result.registryStatus).sort(), ['communityCount', 'communityRegistryAvailable', 'countyCount', 'countyRegistryAvailable', 'recordCount', 'recordSourceAvailable'].sort(), 'registryStatus exposes required availability contract');
+assert.deepStrictEqual(result.coverageCounts, expectedCoverage(result.records), 'coverageCounts are reproduced exactly by filtering records');
+assert.deepStrictEqual(result.discrepancyCounts, expectedDiscrepancyCounts(result.records), 'discrepancyCounts are reproduced exactly by filtering records');
+assert.deepStrictEqual(result.productionDiscrepancies, expectedProductionDiscrepancies(result.records), 'productionDiscrepancies is exactly the discrepancy row filter projection');
+assert.deepStrictEqual(result.communitySummaries, expectedCommunitySummaries(result.records, communities), 'community summaries are reproduced exactly by grouping records');
+assert.deepStrictEqual(result.countySummaries, expectedCountySummaries(result.records, counties, communities, result.communitySummaries), 'county summaries are reproduced exactly by grouping records');
+
+const mutable = build({ records: [point('mutable-1', 30, -95)], communities, counties, productionSnapshot: { consumerEligibleSituations: [point('mutable-1', 30, -95)] } });
+assert.strictEqual(mutable.records, mutable.completeRecordRows, 'authoritative record aliases share object identity before mutation');
+assert.strictEqual(mutable.coverageCounts.insideGridlyCoverage, 1, 'mutation fixture starts inside coverage');
+assert.strictEqual(mutable.communitySummaries.find(s => s.communityId === 'alpha').currentlyConsumerVisibleCount, 1, 'mutation fixture starts visible in community summary');
+mutable.records[0].insideGridlyCoverage = false;
+mutable.records[0].currentConsumerVisible = false;
+mutable.records[0].discrepancyClassification = null;
+assert.deepStrictEqual(mutable.coverageCounts, expectedCoverage(mutable.records), 'coverage getter follows authoritative row mutations');
+assert.deepStrictEqual(mutable.discrepancyCounts, expectedDiscrepancyCounts(mutable.records), 'discrepancy getter follows authoritative row mutations');
+assert.deepStrictEqual(mutable.communitySummaries, expectedCommunitySummaries(mutable.records, communities), 'community summary getter follows authoritative row mutations');
 
 const manyUuidRecords = Array.from({ length: 250 }, (_, index) => ({ sourceMetadata: { GLOBALID: `550e8400-e29b-41d4-a716-${String(index).padStart(12, '0')}` }, category: 'Crash', latitude: 30, longitude: -95 }));
 const manyResult = build({ records: manyUuidRecords, communities, counties });
@@ -85,4 +108,5 @@ assert.strictEqual(registryFailure.communitySummaries.length, 0, 'unavailable re
 
 const source = require('fs').readFileSync(require('path').join(__dirname, '../js/gridlyLp044DriveTexasCommunityAuthorityInventory.js'), 'utf8');
 assert(!/Houston|Dayton|Harris|Liberty|US\s*90|I-?10|I-?45|740|739/.test(source), 'implementation does not hardcode prohibited places, routes, or record counts');
+assert(!/const\s+(coverageCounts|discrepancyCounts|countySummaries|communitySummaries|productionDiscrepancies)\s*=/.test(source), 'derived LP044 outputs are not materialized through a second aggregation path');
 console.log('LP044 DriveTexas community authority inventory tests passed');
