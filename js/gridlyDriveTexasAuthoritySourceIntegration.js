@@ -146,8 +146,11 @@
 
   function validSourcePair(pair) {
     if (!Array.isArray(pair) || pair.length < 2) return null;
-    const longitude = num(pair[0]), latitude = num(pair[1]);
-    return Number.isFinite(longitude) && Number.isFinite(latitude) ? [longitude, latitude] : null;
+    const first = num(pair[0]), second = num(pair[1]);
+    if (!Number.isFinite(first) || !Number.isFinite(second)) return null;
+    if (inTexas(second, first)) return [first, second];
+    if (inTexas(first, second)) return [second, first];
+    return [first, second];
   }
   function geometryBounds(geometry) {
     const pairs = []; iterateGeometrySegments(geometry, (a, b) => { pairs.push(a, b); });
@@ -176,8 +179,9 @@
     if (g.type === "LineString") arr(g.coordinates).slice(0, -1).forEach((p, i) => fn(p, g.coordinates[i + 1], 0, i));
     if (g.type === "MultiLineString") arr(g.coordinates).forEach((line, memberIndex) => arr(line).slice(0, -1).forEach((p, i) => fn(p, line[i + 1], memberIndex, i)));
   }
-  function awarenessBounds(anchor) { const latMiles = 69, lngMiles = Math.max(1, 69 * Math.cos(anchor.lat * Math.PI / 180)); return { minLatitude: anchor.lat - anchor.radiusMiles / latMiles, maxLatitude: anchor.lat + anchor.radiusMiles / latMiles, minLongitude: anchor.lng - anchor.radiusMiles / lngMiles, maxLongitude: anchor.lng + anchor.radiusMiles / lngMiles }; }
-  function boundsOverlap(a, b) { return a && b && a.minLatitude <= b.maxLatitude && a.maxLatitude >= b.minLatitude && a.minLongitude <= b.maxLongitude && a.maxLongitude >= b.minLongitude; }
+  function finiteBounds(bounds) { return bounds && [bounds.minLatitude, bounds.maxLatitude, bounds.minLongitude, bounds.maxLongitude].every(Number.isFinite); }
+  function awarenessBounds(anchor) { const latMiles = 69, lngMiles = Math.max(1, Math.abs(69 * Math.cos(anchor.lat * Math.PI / 180))); return { minLatitude: anchor.lat - anchor.radiusMiles / latMiles, maxLatitude: anchor.lat + anchor.radiusMiles / latMiles, minLongitude: anchor.lng - anchor.radiusMiles / lngMiles, maxLongitude: anchor.lng + anchor.radiusMiles / lngMiles }; }
+  function boundsOverlap(a, b) { return finiteBounds(a) && finiteBounds(b) && a.minLatitude <= b.maxLatitude && a.maxLatitude >= b.minLatitude && a.minLongitude <= b.maxLongitude && a.maxLongitude >= b.minLongitude; }
   function pointSegmentDistanceMiles(anchor, a, b) {
     const latMiles = 69, lngMiles = Math.max(1, 69 * Math.cos(anchor.lat * Math.PI / 180));
     const ax = (a[0] - anchor.lng) * lngMiles, ay = (a[1] - anchor.lat) * latMiles, bx = (b[0] - anchor.lng) * lngMiles, by = (b[1] - anchor.lat) * latMiles;
@@ -188,11 +192,13 @@
   }
   function geometryIntersectionProof(geometry, anchor) {
     const valid = cloneTrustedAuthorityGeometry(geometry);
-    const stats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0 };
+    const stats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
     if (!valid || !anchor.valid || valid.type === "Point") return { valid: Boolean(valid), intersects: false, closestDistanceMiles: null, geometryType: valid?.type || null, stats };
     stats.geometryRecordsEvaluated = 1;
     const gb = geometryBounds(valid), ab = awarenessBounds(anchor);
-    if (!boundsOverlap(gb, ab)) { stats.boundingBoxRejects = 1; return { valid: true, intersects: false, closestDistanceMiles: null, geometryType: valid.type, boundsRejected: true, stats }; }
+    stats.boundingBoxesCreated = finiteBounds(gb) && finiteBounds(ab) ? 1 : 0;
+    if (!boundsOverlap(gb, ab)) { stats.boundingBoxRejects = 1; return { valid: true, intersects: false, closestDistanceMiles: null, geometryType: valid.type, boundsRejected: true, geometryBounds: gb, awarenessBounds: ab, stats }; }
+    stats.boundingBoxesPassed = 1;
     let closest = Infinity, bestMemberIndex = null, bestSegmentIndex = null;
     iterateGeometrySegments(valid, (a, b, memberIndex, segmentIndex) => {
       if (closest <= anchor.radiusMiles) return;
@@ -201,8 +207,10 @@
       if (d < closest) { closest = d; bestMemberIndex = memberIndex; bestSegmentIndex = segmentIndex; }
     });
     const intersects = closest <= anchor.radiusMiles;
+    const roundedClosest = Number.isFinite(closest) ? Number(closest.toFixed(3)) : null;
+    stats.closestGeometryDistanceMiles = roundedClosest;
     if (intersects) stats.intersectionsFound = 1;
-    return { valid: true, intersects, closestDistanceMiles: Number.isFinite(closest) ? Number(closest.toFixed(3)) : null, geometryType: valid.type, bestMemberIndex, bestSegmentIndex, stats };
+    return { valid: true, intersects, closestDistanceMiles: roundedClosest, geometryType: valid.type, bestMemberIndex, bestSegmentIndex, boundsRejected: false, geometryBounds: gb, awarenessBounds: ab, stats };
   }
 
   function freshnessTimestamp(record) { return first(record || {}, FIELD_MAP.updateTime) || first(record || {}, FIELD_MAP.startTime) || first(record || {}, FIELD_MAP.endTime) || first(record || {}, FIELD_MAP.expirationTime) || null; }
@@ -226,7 +234,7 @@
   function buildEligibilityProof(records, input, authority) {
     const area = selectedArea(input) || authority?.selectedAwarenessArea || null, anchor = selectedAnchor(area);
     const seen = new Set();
-    const geometryStats = input.__lp043GeometryEvaluationStats || { recordsEvaluated: 0, geometryRecordsEvaluated: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0 };
+    const geometryStats = input.__lp043GeometryEvaluationStats || { recordsEvaluated: 0, geometryRecordsEvaluated: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
     return arr(records).map((record, index) => {
       const id = record.authorityIdentity || identityFor(record, index).id, duplicate = seen.has(id); seen.add(id);
       const cp = coordinateProof(record), distance = cp.valid && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude) : null;
@@ -234,9 +242,12 @@
       const geometryProof = !inside && anchor.valid ? geometryIntersectionProof(record.sourceGeometry, anchor) : { valid: Boolean(record.sourceGeometryValid), intersects: false, closestDistanceMiles: null, geometryType: record.sourceGeometryType || null, stats: {} };
       geometryStats.recordsEvaluated += 1;
       geometryStats.geometryRecordsEvaluated += geometryProof.stats?.geometryRecordsEvaluated || 0;
+      geometryStats.boundingBoxesCreated += geometryProof.stats?.boundingBoxesCreated || 0;
+      geometryStats.boundingBoxesPassed += geometryProof.stats?.boundingBoxesPassed || 0;
       geometryStats.segmentsEvaluated += geometryProof.stats?.segmentsEvaluated || 0;
       geometryStats.boundingBoxRejects += geometryProof.stats?.boundingBoxRejects || 0;
       geometryStats.intersectionsFound += geometryProof.stats?.intersectionsFound || 0;
+      if (Number.isFinite(geometryProof.closestDistanceMiles) && (!Number.isFinite(geometryStats.closestGeometryDistanceMiles) || geometryProof.closestDistanceMiles < geometryStats.closestGeometryDistanceMiles)) geometryStats.closestGeometryDistanceMiles = geometryProof.closestDistanceMiles;
       const geometryInside = geometryProof.intersects === true;
       const geographicOwned = inside || geometryInside;
       const ownershipMethod = inside ? "valid_source_point_inside_awareness_radius_miles" : (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established");
@@ -285,7 +296,7 @@
     const baseInput = Object.assign({}, input, source, { records: adapted.records, providerAvailable: source.providerAvailable, connectorAvailable: source.connectorAvailable, fetchFailed: source.fetchFailed });
     const authorityBase = (typeof previousSelector === "function" ? previousSelector(baseInput) : { consumerEligibleSituations: [] });
     const geometryEvaluationStarted = Date.now();
-    const geometryEvaluationStats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0 };
+    const geometryEvaluationStats = { recordsEvaluated: 0, geometryRecordsEvaluated: 0, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: 0, closestGeometryDistanceMiles: null };
     const recordProof = buildEligibilityProof(adapted.records, Object.assign({}, baseInput, { __lp043GeometryEvaluationStats: geometryEvaluationStats }), authorityBase);
     geometryEvaluationStats.durationMs = Date.now() - geometryEvaluationStarted;
     const eligibleRecordProof = recordProof.filter((p) => p.finalEligibility);
@@ -541,7 +552,7 @@
       normalizedSourceCount: authority.normalizedRecordCount || records.length, recordsWithTrustedGeometry: records.filter((r) => r.sourceGeometryValid === true).length, geometryTypeCounts, recordsWithValidPoint: proof.filter((p) => p.coordinateValidity === "valid_texas_point").length,
       authorityEligibleCount: authority.authorityEligibleRecordCount || 0, pointQualifiedCount: proof.filter((p) => p.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles" && p.finalEligibility).length, geometryQualifiedCount: proof.filter((p) => p.geographicOwnershipMethod === "trusted_source_geometry_intersects_awareness_radius" && p.finalEligibility).length, rejectedGeographicallyCount: proof.filter((p) => arr(p.ineligibilityReasons).includes("outside_awareness_radius_miles")).length, ownershipMethodCounts,
       selectedAwarenessGeometry: freeze({ method: "center_point_radius", anchor: anchor.valid ? freeze({ latitude: anchor.lat, longitude: anchor.lng }) : null, radiusMiles: anchor.radiusMiles }),
-      geometryEvaluation: authority.geometryEvaluation || freeze({ recordsEvaluated: proof.length, geometryRecordsEvaluated: proof.filter((p) => p.sourceGeometryValid).length, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: proof.filter((p) => p.sourceGeometryIntersectsSelectedAwareness).length, durationMs: null }),
+      geometryEvaluation: authority.geometryEvaluation || freeze({ recordsEvaluated: proof.length, geometryRecordsEvaluated: proof.filter((p) => p.sourceGeometryValid).length, boundingBoxesCreated: 0, boundingBoxesPassed: 0, segmentsEvaluated: 0, boundingBoxRejects: 0, intersectionsFound: proof.filter((p) => p.sourceGeometryIntersectsSelectedAwareness).length, durationMs: null }),
       us90Diagnostic: freeze({ candidateCount: routeDiagnostics.length, pointQualifiedCount: routeDiagnostics.filter((x) => x.p.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles" && x.p.finalEligibility).length, geometryQualifiedCount: routeDiagnostics.filter((x) => x.p.geographicOwnershipMethod === "trusted_source_geometry_intersects_awareness_radius" && x.p.finalEligibility).length, consumerVisibleCount: arr(consumer.consumerVisibleSituations).filter((s) => /us\s*90/i.test(text(s.routeName || s.roadway || s.headline || s.description))).length, candidateRecords: freeze(routeDiagnostics.slice(0, 25).map((x) => freeze({ sourceId: x.r.sourceId || x.r.providerId || x.r.id || null, routeName: x.r.routeName || x.r.roadway || null, sourceGeometryType: x.r.sourceGeometryType || null, geographicOwnershipMethod: x.p.geographicOwnershipMethod || "not_established", finalEligibility: x.p.finalEligibility === true, closestGeometryDistanceToAwarenessMiles: x.p.closestGeometryDistanceToAwarenessMiles ?? null }))) }),
       consumerProjection: freeze({ inputCount: arr(authority.consumerEligibleSituations).length, visibleCount: consumer.consumerVisibleSituationCount || 0, markerCount: arr(consumer.markerInputSituations).length, alertRowCount: arr(consumer.alertInputSituations).length, travelBriefCount: arr(consumer.travelBriefInputSituations).length, quietStateActive: !consumer.consumerVisibleSituationCount }),
       switchingSafety: freeze({ recalculatesFromActiveAwareness: true, staleGeometryQualifiedResultsRetained: false, duplicateSituationCount: authority.duplicateRecordCount || 0 }),
