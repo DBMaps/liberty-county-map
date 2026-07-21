@@ -121,4 +121,37 @@ assert.strictEqual(bulkAudit.nearestGeometryCandidates.length, 25, 'LP043 neares
 assert(bulkAudit.nearestGeometryCandidates.every((candidate, index, list) => index === 0 || list[index - 1].nearestGeometryDistanceMiles <= candidate.nearestGeometryDistanceMiles), 'LP043 nearest geometry candidates are sorted by distance');
 assert.strictEqual(bulkAudit.nearestGeometryCandidates[0].sourceId, 'bulk-0', 'LP043 nearest geometry sorting ignores provider order');
 assert(bulkAudit.nearestGeometryDistanceBuckets.within10Miles >= 10, 'LP043 distance buckets count nearby preserved geometries');
+
+assert.strictEqual(typeof sandbox.gridlyLp043TraceSingleAuthorityRecord, 'function', 'LP043 single-record trace helper exists');
+sandbox.getGridlySelectedAwarenessArea = () => dayton;
+sandbox.gridlyDriveTexasConnector = { getAllNormalizedRecords: () => [crossing, outsideLineResult.records?.[0] || rec('outside-line-regression', { sourceGeometry: { type: 'LineString', coordinates: [[-94.2, 30.6], [-94.1, 30.7]] } })], getNormalizedRecords: () => [] };
+const trace = sandbox.gridlyLp043TraceSingleAuthorityRecord('crossing');
+assert.strictEqual(trace.passive, true, 'single-record trace is passive');
+assert.strictEqual(trace.noFetches, true, 'single-record trace performs no fetches');
+assert.strictEqual(trace.noWrites, true, 'single-record trace performs no writes');
+assert.strictEqual(trace.noMapMovement, true, 'single-record trace performs no map movement');
+assert.strictEqual(trace.sourceId, 'crossing', 'single-record trace uses the real source id');
+assert.strictEqual(trace.providerNormalization.entered, true, 'single-record trace enters provider normalization stage from loaded record');
+assert.strictEqual(trace.lp0392Adaptation.entered, true, 'single-record trace enters LP039.2 adaptation stage');
+assert.strictEqual(trace.buildEligibilityProof.entered, true, 'single-record trace enters buildEligibilityProof');
+assert.strictEqual(trace.pointContainment.entered, true, 'single-record trace enters point containment');
+assert.strictEqual(trace.pointQualified, false, 'fixture trace is not point-qualified');
+assert.strictEqual(trace.geometryAvailable, true, 'fixture trace sees geometry availability');
+assert.strictEqual(trace.geometryValid, true, 'fixture trace validates geometry');
+assert.strictEqual(trace.boundingBoxExecuted, true, 'fixture trace executes bounding-box precheck');
+assert.strictEqual(trace.boundingBoxPassed, true, 'fixture trace passes bounding-box precheck');
+assert.strictEqual(trace.segmentLoopEntered, true, 'fixture trace enters segment loop');
+assert.strictEqual(trace.segmentCount, 1, 'fixture trace evaluates one segment before intersection acceptance');
+assert.strictEqual(trace.closestDistance, 0, 'fixture trace reports exact closest distance');
+assert.strictEqual(trace.intersection, true, 'fixture trace reports intersection');
+assert.strictEqual(trace.ownershipMethod, 'trusted_source_geometry_intersects_awareness_radius', 'fixture trace reports authority ownership method');
+assert.strictEqual(trace.finalEligibility, true, 'fixture trace reports final eligibility');
+assert.strictEqual(trace.consumerVisible, true, 'fixture trace reports consumer visibility');
+assert.strictEqual(trace.exit.condition, 'const ownershipMethod = inside ? "valid_source_point_inside_awareness_radius_miles" : (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established");', 'fixture trace reports exact ownership branch');
+const outsideTrace = sandbox.gridlyLp043TraceSingleAuthorityRecord('outside-line-regression');
+assert.strictEqual(outsideTrace.boundingBoxExecuted, true, 'outside trace executes bounding-box precheck');
+assert.strictEqual(outsideTrace.boundingBoxPassed, false, 'outside trace fails broad phase');
+assert.strictEqual(outsideTrace.segmentLoopEntered, false, 'outside trace exits before segment loop');
+assert.strictEqual(outsideTrace.exit.condition, 'if (!overallOverlap) { stats.boundingBoxRejects = 1; return { valid: true, intersects: false, closestDistanceMiles: null, geometryType: valid.type, boundsRejected: true, geometryBounds: gb, awarenessBounds: ab, stats }; }', 'outside trace reports exact bounding-box exit statement');
+
 console.log('LP043 DriveTexas geometry preservation and authority repair checks passed');
