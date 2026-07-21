@@ -14,7 +14,7 @@ assert(app.includes('focusPulseApplied'), 'marker focus and pulse remain unchang
 assert(app.includes('gridlyBuildTravelBriefModel'), 'Travel Brief ownership remains unchanged');
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains unchanged');
 
-const normalizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
+const normalizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerNormalizeRouteIdentifier'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const detectionSource = app.match(/function gridlyLp0456OfficialSourceDetection[\s\S]*?function gridlyLp0456IsOfficialDriveTexasRecord[\s\S]*?\n}\n/)[0];
 const context = { String, RegExp };
 vm.createContext(context);
@@ -48,7 +48,7 @@ assert.strictEqual(context.gridlyLp0456IsOfficialDriveTexasRecord(roadClosedLive
 const constructionDisplaySubtitle = context.gridlyNormalizeOfficialConsumerLanguage(constructionLiveRecord.sourceLocationDescription, { record: constructionLiveRecord });
 assert.strictEqual(constructionDisplaySubtitle, 'US 59 main lanes remain open. Crews are installing a cable median barrier.', 'Construction live-shaped text becomes consumer-friendly');
 const roadClosedDisplaySubtitle = context.gridlyNormalizeOfficialConsumerLanguage(roadClosedLiveRecord.providerDescription, { record: roadClosedLiveRecord });
-assert.strictEqual(roadClosedDisplaySubtitle, 'Alternating lane closures on US 59. Expect delays. Crews are installing a cable median barrier.', 'Road Closed live-shaped text becomes consumer-friendly');
+assert.strictEqual(roadClosedDisplaySubtitle, 'Alternating lane closures on US 59. Expect delays while crews install a cable median barrier.', 'Road Closed live-shaped text becomes consumer-friendly');
 
 for (const value of [constructionDisplaySubtitle, roadClosedDisplaySubtitle]) {
   assert(!/<\s*br\s*\/?\s*>|&lt;\s*br\s*\/?\s*&gt;/i.test(value), 'no literal or escaped break tags remain');

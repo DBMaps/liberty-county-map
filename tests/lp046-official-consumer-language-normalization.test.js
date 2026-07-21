@@ -3,7 +3,7 @@ const fs = require('fs');
 const vm = require('vm');
 
 const app = fs.readFileSync('js/app.js', 'utf8');
-const normalizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
+const normalizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerNormalizeRouteIdentifier'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const popupSource = app.match(/function gridlyLp0393ConsumerDriveTexasPopupHtml[\s\S]*?\n}\n/)?.[0] || '';
 
 assert(app.includes('function gridlyNormalizeOfficialConsumerLanguage'), 'reusable LP046 official consumer-language normalizer exists');
@@ -23,6 +23,33 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(`${normalizerSource}\n${popupSource}`, context);
+
+
+assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US0059', {}), 'US 59.', 'compact US route IDs are expanded');
+assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US 0059', {}), 'US 59.', 'zero-padded US route IDs are normalized');
+assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US 59', {}), 'US 59.', 'valid US route IDs remain stable');
+assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('FM 1960', {}), 'FM 1960.', 'valid FM route IDs remain stable');
+assert.strictEqual(
+  context.gridlyNormalizeOfficialConsumerLanguage('FOR THE CONSTRUCTION OF SAFETY IMPROVEMENT PROJECTS CONSISTING OF INSTALL CALE MEDIAN BARRIER.', { routeName: 'US0059' }),
+  'Crews are installing a cable median barrier.',
+  'known CALE median-barrier typo is repaired only through the official construction phrase'
+);
+assert.strictEqual(
+  context.gridlyNormalizeOfficialConsumerLanguage('CALE MEDIAN BARRIER near US0059.', { routeName: 'US0059' }),
+  'CALE MEDIAN BARRIER near US 59.',
+  'CALE typo is not corrected by broad spelling cleanup outside the known phrase'
+);
+assert.strictEqual(
+  context.gridlyNormalizeOfficialConsumerLanguage('US0059, Alternating lanes closed.<br/> Motorists should expect delays.<br/>FOR THE CONSTRUCTION OF SAFETY IMPROVEMENT PROJECTS CONSISTING OF INSTALL CALE MEDIAN BARRIER', { routeName: 'US0059' }),
+  'Alternating lane closures on US 59. Expect delays while crews install a cable median barrier.',
+  'Road Closed language uses concise final official wording'
+);
+assert.strictEqual(
+  context.gridlyNormalizeOfficialConsumerLanguage('US 0059, MAIN LANES not affected.<br/>Construction of safety improvement projects consisting of installing cable median barrier.', { routeName: 'US 0059' }),
+  'US 59 main lanes remain open. Crews are installing a cable median barrier.',
+  'Construction language uses final official wording'
+);
+assert(!/US0059|CALE MEDIAN BARRIER|CONSISTING OF INSTALL|<br|&lt;br|\.\./.test(context.gridlyNormalizeOfficialConsumerLanguage('US0059, Alternating lanes closed.<br/> Motorists should expect delays.<br/>FOR THE CONSTRUCTION OF SAFETY IMPROVEMENT PROJECTS CONSISTING OF INSTALL CALE MEDIAN BARRIER', { routeName: 'US0059' })), 'remaining raw provider artifacts are absent');
 
 const construction = context.gridlyNormalizeOfficialConsumerLanguage(
   'US 59, MAIN LANES not affected.<br/><br/>FOR THE CONSTRUCTION OF safety improvement projects consisting of installing cable median barrier.',
