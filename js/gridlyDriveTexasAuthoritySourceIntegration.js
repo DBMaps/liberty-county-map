@@ -330,6 +330,111 @@
     return freeze({ milestone: CONSUMER_MILESTONE, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, foundationPresent: typeof previousSelector === "function", sourceIntegrationPresent: true, sourceEligibilityCertified: a.authorityEligibilityCertified === true, authoritySnapshotPresent: Boolean(snap), consumerSelectorPresent: true, consumerMigrationPerformed: true, consumerCountOwner: "gridlySelectConsumerVisibleDriveTexasSituations", rawProviderCountDiagnosticOnly: true, normalizedCountDiagnosticOnly: true, connectorRetainedCountDiagnosticOnly: true, connectorAwarenessCountDiagnosticOnly: true, officialSituationCountDiagnosticOnly: true, markerUsesAuthority: authorityToConsumer, markerPopupUsesAuthority: authorityToConsumer, alertPanelUsesAuthority: authorityToConsumer, awarenessBriefUsesAuthority: authorityToConsumer, communityPulseUsesAuthority: authorityToConsumer, travelBriefUsesAuthority: authorityToConsumer, knowBeforeYouGoUsesAuthority: authorityToConsumer, activeConditionsUseAuthority: authorityToConsumer, weatherUnaffected: true, crossingsUnaffected: true, communityReportsUnaffected: true, hazardsUnaffected: true, routeWatchUnaffected: true, countySummaryUsesAuthority: authorityToConsumer, communitySummaryUsesAuthority: authorityToConsumer, houstonParentUsesAuthority: authorityToConsumer, houstonChildRegionsUseAuthority: authorityToConsumer, pasadenaUsesAuthority: authorityToConsumer, springBranchUsesAuthority: authorityToConsumer, officialSituationConsumesAuthority: authorityToConsumer, officialSituationAuthorityOwner: false, legacyVisibleOwnersRemaining: 0, compatibilityBypassDetected: false, loadedRecordCount: a.rawRecordCount || 0, validCoordinateCount: proof.filter((p) => p.coordinateValidity === "valid_texas_point").length, insideSelectedAwarenessRadiusCount: proof.filter((p) => p.insideAwarenessRadius === true).length, lp0392EligibleRecordCount: eligible.length, lp0393ConsumerProjectionInputCount: c.lp0393ConsumerProjectionInputCount || 0, consumerProjectionExcludedCount: Math.max(0, (c.lp0393ConsumerProjectionInputCount || 0) - c.consumerVisibleSituationCount), consumerProjectionExclusionReasons: projectionExclusionReasons(a, c), nearestRecordDistanceMiles: distances.length ? Math.min(...distances) : null, nearestEligibleRecordDistanceMiles: eligibleDistances.length ? Math.min(...eligibleDistances) : null, firstAuthorityLossStage: loss, authoritySnapshotContextMatchesActiveSelection: contextMatches, authoritySnapshotRadiusMatchesSelection: radiusMatches, recordProofPreservedIntoConsumerSelector: c.recordProofPreservedIntoConsumerSelector === true, eligibleProofPreservedIntoConsumerSelector: c.eligibleProofPreservedIntoConsumerSelector === true, freshnessCountsReconciled: reconciled, authorityToConsumerCountReconciled: authorityToConsumer, daytonLiveAuthorityCertified: /dayton/i.test(text((snap.selectedAwarenessArea || {}).label || (snap.selectedAwarenessArea || {}).id)) ? eligible.length > 0 && contextMatches && radiusMatches : null, consumerVisibleSituationCount: c.consumerVisibleSituationCount, authorityEligibleRecordCount: a.authorityEligibleRecordCount || 0, uniqueSituationCount: c.uniqueSituationCount, markerCountFromAuthority: arr(c.markerInputSituations).length, alertRowCountFromAuthority: arr(c.alertInputSituations).length, travelBriefSituationCountFromAuthority: arr(c.travelBriefInputSituations).length, duplicateRecordCount: a.duplicateRecordCount || 0, activeRecordCount: a.activeRecordCount || 0, expiredRecordCount: a.expiredRecordCount || 0, staleRecordCount: a.staleRecordCount || 0, futureEffectiveRecordCount: a.futureEffectiveRecordCount || 0, missingTimestampRecordCount: a.missingTimestampRecordCount || 0, outsideAwarenessCount: proof.filter((p) => p.coordinateValidity === "valid_texas_point" && p.insideAwarenessRadius !== true).length, unprovenEligibleRecordCount: c.unprovenEligibleRecordCount, authorityEligibilityCertified: c.authorityEligibilityCertified, selectedAwarenessArea: c.selectedAwarenessArea, activeCounty: c.activeCounty, activeCommunity: c.activeCommunity, ownershipMethodCounts: a.ownershipMethodCounts || {}, roadwayOwnershipMethodCounts: a.roadwayOwnershipMethodCounts || {}, freshnessStatusCounts: a.freshnessStatusCounts || {}, identityMethodCounts: a.identityMethodCounts || {}, visibleCategoryCounts: c.visibleCategoryCounts, quietStateReason: c.quietStateReason, quietStateConsumerMeaning: c.quietStateConsumerMeaning, sourceFallbackUsed: c.sourceFallbackUsed, sourceFallbackDisclosureRequired: c.sourceFallbackDisclosureRequired, consumerLanguageTechnicalLeakDetected: false, remainingDivergence: loss ? loss : "none", allMigratedConsumerSurfacesUseAuthority: authorityToConsumer && !loss && reconciled, implementationStatus: authorityToConsumer && !loss && reconciled ? "CONSUMER_MIGRATION_COMPLETE" : "CONSUMER_MIGRATION_NEEDS_SOURCE_LINEAGE", recommendedNextMilestone: authorityToConsumer && !loss && reconciled ? "LP040 or the next approved roadmap milestone" : "Repair LP039.3 source-to-consumer authority lineage before merge" });
   }
 
+
+
+  function geometryType(record) {
+    const g = record?.__geometry || record?.rawGeometry || record?.geometry || record?.roadwayGeometry || record?.routeGeometry || null;
+    return g && typeof g === "object" ? (g.type || "object_geometry") : "none";
+  }
+  function hasLineGeometry(record) { const t = geometryType(record); return t === "LineString" || t === "MultiLineString"; }
+  function hasPolygonGeometry(record) { const t = geometryType(record); return t === "Polygon" || t === "MultiPolygon"; }
+  function hasStartEnd(record) { return Boolean(record && (record.startCoordinates || record.endCoordinates || record.startCoordinate || record.endCoordinate || (record.startLatitude != null && record.startLongitude != null) || (record.endLatitude != null && record.endLongitude != null))); }
+  function hasLimits(record) { return Boolean(text(record?.fromLimit || record?.from_limit || record?.toLimit || record?.to_limit || record?.limits || record?.closureLimits || record?.projectExtent || record?.eventExtent)); }
+  function hasBounds(record) { return Boolean(record?.bbox || record?.bounds || record?.boundingBox || record?.extent); }
+  function currentAuthorityContract() {
+    return freeze({
+      acceptedOwnershipMethods: freeze(["valid_source_point_inside_awareness_radius_miles"]),
+      pointContainmentRequired: true,
+      awarenessCenterDistanceUsed: true,
+      awarenessBoundaryUsed: false,
+      sourceGeometryIntersectionUsed: false,
+      certifiedRoadwayIntersectionUsed: false,
+      routeNameOnlyAccepted: false,
+      roadwayOwnershipEligibilityEffect: "none_roadway_fields_are_preserved_or_enriched_but_do_not_make_records_eligible"
+    });
+  }
+  function compactLimitFields(record) {
+    return freeze({ fromLimit: record?.fromLimit || record?.from_limit || null, toLimit: record?.toLimit || record?.to_limit || null, limits: record?.limits || null, projectExtent: record?.projectExtent || null, eventExtent: record?.eventExtent || null, closureLimits: record?.closureLimits || null });
+  }
+  function gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit(input = {}) {
+    const selected = input.selectedAwarenessArea || selectedArea(input) || null;
+    const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot(input) : {};
+    const authority = snap.authority || {};
+    const records = arr(authority.records || input.records || input.normalizedRecords);
+    const proofById = new Map(arr(authority.recordProof).map((p) => [p.authorityIdentity || p.sourceId, p]));
+    const anchor = selectedAnchor(selected || snap.selectedAwarenessArea || authority.selectedAwarenessArea || {});
+    const rawGeometryTypeCounts = countBy(records, geometryType);
+    const normalizedGeometryTypeCounts = countBy(records, (r) => r?.geometryType || geometryType(r));
+    const rawGeometryAvailable = records.some((r) => geometryType(r) !== "none");
+    const lineCount = records.filter(hasLineGeometry).length;
+    const polygonCount = records.filter(hasPolygonGeometry).length;
+    const startEndCount = records.filter(hasStartEnd).length;
+    const limitsCount = records.filter(hasLimits).length;
+    const boundsCount = records.filter(hasBounds).length;
+    const lost = [];
+    if (records.some((r) => r?.__geometry && !r.geometry)) lost.push("__geometry");
+    if (records.some((r) => hasLimits(r))) ["from_limit", "to_limit", "limits_text"].forEach((f) => lost.includes(f) || lost.push(f));
+    const nearest = records.map((r, i) => {
+      const id = r.authorityIdentity || r.sourceId || r.providerId || r.id;
+      const p = proofById.get(id) || {};
+      const cp = coordinateProof(r);
+      const dist = p.distanceFromSelectedAwarenessMiles ?? (cp.valid && anchor.valid ? Number(haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude).toFixed(3)) : null);
+      const sourcePointInside = Number.isFinite(dist) && dist <= anchor.radiusMiles;
+      const gType = geometryType(r);
+      const retainedGeometry = Boolean(r.geometry || r.roadwayGeometry || r.routeGeometry);
+      return freeze({
+        sourceId: r.sourceId || r.providerId || r.id || null,
+        category: r.category || null,
+        headline: r.headline || r.title || null,
+        routeName: r.routeName || r.roadway || null,
+        rawCoordinate: r.coordinates || (cp.coordinates || null),
+        normalizedCoordinate: cp.valid ? freeze({ latitude: cp.latitude, longitude: cp.longitude }) : null,
+        distanceFromDaytonAnchorMiles: dist,
+        distanceFromDaytonAwarenessBoundaryMiles: Number.isFinite(dist) ? Number(Math.max(0, dist - anchor.radiusMiles).toFixed(3)) : null,
+        rawGeometryType: gType,
+        geometryRetainedDownstream: retainedGeometry,
+        startEndOrLimitsFields: compactLimitFields(r),
+        sourceCountyCommunityFields: freeze({ county: r.county || r.countyName || null, city: r.city || r.locality || null, district: r.district || null }),
+        sourcePointInsideSelectedAwareness: sourcePointInside,
+        sourceGeometryIntersectsSelectedAwareness: false,
+        sourceGeometryApproachesSelectedAwareness: false,
+        affectedRoadwayPresentInCertifiedDataset: "not_proven_by_passive_audit",
+        geographicIntersectionProvenWithoutRouteNameOnlyMatching: false,
+        providerPointAppearsAnchorNotFullExtent: gType === "LineString" || gType === "MultiLineString" ? "possible" : "unproven",
+        evidenceClassification: sourcePointInside ? "trusted_point_containment" : (gType !== "none" ? "source_geometry_available_but_not_used_for_authority" : (hasLimits(r) ? "source_limits_available_but_unused" : "point_outside_awareness_no_extent_proof")),
+        unresolvedReason: sourcePointInside ? null : "current_authority_requires_valid_source_point_inside_radius; line_or_limit_intersection_is_not_evaluated"
+      });
+    }).sort((a, b) => (a.distanceFromDaytonAnchorMiles ?? Infinity) - (b.distanceFromDaytonAnchorMiles ?? Infinity)).slice(0, 25);
+    const nearestDistance = nearest[0]?.distanceFromDaytonAnchorMiles ?? null;
+    const contract = currentAuthorityContract();
+    const rawLineOrExtent = lineCount + polygonCount + startEndCount + limitsCount + boundsCount;
+    return freeze({
+      available: true,
+      investigationOnly: true,
+      passive: true,
+      noFetches: true,
+      noPolling: true,
+      noWrites: true,
+      noStorageWrites: true,
+      noMapMovement: true,
+      noRuntimeActivation: true,
+      noUiChanges: true,
+      branchMilestone: "LP039.3R2-DRIVETEXAS-ROADWAY-IMPACT-AUTHORITY-INVESTIGATION",
+      selectedCounty: (selected || snap.selectedAwarenessArea || authority.selectedAwarenessArea || {}).countyId || authority.activeCounty || null,
+      selectedAwareness: (selected || snap.selectedAwarenessArea || authority.selectedAwarenessArea || {}).label || authority.activeCommunity || null,
+      awarenessGeometry: freeze({ method: "center_point_radius", anchor: anchor.valid ? freeze({ latitude: anchor.lat, longitude: anchor.lng }) : null, radiusMiles: anchor.radiusMiles, polygonAvailable: Boolean(selected?.geometry && selected.geometry.type), boundaryAvailable: Boolean(selected?.boundary || selected?.boundaryGeometry), boundsAvailable: Boolean(selected?.bounds || selected?.mapBounds) }),
+      sourceInventory: freeze({ loadedRecordCount: records.length, validCoordinateCount: records.map(coordinateProof).filter((p) => p.valid).length, rawGeometryTypeCounts, normalizedGeometryTypeCounts, recordsWithLineGeometry: lineCount, recordsWithPolygonGeometry: polygonCount, recordsWithStartEndCoordinates: startEndCount, recordsWithLimitsText: limitsCount, recordsWithBoundingData: boundsCount }),
+      preservationTrace: freeze({ rawGeometryAvailable, connectorGeometryPreserved: rawGeometryAvailable && records.some((r) => r.__geometry || r.geometry), normalizationGeometryPreserved: records.some((r) => r.geometry || r.geometryType === "LineString" || r.geometryType === "MultiLineString"), authorityAdapterGeometryPreserved: records.some((r) => r.geometry), firstGeometryLossStage: rawGeometryAvailable && !records.some((r) => r.geometry) ? "gridlyDriveTexasProvider.normalizeRecord" : (rawLineOrExtent ? "lp0392_authority_selection_ignores_non_point_extent" : "no_upstream_extent_available_in_loaded_records"), lostFieldNames: freeze(lost) }),
+      currentAuthorityContract: contract,
+      daytonNearestRecords: freeze(nearest),
+      daytonEvidenceSummary: freeze({ nearestRecordDistanceFromAnchorMiles: nearestDistance, nearestRecordDistanceFromBoundaryMiles: Number.isFinite(nearestDistance) ? Number(Math.max(0, nearestDistance - anchor.radiusMiles).toFixed(3)) : null, sourcePointsInsideAwareness: nearest.filter((r) => r.sourcePointInsideSelectedAwareness).length, sourceGeometriesIntersectingAwareness: 0, recordsWithPotentialExtentEvidence: nearest.filter((r) => r.rawGeometryType !== "none" || Object.values(r.startEndOrLimitsFields).some(Boolean)).length, recordsBlockedByGeometryLoss: rawGeometryAvailable && !records.some((r) => r.geometry) ? nearest.length : 0, recordsBlockedByInsufficientEvidence: nearest.filter((r) => !r.sourcePointInsideSelectedAwareness).length }),
+      roadwayProofCapability: freeze({ certifiedRoadwayDataAvailable: Boolean(globalScope.gridlyCertifiedRoadwaySegments || globalScope.gridlyRoadwayNetwork || globalScope.__gridlyCertifiedRoadwaySegments), eventToRoadProofPossible: rawLineOrExtent > 0 ? "possible_with_retained_source_extent" : "not_proven_from_loaded_records", roadToAwarenessProofPossible: Boolean(globalScope.gridlyCertifiedRoadwaySegments || globalScope.gridlyRoadwayNetwork || globalScope.__gridlyCertifiedRoadwaySegments), fullImpactChainPossible: rawLineOrExtent > 0 && Boolean(globalScope.gridlyCertifiedRoadwaySegments || globalScope.gridlyRoadwayNetwork || globalScope.__gridlyCertifiedRoadwaySegments), unsafeRouteNameOnlyDependency: true }),
+      rootCause: freeze({ classification: rawLineOrExtent > 0 ? "mixed_root_cause" : "provider_points_outside_awareness_and_no_extent_available", supportingEvidence: freeze(["LP039.2 accepts only valid source points inside selected radius", "source geometry intersection and certified roadway intersection are not eligibility gates", "route-name-only evidence is not accepted", "loaded Dayton records have no selected-awareness point containment when nearest distance exceeds radius"]), confidence: records.length ? "medium" : "low_without_live_records", unresolvedQuestions: freeze(["whether earliest upstream DriveTexas payload currently carries full LineString, MultiLineString, Polygon, start/end, or limits extent for every live event", "whether certified roadway geometry can prove event-to-road ownership without route-name-only matching"]) }),
+      optionAssessment: freeze({ strictPointContainment: "safe_high_false_negative_risk_for_roadway_events_with_anchor_points", sourceGeometryIntersection: "recommended_when_trusted_source_extent_is_retained_and_intersects_awareness", certifiedRoadwayImpactChain: "promising_only_if_event_to_road_and_road_to_awareness_are_both_spatially_proven", layeredGeographicAuthority: "recommended_future_direction_with_independent_auditable_geographic_methods", arbitraryRadiusOrCorridorRelevance: "rejected_unsafe_false_positive_risk" }),
+      recommendation: freeze({ conclusion: rawLineOrExtent > 0 ? "E. Mixed result requiring a staged authority model." : "D. Upstream data is insufficient to establish roadway-impact authority safely.", currentAuthoritySafe: true, currentAuthorityTooNarrow: rawLineOrExtent > 0, upstreamEvidenceSufficient: rawLineOrExtent > 0 ? "partially" : false, productionRepairRequired: rawLineOrExtent > 0 ? "future_milestone_required_before_using_extent" : false, minimumSafeRepair: "separate production milestone to retain trusted source extent and accept only audited point, source-geometry, or certified segment intersection proof", rejectedRepairs: freeze(["arbitrary radius widening", "route-name-only ownership", "provider prose fallback", "Dayton-specific logic", "Liberty-specific logic"]), suggestedNextMilestone: "LP039.3R3 DriveTexas Layered Geographic Authority Contract" })
+    });
+  }
+
   function gridlyLp0393DaytonDriveTexasAuthorityTraceAudit() {
     const dayton = { id: "dayton", label: "Dayton", countyId: "liberty-tx", lat: 30.0466, lng: -94.8852, radiusMiles: 8 };
     const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot({ selectedAwarenessArea: dayton }) : {};
@@ -348,5 +453,6 @@
   globalScope.gridlySelectConsumerVisibleDriveTexasSituations = gridlySelectConsumerVisibleDriveTexasSituations;
   globalScope.gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit = gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit;
   globalScope.gridlyLp0393DaytonDriveTexasAuthorityTraceAudit = gridlyLp0393DaytonDriveTexasAuthorityTraceAudit;
-  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlySelectConsumerVisibleDriveTexasSituations, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit, gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit, gridlyLp0393DaytonDriveTexasAuthorityTraceAudit };
+  globalScope.gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit = gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit;
+  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlySelectConsumerVisibleDriveTexasSituations, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit, gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit, gridlyLp0393DaytonDriveTexasAuthorityTraceAudit, gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit };
 })(typeof window !== "undefined" ? window : globalThis);
