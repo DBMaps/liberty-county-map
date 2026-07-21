@@ -91,5 +91,55 @@ const quietStates = [
 ];
 quietStates.forEach(([input, meaning]) => assert.strictEqual(sandbox.gridlySelectConsumerVisibleDriveTexasSituations(input).quietStateConsumerMeaning, meaning));
 
+
+
+const dayton = { id: 'dayton', label: 'Dayton', storageValue: 'dayton', countyId: 'liberty-tx', lat: 30.0466, lng: -94.8852, radiusMiles: 8 };
+const woodville = selectedAwarenessArea;
+const pearland = { id: 'pearland', label: 'Pearland', storageValue: 'pearland', countyId: 'brazoria-tx', lat: 29.5636, lng: -95.2860, radiusMiles: 8 };
+function daytonOffset(id, milesNorth, extra = {}) { return rec(id, 'Crash', id, dayton.lat + (milesNorth / 69), dayton.lng, Object.assign({ city: 'Dayton', county: 'Liberty', routeName: 'SH 321', roadway: 'SH 321' }, extra)); }
+const daytonRecords = [
+  daytonOffset('one-mile', 1),
+  daytonOffset('seven-mile', 7, { roadwayOwnershipConfidence: 'low' }),
+  daytonOffset('missing-roadway', 2, { routeName: null, roadway: null, canonicalRoad: null }),
+  daytonOffset('stale-dayton', 3, { updateTime: '2026-07-20T01:00:00Z' }),
+  daytonOffset('nine-mile', 9)
+];
+const daytonSelector = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
+const daytonIds = daytonSelector.consumerVisibleSituations.map((s) => s.providerId).sort();
+assert(daytonIds.includes('one-mile'), 'record one mile from Dayton appears');
+assert(daytonIds.includes('seven-mile'), 'record seven miles from Dayton appears');
+assert(daytonIds.includes('missing-roadway'), 'missing optional roadway fields do not reject valid geographic ownership');
+assert(!daytonIds.includes('nine-mile'), 'record nine miles from Dayton does not appear');
+assert(!daytonIds.includes('stale-dayton'), 'stale record inside Dayton remains excluded');
+assert(daytonSelector.consumerVisibleSituations.every((s) => s.recordProof && s.eligibleRecordProof), 'recordProof and eligibleRecordProof survive into consumer projection');
+assert(daytonSelector.consumerVisibleSituations.every((s) => s.sourceCoordinates && typeof s.sourceCoordinates.latitude === 'number' && typeof s.sourceCoordinates.longitude === 'number'), 'sourceCoordinates survive unchanged as application lat/lng');
+assert(daytonSelector.consumerVisibleSituations.every((s) => s.selectedAwarenessRadiusMiles === 8), 'Dayton eight-mile radius survives through selector');
+assert(daytonSelector.consumerVisibleSituations.some((s) => s.providerId === 'seven-mile'), 'low roadway confidence does not replace point-in-radius authority');
+const daytonSnap = sandbox.gridlyGetDriveTexasAuthoritySnapshot({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
+assert.strictEqual(daytonSnap.selectedAwarenessArea.id, 'dayton', 'Dayton selected awareness survives snapshot');
+assert.strictEqual(daytonSnap.selectedAwarenessRadiusMiles, 8, 'Dayton radius remains eight miles in snapshot');
+assert.strictEqual(daytonSnap.authority.activeRecordCount + daytonSnap.authority.staleRecordCount + daytonSnap.authority.expiredRecordCount + daytonSnap.authority.futureEffectiveRecordCount + daytonSnap.authority.missingTimestampRecordCount, daytonSnap.authority.freshnessEvaluatedRecordCount, 'active and stale counts reconcile with canonical freshness totals');
+assert.strictEqual(daytonSnap.authority.freshnessCountsReconciled, true, 'freshness counts are reconciled');
+assert.strictEqual(daytonSnap.authority.eligibleRecordProof.some((p) => p.sourceId === 'nine-mile'), false, 'LP039.2 rejected record remains rejected');
+assert.strictEqual(daytonSnap.authority.consumerEligibleSituations.length, daytonSelector.lp0393ConsumerProjectionInputCount, 'LP039.2 eligible set feeds LP039.3 projection');
+assert.deepStrictEqual(daytonSelector.markerInputSituations, daytonSelector.consumerVisibleSituations, 'marker input receives certified consumer situation set');
+assert.deepStrictEqual(daytonSelector.alertInputSituations, daytonSelector.consumerVisibleSituations, 'alert input receives certified consumer situation set');
+assert.deepStrictEqual(daytonSelector.travelBriefInputSituations, daytonSelector.consumerVisibleSituations, 'Travel Brief input receives certified set before consolidation');
+const woodvilleZero = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: [daytonOffset('woodville-zero', 1)], selectedAwarenessArea: woodville, nowMs: now });
+const afterWoodvilleDayton = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
+assert.strictEqual(woodvilleZero.consumerVisibleSituationCount, 0, 'Woodville context excludes Dayton record without caching');
+assert(afterWoodvilleDayton.consumerVisibleSituationCount > 0, 'Woodville to Dayton switch recomputes authority');
+const pearlandZero = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: [daytonOffset('pearland-zero', 1)], selectedAwarenessArea: pearland, nowMs: now });
+const afterPearlandDayton = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: daytonRecords, selectedAwarenessArea: dayton, nowMs: now });
+assert.strictEqual(pearlandZero.consumerVisibleSituationCount, 0, 'Pearland context excludes Dayton record without caching');
+assert(afterPearlandDayton.consumerVisibleSituationCount > 0, 'Pearland to Dayton switch recomputes authority');
+assert.strictEqual(afterPearlandDayton.selectedAwarenessArea.id, 'dayton', 'no cached selected-awareness object remains from prior area');
+const reducedAuthorityInput = daytonSnap.authority.consumerEligibleSituations.map(({ sourceId, category, headline }) => ({ sourceId, category, headline }));
+const reducedSelector = sandbox.gridlySelectConsumerVisibleDriveTexasSituations({ records: reducedAuthorityInput, selectedAwarenessArea: dayton, nowMs: now });
+assert.strictEqual(reducedSelector.consumerVisibleSituationCount, 0, 'consumer selector does not recalculate ownership from reduced fields');
+assert.strictEqual(reducedSelector.unprovenEligibleRecordCount, 0, 'no unsupported fallback is admitted');
+assert(!reducedSelector.consumerVisibleSituations.some((s) => !s.recordProof?.finalEligibility), 'no raw provider or connector bypass is restored');
+assert.strictEqual(typeof sandbox.gridlyLp0393DaytonDriveTexasAuthorityTraceAudit, 'function', 'Dayton passive trace audit is exposed');
+
 assert.strictEqual(sandbox.gridlyStoryTransportationConnectorRecords().length, 0, 'compatibility reader delegates to selector, not connector fallback');
 console.log('LP039.3 consumer DriveTexas authority migration checks passed');
