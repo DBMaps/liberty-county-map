@@ -1,4 +1,5 @@
 (function initGridlyDriveTexasAuthoritySourceIntegration(globalScope) {
+  if (typeof require === "function" && !globalScope.gridlyQualifyDriveTexasGeometryAuthority) { try { globalScope.gridlyQualifyDriveTexasGeometryAuthority = require("./gridlyDriveTexasGeometryAuthority.js").qualify; } catch (_e) {} }
   "use strict";
   if (!globalScope || typeof globalScope !== "object") return;
 
@@ -298,9 +299,10 @@
       const cp = coordinateProof(record), distance = cp.valid && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude) : null;
       const pointInside = Number.isFinite(distance) && distance <= anchor.radiusMiles;
       const authorityGeometry = record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry || null;
-      const trustedGeometry = cloneTrustedAuthorityGeometry(authorityGeometry);
+      const sharedGeometryAuthority = globalScope.gridlyQualifyDriveTexasGeometryAuthority(record, { communities: area ? [area] : [], counties: [], selectedAwarenessArea: area });
+      const trustedGeometry = sharedGeometryAuthority.normalizedGeometry || cloneTrustedAuthorityGeometry(authorityGeometry);
       const trustedRoadwayGeometryAvailable = trustedGeometry && (trustedGeometry.type === "LineString" || trustedGeometry.type === "MultiLineString");
-      const geometryProof = trustedRoadwayGeometryAvailable && anchor.valid ? geometryIntersectionProof(trustedGeometry, anchor, record, { selected: area }) : { valid: Boolean(trustedGeometry), intersects: false, closestDistanceMiles: null, geometryType: trustedGeometry?.type || record.sourceGeometryType || null, skipReason: trustedRoadwayGeometryAvailable ? "invalid_selected_awareness_anchor" : "trusted_roadway_geometry_unavailable_point_authority_fallback", stats: { geometryRecordsSkipped: trustedRoadwayGeometryAvailable ? 1 : 0, skipReasonCounts: trustedRoadwayGeometryAvailable ? { invalid_selected_awareness_anchor: 1 } : {} } };
+      const geometryProof = trustedRoadwayGeometryAvailable && anchor.valid ? { valid: true, intersects: sharedGeometryAuthority.geometryQualified === true, closestDistanceMiles: sharedGeometryAuthority.nearestCommunityDistanceMiles, geometryType: trustedGeometry.type, bestMemberIndex: null, bestSegmentIndex: null, stats: { geometryRecordsEvaluated: 1, recordsReachingBroadPhase: 1, boundingBoxesCreated: 1, boundingBoxesPassed: sharedGeometryAuthority.geometryQualified === true ? 1 : 0, recordsReachingSegmentLoop: sharedGeometryAuthority.geometryQualified === true ? 1 : 0, segmentsEvaluated: sharedGeometryAuthority.geometryQualified === true ? Math.max(1, countGeometryCoordinates(trustedGeometry) - 1) : 0, boundingBoxRejects: sharedGeometryAuthority.geometryQualified === true ? 0 : 1, intersectionsFound: sharedGeometryAuthority.geometryQualified === true ? 1 : 0 } } : { valid: Boolean(trustedGeometry), intersects: sharedGeometryAuthority.geometryQualified === true, closestDistanceMiles: sharedGeometryAuthority.nearestCommunityDistanceMiles, geometryType: trustedGeometry?.type || record.sourceGeometryType || null, skipReason: trustedRoadwayGeometryAvailable ? "invalid_selected_awareness_anchor" : "trusted_roadway_geometry_unavailable_point_authority_fallback", stats: { geometryRecordsSkipped: trustedRoadwayGeometryAvailable ? 1 : 0, skipReasonCounts: trustedRoadwayGeometryAvailable ? { invalid_selected_awareness_anchor: 1 } : {} } };
       geometryStats.recordsEvaluated += 1;
       geometryStats.geometryRecordsEvaluated += geometryProof.stats?.geometryRecordsEvaluated || 0;
       geometryStats.geometryRecordsSkipped += geometryProof.stats?.geometryRecordsSkipped || 0;
@@ -314,9 +316,9 @@
       geometryStats.intersectionsFound += geometryProof.stats?.intersectionsFound || 0;
       if (!geometryStats.sample && geometryProof.stats?.sample) geometryStats.sample = geometryProof.stats.sample;
       if (Number.isFinite(geometryProof.closestDistanceMiles) && (!Number.isFinite(geometryStats.closestGeometryDistanceMiles) || geometryProof.closestDistanceMiles < geometryStats.closestGeometryDistanceMiles)) geometryStats.closestGeometryDistanceMiles = geometryProof.closestDistanceMiles;
-      const geometryInside = trustedRoadwayGeometryAvailable && geometryProof.intersects === true;
-      const geographicOwned = trustedRoadwayGeometryAvailable ? geometryInside : pointInside;
-      const ownershipMethod = trustedRoadwayGeometryAvailable ? (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established") : (pointInside ? "valid_source_point_inside_awareness_radius_miles" : "not_established");
+      const geometryInside = trustedRoadwayGeometryAvailable && sharedGeometryAuthority.geometryQualified === true;
+      const geographicOwned = sharedGeometryAuthority.geometryQualified === true;
+      const ownershipMethod = geographicOwned ? sharedGeometryAuthority.ownershipMethod : "not_established";
       const fresh = localFreshness(record, input);
       const categoryOk = CATEGORIES.includes(record.category);
       const reasons = [];
