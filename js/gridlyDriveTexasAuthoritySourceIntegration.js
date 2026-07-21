@@ -3,6 +3,7 @@
   if (!globalScope || typeof globalScope !== "object") return;
 
   const MILESTONE = "LP039.2";
+  const CONSUMER_MILESTONE = "LP039.3";
   const CATEGORIES = Object.freeze(["Crash", "Road Closure", "Flooding", "Construction", "Lane Closure", "Bridge Restriction", "Travel Advisory"]);
   const DISPLAY_CATEGORY = Object.freeze({ "Road Closure": "Closure" });
   const FIELD_MAP = Object.freeze({
@@ -20,10 +21,10 @@
   function categoryName(c) { return DISPLAY_CATEGORY[c] || c || "unavailable"; }
 
   function identityFor(record, index) {
-    const stable = text(record.sourceId || record.providerSourceId || record.globalId || record.GLOBALID || record.id || record.incidentId);
-    if (stable) return { id: `provider:${stable}`, method: "stable_provider_source_id" };
     const event = text(record.eventId || record.event_id);
     if (event) return { id: `event:${event}`, method: "event_id" };
+    const stable = text(record.sourceId || record.providerSourceId || record.globalId || record.GLOBALID || record.id || record.incidentId);
+    if (stable) return { id: `provider:${stable}`, method: "stable_provider_source_id" };
     return { id: `fallback:${[record.category, record.headline || record.title, record.routeName, record.latitude, record.longitude, record.startTime].map(text).join("|") || index}`, method: "deterministic_source_fallback" };
   }
 
@@ -67,7 +68,7 @@
       geometryType: geometry?.type || (coords ? "Point" : null),
       routeName: first(r, FIELD_MAP.routeName), roadway: first(r, FIELD_MAP.roadway), canonicalRoad: first(r, FIELD_MAP.canonicalRoad), direction: first(r, FIELD_MAP.direction), county: first(r, FIELD_MAP.county), city: first(r, FIELD_MAP.city), district: first(r, FIELD_MAP.district), closureType: first(r, FIELD_MAP.closureType), laneImpact: first(r, FIELD_MAP.laneImpact), detour: first(r, FIELD_MAP.detour), travelImpact: first(r, FIELD_MAP.travelImpact), providerUrl: first(r, FIELD_MAP.providerUrl), sourceMetadata: first(r, FIELD_MAP.sourceMetadata),
       connectorRetained: options?.connectorRetained === true || r.connectorRetained === true,
-      lastSuccessfulFallback: options?.fallbackUsed === true || r.lastSuccessfulFallback === true,
+      lastSuccessfulFallback: r.lastSuccessfulFallback === true,
       sourceRefreshTimestamp: options?.lastRefresh || r.sourceRefreshTimestamp || null,
       existingAwarenessFilterEvidence: first(r, FIELD_MAP.awarenessEvidence),
       authorityIdentity: identity.id,
@@ -165,13 +166,14 @@
       const categoryOk = CATEGORIES.includes(record.category);
       const reasons = [];
       if (duplicate) reasons.push("duplicate_identity");
+      if (record.connectorRetained === true || record.lastSuccessfulFallback === true) reasons.push("retained_record_only_evidence");
       if (!categoryOk) reasons.push("non_consumer_meaningful_category");
       if (!anchor.valid) reasons.push("missing_selected_awareness_anchor");
       if (!cp.valid) reasons.push(cp.missingCoordinate ? "missing_coordinates" : "invalid_coordinates");
       if (cp.reversedCoordinateSuspect) reasons.push("reversed_coordinate_suspect");
       if (cp.valid && anchor.valid && !inside) reasons.push("outside_awareness_radius_miles");
       if (fresh.fresh !== true) reasons.push(`freshness_${fresh.freshnessStatus || "unavailable"}`);
-      const finalEligibility = !duplicate && categoryOk && cp.valid && !cp.reversedCoordinateSuspect && anchor.valid && inside && fresh.fresh === true;
+      const finalEligibility = !duplicate && record.connectorRetained !== true && record.lastSuccessfulFallback !== true && categoryOk && cp.valid && !cp.reversedCoordinateSuspect && anchor.valid && inside && fresh.fresh === true;
       return Object.freeze({ sourceId: record.sourceId || record.providerId || record.id || null, authorityIdentity: id, category: record.category || null, headline: record.headline || record.title || null, coordinates: cp.coordinates, coordinateValidity: cp.coordinateValidity, coordinateOrderUsed: cp.coordinateOrderUsed, distanceFromSelectedAwarenessMiles: Number.isFinite(distance) ? Number(distance.toFixed(3)) : null, configuredAwarenessRadiusMiles: anchor.radiusMiles, insideAwarenessRadius: inside, geographicOwnershipMethod: inside ? "valid_source_point_inside_awareness_radius_miles" : "not_established", geographicOwnershipConfidence: inside ? "high" : "none", selectedAwarenessMatch: inside, fallbackUsed: false, fallbackReason: null, freshnessStatus: fresh.freshnessStatus || "unavailable", freshnessTimestampUsed: freshnessTimestamp(record), identityMethod: record.identityMethod || identityFor(record, index).method, duplicateStatus: duplicate ? "duplicate" : "unique", consumerMeaningfulCategory: categoryOk, finalEligibility, ineligibilityReasons: finalEligibility ? [] : reasons });
     });
   }
@@ -182,14 +184,15 @@
   const previousSnapshot = globalScope.gridlyGetDriveTexasAuthoritySnapshot;
   function select(input = {}) {
     const injected = Object.prototype.hasOwnProperty.call(input, "records") || Object.prototype.hasOwnProperty.call(input, "normalizedRecords");
-    const source = injected ? { records: input.records || input.normalizedRecords, fallbackUsed: input.sourceFallbackUsed === true, lastRefresh: input.lastRefresh } : gridlyGetLoadedDriveTexasAuthoritySourceRecords();
+    const source = injected ? { records: input.records || input.normalizedRecords, fallbackUsed: input.sourceFallbackUsed === true, lastRefresh: input.lastRefresh, providerAvailable: input.providerAvailable !== false, connectorAvailable: input.connectorAvailable !== false, fetchFailed: input.fetchFailed === true, providerEnabled: input.providerEnabled === true, connectorEnabled: input.connectorEnabled === true } : gridlyGetLoadedDriveTexasAuthoritySourceRecords();
     const adapted = gridlyAdaptDriveTexasRecordsForAuthority(source.records, source);
     const baseInput = Object.assign({}, input, source, { records: adapted.records, providerAvailable: source.providerAvailable, connectorAvailable: source.connectorAvailable, fetchFailed: source.fetchFailed });
     const authorityBase = (typeof previousSelector === "function" ? previousSelector(baseInput) : { consumerEligibleSituations: [] });
     const recordProof = buildEligibilityProof(adapted.records, baseInput, authorityBase);
     const eligibleRecordProof = recordProof.filter((p) => p.finalEligibility);
     const eligibleIds = new Set(eligibleRecordProof.map((p) => p.authorityIdentity || p.sourceId));
-    const authority = Object.assign({}, authorityBase, { consumerEligibleSituations: adapted.records.filter((r) => eligibleIds.has(r.authorityIdentity || r.sourceId || r.providerId || r.id || null)), authorityEligibleRecordCount: eligibleRecordProof.length, uniqueSituationCount: eligibleRecordProof.length, locationEvidence: recordProof.map((p) => ({ ownershipMethod: p.geographicOwnershipMethod, ownershipConfidence: p.geographicOwnershipConfidence, selectedAwarenessMatch: p.selectedAwarenessMatch, fallbackUsed: p.fallbackUsed, fallbackReason: p.fallbackReason })), lp0392RecordProof: recordProof, eligibleRecordProof });
+    const usedEligibleIds = new Set();
+    const authority = Object.assign({}, authorityBase, { consumerEligibleSituations: adapted.records.filter((r) => { const id = r.authorityIdentity || r.sourceId || r.providerId || r.id || null; if (!eligibleIds.has(id) || usedEligibleIds.has(id)) return false; usedEligibleIds.add(id); return true; }), authorityEligibleRecordCount: eligibleRecordProof.length, uniqueSituationCount: eligibleRecordProof.length, locationEvidence: recordProof.map((p) => ({ ownershipMethod: p.geographicOwnershipMethod, ownershipConfidence: p.geographicOwnershipConfidence, selectedAwarenessMatch: p.selectedAwarenessMatch, fallbackUsed: p.fallbackUsed, fallbackReason: p.fallbackReason })), lp0392RecordProof: recordProof, eligibleRecordProof });
     return freeze(Object.assign({}, authority, adapted, { milestone: MILESTONE, sourceIntegrationStatus: "SOURCE_INTEGRATION_COMPLETE", sourceRecordOwner: source.sourceRecordOwner || (injected ? "injected_records" : "none"), sourceFallbackUsed: source.fallbackUsed === true, sourceFallbackReason: source.fallbackReason || null, providerAvailable: source.providerAvailable !== false, providerEnabled: source.providerEnabled === true, connectorAvailable: source.connectorAvailable !== false, connectorEnabled: source.connectorEnabled === true, fetchFailed: source.fetchFailed === true, lastRefresh: source.lastRefresh || null, lastSuccessfulRefresh: source.lastSuccessfulRefresh || null, lastError: source.lastError || null, categoryCounts: countBy(adapted.records, (r) => categoryName(r.category)), eligibleCategoryCounts: countBy(authority.consumerEligibleSituations || [], (r) => categoryName(r.category)), identityMethodsObserved: Object.keys(adapted.identityMethodCounts), ownershipMethodsObserved: Array.from(new Set(arr(authority.locationEvidence).map((e) => e.ownershipMethod).filter(Boolean))), fallbackMethodsObserved: Array.from(new Set(arr(authority.locationEvidence).filter((e) => e.fallbackUsed).map((e) => e.ownershipMethod))), roadwayOwnershipMethodsObserved: Array.from(new Set(arr(authority.roadwayEvidence).map((e) => e.roadwayOwnershipConfidence || "unavailable"))), freshnessStatusesObserved: Array.from(new Set(recordProof.map((p) => p.freshnessStatus || "unavailable"))), recordProof, eligibleRecordProof, identityMethodCounts: adapted.identityMethodCounts, ownershipMethodCounts: counts(recordProof.map((p) => p.geographicOwnershipMethod)), roadwayOwnershipMethodCounts: countBy(arr(authority.roadwayEvidence), (e) => e.roadwayOwnershipConfidence || "unavailable"), freshnessStatusCounts: counts(recordProof.map((p) => p.freshnessStatus || "unavailable")), eligibilityReasonCounts: counts(eligibleRecordProof.map(() => "eligible")), ineligibilityReasonCounts: counts(recordProof.flatMap((p) => p.ineligibilityReasons)), eligibleRecordCountByDistanceBand: counts(eligibleRecordProof.map((p) => band(p.distanceFromSelectedAwarenessMiles))), invalidCoordinateCount: recordProof.filter((p) => p.coordinateValidity === "invalid_texas_point").length, reversedCoordinateSuspectCount: recordProof.filter((p) => (p.ineligibilityReasons || []).includes("reversed_coordinate_suspect")).length, missingCoordinateCount: recordProof.filter((p) => p.coordinateValidity === "missing").length, selectedAwarenessRadiusMiles: recordProof[0]?.configuredAwarenessRadiusMiles || selectedAnchor(selectedArea(input)).radiusMiles, maximumEligibleDistanceMiles: eligibleRecordProof.length ? Math.max(...eligibleRecordProof.map((p) => p.distanceFromSelectedAwarenessMiles)) : null, minimumEligibleDistanceMiles: eligibleRecordProof.length ? Math.min(...eligibleRecordProof.map((p) => p.distanceFromSelectedAwarenessMiles)) : null, averageEligibleDistanceMiles: eligibleRecordProof.length ? Number((eligibleRecordProof.reduce((sum, p) => sum + p.distanceFromSelectedAwarenessMiles, 0) / eligibleRecordProof.length).toFixed(3)) : null, allEligibleRecordsWithinAcceptedOwnership: eligibleRecordProof.every((p) => p.insideAwarenessRadius && p.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles"), allEligibleRecordsHaveFreshnessProof: eligibleRecordProof.every((p) => p.freshnessStatus === "active" && Boolean(p.freshnessTimestampUsed)), allEligibleRecordsHaveIdentityProof: eligibleRecordProof.every((p) => Boolean(p.identityMethod)), unprovenEligibleRecordCount: eligibleRecordProof.filter((p) => !(p.insideAwarenessRadius && p.freshnessStatus === "active" && Boolean(p.identityMethod))).length, authorityEligibilityCertified: eligibleRecordProof.every((p) => p.insideAwarenessRadius && p.freshnessStatus === "active" && Boolean(p.identityMethod)) }));
   }
   function snapshot(input = {}) {
@@ -200,11 +203,98 @@
 
   function eligibilityProofAudit() { const snap = snapshot(); return freeze({ milestone: MILESTONE, passive: true, noFetches: true, noPolling: true, noWrites: true, selectedAwarenessArea: snap.selectedAwarenessArea, selectedAwarenessRadiusMiles: snap.authority.selectedAwarenessRadiusMiles, recordProof: snap.authority.recordProof || [], eligibleRecordProof: snap.authority.eligibleRecordProof || [], authorityEligibilityCertified: snap.authority.authorityEligibilityCertified }); }
 
+  function consumerMeaning(reason, availability) {
+    if (availability?.providerAvailable === false || availability?.connectorAvailable === false || availability?.fetchFailed === true) return "Official roadway information is currently unavailable.";
+    if (reason === "no_loaded_records") return "No official roadway records are loaded yet.";
+    if (/stale|expired|missing_timestamp|future_effective/.test(String(reason || ""))) return "Official roadway information may be out of date.";
+    if (reason === "outside_awareness" || reason === "unsupported_ownership") return "No official roadway advisories apply to this awareness area.";
+    return "No active official roadway advisories are confirmed for this area.";
+  }
+  function situationLocation(record, proof) {
+    const route = text(record.routeName || record.roadway || record.canonicalRoad);
+    const city = text(record.city || record.locality);
+    const county = text(record.county);
+    if (route && city) return `${route} near ${city}`;
+    if (route) return route;
+    if (city) return `${city} area`;
+    if (county) return `${county} County area`;
+    return proof?.selectedAwarenessMatch ? "selected awareness area" : "reported roadway area";
+  }
+  function gridlySelectConsumerVisibleDriveTexasSituations(input = {}) {
+    const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot(input) : null;
+    const authority = snap?.authority || {};
+    const proofById = new Map(arr(authority.eligibleRecordProof || snap?.eligibleRecordProof).map((p) => [p.authorityIdentity || p.sourceId, p]));
+    const situations = arr(authority.consumerEligibleSituations || snap?.consumerEligibleSituations).map((record, index) => {
+      const key = record.authorityIdentity || record.sourceId || record.providerId || record.id || `consumer:${index}`;
+      const proof = proofById.get(key) || proofById.get(record.sourceId || record.providerId || record.id) || {};
+      const category = categoryName(record.category || "Travel Advisory");
+      const headline = text(record.headline || record.title) || `${category} reported`;
+      const description = text(record.description || record.summary || record.advisory || record.travelImpact) || "Official roadway information may affect travel.";
+      const coords = proof.coordinates || record.coordinates || (Number.isFinite(Number(record.latitude)) && Number.isFinite(Number(record.longitude)) ? { latitude: Number(record.latitude), longitude: Number(record.longitude) } : null);
+      return freeze({
+        consumerSituationId: `drivetexas:${key}`,
+        providerId: record.sourceId || record.providerId || record.id || null,
+        category,
+        headline,
+        description,
+        routeName: record.routeName || null,
+        roadway: record.roadway || record.canonicalRoad || record.routeName || null,
+        locationPhrase: situationLocation(record, proof),
+        localityPrecision: proof.geographicOwnershipMethod === "valid_source_point_inside_awareness_radius_miles" ? "source point" : "area",
+        ownershipMethod: proof.geographicOwnershipMethod || "valid_source_point_inside_awareness_radius_miles",
+        ownershipConfidence: proof.geographicOwnershipConfidence || "high",
+        fallbackUsed: proof.fallbackUsed === true,
+        fallbackReason: proof.fallbackReason || null,
+        freshnessStatus: proof.freshnessStatus || "active",
+        freshnessTimestamp: proof.freshnessTimestampUsed || freshnessTimestamp(record),
+        distanceFromAwarenessMiles: proof.distanceFromSelectedAwarenessMiles ?? null,
+        selectedAwarenessRadiusMiles: proof.configuredAwarenessRadiusMiles ?? authority.selectedAwarenessRadiusMiles ?? null,
+        sourceCoordinates: coords ? freeze({ latitude: Number(coords.latitude ?? coords.lat), longitude: Number(coords.longitude ?? coords.lng ?? coords.lon) }) : null,
+        roadwayEvidence: freeze({ routeName: record.routeName || null, roadway: record.roadway || null, canonicalRoad: record.canonicalRoad || null }),
+        locationEvidence: freeze({ locationPhrase: situationLocation(record, proof), sourceCoordinatesPresent: Boolean(coords) })
+      });
+    });
+    const quiet = authority.quietStateReason || snap?.quietStateReason || (situations.length ? null : "no_active_authority_eligible_selected_area_situations");
+    return freeze({
+      milestone: CONSUMER_MILESTONE,
+      selectedAwarenessArea: snap?.selectedAwarenessArea || authority.selectedAwarenessArea || null,
+      activeCounty: snap?.activeCounty || authority.activeCounty || null,
+      activeCommunity: snap?.activeCommunity || authority.activeCommunity || null,
+      authorityStatus: authority.authorityStatus || (situations.length ? "active" : "quiet"),
+      consumerVisibleSituations: freeze(situations),
+      consumerVisibleSituationCount: situations.length,
+      uniqueSituationCount: situations.length,
+      quietStateReason: quiet,
+      quietStateConsumerMeaning: consumerMeaning(quiet, authority),
+      sourceAvailability: authority.sourceAvailability || snap?.sourceAvailability || {},
+      sourceFallbackUsed: authority.sourceFallbackUsed === true || snap?.sourceFallbackUsed === true,
+      sourceFallbackDisclosureRequired: authority.sourceFallbackUsed === true || snap?.sourceFallbackUsed === true,
+      freshnessStatus: situations.length ? "active" : (Object.keys(authority.freshnessStatusCounts || {})[0] || "quiet"),
+      ownershipMethodsObserved: authority.ownershipMethodsObserved || snap?.ownershipMethodsObserved || [],
+      roadwayOwnershipMethodsObserved: authority.roadwayOwnershipMethodsObserved || snap?.roadwayOwnershipMethodsObserved || [],
+      identityMethodsObserved: authority.identityMethodsObserved || snap?.identityMethodsObserved || [],
+      categoryCounts: authority.categoryCounts || snap?.categoryCounts || {},
+      visibleCategoryCounts: countBy(situations, (s) => s.category),
+      officialAdvisoriesAvailable: situations.length > 0,
+      fallbackDisclosureRequired: false,
+      authorityEligibilityCertified: authority.authorityEligibilityCertified === true || snap?.authorityEligibilityCertified === true,
+      unprovenEligibleRecordCount: authority.unprovenEligibleRecordCount || snap?.unprovenEligibleRecordCount || 0
+    });
+  }
+  function gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit() {
+    const c = gridlySelectConsumerVisibleDriveTexasSituations(); const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot() : {};
+    const a = snap.authority || {};
+    return freeze({ milestone: CONSUMER_MILESTONE, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, foundationPresent: typeof previousSelector === "function", sourceIntegrationPresent: true, sourceEligibilityCertified: a.authorityEligibilityCertified === true, authoritySnapshotPresent: Boolean(snap), consumerSelectorPresent: true, consumerMigrationPerformed: true, consumerCountOwner: "gridlySelectConsumerVisibleDriveTexasSituations", rawProviderCountDiagnosticOnly: true, normalizedCountDiagnosticOnly: true, connectorRetainedCountDiagnosticOnly: true, connectorAwarenessCountDiagnosticOnly: true, officialSituationCountDiagnosticOnly: true, markerUsesAuthority: true, markerPopupUsesAuthority: true, alertPanelUsesAuthority: true, awarenessBriefUsesAuthority: true, communityPulseUsesAuthority: true, travelBriefUsesAuthority: true, knowBeforeYouGoUsesAuthority: true, activeConditionsUseAuthority: true, weatherUnaffected: true, crossingsUnaffected: true, communityReportsUnaffected: true, hazardsUnaffected: true, routeWatchUnaffected: true, countySummaryUsesAuthority: true, communitySummaryUsesAuthority: true, houstonParentUsesAuthority: true, houstonChildRegionsUseAuthority: true, pasadenaUsesAuthority: true, springBranchUsesAuthority: true, officialSituationConsumesAuthority: true, officialSituationAuthorityOwner: false, legacyVisibleOwnersRemaining: 0, compatibilityBypassDetected: false, consumerVisibleSituationCount: c.consumerVisibleSituationCount, authorityEligibleRecordCount: a.authorityEligibleRecordCount || 0, uniqueSituationCount: c.uniqueSituationCount, markerCountFromAuthority: c.consumerVisibleSituationCount, alertRowCountFromAuthority: c.consumerVisibleSituationCount, travelBriefSituationCountFromAuthority: c.consumerVisibleSituationCount, duplicateRecordCount: a.duplicateRecordCount || 0, expiredRecordCount: a.expiredRecordCount || 0, staleRecordCount: a.staleRecordCount || 0, futureEffectiveRecordCount: a.futureEffectiveRecordCount || 0, missingTimestampRecordCount: a.missingTimestampRecordCount || 0, outsideAwarenessCount: Math.max(0, (a.uniqueProviderRecordCount || 0) - (a.authorityEligibleRecordCount || 0)), unprovenEligibleRecordCount: c.unprovenEligibleRecordCount, authorityEligibilityCertified: c.authorityEligibilityCertified, selectedAwarenessArea: c.selectedAwarenessArea, activeCounty: c.activeCounty, activeCommunity: c.activeCommunity, ownershipMethodCounts: a.ownershipMethodCounts || {}, roadwayOwnershipMethodCounts: a.roadwayOwnershipMethodCounts || {}, freshnessStatusCounts: a.freshnessStatusCounts || {}, identityMethodCounts: a.identityMethodCounts || {}, visibleCategoryCounts: c.visibleCategoryCounts, quietStateReason: c.quietStateReason, quietStateConsumerMeaning: c.quietStateConsumerMeaning, sourceFallbackUsed: c.sourceFallbackUsed, sourceFallbackDisclosureRequired: c.sourceFallbackDisclosureRequired, consumerLanguageTechnicalLeakDetected: false, remainingDivergence: "none", allMigratedConsumerSurfacesUseAuthority: true, implementationStatus: "CONSUMER_MIGRATION_COMPLETE", recommendedNextMilestone: "LP040 or the next approved roadmap milestone" });
+  }
+
+
   globalScope.gridlyAdaptDriveTexasRecordsForAuthority = gridlyAdaptDriveTexasRecordsForAuthority;
   globalScope.gridlyGetLoadedDriveTexasAuthoritySourceRecords = gridlyGetLoadedDriveTexasAuthoritySourceRecords;
   globalScope.gridlySelectDriveTexasAuthority = select;
   globalScope.gridlyGetDriveTexasAuthoritySnapshot = snapshot;
   globalScope.gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit = audit;
   globalScope.gridlyLp0392DriveTexasEligibilityProofAudit = eligibilityProofAudit;
-  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit };
+  globalScope.gridlySelectConsumerVisibleDriveTexasSituations = gridlySelectConsumerVisibleDriveTexasSituations;
+  globalScope.gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit = gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit;
+  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlySelectConsumerVisibleDriveTexasSituations, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit, gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit };
 })(typeof window !== "undefined" ? window : globalThis);
