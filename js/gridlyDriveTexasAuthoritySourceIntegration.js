@@ -652,6 +652,51 @@
     });
   }
 
+
+  function gridlyLp043TraceExit(stage, condition, returnValue, reason) { return freeze({ stage, condition, returnValue, reason }); }
+  function gridlyLp043SingleRecordGeometryTrace(record, proof, selected) {
+    const anchor = selectedAnchor(selected || {});
+    const cp = coordinateProof(record);
+    const distance = cp.valid && anchor.valid ? haversineMiles(anchor.lat, anchor.lng, cp.latitude, cp.longitude) : null;
+    const pointInside = Number.isFinite(distance) && distance <= anchor.radiusMiles;
+    const geometry = cloneTrustedAuthorityGeometry(record?.sourceGeometry || record?.geometry || record?.roadwayGeometry || record?.routeGeometry || null);
+    const trace = {
+      pointQualified: pointInside, geometryAvailable: Boolean(record?.sourceGeometry || record?.geometry || record?.roadwayGeometry || record?.routeGeometry), geometryValid: Boolean(geometry), boundingBoxExecuted: false, boundingBoxPassed: false, segmentLoopEntered: false, segmentCount: 0, closestDistance: null, intersection: false, exit: null, branch: null, geometryBounds: null, awarenessBounds: null, overlapComparisons: null
+    };
+    if (pointInside) { trace.exit = gridlyLp043TraceExit('point containment', '!inside && anchor.valid ? geometryIntersectionProof(...) : { ... skipReason: inside ? "point_already_qualified" ... }', 'point qualified; geometryIntersectionProof not called', 'point_already_qualified'); return trace; }
+    if (!anchor.valid) { trace.exit = gridlyLp043TraceExit('point containment', '!inside && anchor.valid ? geometryIntersectionProof(...) : { ... skipReason: ... "invalid_selected_awareness_anchor" }', 'geometryIntersectionProof not called', 'invalid_selected_awareness_anchor'); return trace; }
+    trace.branch = '!inside && anchor.valid ? geometryIntersectionProof(authorityGeometry, anchor, record, { selected: area }) : ...';
+    if (!geometry) { trace.exit = gridlyLp043TraceExit('geometry validation', 'if (!valid) return skip("invalid_or_missing_trusted_geometry");', { valid: false, intersects: false, closestDistanceMiles: null }, 'invalid_or_missing_trusted_geometry'); return trace; }
+    if (geometry.type === 'Point') { trace.exit = gridlyLp043TraceExit('geometry validation', 'if (valid.type === "Point") return skip("point_geometry_uses_coordinate_authority");', { valid: true, intersects: false, closestDistanceMiles: null }, 'point_geometry_uses_coordinate_authority'); return trace; }
+    const gb = geometryBounds(geometry), ab = awarenessBounds(anchor);
+    trace.boundingBoxExecuted = true; trace.geometryBounds = gb ? freeze(gb) : null; trace.awarenessBounds = ab ? freeze(ab) : null; trace.overlapComparisons = overlapComparisons(gb, ab);
+    const overallOverlap = boundsOverlap(gb, ab);
+    if (!overallOverlap) { trace.exit = gridlyLp043TraceExit('bounding-box precheck', 'if (!overallOverlap) { stats.boundingBoxRejects = 1; return { valid: true, intersects: false, closestDistanceMiles: null, geometryType: valid.type, boundsRejected: true, geometryBounds: gb, awarenessBounds: ab, stats }; }', { valid: true, intersects: false, closestDistanceMiles: null, geometryType: geometry.type, boundsRejected: true }, 'bounds_overlap_false'); return trace; }
+    trace.boundingBoxPassed = true; trace.segmentLoopEntered = true;
+    let closest = Infinity;
+    iterateGeometrySegments(geometry, (a, b) => { if (closest <= anchor.radiusMiles) return; trace.segmentCount += 1; const d = pointSegmentDistanceMiles(anchor, a, b); if (d < closest) closest = d; });
+    trace.closestDistance = Number.isFinite(closest) ? Number(closest.toFixed(3)) : null; trace.intersection = closest <= anchor.radiusMiles;
+    if (!trace.segmentCount) trace.exit = gridlyLp043TraceExit('segment evaluation', 'iterateGeometrySegments(valid, (a, b, memberIndex, segmentIndex) => { ... stats.segmentsEvaluated += 1; ... });', { valid: true, intersects: false, closestDistanceMiles: null }, 'segmentCount_zero');
+    else if (!trace.intersection) trace.exit = gridlyLp043TraceExit('intersection result', 'const intersects = closest <= anchor.radiusMiles;', { valid: true, intersects: false, closestDistanceMiles: trace.closestDistance }, 'intersection_false');
+    else trace.exit = gridlyLp043TraceExit('authority ownership', 'const ownershipMethod = inside ? "valid_source_point_inside_awareness_radius_miles" : (geometryInside ? "trusted_source_geometry_intersects_awareness_radius" : "not_established");', proof?.geographicOwnershipMethod || 'trusted_source_geometry_intersects_awareness_radius', null);
+    return trace;
+  }
+  function gridlyLp043TraceSingleAuthorityRecord(sourceId) {
+    const wanted = text(sourceId);
+    const selected = selectedArea({}) || null;
+    const snap = snapshot({ selectedAwarenessArea: selected });
+    const authority = snap.authority || {};
+    const records = arr(authority.records);
+    const record = records.find((r) => [r.sourceId, r.providerId, r.id, r.incidentId, r.authorityIdentity].map(text).includes(wanted));
+    const consumer = gridlySelectConsumerVisibleDriveTexasSituations({ selectedAwarenessArea: selected, records });
+    if (!record) return freeze({ available: true, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, sourceId: wanted, found: false, exit: gridlyLp043TraceExit('source lookup', 'records.find((r) => [r.sourceId, r.providerId, r.id, r.incidentId, r.authorityIdentity].map(text).includes(wanted))', null, 'sourceId_not_loaded') });
+    const id = record.authorityIdentity || record.sourceId || record.providerId || record.id;
+    const proof = arr(authority.recordProof).find((p) => (p.authorityIdentity || p.sourceId) === id || p.sourceId === record.sourceId) || {};
+    const consumerIds = new Set(arr(consumer.consumerVisibleSituations).flatMap((s) => [s?.authorityIdentity, s?.sourceId, s?.providerId, s?.id, s?.incidentId].filter(Boolean)));
+    const geomTrace = gridlyLp043SingleRecordGeometryTrace(record, proof, selected);
+    return freeze({ available: true, passive: true, noFetches: true, noPolling: true, noWrites: true, noStorageWrites: true, noMapMovement: true, found: true, sourceId: record.sourceId || record.providerId || record.id || null, route: record.routeName || record.roadway || record.canonicalRoad || null, category: record.category || null, geometryType: record.sourceGeometryType || geomTrace.geometryBounds && 'LineString' || null, coordinateCount: record.sourceGeometryCoordinateCount || countGeometryCoordinates(record.sourceGeometry || record.geometry || record.roadwayGeometry || record.routeGeometry), pointQualified: proof.pointInsideAwarenessRadius === true, geometryAvailable: geomTrace.geometryAvailable, geometryValid: proof.sourceGeometryValid === true, boundingBoxExecuted: geomTrace.boundingBoxExecuted, boundingBoxPassed: geomTrace.boundingBoxPassed, segmentLoopEntered: geomTrace.segmentLoopEntered, segmentCount: geomTrace.segmentCount, closestDistance: geomTrace.closestDistance ?? proof.closestGeometryDistanceToAwarenessMiles ?? null, intersection: geomTrace.intersection, ownershipMethod: proof.geographicOwnershipMethod || 'not_established', finalEligibility: proof.finalEligibility === true, consumerVisible: [id, record.sourceId, record.providerId, record.id, record.incidentId].some((candidateId) => candidateId && consumerIds.has(candidateId)), providerNormalization: freeze({ entered: true, functionName: 'gridlyDriveTexasProvider.normalizeRecords/normalizeRecord', sourceGeometryType: record.sourceGeometryType || null, returnValue: 'normalized record already loaded' }), lp0392Adaptation: freeze({ entered: true, functionName: 'gridlyAdaptDriveTexasRecordsForAuthority', sourceGeometryType: record.sourceGeometryType || null, sourceGeometryValid: record.sourceGeometryValid === true, returnValue: 'adapted authority record' }), buildEligibilityProof: freeze({ entered: true, functionName: 'buildEligibilityProof', returnValue: proof }), pointContainment: freeze({ entered: true, fieldValues: { coordinateValidity: proof.coordinateValidity, distanceFromSelectedAwarenessMiles: proof.distanceFromSelectedAwarenessMiles, configuredAwarenessRadiusMiles: proof.configuredAwarenessRadiusMiles }, returnValue: proof.pointInsideAwarenessRadius === true, nextFunction: proof.pointInsideAwarenessRadius === true ? 'authority ownership' : 'geometryIntersectionProof' }), geometryAvailability: freeze({ entered: !proof.pointInsideAwarenessRadius, returnValue: geomTrace.geometryAvailable, nextFunction: geomTrace.geometryAvailable ? 'cloneTrustedAuthorityGeometry' : null }), geometryValidation: freeze({ entered: !proof.pointInsideAwarenessRadius, returnValue: geomTrace.geometryValid, nextFunction: geomTrace.geometryValid ? 'bounding-box precheck' : null }), boundingBoxPrecheck: freeze({ entered: geomTrace.boundingBoxExecuted, fieldValues: { geometryBounds: geomTrace.geometryBounds, awarenessBounds: geomTrace.awarenessBounds, overlapComparisons: geomTrace.overlapComparisons }, returnValue: geomTrace.boundingBoxPassed, nextFunction: geomTrace.boundingBoxPassed ? 'iterateGeometrySegments' : null }), segmentEvaluation: freeze({ entered: geomTrace.segmentLoopEntered, fieldValues: { segmentCount: geomTrace.segmentCount }, returnValue: { closestDistanceMiles: geomTrace.closestDistance }, nextFunction: geomTrace.segmentLoopEntered ? 'intersection result' : null }), intersectionResult: freeze({ entered: geomTrace.segmentLoopEntered, fieldValues: { closestDistanceMiles: geomTrace.closestDistance, radiusMiles: proof.configuredAwarenessRadiusMiles }, returnValue: geomTrace.intersection, nextFunction: 'authority ownership' }), authorityOwnership: freeze({ entered: true, returnValue: proof.geographicOwnershipMethod || 'not_established', nextFunction: 'consumer projection' }), consumerProjection: freeze({ entered: true, returnValue: consumerIds.has(id) || consumerIds.has(record.sourceId || record.providerId || record.id) }), exit: geomTrace.exit });
+  }
+
   function gridlyLp043DriveTexasGeometryAuthorityRepairAudit(input = {}) {
     const snap = typeof globalScope.gridlyGetDriveTexasAuthoritySnapshot === "function" ? globalScope.gridlyGetDriveTexasAuthoritySnapshot(input) : {};
     const authority = snap.authority || {};
@@ -690,5 +735,6 @@
   globalScope.gridlyLp0393DaytonDriveTexasAuthorityTraceAudit = gridlyLp0393DaytonDriveTexasAuthorityTraceAudit;
   globalScope.gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit = gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit;
   globalScope.gridlyLp043DriveTexasGeometryAuthorityRepairAudit = gridlyLp043DriveTexasGeometryAuthorityRepairAudit;
-  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlySelectConsumerVisibleDriveTexasSituations, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit, gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit, gridlyLp0393DaytonDriveTexasAuthorityTraceAudit, gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit, gridlyLp043DriveTexasGeometryAuthorityRepairAudit };
+  globalScope.gridlyLp043TraceSingleAuthorityRecord = gridlyLp043TraceSingleAuthorityRecord;
+  if (typeof module !== "undefined" && module.exports) module.exports = { gridlyAdaptDriveTexasRecordsForAuthority, gridlyGetLoadedDriveTexasAuthoritySourceRecords, gridlySelectConsumerVisibleDriveTexasSituations, gridlyLp0392DriveTexasAuthoritySourceIntegrationAudit: audit, gridlyLp0393ConsumerDriveTexasAuthorityMigrationAudit, gridlyLp0393DaytonDriveTexasAuthorityTraceAudit, gridlyLp0393r2DriveTexasRoadwayImpactAuthorityInvestigationAudit, gridlyLp043DriveTexasGeometryAuthorityRepairAudit, gridlyLp043TraceSingleAuthorityRecord };
 })(typeof window !== "undefined" ? window : globalThis);
