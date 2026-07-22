@@ -58,6 +58,7 @@ Current LP051.1 runtime audit targets these totals:
 - Dataset records: 34
 - Supported operational counties: 28
 - Covered counties: 28
+- Missing counties: 0
 - Duplicate ZIPs: 0
 - Invalid records: 0
 - Unknown county IDs: 0
@@ -65,6 +66,17 @@ Current LP051.1 runtime audit targets these totals:
 - Ambiguous ZIPs: 1
 - Coverage certification status: `partial`
 - Merge ready for UI integration: `false`
+
+## LP051.1R1 runtime alignment repair
+
+The live LP051.1 browser audit is authoritative. LP051.1R1 repaired four representative county records that were using generated county-prefixed awareness-area keys while the live Gridly registries expose these four awareness identities as existing unprefixed community keys:
+
+- Montgomery County ZIP `77301`: `montgomery-tx-conroe` was corrected to `conroe`.
+- San Jacinto County ZIP `77331`: `san-jacinto-tx-coldspring` was corrected to `coldspring`.
+- Chambers County ZIP `77514`: `chambers-tx-anahuac` was corrected to `anahuac`.
+- Jefferson County ZIP `77701`: `jefferson-tx-beaumont` was corrected to `beaumont`.
+
+No new community identities, awareness identities, onboarding wiring, Settings wiring, or validation aliases were added. The corrected records now use existing Gridly awareness identities and keep certification partial because complete community and awareness-area coverage remains deferred.
 
 ## County coverage
 
