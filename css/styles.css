@@ -25477,3 +25477,154 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   38% { filter: drop-shadow(0 0 20px rgba(103, 232, 249, 0.82)); transform: scale(1.08); }
   100% { filter: drop-shadow(0 0 0 rgba(103, 232, 249, 0)); transform: scale(1); }
 }
+
+/* LP050 — guided first-run paging experience */
+.gridly-v858-first-run-card {
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+}
+
+.gridly-v950-onboarding-pager {
+  overflow: hidden;
+  gap: 14px;
+  padding: 0 0 calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.gridly-v950-page-track {
+  display: flex;
+  gap: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gridly-v950-page-track::-webkit-scrollbar {
+  display: none;
+}
+
+.gridly-v950-tour-page {
+  flex: 0 0 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 18px;
+  min-height: 0;
+  padding: clamp(18px, 5vw, 24px);
+  border-radius: 26px;
+  scroll-snap-align: center;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.055));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gridly-v950-tour-page[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+.gridly-v950-page-copy {
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+
+.gridly-v950-tour-page h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 8vw, 2.7rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.gridly-v950-tour-page p,
+.gridly-v950-tour-page .gridly-v859-personalization-message {
+  grid-column: auto;
+  max-width: 28rem;
+  margin-inline: auto;
+  font-size: 1.02rem !important;
+}
+
+.gridly-v950-tour-page .gridly-v896-shot-frame {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  max-height: min(42vh, 390px);
+  overflow: hidden;
+  border: 1px solid rgba(158, 211, 249, 0.18);
+  border-radius: 24px;
+  background: rgba(3, 10, 19, 0.42);
+}
+
+.gridly-v950-tour-page .gridly-v896-shot-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: min(42vh, 390px);
+  object-fit: contain;
+}
+
+.gridly-v950-welcome-page {
+  min-height: 100%;
+}
+
+.gridly-v950-setup-page {
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.gridly-v950-page-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  min-height: 18px;
+}
+
+.gridly-v950-page-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(222, 236, 249, 0.36);
+}
+
+.gridly-v950-page-dot.is-active {
+  width: 22px;
+  background: #8ee6ff;
+  box-shadow: 0 0 14px rgba(142, 230, 255, 0.5);
+}
+
+.gridly-v950-page-actions {
+  grid-template-columns: 0.85fr 0.85fr 1.3fr;
+  align-items: center;
+}
+
+.gridly-v950-page-actions [hidden] {
+  display: none !important;
+}
+
+.gridly-v950-page-actions .gridly-v894c2-finish-btn:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 520px) {
+  .gridly-v950-tour-page {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .gridly-v950-tour-page .gridly-v896-shot-frame,
+  .gridly-v950-tour-page .gridly-v896-shot-frame img {
+    max-height: min(38vh, 340px);
+  }
+
+  .gridly-v950-page-actions {
+    grid-template-columns: 0.8fr 0.8fr 1.2fr;
+  }
+}
