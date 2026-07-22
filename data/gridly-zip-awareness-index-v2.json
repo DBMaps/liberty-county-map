@@ -7,7 +7,42 @@
   "mergeReadyForUiIntegration": false,
   "primarySourceName": null,
   "primarySourceVersion": null,
-  "sourceArtifacts": [],
+  "sourceArtifacts": [
+    {
+      "path": "data/source/zip/2025_Gaz_zcta_national.zip",
+      "originalFilename": "2025_Gaz_zcta_national.zip",
+      "sourceType": "unknown",
+      "sourceVersion": "2025",
+      "recordCount": 33791,
+      "fileSize": 952026,
+      "sha256": "51516a4283bab5cd2376eec75609ddc4b363a18297e8adeeaac7b03cf7c84dbe",
+      "parseStatus": "parsed",
+      "schemaStatus": "unknown_or_unsupported",
+      "acquisitionMetadata": {
+        "recordedBy": "LP051.4 owner-side workflow",
+        "acquisitionDate": "2026-07-22",
+        "redistributionAllowed": "review_source_terms_before_committing_restricted_artifacts"
+      },
+      "warnings": []
+    },
+    {
+      "path": "data/source/zip/ZIP-COUNTY_032026.xlsx",
+      "originalFilename": "ZIP-COUNTY_032026.xlsx",
+      "sourceType": "unknown",
+      "sourceVersion": "2026",
+      "recordCount": 0,
+      "fileSize": 2478574,
+      "sha256": "e71413b42849648e74b4d479cde2983bbab7b7e10db2ff3ba11a9057fdfa4b00",
+      "parseStatus": "unparsed",
+      "schemaStatus": "unknown_or_unsupported",
+      "acquisitionMetadata": {
+        "recordedBy": "LP051.4 owner-side workflow",
+        "acquisitionDate": "2026-07-22",
+        "redistributionAllowed": "review_source_terms_before_committing_restricted_artifacts"
+      },
+      "warnings": []
+    }
+  ],
   "normalizedCountySourcePath": "data/generated/gridly-zip-county-source-v1.json",
   "normalizedCountySourceRecordCount": 0,
   "generatedCandidatePath": "data/generated/gridly-zip-awareness-candidates-v1.json",
