@@ -254,3 +254,121 @@ Expected LP051.6R2 values are `true` for the pass fields, `false` for leak/unrea
 9. Reset and test `77084`, `77201`, `77210`, and `99999`; verify ambiguous, PO Box-only, unique ZIP, and unsupported screens use the same styling and readable action hierarchy.
 10. Run `window.gridlyLp0516ZipConfirmationPrototypeAudit?.()` and verify the LP051.6R2 visual pass fields match the expected values while `safeForProductionActivation` remains `false`.
 11. Confirm localStorage/sessionStorage setup keys and production onboarding remain unchanged.
+
+## LP051.6R3 Preview Selection Action Completion
+
+### Root cause
+
+The ready screen rendered an active **Preview selection** button with `data-action="preview"`, and event delegation recognized that action, but the preview branch only refreshed `window.__gridlyLp0516PrototypeResult`. It did not transition to a new prototype step or rerender the sheet, so the action produced no visible response even though the result object could be updated internally.
+
+### Completed Preview selection behavior
+
+Pressing **Preview selection** now performs a prototype-only completion path:
+
+1. keeps the selected consumer community as the experience label;
+2. updates only `window.__gridlyLp0516PrototypeResult` and in-memory prototype state;
+3. records `confirmationMethod: "prototype_preview"`, `previewed: true`, and `saved: false`;
+4. transitions from `ready` to `preview_complete`;
+5. renders a dedicated completion screen.
+
+### Preview-complete screen
+
+The preview-complete screen shows:
+
+- `Selection preview ready`
+- the selected community label, for example `Dayton`
+- the county label, for example `Liberty County`
+- `Gridly would use Dayton for local awareness.`
+- `This is a prototype preview. Your current Gridly setup has not changed.`
+
+Available actions are **Done**, **Try another ZIP**, and **Choose manually**.
+
+### Prototype result contract
+
+The result remains prototype-only and resembles:
+
+```js
+window.__gridlyLp0516PrototypeResult = {
+  zip: "77535",
+  countyId: "liberty-tx",
+  countyName: "Liberty County",
+  communityKey: "dayton",
+  communityLabel: "Dayton",
+  awarenessAreaKey: "dayton",
+  consumerLabel: "Dayton",
+  resolutionStatus: "resolved",
+  confirmationMethod: "prototype_preview",
+  prototypeOnly: true,
+  previewed: true,
+  saved: false
+}
+```
+
+No production setup storage keys are used.
+
+### Done behavior
+
+**Done** closes the prototype cleanly and preserves `window.__gridlyLp0516PrototypeResult` for owner inspection. It does not save setup, complete onboarding, change the active county/community/awareness area, move the map, refresh providers, or touch Route Intelligence.
+
+### Try Another ZIP behavior
+
+**Try another ZIP** returns to ZIP entry and clears only prototype ZIP resolver, candidate, selected-candidate, and preview-result state. Production state remains unchanged.
+
+### Zero-write guarantees
+
+LP051.6R3 preserves the LP051.6 zero-write guarantees:
+
+- `productionSetupWrites: 0`
+- `productionStorageWrites: 0`
+- `activeAwarenessMutations: 0`
+- `mapFocusMutations: 0`
+- `providerRefreshes: 0`
+- `routeIntelligenceTouched: false`
+- `safeForProductionActivation remains false`
+
+### Audit fields
+
+`window.gridlyLp0516ZipConfirmationPrototypeAudit?.()` includes Preview selection action-completion fields:
+
+- `previewActionAvailable`
+- `previewActionCompleted`
+- `previewCompleteFlowAvailable`
+- `prototypeResultPreviewed`
+- `prototypeResultSaved`
+- `previewActionProductionWrites`
+- `previewActionStateMutations`
+- `previewActionPass`
+
+After pressing **Preview selection**, expected values are:
+
+```js
+{
+  previewActionAvailable: true,
+  previewActionCompleted: true,
+  previewCompleteFlowAvailable: true,
+  prototypeResultPreviewed: true,
+  prototypeResultSaved: false,
+  previewActionProductionWrites: 0,
+  previewActionStateMutations: 0,
+  previewActionPass: true,
+  safeForProductionActivation: false
+}
+```
+
+### Exact browser test steps
+
+1. Open the app in a browser.
+2. Open DevTools Console.
+3. Run `window.gridlyOpenLp0516ZipConfirmationPrototype?.()`.
+4. Enter `77535`.
+5. Press **Continue**.
+6. Confirm `Dayton`.
+7. Verify the ready screen shows **Preview selection**.
+8. Press **Preview selection**.
+9. Verify the screen title is `Selection preview ready` and the community copy shows `Dayton` and `Liberty County`.
+10. Run `window.__gridlyLp0516PrototypeState.step` and verify it returns `"preview_complete"`.
+11. Run `window.__gridlyLp0516PrototypeResult` and verify `previewed: true`, `saved: false`, and `confirmationMethod: "prototype_preview"`.
+12. Run `window.gridlyLp0516ZipConfirmationPrototypeAudit?.()` and verify `previewActionPass: true`, zero production writes/mutations, and `safeForProductionActivation: false`.
+13. Press **Done** and verify the prototype closes while `window.__gridlyLp0516PrototypeResult` remains available.
+14. Reopen the prototype, repeat through preview complete, press **Try another ZIP**, and verify only prototype entry/resolver/candidate/selection state resets.
+15. Reopen and press **Choose manually** to verify the existing safe manual fallback remains isolated and non-mutating.
