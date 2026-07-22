@@ -1,0 +1,47 @@
+{
+  "version": "LP051.zip-awareness-index.v1",
+  "status": "foundation_seed",
+  "consumerPurpose": "Resolve a home ZIP into Gridly's existing county and awareness-area/community selection model without displaying ZIP codes as awareness labels.",
+  "records": [
+    {
+      "zip": "77535",
+      "state": "TX",
+      "countyId": "liberty-tx",
+      "countyName": "Liberty County",
+      "awarenessAreaKey": "dayton",
+      "communityName": "Dayton",
+      "resolutionConfidence": "seed_high",
+      "notes": "Dayton primary local setup seed for LP051 foundation."
+    },
+    {
+      "zip": "77575",
+      "state": "TX",
+      "countyId": "liberty-tx",
+      "countyName": "Liberty County",
+      "awarenessAreaKey": "liberty",
+      "communityName": "Liberty",
+      "resolutionConfidence": "seed_high",
+      "notes": "Liberty primary local setup seed for LP051 foundation."
+    },
+    {
+      "zip": "77351",
+      "state": "TX",
+      "countyId": "polk-tx",
+      "countyName": "Polk County",
+      "awarenessAreaKey": "polk-tx-livingston",
+      "communityName": "Livingston",
+      "resolutionConfidence": "seed_high",
+      "notes": "Livingston seed validates ZIP-first architecture against registry-backed operational communities."
+    },
+    {
+      "zip": "77002",
+      "state": "TX",
+      "countyId": "harris-tx",
+      "countyName": "Harris County",
+      "awarenessAreaKey": "houston-downtown-midtown",
+      "communityName": "Downtown / Midtown",
+      "resolutionConfidence": "seed_medium",
+      "notes": "Houston seed intentionally resolves to an existing Houston awareness sub-area instead of changing presentation to ZIP language."
+    }
+  ]
+}
