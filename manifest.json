@@ -1,7 +1,7 @@
 {
-  "name": "Gridly \u2014 Beta Complete",
+  "name": "Gridly",
   "short_name": "Gridly",
-  "description": "Gridly beta is complete. Gridly is preparing for launch.",
+  "description": "Know Before You Go",
   "display": "standalone",
   "start_url": "./",
   "scope": "./",
