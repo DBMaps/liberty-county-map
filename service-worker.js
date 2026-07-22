@@ -1,4 +1,5 @@
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-beta-closure-v1";
+const GRIDLY_SW_VERSION = "lp052.2-update-lifecycle";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp0522-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
@@ -19,8 +20,8 @@ const GRIDLY_LP0361C_RUNTIME_COUNTY_GEOMETRY_URLS = [
 ];
 
 function isRecognizedOldGridlyCache(cacheName) {
-  return /^gridly-pwa-shell-/.test(cacheName)
-    || (/^gridly-beta-closure-/.test(cacheName) && cacheName !== GRIDLY_CLOSURE_CACHE_NAME);
+  return (/^gridly-pwa-shell-/.test(cacheName) && cacheName !== GRIDLY_CLOSURE_CACHE_NAME)
+    || /^gridly-beta-closure-/.test(cacheName);
 }
 
 self.addEventListener("install", (event) => {
@@ -100,4 +101,15 @@ self.addEventListener("fetch", (event) => {
         return response;
       }))
   );
+});
+
+
+self.addEventListener("message", (event) => {
+  const message = event.data || {};
+  if (message && message.type === "GRIDLY_GET_SW_VERSION") {
+    event.source?.postMessage?.({ type: "GRIDLY_SW_VERSION", version: GRIDLY_SW_VERSION, cacheName: GRIDLY_CLOSURE_CACHE_NAME });
+  }
+  if (message && message.type === "GRIDLY_SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
