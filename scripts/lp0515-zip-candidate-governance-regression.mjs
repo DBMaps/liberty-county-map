@@ -1,0 +1,38 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+
+const candidates = JSON.parse(fs.readFileSync('data/generated/gridly-zip-awareness-candidates-v1.json', 'utf8')).records;
+const governanceText = fs.readFileSync('data/generated/gridly-zip-candidate-governance-v1.json', 'utf8');
+const governance = JSON.parse(governanceText);
+const runtime = JSON.parse(fs.readFileSync('data/gridly-zip-awareness-index-v2.json', 'utf8'));
+const app = fs.readFileSync('js/app.js', 'utf8');
+const doc = fs.readFileSync('docs/LP051-5-SOURCE-BACKED-ZIP-CANDIDATE-GOVERNANCE.md', 'utf8');
+
+const allowed = new Set(['resolved', 'resolved_by_governance', 'covered_by_shared_zip', 'requires_confirmation', 'ambiguous', 'unsupported', 'not_zip_addressable', 'internal_only']);
+assert.equal(governance.candidateCount, 566);
+assert.equal(governance.reviewedCandidateCount, candidates.length);
+assert.equal(governance.decisions.length, candidates.length);
+assert.equal(new Set(governance.decisions.map((d) => d.zip)).size, candidates.length);
+assert.ok(governance.decisions.every((d) => d.reviewed && allowed.has(d.governanceDecision)));
+assert.equal(governance.detail.protectedZips.find((z) => z.zip === '77084').governanceDecision, 'ambiguous');
+assert.equal(runtime.records.find((r) => r.zip === '77084').status, 'ambiguous');
+assert.equal(runtime.records.find((r) => r.zip === '77201').status, 'po_box_not_supported');
+assert.equal(runtime.records.find((r) => r.zip === '77210').status, 'unique_zip_not_supported');
+assert.equal(governance.identityValidation.unknownCountyIdCount, 0);
+assert.equal(governance.identityValidation.unknownCommunityCount, 0);
+assert.equal(governance.identityValidation.unknownAwarenessAreaCount, 0);
+assert.equal(governance.identityValidation.candidateIdentityErrorCount, 0);
+assert.equal(crypto.createHash('sha256').update(governanceText).digest('hex'), crypto.createHash('sha256').update(JSON.stringify(governance, null, 2) + '\n').digest('hex'));
+assert.match(app, /function gridlyLp0515ZipCandidateGovernanceAudit\(\)/);
+assert.match(app, /manualSetupPreserved: true/);
+assert.match(app, /routeIntelligenceIndependent: true/);
+const auditBlock = app.slice(app.indexOf('function gridlyLp0515ZipCandidateGovernanceAudit'), app.indexOf('const GRIDLY_SAN_JACINTO_TOWN_CROSSING_COUNT_AUDIT_KEYS'));
+assert.doesNotMatch(auditBlock, /localStorage\.setItem|saveGridlyHomeTownPreference|activateRoute|Route Watch setup/);
+assert.match(doc, /Candidate inventory/);
+assert.match(doc, /566/);
+assert.match(doc, /497/);
+assert.match(doc, /coverageCertificationStatus: `partial`/);
+assert.equal(runtime.reviewedCandidateCount, 566);
+assert.equal(runtime.mergeReadyForUiIntegration, false);
+console.log('LP051.5 ZIP candidate governance regression passed');

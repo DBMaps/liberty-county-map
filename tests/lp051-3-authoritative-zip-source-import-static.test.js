@@ -1,0 +1,50 @@
+const fs = require('fs');
+const vm = require('vm');
+const assert = require('assert');
+
+const app = fs.readFileSync('js/app.js', 'utf8');
+const doc = fs.readFileSync('docs/LP051-3-AUTHORITATIVE-ZIP-SOURCE-IMPORT.md', 'utf8');
+const runtime = JSON.parse(fs.readFileSync('data/gridly-zip-awareness-index-v2.json', 'utf8'));
+
+assert(app.includes('window.gridlyLp0513AuthoritativeZipSourceImportAudit = gridlyBuildLp0513AuthoritativeZipSourceImportAudit'), 'LP051.3 audit helper is exposed');
+assert(app.includes('sourceImportStatus: "blocked"'), 'blocked source status is explicit when no artifact is present');
+assert(doc.includes('ZIP/ZCTA equality is never sufficient'), 'ZIP versus ZCTA distinction is documented');
+assert(doc.includes('Tunnel connection failed: 403 Forbidden'), 'exact acquisition blocker is documented');
+assert(fs.existsSync('scripts/build-gridly-zip-source.ps1'), 'PowerShell acquisition helper exists');
+assert(fs.existsSync('tools/build-gridly-zip-source.js'), 'deterministic runtime builder exists');
+assert(['blocked', 'complete'].includes(runtime.sourceImportStatus), 'runtime artifact reports source import status for current artifact availability');
+assert.strictEqual(runtime.records.find((r) => r.zip === '77084').status, 'ambiguous', '77084 remains ambiguous in generated artifact');
+assert(!app.includes('saveGridlyHomeTownPreference(gridlyResolveHomeZipAwareness'), 'ZIP resolver is not wired into setup persistence');
+
+const noop = () => {};
+const node = { style: {}, dataset: {}, hidden: true, classList: { add: noop, remove: noop, toggle: noop, contains: () => false }, appendChild: noop, setAttribute: noop, removeAttribute: noop, getAttribute: () => null, querySelector: () => null, querySelectorAll: () => [], addEventListener: noop, removeEventListener: noop, contains: () => false, getClientRects: () => [] };
+const document = { addEventListener: noop, removeEventListener: noop, querySelector: () => null, querySelectorAll: () => [], getElementById: () => node, createElement: () => ({ ...node }), head: { appendChild: noop }, documentElement: { scrollWidth: 390, clientWidth: 390, classList: { add: noop, remove: noop, toggle: noop, contains: () => false } }, body: { ...node, classList: { add: noop, remove: noop, toggle: noop, contains: () => false } }, activeElement: null };
+const sandbox = { window: { addEventListener: noop, removeEventListener: noop, location: { search: '' } }, document, localStorage: { data: {}, getItem(k) { return this.data[k] || null; }, setItem(k, v) { this.data[k] = String(v); }, removeItem(k) { delete this.data[k]; } }, sessionStorage: { getItem: () => null, setItem: noop, removeItem: noop }, navigator: { serviceWorker: null, userAgent: 'node' }, innerWidth: 390, innerHeight: 844, location: { search: '' }, console, setTimeout, clearTimeout, requestAnimationFrame: (fn) => fn(), crypto: { randomUUID: () => 'test-uuid' }, URLSearchParams, getComputedStyle: () => ({ display: 'block', visibility: 'visible' }), ResizeObserver: class { observe() {} disconnect() {} }, MutationObserver: class { observe() {} disconnect() {} }, fetch: async () => ({ ok: false, json: async () => ({}) }) };
+sandbox.window = Object.assign(sandbox.window, sandbox);
+vm.runInNewContext(app, sandbox, { timeout: 5000 });
+
+const audit = sandbox.window.gridlyLp0513AuthoritativeZipSourceImportAudit();
+assert.strictEqual(audit.milestone, 'LP051.3');
+assert.strictEqual(audit.sourceImportStatus, 'blocked');
+assert.strictEqual(audit.sourceArtifactDetected, false);
+assert.strictEqual(audit.sourceArtifactRecordCount, 0);
+assert.strictEqual(audit.sourceAuthorityDocumented, true);
+assert.strictEqual(audit.zipVsZctaDistinctionDocumented, true);
+assert.strictEqual(audit.generatedRuntimeDatasetDetected, true);
+assert.strictEqual(audit.supportedCountyCount, 28);
+assert.strictEqual(audit.coveredCountyCount, 28);
+assert.strictEqual(audit.unknownCountyIdCount, 0);
+assert.strictEqual(audit.unknownCommunityCount, 0);
+assert.strictEqual(audit.unknownAwarenessAreaCount, 0);
+assert.strictEqual(audit.candidateIdentityErrorCount, 0);
+assert.strictEqual(audit.mergeReadyForUiIntegration, false);
+assert.strictEqual(audit.coverageCertificationStatus, 'blocked');
+assert(audit.missingSourceRequirements.length > 0, 'blocked audit includes missing source requirements');
+assert.strictEqual(sandbox.window.gridlyResolveHomeZipAwareness('77084').status, 'ambiguous');
+assert.strictEqual(sandbox.window.gridlyResolveHomeZipAwareness('77201').status, 'po_box_not_supported');
+assert.strictEqual(sandbox.window.gridlyResolveHomeZipAwareness('77210').status, 'unique_zip_not_supported');
+assert.strictEqual(sandbox.window.gridlyResolveHomeZipAwareness('abc').status, 'invalid');
+assert.strictEqual(sandbox.window.gridlyResolveHomeZipAwareness('99999').status, 'unsupported');
+const beforeStorage = JSON.stringify(sandbox.localStorage.data);
+sandbox.window.gridlyResolveHomeZipAwareness('77535');
+assert.strictEqual(JSON.stringify(sandbox.localStorage.data), beforeStorage, 'resolver performs no storage writes');

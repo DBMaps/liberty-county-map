@@ -1,0 +1,24 @@
+﻿{
+    "sourceAcquisitionWarnings":  [
+                                      "HUD automated acquisition failed: Invalid URI: The hostname could not be parsed."
+                                  ],
+    "acquisitionDate":  "2026-07-22",
+    "sourceFiles":  [
+                        {
+                            "sourceName":  "Census Gazetteer ZCTA supporting source",
+                            "sourceVersion":  "2025",
+                            "acquisitionDate":  "2026-07-22",
+                            "sourceUrlOrOrigin":  "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_zcta_national.zip",
+                            "path":  "data\\source\\zip\\2025_Gaz_zcta_national.zip",
+                            "originalFilename":  "2025_Gaz_zcta_national.zip",
+                            "fileSize":  952026,
+                            "sha256":  "51516a4283bab5cd2376eec75609ddc4b363a18297e8adeeaac7b03cf7c84dbe",
+                            "redistributionAllowed":  "Public Census geography; verify current Census terms before redistribution."
+                        }
+                    ],
+    "missingSourceRequirements":  {
+
+                                  },
+    "milestone":  "LP051.4",
+    "ownerSideWorkflow":  true
+}
