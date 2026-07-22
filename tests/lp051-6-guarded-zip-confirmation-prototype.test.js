@@ -18,6 +18,20 @@ assert(app.includes('type="text" inputmode="numeric"'), 'prototype preserves pas
 assert(!app.includes('saveGridlyHomeTownPreference(gridlyLp0516'), 'prototype is not wired to setup persistence');
 assert(!app.includes('safeForProductionActivation: true'), 'prototype cannot claim production activation safety');
 
+assert(app.includes('#gridly-lp0516-zip-input{'), 'prototype has scoped ZIP input styling');
+assert(app.includes('color:var(--lp0516-text)'), 'ZIP input has explicit text color');
+assert(app.includes('background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--lp0516-sheet-strong)'), 'ZIP input has explicit dark/glass background');
+assert(app.includes('caret-color:var(--lp0516-focus)'), 'ZIP input has explicit caret color');
+assert(app.includes('-webkit-text-fill-color:var(--lp0516-text)'), 'ZIP input has explicit WebKit text fill color');
+assert(app.includes('#gridly-lp0516-zip-input::placeholder'), 'ZIP input placeholder has explicit visibility styling');
+assert(app.includes('#gridly-lp0516-zip-input:-webkit-autofill'), 'ZIP input autofill remains readable');
+assert(app.includes('--lp0516-sheet:var(--card'), 'prototype reuses Gridly card theme token');
+assert(app.includes('--lp0516-border:var(--border'), 'prototype reuses Gridly border theme token');
+assert(!app.includes('background:#fff;border-radius:28px 28px 0 0'), 'prototype no longer uses a hardcoded bright white sheet');
+assert(app.includes('gridly-lp0516-primary') && app.includes('gridly-lp0516-secondary') && app.includes('gridly-lp0516-tertiary'), 'prototype has primary/secondary/tertiary button hierarchy');
+assert(app.includes('.gridly-lp0516-option[aria-checked="true"]'), 'candidate selected-state styling is present');
+assert(app.includes('.gridly-lp0516-validation'), 'validation styling is present');
+
 const noop = () => {};
 const makeNode = () => ({ style: {}, dataset: {}, hidden: true, innerHTML: '', classList: { add: noop, remove: noop, toggle: noop, contains: () => false }, appendChild: noop, setAttribute: noop, removeAttribute: noop, getAttribute: () => null, querySelector: () => null, querySelectorAll: () => [], addEventListener: noop, removeEventListener: noop, contains: () => false, getClientRects: () => [], focus: noop, remove: noop });
 const nodes = {};
@@ -51,6 +65,17 @@ assert.strictEqual(audit.safeForProductionActivation, false);
 assert.strictEqual(audit.prototypeCertificationStatus, 'guarded_test_candidate');
 assert.strictEqual(audit.safeForGuardedUserTesting, true);
 assert.strictEqual(audit.internalMetadataLeakDetected, false);
+
+assert.strictEqual(audit.themeAlignmentPass, true);
+assert.strictEqual(audit.inputTextVisibilityPass, true);
+assert.strictEqual(audit.inputCaretVisibilityPass, true);
+assert.strictEqual(audit.placeholderVisibilityPass, true);
+assert.strictEqual(audit.buttonHierarchyPass, true);
+assert.strictEqual(audit.candidateContrastPass, true);
+assert.strictEqual(audit.validationContrastPass, true);
+assert.strictEqual(audit.visualIntegrationPass, true);
+assert.strictEqual(audit.lightSurfaceLeakDetected, false);
+assert.strictEqual(audit.unreadableTextDetected, false);
 
 const byZip = Object.fromEntries(audit.testedZipScenarios.map((scenario) => [scenario.zip, scenario]));
 assert.strictEqual(byZip['77535'].step, 'resolved');

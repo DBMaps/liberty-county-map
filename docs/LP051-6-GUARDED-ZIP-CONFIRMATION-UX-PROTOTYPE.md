@@ -197,3 +197,60 @@ The audit reports prototype availability, guard state, current step, resolver av
 ## Recommended next milestone
 
 LP051.7 should run owner-observed mobile portrait sessions, refine candidate copy if needed, and decide whether a separate guarded production experiment is warranted. The recommended next branch is `lp051.7-owner-zip-confirmation-testing`.
+
+## LP051.6R2 Gridly Theme Alignment and ZIP Input Visibility Repair
+
+### Root cause
+
+The LP051.6 guarded prototype focus repair correctly made `#gridly-lp0516-zip-input` active, enabled, writable, and numeric-keyboard friendly, but the presentation layer still used a standalone bright-white prototype sheet and inherited input text colors. In Gridly's current dark/glass appearance, that made typed ZIP text, placeholder copy, candidate choices, validation, and confirmation screens feel disconnected from the app and risked unreadable foreground/background combinations.
+
+### Visual theme alignment
+
+LP051.6R2 keeps the prototype isolated and default-off while aligning its overlay and portrait sheet with Gridly's existing visual rules: `var(--card)`, `var(--border)`, `var(--text)`, `var(--muted)`, `var(--accent)`, `var(--blue)`, `var(--shadow)`, Gridly dark/glass surfaces, subtle borders, 28px top sheet radius, and mobile portrait bottom-sheet spacing. The repair applies to ZIP entry, resolved result, requires-confirmation, ambiguous, unsupported, invalid, PO Box-only, unique ZIP, and final confirmation screens.
+
+### ZIP input text visibility repair
+
+`#gridly-lp0516-zip-input` now has explicit dark-compatible `color`, `background`, `border-color`, `caret-color`, `-webkit-text-fill-color`, `opacity`, placeholder color, selection colors, autofill colors, disabled-state color protection, and a clear focus border/outline. The repair intentionally does not rely on inherited input text color.
+
+### Button hierarchy
+
+Primary actions use the existing Gridly accent-gradient treatment for Continue, Confirm, Preview selection, and the primary unavailable/manual path. Secondary actions use subdued outlined glass controls for Choose manually, Back, and Try another ZIP. Close and Cancel use a quieter tertiary treatment so not every action appears equal.
+
+### Candidate and validation contrast
+
+Candidate options use readable dark/glass controls with explicit text color. Selected candidates receive a distinct accent border, subtle accent fill, and inset highlight while continuing to show consumer-facing community labels only. Inline validation uses the consumer-friendly message `Enter a five-digit ZIP code.` in the Gridly warning token, remains associated to the ZIP field through `aria-describedby`, and reserves a small line height to avoid excessive layout shift.
+
+### Mobile portrait result
+
+The prototype remains a bottom-aligned mobile portrait sheet with `width:min(100%,430px)`, safe-area bottom padding, scrollable max height, visible actions, and usable candidate lists. The repaired sheet no longer appears as a generic bright white web form.
+
+### Audit additions
+
+`window.gridlyLp0516ZipConfirmationPrototypeAudit?.()` now reports:
+
+- `themeAlignmentPass`
+- `inputTextVisibilityPass`
+- `inputCaretVisibilityPass`
+- `placeholderVisibilityPass`
+- `buttonHierarchyPass`
+- `candidateContrastPass`
+- `validationContrastPass`
+- `visualIntegrationPass`
+- `lightSurfaceLeakDetected`
+- `unreadableTextDetected`
+
+Expected LP051.6R2 values are `true` for the pass fields, `false` for leak/unreadable flags, and `safeForProductionActivation: false`.
+
+### Exact browser visual testing steps
+
+1. Open Gridly in a mobile portrait viewport, preferably 390 × 844.
+2. Confirm production ZIP setup is not visible by default.
+3. In DevTools Console, run `window.gridlyOpenLp0516ZipConfirmationPrototype?.()`.
+4. Verify the bottom sheet uses Gridly dark/glass styling, not a bright white standalone sheet.
+5. Click the ZIP input and type `77535`; verify typed text, caret, placeholder behavior, selected text, and focus border remain readable.
+6. Clear the input, type `abc`, and press Continue; verify `Enter a five-digit ZIP code.` is readable and remains associated with the field.
+7. Enter `75834`; verify multiple candidate options are readable, selectable, and show a distinct selected state.
+8. Continue through confirmation and verify the final prototype confirmation uses the same dark/glass theme.
+9. Reset and test `77084`, `77201`, `77210`, and `99999`; verify ambiguous, PO Box-only, unique ZIP, and unsupported screens use the same styling and readable action hierarchy.
+10. Run `window.gridlyLp0516ZipConfirmationPrototypeAudit?.()` and verify the LP051.6R2 visual pass fields match the expected values while `safeForProductionActivation` remains `false`.
+11. Confirm localStorage/sessionStorage setup keys and production onboarding remain unchanged.
