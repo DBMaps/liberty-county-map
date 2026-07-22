@@ -1,12 +1,12 @@
 {
   "version": "LP051.4.owner-zip-source-acquisition.v1",
   "milestone": "LP051.4",
-  "sourceImportStatus": "blocked",
-  "sourceImportCertificationStatus": "blocked",
-  "coverageCertificationStatus": "blocked",
+  "sourceImportStatus": "complete",
+  "sourceImportCertificationStatus": "complete",
+  "coverageCertificationStatus": "partial",
   "mergeReadyForUiIntegration": false,
-  "primarySourceName": null,
-  "primarySourceVersion": null,
+  "primarySourceName": "HUD USPS ZIP Code Crosswalk",
+  "primarySourceVersion": "03/2026",
   "sourceArtifacts": [
     {
       "path": "data/source/zip/2025_Gaz_zcta_national.zip",
@@ -23,30 +23,54 @@
         "acquisitionDate": "2026-07-22",
         "redistributionAllowed": "review_source_terms_before_committing_restricted_artifacts"
       },
+      "worksheetName": null,
+      "headerRow": null,
       "warnings": []
     },
     {
       "path": "data/source/zip/ZIP-COUNTY_032026.xlsx",
       "originalFilename": "ZIP-COUNTY_032026.xlsx",
-      "sourceType": "unknown",
-      "sourceVersion": "2026",
-      "recordCount": 0,
+      "sourceType": "hud_zip_county",
+      "sourceVersion": "03/2026",
+      "recordCount": 54562,
       "fileSize": 2478574,
       "sha256": "e71413b42849648e74b4d479cde2983bbab7b7e10db2ff3ba11a9057fdfa4b00",
-      "parseStatus": "unparsed",
-      "schemaStatus": "unknown_or_unsupported",
+      "parseStatus": "parsed",
+      "schemaStatus": "valid",
       "acquisitionMetadata": {
         "recordedBy": "LP051.4 owner-side workflow",
         "acquisitionDate": "2026-07-22",
         "redistributionAllowed": "review_source_terms_before_committing_restricted_artifacts"
       },
+      "worksheetName": "Sheet1",
+      "headerRow": 1,
       "warnings": []
     }
   ],
   "normalizedCountySourcePath": "data/generated/gridly-zip-county-source-v1.json",
-  "normalizedCountySourceRecordCount": 0,
+  "normalizedCountySourceRecordCount": 743,
   "generatedCandidatePath": "data/generated/gridly-zip-awareness-candidates-v1.json",
-  "generatedCandidateCount": 0,
+  "generatedCandidateCount": 566,
+  "sourceBackedZipCount": 566,
+  "sourceBackedCountyCount": 28,
+  "primarySourceArtifactDetected": true,
+  "primarySourceArtifactPath": "data/source/zip/ZIP-COUNTY_032026.xlsx",
+  "primarySourceRecordCount": 54562,
+  "primarySourceChecksum": "e71413b42849648e74b4d479cde2983bbab7b7e10db2ff3ba11a9057fdfa4b00",
+  "primarySourceChecksumAvailable": true,
+  "primarySourceSchemaValid": true,
+  "primarySourceHeaders": [
+    "zip",
+    "geoid",
+    "res_ratio",
+    "bus_ratio",
+    "oth_ratio",
+    "tot_ratio",
+    "city",
+    "state"
+  ],
+  "primarySourceWorksheetName": "Sheet1",
+  "primarySourceHeaderRow": 1,
   "zipVsZctaDistinction": "USPS ZIP, HUD ZIP-county relationship evidence, Census ZCTA geography, and Gridly awareness assignment are separate evidence layers.",
   "records": [
     {
@@ -60,11 +84,11 @@
       "awarenessAreaKey": "dayton",
       "consumerLabel": "Dayton",
       "resolutionMethod": "directly_zip_resolvable",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77575",
@@ -77,11 +101,11 @@
       "awarenessAreaKey": "liberty",
       "consumerLabel": "Liberty",
       "resolutionMethod": "directly_zip_resolvable",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77327",
@@ -94,11 +118,11 @@
       "awarenessAreaKey": "cleveland",
       "consumerLabel": "Cleveland",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77351",
@@ -111,11 +135,11 @@
       "awarenessAreaKey": "polk-tx-livingston",
       "consumerLabel": "Livingston",
       "resolutionMethod": "directly_zip_resolvable",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77002",
@@ -128,11 +152,11 @@
       "awarenessAreaKey": "houston-downtown-midtown",
       "consumerLabel": "Downtown / Midtown",
       "resolutionMethod": "directly_zip_resolvable",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77022",
@@ -145,11 +169,11 @@
       "awarenessAreaKey": "houston-north",
       "consumerLabel": "North Houston / Greenspoint",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77075",
@@ -162,11 +186,11 @@
       "awarenessAreaKey": "houston-southeast-hobby",
       "consumerLabel": "Southeast Houston / Hobby",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77520",
@@ -179,11 +203,11 @@
       "awarenessAreaKey": "harris-tx-baytown",
       "consumerLabel": "Baytown",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77084",
@@ -196,7 +220,7 @@
       "awarenessAreaKey": "harris-tx-katy",
       "consumerLabel": "Katy",
       "resolutionMethod": "requires_disambiguation",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "split_zip_candidate",
       "candidates": [
         {
@@ -211,7 +235,7 @@
         }
       ],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77201",
@@ -224,11 +248,11 @@
       "awarenessAreaKey": "houston-downtown-midtown",
       "consumerLabel": "Downtown / Midtown",
       "resolutionMethod": "unsupported_zip_type",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "insufficient_evidence",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77210",
@@ -241,11 +265,11 @@
       "awarenessAreaKey": "houston-downtown-midtown",
       "consumerLabel": "Downtown / Midtown",
       "resolutionMethod": "unsupported_zip_type",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "insufficient_evidence",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77301",
@@ -258,11 +282,11 @@
       "awarenessAreaKey": "conroe",
       "consumerLabel": "Conroe",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77331",
@@ -275,11 +299,11 @@
       "awarenessAreaKey": "coldspring",
       "consumerLabel": "Coldspring",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77514",
@@ -292,11 +316,11 @@
       "awarenessAreaKey": "anahuac",
       "consumerLabel": "Anahuac",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77701",
@@ -309,11 +333,11 @@
       "awarenessAreaKey": "beaumont",
       "consumerLabel": "Beaumont",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77625",
@@ -326,11 +350,11 @@
       "awarenessAreaKey": "hardin-tx-kountze",
       "consumerLabel": "Kountze",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77630",
@@ -343,11 +367,11 @@
       "awarenessAreaKey": "orange-tx-orange",
       "consumerLabel": "Orange",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77340",
@@ -360,11 +384,11 @@
       "awarenessAreaKey": "walker-tx-huntsville",
       "consumerLabel": "Huntsville",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "75951",
@@ -377,11 +401,11 @@
       "awarenessAreaKey": "jasper-tx-jasper",
       "consumerLabel": "Jasper",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "75966",
@@ -394,11 +418,11 @@
       "awarenessAreaKey": "newton-tx-newton",
       "consumerLabel": "Newton",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "75979",
@@ -411,11 +435,11 @@
       "awarenessAreaKey": "tyler-tx-woodville",
       "consumerLabel": "Woodville",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77550",
@@ -428,11 +452,11 @@
       "awarenessAreaKey": "galveston-tx-galveston",
       "consumerLabel": "Galveston",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77515",
@@ -445,11 +469,11 @@
       "awarenessAreaKey": "brazoria-tx-angleton",
       "consumerLabel": "Angleton",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77469",
@@ -462,11 +486,11 @@
       "awarenessAreaKey": "fort-bend-tx-richmond",
       "consumerLabel": "Richmond",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77445",
@@ -479,11 +503,11 @@
       "awarenessAreaKey": "waller-tx-hempstead",
       "consumerLabel": "Hempstead",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77418",
@@ -496,11 +520,11 @@
       "awarenessAreaKey": "austin-tx-bellville",
       "consumerLabel": "Bellville",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77833",
@@ -513,11 +537,11 @@
       "awarenessAreaKey": "washington-tx-brenham",
       "consumerLabel": "Brenham",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77803",
@@ -530,11 +554,11 @@
       "awarenessAreaKey": "brazos-tx-bryan",
       "consumerLabel": "Bryan",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77868",
@@ -547,11 +571,11 @@
       "awarenessAreaKey": "grimes-tx-navasota",
       "consumerLabel": "Navasota",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77488",
@@ -564,11 +588,11 @@
       "awarenessAreaKey": "wharton-tx-wharton",
       "consumerLabel": "Wharton",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "78934",
@@ -581,11 +605,11 @@
       "awarenessAreaKey": "colorado-tx-columbus",
       "consumerLabel": "Columbus",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "78945",
@@ -598,11 +622,11 @@
       "awarenessAreaKey": "fayette-tx-la-grange",
       "consumerLabel": "La Grange",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77964",
@@ -615,11 +639,11 @@
       "awarenessAreaKey": "lavaca-tx-hallettsville",
       "consumerLabel": "Hallettsville",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77957",
@@ -632,11 +656,11 @@
       "awarenessAreaKey": "jackson-tx-edna",
       "consumerLabel": "Edna",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77414",
@@ -649,11 +673,11 @@
       "awarenessAreaKey": "matagorda-tx-bay-city",
       "consumerLabel": "Bay City",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     },
     {
       "zip": "77979",
@@ -666,11 +690,11 @@
       "awarenessAreaKey": "calhoun-tx-port-lavaca",
       "consumerLabel": "Port Lavaca",
       "resolutionMethod": "resolved_by_governance",
-      "authority": "LP051.4 blocked: no usable authoritative HUD ZIP-county source artifact is locally present.",
+      "authority": "LP051.4 source evidence layer present; reviewed Gridly governance overrides preserved.",
       "confidence": "existing_governance_confirmed",
       "candidates": [],
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
-      "sourceVersion": null
+      "sourceVersion": "owner_supplied_source_artifact"
     }
   ]
 }
