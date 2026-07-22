@@ -89,6 +89,47 @@
     return Boolean(pkg && pkg.packageType === "intelligence" && pkg.intelligence?.providerId === PROVIDER_ID);
   }
 
+
+  function validLonLatPair(pair) {
+    if (!Array.isArray(pair) || pair.length < 2) return null;
+    const longitude = toFiniteNumber(pair[0]);
+    const latitude = toFiniteNumber(pair[1]);
+    if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) return null;
+    return [longitude, latitude];
+  }
+
+  function geometryBoundsFromPairs(pairs) {
+    return pairs.reduce((bounds, pair) => ({
+      minLongitude: Math.min(bounds.minLongitude, pair[0]),
+      maxLongitude: Math.max(bounds.maxLongitude, pair[0]),
+      minLatitude: Math.min(bounds.minLatitude, pair[1]),
+      maxLatitude: Math.max(bounds.maxLatitude, pair[1])
+    }), { minLongitude: Infinity, maxLongitude: -Infinity, minLatitude: Infinity, maxLatitude: -Infinity });
+  }
+
+  function cloneValidatedProviderGeometry(geometry) {
+    if (!geometry || typeof geometry !== "object") return null;
+    if (geometry.type === "Point") {
+      const point = validLonLatPair(geometry.coordinates);
+      if (!point) return null;
+      return freeze({ type: "Point", coordinates: freeze(point), coordinateCount: 1, bounds: freeze(geometryBoundsFromPairs([point])) });
+    }
+    if (geometry.type === "LineString") {
+      if (!Array.isArray(geometry.coordinates) || geometry.coordinates.length < 2) return null;
+      const coordinates = geometry.coordinates.map(validLonLatPair);
+      if (coordinates.some((pair) => !pair) || coordinates.length < 2) return null;
+      return freeze({ type: "LineString", coordinates: freeze(coordinates.map(freeze)), coordinateCount: coordinates.length, bounds: freeze(geometryBoundsFromPairs(coordinates)) });
+    }
+    if (geometry.type === "MultiLineString") {
+      if (!Array.isArray(geometry.coordinates) || !geometry.coordinates.length) return null;
+      const members = geometry.coordinates.map((line) => Array.isArray(line) ? line.map(validLonLatPair) : null);
+      if (members.some((line) => !line || line.length < 2 || line.some((pair) => !pair))) return null;
+      const all = members.flat();
+      return freeze({ type: "MultiLineString", coordinates: freeze(members.map((line) => freeze(line.map(freeze)))), coordinateCount: all.length, bounds: freeze(geometryBoundsFromPairs(all)) });
+    }
+    return null;
+  }
+
   function extractGeometry(record) {
     if (!record || typeof record !== "object") return null;
     return record.__geometry || record.geometry || record.rawGeometry || null;
@@ -101,6 +142,11 @@
     }
     if (geometry && geometry.type === "LineString" && Array.isArray(geometry.coordinates) && geometry.coordinates.length) {
       const midpoint = geometry.coordinates[Math.floor(geometry.coordinates.length / 2)] || [];
+      return { longitude: toFiniteNumber(midpoint[0]), latitude: toFiniteNumber(midpoint[1]) };
+    }
+    if (geometry && geometry.type === "MultiLineString" && Array.isArray(geometry.coordinates) && geometry.coordinates.length) {
+      const line = geometry.coordinates[Math.floor(geometry.coordinates.length / 2)] || [];
+      const midpoint = line[Math.floor(line.length / 2)] || [];
       return { longitude: toFiniteNumber(midpoint[0]), latitude: toFiniteNumber(midpoint[1]) };
     }
     return {
@@ -142,6 +188,7 @@
 
   function normalizeRecord(record, index) {
     if (!record || typeof record !== "object") return null;
+    const sourceGeometry = cloneValidatedProviderGeometry(extractGeometry(record));
     const coordinates = getCoordinates(record);
     const category = normalizeCategory(record);
     const routeName = toSafeString(readFirst(record, ["route_name", "routeName", "roadway", "road", "highway"]));
@@ -160,6 +207,13 @@
       routeName,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
+      coordinateProvenance: sourceGeometry && sourceGeometry.type !== "Point" ? "provider_geometry_midpoint_for_marker_compatibility" : "provider_point_or_coordinate_fields",
+      sourceGeometry: sourceGeometry ? freeze({ type: sourceGeometry.type, coordinates: sourceGeometry.coordinates }) : null,
+      sourceGeometryType: sourceGeometry?.type || null,
+      sourceGeometryValid: Boolean(sourceGeometry),
+      sourceGeometryCoordinateCount: sourceGeometry?.coordinateCount || 0,
+      sourceGeometryBounds: sourceGeometry?.bounds || null,
+      sourceGeometryProvenance: sourceGeometry ? "trusted_drivetexas_provider_geojson_geometry" : null,
       startTime: startTime || null,
       endTime: endTime || null,
       sourceTrace: freeze({ provider: PROVIDER_NAME, sourceId: sourceId || null }),
@@ -236,7 +290,8 @@
     normalizeRecords,
     validatePayload,
     refresh,
-    getNormalizedRecords
+    getNormalizedRecords,
+    cloneValidatedProviderGeometry
   });
 
   globalScope.gridlyIntelligenceProviders = globalScope.gridlyIntelligenceProviders && typeof globalScope.gridlyIntelligenceProviders === "object"

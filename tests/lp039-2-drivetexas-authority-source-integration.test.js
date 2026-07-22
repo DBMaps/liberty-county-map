@@ -17,6 +17,7 @@ function context(overrides = {}) {
   }, overrides.window || {});
   vm.createContext(sandbox);
   vm.runInContext(foundation, sandbox, { filename: 'lp0391-foundation.js' });
+  vm.runInContext(fs.readFileSync('js/gridlyDriveTexasGeometryAuthority.js', 'utf8'), sandbox, { filename: 'js/gridlyDriveTexasGeometryAuthority.js' });
   vm.runInContext(integration, sandbox, { filename: 'js/gridlyDriveTexasAuthoritySourceIntegration.js' });
   return sandbox.window;
 }
@@ -75,7 +76,8 @@ assert.strictEqual(authority.allEligibleRecordsWithinAcceptedOwnership, true);
 assert.strictEqual(authority.allEligibleRecordsHaveFreshnessProof, true);
 assert.strictEqual(authority.allEligibleRecordsHaveIdentityProof, true);
 assert.strictEqual(Array.isArray(authority.eligibleRecordProof), true);
-assert.strictEqual(authority.ownershipMethodsObserved.length <= 2, true);
+assert(authority.ownershipMethodsObserved.includes('trusted_source_geometry_intersects_awareness_radius'));
+assert.strictEqual(authority.ownershipMethodsObserved.length <= 3, true);
 assert(authority.sourceFieldsAvailable.includes('routeName'));
 
 w = context({ window: {
@@ -131,7 +133,7 @@ const deterministic = [
 ];
 w = context({ window: { getGridlySelectedAwarenessArea: () => woodville } });
 const det = w.gridlySelectDriveTexasAuthority({ records: deterministic, selectedAwarenessArea: woodville, nowMs: now, sourceFallbackUsed: true });
-const byId = Object.fromEntries(det.recordProof.map((p) => [p.sourceId, p]));
+const byId = Object.fromEntries(det.recordProof.map((p) => [String(p.sourceId).replace(/^provider:/, ""), p]));
 assert.strictEqual(byId['one-mile'].finalEligibility, true);
 assert.strictEqual(byId['six-mile'].finalEligibility, true);
 assert.strictEqual(byId['eight-mile'].finalEligibility, false);
