@@ -25791,3 +25791,121 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   white-space: nowrap;
   border: 0;
 }
+
+/* LP050.5 — final onboarding art direction: remove presentation weight */
+.gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+  width: min(560px, calc(100vw - 12px));
+  max-height: min(96dvh, calc(100svh - 10px));
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+.gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+  height: min(96dvh, calc(100svh - 10px));
+  max-height: min(96dvh, calc(100svh - 10px));
+  padding: clamp(10px, 2.8vw, 18px) clamp(12px, 3.5vw, 22px) calc(8px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  box-shadow: none;
+}
+
+.gridly-v858-first-run-card:has([data-gridly-visual-quick-tour])::after {
+  content: none;
+}
+
+.gridly-v950-onboarding-pager {
+  gap: 6px;
+}
+
+.gridly-v950-tour-page {
+  gap: clamp(10px, 2.2vh, 16px);
+  padding: clamp(8px, 2.2vw, 14px) clamp(4px, 1.4vw, 8px);
+  background: transparent;
+  box-shadow: none;
+}
+
+.gridly-v950-welcome-page {
+  gap: clamp(6px, 1.8vh, 12px);
+  padding-inline: clamp(18px, 6vw, 30px);
+}
+
+.gridly-v950-welcome-logo {
+  width: min(64vw, 210px);
+  margin-bottom: clamp(0px, 0.5vh, 4px);
+}
+
+.gridly-v950-welcome-logo img {
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.22));
+}
+
+.gridly-v950-welcome-page .gridly-v950-page-copy {
+  gap: 7px;
+}
+
+.gridly-v950-feature-page .gridly-v950-page-copy {
+  align-self: end;
+  gap: 5px;
+  padding-inline: clamp(10px, 4vw, 24px);
+}
+
+.gridly-v950-tour-page h3 {
+  font-size: clamp(1.55rem, 6vw, 2.2rem);
+  letter-spacing: -0.045em;
+}
+
+.gridly-v950-tour-page p,
+.gridly-v950-tour-page .gridly-v859-personalization-message {
+  max-width: 20rem;
+  color: rgba(226, 239, 255, 0.78) !important;
+  font-size: 0.94rem !important;
+  line-height: 1.34 !important;
+}
+
+.gridly-v950-tour-page .gridly-v896-shot-frame {
+  place-items: center;
+  min-height: min(66vh, 640px);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.gridly-v950-tour-page .gridly-v896-shot-frame img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 34px rgba(0, 0, 0, 0.34));
+}
+
+.gridly-v950-page-indicators {
+  margin-top: 1px;
+}
+
+.gridly-v950-page-actions {
+  padding-top: 0;
+}
+
+@media (max-width: 520px) {
+  .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+    width: min(100vw - 8px, 520px);
+    max-width: calc(100vw - 8px);
+  }
+
+  .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+    padding: 10px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gridly-v950-tour-page {
+    padding: 7px 0;
+  }
+
+  .gridly-v950-welcome-logo {
+    width: min(62vw, 196px);
+  }
+
+  .gridly-v950-tour-page .gridly-v896-shot-frame {
+    min-height: min(67vh, 610px);
+  }
+}
