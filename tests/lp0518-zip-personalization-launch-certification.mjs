@@ -23,6 +23,9 @@ assert(app.includes('transactionRollbackAvailable'), 'rollback contract is audit
 assert(app.includes('routeIntelligenceTouched'), 'Route Intelligence independence is audited');
 assert(app.includes('launchCertificationStatus') && app.includes('safeForLaunch'), 'safe launch status rules are exposed');
 assert(app.includes('browserProofComplete') && app.includes('__gridlyLp0518ManualBrowserCertificationPassed'), 'browser-only proof is represented honestly');
+assert(app.includes('settingsEvidenceStatus') && app.includes('mobilePortraitEvidenceStatus') && app.includes('requiresConfirmationEvidenceStatus'), 'pass/fail/unobserved evidence statuses are reported');
+assert(app.includes('certificationEvidencePending') && app.includes('certificationPendingCount'), 'pending evidence is reported separately from blockers');
+assert(app.includes('manualProofCannotOverrideFailures') && app.includes('launchGateIntegrityPass'), 'manual proof cannot override launch gate failures');
 assert(doc.includes('window.gridlyLp0518ZipPersonalizationLaunchCertificationAudit?.()'), 'documentation includes audit command');
 assert(doc.includes('Home versus Current View contract'), 'documentation covers Home versus Current View contract');
 assert(doc.includes('Exact browser testing steps'), 'documentation includes browser-only validation steps');

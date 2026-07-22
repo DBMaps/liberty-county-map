@@ -8,7 +8,7 @@ LP051.8 adds the final passive launch-certification audit for Gridly's ZIP-based
 window.gridlyLp0518ZipPersonalizationLaunchCertificationAudit?.()
 ```
 
-The audit is intentionally honest: it reports `partial` until the required browser and mobile portrait scenarios are completed and explicitly recorded by setting `window.__gridlyLp0518ManualBrowserCertificationPassed = true` in the validated browser session. It does not mark `safeForLaunch` true from static or hidden-DOM evidence alone.
+The audit is intentionally honest: it reports `partial` until required browser scenarios are observed and the owner acknowledges completion by setting `window.__gridlyLp0518ManualBrowserCertificationPassed = true` in the validated browser session. The manual flag means only “the owner completed the required browser checklist”; it does not flip failed fields to pass, ignore visible failures, bypass missing scenario evidence, force `launch_candidate`, or force `safeForLaunch: true`.
 
 ## Certified architecture
 
@@ -85,7 +85,7 @@ The audit reports protected ZIP findings and write-detection fields for unsuppor
 
 ## Requires-confirmation result
 
-ZIP `75834` is treated as a confirmation-required rural multi-community scenario. Gridly must show multiple relevant existing candidates, avoid silent selection, use consumer-friendly labels, and apply exactly the selected identity.
+ZIP `75834` is treated as a confirmation-required rural multi-community scenario. Function availability is not proof. The required browser proof is that `75834` presents multiple relevant existing candidates, silently selects no default, requires explicit selection, applies only the selected identity, and preserves previous Home on cancel. Until tested, the audit reports `requiresConfirmationEvidenceStatus: "unobserved"`, `requiresConfirmationPass: null`, pending evidence, and `safeForLaunch: false`.
 
 ## Houston result
 
@@ -105,7 +105,7 @@ Awareness Brief, Current Conditions, Community Pulse, Travel Brief, alert filter
 
 ## Settings result
 
-The visible production Settings renderer is `buildSettingsSurfaceHtml()` inside `#gridlyPortraitV2SheetBody`. The required visible Dayton setup text is: HOME AREA, Dayton, Liberty County, HOME ZIP, 77535, Change home ZIP, CURRENT VIEW, Dayton or Liberty County, Change Area, and Choose community manually. Hidden legacy markup does not satisfy LP051.8.
+The visible production Settings renderer is `buildSettingsSurfaceHtml()` inside `#gridlyPortraitV2SheetBody`. The required visible Dayton setup text is: HOME AREA, Dayton, Liberty County, HOME ZIP, 77535, Change home ZIP, CURRENT VIEW, Dayton or Liberty County, Change Area, and Choose community manually. Hidden legacy markup does not satisfy LP051.8. Settings is not required to remain open permanently: a closed Settings panel is `settingsEvidenceStatus: "unobserved"` and creates pending evidence, while an open Settings panel missing required controls is `settingsEvidenceStatus: "fail"` and blocks launch. Passing Settings evidence must be earned while the runtime DOM is observable, for example with `window.gridlyLp0518RecordBrowserEvidence?.("settingsVisiblePass")` after opening Settings and verifying the required text.
 
 ## Storage consistency
 
@@ -121,7 +121,7 @@ Successful apply should write the canonical record once, block duplicate taps, b
 
 ## Mobile portrait result
 
-Mobile portrait is the primary experience. Required manual viewports include 390 × 844 and one narrower phone viewport. Review ZIP entry, resolved result, confirmation lists, ambiguous list, protected ZIP states, applying/success states, Settings Home card, Settings Current View card, Change ZIP flow, manual fallback, and county-wide Current View for Gridly dark/glass styling, readable text, clear button hierarchy, unclipped controls, keyboard safety, clean bottom-sheet close, and understandable Home versus Current View separation.
+Mobile portrait uses the same pass/fail/unobserved evidence model. CSS presence alone is not proof. Until the owner verifies a usable 390 × 844 layout, readable entry/result/Settings screens, unclipped required actions, keyboard-safe ZIP entry, and clear Home versus Current View language, the audit reports `mobilePortraitEvidenceStatus: "unobserved"`, `mobilePortraitPass: null`, pending evidence, and `safeForLaunch: false`. Mobile portrait is the primary experience. Required manual viewports include 390 × 844 and one narrower phone viewport. Review ZIP entry, resolved result, confirmation lists, ambiguous list, protected ZIP states, applying/success states, Settings Home card, Settings Current View card, Change ZIP flow, manual fallback, and county-wide Current View for Gridly dark/glass styling, readable text, clear button hierarchy, unclipped controls, keyboard safety, clean bottom-sheet close, and understandable Home versus Current View separation.
 
 ## Accessibility result
 
@@ -129,7 +129,7 @@ Scoped checks cover ZIP input label, aria-live validation, focus management, dia
 
 ## Audit output
 
-The LP051.8 audit reports all required top-level booleans and details arrays: canonical-record findings, active-state findings, map findings, awareness findings, Settings findings, startup findings, migration findings, change-ZIP findings, cancel findings, protected ZIP findings, write findings, refresh findings, stale-state findings, visual findings, accessibility findings, certification blockers, and representative test results.
+The LP051.8 audit reports pass/fail/unobserved evidence fields including `settingsEvidenceStatus`, `mobilePortraitEvidenceStatus`, `requiresConfirmationEvidenceStatus`, `changeZipApplyEvidenceStatus`, `changeZipCancelEvidenceStatus`, `homeCurrentViewEvidenceStatus`, `certificationEvidencePending`, `certificationPendingCount`, `manualProofCannotOverrideFailures`, and `launchGateIntegrityPass`. The LP051.8 audit reports all required top-level booleans and details arrays: canonical-record findings, active-state findings, map findings, awareness findings, Settings findings, startup findings, migration findings, change-ZIP findings, cancel findings, protected ZIP findings, write findings, refresh findings, stale-state findings, visual findings, accessibility findings, certification blockers, and representative test results.
 
 ## Certification blockers
 
@@ -137,7 +137,17 @@ Blockers include invalid canonical records, active-state disagreement after norm
 
 ## Launch status
 
-`launchCertificationStatus` values are `blocked`, `partial`, `launch_candidate`, and `certified`. LP051.8 does not use `certified` unless final real-device launch certification is explicitly completed. `safeForLaunch` may be true only for `launch_candidate` or `certified` with zero blockers.
+LP051.8 separates proven failures from missing evidence. `certificationBlockers` contains proven failures. `certificationEvidencePending` contains required browser scenarios or other requirements that are not yet observed. `certificationBlockerCount` and `certificationPendingCount` are reported separately.
+
+Corrected launch-status truth table:
+
+| Blockers | Pending evidence | Browser proof complete | launchCertificationStatus | safeForLaunch |
+| --- | --- | --- | --- | --- |
+| > 0 | any | any | `blocked` | `false` |
+| 0 | > 0 | any | `partial` | `false` |
+| 0 | 0 | `true` | `launch_candidate` | `true` |
+
+`launchCertificationStatus` values are `blocked`, `partial`, `launch_candidate`, and `certified`. LP051.8 does not use `certified` unless final real-device launch certification is explicitly completed. `safeForLaunch` may be true only for `launch_candidate` with every mandatory requirement passing and no pending evidence.
 
 ## Merge recommendation
 
@@ -161,7 +171,8 @@ Merge recommendation: merge as the launch-certification harness and documentatio
 14. Validate map and awareness surfaces after each apply/restore.
 15. Validate mobile portrait at 390 × 844 and a narrower viewport.
 16. Validate scoped accessibility basics.
-17. Only after every browser scenario passes, set `window.__gridlyLp0518ManualBrowserCertificationPassed = true` and rerun the audit to confirm `launch_candidate` and `safeForLaunch: true`.
+17. Record earned evidence as each browser scenario is inspected, for example `window.gridlyLp0518RecordBrowserEvidence?.("settingsVisiblePass")` while Settings is open, then record `mobilePortraitPass`, `requiresConfirmationPass`, `changeZipApplyPass`, `changeZipCancelPass`, `countyWideHomeSeparationPass`, `visualIntegrationPass`, and `accessibilityBasicsPass` only after those checks pass.
+18. Only after every browser scenario passes, set `window.__gridlyLp0518ManualBrowserCertificationPassed = true` and rerun the audit. Confirm `launch_candidate` and `safeForLaunch: true` only when `certificationBlockerCount === 0`, `certificationPendingCount === 0`, and every mandatory field is true.
 
 ## Post-LP051 recommendation
 
