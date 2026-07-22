@@ -25195,6 +25195,9 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 #gridlyPortraitV2 .gridly-travel-brief-item {
   display: grid;
   grid-template-columns: minmax(92px, 0.34fr) minmax(0, 1fr);
+  grid-template-areas:
+    "title lines"
+    "source lines";
   align-items: start;
   column-gap: 12px;
   padding: 9px 12px;
@@ -25205,11 +25208,13 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 }
 
 #gridlyPortraitV2 .gridly-travel-brief-item h4,
-#gridlyPortraitV2 .gridly-travel-brief-item p {
+#gridlyPortraitV2 .gridly-travel-brief-item p,
+#gridlyPortraitV2 .gridly-travel-brief-item small {
   margin: 0;
 }
 
 #gridlyPortraitV2 .gridly-travel-brief-item h4 {
+  grid-area: title;
   color: rgba(156, 255, 231, 0.9);
   font-size: 0.68rem;
   font-weight: 860;
@@ -25218,7 +25223,17 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   text-transform: uppercase;
 }
 
+#gridlyPortraitV2 .gridly-travel-brief-source {
+  grid-area: source;
+  margin-top: 3px;
+  color: rgba(189, 204, 224, 0.74);
+  font-size: 0.62rem;
+  font-weight: 680;
+  line-height: 1.22;
+}
+
 #gridlyPortraitV2 .gridly-travel-brief-lines {
+  grid-area: lines;
   display: grid;
   gap: 3px;
   min-width: 0;

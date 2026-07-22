@@ -64,7 +64,7 @@ const root = new FakeElement();
 root.children = [construction.row, roadClosed.row, flooding.row, train.row];
 
 const source = [
-  app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES')),
+  app.slice(app.indexOf('function gridlyOfficialConsumerNormalizeRouteIdentifier'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES')),
   app.match(/function gridlyLp0456OfficialSourceDetection[\s\S]*?\n}\n\nfunction gridlyLp0456IsOfficialDriveTexasRecord/)[0].replace('\nfunction gridlyLp0456IsOfficialDriveTexasRecord', ''),
   app.match(/function gridlyLp0462DecodeVisibleAlertElementProse[\s\S]*?if \(typeof window !== "undefined"\) window\.gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom = gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom;/)[0]
 ].join('\n');
@@ -79,7 +79,7 @@ context.gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom(root, [
 ]);
 
 assert.strictEqual(construction.loc.textContent, 'US 59 main lanes remain open. Crews are installing a cable median barrier.');
-assert.strictEqual(roadClosed.loc.textContent, 'Alternating lane closures on US 59. Expect delays. Crews are installing a cable median barrier.');
+assert.strictEqual(roadClosed.loc.textContent, 'Alternating lane closures on US 59. Expect delays while crews install a cable median barrier.');
 assert(!/<\s*br\s*\/?\s*>|&lt;\s*br\s*\/?\s*&gt;/i.test(`${construction.loc.textContent} ${construction.sum.textContent} ${roadClosed.loc.textContent} ${roadClosed.sum.textContent}`), 'official cards contain no break-tag text');
 assert.strictEqual(flooding.loc.textContent, 'Community reported / keep this separator');
 assert.strictEqual(flooding.sum.textContent, 'Community Flooding summary with <br/> intentionally unchanged.');
