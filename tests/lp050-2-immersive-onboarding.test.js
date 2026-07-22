@@ -23,8 +23,12 @@ for (const key of ['awareness', 'map', 'alerts', 'report', 'settings']) {
   assert(styleSource.includes(`data-gridly-visual-tour-card="${key}"`), `${key} has feature-specific focal positioning`);
 }
 assert(/\.gridly-v950-tour-page[\s\S]*grid-template-rows:\s*auto minmax\(0, 1fr\)/.test(styleSource), 'feature pages reserve most space for the visual');
-assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame[\s\S]*min-height:\s*min\(6[18]vh/.test(styleSource), 'feature visuals receive substantially more presentation space');
+assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame[\s\S]*min-height:\s*min\(6[68]vh/.test(styleSource), 'feature visuals receive substantially more presentation space');
 assert(/object-fit:\s*contain/.test(styleSource), 'feature images show the full phone without stretching');
 const immersiveCss = styleSource.slice(styleSource.indexOf('/* LP050.2'));
+const finalArtDirectionCss = styleSource.slice(styleSource.indexOf('/* LP050.5'));
 assert(!/\.gridly-v950-feature-page[^{]*\{[^}]*overflow-y:\s*auto/.test(immersiveCss), 'feature pages do not revert to long vertical scrolling');
+assert(/\.gridly-v858-first-run-sheet:has\(\[data-gridly-visual-quick-tour\]\)[\s\S]*background:\s*transparent/.test(finalArtDirectionCss), 'presentation sheet background is removed for visual tour');
+assert(/\.gridly-v858-first-run-card:has\(\[data-gridly-visual-quick-tour\]\)[\s\S]*box-shadow:\s*none/.test(finalArtDirectionCss), 'presentation card shadow is removed for visual tour');
+assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame img[\s\S]*filter:\s*drop-shadow/.test(finalArtDirectionCss), 'floating phone uses only subtle image shadow');
 console.log('lp050-2-immersive-onboarding.test.js passed');
