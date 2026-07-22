@@ -13,7 +13,7 @@ assert(app.includes('gridlyLp0457CachedMarkupLooksOfficial(cache.renderedMarkup)
 assert(app.includes('window.gridlyLp0457CachedOfficialAlertMarkupAudit'), 'passive LP045.7 cache audit is exposed');
 assert(app.includes('sourceCollectionName: "presentationAlerts from presentationCountModel.alerts fallback buildAlertPresentationGroups(alertsForRender)"'), 'cache-generation source collection is documented');
 assert(app.includes('gridlyLp0457SanitizeOfficialCardCopy(alert'), 'official card copy is sanitized during cache generation');
-assert(app.includes('gridlySanitizeOfficialConsumerProse(selectedDescription.value)'), 'cached location line is sanitized before escaping');
+assert(app.includes('gridlyNormalizeOfficialConsumerLanguage(rawOfficialDescriptionValue'), 'cached location line is sanitized before escaping');
 assert(app.includes('gridlyLp0457NormalizeOfficialSummaryProse'), 'cached situation summary has independent sanitizer');
 assert(app.includes('data-gridly-alert-situation-summary="true"'), 'situation summary is rendered from the card contract');
 assert(app.includes('gridlyLp0455OfficialFreshnessResult(alert).renderedFreshnessLine'), 'official card freshness remains unchanged');
@@ -24,7 +24,7 @@ assert(app.includes('focusPulseApplied'), 'marker focus and pulse auditing remai
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains unchanged');
 assert(app.includes('Travel Brief'), 'Travel Brief ownership remains unchanged');
 
-const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerNormalizeRouteIdentifier'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const normalizeSource = app.match(/function gridlyLp0457NormalizeOfficialSummaryProse[\s\S]*?\n}\n/)[0];
 const detectionSource = app.match(/function gridlyLp0456OfficialSourceDetection[\s\S]*?function gridlyLp0456IsOfficialDriveTexasRecord[\s\S]*?\n}\n/)[0];
 const context = { String, RegExp };

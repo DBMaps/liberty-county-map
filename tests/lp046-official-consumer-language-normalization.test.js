@@ -29,6 +29,11 @@ assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US0059', {})
 assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US 0059', {}), 'US 59.', 'zero-padded US route IDs are normalized');
 assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('US 59', {}), 'US 59.', 'valid US route IDs remain stable');
 assert.strictEqual(context.gridlyNormalizeOfficialConsumerLanguage('FM 1960', {}), 'FM 1960.', 'valid FM route IDs remain stable');
+
+assert.strictEqual(context.gridlyOfficialConsumerCleanText('US0059').replace(/[.!?]$/g, ''), 'US 59', 'compact popup roadway labels normalize without sentence punctuation');
+assert.strictEqual(context.gridlyOfficialConsumerCleanText('US 0059').replace(/[.!?]$/g, ''), 'US 59', 'space-padded popup roadway labels normalize without sentence punctuation');
+assert.strictEqual(context.gridlyOfficialConsumerCleanText('US-0059').replace(/[.!?]$/g, ''), 'US 59', 'hyphen-padded popup roadway labels normalize without sentence punctuation');
+assert.strictEqual(context.gridlyOfficialConsumerCleanText('FM 1960').replace(/[.!?]$/g, ''), 'FM 1960', 'valid FM popup roadway labels remain unchanged');
 assert.strictEqual(
   context.gridlyNormalizeOfficialConsumerLanguage('FOR THE CONSTRUCTION OF SAFETY IMPROVEMENT PROJECTS CONSISTING OF INSTALL CALE MEDIAN BARRIER.', { routeName: 'US0059' }),
   'Crews are installing a cable median barrier.',
@@ -78,6 +83,8 @@ const popup = context.gridlyLp0393ConsumerDriveTexasPopupHtml({
   description: 'US 59, MAIN LANES not affected.<br/>Construction of safety improvement projects consisting of installing cable median barrier.'
 });
 assert(popup.includes('Official Source · DriveTexas'), 'popup attribution remains unchanged');
+assert(!popup.includes('Official advisory ·'), 'popup omits redundant official advisory prefix');
+assert(!popup.includes('What drivers should know · Construction'), 'popup does not render category as guidance text');
 assert(!/<\s*br|&lt;\s*br/i.test(popup) && !/MAIN LANES|FOR THE CONSTRUCTION/.test(popup), 'popup uses normalized consumer description');
 assert(popup.includes('US 59'), 'popup preserves roadway names');
 

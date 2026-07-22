@@ -33,7 +33,7 @@ console.log('LP045.2 official marker construction repair checks passed');
 
 assert(app.includes('function gridlySanitizeOfficialConsumerProse'), 'narrow official consumer prose sanitizer exists');
 assert(/replace\(\/&lt;\\s\*br/.test(app) && /replace\(\/<\\s\*br/.test(app), 'official prose sanitizer normalizes escaped and literal break tags');
-assert(app.includes('const desc = sanitizeText(gridlySanitizeOfficialConsumerProse'), 'official DriveTexas popup description uses sanitized consumer prose');
-assert(app.includes('sourceLocationDescription: gridlySanitizeOfficialConsumerProse') && app.includes('normalizedDescription: gridlySanitizeOfficialConsumerProse'), 'official alert presentation description fields are sanitized without mutating source records');
+assert(app.includes('const desc = sanitizeText(presentation?.combinedDescription || gridlyNormalizeOfficialConsumerLanguage'), 'official DriveTexas popup description uses sanitized consumer prose');
+assert(app.includes('sourceLocationDescription: gridlyNormalizeOfficialConsumerLanguage') && app.includes('normalizedDescription: gridlyNormalizeOfficialConsumerLanguage'), 'official alert presentation description fields are sanitized without mutating source records');
 assert(app.includes('Official Source · DriveTexas'), 'official popup still includes DriveTexas source attribution');
 assert(!/gridlySanitizeOfficialConsumerProse[\s\S]{0,1200}setInterval|gridlySanitizeOfficialConsumerProse[\s\S]{0,1200}fetch/.test(app), 'sanitizer remains presentation-only and does not fetch or poll');

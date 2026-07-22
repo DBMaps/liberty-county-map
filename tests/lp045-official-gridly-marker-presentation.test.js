@@ -8,7 +8,8 @@ assert(app.includes('function gridlyBuildOfficialRoadwayProductionMarkerIcon'), 
 assert(app.includes('getGridlyProductionMarkerAsset(productionMarkerCategory)'), 'official markers reuse Gridly production marker assets');
 assert(app.includes('gridlyBuildVisualPriorityMetadata({'), 'official markers reuse shared marker hierarchy metadata');
 assert(app.includes('data-gridly-marker-source-kind="official"'), 'official marker presentation identifies official source kind without a separate icon family');
-assert(app.includes('Official advisory · Official Source · DriveTexas'), 'official popup identifies DriveTexas as the official source');
+assert(app.includes('Official Source · DriveTexas'), 'official popup identifies DriveTexas as the official source');
+assert(!app.includes('Official advisory · Official Source · DriveTexas'), 'official popup omits redundant advisory metadata');
 assert(app.includes('gridlyApplySelectedVisualDominanceToMarker(currentMarker, true)') && app.includes('gridlyApplySelectedVisualDominanceToMarker(currentMarker, false)') && app.includes('}, 1400);'), 'alert focus applies a naturally expiring marker highlight');
 assert(css.includes('gridlyOfficialMarkerFocusPulse'), 'official marker focus pulse styling exists');
 assert(!/gridly-official-roadway-marker[\s\S]{0,400}>i<|>i<\/b>/.test(app), 'official marker rendering does not restore blue information-circle markup');
