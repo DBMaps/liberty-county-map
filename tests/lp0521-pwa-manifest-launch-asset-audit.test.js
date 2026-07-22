@@ -14,7 +14,7 @@ assert(!manifestText.includes('Beta Complete'));
 assert(!/preparing for launch/i.test(manifestText));
 assert(app.includes('window.gridlyLp0521PwaManifestLaunchAssetAudit = function gridlyLp0521PwaManifestLaunchAssetAudit()'), 'LP052.1 audit helper exists');
 assert(app.includes('exposeGridlyAuditHelper("gridlyLp0521PwaManifestLaunchAssetAudit", window.gridlyLp0521PwaManifestLaunchAssetAudit);'), 'LP052.1 audit helper is registered');
-assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-beta-closure-v1";'), 'service-worker strategy cache name remains unchanged');
+assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp0522-v1";'), 'service-worker cache name advances safely for LP052.2 lifecycle cleanup');
 assert(serviceWorker.includes('self.skipWaiting()'), 'service-worker lifecycle strategy remains unchanged');
 assert(serviceWorker.includes('self.clients.claim()'), 'service-worker clients claim strategy remains unchanged');
 assert(serviceWorker.includes('./assets/icon-180.png') && serviceWorker.includes('./assets/icon-192.png') && serviceWorker.includes('./assets/icon-512.png'), 'service-worker precache inventory reports icon additions');

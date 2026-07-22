@@ -16,5 +16,5 @@ assert.strictEqual(manifest.display, 'standalone', 'manifest keeps standalone di
 assert.strictEqual(manifest.start_url, './', 'manifest start_url remains relative');
 assert.strictEqual(manifest.scope, './', 'manifest scope remains relative');
 assert(manifest.icons.some((icon) => icon.sizes === '512x512' && /maskable/.test(icon.purpose || '')), 'manifest includes a maskable 512 icon');
-assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-beta-closure-v1";'), 'service worker cache name unchanged');
+assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp0522-v1";'), 'service worker cache name advanced for LP052.2 lifecycle cleanup');
 assert(serviceWorker.includes('fetch(request, { cache: "no-store" })'), 'navigation network-first behavior unchanged');
