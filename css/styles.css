@@ -25668,20 +25668,18 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   padding-inline: clamp(22px, 7vw, 34px);
 }
 
-.gridly-v950-welcome-mark {
+.gridly-v950-welcome-logo {
   display: grid;
   place-items: center;
-  width: clamp(86px, 27vw, 118px);
-  height: clamp(86px, 27vw, 118px);
-  border-radius: 30px;
-  color: #f8fcff;
-  font-size: clamp(3rem, 14vw, 4.6rem);
-  font-weight: 950;
-  letter-spacing: -0.08em;
-  background:
-    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(145deg, rgba(20, 144, 218, 0.94), rgba(28, 72, 168, 0.94));
-  box-shadow: 0 24px 70px rgba(56, 189, 248, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  width: min(76vw, 240px);
+  margin-inline: auto;
+}
+
+.gridly-v950-welcome-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.28));
 }
 
 .gridly-v950-welcome-page .gridly-v950-page-copy {
@@ -25715,12 +25713,12 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   align-self: stretch;
   justify-self: stretch;
   place-items: stretch;
-  min-height: min(58vh, 560px);
+  min-height: min(61vh, 580px);
   max-height: none;
   border: 0;
-  border-radius: 28px;
-  background: rgba(3, 10, 19, 0.16);
-  box-shadow: 0 24px 78px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(142, 230, 255, 0.08);
+  border-radius: 24px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .gridly-v950-tour-page .gridly-v896-shot-frame img {
@@ -25728,15 +25726,16 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   height: 100%;
   max-width: 100%;
   max-height: none;
-  object-fit: cover;
-  object-position: 50% 18%;
+  object-fit: contain;
+  object-position: 50% 50%;
+  filter: drop-shadow(0 24px 46px rgba(0, 0, 0, 0.42));
 }
 
-.gridly-v950-tour-page[data-gridly-visual-tour-card="awareness"] .gridly-v896-shot-frame img { object-position: 50% 10%; }
-.gridly-v950-tour-page[data-gridly-visual-tour-card="map"] .gridly-v896-shot-frame img { object-position: 50% 45%; }
-.gridly-v950-tour-page[data-gridly-visual-tour-card="alerts"] .gridly-v896-shot-frame img { object-position: 50% 36%; }
-.gridly-v950-tour-page[data-gridly-visual-tour-card="report"] .gridly-v896-shot-frame img { object-position: 50% 48%; }
-.gridly-v950-tour-page[data-gridly-visual-tour-card="settings"] .gridly-v896-shot-frame img { object-position: 50% 36%; }
+.gridly-v950-tour-page[data-gridly-visual-tour-card="awareness"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
+.gridly-v950-tour-page[data-gridly-visual-tour-card="map"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
+.gridly-v950-tour-page[data-gridly-visual-tour-card="alerts"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
+.gridly-v950-tour-page[data-gridly-visual-tour-card="report"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
+.gridly-v950-tour-page[data-gridly-visual-tour-card="settings"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
 
 .gridly-v950-setup-page {
   align-content: center;
@@ -25756,8 +25755,8 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   }
 
   .gridly-v950-tour-page .gridly-v896-shot-frame {
-    min-height: min(61vh, 560px);
-    border-radius: 24px;
+    min-height: min(62vh, 560px);
+    border-radius: 20px;
   }
 
   .gridly-v950-page-actions {
