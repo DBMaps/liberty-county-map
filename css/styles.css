@@ -25650,85 +25650,97 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 /* LP050.2 — immersive first-run onboarding presentation */
 .gridly-v950-onboarding-pager {
   grid-template-rows: minmax(0, 1fr) auto auto auto;
+  gap: 4px;
 }
 
 .gridly-v950-tour-page {
   align-content: stretch;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: clamp(12px, 3vh, 18px);
-  padding: clamp(14px, 3.8vw, 22px) clamp(10px, 3vw, 18px);
+  gap: clamp(8px, 2vh, 12px);
+  padding: clamp(8px, 2.5vw, 14px) clamp(4px, 1.8vw, 10px);
   border: 0;
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
 .gridly-v950-welcome-page {
+  align-content: center;
   place-items: center;
   text-align: center;
-  padding-inline: clamp(22px, 7vw, 34px);
+  gap: clamp(8px, 2vh, 14px);
+  padding-inline: clamp(20px, 6vw, 32px);
+  padding-block: clamp(4px, 1.5vh, 10px);
 }
 
 .gridly-v950-welcome-logo {
   display: grid;
   place-items: center;
-  width: min(76vw, 240px);
-  margin-inline: auto;
+  width: min(72vw, 230px);
+  margin: 0 auto clamp(2px, 0.8vh, 6px);
 }
 
 .gridly-v950-welcome-logo img {
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.28));
+  filter: drop-shadow(0 18px 38px rgba(0, 0, 0, 0.28));
 }
 
 .gridly-v950-welcome-page .gridly-v950-page-copy {
-  gap: 12px;
+  gap: 8px;
+}
+
+.gridly-v950-welcome-page .gridly-v858-first-run-eyebrow {
+  margin-bottom: -2px;
 }
 
 .gridly-v950-welcome-page h2,
 .gridly-v950-setup-page h3 {
-  font-size: clamp(2.35rem, 10vw, 3.15rem);
+  font-size: clamp(2.25rem, 9.5vw, 3.05rem);
 }
 
 .gridly-v950-feature-page .gridly-v950-page-copy {
   align-self: end;
-  gap: 8px;
+  gap: 6px;
   padding-inline: clamp(8px, 3vw, 18px);
 }
 
 .gridly-v950-tour-page h3 {
-  font-size: clamp(1.72rem, 7vw, 2.55rem);
+  font-size: clamp(1.66rem, 6.6vw, 2.45rem);
   line-height: 0.98;
 }
 
 .gridly-v950-tour-page p,
 .gridly-v950-tour-page .gridly-v859-personalization-message {
-  max-width: 24rem;
-  font-size: 0.98rem !important;
-  line-height: 1.38 !important;
+  max-width: 23rem;
+  font-size: 0.96rem !important;
+  line-height: 1.34 !important;
 }
 
 .gridly-v950-tour-page .gridly-v896-shot-frame {
   align-self: stretch;
   justify-self: stretch;
+  display: grid;
   place-items: stretch;
-  min-height: min(61vh, 580px);
+  min-height: min(68vh, 660px);
   max-height: none;
+  overflow: visible;
   border: 0;
-  border-radius: 24px;
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
 .gridly-v950-tour-page .gridly-v896-shot-frame img {
+  display: block;
   width: 100%;
   height: 100%;
   max-width: 100%;
   max-height: none;
   object-fit: contain;
   object-position: 50% 50%;
-  filter: drop-shadow(0 24px 46px rgba(0, 0, 0, 0.42));
+  filter: drop-shadow(0 26px 48px rgba(0, 0, 0, 0.44));
 }
 
 .gridly-v950-tour-page[data-gridly-visual-tour-card="awareness"] .gridly-v896-shot-frame img { object-position: 50% 50%; }
@@ -25751,12 +25763,16 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 
 @media (max-width: 520px) {
   .gridly-v950-tour-page {
-    padding: 12px 6px;
+    gap: 7px;
+    padding: 8px 2px;
   }
 
   .gridly-v950-tour-page .gridly-v896-shot-frame {
-    min-height: min(62vh, 560px);
-    border-radius: 20px;
+    min-height: min(69vh, 620px);
+  }
+
+  .gridly-v950-welcome-logo {
+    width: min(70vw, 220px);
   }
 
   .gridly-v950-page-actions {
