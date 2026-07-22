@@ -935,10 +935,13 @@
             <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
             <div class="settings-place-grid" aria-label="Awareness Area settings">
               <article class="settings-place-card settings-place-card-wide settings-awareness-area-card">
-                <span class="settings-place-label">Awareness Area</span>
+                <span class="settings-place-label">Home area</span>
                 <strong id="settingsAwarenessAreaValue">Not selected</strong>
                 <small id="settingsAwarenessAreaMeta">Choose the community-watch area Gridly should follow.</small>
-                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsChangeAwarenessAreaBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Change Awareness Area</button>
+                <span class="settings-place-label">Home ZIP</span>
+                <strong id="settingsHomeZipValue">Not set</strong>
+                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsChangeAwarenessAreaBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Change home ZIP</button>
+                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsChooseCommunityManuallyBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Choose community manually</button>
               </article>
             </div>
             <div class="settings-awareness-area-chooser" id="settingsAwarenessAreaChooser" data-gridly-settings-awareness-options aria-label="Choose an awareness area" hidden></div>
@@ -1214,7 +1217,8 @@
         <article class="gridly-welcome-step" data-gridly-welcome-step="3" hidden>
           <p class="eyebrow">Awareness Area</p>
           <h2>Choose Your County</h2>
-          <p>Start with your county, then choose the home area Gridly should watch first. ZIP-based setup is coming later; today you can choose a home area without sharing precise location.</p>
+          <p>Enter your ZIP first so Gridly can find or narrow the familiar home area it should watch. You can still choose a community manually.</p>
+          <button class="primary-btn" type="button" id="gridlyWelcomeZipSetupBtn">What’s your ZIP Code?</button>
           <label class="gridly-welcome-select-label">
             Select County
             <select id="gridlyWelcomeCountySelect" class="gridly-premium-select" data-gridly-county-select data-gridly-county-option-list aria-label="Select County">
