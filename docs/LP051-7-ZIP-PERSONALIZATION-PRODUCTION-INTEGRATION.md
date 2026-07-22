@@ -76,6 +76,37 @@ Rural confirmation-required ZIPs present valid existing Gridly candidates and re
 ## Error handling
 Invalid identity and persistence failures block setup completion and expose a retry/manual fallback. Map-focus failure after persistence is reported diagnostically while preserving saved setup.
 
+
+## LP051.7R1 root cause
+The first LP051.7 Settings work was present in the legacy `#settingsModal` markup and helper refresh path, but the production browser-visible owner for portrait mobile Settings is the Portrait V2 Settings renderer in `buildSettingsSurfaceHtml()` inside `#gridlyPortraitV2SheetBody`. That renderer rebuilt the visible Settings body with only the legacy Awareness Area / Change Area card, so the legacy Home ZIP nodes were dormant whenever Portrait V2 Settings was open.
+
+## Actual visible Settings renderer repaired
+LP051.7R1 repairs the production-visible Portrait V2 Settings renderer, not a hidden legacy surface. The Awareness section now renders a visible Home card sourced from `gridlyHomePersonalizationV1` when valid, followed by a distinct Current view card that keeps the existing awareness selector controls.
+
+## Home versus Current View distinction
+Home is persistent personalization: it displays the saved consumer community label, county name, and ZIP from the canonical record. Current View is the temporary awareness view: it can remain Dayton, switch to Liberty County, or switch to another available community without rewriting the canonical Home ZIP record merely because the user is viewing a different area. Communities remain the consumer experience; ZIP remains only the input method.
+
+## Visible Home ZIP management
+When a canonical record exists, Settings shows Home area, the consumer label such as Dayton, the county name such as Liberty County, Home ZIP, ZIP 77535, and Change home ZIP. For existing/manual users without a valid canonical ZIP, Settings shows the existing community/county safely, Home ZIP as Not set, and Add home ZIP. Change/Add home ZIP opens the ZIP confirmation flow and preserves the old setup until a new selection is explicitly confirmed.
+
+## Legacy Change Area preservation
+The existing Awareness Area selector remains available as Current view with Change Area. Choose community manually opens the same manual awareness/community chooser and does not fabricate or erase ZIP data.
+
+## County-wide viewing preservation
+County-wide viewing remains available through the existing manual awareness chooser and county/community selector. Selecting a county-wide Current view must not overwrite the persistent Home record saved at `gridlyHomePersonalizationV1`.
+
+## Existing-user Not set behavior
+If the canonical record is missing or invalid, Settings does not crash and does not expose internal keys. It falls back to the existing manual awareness display and shows Home ZIP as Not set while the audit records invalid stored records.
+
+## Exact browser validation steps
+1. Open the app in a fresh browser profile.
+2. Use the production ZIP confirmation flow to enter `77535` and confirm Dayton.
+3. Open Settings from the Portrait V2 bottom dock.
+4. Confirm the visible Settings text includes `Home area`, `Dayton`, `Liberty County`, `Home ZIP`, `77535`, `Change home ZIP`, `Choose community manually`, and `Change Area`.
+5. Run `window.gridlyLp0517ZipPersonalizationProductionIntegrationAudit?.()` and confirm `visibleSettingsSurfaceDetected`, `homeAreaVisible`, `homeZipVisible`, `savedZipVisibleInSettings`, `changeHomeZipVisible`, `manualHomeFallbackVisible`, `legacyChangeAreaPreserved`, `homeAndCurrentViewDistinct`, `settingsCanonicalRecordRendered`, and `settingsZipManagementPass` are all `true`.
+6. Use Change Area to switch Current view to Liberty County and confirm `JSON.parse(localStorage.gridlyHomePersonalizationV1).consumerLabel` remains `Dayton` and `.zip` remains `77535`.
+7. Use Change home ZIP, cancel, and confirm the same saved Home values remain visible.
+
 ## Audit contract
 `window.gridlyLp0517ZipPersonalizationProductionIntegrationAudit?.()` reports production availability, canonical record validity, writes, state transitions, refreshes, map focus operations, Settings, startup, protected ZIP results, certification blockers, certification status, and safe-for-production status.
 
