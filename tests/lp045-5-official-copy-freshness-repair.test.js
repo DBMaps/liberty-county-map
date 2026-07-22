@@ -13,7 +13,7 @@ assert(app.includes('focusPulseApplied'), 'focus pulse audit remains present');
 assert(app.includes('Travel Brief'), 'Travel Brief ownership text remains present');
 assert(app.includes('gridlyEvaluateDriveTexasGeographicOwnership'), 'LP039 authority remains present');
 
-const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerSentenceCase'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
+const sanitizerSource = app.slice(app.indexOf('function gridlyOfficialConsumerNormalizeRouteIdentifier'), app.indexOf('const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES'));
 const freshnessSource = app.match(/const GRIDLY_OFFICIAL_FRESHNESS_REASONABLE_MAX_MINUTES[\s\S]*?function gridlyLp0393OfficialPopupFreshnessLine[\s\S]*?\n}\n/)[0];
 const context = {
   Date,
@@ -37,7 +37,7 @@ const liveShape = 'US 59, MAIN LANES not affected.<br> /<br>Construction of safe
 const sanitized = context.gridlySanitizeOfficialConsumerProse(liveShape);
 assert(!/<\s*br\s*\/?\s*>/i.test(sanitized), 'literal <br> is removed');
 assert(!/(?:^|\s)[/|]+(?:\s|$)/.test(sanitized), 'slash-only separators are removed');
-assert(sanitized.includes('US 59 Main lanes remain open.'), 'meaningful route and lane prose remains in consumer language');
+assert(sanitized.includes('US 59 main lanes remain open.'), 'meaningful route and lane prose remains in consumer language');
 assert(sanitized.includes('Crews are installing a cable median barrier.'), 'meaningful construction prose remains in consumer language');
 
 ['A<br>B', 'A<br/>B', 'A<br />B', 'A&lt;br&gt;B', 'A<br><br/> /<br />B'].forEach((sample) => {
@@ -62,6 +62,8 @@ assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable');
 assert.strictEqual(result.freshnessFallbackReason, 'invalid_or_unknown');
 result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: 'not a date' }, now);
 assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable', 'invalid timestamps fall back safely');
+result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: now - 9718 * 60000 }, now);
+assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable', 'extremely stale official timestamps fall back safely');
 result = context.gridlyLp0455OfficialFreshnessResult({ updatedAt: '2020-01-01T00:00:00Z' }, now);
 assert.strictEqual(result.renderedFreshnessLine, 'Update time unavailable', 'implausibly old timestamps fall back safely');
 assert.strictEqual(result.freshnessFallbackReason, 'implausibly_old');
