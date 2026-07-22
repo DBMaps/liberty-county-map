@@ -24,7 +24,7 @@ for (const key of ['awareness', 'map', 'alerts', 'report', 'settings']) {
 }
 assert(/\.gridly-v950-tour-page[\s\S]*grid-template-rows:\s*auto minmax\(0, 1fr\)/.test(styleSource), 'feature pages reserve most space for the visual');
 assert(/\.gridly-v950-tour-page \.gridly-v896-shot-frame[\s\S]*min-height:\s*min\(6[18]vh/.test(styleSource), 'feature visuals receive substantially more presentation space');
-assert(/object-fit:\s*cover/.test(styleSource), 'feature images crop without stretching');
+assert(/object-fit:\s*contain/.test(styleSource), 'feature images show the full phone without stretching');
 const immersiveCss = styleSource.slice(styleSource.indexOf('/* LP050.2'));
 assert(!/\.gridly-v950-feature-page[^{]*\{[^}]*overflow-y:\s*auto/.test(immersiveCss), 'feature pages do not revert to long vertical scrolling');
 console.log('lp050-2-immersive-onboarding.test.js passed');
