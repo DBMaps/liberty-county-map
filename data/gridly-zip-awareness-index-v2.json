@@ -1,6 +1,6 @@
 {
-  "version": "LP051.4.owner-zip-source-acquisition.v1",
-  "milestone": "LP051.4",
+  "version": "LP051.5.source-backed-zip-candidate-governance.v1",
+  "milestone": "LP051.5",
   "sourceImportStatus": "complete",
   "sourceImportCertificationStatus": "complete",
   "coverageCertificationStatus": "partial",
@@ -696,5 +696,27 @@
       "governanceNotes": "Preserved LP051-LP051.3 governed behavior; no ZIP-first UI activation.",
       "sourceVersion": "owner_supplied_source_artifact"
     }
-  ]
+  ],
+  "reviewedGovernancePath": "data/generated/gridly-zip-candidate-governance-v1.json",
+  "reviewedCandidateCount": 566,
+  "governanceDecisionCounts": {
+    "requires_confirmation": 497,
+    "ambiguous": 35,
+    "resolved_by_governance": 29,
+    "resolved": 4,
+    "unsupported": 1
+  },
+  "governanceSummary": {
+    "candidateCount": 566,
+    "reviewedCandidateCount": 566,
+    "splitSupportedCountyCount": 34,
+    "splitSupportedUnsupportedCount": 13,
+    "dominantCountyCount": 78,
+    "singleCountyCount": 441,
+    "requiresConfirmationCount": 497,
+    "ambiguousCount": 35,
+    "unsupportedCount": 1,
+    "governedCount": 29,
+    "resolvedCount": 4
+  }
 }
