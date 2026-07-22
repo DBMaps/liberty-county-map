@@ -10,6 +10,11 @@ assert(app.includes('window.gridlyOpenLp0516ZipConfirmationPrototype = gridlyOpe
 assert(app.includes('window.gridlyCloseLp0516ZipConfirmationPrototype = gridlyCloseLp0516ZipConfirmationPrototype'), 'close helper is exposed');
 assert(app.includes('window.gridlyResetLp0516ZipConfirmationPrototype = gridlyResetLp0516ZipConfirmationPrototype'), 'reset helper is exposed');
 assert(app.includes('window.gridlyResolveHomeZipAwareness'), 'prototype reuses the existing resolver contract');
+assert(app.includes('function gridlyLp0516FocusZipInput()'), 'prototype has dedicated ZIP focus repair helper');
+assert(app.includes('document.activeElement === input'), 'prototype verifies the ZIP input receives active focus');
+assert(app.includes('input.disabled = false; input.readOnly = false'), 'prototype keeps ZIP input enabled and writable');
+assert(app.includes('inputmode="numeric"'), 'prototype keeps numeric keyboard hint');
+assert(app.includes('type="text" inputmode="numeric"'), 'prototype preserves paste and editing behavior with text input plus numeric hint');
 assert(!app.includes('saveGridlyHomeTownPreference(gridlyLp0516'), 'prototype is not wired to setup persistence');
 assert(!app.includes('safeForProductionActivation: true'), 'prototype cannot claim production activation safety');
 
@@ -30,6 +35,7 @@ assert.strictEqual(audit.milestone, 'LP051.6');
 assert.strictEqual(audit.prototypeOnly, true);
 assert.strictEqual(audit.enabledByDefault, false);
 assert.strictEqual(audit.resolverAvailable, true);
+assert.strictEqual(audit.zipInputFocusRepairAvailable, true);
 assert.strictEqual(audit.resolvedFlowAvailable, true);
 assert.strictEqual(audit.requiresConfirmationFlowAvailable, true);
 assert.strictEqual(audit.ambiguousFlowAvailable, true);
