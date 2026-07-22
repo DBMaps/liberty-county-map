@@ -25329,6 +25329,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.35);
 }
 .gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] { color: rgba(147, 197, 253, 0.98); }
+.gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] + [data-gridly-official-popup-field="freshnessLine"] { margin-top: 3px; }
 #map .gridly-official-roadway-marker-icon .gridly-official-roadway-marker {
   width: 24px !important;
   height: 24px !important;
