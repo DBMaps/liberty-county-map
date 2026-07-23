@@ -32,10 +32,17 @@
       ['gridlyHistoricalEpisodeRecords', () => globalScope.gridlyHistoricalEpisodeRecords],
       ['__gridlyHistoricalEpisodeRecords', () => globalScope.__gridlyHistoricalEpisodeRecords]
     ];
+    let emptyRuntimeSource = null;
     for (const [name, getter] of candidates) {
-      try { const records = getter(); if (Array.isArray(records)) return { available: true, detected: true, records, sourceVersion: name }; } catch (error) {}
+      try {
+        const records = getter();
+        if (Array.isArray(records)) {
+          if (records.length > 0) return { available: true, detected: true, records, sourceVersion: name };
+          if (!emptyRuntimeSource) emptyRuntimeSource = name;
+        }
+      } catch (error) {}
     }
-    return { available: true, detected: true, records: [], sourceVersion: 'no_runtime_records_detected' };
+    return { available: true, detected: true, records: [], sourceVersion: emptyRuntimeSource || 'no_runtime_records_detected' };
   }
 
   function buildSourceSnapshot(options = {}) {

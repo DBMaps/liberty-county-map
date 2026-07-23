@@ -5,6 +5,8 @@ const vm = require('vm');
 
 const root = path.resolve(__dirname, '..');
 const scripts = [
+  'js/history-capture/historyEpisodeResolver.js',
+  'js/history-capture/historyEpisodeRuntimeBridge.js',
   'js/history-capture/historyAggregationEngine.js',
   'js/history-capture/historyPatternQualificationEngine.js',
   'js/history-capture/historyPatternRegistry.js',
