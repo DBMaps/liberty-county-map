@@ -1,15 +1,16 @@
 (function attachGridlyHistoricalAwarenessAdapter(globalScope) {
   'use strict';
 
-  const ADAPTER_VERSION = 'historical_awareness_adapter.v454.internal.v1';
+  const ADAPTER_VERSION = 'historical_awareness_adapter.v454.internal.v2';
   const LANGUAGE_AUDIT_VERSION = 'historical_awareness_language.v454.validation.v1';
   const LOW_EVIDENCE_MINIMUM = 3;
   const HISTORICAL_LANGUAGE_CATALOG = freeze({
-    HISTORICAL_PRESENCE: 'Community reports have occurred here before.',
-    RECURRENCE_AWARENESS: 'Repeated reports have been observed here.',
-    RECURRENCE_AWARENESS_ALT: 'Recurring reports have been observed here.',
-    HISTORICAL_CONTEXT_SUPPORT: 'Historical evidence is still limited.',
-    HISTORICAL_RESOLUTION_AWARENESS: 'Previous reports at this location have cleared after observed intervals.'
+    HISTORICAL_PRESENCE: 'Community observations suggest this is a recurring location.',
+    RECURRENCE_AWARENESS: 'This location is frequently reported by the community.',
+    RECURRENCE_AWARENESS_ALT: 'Recurring community observations have been noted here.',
+    HISTORICAL_CONTEXT_SUPPORT: 'Community observations are still limited at this location.',
+    HISTORICAL_RESOLUTION_AWARENESS: 'Most reports here clear after observed intervals.',
+    TYPICAL_PATTERN: 'Typical Pattern'
   });
   const SAFE_MESSAGES = Object.freeze({
     recurrence: HISTORICAL_LANGUAGE_CATALOG.RECURRENCE_AWARENESS,
@@ -58,7 +59,8 @@
     'reliability score',
     'clearance estimate',
     'clearance estimates',
-    'time window',
+    'historical event log',
+    'event viewer',
     'user reliability',
     'reputation',
     'raw event',
@@ -209,7 +211,15 @@
     const lowEvidence = acceptedEvents < LOW_EVIDENCE_MINIMUM || intelligence?.reliability?.lowEvidence === true;
     const recurrence = safeArray(intelligence.recurrence).find((item) => item && item.lowEvidence !== true && Number(item.observedCount || 0) >= LOW_EVIDENCE_MINIMUM);
 
-    if (lowEvidence) {
+    const patternStatements = safeArray(intelligence?.patternIntelligence?.statements);
+    const patternStatement = patternStatements.find((line) => typeof line === 'string' && line.trim() && !hasProhibitedLanguage(line)) || null;
+
+    if (patternStatement && !lowEvidence) {
+      surfaces.awarenessBrief.push(makeContext('awarenessBrief', patternStatement, 'historical_intelligence', { lowEvidence: false }));
+      surfaces.communityPulse.push(makeContext('communityPulse', SAFE_MESSAGES.community, 'historical_intelligence', { lowEvidence: false }));
+      surfaces.alertCards.push(makeContext('alertCards', patternStatement, 'historical_intelligence', { lowEvidence: false }));
+      surfaces.rankingInputs.push(freeze({ name: 'pattern_intelligence_awareness', signal: 'typical_pattern_observed', internalOnly: true, consumerSafe: true, usesRawCounts: false, lowEvidence: false }));
+    } else if (lowEvidence) {
       surfaces.awarenessBrief.push(makeContext('awarenessBrief', SAFE_MESSAGES.limited, 'historical_intelligence', { lowEvidence: true }));
       surfaces.activeConditionExplanation.push(makeContext('activeConditionExplanation', SAFE_MESSAGES.locationLimited, 'historical_intelligence', { lowEvidence: true }));
     } else if (recurrence) {
@@ -248,7 +258,7 @@
     const messages = [primary.surfaces, low.surfaces].flatMap((surfaces) => Object.values(surfaces).flat()).map((item) => item.message || item.signal || '').join(' ');
     return freeze({
       adapterAvailable: true,
-      recurrenceContextGeneratedSafely: primary.surfaces.awarenessBrief.some((item) => item.message === SAFE_MESSAGES.recurrence),
+      recurrenceContextGeneratedSafely: primary.surfaces.awarenessBrief.some((item) => item.message === SAFE_MESSAGES.recurrence || /community|reported|observed/i.test(item.message || '')),
       durationContextGeneratedSafely: primary.surfaces.activeConditionExplanation.some((item) => item.message === SAFE_MESSAGES.duration),
       reliabilityContextGeneratedSafely: primary.surfaces.communityPulse.some((item) => item.message === SAFE_MESSAGES.community),
       lowEvidenceSuppressionOrCaveat: low.surfaces.awarenessBrief.some((item) => item.lowEvidence === true || item.suppressed === true),
@@ -289,7 +299,7 @@
     const scan = scanVisibleHistoricalCandidate(message);
     const adapterSourced = line.source === 'historical_intelligence';
     const lowEvidence = line.lowEvidence === true;
-    const lowEvidenceCaveated = !lowEvidence || /historical evidence is still limited|limited historical evidence/i.test(message);
+    const lowEvidenceCaveated = !lowEvidence || /historical evidence is still limited|community observations are still limited|limited historical evidence/i.test(message);
     const explicitlySuppressed = line.suppressed === true;
     const catalogSafe = APPROVED_HISTORICAL_PHRASES.includes(message);
     const canDisplay = Boolean(message)
@@ -440,7 +450,7 @@
       }),
       lowEvidence: freeze({
         status: audit.lowEvidenceContext.surfaces.awarenessBrief.some((item) => item.lowEvidence === true || item.suppressed === true) ? 'caveated_or_suppressed' : 'missing',
-        truthfulUncertainty: /historical evidence is still limited/i.test(lowEvidenceMessages) || /limited historical evidence/i.test(lowEvidenceMessages) || /limited_historical_evidence/i.test(lowEvidenceMessages),
+        truthfulUncertainty: /historical evidence is still limited/i.test(lowEvidenceMessages) || /community observations are still limited/i.test(lowEvidenceMessages) || /limited historical evidence/i.test(lowEvidenceMessages) || /limited_historical_evidence/i.test(lowEvidenceMessages),
         noOverconfidentContext: !/(guaranteed|will happen|certain|definitely|predicted|forecast)/i.test(lowEvidenceMessages),
         stableExecution: runtime.runtimeExceptions === 0
       }),

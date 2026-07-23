@@ -28,11 +28,11 @@ require('../../js/history-capture/historyAwarenessAdapter.js');
   const primaryBrief = primary.surfaces.awarenessBrief[0];
   const lowBrief = low.surfaces.awarenessBrief[0];
 
-  assert.strictEqual(primaryBrief.message, 'Repeated reports have been observed here.');
+  assert.strictEqual(primaryBrief.message, 'This location is frequently reported by the community.');
   assert.strictEqual(primaryBrief.consumerSafe, true);
   assert.strictEqual(primaryBrief.exposesRawHistory, false);
   assert.strictEqual(lowBrief.lowEvidence, true);
-  assert.match(lowBrief.message, /historical evidence is still limited|limited historical evidence/i);
+  assert.match(lowBrief.message, /community observations are still limited|historical evidence is still limited|limited historical evidence/i);
 
   const visibleMessages = `${primaryBrief.message} ${lowBrief.message}`;
   [

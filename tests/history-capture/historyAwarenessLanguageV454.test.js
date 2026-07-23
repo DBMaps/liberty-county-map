@@ -7,7 +7,7 @@ assert.strictEqual(typeof globalThis.gridlyHistoricalLanguageAudit, 'function');
 
 const approved = adapter.runHistoricalLanguagePipeline({ category: 'RecurrenceAwareness' }, { surface: 'Awareness Brief' });
 assert.strictEqual(approved.displayable, true);
-assert.strictEqual(approved.approvedPhrase, 'Repeated reports have been observed here.');
+assert.strictEqual(approved.approvedPhrase, 'This location is frequently reported by the community.');
 
 const suppressedCategory = adapter.runHistoricalLanguagePipeline({ category: 'HistoricalDashboard', phrase: 'Open the history browser.' }, { surface: 'Awareness Brief' });
 assert.strictEqual(suppressedCategory.displayable, false);
@@ -37,7 +37,7 @@ assert(unsafeVisible.suppressionReasons.includes('prediction_or_forecast_languag
 
 const lowEvidenceCaveat = adapter.runHistoricalLanguagePipeline({ category: 'HistoricalContextSupport' }, { surface: 'Community Pulse', lowEvidence: true });
 assert.strictEqual(lowEvidenceCaveat.displayable, true);
-assert.strictEqual(lowEvidenceCaveat.approvedPhrase, 'Historical evidence is still limited.');
+assert.strictEqual(lowEvidenceCaveat.approvedPhrase, 'Community observations are still limited at this location.');
 assert.strictEqual(lowEvidenceCaveat.lowEvidenceState, 'low_evidence');
 
 const lowEvidenceNonCaveat = adapter.runHistoricalLanguagePipeline({ category: 'HistoricalPresence' }, { surface: 'Community Pulse', lowEvidence: true });
@@ -55,7 +55,7 @@ assert.strictEqual(ineligibleSurface.suppressionReason, 'surface_not_eligible');
 
 const audit = globalThis.gridlyHistoricalLanguageAudit({ category: 'HistoricalPresence' }, { surface: 'Alert Cards' });
 assert.strictEqual(audit.auditVersion, 'historical_awareness_language.v454.validation.v1');
-assert.strictEqual(audit.approvedPhrase, 'Community reports have occurred here before.');
+assert.strictEqual(audit.approvedPhrase, 'Community observations suggest this is a recurring location.');
 assert.strictEqual(audit.suppressedPhrase, null);
 assert.strictEqual(audit.suppressionReason, null);
 assert.strictEqual(audit.predictionRisk, false);

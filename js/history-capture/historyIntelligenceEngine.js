@@ -1,7 +1,7 @@
 (function attachGridlyHistoricalIntelligenceEngine(globalScope) {
   'use strict';
 
-  const MODEL_VERSION = 'historical_intelligence.v430.internal.v1';
+  const MODEL_VERSION = 'historical_intelligence.v430.internal.v2';
   const SUPPORTED_EVENT_TYPES = Object.freeze(['report_created', 'report_cleared']);
   const LOW_EVIDENCE_MINIMUM = 3;
   const STRONG_EVIDENCE_MINIMUM = 6;
@@ -248,6 +248,102 @@
     });
   }
 
+
+  function formatMinutes(minutes) {
+    const value = Math.round(Number(minutes));
+    if (!Number.isFinite(value)) return null;
+    if (value < 60) return value <= 5 ? 'a few minutes' : `about ${value} minutes`;
+    const hours = value / 60;
+    if (hours >= 1 && hours <= 3) return `about ${Math.round(hours)} hour${Math.round(hours) === 1 ? '' : 's'}`;
+    return `about ${Math.round(hours)} hours`;
+  }
+
+  function timeLabel(hour) {
+    const value = Number(hour);
+    if (!Number.isFinite(value)) return null;
+    if (value >= 5 && value < 10) return 'morning';
+    if (value >= 10 && value < 15) return 'midday';
+    if (value >= 15 && value < 19) return 'afternoon commute hours';
+    if (value >= 19 && value < 23) return 'evening';
+    return 'overnight';
+  }
+
+  function topKeys(signals, limit) {
+    return safeArray(signals).slice(0, limit || 3).map((item) => item.key).filter(Boolean);
+  }
+
+  function compactList(values) {
+    const list = safeArray(values).filter(Boolean);
+    if (!list.length) return null;
+    if (list.length === 1) return list[0];
+    if (list.length === 2) return `${list[0]} and ${list[1]}`;
+    return `${list.slice(0, -1).join(', ')}, and ${list[list.length - 1]}`;
+  }
+
+  function consumerHazardLabel(value) {
+    const normalized = String(value || '').toLowerCase().replace(/[\s_-]+/g, ' ').trim();
+    const labels = {
+      'blocked crossing': 'train crossing delays',
+      'rail crossing obstruction': 'train crossing delays',
+      'flooding': 'flooding',
+      'high water': 'high water',
+      'construction': 'construction activity',
+      'road construction': 'construction activity',
+      'disabled vehicle': 'disabled vehicles',
+      'debris': 'road debris'
+    };
+    return labels[normalized] || (normalized ? normalized : null);
+  }
+
+  function generatePatternIntelligence(evidence, recurrence, duration, reliability, patterns) {
+    const createdEvents = evidence.filter((item) => item.eventType === 'report_created');
+    const createdCount = createdEvents.length;
+    const clearedCount = evidence.filter((item) => item.eventType === 'report_cleared').length;
+    const dominantDays = topKeys(patterns.dayOfWeekClustersUtc, 3);
+    const weekdayReports = createdEvents.filter((item) => item.observedMs !== null).filter((item) => {
+      const day = new Date(item.observedMs).getUTCDay();
+      return day >= 1 && day <= 5;
+    }).length;
+    const topHours = topKeys(patterns.timeOfDayClustersUtc, 3).map(Number).filter(Number.isFinite);
+    const timeLabels = Array.from(new Set(topHours.map(timeLabel).filter(Boolean)));
+    const hazardTypes = Array.from(new Set(topKeys(patterns.recurringHazardTypes, 3).filter((key) => key !== 'unspecified').map(consumerHazardLabel).filter(Boolean)));
+    const topRecurrence = safeArray(recurrence)[0] || null;
+    const averageDuration = formatMinutes(duration.averageObservedMinutes);
+    const typicalResolution = duration.averageObservedMinutes === null ? null : (duration.averageObservedMinutes <= 30 ? 'Most reports clear quickly.' : duration.averageObservedMinutes <= 180 ? `Historically, reports here clear within ${formatMinutes(duration.averageObservedMinutes)}.` : 'Reports here often remain active for an extended period.');
+    const frequency = topRecurrence?.observedCount >= STRONG_EVIDENCE_MINIMUM ? 'frequently' : (topRecurrence?.observedCount >= LOW_EVIDENCE_MINIMUM ? 'often' : (topRecurrence?.observedCount >= 2 ? 'occasionally' : 'limited'));
+    const statements = [];
+    if (topRecurrence && frequency !== 'limited') statements.push(`This location is ${frequency} reported by the community.`);
+    else statements.push('Community observations are still limited at this location.');
+    if (weekdayReports >= Math.max(2, Math.ceil(createdCount * 0.6))) statements.push('Activity is usually observed on weekdays.');
+    else if (dominantDays.length) statements.push(`Most reports are observed on ${compactList(dominantDays)}.`);
+    if (timeLabels.length) statements.push(`Activity is often reported during the ${compactList(timeLabels)}.`);
+    if (averageDuration) statements.push(`Historical average duration: ${averageDuration}.`);
+    if (typicalResolution) statements.push(typicalResolution);
+    if (clearedCount >= Math.max(1, Math.ceil(createdCount * 0.5))) statements.push('Community confirmations usually include follow-up clear observations.');
+    else if (createdCount > 0) statements.push('Community confirmation patterns are still developing.');
+    if (hazardTypes.length) statements.push(`Recurring hazard types: ${compactList(hazardTypes)}.`);
+    return freeze({
+      title: 'Typical Pattern',
+      consumerFacing: true,
+      internalOnly: false,
+      source: 'observed_community_patterns',
+      daysOfWeek: freeze(dominantDays),
+      timeOfDay: freeze(timeLabels),
+      frequency,
+      averageDuration: averageDuration || null,
+      typicalResolutionTime: typicalResolution,
+      communityConfirmationPattern: clearedCount >= Math.max(1, Math.ceil(createdCount * 0.5)) ? 'Community confirmations usually include follow-up clear observations.' : 'Community confirmation patterns are still developing.',
+      recurringHazardTypes: freeze(hazardTypes),
+      statements: freeze(statements),
+      exposesRawRecords: false,
+      exposesInternalIds: false,
+      exposesTechnicalTimestamps: false,
+      exposesAuditInformation: false,
+      readOnly: true,
+      forecasting: false
+    });
+  }
+
   function generateHistoricalIntelligence(events, options) {
     const evidence = normalizeEvidence(events);
     const recurrence = generateRecurrence(evidence);
@@ -266,7 +362,8 @@
       recurrence,
       duration,
       reliability,
-      patterns
+      patterns,
+      patternIntelligence: generatePatternIntelligence(evidence, recurrence, duration, reliability, patterns)
     });
   }
 
@@ -346,6 +443,19 @@
         noForecasting: patterns.forecasting === false,
         noPrediction: patterns.predictiveClaims === false,
         noFutureEventGeneration: true
+      }),
+      patternIntelligence: freeze({
+        status: intelligence.patternIntelligence?.title === 'Typical Pattern' ? 'generated' : 'missing',
+        consumerLanguageOnly: safeArray(intelligence.patternIntelligence?.statements).every((line) => !/(reported:\s|cleared:\s|source_report_id|observed_at|event_type|database|schema|table|\d{4}-\d{2}-\d{2}T)/i.test(line)),
+        summarizesDaysOfWeek: safeArray(intelligence.patternIntelligence?.daysOfWeek).length > 0,
+        summarizesTimeOfDay: safeArray(intelligence.patternIntelligence?.timeOfDay).length > 0,
+        summarizesFrequency: Boolean(intelligence.patternIntelligence?.frequency),
+        summarizesAverageDuration: Boolean(intelligence.patternIntelligence?.averageDuration),
+        summarizesResolution: Boolean(intelligence.patternIntelligence?.typicalResolutionTime),
+        summarizesCommunityConfirmation: Boolean(intelligence.patternIntelligence?.communityConfirmationPattern),
+        summarizesRecurringHazards: safeArray(intelligence.patternIntelligence?.recurringHazardTypes).length > 0,
+        noRawRecords: intelligence.patternIntelligence?.exposesRawRecords === false,
+        readOnly: intelligence.patternIntelligence?.readOnly === true
       }),
       lowEvidence: freeze({
         stable: lowEvidenceAudit.recurrenceGenerated && lowEvidenceAudit.durationGenerated && lowEvidenceAudit.reliabilityGenerated && lowEvidenceAudit.patternGenerated,
