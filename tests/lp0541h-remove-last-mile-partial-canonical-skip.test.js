@@ -14,7 +14,7 @@ function includes(haystack, needle, message) { assert(haystack.includes(needle),
 function notIncludes(haystack, needle, message) { assert(!haystack.includes(needle), message); }
 
 const enforcement = blockBetween(
-  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write") {',
+  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write", options = {}) {',
   'if (typeof window !== "undefined") { window.gridlyEnforceCanonicalPresentationOnVisibleAlertCards',
   'last-mile enforcement function'
 );
@@ -112,7 +112,7 @@ includes(source, 'return "Flooding"', 'Flooding remains the canonical title/cond
 includes(source, 'Traffic Backup / Heavy Delay', 'Traffic Backup heavy-delay canonical presentation remains available');
 notIncludes(enforcement, 'Crossing Blocked', 'broken Flooding card cannot keep Crossing Blocked in last-mile enforcement');
 notIncludes(enforcement, 'Train Blocking Crossing', 'Traffic Backup card cannot keep crossing renderer text in last-mile enforcement');
-includes(enforcement, 'container.querySelectorAll(".gridly-alert-row[data-gridly-alert-row=\'true\']")', 'enforcement stays scoped to existing visible alert cards, not another renderer');
+includes(enforcement, 'container.querySelectorAll(\n      ".gridly-alert-row[data-gridly-alert-row=\'true\']"\n    )', 'enforcement stays scoped to existing visible alert cards, not another renderer');
 includes(enforcement, 'if (fullyCanonical === true)', 'correct canonical cards remain unchanged');
 includes(enforcement, 'return;', 'fully canonical or unmatchable cards return without rewriting buttons or handlers');
 

@@ -14,7 +14,7 @@ function includes(haystack, needle, message) { assert(haystack.includes(needle),
 function notIncludes(haystack, needle, message) { assert(!haystack.includes(needle), message); }
 
 const enforcement = blockBetween(
-  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write") {',
+  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write", options = {}) {',
   'if (typeof window !== "undefined") { window.gridlyEnforceCanonicalPresentationOnVisibleAlertCards',
   'last-mile enforcement function'
 );
@@ -41,7 +41,7 @@ const renderAlerts = blockBetween(
 
 includes(enforcement, 'gridlyFindVisibleAlertsContainerForLastMileEnforcement()', 'enforcement locates the actually visible Alerts container');
 includes(source, 'gridlyIsElementActuallyVisible(node)', 'container lookup uses the actual visibility helper');
-includes(enforcement, 'container.querySelectorAll(".gridly-alert-row[data-gridly-alert-row=\'true\']")', 'enforcement targets only real visible alert rows');
+includes(enforcement, 'container.querySelectorAll(\n      ".gridly-alert-row[data-gridly-alert-row=\'true\']"\n    )', 'enforcement targets only real visible alert rows');
 for (const attr of ['data-gridly-canonical-incident-id', 'data-gridly-incident-id', 'data-incident-id', 'data-gridly-alert-id', 'data-report-id']) {
   includes(source, `"${attr}"`, `incident ID resolution checks ${attr}`);
 }

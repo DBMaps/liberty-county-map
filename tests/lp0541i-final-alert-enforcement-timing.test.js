@@ -24,7 +24,7 @@ const portraitOpen = blockBetween(
   'Portrait V2 sheet writer'
 );
 const enforcement = blockBetween(
-  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write") {',
+  'function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write", options = {}) {',
   'if (typeof window !== "undefined") { window.gridlyEnforceCanonicalPresentationOnVisibleAlertCards',
   'last-mile enforcement function'
 );
@@ -42,7 +42,8 @@ const authoritativeApply = blockBetween(
 const assignmentIndex = indexOf(portraitOpen, 'body.innerHTML = templateHtml || "";', 'alerts branch performs the final visible card innerHTML assignment');
 const bodyVisibleIndex = indexOf(portraitOpen, 'body.hidden = false; body.style.display = "";', 'sheet body is made visible before final enforcement');
 const shellVisibleIndex = indexOf(portraitOpen, 'sheet.classList.add("is-open", "active", "open");', 'sheet visible classes are applied before final enforcement');
-const finalEnforcementIndex = indexOf(portraitOpen, 'gridlyEnforceCanonicalPresentationOnVisibleAlertCards("final-visible-alert-card-dom-write")', 'final visible DOM write invokes canonical enforcement');
+const finalEnforcementIndex = indexOf(portraitOpen, `gridlyEnforceCanonicalPresentationOnVisibleAlertCards(
+          "final-visible-alert-card-dom-write",`, 'final visible DOM write invokes canonical enforcement');
 const bindIndex = indexOf(portraitOpen, 'bindV2SheetActions()', 'close/click binding remains after final enforcement');
 
 assert(assignmentIndex < bodyVisibleIndex, 'body visibility is applied after the alert-card HTML assignment');
