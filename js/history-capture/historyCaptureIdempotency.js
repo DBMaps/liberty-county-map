@@ -33,9 +33,10 @@
         schemaVersion: envelope.schemaVersion || 'history_capture.phase_1a.v1',
         eventType: envelope.eventType || '',
         observedAt: envelope.observedAt || '',
-        reportId: report.id || report.reportId || report.uuid || '',
-        reportType: report.type || report.reportType || '',
-        report: report.id || report.reportId || report.uuid ? undefined : report
+        reportId: report.id || report.crossingId || '',
+        reportType: report.reportType || '',
+        locationBucket: report.locationBucket || '',
+        report
       };
 
       return `phase1a:${hashString(stableStringify(stableParts))}`;

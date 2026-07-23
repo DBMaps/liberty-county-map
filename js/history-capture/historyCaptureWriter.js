@@ -148,7 +148,7 @@
       phase: envelope.phase,
       event_type: envelope.eventType,
       source_kind: typeof envelope.report?.reportType === 'string' ? envelope.report.reportType : null,
-      source_report_id: envelope.report?.id || envelope.report?.reportId || envelope.report?.uuid || null,
+      source_report_id: envelope.report?.id || envelope.report?.crossingId || null,
       idempotency_key: idempotencyKey,
       observed_at: envelope.observedAt,
       hook_name: typeof options?.hook === 'string' ? options.hook : null,
