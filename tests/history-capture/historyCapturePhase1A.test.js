@@ -1,5 +1,6 @@
 const assert = require('assert');
 require('../../js/history-capture/historyCaptureFlags.js');
+require('../../js/history-capture/historyIdentity.js');
 require('../../js/history-capture/historyCaptureEnvelope.js');
 require('../../js/history-capture/historyCaptureIdempotency.js');
 require('../../js/history-capture/historyCaptureMonitoring.js');
