@@ -257,6 +257,6 @@
     });
   }
 
-  globalScope.gridlyHistoricalEvidenceInterpretationAdapter = freeze(Object.assign({}, adapter, { ADAPTER_VERSION, STATUSES, THRESHOLDS }));
+  globalScope.gridlyHistoricalEvidenceInterpretationAdapter = freeze(Object.assign({}, adapter, { ADAPTER_VERSION, STATUSES, THRESHOLDS, buildInterpretationAdapter: createSnapshot }));
   globalScope.gridlyLp0538HistoricalEvidenceInterpretationAudit = gridlyLp0538HistoricalEvidenceInterpretationAudit;
 })(typeof window !== 'undefined' ? window : globalThis);

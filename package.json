@@ -14,6 +14,7 @@
   "scripts": {
     "build:county-geometry": "node tools/build-gridly-authoritative-county-geometry.js",
     "verify:county-geometry-deterministic": "node tools/build-gridly-authoritative-county-geometry.js --verify-deterministic",
-    "copy:county-geometry:android": "node tools/copy-gridly-runtime-county-geometry-to-android.js"
+    "copy:county-geometry:android": "node tools/copy-gridly-runtime-county-geometry-to-android.js",
+    "test:lp0540": "node tests/lp0540-production-historical-runtime-integration.test.js"
   }
 }
