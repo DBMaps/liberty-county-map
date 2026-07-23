@@ -18,7 +18,7 @@ require('../../js/history-capture/historyAwarenessAdapter.js');
   assert.strictEqual(audit.noPredictionLanguage, true);
   assert.strictEqual(audit.lowEvidenceState.lowEvidence, true);
   assert.strictEqual(audit.lowEvidenceState.caveated, true);
-  assert.strictEqual(audit.lowEvidenceState.line, 'Historical evidence is still limited.');
+  assert.strictEqual(audit.lowEvidenceState.line, 'Community observations are still limited at this location.');
   assert.deepStrictEqual(audit.protectedBoundaryStatus, {
     historicalReadsEnabled: false,
     historyUiEnabled: false,

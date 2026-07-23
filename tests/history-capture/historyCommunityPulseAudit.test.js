@@ -13,7 +13,7 @@ require('../../js/history-capture/historyAwarenessAdapter.js');
   assert.strictEqual(audit.adapterSourced, true);
   assert.strictEqual(audit.auditVersion, 'historical_community_pulse.v437.validation.v1');
   assert.strictEqual(audit.safeDisplayBehavior, true);
-  assert.strictEqual(audit.visibleLine, 'Community reports have occurred here before.');
+  assert.strictEqual(audit.visibleLine, 'Community observations suggest this is a recurring location.');
   assert.strictEqual(audit.suppressionBehavior, true);
   assert.strictEqual(audit.lowEvidenceBehavior, true);
   assert.strictEqual(audit.prohibitedLanguageValidation.absent, true);
@@ -63,7 +63,7 @@ require('../../js/history-capture/historyAwarenessAdapter.js');
 
   const lowEvidenceUncaveated = adapter.evaluateVisibleHistoricalCommunityPulseLine({
     surface: 'communityPulse',
-    message: 'Community reports have occurred here before.',
+    message: 'Community observations suggest this is a recurring location.',
     source: 'historical_intelligence',
     consumerSafe: true,
     internalOnly: true,
@@ -78,7 +78,7 @@ require('../../js/history-capture/historyAwarenessAdapter.js');
 
   const lowEvidenceCaveat = adapter.evaluateVisibleHistoricalCommunityPulseLine({
     surface: 'communityPulse',
-    message: 'Historical evidence is still limited.',
+    message: 'Community observations are still limited at this location.',
     source: 'historical_intelligence',
     consumerSafe: true,
     internalOnly: true,
