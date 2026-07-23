@@ -16,6 +16,6 @@ assert.match(source, /options\?\.developerProtectedMode === true/, 'protected pl
 assert.match(source, /rawHistoryLeakDetected[\s\S]*technicalMetadataLeakDetected[\s\S]*chronologicalEventLanguageDetected/, 'audit checks raw records, IDs, timestamps, metadata, and event-viewer language are suppressed');
 assert.match(source, /historyWriteAttemptDetected:\s*false[\s\S]*activeStateMutationDetected:\s*false[\s\S]*protectedSystemsSafe:\s*true/, 'audit asserts read-only behavior and protected system safety');
 assert.match(source, /window\.gridlyLp0543VisibleHistoricalPatternAudit\s*=\s*gridlyLp0543VisibleHistoricalPatternAudit/, 'browser certification helper is exposed');
-assert.match(source, /lp0543CertificationFixture[\s\S]*2026-06-01T05:47:00\.000Z[\s\S]*2026-06-08T05:52:00\.000Z[\s\S]*2026-06-15T05:45:00\.000Z/, 'deterministic audit-only fixture models independent Monday incidents');
+assert.match(source, /lp0543CertificationFixture[\s\S]*2026-06-01T05:47:00-05:00[\s\S]*2026-06-08T05:52:00-05:00[\s\S]*2026-06-15T05:45:00-05:00/, 'deterministic audit-only fixture models independent Monday incidents');
 
 console.log('LP054.3 visible historical pattern activation static coverage passed');
