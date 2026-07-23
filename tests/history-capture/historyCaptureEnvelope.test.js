@@ -1,4 +1,5 @@
 const assert = require('assert');
+require('../../js/history-capture/historyIdentity.js');
 require('../../js/history-capture/historyCaptureEnvelope.js');
 
 const api = globalThis.gridlyPassiveHistoryCaptureEnvelope;
@@ -16,6 +17,18 @@ assert.deepStrictEqual(envelope, {
   observedAt: '2026-01-02T03:04:05.000Z',
   source: 'passive_history_capture_sidecar',
   report: { reportType: 'road', id: 'r1' },
+  identity: {
+    version: 'historical_identity_v1',
+    sourceReportId: 'r1',
+    locationKey: null,
+    locationStrength: 'insufficient',
+    conditionFamily: 'road',
+    lifecycleState: 'active',
+    observationKey: envelope.identity.observationKey,
+    incidentCandidateKey: null,
+    recurrenceKey: null,
+    candidateWindowMinutes: null
+  },
   metadata: {
     passive: true,
     writesDisabled: true,
