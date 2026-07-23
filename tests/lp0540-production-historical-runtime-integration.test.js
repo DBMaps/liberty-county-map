@@ -20,10 +20,10 @@ function load(extra = {}) {
   scripts.forEach((file) => vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, { filename: file }));
   return context;
 }
-const episode = (id, date) => ({ episodeCandidateId: id, incidentCandidateKey: `incident:${id}`, resolutionState: 'clear_observed', locationKey: 'crossing:123456A', conditionFamily: 'rail-crossing-obstruction', observationCount: 3, activeObservationCount: 2, clearObservationCount: 1, firstObservedAt: date, lastObservedAt: date.replace('08:00', '08:30'), durationUpperBoundMinutes: 30 });
+const episode = (id, date) => ({ episodeCandidateId: id, incidentCandidateKey: `incident:${id}`, sourceClassification: 'passive_history', passiveOnly: true, nonLiveRecord: true, resolutionState: 'clear_observed', locationKey: 'crossing:123456A', conditionFamily: 'rail-crossing-obstruction', observationCount: 3, activeObservationCount: 2, clearObservationCount: 1, firstObservedAt: date, lastObservedAt: date.replace('08:00', '08:30'), durationUpperBoundMinutes: 30 });
 
 {
-  const records = [episode('prod-a', '2026-06-01T08:00:00.000Z'), episode('prod-b', '2026-06-08T08:00:00.000Z'), episode('prod-c', '2026-06-15T08:00:00.000Z'), episode('prod-c', '2026-06-15T08:00:00.000Z'), { episodeCandidateId: 'active-a', incidentCandidateKey: 'incident:active-a', resolutionState: 'active_observed' }, { episodeCandidateId: 'bad-a' }, null, { episodeCandidateId: 'seed-lp0537-a', incidentCandidateKey: 'seed', resolutionState: 'clear_observed', certificationSeed: true }];
+  const records = [episode('prod-a', '2026-06-01T08:00:00.000Z'), episode('prod-b', '2026-06-08T08:00:00.000Z'), episode('prod-c', '2026-06-15T08:00:00.000Z'), episode('prod-c', '2026-06-15T08:00:00.000Z'), { episodeCandidateId: 'active-a', incidentCandidateKey: 'incident:active-a', sourceClassification: 'passive_history', passiveOnly: true, resolutionState: 'active_observed' }, { episodeCandidateId: 'bad-a', sourceClassification: 'passive_history', passiveOnly: true }, { sourceClassification: 'passive_history', passiveOnly: true }, { episodeCandidateId: 'seed-lp0537-a', incidentCandidateKey: 'seed', sourceClassification: 'passive_history', passiveOnly: true, resolutionState: 'clear_observed', certificationSeed: true }];
   const before = JSON.stringify(records);
   const ctx = load({ gridlyHistoricalEpisodeRecords: records });
   const audit = ctx.gridlyLp0540ProductionHistoricalRuntimeIntegrationAudit();
@@ -50,7 +50,7 @@ const episode = (id, date) => ({ episodeCandidateId: id, incidentCandidateKey: `
 }
 
 {
-  const ctx = load({ gridlyHistoricalEpisodeRecords: [{ episodeCandidateId: 'active-a', incidentCandidateKey: 'incident:active-a', resolutionState: 'active_observed' }] });
+  const ctx = load({ gridlyHistoricalEpisodeRecords: [{ episodeCandidateId: 'active-a', incidentCandidateKey: 'incident:active-a', sourceClassification: 'passive_history', passiveOnly: true, resolutionState: 'active_observed' }] });
   const audit = ctx.gridlyLp0540ProductionHistoricalRuntimeIntegrationAudit();
   assert.strictEqual(audit.sourceMode, 'production_runtime_empty');
   assert.strictEqual(audit.pipelineStatus, 'production_history_empty');

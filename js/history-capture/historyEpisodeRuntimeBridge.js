@@ -6,6 +6,7 @@
   const OWNER_NAME = 'gridlyHistoricalEpisodeResolver.resolveHistoricalEpisodes(passive_lifecycle_observation_registry)';
   const freeze = (value) => { try { return Object.freeze(value); } catch (error) { return value; } };
   const clone = (value) => value == null ? value : JSON.parse(JSON.stringify(value));
+  const HISTORICAL_SOURCE_CLASSIFICATION = 'historical_sidecar';
   const clean = (value) => typeof value === 'string' && value.trim() ? value.trim() : null;
   const safeArray = (value) => Array.isArray(value) ? value : [];
   const observationRecords = [];
@@ -24,16 +25,57 @@
   function isActive(record) { return record?.resolutionState === 'active_observed' || record?.resolutionState === 'active' || record?.active === true; }
   function isOrphan(record) { return record?.orphanClear === true || (!record?.episodeCandidateId && !record?.episodeId && !record?.incidentCandidateKey); }
 
+  function historicalId(prefix, value) {
+    const cleaned = clean(value);
+    if (!cleaned) return null;
+    return cleaned.startsWith(`${prefix}:`) ? cleaned : `${prefix}:${cleaned}`;
+  }
+
+  function isolateObservation(obs) {
+    const copy = clone(obs);
+    if (!copy || typeof copy !== 'object' || Array.isArray(copy)) return null;
+    const originalConditionFamily = clean(copy.conditionFamily) || 'unknown';
+    copy.originalConditionFamily = originalConditionFamily;
+    copy.hazardType = originalConditionFamily;
+    copy.sourceClassification = HISTORICAL_SOURCE_CLASSIFICATION;
+    copy.passiveOnly = true;
+    copy.consumerVisible = false;
+    copy.nonLiveRecord = true;
+    copy.sourceReportId = historicalId('historical-report', copy.sourceReportId);
+    copy.observationKey = historicalId('historical-observation', copy.observationKey);
+    copy.incidentCandidateKey = historicalId('historical-incident-candidate', copy.incidentCandidateKey);
+    copy.recurrenceKey = historicalId('historical-recurrence', copy.recurrenceKey);
+    return freeze(copy);
+  }
+
+  function isolateEpisode(record) {
+    const copy = clone(record);
+    if (!copy || typeof copy !== 'object' || Array.isArray(copy)) return copy;
+    const originalConditionFamily = clean(copy.conditionFamily) || clean(copy.hazardType) || 'unknown';
+    copy.originalConditionFamily = originalConditionFamily;
+    copy.hazardType = originalConditionFamily;
+    copy.sourceClassification = HISTORICAL_SOURCE_CLASSIFICATION;
+    copy.passiveOnly = true;
+    copy.consumerVisible = false;
+    copy.nonLiveRecord = true;
+    copy.episodeCandidateId = historicalId('historical-episode', copy.episodeCandidateId);
+    copy.episodeId = historicalId('historical-episode', copy.episodeId);
+    copy.incidentCandidateKey = historicalId('historical-incident-candidate', copy.incidentCandidateKey);
+    copy.recurrenceKey = historicalId('historical-recurrence', copy.recurrenceKey);
+    copy.observations = safeArray(copy.observations).map(isolateObservation).filter(Boolean);
+    return freeze(copy);
+  }
+
   function normalizeObservation(input) {
     try {
       const api = resolver();
-      const safeInput = input && typeof input === 'object' ? input : {};
-      return api?.normalizeHistoricalObservation?.({
+      const safeInput = clone(input && typeof input === 'object' ? input : {});
+      return isolateObservation(api?.normalizeHistoricalObservation?.({
         eventType: safeInput.eventType,
         observedAt: safeInput.observedAt,
         report: safeInput.report || safeInput.sanitizedReport || {},
         identity: safeInput.identity || safeInput
-      }) || null;
+      }) || null);
     } catch (error) { return null; }
   }
 
@@ -47,13 +89,13 @@
     const key = observationKey(obs, observationRecords.length);
     if (observationKeys.has(key)) return false;
     observationKeys.add(key);
-    observationRecords.push(clone(obs));
+    observationRecords.push(obs);
     if (options.notify !== false) notifyEpisodesChanged({ reason: options.reason || 'historical_observation_ingested' });
     return true;
   }
 
   function getRawEpisodes() {
-    try { return safeArray(resolver()?.resolveHistoricalEpisodes?.(observationRecords)); } catch (error) { return []; }
+    try { return safeArray(resolver()?.resolveHistoricalEpisodes?.(observationRecords)).map(isolateEpisode); } catch (error) { return []; }
   }
 
   function getEpisodes() { return sortEpisodes(getRawEpisodes()).map(clone); }
@@ -98,7 +140,7 @@
     return freeze({ passiveOnly: true, runtimeAvailable: true, authoritativeOwnerDetected: d.authoritativeOwnerDetected, authoritativeOwnerName: d.authoritativeOwnerName, sourceHydrated: d.sourceHydrated, sourceHydrationStatus: d.sourceHydrationStatus, allEpisodeCount: d.allEpisodeCount, completedEpisodeCount: d.completedEpisodeCount, activeEpisodeCount: d.activeEpisodeCount, incompleteEpisodeCount: d.incompleteEpisodeCount, orphanEpisodeCount: d.orphanEpisodeCount, malformedEpisodeCount: d.malformedEpisodeCount, duplicateEpisodeCount: d.duplicateEpisodeCount, canonicalCompletionState: d.canonicalCompletionState, getEpisodesAvailable: true, getCompletedEpisodesAvailable: true, deterministicOrdering: d.deterministicOrdering, defensiveCopiesVerified: d.defensiveCopiesVerified, startupSynchronized: true, clearLifecycleSynchronized: true, lifecycleNotificationAvailable: true, lp0540IntegrationAvailable: Boolean(globalScope.gridlyHistoricalIntelligenceRuntimeIntegration), lp0540SourceMode: lp.sourceMode || null, lp0540CompletedEpisodeCount: lp.completedProductionEpisodeCount || 0, lp0540PipelineSynchronized: lp.pipelineSynchronized === true, noSourceEpisodeMutation: !d.sourceEpisodeMutationDetected, noLiveStateMutation: !d.liveStateMutationDetected, noStorageWritesAdded: d.storageWritesAdded === false, protectedSystemsModified: false, safeToProceedToLp0542: d.authoritativeOwnerDetected === true && d.sourceHydrated === true && d.defensiveCopiesVerified === true && lp.pipelineSynchronized === true });
   }
 
-  const api = freeze({ RUNTIME_VERSION, CANONICAL_COMPLETION_STATE, getEpisodes, getCompletedEpisodes, getEpisodeById, getEpisodesByLocation, getEpisodesByHazardType, getDiagnostics, notifyEpisodesChanged, subscribeCompletedEpisodeChanges, ingestObservation });
+  const api = freeze({ RUNTIME_VERSION, CANONICAL_COMPLETION_STATE, HISTORICAL_SOURCE_CLASSIFICATION, getEpisodes, getCompletedEpisodes, getEpisodeById, getEpisodesByLocation, getEpisodesByHazardType, getDiagnostics, notifyEpisodesChanged, subscribeCompletedEpisodeChanges, ingestObservation });
   globalScope.gridlyHistoricalEpisodeRuntime = api;
   globalScope.gridlyLp0541HistoricalEpisodeRuntimeBridgeAudit = audit;
   notifyEpisodesChanged({ reason: 'startup_synchronization' });
