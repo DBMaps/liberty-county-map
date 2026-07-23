@@ -1,0 +1,2302 @@
+GRIDLY LP054.1 DOM WRITE INVESTIGATION
+Generated: 2026-07-23 16:03:50
+Repository: C:\GitHub\liberty-county-map
+Current commit: 612af69e
+
+============================================================
+SUMMARY
+============================================================
+openGridlyPortraitV2Sheet found: True
+openGridlyPortraitV2Sheet lines: 104690-104791
+Final enforcement line: 104775
+DOM writes after final enforcement: 0
+
+No direct DOM replacement was found after final enforcement inside openGridlyPortraitV2Sheet.
+
+============================================================
+DOM WRITES AND ENFORCEMENT ORDER INSIDE openGridlyPortraitV2Sheet
+============================================================
+Line 104690: function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) { 
+Line 104735: if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; }); 
+Line 104736: else { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; } 
+Line 104774: gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "last-mile canonical enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("openGridlyPortraitV2Sheet")); 
+Line 104775: gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible alert-card DOM write enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("final-visible-alert-card-dom-write")); <<< FINAL ENFORCEMENT
+
+============================================================
+ALL RELEVANT DOM WRITES / ALERT CALLS IN app.js
+============================================================
+Line 1939: list.replaceChildren();
+Line 1950: item.append(title, line, meta);
+Line 1951: list.appendChild(item);
+Line 1962: confidence.append(title, level, detail);
+Line 1963: list.appendChild(confidence);
+Line 2569: list.replaceChildren();
+Line 2584: body.appendChild(p);
+Line 2586: item.append(title, source, body);
+Line 2587: list.appendChild(item);
+Line 2978: clearResetOwner: "gridlyRenderTravelBrief() list.replaceChildren()",
+Line 3052: handle.querySelector(".gridly-brief-foundation-handle-icon")?.replaceChildren(document.createTextNode(expanded ? "â–²" : "â–¼"));
+Line 3092: weather.replaceChildren();
+Line 3101: weather.append(label, headline);
+Line 3106: weather.appendChild(summary);
+Line 3114: outlook.replaceChildren();
+Line 3125: row.append(icon, text);
+Line 3126: outlook.appendChild(row);
+Line 6912: notice.innerHTML = '<div><strong>A new version of Gridly is available.</strong><br><span>Update now for the latest improvements.</span></div><div style="display:flex;gap:.5rem;flex-shrink:0;"><button type="button" data-gridly-pwa-update-later style="border:1px solid rgba(148,163,184,.5);border-radius:999px;background:transparent;color:#f8fafc;padding:.5rem .75rem;">Later</button><button type="button" data-gridly-pwa-update-now style="border:0;border-radius:999px;background:#38bdf8;color:#04111f;font-weight:700;padding:.5rem .8rem;">Update Now</button></div>';
+Line 6913: document.body?.appendChild(notice);
+Line 15791: if (!root) { root = document.createElement("section"); root.id = "gridly-lp0516-zip-prototype"; root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-labelledby", "gridly-lp0516-title"); document.body?.appendChild(root); }
+Line 15809: root.innerHTML = `<style>#gridly-lp0516-zip-prototype{--lp0516-bg:var(--bg,#050505);--lp0516-sheet:var(--card,rgba(16,18,21,.92));--lp0516-sheet-strong:var(--gridly-surface-strong,#081827);--lp0516-border:var(--border,rgba(255,255,255,.14));--lp0516-border-accent:var(--gridly-border,rgba(0,245,240,.28));--lp0516-text:var(--text,#fff);--lp0516-muted:var(--muted,#a4acb8);--lp0516-accent:var(--accent,#39f3a4);--lp0516-focus:var(--blue,#66e8ff);position:fixed;inset:0;z-index:2147483647;background:rgba(2,8,18,.72);display:flex;align-items:flex-end;justify-content:center;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;pointer-events:auto;touch-action:manipulation;color:var(--lp0516-text)}.gridly-lp0516-sheet{position:relative;z-index:1;width:min(100%,430px);max-height:min(86vh,760px);overflow-y:auto;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025)),var(--lp0516-sheet);border:1px solid var(--lp0516-border-accent);border-bottom:0;border-radius:28px 28px 0 0;padding:28px 22px calc(28px + env(safe-area-inset-bottom));box-shadow:var(--shadow,0 26px 60px rgba(0,0,0,.72)),var(--gridly-cyan-glow,0 0 26px rgba(0,245,240,.14));backdrop-filter:blur(18px)}#gridly-lp0516-title{font-size:1.55rem;line-height:1.05;margin:0 0 10px;color:var(--lp0516-text);letter-spacing:-.02em}.gridly-lp0516-sheet h3{margin:8px 0;color:var(--lp0516-text);font-size:1.15rem}.gridly-lp0516-sheet p,.gridly-lp0516-sheet small{color:var(--lp0516-muted);line-height:1.45}.gridly-lp0516-sheet label{display:block;margin-top:16px;color:var(--lp0516-muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}#gridly-lp0516-zip-input{box-sizing:border-box;width:100%;font-size:1.25rem;padding:16px;border:1px solid var(--lp0516-border);border-radius:16px;margin:8px 0 6px;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--lp0516-sheet-strong);opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}#gridly-lp0516-zip-input::placeholder{color:var(--lp0516-muted);opacity:.82;-webkit-text-fill-color:var(--lp0516-muted)}#gridly-lp0516-zip-input::selection{background:var(--lp0516-focus);color:#02070a;-webkit-text-fill-color:#02070a}#gridly-lp0516-zip-input:-webkit-autofill,#gridly-lp0516-zip-input:-webkit-autofill:focus{-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);box-shadow:0 0 0 1000px var(--lp0516-sheet-strong) inset;border-color:var(--lp0516-border-accent)}#gridly-lp0516-zip-input:disabled{opacity:1;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text)}.gridly-lp0516-validation{min-height:20px;color:var(--warning,#ffbf47);font-size:.9rem;font-weight:750}.gridly-lp0516-btn,.gridly-lp0516-option{width:100%;min-height:48px;border-radius:16px;border:1px solid var(--lp0516-border);margin-top:10px;font-weight:900;cursor:pointer}.gridly-lp0516-primary{background:linear-gradient(135deg,var(--blue,#66e8ff),#3dcfe8);color:#02070a;border-color:transparent}.gridly-lp0516-secondary,.gridly-lp0516-option{background:rgba(255,255,255,.07);color:var(--lp0516-text)}.gridly-lp0516-tertiary{background:transparent;color:var(--lp0516-muted);border-color:rgba(255,255,255,.1)}.gridly-lp0516-options{display:grid;gap:10px;margin:14px 0}.gridly-lp0516-option{text-align:left;padding:14px 16px}.gridly-lp0516-option[aria-checked="true"]{border-color:var(--lp0516-accent);background:linear-gradient(135deg,rgba(57,243,164,.22),rgba(102,232,255,.12));color:var(--lp0516-text);box-shadow:0 0 0 1px rgba(57,243,164,.18) inset}.gridly-lp0516-option:focus,.gridly-lp0516-btn:focus,#gridly-lp0516-zip-input:focus{outline:3px solid var(--lp0516-focus);outline-offset:2px;border-color:var(--lp0516-focus)}</style><div class="gridly-lp0516-sheet">${body}</div>`;
+Line 20966: existing.outerHTML = markup;
+Line 20968: target.insertAdjacentHTML("beforeend", markup);
+Line 31362: textarea.innerHTML = html;
+Line 31959: { file: "js/gridlyAlertsPublishedAwareness.js", line: 254, match: "window.openGridlyPortraitV2Sheet(\"alerts\", { title, html })", containingFunction: "openGridlyPublishedAwarenessAlertsSurface" },
+Line 31962: { file: "js/app.js", line: 30006, match: "window.openGridlyPortraitV2Sheet(\"alerts\", { title, html })", containingFunction: "openAlertsSurfaceFromDock" },
+Line 31964: { file: "js/app.js", line: 31689, match: "window.openGridlyPortraitV2Sheet(\"alerts\", { title, html })", containingFunction: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply" },
+Line 31965: { file: "js/app.js", line: 31766, match: "openGridlyPortraitV2Sheet('alerts', template)", containingFunction: "legacy alerts open fallback" },
+Line 32033: gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "openGridlyPortraitV2Sheet(alerts)";
+Line 32204: // LP009 ordering anchor: openGridlyPortraitV2Sheet("alerts") happens before gridlyOpenAlertsSurfaceAfterPaint().
+Line 32206: ? Boolean(window.openGridlyPortraitV2Sheet("alerts", { title, html }))
+Line 32207: : (typeof openGridlyPortraitV2Sheet === "function" ? Boolean(openGridlyPortraitV2Sheet("alerts", { title, html })) : false);
+Line 33648: if (phase2Contract) return RenderCompleteAlertCard(phase2Contract);
+Line 33882: const generatedMarkup = options.firstVisible === true ? RenderFirstVisibleAlertCard({ ...phase1Contract, phase2Contract: canonicalRenderContract }) : RenderCompleteAlertCard(canonicalRenderContract);
+Line 33923: lastWriter: "window.openGridlyPortraitV2Sheet('alerts', { html })",
+Line 34107: const opened = gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => window.openGridlyPortraitV2Sheet("alerts", {
+Line 34113: if (opened) gridlyEnforceCanonicalPresentationOnVisibleAlertCards("gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync");
+Line 34185: const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
+Line 34924: sheet.innerHTML = `<div class="gridly-tactical-dock-sheet-head"><strong id="gridlyTacticalDockSheetTitle"></strong><button type="button" id="gridlyTacticalDockSheetClose" aria-label="Close tactical panel">X</button></div><div id="gridlyTacticalDockSheetBody" class="gridly-tactical-dock-sheet-body"></div>`;
+Line 34925: document.body.appendChild(sheet);
+Line 34955: if (bodyEl) bodyEl.innerHTML = contentHtml;
+Line 36372: resultsContainer.appendChild(status);
+Line 36380: resultsContainer.appendChild(status);
+Line 36409: resultsContainer.appendChild(status);
+Line 36419: resultsContainer.appendChild(sectionTitle);
+Line 36435: itemBtn.appendChild(label);
+Line 36451: itemBtn.appendChild(meta);
+Line 36473: list.appendChild(itemBtn);
+Line 36478: resultsContainer.appendChild(list);
+Line 37007: paneEls.reasons.innerHTML = "";
+Line 37011: paneEls.reasons.appendChild(item);
+Line 42322: els.mobileTownSelectorBtn.innerHTML = `Awareness Area<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>`;
+Line 43950: els.gridlyWelcomeHomeAreaSelect.replaceChildren();
+Line 43956: els.gridlyWelcomeHomeAreaSelect.append(option);
+Line 44009: els.gridlyWelcomeFinalCopy.replaceChildren();
+Line 44014: els.gridlyWelcomeFinalCopy.append(lead, identity);
+Line 44391: card.innerHTML = `
+Line 44407: overlay.innerHTML = `
+Line 44460: indicators.innerHTML = pages.map((_, pageIndex) => `<button type="button" class="gridly-v950-page-dot${pageIndex === activePageIndex ? " is-active" : ""}" data-gridly-page-dot="${pageIndex}" aria-label="Go to Quick Tour page ${pageIndex + 1}" aria-current="${pageIndex === activePageIndex ? "step" : "false"}"></button>`).join("");
+Line 44994: modal.innerHTML = `
+Line 45015: document.body.appendChild(modal);
+Line 46590: mapNode.appendChild(mobileControlRail);
+Line 46607: menuRoot.innerHTML = `
+Line 46618: mobileControlRail?.appendChild(menuRoot);
+Line 46678: mobileControlRail?.appendChild(menuRoot);
+Line 46679: if (zoomControl) mobileControlRail?.appendChild(zoomControl);
+Line 46694: mapNode?.appendChild(menuRoot);
+Line 46696: if (zoomControl && controlCorner) controlCorner.appendChild(zoomControl);
+Line 52392: els.crossingSelect.innerHTML = `
+Line 61810: template.innerHTML = html;
+Line 62246: parent.appendChild(microline);
+Line 64390: gate: "openGridlyPortraitV2Sheet(sheetName)",
+Line 74228: function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write") {
+Line 75143: panel.innerHTML = `
+Line 75172: document.body.appendChild(counter);
+Line 75173: document.body.appendChild(launcher);
+Line 75174: document.body.appendChild(panel);
+Line 75282: panel.innerHTML = `
+Line 75303: document.body.appendChild(panel);
+Line 75329: document.head.appendChild(style);
+Line 75341: startSelect.innerHTML = els.routeWatchStartSelect.innerHTML;
+Line 75345: destinationSelect.innerHTML = els.routeWatchDestinationSelect.innerHTML;
+Line 77850: { source: "renderAlerts() and openGridlyPortraitV2Sheet('alerts')", classification: "panel open blocking", evidence: "Alerts sheet uses a synchronous template/body render and immediate alert-location sync after opening; desktop renderAlerts() rebuilds alert HTML from current incident intelligence." },
+Line 77882: panelOpenReadiness: ["openGridlyPortraitV2Sheet()", "openPortraitV2Sheet()", "bindV2SheetActions()", "renderAlerts() for desktop alerts list"]
+Line 79377: document.head.appendChild(style);
+Line 79589: els.manualReportType.innerHTML = ROAD_HAZARD_TYPE_OPTIONS.map(
+Line 79593: els.manualReportType.innerHTML = `
+Line 79680: body.innerHTML = `
+Line 79719: body.innerHTML = `
+Line 81804: btn.appendChild(primary);
+Line 81809: btn.appendChild(secondary);
+Line 81835: els.destinationEmptyNote.appendChild(row);
+Line 81878: selectEl.innerHTML = "";
+Line 81883: selectEl.appendChild(option);
+Line 81891: selectEl.appendChild(option);
+Line 81911: el.innerHTML = "";
+Line 81915: el.appendChild(placeholderOption);
+Line 81920: el.appendChild(option);
+Line 82112: list.innerHTML = "";
+Line 82117: list.appendChild(empty);
+Line 82124: row.appendChild(label);
+Line 82125: list.appendChild(row);
+Line 82131: list.appendChild(more);
+Line 85605: else actionHost.appendChild(button);
+Line 87998: communitySelect.replaceChildren();
+Line 88004: communitySelect.append(option);
+Line 88026: container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue);
+Line 88807: els.settingsSavedPlacesList.innerHTML = "";
+Line 91089: document.head.appendChild(style);
+Line 91135: els.departureReason.innerHTML = `
+Line 91175: desktopMetricsContainer.innerHTML = `
+Line 91975: node.innerHTML = badges.map((badge) => `<span class="trust-pill">${sanitizeText(badge)}</span>`).join("");
+Line 99705: panel.innerHTML = `
+Line 99715: else bottomRegion.appendChild(panel);
+Line 100252: els.roadHazardsList.innerHTML = `
+Line 100261: els.roadHazardsList.innerHTML = hazards.map((incident) => {
+Line 100461: els.alertsList.innerHTML = `<div class="alert-item corridor-command-status"><strong>Community Awareness</strong><p>Nothing new nearby. Gridly is still watching your area.</p></div>`;
+Line 100520: els.alertsList.innerHTML = nextAlertHtml;
+Line 100521: gridlyEnforceCanonicalPresentationOnVisibleAlertCards("renderAlerts");
+Line 100555: els.trendingList.innerHTML = `<div class="trend-item muted">Nearby crossings look clear right now.</div>`;
+Line 100559: els.trendingList.innerHTML = incidents
+Line 100591: gridlyEnforceCanonicalPresentationOnVisibleAlertCards("updateMobileAlertsMirror");
+Line 100600: gridlyEnforceCanonicalPresentationOnVisibleAlertCards("updateMobileAlertsMirror");
+Line 101025: els.searchResults.innerHTML = "";
+Line 101034: els.searchResults.innerHTML = `
+Line 101043: els.searchResults.innerHTML = matches
+Line 101366: panel.innerHTML = `
+Line 101395: document.body.appendChild(panel);
+Line 101678: document.head.appendChild(style);
+Line 101719: choiceGrid.appendChild(button);
+Line 101916: document.head.appendChild(style);
+Line 101940: wrap.innerHTML = `
+Line 101952: document.body.appendChild(wrap);
+Line 101977: modal.innerHTML = `
+Line 101991: document.body.appendChild(modal);
+Line 102233: document.head.appendChild(style);
+Line 102266: dock.innerHTML = `
+Line 102271: alertsPanel.appendChild(dock);
+Line 102303: launcher.prepend(chip);
+Line 102364: document.head.appendChild(style);
+Line 102397: launcher.prepend(chip);
+Line 102422: card.innerHTML = `
+Line 102430: target.appendChild(card);
+Line 102515: document.head.appendChild(style);
+Line 102544: rightColumn.appendChild(tools);
+Line 102568: document.head.appendChild(style);
+Line 102610: document.head.appendChild(style);
+Line 102642: document.head.appendChild(style);
+Line 102685: document.head.appendChild(style);
+Line 102991: body.innerHTML = `
+Line 103121: body.innerHTML = views[section].html;
+Line 103456: document.head.appendChild(style);
+Line 103497: badge.id = DEV_BADGE_ID; badge.className = "gridly-layout-edit-fixed"; badge.textContent = "Gridly Layout Edit Mode"; document.body.appendChild(badge);
+Line 103502: overlay.innerHTML = '<div class="gridly-row" data-k="mode"></div><div class="gridly-row" data-k="selected"></div><div class="gridly-row" data-k="metrics"></div><div class="gridly-actions"><button type="button" data-gridly-export>Export snapshot</button><button type="button" data-gridly-reset>Reset</button><button type="button" data-gridly-disable>Disable</button></div>';
+Line 103508: document.body.appendChild(overlay);
+Line 104690: function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
+Line 104735: if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; });
+Line 104736: else { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; }
+Line 104774: gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "last-mile canonical enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("openGridlyPortraitV2Sheet"));
+Line 104775: gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible alert-card DOM write enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("final-visible-alert-card-dom-write"));
+Line 104795: return openGridlyPortraitV2Sheet(type, {
+Line 104800: return openGridlyPortraitV2Sheet(type);
+Line 105893: return openGridlyPortraitV2Sheet(sheetName);
+
+============================================================
+FUNCTION: openGridlyPortraitV2Sheet
+FOUND: True
+LINES: 104690-104791
+============================================================
+function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
+    gridlyLp017AuditRecordSheetOpen(sheetName, templateOverride);
+    window.gridlyStartupDiagnostics?.markInteractionProbe?.("surfaceOpen");
+    window.gridlyBriefInteractionCollapseForPanel?.(`portrait-v2-sheet:${sheetName || "unknown"}`);
+    const settingsActive = sheetName === "settings";
+    const openStartedAt = settingsActive ? getGridlySettingsPerfNow() : 0;
+    if (settingsActive) gridlySettingsPerformanceTrace.settingsOpenCount += 1;
+    const queryBucket = sheetName === "alerts" ? "insertionSubphases" : null;
+    const queryNodes = () => ({
+      sheet: document.getElementById("gridlyPortraitV2Sheet"),
+      backdrop: document.getElementById("gridlyPortraitV2SheetBackdrop"),
+      shell: document.getElementById("gridlyPortraitV2"),
+      title: document.getElementById("gridlyPortraitV2SheetTitle"),
+      body: document.getElementById("gridlyPortraitV2SheetBody")
+    });
+    const queriedNodes = queryBucket ? gridlyAlertsOpenAuditMeasureMicro(queryBucket, "DOM querying after insertion", queryNodes) : queryNodes();
+    const { sheet, backdrop, shell, title, body } = queriedNodes;
+    const template = templateOverride || sheetTemplates[sheetName];
+    if (!sheet || !backdrop || !title || !body || !template) return false;
+    if (sheetName !== "alerts" && (activeSheet === "alerts" || sheet.dataset?.activeSheet === "alerts")) gridlyMarkAlertsSheetClosed();
+    if (sheetName === "alerts" && !gridlyAlertsSheetLifecycleState.activeGeneration) gridlyBeginAlertsSheetLifecycle();
+    if (sheetName === "report" && !templateOverride && !reportingState?.placementModeActive) {
+      selectedV2HazardType = "";
+      selectedQuickHazardType = null;
+      pendingHazardPlacement = null;
+      selectedOtherHazardSubtype = "";
+      if (typeof reportingState === "object" && reportingState?.selectedHazardType) {
+        updateReportingState({ selectedHazardType: null, lastReportMessage: "" });
+      }
+    }
+    if (settingsActive) suppressLegacySettingsSurfaceForPortraitV2Settings();
+    const settingsAlreadyOpen = settingsActive
+      && activeSheet === "settings"
+      && sheet.dataset?.activeSheet === "settings"
+      && !sheet.hidden
+      && body.querySelector?.("[data-gridly-settings-v2]");
+    if (settingsAlreadyOpen && !templateOverride) {
+      const duration = Number((getGridlySettingsPerfNow() - openStartedAt).toFixed(2));
+      gridlySettingsPerformanceTrace.lastOpenDurationMs = duration;
+      recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", "Repeated Settings open request ignored because the Settings sheet is already active.");
+      return true;
+    }
+    const templateHtml = typeof template.html === "function" ? template.html() : template.html;
+
+    activeSheet = sheetName;
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; });
+    else { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; }
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible official card DOM sanitation", () => gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom(body));
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "event-listener wiring", () => gridlyBindPwaInstallUx(body));
+    else gridlyBindPwaInstallUx(body);
+    const applyInitialStyles = () => { body.hidden = false; body.style.display = ""; applyGridlySettingsSheetRuntimeAlignment(sheet, body, sheetName); };
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "style/class writes", applyInitialStyles);
+    else applyInitialStyles();
+
+    const applyShellStyles = () => {
+    shell?.removeAttribute("hidden");
+    shell?.classList.remove("is-closing", "is-closed");
+
+    sheet.hidden = false;
+    sheet.removeAttribute("hidden");
+    sheet.removeAttribute("aria-hidden");
+    sheet.removeAttribute("inert");
+    sheet.style.visibility = "visible";
+    sheet.style.opacity = "1";
+    sheet.style.display = "";
+    sheet.style.pointerEvents = "auto";
+    sheet.style.transform = "translate3d(0, 0, 0)";
+    sheet.style.translate = "0 0";
+    sheet.classList.remove("is-closing", "is-closed", "visible", "active", "open");
+    sheet.classList.add("is-open", "active", "open");
+    sheet.setAttribute("data-active-sheet", sheetName);
+
+    backdrop.hidden = false;
+    backdrop.removeAttribute("hidden");
+    backdrop.removeAttribute("aria-hidden");
+    backdrop.removeAttribute("inert");
+    backdrop.style.display = "";
+    backdrop.style.pointerEvents = "auto";
+    backdrop.classList.remove("is-closing", "is-closed");
+    backdrop.classList.add("is-open");
+    };
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "style/class writes", applyShellStyles);
+    else applyShellStyles();
+    if (sheetName === "alerts") {
+      gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "last-mile canonical enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("openGridlyPortraitV2Sheet"));
+      gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible alert-card DOM write enforcement", () => gridlyEnforceCanonicalPresentationOnVisibleAlertCards("final-visible-alert-card-dom-write"));
+    }
+
+    const bindStartedAt = sheetName === "settings" ? getGridlySettingsPerfNow() : 0;
+    if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "close-button wiring", () => bindV2SheetActions());
+    else bindV2SheetActions();
+    if (sheetName === "settings") {
+      const bindDuration = Number((getGridlySettingsPerfNow() - bindStartedAt).toFixed(2));
+      const openDuration = Number((getGridlySettingsPerfNow() - openStartedAt).toFixed(2));
+      gridlySettingsPerformanceTrace.lastBindingDurationMs = bindDuration;
+      gridlySettingsPerformanceTrace.lastOpenDurationMs = openDuration;
+      gridlySettingsPerformanceTrace.slowInteractionSuspected = openDuration > 120 || bindDuration > 50 || Boolean(gridlySettingsPerformanceTrace.duplicateSettingsBindingDetected);
+      if (bindDuration > 50) recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Settings binding took ${bindDuration}ms.`);
+      recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", `Settings V2 sheet render+bind completed in ${openDuration}ms.`);
+    }
+    return true;
+  }
+
+============================================================
+FUNCTION: gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync
+FOUND: True
+LINES: 32379-34219
+============================================================
+function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsSheetGeneration = gridlyAlertsSheetLifecycleState.activeGeneration) {
+  if (!gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)) {
+    gridlyIgnoreLateAlertsSheetResult(alertsSheetGeneration, "authoritative_build_not_current_at_start");
+    return false;
+  }
+  const cooperativeBuildGeneration = ++gridlyAlertsCooperativeBuildState.generation;
+  const cooperativeBuildContextKey = gridlyGetAlertsAuthoritativeContextKey();
+  const cooperativeBuildRevisionKey = gridlyGetAlertsAuthoritativeRevisionKey();
+  const cooperativeBuildStartedAt = gridlyAlertsCooperativeNow();
+  const cooperativeBuildAudit = {
+    contextKey: cooperativeBuildContextKey,
+    revisionKey: cooperativeBuildRevisionKey,
+    startedAt: cooperativeBuildStartedAt,
+    completedAt: null,
+    durationMs: null,
+    itemCount: 0,
+    chunkCount: 0,
+    longestChunkMs: 0,
+    averageChunkMs: 0,
+    totalChunkMs: 0,
+    browserYields: 0,
+    duplicateBuildPrevented: Boolean(gridlyAlertsCooperativeBuildState.duplicateBuildPrevented),
+    superseded: false,
+    cancelled: false,
+    finalContentApplied: false,
+    finalCacheUpdated: false,
+    finalDomInsertionOccurred: false,
+    staleApplicationBlocked: false,
+    cancelledGenerationCount: 0,
+    closeProcessedBeforeBuildCompletion: false,
+    phaseDurations: {}
+  };
+  const cooperativeChunkStartedAt = { value: cooperativeBuildStartedAt };
+  gridlyAlertsCooperativeBuildState.lastBuild = cooperativeBuildAudit;
+  const cooperativeOwnership = { alertsSheetGeneration, cooperativeBuildGeneration, contextKey: cooperativeBuildContextKey, revisionKey: cooperativeBuildRevisionKey };
+  const cooperativeYieldOrCancel = (force = false, reason = "cancelled_after_browser_yield") => gridlyAlertsCooperativeYieldIfNeeded(cooperativeBuildAudit, cooperativeChunkStartedAt, force, { ...cooperativeOwnership, reason });
+  const cooperativePhase = async (name, fn) => {
+    const phaseStartedAt = gridlyAlertsCooperativeNow();
+    try {
+      return await fn();
+    } finally {
+      cooperativeBuildAudit.phaseDurations[name] = Number((gridlyAlertsCooperativeNow() - phaseStartedAt).toFixed(2));
+    }
+  };
+  window.gridlyStartupDiagnostics?.markInteractionProbe?.("clickHandler");
+  window.gridlyStartupDiagnostics?.markPostPaintLifecycle?.("firstResponsiveInteraction");
+  const gridlyAlertsOpenAuditRun = gridlyAlertsOpenAuditBegin();
+  gridlyAlertsOpenAuditRecordPhase("open handler entered", gridlyAlertsOpenAuditRun.startedAt, gridlyAlertsOpenAuditNow());
+  const gridlyV920PanelOpenStartedAt = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+  const gridlyV921PanelTiming = { startedAt: gridlyV920PanelOpenStartedAt, acknowledgement: 0 };
+  gridlyBeginAlertsOpenRefreshFixTiming(gridlyV920PanelOpenStartedAt);
+  gridlyBetaInstantInteractionState.alertsOpenImmediate = true;
+  gridlyBetaInstantInteractionState.alertsUsesBestAvailableLocalState = true;
+  gridlyV920MainThreadRepairState.panelShellVisibleBeforeHeavyContent = true;
+  gridlyV920Measure("openAlertsSurfaceFromDock.shell", "panel", () => {
+    document.body?.classList.add("gridly-alerts-panel-opening");
+  }, { triggeredBy: "tap", synchronous: true });
+  gridlyV921PanelTiming.shellVisible = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
+  requestAnimationFrame?.(() => { gridlyV921PanelTiming.contentFirstPaint = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2)); });
+
+  const bindAlertsPanelClick = () => {
+    const alertsPanel = document.querySelector(".gridly-alerts-active");
+    if (!(alertsPanel instanceof HTMLElement) || alertsPanel.dataset.alertFocusBound === "true") return;
+    alertsPanel.addEventListener("click", (event) => {
+      const expandRow = event.target?.closest?.("[data-gridly-alert-expand]");
+      if (expandRow) {
+        event.preventDefault();
+        const hiddenRows = alertsPanel.querySelectorAll("[data-gridly-alert-hidden='true']");
+        hiddenRows.forEach((row) => { row.style.display = ""; });
+        expandRow.remove();
+        return;
+      }
+      const alertRow = event.target?.closest?.(GRIDLY_ALERT_ROW_SELECTOR);
+      if (!alertRow || !alertsPanel.contains(alertRow)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const id = alertRow.getAttribute("data-gridly-alert-id") || "";
+      const readRowCoordinate = (name) => {
+        const rawValue = alertRow.getAttribute(`data-gridly-alert-${name}`);
+        if (rawValue === null || rawValue === "") return null;
+        const value = Number(rawValue);
+        return Number.isFinite(value) ? value : null;
+      };
+      const findMatchingAlert = () => {
+        const alerts = Array.isArray(window.__gridlyLatestAlertsForRender) ? window.__gridlyLatestAlertsForRender : [];
+        if (!id) return null;
+        return alerts.find((alert, index) => {
+          const alertId = normalizeToken(alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`);
+          return alertId === id;
+        }) || null;
+      };
+      const rowLat = readRowCoordinate("lat");
+      const rowLng = readRowCoordinate("lng");
+      const matchingAlert = (!Number.isFinite(rowLat) || !Number.isFinite(rowLng)) ? findMatchingAlert() : null;
+      const fallbackLat = matchingAlert ? getFirstNumber(matchingAlert, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude"]) : null;
+      const fallbackLng = matchingAlert ? getFirstNumber(matchingAlert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]) : null;
+      const lat = Number.isFinite(rowLat) ? rowLat : fallbackLat;
+      const lng = Number.isFinite(rowLng) ? rowLng : fallbackLng;
+      const sheet = alertRow.closest("#gridlyPortraitV2Sheet, .gridly-v2-sheet") || document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
+      const closeButton = sheet?.querySelector?.("#gridlyPortraitV2SheetClose, [data-gridly-sheet-close='alerts'], [data-sheet-close='alerts'], [aria-label='Close panel'], [aria-label='Close']") || null;
+      const isVisible = (el) => {
+        if (!(el instanceof HTMLElement)) return false;
+        const style = getComputedStyle(el);
+        if (el.hidden || style.display === "none" || style.visibility === "hidden" || Number(style.opacity || "1") === 0) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      };
+      const isPanelVisible = () => {
+        const activeSheet = document.querySelector("#gridlyPortraitV2Sheet[data-active-sheet='alerts']");
+        if (activeSheet instanceof HTMLElement) return isVisible(activeSheet);
+        return isVisible(alertsPanel);
+      };
+      const focusSucceeded = focusGridlyAlertIncident({
+        id,
+        lat,
+        lng,
+        type: matchingAlert?.reportKind || matchingAlert?.type || "alerts_panel",
+        closeSurface: () => {
+          if (closeButton) closeButton.click();
+          else if (typeof window.closePortraitV2Sheet === "function") window.closePortraitV2Sheet();
+        },
+        openPopup: true,
+        source: "alerts_panel_row"
+      });
+      window.setTimeout(() => {
+        const audit = window.gridlyAlertFocusAudit?.();
+        console.log("[V198.2 ALERT MAP FOCUS RESULT]", {
+          id,
+          lat,
+          lng,
+          focusSucceeded: Boolean(audit?.focusSucceeded ?? (focusSucceeded && !isPanelVisible())),
+          panelVisibleAfter: isPanelVisible(),
+          audit
+        });
+      }, 450);
+    });
+    alertsPanel.dataset.alertFocusBound = "true";
+    gridlyAlertFocusAuditState.alertRowsBound = true;
+  };
+  const normalizeToken = (value) => String(value || "").replace(/[\s_]+/g, " ").trim();
+  const titleCase = (value) => normalizeToken(value).toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
+  const upperText = (value) => normalizeToken(value).toUpperCase();
+  const toMinutesAgoLabel = (alert) => {
+    const timestamp = alert?.timestamp || alert?.updated_at || alert?.created_at || alert?.reportedAt || alert?.lastSeenAt || "";
+    if (!timestamp) return normalizeToken(alert?.minutesText || alert?.timeAgo || "") || "Just now";
+    const parsed = new Date(timestamp).getTime();
+    if (!Number.isFinite(parsed)) return normalizeToken(alert?.minutesText || alert?.timeAgo || "") || "Just now";
+    const mins = Math.max(0, Math.round((Date.now() - parsed) / 60000));
+    return `${mins}m ago`;
+  };
+  const parseDirection = (alert) => {
+    const raw = normalizeToken(alert?.direction || alert?.lane || alert?.side || alert?.routeImpact || "").toLowerCase();
+    if (!raw) return "";
+    if (/(both|all directions|bidirectional|two-way)/.test(raw)) return "Both directions";
+    if (/east/.test(raw)) return "Eastbound";
+    if (/west/.test(raw)) return "Westbound";
+    if (/north/.test(raw)) return "Northbound";
+    if (/south/.test(raw)) return "Southbound";
+    if (/shoulder/.test(raw)) return "Shoulder";
+    if (/(lane blocked|blocked lane|lane closure|closed lane)/.test(raw)) return "Lane blocked";
+    if (/lane/.test(raw)) return "Lane affected";
+    return titleCase(raw);
+  };
+  const getLocationConfidence = (resolutionType = "") => {
+    if (resolutionType === "exact") return "Location confirmed";
+    if (resolutionType === "resolved") return "Location matched";
+    return "Approximate location";
+  };
+  const getLocationDetail = (resolutionType = "") => {
+    if (resolutionType === "exact") return "Exact crossing";
+    if (resolutionType === "resolved") return "Near known road";
+    return "Approximate coordinates";
+  };
+  const getImpact = (alert) => {
+    const raw = normalizeToken(alert?.routeImpact || alert?.impact || alert?.severity || alert?.priority || "").toLowerCase();
+    if (/(high|major|severe|blocked|closure|closed|standstill)/.test(raw)) return "Widespread Delays";
+    if (/(moderate|medium|delay|slow|congestion)/.test(raw)) return "Impacted Movement";
+    if (/(minor|watch|caution|active)/.test(raw)) return "Slowing Areas";
+    return "Flowing Normally";
+  };
+  const getHazardType = (alert) => titleCase(alert?.hazardType || alert?.category || alert?.label || alert?.type || "Road hazard reported") || "Road hazard reported";
+  const maybeResolveNearestRoad = (lat, lng) => {
+    if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng))) return { resolvedRoad: "", resolvedLocation: "" };
+    const resolvedRoad = typeof resolveNearestRoadName === "function" ? normalizeToken(resolveNearestRoadName(lat, lng)) : "";
+    const resolvedLocation = typeof resolveNearbyKnownLocation === "function" ? normalizeToken(resolveNearbyKnownLocation(lat, lng)) : "";
+    return { resolvedRoad, resolvedLocation };
+  };
+  const readPathValue = (obj, path) => {
+    if (!obj || !path) return undefined;
+    return String(path).split(".").reduce((acc, key) => (acc && typeof acc === "object") ? acc[key] : undefined, obj);
+  };
+  const getFirstText = (obj, paths = []) => {
+    for (const path of paths) {
+      const value = readPathValue(obj, path);
+      const normalized = normalizeToken(value);
+      if (normalized) return normalized;
+    }
+    return "";
+  };
+  const getFirstNumber = (obj, paths = []) => {
+    for (const path of paths) {
+      const value = readPathValue(obj, path);
+      const numeric = Number(value);
+      if (Number.isFinite(numeric)) return numeric;
+    }
+    return null;
+  };
+  const resolveCrossingById = (alertObject = {}) => {
+    const crossingId = getFirstText(alertObject, ["crossingId", "crossing_id", "raw.crossingId", "raw.crossing_id", "source.crossingId", "source.crossing_id"]);
+    if (!crossingId) return {};
+    const crossing = (typeof crossings !== "undefined" && Array.isArray(crossings) ? crossings : []).find((item) => String(item?.id || "").trim() === crossingId);
+    if (!crossing) return {};
+    return {
+      crossingRoad: normalizeToken(crossing?.road || crossing?.name || crossing?.crossingRoad || ""),
+      crossingName: normalizeToken(crossing?.name || crossing?.crossingName || crossing?.road || ""),
+      corridor: normalizeToken(crossing?.corridor || crossing?.route || crossing?.line || ""),
+      lat: Number.isFinite(Number(crossing?.lat)) ? Number(crossing.lat) : null,
+      lng: Number.isFinite(Number(crossing?.lng)) ? Number(crossing.lng) : (Number.isFinite(Number(crossing?.lon)) ? Number(crossing.lon) : null)
+    };
+  };
+  const resolveLocationContext = (alertObject, isRail, lat, lng) => {
+    const resolvedByNearby = Number.isFinite(lat) && Number.isFinite(lng) && typeof resolveNearbyKnownLocation === "function"
+      ? normalizeToken(resolveNearbyKnownLocation(lat, lng)) : "";
+    const resolvedByRoad = Number.isFinite(lat) && Number.isFinite(lng) && typeof resolveNearestRoadName === "function"
+      ? normalizeToken(resolveNearestRoadName(lat, lng)) : "";
+    const first = (values) => values.map(normalizeToken).find(Boolean) || "";
+    if (isRail) {
+      return {
+        crossing: first([alertObject?.crossingRoad, alertObject?.crossingName, alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+        road: first([alertObject?.roadName, alertObject?.primaryRoad, alertObject?.corridor, alertObject?.route, resolvedByRoad]),
+        nearestRoad: first([alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+        resolutionType: normalizeToken(alertObject?.crossingRoad || alertObject?.crossingName) ? "exact" : ((resolvedByNearby || resolvedByRoad || alertObject?.nearestRoad || alertObject?.knownLocation || alertObject?.locationName) ? "resolved" : "approx")
+      };
+    }
+    const crossA = first([alertObject?.crossStreetA, alertObject?.crossStreet1, alertObject?.fromStreet]);
+    const crossB = first([alertObject?.crossStreetB, alertObject?.crossStreet2, alertObject?.toStreet]);
+    return {
+      road: first([alertObject?.primaryRoad, alertObject?.roadName, alertObject?.corridor, alertObject?.route, resolvedByRoad]),
+      crossing: "",
+      nearestRoad: first([alertObject?.nearestRoad, alertObject?.knownLocation, alertObject?.locationName, resolvedByNearby, resolvedByRoad]),
+      crossA,
+      crossB,
+      resolutionType: (crossA && crossB) || normalizeToken(alertObject?.primaryRoad || alertObject?.roadName || alertObject?.corridor || alertObject?.nearestRoad || alertObject?.knownLocation || alertObject?.locationName || resolvedByNearby || resolvedByRoad) ? "resolved" : "approx"
+    };
+  };
+  const formatAlertForMobileV2 = (alert) => {
+    const alertObject = alert && typeof alert === "object" ? alert : {};
+    const crossingResolved = resolveCrossingById(alertObject);
+    const rawRoad = getFirstText(alertObject, ["roadName", "corridor", "primaryRoad", "route", "raw.roadName", "raw.corridor", "source.roadName", "source.corridor"]) || crossingResolved.corridor || "";
+    const rawCrossing = getFirstText(alertObject, [
+      "crossingRoad", "crossingName", "roadName", "corridor", "nearestRoad", "knownLocation", "locationName",
+      "raw.crossingRoad", "raw.crossingName", "raw.roadName", "raw.corridor", "source.crossingRoad", "source.roadName", "source.corridor"
+    ]) || crossingResolved.crossingRoad || crossingResolved.crossingName || "";
+    const rawNearest = getFirstText(alertObject, ["nearestRoad", "knownLocation", "locationName", "location", "raw.nearestRoad", "raw.knownLocation", "source.nearestRoad", "source.knownLocation"]);
+    const rawDescription = normalizeToken(alertObject?.description || alertObject?.subtitle || alertObject?.title || "");
+    const crossA = normalizeToken(alertObject?.crossStreetA || alertObject?.crossStreet1 || alertObject?.fromStreet || "");
+    const crossB = normalizeToken(alertObject?.crossStreetB || alertObject?.crossStreet2 || alertObject?.toStreet || "");
+    const direction = parseDirection(alertObject);
+    const lat = getFirstNumber(alertObject, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "raw.rawLat", "source.lat", "source.latitude", "source.rawLat"]) ?? crossingResolved.lat;
+    const lng = getFirstNumber(alertObject, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "raw.rawLng", "source.lng", "source.lon", "source.longitude", "source.rawLng"]) ?? crossingResolved.lng;
+    const { resolvedRoad, resolvedLocation } = maybeResolveNearestRoad(lat, lng);
+    const typeToken = normalizeToken(alertObject?.type || alertObject?.category || alertObject?.hazardType || alertObject?.title).toLowerCase();
+    const isRail = /rail|train|crossing|blocked/.test(typeToken);
+    const context = resolveLocationContext({
+      ...alertObject,
+      crossingRoad: rawCrossing || crossingResolved.crossingRoad,
+      crossingName: rawCrossing || crossingResolved.crossingName,
+      roadName: rawRoad || crossingResolved.corridor,
+      corridor: rawRoad || crossingResolved.corridor,
+      nearestRoad: rawNearest
+    }, isRail, lat, lng);
+    const bestRoad = context.road || rawRoad || resolvedRoad;
+    const bestNear = context.nearestRoad || rawNearest || resolvedLocation;
+    const resolvedHeadline = normalizeToken(
+      alertObject?.resolvedHeadline ||
+      alertObject?.headline ||
+      alertObject?.localizedSummary ||
+      (alertObject?.title && typeof alertObject.title === "object"
+        ? (alertObject.title.label || alertObject.title.text || alertObject.title.name || alertObject.title.title || "")
+        : alertObject?.title)
+    );
+    let title = resolvedHeadline ? upperText(resolvedHeadline) : "";
+
+    const specificCrossingLocation = isRail && typeof getGridlySpecificCrossingLocation === "function"
+      ? getGridlySpecificCrossingLocation(alertObject)
+      : null;
+    const railHeadlineIsGeneric = /^RAIL\s+CROSSING\s+BLOCKED$/.test(title) || isGridlyGenericCrossingAlertText(title);
+    const shouldBuildRailTitle = isRail && (!title || railHeadlineIsGeneric || (specificCrossingLocation?.headlineLocation && specificCrossingLocation.specificity !== "fallback_context"));
+
+    if (shouldBuildRailTitle) {
+      const roadParts = String(bestRoad || "").split("&").map((part) => normalizeToken(part)).filter(Boolean);
+      if (specificCrossingLocation?.headlineLocation && specificCrossingLocation.specificity !== "fallback_context") {
+        title = `TRAIN BLOCKING CROSSING ON ${upperText(specificCrossingLocation.headlineLocation)}`;
+      } else if (roadParts.length >= 2) {
+        title = `TRAIN BLOCKING ${upperText(roadParts[0])} AT ${upperText(roadParts[1])}`;
+      } else if (context.crossing && bestNear) {
+        title = `TRAIN BLOCKING ${upperText(context.crossing)} AT ${upperText(bestNear)}`;
+      } else if (bestRoad) {
+        title = `TRAIN BLOCKING ${upperText(bestRoad)}`;
+      } else {
+        title = "TRAIN BLOCKING RAIL CROSSING";
+      }
+    } else if (!title) {
+      const hazard = upperText(getHazardType(alertObject));
+      const betweenA = context.crossA || crossA;
+      const betweenB = context.crossB || crossB;
+      if (bestRoad && direction && betweenA && betweenB) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} BETWEEN ${upperText(betweenA)} AND ${upperText(betweenB)}`;
+      else if (bestRoad && betweenA && betweenB) title = `${hazard} ON ${upperText(bestRoad)} BETWEEN ${upperText(betweenA)} AND ${upperText(betweenB)}`;
+      else if (bestRoad && direction && bestNear) title = `${hazard} ON ${upperText(bestRoad)} ${upperText(direction)} NEAR ${upperText(bestNear)}`;
+      else if (bestRoad && bestNear) title = `${hazard} ON ${upperText(bestRoad)} NEAR ${upperText(bestNear)}`;
+      else if (bestNear) title = `${hazard} NEAR ${upperText(bestNear)}`;
+      else if (Number.isFinite(lat) && Number.isFinite(lng)) title = "ROAD HAZARD NEAR REPORTED LOCATION";
+      else title = `${hazard} REPORTED — LOCATION NEEDS CONFIRMATION`;
+    }
+
+    const locationDetail = getLocationDetail(context.resolutionType);
+    const detail = `${locationDetail} • ${toMinutesAgoLabel(alertObject)}`;
+    return {
+      title,
+      detail,
+      confidence: getLocationConfidence(context.resolutionType),
+      impact: getImpact(alertObject),
+      rawType: normalizeToken(alertObject?.type || alertObject?.category || alertObject?.hazardType || ""),
+      rawRoad: rawRoad || bestRoad,
+      lat: Number.isFinite(lat) ? lat : null,
+      lng: Number.isFinite(lng) ? lng : null,
+      resolvedRoad,
+      resolvedLocation,
+      road: bestRoad,
+      crossing: context.crossing,
+      nearestRoad: context.nearestRoad,
+      direction,
+      reportCount: 1,
+      clusterKey: `${isRail ? "rail" : "road"}|${upperText(rawRoad || bestRoad || rawNearest || resolvedLocation || "unknown")}|${upperText(getHazardType(alertObject))}`,
+      latestAtMs: new Date(alertObject?.timestamp || alertObject?.updated_at || alertObject?.created_at || Date.now()).getTime() || Date.now()
+    };
+  };
+  const rankImpact = (impact) => ({ "Widespread Delays": 4, "Impacted Movement": 3, "Slowing Areas": 2, "Flowing Normally": 1 }[impact] || 1);
+  const rankConfidence = (confidence) => ({ "Location confirmed": 3, "Location matched": 2, "Approximate location": 1 }[confidence] || 1);
+  const clusterAlerts = (formattedAlerts) => {
+    const map = new Map();
+    formattedAlerts.forEach((item) => {
+      const key = item.clusterKey;
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, { ...item, reportCount: 1, latestAtMs: item.latestAtMs });
+        return;
+      }
+      existing.reportCount += 1;
+      if (rankImpact(item.impact) > rankImpact(existing.impact)) existing.impact = item.impact;
+      if (rankConfidence(item.confidence) > rankConfidence(existing.confidence)) existing.confidence = item.confidence;
+      if (item.latestAtMs > existing.latestAtMs) {
+        existing.latestAtMs = item.latestAtMs;
+        existing.title = item.title;
+        existing.detail = item.detail;
+      }
+    });
+    return Array.from(map.values()).map((item) => {
+      const mins = Math.max(0, Math.round((Date.now() - item.latestAtMs) / 60000));
+      return {
+        ...item,
+        clusterInfo: item.reportCount > 1 ? `${item.reportCount} community reports nearby • latest ${mins}m ago` : ""
+      };
+    });
+  };
+  const toDelayEstimate = (state) => ({
+    "Widespread Delays": "15–30 min delays possible",
+    "Impacted Movement": "8–15 min delays possible",
+    "Slowing Areas": "5–10 min slowdowns possible",
+    "Flowing Normally": "Near normal travel times"
+  }[state] || "Near normal travel times");
+  const getCrossingHeader = (card) => {
+    const crossing = upperText(card?.crossing || card?.nearestRoad || "LOCAL CROSSING");
+    const corridor = upperText(card?.rawRoad || card?.road || "NEARBY CORRIDOR");
+    return `${crossing} / ${corridor}`;
+  };
+  const getCardLabel = (card) => {
+    if (card?.impact === "Flowing Normally") return "Conditions stable";
+    if (/rail|train|crossing|blocked/.test(String(card?.rawType || '').toLowerCase())) return "Train blocking crossing";
+    return "Traffic disruption reported";
+  };
+  const buildMobileV2AlertsHtmlFromRawAlerts = (alerts = []) => {
+    const formattedAlerts = alerts.map((alert) => formatAlertForMobileV2(alert));
+    const cards = clusterAlerts(formattedAlerts);
+    const fallbackCards = formattedAlerts.filter(Boolean);
+    const activeCards = cards.length > 0 ? cards : fallbackCards;
+    const detailCards = activeCards.slice(0, 3);
+    const hiddenCount = Math.max(0, activeCards.length - detailCards.length);
+    const leadCard = detailCards[0] || activeCards[0] || null;
+    const totalReports = activeCards.reduce((sum, card) => sum + Number(card?.reportCount || 1), 0);
+    return `
+<div class="gridly-alerts-active">
+  <div class="gridly-alert-row gridly-alert-intel-card">
+    <div><strong>Impacted Movement</strong></div>
+    <small>${leadCard ? `Multiple rail crossings are affecting ${sanitizeText(normalizeToken(leadCard?.rawRoad || leadCard?.road || "nearby") )} movement through Dayton.` : "Multiple rail crossings are affecting movement through Dayton."}</small>
+    <small><strong>Expected impact:</strong> ${sanitizeText(toDelayEstimate(leadCard?.impact || "Widespread Delays"))}</small>
+    <small><strong>Based on community reports:</strong> ${totalReports} nearby report${totalReports === 1 ? "" : "s"}</small>
+  </div>
+  ${detailCards.map((card) => `
+    <div class="gridly-alert-row gridly-alert-intel-card">
+      <div><strong>${sanitizeText(getCrossingHeader(card))}</strong></div>
+      <small>${sanitizeText(getCardLabel(card))}</small>
+      <small>${sanitizeText(card?.confidence || "Approximate location")} · ${sanitizeText(formatMinutesAgo(card?.latestAtMs))}</small>
+    </div>
+  `).join("")}
+  ${hiddenCount > 0 ? `<div class="gridly-alert-row gridly-alert-intel-card"><small><strong>+ ${hiddenCount} more affected crossing${hiddenCount === 1 ? "" : "s"}</strong></small></div>` : ""}
+</div>`.trim();
+  };
+  const fallbackTemplate = {
+    title: 'No Active Alerts',
+    html: '<div class="gridly-v2-list"><div class="gridly-alert-empty-state gridly-alert-intel-card"><strong>You\'re all caught up.</strong><p class="gridly-v2-sheet-copy">No active community alerts in your Awareness Area.</p></div></div>'
+  };
+  let template = fallbackTemplate;
+  let alertsOpenRenderContext = null;
+  try {
+    if (!(await cooperativeYieldOrCancel(true, "cancelled_before_snapshot"))) return false;
+    const snapshot = await cooperativePhase("snapshotAcquisitionMs", async () => gridlyAlertsOpenAuditMeasure("alert snapshot creation", () => window.getAlertsSurfaceSnapshot?.() || getAlertsSurfaceSnapshot?.()));
+    if (!(await cooperativeYieldOrCancel(true, "cancelled_after_snapshot"))) return false;
+    const snapshotAlerts = Array.isArray(snapshot?.alerts) ? snapshot.alerts : [];
+    const alertsForRender = await cooperativePhase("awarenessFilteringMs", async () => gridlyAlertsOpenAuditMeasure("alert merge", () => (typeof gridlyFilterAlertRecordsBySelectedAwarenessArea === "function"
+      ? gridlyFilterAlertRecordsBySelectedAwarenessArea(snapshotAlerts, "openAlertsSurfaceFromDock")
+      : snapshotAlerts)));
+    if (!(await cooperativeYieldOrCancel(true, "cancelled_after_awareness_filter"))) return false;
+    window.__gridlyLatestAlertsForRender = alertsForRender;
+    window.__gridlyAlertsForRenderSample = alertsForRender.slice(0, 5);
+    const providerCountsForOpen = { community: 0, officialRoadway: 0, weather: 0 };
+    await cooperativePhase("providerCountingMs", async () => {
+      for (const alert of alertsForRender) {
+        const provider = gridlyAlertsOpenAuditCountProvider(alert);
+        providerCountsForOpen[provider] = Number(providerCountsForOpen[provider] || 0) + 1;
+        if (!(await cooperativeYieldOrCancel(false, "cancelled_during_provider_counting"))) return;
+      }
+    });
+    if (cooperativeBuildAudit.cancelled) return false;
+    gridlyAlertsOpenAuditSetMetadata({
+      alertCount: alertsForRender.length,
+      providerCounts: providerCountsForOpen,
+      communityCount: providerCountsForOpen.community || 0,
+      officialRoadwayCount: providerCountsForOpen.officialRoadway || 0,
+      weatherCount: providerCountsForOpen.weather || 0
+    });
+
+
+    if (alertsForRender.length > 0) {
+      const esc = value => String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+
+      const text = value => {
+        if (typeof value === "string") return value;
+        if (value && typeof value === "object") {
+          return value.label || value.text || value.name || value.title || value.value || "";
+        }
+        return "";
+      };
+
+      const cleanDisplayValue = (value) => {
+        const normalized = normalizeToken(value);
+        if (!normalized) return "";
+        const lowered = normalized.toLowerCase();
+        if (lowered === "unknown" || lowered === "undefined" || lowered === "null" || lowered === "[object object]") return "";
+        return normalized;
+      };
+      const extractRoadFromCrossingName = (value) => cleanDisplayValue(value).split("&").map((segment) => cleanDisplayValue(segment)).filter(Boolean);
+      const isSpecificPhrase = (value) => {
+        const v = cleanDisplayValue(value);
+        if (!v) return false;
+        const lowered = v.toLowerCase();
+        if (/^near\s+/.test(lowered) && !/\sat\s/.test(lowered)) return false;
+        return /\sat\s|\sbetween\s|crossing|county road|cr\s*\d|fm\s*\d|us\s*\d|high school|street|st\b|ave|blvd/.test(lowered) || v.split(" ").length >= 4;
+      };
+      const chooseBestAlertLocationContext = (alert = {}) => {
+        const enriched = enrichAlertContext(alert);
+        const explicitHeadline = cleanDisplayValue(text(alert.resolvedHeadline) || text(alert.headline) || text(alert.title) || text(alert.localizedSummary));
+        const richLocationFields = [
+          text(alert.crossingName), text(alert.crossingRoad), text(alert.resolvedCrossingName), text(alert.nearbyCrossStreet),
+          text(alert.crossingLabel), text(alert.locationPhrase), text(alert.localizedSummary), text(alert.resolvedHeadline),
+          text(alert.subtitle), text(alert.locationText), text(alert.knownLocation), text(alert.locationName)
+        ].map(cleanDisplayValue).filter(Boolean);
+        const road = cleanDisplayValue(enriched.resolvedRoadName);
+        const crossStreet = cleanDisplayValue(enriched.crossStreet);
+        const near = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const bestLocationPhrase = richLocationFields.find(isSpecificPhrase) || richLocationFields[0] || "";
+        return {
+          enriched,
+          roadFieldUsed: road || "",
+          crossingFieldUsed: bestLocationPhrase || crossStreet || near || "",
+          bestTitleLocation: bestLocationPhrase || (road && crossStreet ? `${road} at ${crossStreet.split(" and ")[0]}` : (road && near ? `${road} near ${near}` : (road || "Road hazard reported"))),
+          explicitHeadline,
+          secondary: near ? `Near ${near}` : (enriched.movementSummary || "Moderate movement impact")
+        };
+      };
+      const enrichAlertContext = (alert = {}) => {
+        const alertObj = alert && typeof alert === "object" ? alert : {};
+        const crossingId = cleanDisplayValue(alertObj?.crossingId);
+        const crossingRecord = crossingId
+          ? (typeof crossings !== "undefined" && Array.isArray(crossings) ? crossings : []).find((item) => cleanDisplayValue(item?.id) === crossingId)
+          : null;
+        const lat = getFirstNumber(alertObj, ["lat", "latitude", "rawLat", "raw.lat", "raw.latitude", "source.lat", "source.latitude"]);
+        const lng = getFirstNumber(alertObj, ["lng", "lon", "longitude", "rawLng", "raw.lng", "raw.lon", "raw.longitude", "source.lng", "source.lon", "source.longitude"]);
+        const resolvedByLookup = maybeResolveNearestRoad(lat, lng);
+        const roadName = cleanDisplayValue(getFirstText(alertObj, ["roadName", "primaryRoad", "corridor", "route", "raw.roadName", "source.roadName"])) || cleanDisplayValue(crossingRecord?.road);
+        const nearestRoad = cleanDisplayValue(getFirstText(alertObj, ["nearestRoad", "knownLocation", "locationName", "location", "raw.nearestRoad", "source.nearestRoad"])) || cleanDisplayValue(resolvedByLookup?.resolvedRoad);
+        const crossStreetA = cleanDisplayValue(getFirstText(alertObj, ["crossStreetA", "crossStreet1", "fromStreet", "raw.crossStreetA", "source.crossStreetA"]));
+        const crossStreetB = cleanDisplayValue(getFirstText(alertObj, ["crossStreetB", "crossStreet2", "toStreet", "raw.crossStreetB", "source.crossStreetB"]));
+        const crossingRoad = cleanDisplayValue(getFirstText(alertObj, ["crossingRoad", "crossingName", "raw.crossingRoad", "source.crossingRoad"])) || cleanDisplayValue(crossingRecord?.name || crossingRecord?.crossingName);
+        const crossingParts = extractRoadFromCrossingName(crossingRoad);
+        const resolvedRoadName = roadName || crossingParts[0] || nearestRoad || "Dayton area";
+        const crossStreet = [crossStreetA, crossStreetB].filter(Boolean).join(" and ") || crossingParts.slice(1).join(" and ");
+        const direction = cleanDisplayValue(parseDirection(alertObj));
+        const nearbyKnownLocation = cleanDisplayValue(getFirstText(alertObj, ["knownLocation", "locationName", "location", "raw.knownLocation", "source.knownLocation"])) || cleanDisplayValue(resolvedByLookup?.resolvedLocation) || "Dayton area";
+        const impactLevel = cleanDisplayValue(getImpact(alertObj));
+        const movementSummary = ({
+          "Widespread Delays": "Heavy impact",
+          "Impacted Movement": "Moderate impact",
+          "Slowing Areas": "Minor impact",
+          "Flowing Normally": "Minor impact"
+        })[impactLevel] || "Minor impact";
+        return { resolvedRoadName, crossStreet, direction, nearbyKnownLocation, impactLevel, movementSummary };
+      };
+      const isGenericPrimaryTitle = (value) => /^(road|traffic)?\s*hazard reported$|^hazard reported$|^alert reported$/i.test(cleanDisplayValue(value));
+      const pickPrimaryTitleMeta = (alert = {}) => {
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched || {};
+        const road = cleanDisplayValue(enriched.resolvedRoadName);
+        const crossStreet = cleanDisplayValue(enriched.crossStreet);
+        const known = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const locationPhrase = cleanDisplayValue(text(alert.locationPhrase) || text(alert.locationText) || text(alert.locationLabel) || text(alert.knownLocation) || text(alert.locationName));
+        const nearestRoad = cleanDisplayValue(text(alert.nearestRoad) || text(alert.nearestCrossStreet) || road);
+        if (road && crossStreet) return { value: `${road} at ${crossStreet.split(" and ")[0]}`, source: "roadPlusCrossStreet" };
+        if (known && known.toLowerCase() !== "dayton area") return { value: known, source: "knownLocation" };
+        if (locationPhrase) return { value: locationPhrase, source: "locationPhrase" };
+        if (nearestRoad) return { value: /^near\s+/i.test(nearestRoad) ? nearestRoad : `Near ${nearestRoad}`, source: "nearestRoad" };
+        return { value: cleanDisplayValue(picked.bestTitleLocation), source: "fallbackLocationText" };
+      };
+      const pickSecondaryDetailMeta = (alert = {}) => {
+        const hazardType = cleanDisplayValue(text(alert.hazardType));
+        if (hazardType) return { value: hazardType, source: "hazardType" };
+        const reportType = cleanDisplayValue(text(alert.reportType) || text(alert.type));
+        if (reportType) return { value: reportType, source: "reportType" };
+        const category = cleanDisplayValue(text(alert.category) || text(alert.label));
+        if (category) return { value: category, source: "alertCategory" };
+        const shortDesc = cleanDisplayValue(text(alert.description) || text(alert.subtitle) || text(alert.localizedSummary));
+        return { value: shortDesc || "Road hazard reported", source: shortDesc ? "shortHazardDescription" : "default" };
+      };
+
+      const normalizeRailSubtitleMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const normalizeRoadLabel = (value) => {
+        let normalized = cleanDisplayValue(value).toUpperCase().replace(/[^A-Z0-9]+/g, " ").trim();
+        if (!normalized) return "";
+        normalized = normalized
+          .replace(/\bCROSSING\b/g, " ")
+          .replace(/\bRAIL(?:ROAD)?\b/g, " ")
+          .replace(/\bRR\b/g, " ")
+          .replace(/\bCOUNTY\s+(?:ROAD|RD)\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\b(?:CO|CNTY)\s+(?:ROAD|RD)\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\bCO\s*0*(\d{3,}[A-Z]?)\b/g, "CR$1")
+          .replace(/\bC\s*R\s*0*(\d+[A-Z]?)\b/g, "CR$1")
+          .replace(/\bFARM\s+TO\s+MARKET\s*0*(\d+[A-Z]?)\b/g, "FM$1")
+          .replace(/\bF\s*M\s*0*(\d+[A-Z]?)\b/g, "FM$1")
+          .replace(/\bU\s*S\s*(?:HWY|HIGHWAY|ROUTE)?\s*0*(\d+[A-Z]?)\b/g, "US$1")
+          .replace(/\b(?:HWY|HIGHWAY)\s*0*(\d+[A-Z]?)\b/g, "HWY$1")
+          .replace(/\bRD\b/g, "ROAD")
+          .replace(/\bST\b/g, "STREET")
+          .replace(/\bAVE\b/g, "AVENUE")
+          .replace(/\bBLVD\b/g, "BOULEVARD")
+          .replace(/\bDR\b/g, "DRIVE")
+          .replace(/\bLN\b/g, "LANE")
+          .replace(/\b0+(\d)/g, "$1")
+          .replace(/\s+/g, " ")
+          .trim();
+        return normalized.replace(/\s+/g, "");
+      };
+      const normalizeRailRoadAlias = normalizeRoadLabel;
+      const isGenericRailCrossingLabel = (value) => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        return !normalized || /^(blocked|rail crossing blocked|train blocking crossing|crossing blocked|local crossing|railroad crossing|rail crossing|unknown crossing|nearby crossing|nearby|dayton area|liberty county|local area|area|region|community area|town area|city area|tbd|unknown|unknown road|unknown crossing|unidentified crossing|unidentified road|local road|area road|county area|nearby area|general area)$/.test(normalized);
+      };
+      const isGenericAreaLikeLabel = (value = "") => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (!normalized) return { invalid: true, reason: "empty" };
+        if (/^(private|unknown|unnamed|null|undefined)$/.test(normalized)) return { invalid: true, reason: normalized };
+        if (isGenericRailCrossingLabel(value)) return { invalid: true, reason: "generic-area-or-placeholder" };
+        if (/\b(?:city|town|county|community|local|nearby|general|metro)\s+area\b/.test(normalized)) return { invalid: true, reason: "generic-area" };
+        if (/\barea\b/.test(normalized) && normalized.split(" ").length <= 3) return { invalid: true, reason: "generic-area" };
+        if (/\b(?:county|city|region)\b/.test(normalized) && normalized.split(" ").length <= 2) return { invalid: true, reason: "generic-region" };
+        return { invalid: false, reason: "" };
+      };
+      const isInvalidPrimaryRoadLabel = (value = "") => isGenericAreaLikeLabel(value);
+      const isUnqualifiedRailRouteAlias = (value) => {
+        const label = cleanDisplayValue(value).toUpperCase().replace(/[^A-Z0-9]+/g, " ").trim();
+        const normalized = normalizeRoadLabel(value);
+        if (!label || !normalized) return false;
+        const routeMatch = normalized.match(/^(?:CO|CR|FM|US|HWY|SH|TX|IH|I)\d+[A-Z]?$/);
+        if (!routeMatch) return false;
+        return /^(?:CO|CR|FM|US|HWY|SH|TX|IH|I)\s*0*\d+[A-Z]?$/.test(label);
+      };
+      const isAllowedCompactSecondaryRouteAlias = (value) => /^(?:CR|FM)\s*\d+[A-Z]?$/i.test(cleanDisplayValue(value));
+      const areRailRoadAliasesEquivalent = (left, right) => {
+        const a = normalizeRailRoadAlias(left);
+        const b = normalizeRailRoadAlias(right);
+        if (!a || !b) return false;
+        if (a === b) return true;
+        const aHighway = a.match(/^(?:US|HWY)(\d+[A-Z]?)$/);
+        const bHighway = b.match(/^(?:US|HWY)(\d+[A-Z]?)$/);
+        return Boolean(aHighway && bHighway && aHighway[1] === bHighway[1]);
+      };
+      const isRailAlert = (alert = {}) => {
+        const railText = [
+          alert?.type, alert?.category, alert?.hazardType, alert?.label, alert?.reportType, alert?.title,
+          alert?.headline, alert?.resolvedHeadline, alert?.localizedSummary, alert?.subtitle, alert?.description
+        ].map(text).join(" ");
+        const crossingText = [
+          alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel, alert?.crossStreet, alert?.nearbyCrossStreet,
+          alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.source?.crossingName, alert?.source?.crossingRoad
+        ].map(text).join(" ");
+        return /rail|train|crossing/i.test(railText) || (/blocked/i.test(railText) && Boolean(cleanDisplayValue(crossingText)));
+      };
+      const splitCrossingPair = value => cleanDisplayValue(value)
+        .split(/\s*(?:&|\band\b|\bat\b|\/)\s*/i)
+        .map(cleanDisplayValue)
+        .filter(Boolean);
+      const isDistinctCrossingPart = (value, compareTo, rejected = [], options = {}) => {
+        const label = cleanDisplayValue(value);
+        const normalized = normalizeRailSubtitleMatch(label);
+        const alias = normalizeRailRoadAlias(label);
+        const compare = normalizeRailRoadAlias(compareTo) || normalizeRailSubtitleMatch(compareTo);
+        const reject = (reason) => {
+          if (Array.isArray(rejected)) rejected.push({ value: label, normalized: alias || normalized, reason });
+          return false;
+        };
+        if (!normalized) return reject("empty");
+        if (isGenericRailCrossingLabel(label)) return reject("generic-area-or-placeholder");
+        if (compare && (areRailRoadAliasesEquivalent(label, compareTo) || alias === compare || normalized === compare)) return reject("same-road-alias");
+        if (options.rejectRouteAlias && isUnqualifiedRailRouteAlias(label) && !isAllowedCompactSecondaryRouteAlias(label)) return reject("route-alias-only");
+        return true;
+      };
+      const collectRailLabelValues = (obj, paths = []) => paths.map(path => readPathValue(obj, path)).filter(value => cleanDisplayValue(text(value)));
+      const getLocalCrossingContext = (crossingId = "", crossingReview = {}) => {
+        if (typeof getGridlyReviewedCrossingLocationContext === "function") return getGridlyReviewedCrossingLocationContext(crossingId, crossingReview);
+        return {};
+      };
+      const resolveRailCrossingPair = (alert = {}) => {
+        const enriched = chooseBestAlertLocationContext(alert).enriched || {};
+        const crossingId = cleanDisplayValue(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || alert?.source?.crossingId || alert?.source?.crossing_id);
+        const crossingRecord = crossingId
+          ? (typeof crossings !== "undefined" && Array.isArray(crossings) ? crossings : []).find((item) => cleanDisplayValue(item?.id) === crossingId)
+          : null;
+        const crossingProps = crossingRecord?.props || {};
+        const crossingFields = [
+          alert?.crossingName, alert?.crossingRoad, alert?.resolvedCrossingName, alert?.crossingLabel,
+          alert?.raw?.crossingName, alert?.raw?.crossingRoad, alert?.raw?.source?.crossingName, alert?.raw?.source?.crossingRoad,
+          alert?.source?.crossingName, alert?.source?.crossingRoad,
+          crossingRecord?.name, crossingRecord?.originalName, crossingProps?.street, crossingProps?.roadwayname, crossingProps?.highwayname,
+          crossingProps?.road, crossingProps?.road_name, crossingProps?.crossingname
+        ];
+        const crossingParts = crossingFields.flatMap(splitCrossingPair);
+        const normalizedRejected = [];
+        const seenSelectedAliases = new Set();
+        const pickDistinct = (values, compareTo = "", localRejected = normalizedRejected) => values
+          .map(value => cleanDisplayValue(text(value)))
+          .find(value => isDistinctCrossingPart(value, compareTo, localRejected)) || "";
+        const primaryRoad = pickDistinct([
+          alert?.primaryRoad, alert?.roadName, alert?.corridor, alert?.route, alert?.road, enriched.resolvedRoadName,
+          alert?.raw?.primaryRoad, alert?.raw?.roadName, alert?.raw?.corridor, alert?.raw?.source?.primaryRoad, alert?.raw?.source?.roadName, alert?.raw?.source?.corridor,
+          alert?.source?.primaryRoad, alert?.source?.roadName, alert?.source?.corridor, crossingProps?.road_name, crossingProps?.roadwayname, crossingRecord?.road, crossingParts[0]
+        ], "", []);
+        const firstDistinctCrossingPart = crossingParts.find(part => isDistinctCrossingPart(part, primaryRoad, normalizedRejected)) || "";
+        const candidateLabels = [];
+        const rejectedCandidates = [];
+        const logNormalizationDecision = (rawSecondary, normalizedSecondary, duplicateRejected, reason = "") => {
+        };
+        const rejectSecondaryCandidate = (value, normalized, reason, sourceFieldUsed) => {
+          const rejected = { sourceFieldUsed, value, normalized, reason };
+          rejectedCandidates.push(rejected);
+          normalizedRejected.push(rejected);
+          logNormalizationDecision(value, normalized, true, reason);
+        };
+        const evaluateSecondaryCandidate = (rawValue, sourceFieldUsed = "", qualityRank = 99) => {
+          const value = cleanDisplayValue(text(rawValue));
+          if (!value) return null;
+          const normalized = normalizeRoadLabel(value) || normalizeRailSubtitleMatch(value);
+          const candidateOrder = candidateLabels.length;
+          candidateLabels.push({ sourceFieldUsed, value, normalized, qualityRank, candidateOrder });
+          const localRejected = [];
+          if (!isDistinctCrossingPart(value, primaryRoad, localRejected, { rejectRouteAlias: true })) {
+            const reason = localRejected[0]?.reason || "quality-threshold";
+            rejectSecondaryCandidate(value, normalized, reason, sourceFieldUsed);
+            return null;
+          }
+          if (seenSelectedAliases.has(normalized)) {
+            rejectSecondaryCandidate(value, normalized, "duplicate-value", sourceFieldUsed);
+            return null;
+          }
+          seenSelectedAliases.add(normalized);
+          logNormalizationDecision(value, normalized, false);
+          return { value, normalized, sourceFieldUsed, qualityRank, candidateOrder };
+        };
+        const collectSecondaryCandidates = (candidates = [], sourceFieldUsed = "", qualityRank = 99) => {
+          const matches = [];
+          for (const candidate of candidates) {
+            const parts = splitCrossingPair(candidate);
+            const values = parts.length ? parts : [candidate];
+            for (const rawValue of values) {
+              const match = evaluateSecondaryCandidate(rawValue, sourceFieldUsed, qualityRank);
+              if (match) matches.push(match);
+            }
+          }
+          return matches;
+        };
+        const crossingMetadataValues = collectRailLabelValues(alert, [
+          "crossingMetadata.label", "crossingMetadata.name", "crossingMetadata.roadName", "crossingMetadata.roadwayName", "crossingMetadata.crossStreet",
+          "metadata.crossingLabel", "metadata.crossingName", "metadata.roadName", "metadata.roadwayName", "metadata.crossStreet",
+          "raw.crossingMetadata.label", "raw.crossingMetadata.name", "raw.crossingMetadata.roadName", "raw.metadata.crossingLabel", "source.crossingMetadata.label"
+        ]);
+        const fraMetadataValues = [
+          ...collectRailLabelValues(alert, [
+            "fra.label", "fra.name", "fra.roadwayName", "fra.roadwayname", "fra.highwayName", "fra.highwayname", "fra.street",
+            "fraCrossing.label", "fraCrossing.name", "fraCrossing.roadwayName", "fraCrossing.roadwayname", "fraCrossing.highwayName", "fraCrossing.highwayname",
+            "raw.fra.label", "raw.fra.name", "raw.fra.roadwayName", "raw.fraCrossing.label", "source.fra.label", "source.fraCrossing.label"
+          ]),
+          crossingRecord?.name, crossingRecord?.originalName, crossingProps?.street, crossingProps?.roadwayname, crossingProps?.highwayname,
+          crossingProps?.road, crossingProps?.road_name, crossingProps?.crossingname
+        ];
+        const allCrossingFields = {
+          crossStreet: alert?.crossStreet,
+          crossStreetA: alert?.crossStreetA || alert?.crossStreet1 || alert?.fromStreet,
+          crossStreetB: alert?.crossStreetB || alert?.crossStreet2 || alert?.toStreet,
+          crossingRoad: alert?.crossingRoad,
+          crossingName: alert?.crossingName,
+          resolvedCrossingName: alert?.resolvedCrossingName,
+          nearestCrossStreet: alert?.nearestCrossStreet,
+          knownLocation: alert?.knownLocation,
+          nearbyKnownLocation: alert?.nearbyKnownLocation,
+          fraCrossingMetadata: fraMetadataValues,
+          crossingMetadataLabels: crossingMetadataValues
+        };
+        const populatedFields = Object.entries(allCrossingFields)
+          .filter(([, value]) => {
+            if (Array.isArray(value)) return value.some(item => cleanDisplayValue(text(item)));
+            return Boolean(cleanDisplayValue(text(value)));
+          })
+          .map(([field]) => field);
+
+        const secondaryCandidates = [
+          { sourceFieldUsed: "crossStreet", qualityRank: 1, values: [
+            alert?.crossStreet, alert?.raw?.crossStreet, alert?.raw?.source?.crossStreet, alert?.source?.crossStreet
+          ] },
+          { sourceFieldUsed: "crossStreetA", qualityRank: 2, values: [
+            alert?.crossStreetA, alert?.crossStreet1, alert?.fromStreet, alert?.raw?.crossStreetA, alert?.raw?.crossStreet1,
+            alert?.raw?.fromStreet, alert?.raw?.source?.crossStreetA, alert?.source?.crossStreetA, alert?.source?.crossStreet1, alert?.source?.fromStreet
+          ] },
+          { sourceFieldUsed: "crossStreetB", qualityRank: 2, values: [
+            alert?.crossStreetB, alert?.crossStreet2, alert?.toStreet, alert?.raw?.crossStreetB, alert?.raw?.crossStreet2,
+            alert?.raw?.toStreet, alert?.raw?.source?.crossStreetB, alert?.source?.crossStreetB, alert?.source?.crossStreet2, alert?.source?.toStreet
+          ] },
+          { sourceFieldUsed: "nearbyCrossStreet", qualityRank: 3, values: [
+            alert?.nearbyCrossStreet, alert?.raw?.nearbyCrossStreet, alert?.raw?.source?.nearbyCrossStreet, alert?.source?.nearbyCrossStreet, enriched.crossStreet
+          ] },
+          { sourceFieldUsed: "nearestCrossStreet", qualityRank: 4, values: [
+            alert?.nearestCrossStreet, alert?.raw?.nearestCrossStreet, alert?.raw?.source?.nearestCrossStreet, alert?.source?.nearestCrossStreet
+          ] },
+          { sourceFieldUsed: "crossingMetadata", qualityRank: 5, values: crossingMetadataValues },
+          { sourceFieldUsed: "knownLocation", qualityRank: 6, values: [
+            alert?.knownLocation, alert?.nearbyKnownLocation, alert?.locationName, alert?.locationLabel,
+            alert?.raw?.knownLocation, alert?.raw?.nearbyKnownLocation, alert?.raw?.locationName, alert?.raw?.source?.knownLocation,
+            alert?.source?.knownLocation, alert?.source?.nearbyKnownLocation, alert?.source?.locationName, enriched.nearbyKnownLocation
+          ] },
+          { sourceFieldUsed: "fraCrossingMetadata", qualityRank: 7, values: fraMetadataValues },
+          { sourceFieldUsed: "crossingRoad", qualityRank: 8, values: [
+            alert?.crossingRoad, alert?.crossingName, alert?.crossingLabel, firstDistinctCrossingPart,
+            alert?.resolvedCrossingName, alert?.raw?.resolvedCrossingName, alert?.raw?.source?.resolvedCrossingName, alert?.source?.resolvedCrossingName,
+            alert?.raw?.crossingRoad, alert?.raw?.crossingName, alert?.raw?.source?.crossingRoad, alert?.raw?.source?.crossingName,
+            alert?.source?.crossingRoad, alert?.source?.crossingName
+          ] }
+        ];
+        const secondaryMatch = secondaryCandidates
+          .slice()
+          .sort((a, b) => (a.qualityRank - b.qualityRank))
+          .flatMap(candidate => collectSecondaryCandidates(candidate.values, candidate.sourceFieldUsed, candidate.qualityRank))
+          .sort((a, b) => (a.qualityRank - b.qualityRank) || (a.candidateOrder - b.candidateOrder))[0] || { value: "", sourceFieldUsed: "" };
+        const resolvedSecondaryCrossingLabel = secondaryMatch.value;
+        const reviewContext = crossingRecord?.review || (crossingId ? crossingReviewOverrides?.[crossingId] : {}) || {};
+        const localCrossingContext = getLocalCrossingContext(crossingId, reviewContext);
+        const localPrimaryLabel = cleanDisplayValue(localCrossingContext?.primaryLabel);
+        const localSecondaryLabel = cleanDisplayValue(localCrossingContext?.secondaryLabel);
+        const localDisplayName = cleanDisplayValue(localCrossingContext?.displayName);
+        const localPrimaryIsValid = localPrimaryLabel && !isInvalidPrimaryRoadLabel(localPrimaryLabel).invalid;
+        const effectivePrimaryRoad = localPrimaryIsValid ? localPrimaryLabel : primaryRoad;
+        const localSecondaryIsDistinct = isDistinctCrossingPart(localSecondaryLabel, effectivePrimaryRoad, [], { rejectRouteAlias: true });
+        const usedReviewedContext = Boolean(localSecondaryLabel && localSecondaryIsDistinct && (localPrimaryIsValid || !resolvedSecondaryCrossingLabel));
+        const resolvedSecondaryWithLocal = usedReviewedContext ? localSecondaryLabel : resolvedSecondaryCrossingLabel;
+        const singleRoadCandidate = effectivePrimaryRoad || firstDistinctCrossingPart || cleanDisplayValue(enriched.nearbyKnownLocation);
+        const primaryRoadValidity = isInvalidPrimaryRoadLabel(effectivePrimaryRoad);
+        const singleRoadValidity = isGenericAreaLikeLabel(singleRoadCandidate);
+        const nearbyRoadCandidateRaw = firstDistinctCrossingPart;
+        const nearbyReferenceRoadRaw = cleanDisplayValue(enriched.nearbyKnownLocation);
+        const nearestRoadLookupRaw = cleanDisplayValue(alert?.nearestRoad || alert?.knownLocation || alert?.locationName);
+        const crossingLat = Number.isFinite(Number(crossingRecord?.lat)) ? Number(crossingRecord.lat) : null;
+        const crossingLng = Number.isFinite(Number(crossingRecord?.lng))
+          ? Number(crossingRecord.lng)
+          : (Number.isFinite(Number(crossingRecord?.lon)) ? Number(crossingRecord.lon) : null);
+        const nearestRoadByCrossingCoordsRaw = (Number.isFinite(crossingLat) && Number.isFinite(crossingLng) && typeof resolveNearestRoadName === "function")
+          ? cleanDisplayValue(resolveNearestRoadName(crossingLat, crossingLng))
+          : "";
+        const nearbyRoadCandidate = isGenericAreaLikeLabel(nearbyRoadCandidateRaw).invalid ? "" : nearbyRoadCandidateRaw;
+        const nearbyReferenceRoad = isGenericAreaLikeLabel(nearbyReferenceRoadRaw).invalid ? "" : nearbyReferenceRoadRaw;
+        const nearestRoadLookup = isGenericAreaLikeLabel(nearestRoadLookupRaw).invalid ? "" : nearestRoadLookupRaw;
+        const nearestRoadByCrossingCoords = isGenericAreaLikeLabel(nearestRoadByCrossingCoordsRaw).invalid ? "" : nearestRoadByCrossingCoordsRaw;
+        let finalHeadline = "";
+        let replacementSource = "primaryRoad";
+        let rejectedLabel = "";
+        let rejectionReason = "";
+        if (!primaryRoadValidity.invalid && effectivePrimaryRoad && resolvedSecondaryWithLocal) {
+          finalHeadline = `Crossing blocked at ${effectivePrimaryRoad} and ${resolvedSecondaryWithLocal}`;
+        } else if (!primaryRoadValidity.invalid && !singleRoadValidity.invalid && singleRoadCandidate) {
+          finalHeadline = `Crossing blocked at ${singleRoadCandidate}`;
+        } else if (usedReviewedContext && localDisplayName) {
+          finalHeadline = `Crossing blocked at ${localDisplayName}`;
+          replacementSource = "reviewedCrossingContext";
+        } else if (nearbyRoadCandidate) {
+          finalHeadline = `Crossing blocked near ${nearbyRoadCandidate}`;
+          replacementSource = "nearbyRoadCandidate";
+        } else if (nearbyReferenceRoad) {
+          finalHeadline = `Crossing blocked near ${nearbyReferenceRoad}`;
+          replacementSource = "nearbyReferenceRoad";
+        } else if (nearestRoadLookup) {
+          finalHeadline = `Crossing blocked near ${nearestRoadLookup}`;
+          replacementSource = "nearestRoadLookup";
+        } else if (nearestRoadByCrossingCoords) {
+          finalHeadline = `Crossing blocked near ${nearestRoadByCrossingCoords}`;
+          replacementSource = "nearestRoadByCrossingCoords";
+        } else {
+          finalHeadline = "Crossing blocked nearby";
+          replacementSource = "fallbackNearby";
+        }
+        if (primaryRoadValidity.invalid) {
+          rejectedLabel = cleanDisplayValue(primaryRoad);
+          rejectionReason = primaryRoadValidity.reason;
+        } else if (singleRoadCandidate && singleRoadValidity.invalid) {
+          rejectedLabel = cleanDisplayValue(singleRoadCandidate);
+          rejectionReason = singleRoadValidity.reason;
+        }
+        const resolvedSecondaryForOutput = resolvedSecondaryWithLocal;
+        const sourceFieldUsedForOutput = usedReviewedContext ? "reviewedCrossingContext" : (secondaryMatch.sourceFieldUsed || "");
+        const debugId = cleanDisplayValue(alert?.id || alert?.reportId || alert?.crossingId || alert?.crossing_id);
+        return {
+          primaryRoad: effectivePrimaryRoad,
+          secondaryCrossingLabel: resolvedSecondaryForOutput,
+          resolvedSecondaryCrossingLabel: resolvedSecondaryForOutput,
+          sourceFieldUsed: sourceFieldUsedForOutput,
+          finalHeadline
+        };
+      };
+      
+      const isRoadLabelGenericForHazard = (value = "") => {
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (!normalized) return true;
+        return /^(dayton area|liberty county|montgomery county|nearby|area|unknown|local area|road|street|highway|route)$/.test(normalized);
+      };
+      const toHazardEventLabel = (alert = {}) => {
+        const value = cleanDisplayValue(text(alert.hazardType) || text(alert.type) || text(alert.category) || text(alert.label));
+        if (!value) return "Road hazard";
+        const normalized = normalizeRailSubtitleMatch(value);
+        if (normalized.includes("flood")) return "Flooding";
+        if (normalized.includes("construct")) return "Construction";
+        if (normalized.includes("closed") || normalized.includes("closure")) return "Road closed";
+        if (normalized.includes("debris")) return "Debris in Road";
+        if (normalized.includes("traffic") || normalized.includes("backup")) return "Traffic Backup";
+        if (normalized.includes("crash") || normalized.includes("wreck") || normalized.includes("accident")) return "Crash / Wreck";
+        return value;
+      };
+      const resolveRoadHazardSegmentHeadline = (alert = {}) => {
+        const splitCompositePrimaryRoad = (value = "") => {
+          const original = cleanDisplayValue(text(value));
+          if (!original) return { parsedPrimaryRoad: "", parsedCrossRoad: "", splitDetected: false };
+          const match = original.match(/\s*(?:&|\/|@|\band\b|\sat\s|\snear\s)\s*/i);
+          if (!match || typeof match.index !== "number") {
+            return { parsedPrimaryRoad: original, parsedCrossRoad: "", splitDetected: false };
+          }
+          const left = cleanDisplayValue(original.slice(0, match.index));
+          const right = cleanDisplayValue(original.slice(match.index + match[0].length));
+          if (!left || !right) {
+            return { parsedPrimaryRoad: original, parsedCrossRoad: "", splitDetected: false };
+          }
+          return { parsedPrimaryRoad: left, parsedCrossRoad: right, splitDetected: true };
+        };
+        const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
+        const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
+        const byLookup = maybeResolveNearestRoad(lat, lng);
+        const explicitRoad = cleanDisplayValue(text(alert.roadName) || text(alert.primaryRoad) || text(alert.route));
+        const fallbackRoad = cleanDisplayValue(byLookup?.resolvedRoad);
+        const originalPrimaryRoad = !isRoadLabelGenericForHazard(explicitRoad) ? explicitRoad : fallbackRoad;
+        const splitPrimary = splitCompositePrimaryRoad(originalPrimaryRoad);
+        const primaryRoad = splitPrimary.parsedPrimaryRoad || originalPrimaryRoad;
+
+        const collectRoadCandidates = (values = []) => values
+          .flatMap((value) => {
+            const label = cleanDisplayValue(text(value));
+            if (!label) return [];
+            const parts = label.split(/\s*(?:&|\band\b|\/)\s*/i).map(cleanDisplayValue).filter(Boolean);
+            return parts.length ? parts : [label];
+          });
+        const crossA = cleanDisplayValue(text(alert.crossStreetA) || text(alert.crossStreet1) || text(alert.fromStreet));
+        const crossB = cleanDisplayValue(text(alert.crossStreetB) || text(alert.crossStreet2) || text(alert.toStreet));
+        const nearbyStreet = cleanDisplayValue(text(alert.nearbyCrossStreet) || text(alert.nearestCrossStreet) || text(alert.knownLocation) || text(alert.locationName) || text(byLookup?.resolvedLocation));
+        const intersectionStreet = cleanDisplayValue(text(alert.crossStreet) || text(alert.crossingRoad) || text(alert.crossingName));
+        const nearestRoad = cleanDisplayValue(text(alert.nearestRoad) || text(alert.raw?.nearestRoad) || text(alert.source?.nearestRoad));
+        const enrichedContext = chooseBestAlertLocationContext(alert).enriched || {};
+        const refsRaw = collectRoadCandidates([
+          splitPrimary.parsedCrossRoad, crossA, crossB, nearbyStreet, intersectionStreet, nearestRoad, enrichedContext.crossStreet, enrichedContext.nearbyKnownLocation
+        ]);
+        const refs = refsRaw.filter((v, i, arr) => Boolean(v)
+          && !isRoadLabelGenericForHazard(v)
+          && arr.findIndex(x => normalizeRoadLabel(x) === normalizeRoadLabel(v)) === i
+          && normalizeRoadLabel(v) !== normalizeRoadLabel(primaryRoad));
+        const referenceRoadA = refs[0] || "";
+        const referenceRoadB = refs[1] || "";
+        const localReferenceStreet = referenceRoadA || "";
+        const eventLabel = toHazardEventLabel(alert);
+        const duplicateSuppressed = Boolean(
+          (primaryRoad && referenceRoadA && normalizeRoadLabel(primaryRoad) === normalizeRoadLabel(referenceRoadA))
+          || (primaryRoad && referenceRoadB && normalizeRoadLabel(primaryRoad) === normalizeRoadLabel(referenceRoadB))
+          || (referenceRoadA && referenceRoadB && normalizeRoadLabel(referenceRoadA) === normalizeRoadLabel(referenceRoadB))
+        );
+        const communityDistance = typeof resolveGridlyV313RoadHazardCommunityDistance === "function"
+          ? resolveGridlyV313RoadHazardCommunityDistance({ lat, lng })
+          : { text: "" };
+        const majorCorridor = typeof isGridlyV313MajorRoadHazardCorridor === "function" && isGridlyV313MajorRoadHazardCorridor(primaryRoad);
+        let selectedTier = "tier4";
+        let finalHeadline = "";
+        if (primaryRoad && referenceRoadA && referenceRoadB) {
+          selectedTier = "tier4";
+          finalHeadline = `${eventLabel} on ${primaryRoad} between ${referenceRoadA} and ${referenceRoadB}`;
+        } else if (primaryRoad && majorCorridor && communityDistance.text) {
+          selectedTier = "tier3";
+          finalHeadline = `${eventLabel} on ${primaryRoad} ${communityDistance.text}`;
+        } else if (primaryRoad && referenceRoadA) {
+          selectedTier = "tier4";
+          finalHeadline = `${eventLabel} on ${primaryRoad} near ${referenceRoadA}`;
+        } else if (primaryRoad) {
+          selectedTier = "tier4";
+          finalHeadline = `${eventLabel} on ${primaryRoad}`;
+        }
+        else if (referenceRoadA && referenceRoadB) finalHeadline = `${eventLabel} between ${referenceRoadA} and ${referenceRoadB}`;
+        else if (referenceRoadA) finalHeadline = `${eventLabel} near ${referenceRoadA}`;
+        else finalHeadline = `${eventLabel} reported`;
+
+        const finalSubtitle = `${cleanDisplayValue(getImpact(alert)) || "Active report"} • ${toMinutesAgoLabel(alert)}`;
+        const persistedFields = {
+          originalPrimaryRoad,
+          primaryRoad,
+          parsedPrimaryRoad: primaryRoad,
+          parsedCrossRoad: splitPrimary.parsedCrossRoad || "",
+          referenceRoadA,
+          referenceRoadB,
+          finalHeadline
+        };
+        let rawOwner = null;
+        if (alert && typeof alert === "object") {
+          Object.assign(alert, persistedFields);
+          if (alert.raw && typeof alert.raw === "object") {
+            rawOwner = alert.raw;
+            const nonEmpty = (value) => {
+              if (value === null || value === undefined) return false;
+              if (typeof value === "string") return Boolean(value.trim());
+              return true;
+            };
+            const buildProtectedFields = (existing = {}, incoming = {}) => {
+              const protectedFields = {};
+              const candidateFields = [
+                "primaryRoad",
+                "referenceRoadA",
+                "referenceRoadB",
+                "parsedPrimaryRoad",
+                "parsedCrossRoad"
+              ];
+              candidateFields.forEach((field) => {
+                const currentValue = existing?.[field];
+                const nextValue = incoming?.[field];
+                if (!nonEmpty(currentValue)) {
+                  protectedFields[field] = nextValue;
+                  return;
+                }
+                if (!nonEmpty(nextValue)) {
+                  protectedFields[field] = currentValue;
+                  return;
+                }
+                protectedFields[field] = nextValue;
+              });
+              const existingRefA = cleanDisplayValue(existing?.referenceRoadA);
+              const existingRefB = cleanDisplayValue(existing?.referenceRoadB);
+              const incomingRefA = cleanDisplayValue(incoming?.referenceRoadA);
+              const incomingRefB = cleanDisplayValue(incoming?.referenceRoadB);
+              const existingRefCount = (existingRefA ? 1 : 0) + (existingRefB ? 1 : 0);
+              const incomingRefCount = (incomingRefA ? 1 : 0) + (incomingRefB ? 1 : 0);
+              if (existingRefCount > incomingRefCount) {
+                protectedFields.referenceRoadA = existing?.referenceRoadA;
+                protectedFields.referenceRoadB = existing?.referenceRoadB;
+              }
+              if (nonEmpty(existing?.parsedCrossRoad) && !nonEmpty(incoming?.parsedCrossRoad)) {
+                protectedFields.parsedCrossRoad = existing?.parsedCrossRoad;
+              }
+              return protectedFields;
+            };
+            const preservedRoadFields = buildProtectedFields(rawOwner, persistedFields);
+                        Object.assign(rawOwner, persistedFields, preservedRoadFields);
+                      }
+        }
+        const availableRoadFields = Object.keys(persistedFields).filter((field) => {
+          if (!rawOwner || typeof rawOwner !== "object") return false;
+          const value = rawOwner[field];
+          return typeof value === "string" ? Boolean(value.trim()) : value !== undefined && value !== null;
+        });
+        const countyAwareFinalHeadline = normalizeGridlyCountyAwareDisplayText(finalHeadline, alert);
+        return { finalHeadline: countyAwareFinalHeadline, finalSubtitle: normalizeGridlyCountyAwareDisplayText(finalSubtitle, alert), ...persistedFields, finalHeadline: countyAwareFinalHeadline };
+      };
+
+      const composeRailCrossingHeadline = (alert = {}) => resolveRailCrossingPair(alert).finalHeadline;
+      const alertsTitleDiagnostics = gridlyAlertsOpenAuditActive()?.microProfile?.titleDiagnostics || {
+        titleSource: "",
+        titleFunctionChain: [],
+        broadTitleDependencyInvoked: false,
+        titleFallbackUsed: false,
+        firstTitleDurationMs: null,
+        subsequentTitleDurationMs: null
+      };
+      if (gridlyAlertsOpenAuditActive()?.microProfile) gridlyAlertsOpenAuditActive().microProfile.titleDiagnostics = alertsTitleDiagnostics;
+      const recordAlertTitleDiagnostics = (entry = {}) => {
+        if (!alertsTitleDiagnostics.titleSource && entry.titleSource) alertsTitleDiagnostics.titleSource = entry.titleSource;
+        if (Array.isArray(entry.titleFunctionChain) && !alertsTitleDiagnostics.titleFunctionChain.length) alertsTitleDiagnostics.titleFunctionChain = entry.titleFunctionChain;
+        alertsTitleDiagnostics.broadTitleDependencyInvoked = Boolean(alertsTitleDiagnostics.broadTitleDependencyInvoked || entry.broadTitleDependencyInvoked);
+        alertsTitleDiagnostics.titleFallbackUsed = Boolean(alertsTitleDiagnostics.titleFallbackUsed || entry.titleFallbackUsed);
+      };
+      const eventCenteredTitleFor = (alert = {}) => {
+        const candidates = [
+          { source: "event-centered situation label", value: alert?.__gridlyEventSituationLabel },
+          { source: "event-centered situation type", value: typeof getGridlyAlertSituationLabel === "function" ? getGridlyAlertSituationLabel(alert) : "" },
+          { source: "normalized category/type label", value: text(alert?.category) || text(alert?.type) || text(alert?.hazardType) || text(alert?.reportType) },
+          { source: "consumer-safe alert title", value: text(alert?.resolvedHeadline) || text(alert?.headline) || text(alert?.title) || text(alert?.localizedSummary) },
+          { source: "local fallback", value: "Travel Alert", fallback: true }
+        ];
+        for (const candidate of candidates) {
+          const value = cleanDisplayValue(candidate.value);
+          if (!value || /^(undefined|null|\[object object\])$/i.test(value)) continue;
+          const title = standardizeGridlyAlertHeadline(value);
+          recordAlertTitleDiagnostics({
+            titleSource: candidate.source,
+            titleFunctionChain: ["renderAlertCard/buildAlertPresentationGroups", "titleFor", "eventCenteredTitleFor", candidate.source],
+            broadTitleDependencyInvoked: false,
+            titleFallbackUsed: Boolean(candidate.fallback)
+          });
+          return title;
+        }
+        return "Travel Alert";
+      };
+      const titleFor = alert => {
+        const started = gridlyAlertsOpenAuditNow();
+        try {
+          if (!isRailAlert(alert)) return eventCenteredTitleFor(alert);
+          recordAlertTitleDiagnostics({ titleSource: "rail crossing headline", titleFunctionChain: ["renderAlertCard/buildAlertPresentationGroups", "titleFor", "composeRailCrossingHeadline", "resolveRailCrossingPair"], broadTitleDependencyInvoked: false });
+          return composeRailCrossingHeadline(alert);
+        } finally {
+          const duration = Number((gridlyAlertsOpenAuditNow() - started).toFixed(2));
+          if (alertsTitleDiagnostics.firstTitleDurationMs === null) alertsTitleDiagnostics.firstTitleDurationMs = duration;
+          else alertsTitleDiagnostics.subsequentTitleDurationMs = duration;
+        }
+      };
+
+      const isRailBlockedTitle = value => normalizeRailSubtitleMatch(value) === "rail crossing blocked";
+      const isWeakRailBlockedSubtitle = value => normalizeRailSubtitleMatch(value) === "blocked";
+      const formatRailCrossingContext = (alert = {}) => {
+        const picked = chooseBestAlertLocationContext(alert);
+        const enriched = picked.enriched || {};
+        const normalizeCandidate = value => cleanDisplayValue(text(value));
+        const isUsableContext = value => {
+          const normalized = normalizeRailSubtitleMatch(value);
+          return Boolean(normalized && normalized !== "blocked" && normalized !== "rail crossing blocked" && normalized !== "dayton area");
+        };
+        const crossingContext = [
+          alert.crossingName,
+          alert.crossingRoad,
+          alert.resolvedCrossingName,
+          alert.crossingLabel,
+          enriched.crossStreet
+        ].map(normalizeCandidate).find(isUsableContext);
+        if (crossingContext) return /crossing/i.test(crossingContext) ? crossingContext : `${crossingContext} crossing`;
+
+        const roadContext = [
+          enriched.resolvedRoadName,
+          alert.roadName,
+          alert.primaryRoad,
+          alert.corridor,
+          alert.route,
+          alert.road,
+          alert.nearestRoad,
+          alert.titleRoad,
+          alert.raw?.roadName,
+          alert.raw?.nearestRoad,
+          alert.source?.roadName,
+          alert.source?.nearestRoad
+        ].map(normalizeCandidate).find(isUsableContext);
+        if (roadContext) return /crossing/i.test(roadContext) ? roadContext : `${roadContext} crossing`;
+
+        const cityContext = [alert.city, alert.place, alert.area, enriched.nearbyKnownLocation, alert.nearbyKnownLocation, alert.knownLocation, alert.locationName, alert.locationLabel, alert.locationPhrase, alert.locationText, alert.location]
+          .map(normalizeCandidate)
+          .find(isUsableContext);
+        if (cityContext) return /^near\s+/i.test(cityContext) ? cityContext : `Near ${cityContext}`;
+
+        return "Active rail report";
+      };
+
+      const timeTextFor = alert => text(alert.minutesText) || text(alert.timeAgo) || text(alert.updatedText) || toMinutesAgoLabel(alert);
+      const railImpactTextFor = alert => {
+        const impact = cleanDisplayValue(getImpact(alert));
+        if (impact === "Widespread Delays") return "High impact";
+        if (impact === "Impacted Movement") return "Moderate impact";
+        if (impact === "Slowing Areas") return "Active rail report";
+        return "Active rail report";
+      };
+      const cleanSubtitleText = value => {
+        const cleaned = cleanDisplayValue(value);
+        return /^(undefined|null|\[object object\]|blocked)$/i.test(cleaned) ? "" : cleaned;
+      };
+      const helperTextFor = alert => {
+        if (isRailAlert(alert)) return `${railImpactTextFor(alert)} • ${cleanSubtitleText(timeTextFor(alert)) || "Now"}`;
+        const primaryTitle = titleFor(alert);
+        const primary = primaryTitle.toLowerCase();
+        const secondary = pickSecondaryDetailMeta(alert);
+        if (isRailBlockedTitle(primaryTitle) && isWeakRailBlockedSubtitle(secondary.value)) return formatRailCrossingContext(alert);
+        if (secondary.value && secondary.value.toLowerCase() !== primary) return cleanSubtitleText(secondary.value) || "Road hazard reported";
+        return "Road hazard reported";
+      };
+      const getEventCenteredSituationSummary = (alert = {}, title = "") => {
+        const label = alert?.__gridlyEventSituationLabel || (typeof getGridlyAlertSituationLabel === "function" ? getGridlyAlertSituationLabel(alert) : title) || title || "Travel situation";
+        const normalized = cleanDisplayValue(label).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        if (normalized === "flooding") return "Flooding affecting nearby roads.";
+        if (normalized === "construction") return "Lane closure or work zone affecting travel.";
+        if (normalized === "crossing delay") return "Rail crossing activity affecting nearby movement.";
+        if (normalized === "crash") return "Crash affecting travel nearby.";
+        if (normalized === "road closure") return "Road closure affecting travel.";
+        if (normalized === "downed power line") return "Downed power line reported near travel lanes.";
+        if (normalized === "livestock") return "Livestock reported near the roadway.";
+        if (normalized === "weather event") return "Weather conditions may affect travel.";
+        return `${label} affecting nearby travel.`;
+      };
+      const sourceTextFor = (row = {}) => [row?.provider, row?.sourceName, row?.source, row?.origin, row?.feed, row?.authority, row?.agency, row?.raw?.provider, row?.raw?.source, row?.source?.provider, row?.source?.name].map(text).join(" ").toLowerCase();
+      const rowLooksOfficialRoadway = (row = {}) => /drivetexas|txdot|official|roadway|transportation|dot\b/.test(sourceTextFor(row));
+      const rowLooksWeather = (row = {}) => /weather|nws|national weather|warning|watch|advisory/.test([sourceTextFor(row), row?.category, row?.event, row?.title, row?.headline, row?.description].map(text).join(" ").toLowerCase());
+      const getNarrowAlertLocationLabel = (alert = {}, consumerCard = {}) => pickFirstNonEmptyText([
+    alert?.__gridlyPresentationLocationLabel,
+    consumerCard?.locationLabel,
+    consumerCard?.locationLine,
+    alert?.locationLabel,
+    alert?.locationLine,
+    alert?.displayLocation,
+    alert?.presentationLocation,
+    alert?.roadName,
+    alert?.primaryRoad,
+    alert?.corridor,
+    alert?.route,
+    alert?.normalizedLocation,
+    alert?.normalizedLocationText,
+    alert?.locationName,
+    alert?.knownLocation,
+    alert?.raw?.normalizedLocation,
+    alert?.raw?.locationName,
+    alert?.source?.normalizedLocation,
+    alert?.source?.locationName,
+    alert?.awarenessArea,
+    alert?.awareness_area,
+    alert?.area,
+    alert?.city,
+    alert?.town,
+    alert?.raw?.awarenessArea,
+    alert?.raw?.city
+  ]) || "Nearby";
+
+      const buildNarrowAlertTrustDisplayModel = (alert = {}, resolvedTitle = "") => {
+        const existing = alert?.__gridlyNarrowTrustDisplayModel || alert?.__gridlyNarrowConsumerCard;
+        if (existing) return existing;
+        const consumerCard = buildGridlyAlertCardConsumerModel(alert, { fallbackTitle: resolvedTitle });
+        const communityReportCount = Math.max(
+          0,
+          Number(alert?.communityReportCount || alert?.__gridlyCommunityReportEvidenceCount || alert?.__gridlyPresentationGroupCount || alert?.groupedRecordCount || alert?.count || consumerCard?.reportCount || 0)
+        );
+        const evidenceCount = Math.max(communityReportCount, Number(alert?.sourceEvidenceCount || alert?.evidenceCount || alert?.__gridlyPresentationSourceCount || 0));
+        const locationLabel = getNarrowAlertLocationLabel(alert, consumerCard);
+        return {
+          ...consumerCard,
+          communityReportCount,
+          groupedRecordCount: Math.max(1, Number(alert?.groupedRecordCount || alert?.__gridlyPresentationGroupCount || 1)),
+          evidenceCount,
+          trustLabel: alert?.trustLabel || consumerCard?.trustLabel || consumerCard?.trustLine || "Official roadway source",
+          participationLabel: alert?.participationLabel || (communityReportCount === 1 ? "1 community report" : `${communityReportCount} community reports`),
+          locationLabel,
+          locationLine: locationLabel
+        };
+      };
+
+      const getEventCenteredEvidenceLines = (alert = {}, evidenceCount = 1) => {
+        const evidenceRows = Array.isArray(alert?.__gridlyPresentationEvidenceRows) && alert.__gridlyPresentationEvidenceRows.length ? alert.__gridlyPresentationEvidenceRows : [alert];
+        const communityCount = Math.max(0, Number(alert?.__gridlyCommunityReportEvidenceCount || evidenceCount || 0));
+        const officialRows = evidenceRows.filter(rowLooksOfficialRoadway);
+        const weatherRows = evidenceRows.filter(rowLooksWeather);
+        const officialLabel = officialRows.length ? pickFirstNonEmptyText(officialRows.flatMap((row) => [row?.provider, row?.sourceName, row?.agency, row?.source?.name, row?.raw?.provider])) || "Official roadway source" : "No official roadway closure";
+        const weatherLabel = weatherRows.length ? pickFirstNonEmptyText(weatherRows.flatMap((row) => [row?.event, row?.headline, row?.title, row?.category, row?.description])) || "Weather alert active" : "No active weather evidence linked";
+        return [
+          { label: "Community", value: communityCount > 0 ? `${communityCount} community report${communityCount === 1 ? "" : "s"}` : "No nearby community reports" },
+          { label: "Official Roadways", value: officialLabel },
+          { label: "Weather", value: weatherLabel }
+        ];
+      };
+
+      const GRIDLY_LP005_ALERTS_RENDERING_FOUNDATION = Object.freeze({
+        phase1: "First visible card contract",
+        phase2: "Complete alert card contract plus remaining visible cards, heading, expand row, and counts",
+        phase3: "Background work, map sync, analytics, refresh, and interaction wiring",
+        schedulingChanged: false
+      });
+
+      const buildGridlyFirstVisibleAlertCardContract = ({ id, title, situationLabel, locationLine, severity, freshnessToken = "", coordinates = null }) => ({
+        id,
+        title,
+        situationLabel,
+        locationLine,
+        severity,
+        freshnessToken,
+        coordinates,
+        __gridlyPhase: 1,
+        __gridlyContract: "first-visible-alert-card"
+      });
+
+      const buildGridlyCompleteAlertCardContract = ({ phase1Contract, alert, index, isHidden, lat, lng, coordAttrs, consumerCard, metadataAttrs, displaySubtitle, situationSummary, cleanedAlertLocationLabel, historicalAlertLine, evidenceCount, evidenceLine, eventEvidenceLines, eventEvidenceHtml, freshnessLine, trustLine, alertRowSummary }) => ({
+        ...phase1Contract,
+        alert,
+        index,
+        isHidden,
+        lat,
+        lng,
+        coordAttrs,
+        consumerCard,
+        metadataAttrs,
+        displaySubtitle,
+        situationSummary,
+        cleanedAlertLocationLabel,
+        historicalAlertLine,
+        evidenceCount,
+        evidenceLine,
+        eventEvidenceLines,
+        eventEvidenceHtml,
+        freshnessLine,
+        trustLine,
+        alertRowSummary,
+        trust: trustLine,
+        evidence: eventEvidenceLines,
+        counts: { evidenceCount, evidenceLine },
+        historicalContext: historicalAlertLine,
+        providerBadges: eventEvidenceLines,
+        richLocation: cleanedAlertLocationLabel,
+        secondaryDetails: displaySubtitle,
+        __gridlyPhase: 2,
+        __gridlyContract: "complete-alert-card"
+      });
+
+      const RenderFirstVisibleAlertCard = (phase1Contract) => {
+        const { id, title, situationLabel, locationLine, severity, freshnessToken, coordinates, phase2Contract } = phase1Contract || {};
+        if (phase2Contract) return RenderCompleteAlertCard(phase2Contract);
+        return { id, title, situationLabel, locationLine, severity, freshnessToken, coordinates };
+      };
+
+      const RenderCompleteAlertCard = (phase2Contract) => {
+        const { id, index, isHidden, lat, lng, coordAttrs, metadataAttrs, displaySubtitle, cleanedAlertLocationLabel, historicalAlertLine, eventEvidenceHtml, freshnessLine, trustLine, alertRowSummary } = phase2Contract;
+        let displayTitle;
+        let displayCondition;
+        let canonicalHazardType;
+        let canonicalConditionFamily;
+        let canonicalIncidentId;
+        let sourceReportId;
+        let lockMetadataAttrs = metadataAttrs || "";
+        if (phase2Contract.canonicalPresentationLocked === true) {
+          displayTitle = phase2Contract.canonicalTitle || phase2Contract.title || "";
+          displayCondition = phase2Contract.canonicalConditionLabel || phase2Contract.conditionLabel || "";
+          canonicalHazardType = phase2Contract.hazardType || "";
+          canonicalConditionFamily = phase2Contract.conditionFamily || "";
+          canonicalIncidentId = phase2Contract.incidentId || "";
+          sourceReportId = phase2Contract.sourceReportId || "";
+          lockMetadataAttrs += ` data-gridly-canonical-presentation="true" data-gridly-canonical-presentation-locked="true" data-gridly-canonical-incident-id="${esc(canonicalIncidentId)}" data-gridly-source-report-id="${esc(sourceReportId)}" data-gridly-canonical-hazard-type="${esc(canonicalHazardType)}" data-gridly-canonical-condition-family="${esc(canonicalConditionFamily)}" data-gridly-canonical-title="${esc(displayTitle)}" data-gridly-canonical-condition-label="${esc(displayCondition)}" data-gridly-title-source="canonical-live-presentation" data-gridly-condition-source="canonical-live-presentation" data-gridly-renderer-source="RenderCompleteAlertCard"`;
+        } else {
+          displayTitle = phase2Contract.title || "";
+          displayCondition = phase2Contract.situationSummary || phase2Contract.conditionLabel || "";
+        }
+        return `
+  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-condition="${esc(displayCondition)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}" data-gridly-alert-historical-context="${esc(historicalAlertLine)}" data-gridly-alert-historical-context-source="${historicalAlertLine ? "historical_awareness_adapter" : "suppressed"}"${coordAttrs}${lockMetadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
+    <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
+    <div style="min-width:0;flex:1;">
+      <div style="display:grid;gap:4px;">
+        <strong class="gridly-alert-title" data-gridly-alert-title-text="true" data-gridly-alert-title-node="true" style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
+        <div class="gridly-alert-location-line" data-gridly-alert-location-line="true" style="font-size:12px;line-height:1.35;color:rgba(235,244,255,0.92);font-weight:720;">${esc(displaySubtitle)}</div>
+        <div class="gridly-alert-situation-summary gridly-alert-subtitle" data-gridly-alert-situation-summary="true" data-gridly-alert-condition-line="true" data-gridly-alert-condition-node="true" style="font-size:12px;line-height:1.35;color:rgba(242,246,255,0.9);">${esc(displayCondition)}</div>
+        <div class="gridly-alert-meta-line" data-gridly-alert-freshness="true"><strong>Updated</strong> ${esc(freshnessLine.replace(/^Updated\s*/i, ""))}</div>
+        ${eventEvidenceHtml}
+        <div class="gridly-alert-trust-line" data-gridly-alert-trust="true">${esc(trustLine)}</div>
+        ${historicalAlertLine ? `<div class="gridly-alert-context-line" data-gridly-alert-historical-context-line="true" style="font-size:11px;line-height:1.25;color:rgba(225,232,244,0.64);">${esc(historicalAlertLine)}</div>` : ""}
+      </div>
+    </div>
+  </div>
+`;
+      };
+
+      const renderAlertCard = (alert, index, isHidden = false, options = {}) => {
+  const lat = getFirstNumber(alert, ["lat", "latitude", "rawLat", "raw.lat", "source.lat"]);
+  const lng = getFirstNumber(alert, ["lng", "lon", "longitude", "rawLng", "raw.lng", "source.lng", "source.lon"]);
+  const canonicalIdentity = alert?.__gridlyCanonicalIdentity || gridlyResolveCanonicalLiveIncidentIdentity(alert);
+  const canonicalPresentation = alert?.__gridlyCanonicalPresentation || gridlyBuildCanonicalLiveIncidentPresentation(alert);
+  const displayTitle = canonicalPresentation.title;
+  const displayCondition = canonicalPresentation.conditionLabel;
+  const canonicalIncidentId = canonicalPresentation.incidentId || canonicalIdentity.incidentId;
+  const sourceReportId = canonicalPresentation.sourceReportId || canonicalPresentation.reportId || canonicalIdentity.sourceReportId;
+  const canonicalHazardType = canonicalPresentation.hazardType || canonicalIdentity.hazardType;
+  const canonicalConditionFamily = canonicalPresentation.conditionFamily || canonicalIdentity.conditionFamily;
+  const id = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "sanitization/escaping", () => cleanDisplayValue(canonicalIncidentId || alert?.id || alert?.reportId || alert?.uuid || `alert-${index}`));
+  const coordAttrs = Number.isFinite(lat) && Number.isFinite(lng) ? ` data-gridly-alert-lat="${esc(lat)}" data-gridly-alert-lng="${esc(lng)}"` : "";
+  const resolvedTitle = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "title creation", () => displayTitle);
+  const resolvedHelper = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "summary formatting", () => helperTextFor(alert));
+  const consumerCard = alert?.__gridlyNarrowConsumerCard || gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "trust/participation model", () => buildNarrowAlertTrustDisplayModel(alert, resolvedTitle));
+  const metadataAttrs = ` data-gridly-canonical-incident-id="${esc(canonicalIncidentId || id || "")}" data-gridly-source-report-id="${esc(sourceReportId || "")}" data-gridly-canonical-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-canonical-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-canonical-title="${esc(displayTitle || "")}" data-gridly-canonical-condition-label="${esc(displayCondition || "")}" data-gridly-canonical-presentation="true" data-gridly-alert-report-id="${esc(sourceReportId || "")}" data-gridly-alert-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-alert-condition="${esc(displayCondition || "")}" data-gridly-canonical-event-presentation="true" data-gridly-alert-crossing-id="${esc(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-alert-awareness-area="${esc(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}" data-gridly-crossing-label-source="${esc(consumerCard.crossingLabelSource || "")}" data-gridly-crossing-display-name="${esc(consumerCard.crossingDisplayName || "")}" data-gridly-crossing-primary-road="${esc(consumerCard.crossingPrimaryRoad || "")}" data-gridly-crossing-secondary-road="${esc(consumerCard.crossingSecondaryRoad || "")}" data-gridly-reviewed-label-applied="${consumerCard.reviewedLabelApplied ? "true" : "false"}" data-gridly-fallback-label-used="${consumerCard.fallbackLabelUsed ? "true" : "false"}"`;
+  const alertLocationLabel = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "location formatting", () => getNarrowAlertLocationLabel(alert, consumerCard));
+  const normalizeAlertDisplayMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const eventTokenLabels = [
+    { token: "road closed", label: "Road closed" },
+    { token: "road closure", label: "Road closed" },
+    { token: "construction", label: "Construction" },
+    { token: "blocked", label: "Blocked" },
+    { token: "flooding", label: "Flooding" },
+    { token: "debris", label: "Debris in Road" },
+    { token: "traffic backup", label: "Traffic Backup" },
+    { token: "heavy delay", label: "Traffic Backup" },
+    { token: "crash", label: "Crash / Wreck" },
+    { token: "accident", label: "Accident" }
+  ];
+  const eventLabelFromHelper = helper => {
+    const normalized = normalizeAlertDisplayMatch(helper);
+    const matched = eventTokenLabels.find(({ token }) => {
+      const normalizedToken = normalizeAlertDisplayMatch(token);
+      return normalized === normalizedToken || ` ${normalized} `.includes(` ${normalizedToken} `);
+    });
+    return matched?.label || "";
+  };
+  const normalizedTitle = normalizeAlertDisplayMatch(resolvedTitle);
+  const normalizedTitleWithoutNear = normalizedTitle.replace(/^near\s+/, "");
+  const locationCandidateValues = [
+    alertLocationLabel,
+    alert?.roadName,
+    alert?.primaryRoad,
+    alert?.corridor,
+    alert?.route,
+    alert?.nearestRoad,
+    alert?.knownLocation,
+    alert?.locationName,
+    alert?.location,
+    alert?.titleRoad,
+    alert?.raw?.roadName,
+    alert?.raw?.nearestRoad,
+    alert?.raw?.knownLocation,
+    alert?.raw?.locationName,
+    alert?.source?.roadName,
+    alert?.source?.nearestRoad,
+    alert?.source?.knownLocation,
+    alert?.source?.locationName
+  ];
+  const normalizedLocationCandidates = locationCandidateValues
+    .map(normalizeAlertDisplayMatch)
+    .filter(candidate => candidate && candidate !== "dayton area");
+  const titleLooksLikeRoadOrLocation = Boolean(normalizedTitle && !eventLabelFromHelper(resolvedTitle) && normalizedLocationCandidates.some(candidate => {
+    return normalizedTitle === candidate || normalizedTitleWithoutNear === candidate;
+  }));
+  const helperEventLabel = eventLabelFromHelper(resolvedHelper);
+  const shouldUseEventFirstLayout = titleLooksLikeRoadOrLocation && Boolean(helperEventLabel);
+  const normalizedCanonicalTitle = normalizeGridlyCountyAwareDisplayText(displayTitle, alert);
+  const selectedDescriptionCandidates = [
+    { field: "providerDescription", value: alert?.providerDescription },
+    { field: "normalizedDescription", value: alert?.normalizedDescription },
+    { field: "description", value: alert?.description },
+    { field: "sourceDescription", value: alert?.sourceDescription },
+    { field: "sourceLocationDescription", value: alert?.sourceLocationDescription },
+    { field: "advisory", value: alert?.advisory },
+    { field: "narrative", value: alert?.narrative },
+    { field: "localizedSummary", value: alert?.localizedSummary },
+    { field: "consumerCard.locationLine", value: consumerCard.locationLine },
+    { field: "alertLocationLabel", value: alertLocationLabel },
+    { field: "resolvedHelper", value: resolvedHelper }
+  ];
+  const selectedDescription = selectedDescriptionCandidates.find((candidate) => cleanDisplayValue(candidate.value));
+  const officialDetection = typeof gridlyLp0456OfficialSourceDetection === "function"
+    ? gridlyLp0456OfficialSourceDetection(alert)
+    : { official: rowLooksOfficialRoadway(alert), reason: rowLooksOfficialRoadway(alert) ? "closure_source_text" : "not_official" };
+  const officialAlertCard = Boolean(officialDetection.official);
+  const rawDisplaySubtitle = alertLocationLabel || consumerCard.locationLine || (shouldUseEventFirstLayout
+    ? normalizeGridlyCountyAwareDisplayText(standardizeGridlyAlertHeadline(resolvedTitle), alert)
+    : normalizeGridlyCountyAwareDisplayText(resolvedHelper, alert));
+  const rawOfficialDescriptionValue = selectedDescription?.value || rawDisplaySubtitle;
+  const finalOfficialDescription = officialAlertCard && rawOfficialDescriptionValue
+    ? gridlyNormalizeOfficialConsumerLanguage(rawOfficialDescriptionValue, { record: alert, selectedField: selectedDescription?.field || null })
+    : rawDisplaySubtitle;
+  const displaySubtitle = officialAlertCard && finalOfficialDescription ? normalizeGridlyCountyAwareDisplayText(finalOfficialDescription, alert) : rawDisplaySubtitle;
+  if (officialAlertCard) {
+    const renderedAlertDescription = cleanDisplayValue(displaySubtitle);
+    gridlyLp0455OfficialCopyFreshnessTraceState.lastTrace = {
+      ...(gridlyLp0455OfficialCopyFreshnessTraceState.lastTrace || {}),
+      officialAlertFound: true,
+      rawDescriptionFields: selectedDescriptionCandidates.reduce((acc, item) => ({ ...acc, [item.field]: item.value ?? null }), {}),
+      selectedDescriptionField: selectedDescription?.field || null,
+      selectedDescriptionBeforeSanitize: selectedDescription?.value || "",
+      selectedDescriptionAfterSanitize: finalOfficialDescription || "",
+      alertCardRendererFound: "openAlertsSurfaceFromDock.renderAlertCard RenderCompleteAlertCard displaySubtitle",
+      alertCardSanitizerInvoked: true,
+      renderedAlertDescription,
+      renderedContainsBreakTag: /<\s*br\s*\/?\s*>/i.test(renderedAlertDescription),
+      renderedContainsEscapedBreakTag: /&lt;\s*br\s*\/?\s*&gt;/i.test(renderedAlertDescription),
+      renderedContainsSlashArtifact: /(?:^|\s)[\/|]+(?:\s|$)/.test(renderedAlertDescription),
+      firstAlertCopyFailureStage: /<\s*br\s*\/?\s*>|&lt;\s*br\s*\/?\s*&gt;|(?:^|\s)[\/|]+(?:\s|$)/i.test(renderedAlertDescription) ? "rendered_official_copy_not_clean" : null
+    };
+  }
+  const rawSituationSummary = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "situation summary markup", () => displayCondition);
+  const officialSummaryCopy = gridlyLp0457SanitizeOfficialCardCopy(alert, [{ field: "displaySubtitle", value: displaySubtitle }], [
+    { field: "eventCenteredSituationSummary", value: rawSituationSummary },
+    { field: selectedDescription?.field || "selectedDescription", value: selectedDescription?.value },
+    { field: "displaySubtitle", value: displaySubtitle }
+  ]);
+  const situationSummary = normalizeGridlyCountyAwareDisplayText(displayCondition, alert);
+  const cleanedAlertLocationLabel = consumerCard.locationLabel || (shouldUseEventFirstLayout
+    ? normalizeGridlyLightweightLocationLabelText(resolvedTitle)
+    : normalizeGridlyLightweightLocationLabelText(getGridlyLightweightLocationFromHeadline(`${displayTitle} ${displaySubtitle}`) || ""));
+  const historicalAlertLine = alert?.historicalAlertLine || alert?.__gridlyHistoricalContextLine || "";
+  const evidenceCount = Math.max(Number(consumerCard.reportCount || 1), Number(alert?.__gridlyPresentationGroupCount || 1), Number(alert?.count || alert?.confirmationCount || 0));
+  const evidenceLine = `${evidenceCount} community report${evidenceCount === 1 ? "" : "s"}`;
+  const eventEvidenceLines = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "evidence composition", () => getEventCenteredEvidenceLines(alert, evidenceCount));
+  const eventEvidenceHtml = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "evidence-line generation", () => eventEvidenceLines.map((item) => `<div class="gridly-alert-evidence-line" data-gridly-alert-evidence="true"><strong>${esc(item.label)}</strong> ${esc(item.value)}</div>`).join(""));
+  const freshnessLine = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "freshness formatting", () => officialAlertCard && typeof gridlyLp0455OfficialFreshnessResult === "function"
+    ? gridlyLp0455OfficialFreshnessResult(alert).renderedFreshnessLine
+    : formatGridlyAlertsFreshnessLine(alert, consumerCard.freshnessLine));
+  const trustLine = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "freshness/trust markup", () => formatGridlyAlertsTrustLine({ report: alert, count: evidenceCount, fallback: consumerCard.trustLine }));
+  const alertRowSummary = normalizeGridlyUserFacingRoadText(`${normalizedCanonicalTitle} ${displaySubtitle} ${displayCondition} ${freshnessLine} ${eventEvidenceLines.map((item) => `${item.label} ${item.value}`).join(" ")} ${trustLine} ${historicalAlertLine}`);
+  const lp017SerializedMetadataField = gridlyLp017AuditSerializedField(alert);
+  recordGridlyActiveLocationLifecycleEvent("alertRowRender", {
+    index,
+    id,
+    hidden: Boolean(isHidden),
+    displayTitle: normalizedCanonicalTitle,
+    displaySubtitle,
+    cleanedAlertLocationLabel,
+    alertRowSummary,
+    locationSources: ["event-centered-location"]
+  });
+  const phase1Contract = buildGridlyFirstVisibleAlertCardContract({
+    id,
+    title: normalizedCanonicalTitle,
+    situationLabel: situationSummary,
+    locationLine: displaySubtitle,
+    severity: alert?.severity || alert?.impact || alert?.hazardSeverity || "active",
+    freshnessToken: freshnessLine,
+    coordinates: Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null
+  });
+  const phase2Contract = buildGridlyCompleteAlertCardContract({
+    phase1Contract,
+    alert,
+    index,
+    isHidden,
+    lat,
+    lng,
+    coordAttrs,
+    consumerCard,
+    metadataAttrs,
+    displaySubtitle,
+    situationSummary,
+    cleanedAlertLocationLabel,
+    historicalAlertLine,
+    evidenceCount,
+    evidenceLine,
+    eventEvidenceLines,
+    eventEvidenceHtml,
+    freshnessLine,
+    trustLine,
+    alertRowSummary
+  });
+  const canonicalRenderContract = {
+    ...phase2Contract,
+    canonicalPresentationLocked: true,
+    incidentId: canonicalPresentation.incidentId || canonicalIdentity.incidentId,
+    sourceReportId: canonicalPresentation.sourceReportId || canonicalIdentity.sourceReportId,
+    hazardType: canonicalPresentation.hazardType || canonicalIdentity.hazardType,
+    conditionFamily: canonicalPresentation.conditionFamily || canonicalIdentity.conditionFamily,
+    title: canonicalPresentation.title,
+    headline: canonicalPresentation.title,
+    conditionLabel: canonicalPresentation.conditionLabel,
+    situationSummary: canonicalPresentation.conditionLabel,
+    evidenceLine: canonicalPresentation.conditionLabel,
+    canonicalTitle: canonicalPresentation.title,
+    canonicalConditionLabel: canonicalPresentation.conditionLabel
+  };
+  const generatedMarkup = options.firstVisible === true ? RenderFirstVisibleAlertCard({ ...phase1Contract, phase2Contract: canonicalRenderContract }) : RenderCompleteAlertCard(canonicalRenderContract);
+  if (officialAlertCard && typeof gridlyLp0456LiveOfficialAlertCardTraceState !== "undefined") {
+    const renderedText = String(generatedMarkup).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    gridlyLp0456LiveOfficialAlertCardTraceState.invocationCount += 1;
+    gridlyLp0456LiveOfficialAlertCardTraceState.lastTrace = {
+      available: true,
+      investigationOnly: true,
+      alertsSurfaceOpen: true,
+      liveRendererName: "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync.renderAlertCard -> RenderCompleteAlertCard",
+      liveRendererInvocationCount: gridlyLp0456LiveOfficialAlertCardTraceState.invocationCount,
+      liveCollectionName: "presentationAlerts from presentationCountModel.alerts fallback buildAlertPresentationGroups(alertsForRender)",
+      liveCollectionCount: Array.isArray(typeof presentationAlerts !== "undefined" ? presentationAlerts : null) ? presentationAlerts.length : null,
+      matchedOfficialRecordFound: true,
+      officialSourceDetectionReason: officialDetection.reason,
+      matchedRecordKeys: Object.keys(alert || {}),
+      rawDescriptionCandidates: selectedDescriptionCandidates.map((candidate) => ({ field: candidate.field, value: candidate.value ?? null })),
+      selectedDescriptionField: selectedDescription?.field || null,
+      selectedDescriptionBeforeSanitize: selectedDescription?.value || "",
+      sanitizerInvoked: true,
+      selectedDescriptionAfterSanitize: finalOfficialDescription || "",
+      rawDescriptionField: selectedDescription?.field || null,
+      rawDescriptionValue: selectedDescription?.value || "",
+      normalizedDescriptionValue: finalOfficialDescription || "",
+      rawSituationSummary,
+      normalizedSituationSummary: situationSummary,
+      normalizerInvoked: true,
+      normalizedValueUsedForDisplaySubtitle: displaySubtitle,
+      normalizedValueUsedForSituationSummary: situationSummary,
+      rawValueReintroducedAfterNormalization: Boolean((displaySubtitle && selectedDescription?.value && displaySubtitle === selectedDescription.value) || (situationSummary && rawSituationSummary && situationSummary === rawSituationSummary && /<\s*br|&lt;\s*br|FOR THE CONSTRUCTION|MOTORISTS SHOULD EXPECT DELAYS/i.test(rawSituationSummary))),
+      renderedCardText: renderedText,
+      renderedCardHtml: String(generatedMarkup),
+      renderedContainsLiteralBreakTag: /<\s*br\s*\/?\s*>/i.test(renderedText),
+      renderedContainsEscapedBreakTag: /&lt;\s*br\s*\/?\s*&gt;/i.test(renderedText),
+      renderedContainsSlashArtifact: /(?:^|\s)[\/|]+(?:\s|$)/.test(renderedText),
+      domCardMatched: false,
+      firstFailureStage: /<\s*br\s*\/?\s*>|&lt;\s*br\s*\/?\s*&gt;|(?:^|\s)[\/|]+(?:\s|$)/i.test(renderedText) ? "rendered_official_copy_not_clean" : null,
+      likelyRootCause: "LP045.5 audited only render-time trace; live Alerts opens from authoritative cached markup, so passive DOM audit must inspect visible sheet plus latest render trace."
+    };
+  }
+  gridlyLp017AuditRecordRender({
+    renderingOwner: "openAlertsSurfaceFromDock.renderAlertCard",
+    lastWriter: "window.openGridlyPortraitV2Sheet('alerts', { html })",
+    sourceRecordIdentifier: id,
+    sourceRecordType: String(alert?.reportKind || alert?.situationType || alert?.hazardType || alert?.type || alert?.category || alert?.reportType || ""),
+    ...gridlyLp017AuditRecordShape(alert),
+    buildGridlyAlertCardConsumerModelCalled: Boolean(consumerCard),
+    consumerModelOutput: consumerCard,
+    displayTitle: normalizedCanonicalTitle,
+    visibleText: alertRowSummary,
+    generatedMarkupText: String(generatedMarkup).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+    serializedMetadataFieldDetected: lp017SerializedMetadataField,
+    eventEvidenceLines
+  });
+  return generatedMarkup;
+};
+
+      const normalizeAlertPresentationKey = (value) => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      const buildAlertPresentationGroups = (alerts = []) => {
+        const groups = new Map();
+        alerts.forEach((alert, sourceIndex) => {
+          const resolvedTitle = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "title creation", () => titleFor(alert));
+          const consumerCard = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "trust/participation model", () => buildNarrowAlertTrustDisplayModel(alert, resolvedTitle));
+          const titleKey = normalizeAlertPresentationKey(consumerCard.title || resolvedTitle);
+          const locationKey = normalizeAlertPresentationKey(consumerCard.locationLabel || consumerCard.locationLine || "nearby");
+          const hazardKey = normalizeAlertPresentationKey(alert?.hazardType || alert?.type || alert?.category || alert?.reportType || "alert");
+          const key = `${hazardKey}|${titleKey}|${locationKey}`;
+          const existing = groups.get(key);
+          const minutes = Number(alert?.minutesAgo ?? alert?.newestMinutes ?? alert?.age_minutes ?? Infinity);
+          if (!existing) {
+            groups.set(key, { ...alert, __gridlyNarrowConsumerCard: consumerCard, __gridlyNarrowTrustDisplayModel: consumerCard, __gridlyPresentationLocationLabel: consumerCard.locationLabel || consumerCard.locationLine || "Nearby", __gridlyPresentationGroupCount: 1, __gridlyPresentationSourceCount: 1, __gridlyPresentationSourceIndexes: [sourceIndex], __gridlyPresentationLatestMinutes: minutes });
+            return;
+          }
+          existing.__gridlyPresentationGroupCount += 1;
+          existing.__gridlyPresentationSourceCount += 1;
+          existing.__gridlyPresentationSourceIndexes.push(sourceIndex);
+          if (Number.isFinite(minutes) && (!Number.isFinite(existing.__gridlyPresentationLatestMinutes) || minutes < existing.__gridlyPresentationLatestMinutes)) {
+            existing.__gridlyPresentationLatestMinutes = minutes;
+            Object.assign(existing, alert, {
+              __gridlyPresentationGroupCount: existing.__gridlyPresentationGroupCount,
+              __gridlyPresentationSourceCount: existing.__gridlyPresentationSourceCount,
+              __gridlyPresentationSourceIndexes: existing.__gridlyPresentationSourceIndexes,
+              __gridlyNarrowConsumerCard: existing.__gridlyNarrowConsumerCard || consumerCard,
+              __gridlyNarrowTrustDisplayModel: existing.__gridlyNarrowTrustDisplayModel || consumerCard,
+              __gridlyPresentationLocationLabel: existing.__gridlyPresentationLocationLabel || consumerCard.locationLabel || consumerCard.locationLine || "Nearby"
+            });
+          }
+        });
+        return Array.from(groups.values()).map((alert) => {
+          const existingCount = Number(alert?.count || alert?.confirmationCount || alert?.incidentReportCount || alert?.activeReportCount || 0);
+          const groupedCount = Number(alert.__gridlyPresentationGroupCount || 1);
+          return { ...alert, count: Math.max(existingCount, groupedCount), __gridlyPresentationGrouped: groupedCount > 1 };
+        });
+      };
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_before_presentation_model"))) return false;
+      const presentationCountModel = await cooperativePhase("presentationModelMs", async () => gridlyAlertsOpenAuditMeasure("presentation model creation", () => gridlyLp016AlertsPostPaintDelayMeasureAsync("getGridlyAlertsPresentationCountModel", "presentation", () => (typeof gridlyGetAlertsPresentationCountModelCooperative === "function"
+        ? gridlyGetAlertsPresentationCountModelCooperative(alertsForRender, {
+          cooperativeBuildAudit,
+          cooperativeChunkStartedAt: cooperativeChunkStartedAt,
+          isCancelled: () => !gridlyAlertsAuthoritativeBuildStillCurrent(alertsSheetGeneration, cooperativeBuildGeneration, cooperativeBuildContextKey, cooperativeBuildRevisionKey)
+        })
+        : (typeof getGridlyAlertsPresentationCountModel === "function" ? getGridlyAlertsPresentationCountModel(alertsForRender) : { alerts: buildAlertPresentationGroups(alertsForRender), groupedAlertCount: alertsForRender.length, rawAlertRecordCount: alertsForRender.length, communityReportCount: alertsForRender.length })), { caller: "openAlertsSurfaceFromDock", inputCount: alertsForRender.length }), { caller: "openAlertsSurfaceFromDock", inputCount: alertsForRender.length }));
+      if (gridlyAlertsGroupingHotLoopState.lastBuild?.cancelled) {
+        cooperativeBuildAudit.superseded = true;
+        cooperativeBuildAudit.cancelled = true;
+        return false;
+      }
+      alertsOpenRenderContext = {
+        runId: gridlyAlertsOpenAuditActive()?.runId || null,
+        snapshot,
+        alerts: alertsForRender,
+        presentationModel: presentationCountModel
+      };
+      gridlyAlertsOpenPerformanceAuditState.activeRenderContext = alertsOpenRenderContext;
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_after_presentation_model"))) return false;
+      const rawPresentationAlerts = await cooperativePhase("presentationGroupingMs", async () => gridlyAlertsOpenAuditMeasure("situation clustering", () => gridlyLp016AlertsPostPaintDelayMeasure("buildAlertPresentationGroups fallback", "presentation", () => presentationCountModel.alerts.length ? presentationCountModel.alerts : buildAlertPresentationGroups(alertsForRender), { inputCount: alertsForRender.length })));
+      const presentationAlerts = rawPresentationAlerts.map(alert => {
+        const identity = gridlyResolveCanonicalLiveIncidentIdentity(alert);
+        const presentation = gridlyBuildCanonicalLiveIncidentPresentation(alert);
+        return {
+          ...alert,
+          __gridlyCanonicalIdentity: identity,
+          __gridlyCanonicalPresentation: presentation
+        };
+      });
+      cooperativeBuildAudit.itemCount = presentationAlerts.length;
+      gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore = gridlyAlertsAuthoritativeOutputSignature(presentationAlerts);
+      gridlyAlertsGroupingHotLoopState.equivalence.beforeSignature = gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore;
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_after_presentation_grouping"))) return false;
+      gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "trust/participation model", () => null);
+      for (let index = 0; index < presentationAlerts.length; index += 1) {
+        const alert = presentationAlerts[index];
+        if (alert && !alert.__gridlyNarrowConsumerCard) {
+          const resolvedTitle = titleFor(alert);
+          const consumerCard = buildNarrowAlertTrustDisplayModel(alert, resolvedTitle);
+          alert.__gridlyNarrowConsumerCard = consumerCard;
+          alert.__gridlyNarrowTrustDisplayModel = consumerCard;
+          alert.__gridlyPresentationLocationLabel = consumerCard.locationLabel || consumerCard.locationLine || "Nearby";
+        }
+        if (!(await cooperativeYieldOrCancel(false, "cancelled_during_card_model_hydration"))) return false;
+      }
+      const visibleRowParts = [];
+      const hiddenRowParts = [];
+      for (let index = 0; index < presentationAlerts.length; index += 1) {
+        const alert = presentationAlerts[index];
+        const isHidden = index >= 3;
+        const rendered = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "renderAlertCard total", () => renderAlertCard(alert, index, isHidden), { hidden: isHidden });
+        if (isHidden) hiddenRowParts.push(rendered); else visibleRowParts.push(rendered);
+        if (!(await cooperativeYieldOrCancel(false, "cancelled_during_card_html_generation"))) return false;
+      }
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_after_card_html_generation"))) return false;
+      const renderedRows = gridlyAlertsOpenAuditMeasure("DOM generation", () => ({
+        rows: visibleRowParts.join(""),
+        hiddenRows: hiddenRowParts.join("")
+      }));
+      const rows = renderedRows.rows;
+      const hiddenRows = renderedRows.hiddenRows;
+      gridlyAlertsOpenAuditSetMetadata({ presentationCount: presentationAlerts.length, renderedCardCount: Math.min(3, presentationAlerts.length) });
+      const preInsertionStarted = gridlyAlertsOpenAuditNow();
+
+      const extra = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "hidden-row expand markup", () => presentationAlerts.length > 3
+        ? `<div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alert-expand="true" data-gridly-alert-expanded-secondary="true" style="margin-top:6px;padding:10px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:11px;background:rgba(255,255,255,0.018);text-align:center;cursor:pointer;"><small style="font-size:11px;line-height:1.35;color:rgba(206,218,235,0.85);letter-spacing:0.02em;"><strong style="color:#f2f6ff;">+ ${presentationAlerts.length - 3} more alert${presentationAlerts.length - 3 === 1 ? "" : "s"}</strong></small></div>`
+        : "");
+
+      const headerLeadAlert = presentationAlerts[0] || alertsForRender[0] || null;
+      const headerEvidenceLine = pluralizeGridlyMobilityReports(presentationCountModel.communityReportCount || alertsForRender.length);
+      const alertsPanelHeadingModel = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "outer sheet/header markup", () => {
+        const countText = presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`;
+        const locationText = headerLeadAlert ? getNarrowAlertLocationLabel(headerLeadAlert, headerLeadAlert.__gridlyNarrowConsumerCard || {}) : "";
+        const summaryText = headerLeadAlert?.__gridlyEventSituationLabel || (typeof getGridlyAlertSituationLabel === "function" ? getGridlyAlertSituationLabel(headerLeadAlert) : "") || headerLeadAlert?.hazardType || headerLeadAlert?.type || "";
+        return { text: countText, locationText, evidenceText: summaryText ? `${summaryText} · ${headerEvidenceLine}` : headerEvidenceLine };
+      });
+      const alertsPanelHeadingText = alertsPanelHeadingModel.text;
+      const alertsPanelHeadingLocationText = alertsPanelHeadingModel.locationText || "";
+      const alertsPanelHeadingEvidenceText = alertsPanelHeadingModel.evidenceText || headerEvidenceLine;
+
+      const html = gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "string joining", () => `
+<div class="gridly-alerts-active" style="padding:0 1px;" data-gridly-alerts-deduplicated="true">
+  <div class="gridly-alert-row gridly-alert-intel-card" data-gridly-alerts-panel-heading="true" style="margin-bottom:8px;padding:12px;border:1px solid rgba(255,255,255,0.08);border-radius:12px;background:rgba(255,255,255,0.025);">
+    <strong>${esc(alertsPanelHeadingText)}</strong>
+    ${alertsPanelHeadingLocationText ? `<div data-gridly-alerts-panel-heading-location="true" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(alertsPanelHeadingLocationText)}</div>` : `<div data-gridly-alerts-panel-heading-location="true" style="display:none;"></div>`}
+    <div data-gridly-alerts-panel-heading-evidence="true" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">${esc(alertsPanelHeadingEvidenceText)}</div>
+  </div>
+  ${rows}
+  ${hiddenRows}
+  ${extra}
+</div>`);
+      gridlyAlertsOpenAuditSetMetadata({ generatedMarkupLength: html.length });
+
+      const cooperativeOutputSignatureAfter = gridlyAlertsAuthoritativeOutputSignature(presentationAlerts);
+      gridlyAlertsCooperativeBuildState.equivalence.outputSignatureAfter = cooperativeOutputSignatureAfter;
+      gridlyAlertsCooperativeBuildState.equivalence.outputEquivalent = JSON.stringify(gridlyAlertsCooperativeBuildState.equivalence.outputSignatureBefore) === JSON.stringify(cooperativeOutputSignatureAfter);
+      gridlyAlertsGroupingHotLoopState.equivalence.afterSignature = cooperativeOutputSignatureAfter;
+      gridlyAlertsGroupingHotLoopState.equivalence.outputEquivalent = gridlyAlertsCooperativeBuildState.equivalence.outputEquivalent;
+      gridlyAlertsCooperativeBuildState.equivalence.finalCardCount = presentationAlerts.length;
+      gridlyStoreAlertsAuthoritativeRenderedCache({
+        contextKey: cooperativeBuildContextKey,
+        revisionKey: cooperativeBuildRevisionKey,
+        renderedMarkup: html,
+        title: `${presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`}`,
+        presentationRecordCount: presentationAlerts.length
+      });
+      cooperativeBuildAudit.finalCacheUpdated = true;
+
+      gridlyAlertsOpenAuditRecordPhase("pre-insertion work", preInsertionStarted, gridlyAlertsOpenAuditNow());
+      if (!(await cooperativeYieldOrCancel(true, "cancelled_before_final_dom_insertion"))) return false;
+      const canApplyAuthoritativeContent = cooperativeBuildGeneration === gridlyAlertsCooperativeBuildState.generation
+        && cooperativeBuildContextKey === gridlyGetAlertsAuthoritativeContextKey()
+        && cooperativeBuildRevisionKey === gridlyGetAlertsAuthoritativeRevisionKey()
+        && gridlyIsAlertsSheetStillOpenForAuthoritativeApply(alertsSheetGeneration);
+      if (!canApplyAuthoritativeContent) {
+        cooperativeBuildAudit.superseded = cooperativeBuildGeneration !== gridlyAlertsCooperativeBuildState.generation || cooperativeBuildContextKey !== gridlyGetAlertsAuthoritativeContextKey() || cooperativeBuildRevisionKey !== gridlyGetAlertsAuthoritativeRevisionKey();
+        cooperativeBuildAudit.cancelled = !gridlyIsAlertsSheetStillOpenForAuthoritativeApply(alertsSheetGeneration);
+        cooperativeBuildAudit.staleApplicationBlocked = true;
+        cooperativeBuildAudit.completedAt = gridlyAlertsCooperativeNow();
+        cooperativeBuildAudit.durationMs = Number((cooperativeBuildAudit.completedAt - cooperativeBuildAudit.startedAt).toFixed(2));
+        cooperativeBuildAudit.closeProcessedBeforeBuildCompletion = Boolean(gridlyAlertsSheetLifecycleState.lastCloseAt && gridlyAlertsSheetLifecycleState.lastCloseAt < cooperativeBuildAudit.completedAt);
+        cooperativeBuildAudit.averageChunkMs = cooperativeBuildAudit.chunkCount ? Number((cooperativeBuildAudit.totalChunkMs / cooperativeBuildAudit.chunkCount).toFixed(2)) : 0;
+        return false;
+      }
+      const domInsertStarted = gridlyAlertsOpenAuditNow();
+      if (!gridlyCanApplyAlertsSheetGeneration(alertsSheetGeneration)) {
+        gridlyIgnoreLateAlertsSheetResult(alertsSheetGeneration, "authoritative_apply_lost_ownership");
+        return false;
+      }
+      gridlyLp017DisabledVehiclePresentationAuditState.lastFunctionEntered = "gridlyOpenAlertsSurfaceAuthoritativeBuildAndApply";
+      const opened = gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => window.openGridlyPortraitV2Sheet("alerts", {
+        title: `${presentationAlerts.length === 1 ? "1 Active Alert" : `${presentationAlerts.length} Active Alerts`}`,
+        html: gridlyLp0458SanitizeOfficialAlertCardMarkup(html)
+      }));
+      cooperativeBuildAudit.finalContentApplied = Boolean(opened);
+      cooperativeBuildAudit.finalDomInsertionOccurred = Boolean(opened);
+      if (opened) gridlyEnforceCanonicalPresentationOnVisibleAlertCards("gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync");
+      if (opened) {
+        gridlyAlertsSheetLifecycleState.latestAppliedGeneration = alertsSheetGeneration;
+        gridlyFinalizeAlertsSheetGeneration(alertsSheetGeneration, "applied");
+      }
+      gridlyAlertsOpenAuditRecordPhase("DOM insertion", domInsertStarted, gridlyAlertsOpenAuditNow(), { opened: Boolean(opened) });
+      const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
+      gridlyRecordAlertsOpenRefreshFixTiming({
+        sheetVisibleAt: sheetInsertedAt,
+        initialCardsRenderedAt: sheetInsertedAt,
+        sheetOpenDelayMs: Number((sheetInsertedAt - gridlyV920PanelOpenStartedAt).toFixed(2))
+      });
+      const animationStarted = gridlyAlertsOpenAuditNow();
+      gridlyAlertsOpenAuditRecordPhase("animation start", animationStarted, animationStarted, { opened: Boolean(opened) });
+      const animationFrame = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (cb) => setTimeout(cb, 16);
+      const activeAuditRun = gridlyAlertsOpenAuditActive();
+      const animationRunId = activeAuditRun?.runId || null;
+      if (activeAuditRun) activeAuditRun.pendingAnimationComplete = true;
+      animationFrame(() => animationFrame(() => {
+        const run = gridlyAlertsOpenAuditActive();
+        if (!run || run.runId !== animationRunId) return;
+        const animationFinished = gridlyAlertsOpenAuditNow();
+        gridlyAlertsOpenAuditRecordPhase("animation complete", animationStarted, animationFinished, { opened: Boolean(opened), runId: animationRunId });
+        gridlyAlertsOpenAuditSetMetadata({ animationDuration: Number((animationFinished - animationStarted).toFixed(2)) });
+        run.pendingAnimationComplete = false;
+        gridlyAlertsOpenAuditFinish();
+      }));
+      gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "card click-handler wiring", () => bindAlertsPanelClick());
+      gridlyV921PanelTiming.contentReady = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
+      gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
+      gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: Boolean(opened), path: "active-alerts" });
+      gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "map/sheet synchronization scheduling", () => {
+        const schedule = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (cb) => setTimeout(cb, 16);
+        schedule(() => setTimeout(() => runGridlyAlertLocationSyncAfterAlertRender("deferred_after_alert_render"), 0));
+      });
+      gridlyAlertsOpenAuditMeasureMicro("preInsertionSubphases", "background refresh scheduling", () => gridlyRunAlertsBackgroundRefreshAfterOpen("alerts_open_background_refresh"));
+      if (gridlyAlertsOpenPerformanceAuditState.activeRenderContext === alertsOpenRenderContext) gridlyAlertsOpenPerformanceAuditState.activeRenderContext = null;
+      cooperativeBuildAudit.completedAt = gridlyAlertsCooperativeNow();
+      cooperativeBuildAudit.durationMs = Number((cooperativeBuildAudit.completedAt - cooperativeBuildAudit.startedAt).toFixed(2));
+      cooperativeBuildAudit.closeProcessedBeforeBuildCompletion = Boolean(gridlyAlertsSheetLifecycleState.lastCloseAt && gridlyAlertsSheetLifecycleState.lastCloseAt < cooperativeBuildAudit.completedAt);
+      cooperativeBuildAudit.averageChunkMs = cooperativeBuildAudit.chunkCount ? Number((cooperativeBuildAudit.totalChunkMs / cooperativeBuildAudit.chunkCount).toFixed(2)) : 0;
+      gridlyAlertsCooperativeBuildState.equivalence.duplicateCardsDetected = gridlyDetectDuplicateAlertCards();
+      gridlyAlertsGroupingHotLoopState.equivalence.duplicateCardsDetected = gridlyAlertsCooperativeBuildState.equivalence.duplicateCardsDetected;
+      gridlyAlertsOpenAuditFinish({ opened: Boolean(opened), path: "active-alerts" });
+      return opened;
+    }
+
+    if (typeof isGridlyExplicitDebugModeEnabled === "function" && isGridlyExplicitDebugModeEnabled()) {
+      console.debug("[Gridly][Alerts][V919R] fallback render sample", alertsForRender.slice(0, 5).map(a => ({
+        keys: Object.keys(a || {}).join(", "),
+        id: a?.id,
+        type: a?.type,
+        title: JSON.stringify(a?.title),
+        subtitle: a?.subtitle,
+        corridor: a?.corridor,
+        roadName: a?.roadName,
+        crossingId: a?.crossingId,
+        crossingRoad: a?.crossingRoad,
+        lat: a?.lat || a?.latitude || a?.rawLat,
+        lng: a?.lng || a?.lon || a?.longitude || a?.rawLng,
+        rawKeys: a?.raw ? Object.keys(a.raw).join(", ") : "",
+        sourceKeys: a?.source ? Object.keys(a.source).join(", ") : ""
+      })));
+    }
+    template = fallbackTemplate;
+  } catch (error) {
+    if (gridlyAlertsOpenPerformanceAuditState.activeRenderContext === alertsOpenRenderContext) gridlyAlertsOpenPerformanceAuditState.activeRenderContext = null;
+    gridlyAlertsOpenAuditSetMetadata({ renderError: true });
+    console.warn('[Gridly][Alerts] live alerts template render failed; fallback retained.', error);
+  }
+
+  if (typeof openGridlyPortraitV2Sheet === 'function') {
+    const opened = Boolean(openGridlyPortraitV2Sheet('alerts', template));
+    if (opened) {
+      const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
+      gridlyRecordAlertsOpenRefreshFixTiming({
+        sheetVisibleAt: sheetInsertedAt,
+        initialCardsRenderedAt: sheetInsertedAt,
+        sheetOpenDelayMs: Number((sheetInsertedAt - gridlyV920PanelOpenStartedAt).toFixed(2))
+      });
+      scrollToSection('mapSection');
+      gridlyRunAlertsBackgroundRefreshAfterOpen("alerts_open_background_refresh_fallback");
+      gridlyV921PanelTiming.contentReady = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
+      gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
+      gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "fallback-template" });
+      gridlyAlertsOpenAuditFinish({ opened: true, path: "fallback-template" });
+      return true;
+    }
+  }
+  if (typeof openPortraitV2Sheet === 'function') {
+    openPortraitV2Sheet('alerts');
+    const sheetInsertedAt = gridlyAlertsOpenRefreshFixNow();
+    gridlyRecordAlertsOpenRefreshFixTiming({
+      sheetVisibleAt: sheetInsertedAt,
+      initialCardsRenderedAt: sheetInsertedAt,
+      sheetOpenDelayMs: Number((sheetInsertedAt - gridlyV920PanelOpenStartedAt).toFixed(2))
+    });
+    scrollToSection('mapSection');
+    gridlyV921PanelTiming.contentReady = Number((gridlyV921Now() - gridlyV920PanelOpenStartedAt).toFixed(2));
+    gridlyV921PanelTiming.fullInteractionCompletion = gridlyV921PanelTiming.contentReady;
+    gridlyV921RecordPipelineCall("panel", { ...gridlyV921PanelTiming, opened: true, path: "legacy-portrait" });
+    gridlyAlertsOpenAuditFinish({ opened: true, path: "legacy-portrait" });
+    return true;
+  }
+  gridlyAlertsOpenAuditFinish({ opened: false, path: "unavailable" });
+  return false;
+}
+
+============================================================
+FUNCTION: gridlyEnforceCanonicalPresentationOnVisibleAlertCards
+FOUND: True
+LINES: 74228-74329
+============================================================
+function gridlyEnforceCanonicalPresentationOnVisibleAlertCards(reason = "visible-alert-dom-write") {
+  const diagnostics = gridlyVisibleAlertLastMileCanonicalEnforcementDiagnostics;
+  diagnostics.enforcementRunCount += 1;
+  diagnostics.enforcementReason = String(reason || "");
+  diagnostics.enforcementLastRunAt = new Date().toISOString();
+  const isFinalVisibleAlertCardDomWrite = diagnostics.enforcementReason === "final-visible-alert-card-dom-write";
+  if (isFinalVisibleAlertCardDomWrite) {
+    diagnostics.enforcementFinalDomWriteRunCount += 1;
+    diagnostics.enforcementFinalDomWriteReason = diagnostics.enforcementReason;
+    diagnostics.enforcementFinalDomWriteCardCount = 0;
+    diagnostics.enforcementFinalDomWriteUpdatedCount = 0;
+  }
+  diagnostics.enforcementCardCount = 0;
+  diagnostics.enforcementUpdatedCount = 0;
+  diagnostics.enforcementAlreadyCanonicalCount = 0;
+  diagnostics.enforcementMissingIncidentIdCount = 0;
+  diagnostics.enforcementCanonicalRecordNotFoundCount = 0;
+  diagnostics.enforcementMatchedCanonicalRecordCount = 0;
+  diagnostics.enforcementFullyCanonicalBeforeCount = 0;
+  diagnostics.enforcementPartiallyCanonicalCount = 0;
+  diagnostics.enforcementTitleNodeMissingCount = 0;
+  diagnostics.enforcementTitleUpdatedCount = 0;
+  diagnostics.enforcementConditionUpdatedCount = 0;
+  diagnostics.enforcementDatasetsUpdatedCount = 0;
+  diagnostics.enforcementConditionNodeCreatedCount = 0;
+  const container = gridlyFindVisibleAlertsContainerForLastMileEnforcement();
+  if (!container) return { ...diagnostics, visibleAlertsContainerFound: false };
+  const canonicalState = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : { activeRecords: [] };
+  const canonicalByStableId = new Map();
+  (Array.isArray(canonicalState.activeRecords) ? canonicalState.activeRecords : []).forEach((record) => {
+    const identity = gridlyResolveCanonicalLiveIncidentIdentity(record);
+    [identity.incidentId, identity.sourceReportId, record?.id, record?.incidentId, record?.incident_id, record?.reportId, record?.report_id, record?.raw?.id, record?.raw?.reportId, record?.raw?.report_id]
+      .map((value) => String(value || "").trim()).filter(Boolean).forEach((id) => { if (!canonicalByStableId.has(id)) canonicalByStableId.set(id, record); });
+  });
+  const cards = Array.from(container.querySelectorAll(".gridly-alert-row[data-gridly-alert-row='true']")).filter((card) => card.getAttribute("data-gridly-alert-hidden") !== "true" && !card.classList?.contains("gridly-alert-empty-state") && gridlyIsElementActuallyVisible(card));
+  diagnostics.enforcementCardCount = cards.length;
+  if (isFinalVisibleAlertCardDomWrite) diagnostics.enforcementFinalDomWriteCardCount = cards.length;
+  cards.forEach((card) => {
+    const incidentId = gridlyResolveVisibleAlertCardIncidentId(card);
+    if (!incidentId) { diagnostics.enforcementMissingIncidentIdCount += 1; return; }
+    const canonicalRecord = canonicalByStableId.get(incidentId);
+    if (!canonicalRecord) { diagnostics.enforcementCanonicalRecordNotFoundCount += 1; return; }
+    diagnostics.enforcementMatchedCanonicalRecordCount += 1;
+    const identity = gridlyResolveCanonicalLiveIncidentIdentity(canonicalRecord);
+    const presentation = gridlyBuildCanonicalLiveIncidentPresentation(canonicalRecord);
+    const expectedIncidentId = String(presentation.incidentId || identity.incidentId || "");
+    const expectedReportId = String(presentation.sourceReportId || identity.sourceReportId || "");
+    const expectedHazardType = String(presentation.hazardType || identity.hazardType || "");
+    const expectedConditionFamily = String(presentation.conditionFamily || identity.conditionFamily || "");
+    const expectedTitle = String(presentation.title || "");
+    const expectedCondition = String(presentation.conditionLabel || "");
+    const titleNode = card.querySelector("[data-gridly-alert-title-node='true'], [data-gridly-alert-title-text='true'], .gridly-alert-title, strong");
+    if (!titleNode) diagnostics.enforcementTitleNodeMissingCount += 1;
+    let conditionNode = card.querySelector("[data-gridly-alert-condition-node='true'], [data-gridly-alert-condition-line='true'], .gridly-alert-situation-summary");
+    const currentTitle = String(titleNode?.textContent || "").trim();
+    const currentCondition = String(conditionNode?.textContent || "").trim();
+    const fullyCanonical =
+      card.dataset.gridlyCanonicalPresentation === "true" &&
+      card.dataset.gridlyCanonicalPresentationLocked === "true" &&
+      card.dataset.gridlyCanonicalIncidentId === expectedIncidentId &&
+      card.dataset.gridlySourceReportId === expectedReportId &&
+      card.dataset.gridlyCanonicalHazardType === expectedHazardType &&
+      card.dataset.gridlyCanonicalConditionFamily === expectedConditionFamily &&
+      card.dataset.gridlyCanonicalTitle === expectedTitle &&
+      card.dataset.gridlyCanonicalConditionLabel === expectedCondition &&
+      card.dataset.gridlyTitleSource === "last-mile-canonical-enforcement" &&
+      card.dataset.gridlyConditionSource === "last-mile-canonical-enforcement" &&
+      card.dataset.gridlyRendererSource === "visible-alert-dom-enforcement" &&
+      currentTitle === expectedTitle &&
+      currentCondition === expectedCondition;
+    if (fullyCanonical === true) { diagnostics.enforcementFullyCanonicalBeforeCount += 1; diagnostics.enforcementAlreadyCanonicalCount += 1; return; }
+    diagnostics.enforcementPartiallyCanonicalCount += 1;
+    if (titleNode && currentTitle !== expectedTitle) diagnostics.enforcementTitleUpdatedCount += 1;
+    if (!conditionNode && titleNode) {
+      conditionNode = document.createElement("div");
+      conditionNode.className = "gridly-alert-situation-summary gridly-alert-subtitle";
+      conditionNode.setAttribute("data-gridly-alert-condition-line", "true");
+      conditionNode.setAttribute("data-gridly-alert-condition-node", "true");
+      titleNode.insertAdjacentElement("afterend", conditionNode);
+      diagnostics.enforcementConditionNodeCreatedCount += 1;
+    }
+    const conditionBeforeWrite = String(conditionNode?.textContent || "").trim();
+    if (conditionNode && conditionBeforeWrite !== expectedCondition) diagnostics.enforcementConditionUpdatedCount += 1;
+    if (titleNode) { titleNode.textContent = expectedTitle; titleNode.setAttribute("data-gridly-alert-title-node", "true"); }
+    if (conditionNode) { conditionNode.textContent = expectedCondition; conditionNode.setAttribute("data-gridly-alert-condition-node", "true"); }
+    card.dataset.gridlyCanonicalPresentation = "true";
+    card.dataset.gridlyCanonicalPresentationLocked = "true";
+    card.dataset.gridlyCanonicalIncidentId = expectedIncidentId;
+    card.dataset.gridlySourceReportId = expectedReportId;
+    card.dataset.gridlyCanonicalHazardType = expectedHazardType;
+    card.dataset.gridlyCanonicalConditionFamily = expectedConditionFamily;
+    card.dataset.gridlyCanonicalTitle = expectedTitle;
+    card.dataset.gridlyCanonicalConditionLabel = expectedCondition;
+    card.dataset.gridlyTitleSource = "last-mile-canonical-enforcement";
+    card.dataset.gridlyConditionSource = "last-mile-canonical-enforcement";
+    card.dataset.gridlyRendererSource = "visible-alert-dom-enforcement";
+    diagnostics.enforcementDatasetsUpdatedCount += 1;
+    diagnostics.enforcementUpdatedCount += 1;
+  });
+  if (isFinalVisibleAlertCardDomWrite) diagnostics.enforcementFinalDomWriteUpdatedCount = diagnostics.enforcementUpdatedCount;
+  return { ...diagnostics, visibleAlertsContainerFound: true };
+}
+
+============================================================
+FUNCTION: gridlyFindVisibleAlertsContainerForLastMileEnforcement
+FOUND: True
+LINES: 74213-74226
+============================================================
+function gridlyFindVisibleAlertsContainerForLastMileEnforcement() {
+  if (typeof document === "undefined") return null;
+  const selectors = [
+    "#gridlyPortraitV2Sheet[data-active-sheet='alerts'] .gridly-alerts-active",
+    "#gridlyPortraitV2SheetBody .gridly-alerts-active",
+    "#gridlyPortraitV2Sheet .gridly-alerts-active",
+    ".gridly-alerts-active"
+  ];
+  for (const selector of selectors) {
+    const visible = Array.from(document.querySelectorAll(selector)).find((node) => gridlyIsElementActuallyVisible(node));
+    if (visible) return visible;
+  }
+  return null;
+}
+
+============================================================
+FUNCTION: gridlyIsElementActuallyVisible
+FOUND: True
+LINES: 74115-74130
+============================================================
+function gridlyIsElementActuallyVisible(element) {
+  if (!element || element.isConnected === false) return false;
+  if (element.hidden === true || String(element.getAttribute?.("aria-hidden") || "").toLowerCase() === "true") return false;
+  const style = typeof getComputedStyle === "function" ? getComputedStyle(element) : null;
+  if (style && (style.display === "none" || style.visibility === "hidden" || style.opacity === "0")) return false;
+  const rect = typeof element.getBoundingClientRect === "function" ? element.getBoundingClientRect() : null;
+  if (rect && !(rect.width > 0 && rect.height > 0)) return false;
+  let ancestor = element.parentElement;
+  while (ancestor) {
+    if (ancestor.hidden === true || String(ancestor.getAttribute?.("aria-hidden") || "").toLowerCase() === "true") return false;
+    const ancestorStyle = typeof getComputedStyle === "function" ? getComputedStyle(ancestor) : null;
+    if (ancestorStyle && (ancestorStyle.display === "none" || ancestorStyle.visibility === "hidden" || ancestorStyle.opacity === "0")) return false;
+    ancestor = ancestor.parentElement;
+  }
+  return true;
+}
+
+============================================================
+FUNCTION: RenderCompleteAlertCard
+FOUND: False
+LINES: -
+============================================================
+Function not found using a standard function declaration.
