@@ -16,6 +16,7 @@
   function sourceKey(episode, index) { return clean(episode?.episodeCandidateId) || clean(episode?.incidentCandidateKey) || `episode-index:${index}`; }
   function completedSort(a, b) { return String(a.firstObservedAt || '').localeCompare(String(b.firstObservedAt || '')) || String(a.episodeCandidateId || '').localeCompare(String(b.episodeCandidateId || '')) || String(a.incidentCandidateKey || '').localeCompare(String(b.incidentCandidateKey || '')); }
   function isMalformedEpisode(record) { return !record || typeof record !== 'object' || Array.isArray(record) || !clean(record.episodeCandidateId || record.incidentCandidateKey); }
+  function isPassiveHistoricalRecord(record) { return record?.sourceClassification === 'historical_sidecar' || record?.sourceClassification === 'passive_history' || record?.sourceClassification === 'non_live_record' || record?.passiveOnly === true || record?.nonLiveRecord === true; }
   function isSeedRecord(record) { return record?.sourceMode === SOURCE_MODES.certification || record?.certificationSeed === true || String(record?.episodeCandidateId || '').includes('lp053') || String(record?.episodeCandidateId || '').includes('seed'); }
   function isCompleted(record) { return record?.resolutionState === COMPLETED_STATE; }
   function isActive(record) { return record?.resolutionState === 'active_observed' || record?.resolutionState === 'active' || record?.active === true; }
@@ -28,14 +29,21 @@
       ['gridlyHistoricalEpisodeRuntime.getEpisodes', () => globalScope.gridlyHistoricalEpisodeRuntime?.getEpisodes?.()],
       ['gridlyHistoricalEpisodeResolverRuntime.getCompletedEpisodes', () => globalScope.gridlyHistoricalEpisodeResolverRuntime?.getCompletedEpisodes?.()],
       ['gridlyHistoricalEpisodeResolverRuntime.getEpisodes', () => globalScope.gridlyHistoricalEpisodeResolverRuntime?.getEpisodes?.()],
-      ['gridlyCompletedHistoricalEpisodes', () => globalScope.gridlyCompletedHistoricalEpisodes],
-      ['gridlyHistoricalEpisodeRecords', () => globalScope.gridlyHistoricalEpisodeRecords],
-      ['__gridlyHistoricalEpisodeRecords', () => globalScope.__gridlyHistoricalEpisodeRecords]
+      ['gridlyCompletedHistoricalEpisodes(passive_only)', () => safeArray(globalScope.gridlyCompletedHistoricalEpisodes).filter(isPassiveHistoricalRecord)],
+      ['gridlyHistoricalEpisodeRecords(passive_only)', () => safeArray(globalScope.gridlyHistoricalEpisodeRecords).filter(isPassiveHistoricalRecord)],
+      ['__gridlyHistoricalEpisodeRecords(passive_only)', () => safeArray(globalScope.__gridlyHistoricalEpisodeRecords).filter(isPassiveHistoricalRecord)]
     ];
+    let emptyRuntimeSource = null;
     for (const [name, getter] of candidates) {
-      try { const records = getter(); if (Array.isArray(records)) return { available: true, detected: true, records, sourceVersion: name }; } catch (error) {}
+      try {
+        const records = getter();
+        if (Array.isArray(records)) {
+          if (records.length > 0) return { available: true, detected: true, records, sourceVersion: name };
+          if (!emptyRuntimeSource) emptyRuntimeSource = name;
+        }
+      } catch (error) {}
     }
-    return { available: true, detected: true, records: [], sourceVersion: 'no_runtime_records_detected' };
+    return { available: true, detected: true, records: [], sourceVersion: emptyRuntimeSource || 'no_runtime_records_detected' };
   }
 
   function buildSourceSnapshot(options = {}) {
