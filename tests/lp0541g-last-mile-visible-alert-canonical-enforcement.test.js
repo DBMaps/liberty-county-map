@@ -50,8 +50,8 @@ notIncludes(enforcement, 'nearest', 'enforcement does not guess by nearest locat
 notIncludes(enforcement, 'crossingId)', 'enforcement does not resolve visible cards by crossing ID alone');
 includes(enforcement, 'const identity = gridlyResolveCanonicalLiveIncidentIdentity(canonicalRecord);', 'identity is resolved from the exact canonical record');
 includes(enforcement, 'const presentation = gridlyBuildCanonicalLiveIncidentPresentation(canonicalRecord);', 'presentation is rebuilt from the exact canonical record');
-includes(enforcement, 'titleNode.textContent = presentation.title || "Road Hazard";', 'legacy Flooding/Crossing Blocked title is overwritten by canonical title');
-includes(enforcement, 'conditionNode.textContent = presentation.conditionLabel || presentation.title || "Road Hazard";', 'legacy/missing condition is overwritten by canonical condition');
+includes(enforcement, 'titleNode.textContent = expectedTitle;', 'legacy Flooding/Crossing Blocked title is overwritten by canonical title');
+includes(enforcement, 'conditionNode.textContent = expectedCondition;', 'legacy/missing condition is overwritten by canonical condition');
 includes(enforcement, 'document.createElement("div")', 'missing condition node is created');
 includes(enforcement, 'titleNode.insertAdjacentElement("afterend", conditionNode)', 'created condition node is inserted directly under title');
 includes(enforcement, 'card.dataset.gridlyTitleSource = "last-mile-canonical-enforcement";', 'last-mile owns title source');
@@ -85,7 +85,7 @@ includes(source, 'Traffic Backup / Heavy Delay', 'Traffic Backup condition remai
 notIncludes(enforcement, 'Crossing Blocked', 'Flooding cannot retain legacy crossing title in last-mile enforcement');
 notIncludes(enforcement, 'Train Blocking Crossing', 'Traffic Backup cannot retain legacy train-blocking title in last-mile enforcement');
 includes(enforcement, 'return;', 'cards without an incident ID or missing canonical records are reported but not guessed');
-includes(enforcement, 'card.dataset.gridlyCanonicalTitle = String(presentation.title || "");', 'correct canonical cards remain dataset-stable');
-includes(enforcement, 'if (alreadyCanonical) diagnostics.enforcementAlreadyCanonicalCount += 1; else diagnostics.enforcementUpdatedCount += 1;', 'idempotent runs distinguish already-canonical cards from updates');
+includes(enforcement, 'card.dataset.gridlyCanonicalTitle = expectedTitle;', 'correct canonical cards remain dataset-stable');
+includes(enforcement, 'if (fullyCanonical === true) { diagnostics.enforcementFullyCanonicalBeforeCount += 1; diagnostics.enforcementAlreadyCanonicalCount += 1; return; }', 'idempotent runs distinguish already-canonical cards from updates');
 
 console.log('LP054.1G last-mile visible alert canonical enforcement tests passed');
