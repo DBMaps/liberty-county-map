@@ -37473,6 +37473,26 @@ function verifyGridlyPortraitAwarenessSurfaceSync({ textModel = {}, awarenessAre
   return { topSynced, panelSynced, domState, expectedPrimary, expectedSecondary, expectedArea };
 }
 
+function gridlyLp0552RefreshOpenHistoricalSheetForAwarenessChange(reason = "awareness-area-change") {
+  if (typeof document === "undefined") return { available: false, refreshed: false, reason: "document_unavailable" };
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  const body = document.getElementById("gridlyPortraitV2SheetBody");
+  const title = document.getElementById("gridlyPortraitV2SheetTitle");
+  if (!sheet || !body || sheet.dataset?.activeSheet !== "history" || sheet.hidden) return { available: true, refreshed: false, reason: "history_sheet_not_open" };
+  const template = typeof sheetTemplates !== "undefined" ? sheetTemplates.history : null;
+  if (!template || typeof template.html !== "function") return { available: true, refreshed: false, reason: "history_template_unavailable" };
+  const priorText = safeDisplayText(body.textContent || "", "");
+  const priorSubject = safeDisplayText(body.querySelector?.("[data-gridly-history-consumer-subject]")?.textContent || "", "");
+  title.textContent = template.title || "Historical Intelligence";
+  body.innerHTML = template.html() || "";
+  gridlyBindPwaInstallUx?.(body);
+  bindV2SheetActions?.();
+  const nextSubject = safeDisplayText(body.querySelector?.("[data-gridly-history-consumer-subject]")?.textContent || "", "");
+  sheet.dataset.gridlyHistoryRefreshReason = reason;
+  sheet.dataset.gridlyHistoryLastRefreshAt = new Date().toISOString();
+  return { available: true, refreshed: true, behavior: "rerender", reason, priorSubject, nextSubject, stalePriorSubjectRemoved: !priorSubject || priorSubject === nextSubject || !safeDisplayText(body.textContent || "", "").includes(priorSubject), priorTextChanged: priorText !== safeDisplayText(body.textContent || "", "") };
+}
+
 function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-change", options = {}) {
   const syncStartedAt = typeof performance !== "undefined" && typeof performance.now === "function" ? performance.now() : Date.now();
   const summary = typeof buildGridlyCommunityAwarenessIntelligenceSummary === "function"
@@ -37508,6 +37528,7 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
   if (typeof renderUnifiedIncidents === "function" && options?.refreshMapMarkers !== false) {
     renderUnifiedIncidents(`awareness-area-sync:${reason}`);
   }
+  const historicalSheetRefreshResult = gridlyLp0552RefreshOpenHistoricalSheetForAwarenessChange(reason);
 
   const surfaceSync = verifyGridlyPortraitAwarenessSurfaceSync({
     textModel: portraitRefreshResult?.textModel,
@@ -37526,6 +37547,7 @@ function syncGridlyAwarenessAreaSurfacesImmediately(reason = "awareness-area-cha
     activeHazardsInArea: Array.isArray(summary?.activeHazardsInArea) ? summary.activeHazardsInArea.length : 0,
     activeReportsInArea: Array.isArray(summary?.activeReportsInArea) ? summary.activeReportsInArea.length : 0,
     pulseVisible: Boolean(communityPulseState?.pulseVisible),
+    historicalSheetRefreshResult,
     surfaceDomState: surfaceSync.domState,
     expectedTopAwarenessPrimary: surfaceSync.expectedPrimary,
     expectedTopAwarenessSecondary: surfaceSync.expectedSecondary
@@ -61690,7 +61712,7 @@ function gridlyLp0552PresentMomentComparisonReason(relationship = "unavailable")
 }
 
 function gridlyLp0544BuildContextStatement(pattern = {}, classification = "no_context_match") {
-  const subject = gridlyLp0552ResolveConsumerSubjectLabel(pattern).label;
+  const subject = safeDisplayText(pattern.finalConsumerSubjectLabel || gridlyLp0552ResolveConsumerSubjectLabel(pattern).label, "Selected area");
   const day = pattern.supportedPatternDay || pattern.localDayClassification || "";
   const dayPlural = day ? `${day}s` : "the common day";
   const windowText = pattern.fixtureRenderedLocalWindow || (Number.isFinite(pattern.supportedWindowStartMinutes) && Number.isFinite(pattern.supportedWindowEndMinutes) ? `${gridlyLp0543FormatConsumerLocalMinute(pattern.supportedWindowStartMinutes)} to ${gridlyLp0543FormatConsumerLocalMinute(pattern.supportedWindowEndMinutes)}` : "");
@@ -61740,7 +61762,7 @@ function gridlyLp0544ApplyContextToPattern(pattern = {}, options = {}) {
     }
   }
   const heading = classification === "active_window" ? "Relevant Right Now" : (classification === "approaching_window" ? "Coming Up Soon" : (classification === "recently_ended_window" ? "Earlier Today" : "Typical Pattern"));
-  return { ...pattern, consumerNowIso: now.consumerNowIso, consumerLocalDay: now.consumerLocalDay, consumerLocalMinutes: now.consumerLocalMinutes, supportedPatternDay: supportedDay, supportedWindowStartMinutes: Number.isFinite(start) ? start : null, supportedWindowEndMinutes: Number.isFinite(end) ? end : null, contextClassification: classification, overnightWindow: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start), nextSupportedCalendarDay: gridlyLp0544NextWeekday(supportedDay), afterMidnightContinuation: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start && now.consumerLocalDay === gridlyLp0544NextWeekday(supportedDay) && Number.isFinite(now.consumerLocalMinutes) && now.consumerLocalMinutes <= end), effectivePatternDay: supportedDay, minutesUntilWindow, minutesSinceWindow, contextHeading: heading, contextStatement: gridlyLp0544BuildContextStatement({ ...pattern, supportedPatternDay: supportedDay, supportedWindowStartMinutes: start, supportedWindowEndMinutes: end }, classification), contextRelevant: ["active_window", "approaching_window", "recently_ended_window"].includes(classification), contextPrecisionSupported: precision };
+  return { ...pattern, consumerNowIso: now.consumerNowIso, consumerLocalDay: now.consumerLocalDay, consumerLocalMinutes: now.consumerLocalMinutes, supportedPatternDay: supportedDay, supportedWindowStartMinutes: Number.isFinite(start) ? start : null, supportedWindowEndMinutes: Number.isFinite(end) ? end : null, contextClassification: classification, overnightWindow: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start), nextSupportedCalendarDay: gridlyLp0544NextWeekday(supportedDay), afterMidnightContinuation: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start && now.consumerLocalDay === gridlyLp0544NextWeekday(supportedDay) && Number.isFinite(now.consumerLocalMinutes) && now.consumerLocalMinutes <= end), effectivePatternDay: supportedDay, minutesUntilWindow, minutesSinceWindow, contextHeading: heading, contextStatement: gridlyLp0544BuildContextStatement({ ...pattern, supportedPatternDay: supportedDay, supportedWindowStartMinutes: start, supportedWindowEndMinutes: end, finalConsumerSubjectLabel: pattern.finalConsumerSubjectLabel }, classification), contextRelevant: ["active_window", "approaching_window", "recently_ended_window"].includes(classification), contextPrecisionSupported: precision };
 }
 
 function gridlyLp0552ConsumerSubjectCandidateValid(value = "") {
@@ -61789,6 +61811,30 @@ function gridlyLp0552ResolveConsumerSubjectLabel(source = {}, options = {}) {
   const awareness = gridlyLp0543SafeIdentityCandidate(options?.awarenessArea?.displayName || options?.awarenessArea?.name || options?.awarenessArea?.label || options?.currentAwarenessContext?.label || "");
   if (gridlyLp0552ConsumerSubjectCandidateValid(awareness)) return { label: awareness, source: "governed_awareness_label", fallbackUsed: true, fallbackReason: "canonical_subject_missing", canonical: false };
   return { label: "Selected area", source: "safe_generic_fallback", fallbackUsed: true, fallbackReason: "no_safe_governed_subject", canonical: false };
+}
+
+
+function gridlyLp0552CurrentAwarenessIdentitySnapshot(options = {}) {
+  const resolved = gridlyLp0552CanonicalAwarenessSubjectCandidates(options);
+  const identity = resolved.identity || {};
+  const label = gridlyLp0552ResolveConsumerSubjectLabel({}, options).label;
+  return {
+    subjectLabel: label,
+    identity: [identity.canonicalCountyKey || identity.countyId || "", identity.awarenessAreaId || "", identity.selectionScope || "", label].join("|")
+  };
+}
+
+function gridlyLp0552PatternWithFinalConsumerSubject(pattern = {}, subjectLabel = "Selected area") {
+  const prior = safeDisplayText(pattern.resolvedConsumerSubject || pattern.authoritativePatternSubject || pattern.location || "", "");
+  const finalLabel = safeDisplayText(subjectLabel, "Selected area");
+  const statements = (Array.isArray(pattern.statements) ? pattern.statements : []).map((line, index) => {
+    const text = safeDisplayText(line, "");
+    if (index !== 0 || !text) return text;
+    if (prior && text.startsWith(prior)) return `${finalLabel}${text.slice(prior.length)}`;
+    if (/^(?:Selected area|This location|This area)\b/i.test(text)) return text.replace(/^(?:Selected area|This location|This area)\b/i, finalLabel);
+    return text;
+  });
+  return { ...pattern, finalConsumerSubjectLabel: finalLabel, location: finalLabel, resolvedConsumerSubject: finalLabel, authoritativePatternSubject: finalLabel, statements };
 }
 
 function gridlyLp0552HistoricalPeakWindowLabel(pattern = {}) {
@@ -63173,9 +63219,11 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   if ((protectedState.historyUiEnabled === false || protectedState.historicalReadsEnabled === false) && options?.developerProtectedMode === true) return gridlyHistoricalPanelProtectedStateMessage();
   const visiblePattern = gridlyLp0543BuildVisibleHistoricalPatternModel(options);
   if (visiblePattern.patternResultAvailable) {
-    const pattern = gridlyLp0544ApplyContextToPattern(options?.patternModel || visiblePattern.pattern, options);
-    const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel(pattern, options);
+    const rawPattern = options?.patternModel || visiblePattern.pattern;
+    const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel(rawPattern, options);
     const subjectLabel = subjectResolution.label;
+    const pattern = gridlyLp0544ApplyContextToPattern(gridlyLp0552PatternWithFinalConsumerSubject(rawPattern, subjectLabel), options);
+    const awarenessSnapshot = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
     const relationship = gridlyLp0552PresentMomentRelationship(pattern.contextClassification || "no_context_match", pattern);
     const peakWindowLabel = gridlyLp0552HistoricalPeakWindowLabel(pattern);
     const attrs = [
@@ -63189,7 +63237,9 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       `data-gridly-history-pattern-time-window="${sanitizeText(peakWindowLabel || "")}"`,
       `data-gridly-history-pattern-duration="${sanitizeText(pattern.renderedDurationText || "")}"`,
       `data-gridly-history-pattern-evidence="${sanitizeText(pattern.classification || "")}"`,
-      `data-gridly-history-context-classification="${sanitizeText(pattern.contextClassification || "no_context_match")}"`
+      `data-gridly-history-context-classification="${sanitizeText(pattern.contextClassification || "no_context_match")}"`,
+      `data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}"`,
+      `data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}"`
     ].join(" ");
     const statements = pattern.statements.map((line, index) => {
       const role = index === 0 ? "subject" : (index === 1 ? "time-window" : (index === 2 && /^It usually clears within/i.test(line) ? "duration" : "evidence"));
@@ -63200,7 +63250,8 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   if (visiblePattern.evidenceClassification === "no_history" || visiblePattern.evidenceClassification === "insufficient_history") {
     const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel({ ...(visiblePattern.pattern || {}), lp0545Context: visiblePattern.lp0545Context }, options);
     const subjectLabel = subjectResolution.label;
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Current-time context</strong><p data-gridly-history-context-statement="true">${sanitizeText(`Not enough cleared reports are available to compare the current time with a reliable local pattern for ${subjectLabel}.`)}</p><strong data-gridly-history-no-data-heading="true">Not enough history yet</strong><p data-gridly-history-no-data-statement="true">More cleared community reports are needed before Gridly identifies a reliable local pattern for ${sanitizeText(subjectLabel)}.</p><strong>Why it matters</strong><p data-gridly-history-why-it-matters="true">${sanitizeText(gridlyLp0552WhyItMattersLine(subjectLabel))}</p></div></div>`;
+    const awarenessSnapshot = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
+    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}" data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Current-time context</strong><p data-gridly-history-context-statement="true">${sanitizeText(`Not enough cleared reports are available to compare the current time with a reliable local pattern for ${subjectLabel}.`)}</p><strong data-gridly-history-no-data-heading="true">Not enough history yet</strong><p data-gridly-history-no-data-statement="true">More cleared community reports are needed before Gridly identifies a reliable local pattern for ${sanitizeText(subjectLabel)}.</p><strong>Why it matters</strong><p data-gridly-history-why-it-matters="true">${sanitizeText(gridlyLp0552WhyItMattersLine(subjectLabel))}</p></div></div>`;
   }
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
@@ -63242,6 +63293,18 @@ function gridlyLp0552HistoricalSubjectPresentMomentAudit(options = {}) {
   const text = safeDisplayText(String(sheet?.textContent || effectiveHtml || "").replace(/<[^>]+>/g, " "), "");
   const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel({ ...pattern, lp0545Context: context }, options);
   const visibleSheetSubjectLabel = safeDisplayText(sheet?.querySelector?.("[data-gridly-history-consumer-subject]")?.textContent || (effectiveHtml.match(/data-gridly-history-consumer-subject="true">([^<]+)/)?.[1] || ""), "");
+  const recurringPatternSubjectLabel = safeDisplayText(sheet?.querySelector?.('[data-gridly-history-pattern-statement="subject"]')?.textContent?.match(/^(.*?)(?:\s+is\s|\s+has\s)/i)?.[1] || effectiveHtml.match(/data-gridly-history-pattern-subject="([^"]*)"/)?.[1] || "", "");
+  const whyItMattersSubjectLabel = safeDisplayText(sheet?.querySelector?.('[data-gridly-history-why-it-matters]')?.textContent?.match(/historical context for (.*?) before you go/i)?.[1] || "", "");
+  const allConsumerSubjectReferences = [visibleSheetSubjectLabel, recurringPatternSubjectLabel, whyItMattersSubjectLabel].filter(Boolean);
+  const allSubjectReferencesAgree = allConsumerSubjectReferences.length > 0 && allConsumerSubjectReferences.every((value) => value === allConsumerSubjectReferences[0]);
+  const genericSubjectPlaceholderCount = (text.match(/\b(?:Selected area|This location|This area)\b/g) || []).length;
+  const currentAwareness = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
+  const currentAwarenessSubjectLabel = currentAwareness.subjectLabel;
+  const sheetRenderAwarenessIdentity = safeDisplayText(sheet?.getAttribute?.("data-gridly-history-render-awareness-identity") || effectiveHtml.match(/data-gridly-history-render-awareness-identity="([^"]*)"/)?.[1] || "", "");
+  const currentAwarenessIdentity = currentAwareness.identity;
+  const sheetAwarenessIdentityMatchesCurrent = Boolean(sheetRenderAwarenessIdentity && currentAwarenessIdentity && sheetRenderAwarenessIdentity === currentAwarenessIdentity);
+  const visibleSubjectMatchesCurrentAwareness = Boolean(visibleSheetSubjectLabel && currentAwarenessSubjectLabel && visibleSheetSubjectLabel === currentAwarenessSubjectLabel);
+  const staleSubjectDetected = Boolean(visibleSheetSubjectLabel && currentAwarenessSubjectLabel && visibleSheetSubjectLabel !== currentAwarenessSubjectLabel);
   const now = gridlyLp0544ResolveConsumerNow(options);
   const peakWindowLabel = gridlyLp0552HistoricalPeakWindowLabel(pattern);
   const relationship = gridlyLp0552PresentMomentRelationship(pattern.contextClassification || "no_context_match", pattern);
@@ -63277,12 +63340,18 @@ function gridlyLp0552HistoricalSubjectPresentMomentAudit(options = {}) {
   if (predictiveLanguageDetected) certificationBlockers.push("predictive_language_detected");
   if (liveStatusClaimDetected) certificationBlockers.push("live_condition_claim_detected");
   if (genericThisLocationDetected) certificationBlockers.push("generic_placeholder_detected");
+  if (!allSubjectReferencesAgree) certificationBlockers.push("mixed_subject_references");
+  if (genericSubjectPlaceholderCount > 0 && subjectResolution.label !== "Selected area") certificationBlockers.push("generic_subject_placeholder_visible");
+  if (staleSubjectDetected) certificationBlockers.push("stale_sheet_awareness_subject");
+  if (!sheetAwarenessIdentityMatchesCurrent) certificationBlockers.push("sheet_awareness_identity_mismatch");
+  if (!visibleSubjectMatchesCurrentAwareness) certificationBlockers.push("current_awareness_subject_mismatch");
+  if (options?.expectCrossingEntryPoint === true || options?.sourceSurface === "crossing") certificationBlockers.push("unsupported_crossing_entry_point_expectation");
   if (!/Historical Intelligence is context only — not a live incident or prediction\./.test(text)) certificationBlockers.push("historical_disclaimer_missing");
   const fallbackExpected = options.expectFallback === true || options.expectedFallback === true;
   if (genericFallbackDisplayed && !fallbackExpected) certificationBlockers.push("unexpected_generic_fallback_displayed");
   const safe = certificationBlockers.length === 0;
   return {
-    available: true, sheetOpen: /gridly-historical-intelligence-sheet/.test(effectiveHtml), resolvedContextType: context?.contextType || (pattern.location ? "historical_location" : "unavailable"), resolvedContextSubject: context?.consumerSubject || pattern.authoritativePatternSubject || pattern.resolvedConsumerSubject || "", resolvedConsumerSubjectLabel: subjectResolution.label, visibleSheetSubjectLabel, subjectMatchesVisibleSheet, subjectCandidateValidityPass, genericFallbackDisplayed, subjectLabelSource: subjectResolution.source, subjectFallbackUsed: Boolean(subjectResolution.fallbackUsed), subjectFallbackReason: subjectResolution.fallbackReason || "none", provenanceAgreement, genericThisLocationDetected, internalIdLeakDetected, currentLocalDateTime: now.consumerNowIso, currentDayLabel: now.consumerLocalDay, currentTimeLabel: now.consumerLocalTime, historicalPeakWindowAvailable: Boolean(peakWindowLabel && pattern.contextPrecisionSupported), historicalPeakWindowLabel: peakWindowLabel, currentDayMatchesHistoricalDay, currentTimeWithinHistoricalWindow, presentMomentComparisonApplied: ["within_common_window", "near_common_window", "different_common_day", "same_day_outside_window"].includes(relationship), presentMomentRelationship: relationship, presentMomentComparisonReason: comparisonReason, presentMomentConsumerLine: consumerLine, consumerLineExplainsDayRelationship, consumerLineExplainsTimeRelationship, consumerLineNamesResolvedSubject, predictiveLanguageDetected, liveStatusClaimDetected, historicalDisclaimerPresent: /Historical Intelligence is context only — not a live incident or prediction\./.test(text), canonicalSubjectAuthorityPreserved, historicalModelUntouched: true, protectedSystemsSafe: true, certificationBlockers, certificationBlockerCount: certificationBlockers.length, certificationStatus: safe ? "PASS" : "REVIEW", safeToProceed: safe, failedChecks: certificationBlockers
+    available: true, sheetOpen: /gridly-historical-intelligence-sheet/.test(effectiveHtml), resolvedContextType: context?.contextType || (pattern.location ? "historical_location" : "unavailable"), resolvedContextSubject: context?.consumerSubject || pattern.authoritativePatternSubject || pattern.resolvedConsumerSubject || "", resolvedConsumerSubjectLabel: subjectResolution.label, visibleSheetSubjectLabel, recurringPatternSubjectLabel, whyItMattersSubjectLabel, allConsumerSubjectReferences, allSubjectReferencesAgree, genericSubjectPlaceholderCount, staleSubjectDetected, currentAwarenessSubjectLabel, visibleSubjectMatchesCurrentAwareness, sheetRenderAwarenessIdentity, currentAwarenessIdentity, sheetAwarenessIdentityMatchesCurrent, subjectMatchesVisibleSheet, subjectCandidateValidityPass, genericFallbackDisplayed, subjectLabelSource: subjectResolution.source, subjectFallbackUsed: Boolean(subjectResolution.fallbackUsed), subjectFallbackReason: subjectResolution.fallbackReason || "none", provenanceAgreement, genericThisLocationDetected, internalIdLeakDetected, currentLocalDateTime: now.consumerNowIso, currentDayLabel: now.consumerLocalDay, currentTimeLabel: now.consumerLocalTime, historicalPeakWindowAvailable: Boolean(peakWindowLabel && pattern.contextPrecisionSupported), historicalPeakWindowLabel: peakWindowLabel, currentDayMatchesHistoricalDay, currentTimeWithinHistoricalWindow, presentMomentComparisonApplied: ["within_common_window", "near_common_window", "different_common_day", "same_day_outside_window"].includes(relationship), presentMomentRelationship: relationship, presentMomentComparisonReason: comparisonReason, presentMomentConsumerLine: consumerLine, consumerLineExplainsDayRelationship, consumerLineExplainsTimeRelationship, consumerLineNamesResolvedSubject, predictiveLanguageDetected, liveStatusClaimDetected, historicalDisclaimerPresent: /Historical Intelligence is context only — not a live incident or prediction\./.test(text), canonicalSubjectAuthorityPreserved, historicalModelUntouched: true, protectedSystemsSafe: true, certificationBlockers, certificationBlockerCount: certificationBlockers.length, certificationStatus: safe ? "PASS" : "REVIEW", safeToProceed: safe, failedChecks: certificationBlockers
   };
 }
 

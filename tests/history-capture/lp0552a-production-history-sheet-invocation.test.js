@@ -8,7 +8,7 @@ assert.match(source, /const templateHtml = typeof template\.html === "function" 
 assert.match(source, /gridlyLp0546ResolveCurrentAwarenessContext\(options\)/, 'LP055.2A consumes the existing LP054.6 current awareness context chain');
 assert.match(source, /canonical_awareness_community/, 'Dayton, Liberty, and Cleveland community subjects can resolve from canonical awareness');
 assert.match(source, /canonical_awareness_countywide/, 'Liberty County countywide subjects can resolve from canonical awareness');
-assert.match(source, /historical_context_crossing/, 'crossing-originated sheets prefer certified crossing context subjects');
+assert.doesNotMatch(source, /crossing-originated History sheet certification requirement/i, 'LP055.2 certification no longer requires unsupported crossing-originated History entry points');
 assert.match(source, /governed_awareness_label/, 'governed awareness display label remains the honest fallback before Selected area');
 assert.match(source, /safe_generic_fallback/, 'Selected area is explicitly reported as final safe fallback only');
 assert.match(source, /gridlyLp0552ConsumerSubjectCandidateValid/, 'generic and internal subject candidates are rejected before provenance is assigned');
