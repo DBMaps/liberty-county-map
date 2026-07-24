@@ -61136,9 +61136,9 @@ const GRIDLY_HISTORICAL_INTELLIGENCE_LANGUAGE = Object.freeze({
       : "Community members have repeatedly reported a road issue here."
   }),
   no_history: Object.freeze({
-    title: "Not Enough History Yet",
+    title: "Not enough history yet",
     category: "History",
-    description: () => "Gridly will show local patterns here after more cleared reports are collected."
+    description: () => "More cleared community reports are needed before Gridly identifies a reliable local pattern."
   })
 });
 
@@ -62660,7 +62660,7 @@ function gridlyLp0545HistoricalContextBindingAudit(options = {}) {
   const patternResultAvailable = Boolean(render.modelResult.patternResultAvailable);
   const insufficientHistoryStateVisible = /Not enough history yet/i.test(render.html);
   const modelNoDataHeading = patternResultAvailable ? "" : "Not enough history yet";
-  const modelNoDataStatement = patternResultAvailable ? "" : "Gridly needs more community observations before identifying a reliable pattern here.";
+  const modelNoDataStatement = patternResultAvailable ? "" : "More cleared community reports are needed before Gridly identifies a reliable local pattern here.";
   const domNoDataHeading = render.dom.noDataHeading || "";
   const domNoDataStatement = render.dom.noDataStatement || "";
   const noDataHeadingAgreement = patternResultAvailable || modelNoDataHeading === domNoDataHeading;
@@ -63105,15 +63105,15 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       const role = index === 0 ? "subject" : (index === 1 ? "time-window" : (index === 2 && /^It usually clears within/i.test(line) ? "duration" : "evidence"));
       return `<p data-gridly-history-pattern-statement="${role}">${sanitizeText(line)}</p>`;
     }).join("");
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(pattern.resolvedConsumerSubject || pattern.location || "This location")}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">${sanitizeText(pattern.contextHeading || "Typical Pattern")}</strong>${pattern.contextStatement ? `<p data-gridly-history-context-statement="true">${sanitizeText(pattern.contextStatement)}</p>` : ""}${statements}</div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(pattern.resolvedConsumerSubject || pattern.location || "This location")}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">${sanitizeText(pattern.contextHeading || "Typical Pattern")}</strong>${pattern.contextStatement ? `<p data-gridly-history-context-statement="true">${sanitizeText(pattern.contextStatement)}</p>` : ""}${statements}</div></div>`;
   }
   if (visiblePattern.evidenceClassification === "no_history" || visiblePattern.evidenceClassification === "insufficient_history") {
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true" data-gridly-history-context-subject="${sanitizeText(visiblePattern.pattern?.resolvedConsumerSubject || visiblePattern.lp0545Context?.consumerSubject || "This location")}"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(visiblePattern.pattern?.resolvedConsumerSubject || visiblePattern.lp0545Context?.consumerSubject || "This location")}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-no-data-heading="true">Not enough history yet</strong><p data-gridly-history-no-data-statement="true">Gridly needs more community observations before identifying a reliable pattern here.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true" data-gridly-history-context-subject="${sanitizeText(visiblePattern.pattern?.resolvedConsumerSubject || visiblePattern.lp0545Context?.consumerSubject || "This location")}"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(visiblePattern.pattern?.resolvedConsumerSubject || visiblePattern.lp0545Context?.consumerSubject || "This location")}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-no-data-heading="true">Not enough history yet</strong><p data-gridly-history-no-data-statement="true">More cleared community reports are needed before Gridly identifies a reliable local pattern here.</p></div></div>`;
   }
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
-    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not Enough History Yet</strong><p>Gridly will show local patterns here after more cleared reports are collected.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><div class="gridly-historical-intelligence-empty"><strong>Not enough history yet</strong><p>More cleared community reports are needed before Gridly identifies reliable local patterns.</p></div></div>`;
   }
   const rows = rankedFindings.map((finding, index) => {
     const language = getGridlyIntelligencePreviewLanguage(finding.category);
@@ -63135,9 +63135,9 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       communityMembers ? `<div class="gridly-historical-intelligence-stat"><span>Reported by</span><strong>${sanitizeText(`${communityMembers} community ${communityMembers === 1 ? "member" : "members"}`)}</strong></div>` : `<div class="gridly-historical-intelligence-stat"><span>Community reports</span><strong>${sanitizeText(`${count} ${count === 1 ? "report" : "reports"}`)}</strong></div>`,
       lastSeen ? `<div class="gridly-historical-intelligence-stat gridly-historical-intelligence-stat-muted"><span>Last reported</span><strong>${sanitizeText(lastSeen)}</strong></div>` : ""
     ].filter(Boolean).join("");
-    return `<details class="gridly-historical-intelligence-row" data-history-row="${index + 1}"><summary class="gridly-historical-intelligence-summary"><span class="gridly-historical-intelligence-row-copy"><span class="gridly-historical-intelligence-category">${category}</span><strong>${rowTitle}</strong><span class="gridly-historical-intelligence-pattern">${patternSubtitle}</span>${summary ? `<span class="gridly-historical-intelligence-line">${summary}</span>` : ""}</span><span class="gridly-historical-intelligence-expand" aria-hidden="true"></span></summary><div class="gridly-historical-intelligence-details"><div class="gridly-historical-intelligence-detail-title"><span>${category}</span><strong>${title}</strong><em>${location}</em></div><div class="gridly-historical-intelligence-stats">${detailLines}</div><p>${supportingCopy}</p></div></details>`;
+    return `<details class="gridly-historical-intelligence-row" data-history-row="${index + 1}"><summary class="gridly-historical-intelligence-summary"><span class="gridly-historical-intelligence-row-copy"><span class="gridly-historical-intelligence-category">${category}</span><strong>${rowTitle}</strong><span class="gridly-historical-intelligence-pattern"><span>Recurring pattern</span>${patternSubtitle}</span>${summary ? `<span class="gridly-historical-intelligence-line"><span>Why it matters</span>${summary}</span>` : ""}</span><span class="gridly-historical-intelligence-expand" aria-hidden="true"></span></summary><div class="gridly-historical-intelligence-details"><div class="gridly-historical-intelligence-detail-title"><span>${category}</span><strong>${title}</strong><em>${location}</em></div><div class="gridly-historical-intelligence-stats">${detailLines}</div><p class="gridly-historical-intelligence-context-note">Past cleared reports only. This is not a live incident or a prediction.</p><p>${supportingCopy}</p></div></details>`;
   }).join("");
-  return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
+  return `<div class="gridly-historical-intelligence-sheet"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local context from cleared community reports helps drivers recognize places that have experienced repeat delays or disruptions in the past.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-note">Historical Intelligence is context only — not a live incident or prediction.</p><div class="gridly-historical-intelligence-list">${rows}</div></div>`;
 }
 
 function gridlyHistoricalIntelligenceFinalRenderAudit(options = {}) {
@@ -63428,12 +63428,12 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
     const dedupedRankedFindings = state.dedupedRankedFindings || state.supportingData?.dedupedRankedFindings || rankedFindings;
     const findingCount = Number(state.findingCount ?? dedupedRankedFindings.length ?? 0);
     const historicalRecordCount = Number(state.supportingData?.historicalRecordCount || 0);
-    const sheetCopy = "Historical Intelligence Local patterns from cleared community reports History Local patterns Not enough history yet Gridly will show local patterns here after more cleared reports are collected.";
+    const sheetCopy = "Historical Intelligence Local context from cleared community reports History Local patterns Not enough history yet More cleared community reports are needed before Gridly identifies reliable local patterns.";
     const noPreviewLanguage = !/simulated/i.test(sheetCopy);
     const avoidedInternalTerms = !/(framework|simulation|score|model|confidence engine|signal)/i.test(sheetCopy);
     return {
       title: "Historical Intelligence",
-      subtitle: "Local patterns from cleared community reports",
+      subtitle: "Local context from cleared community reports",
       chipTitle: state.selectedTitle || "History",
       chipDescription: state.selectedDescription || "Local patterns",
       category: state.selectedCategory || "no_history",
@@ -63465,7 +63465,7 @@ window.gridlyIntelligenceContentAudit = function gridlyIntelligenceContentAudit(
   } catch (error) {
     return {
       title: "Historical Intelligence",
-      subtitle: "Local patterns from cleared community reports",
+      subtitle: "Local context from cleared community reports",
       chipTitle: "History",
       chipDescription: "Local patterns",
       category: "no_history",
@@ -108778,7 +108778,7 @@ function gridlyHistoricalIntelligenceExperienceAudit() {
     { signal: "crossing recurrence", status: crossingGroups.repeated > 0 ? "AVAILABLE" : "DERIVABLE_WHEN_DATA_EXISTS", sourceFields: ["crossingEvents[].crossingId", "crossingName"], currentValue: crossingGroups.repeated, driverValue: "HIGH", intelligenceAssetValue: "HIGH", notes: "Currently generates Frequently Blocked Crossing findings." }
   ];
   const currentListInputs = [
-    { row: "Historical Intelligence list", fieldsUsed: ["dedupedRankedFindings", "categoryLabel", "title", "presentationLocationLabel", "locationLabel", "displayLocation", "referenceRoad", "roadName", "crossingName", "intersection", "nearestRoad", "street", "address", "peakWindowLabel", "averageDurationMinutes", "communityMemberEstimate", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["summary line", "Most reported", "Typical delay", "Usually clears", "formatted last reported"], placeholderFields: ["Not Enough History Yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
+    { row: "Historical Intelligence list", fieldsUsed: ["dedupedRankedFindings", "categoryLabel", "title", "presentationLocationLabel", "locationLabel", "displayLocation", "referenceRoad", "roadName", "crossingName", "intersection", "nearestRoad", "street", "address", "peakWindowLabel", "averageDurationMinutes", "communityMemberEstimate", "count", "latestAt"], source: "buildGridlyHistoricalIntelligenceSheetHtml() from gridlyBuildHistoricalIntelligenceFindings()", derivedFields: ["summary line", "Most reported", "Typical delay", "Usually clears", "formatted last reported"], placeholderFields: ["Not enough history yet empty state"], seededOrDemoFields: seededDataDetected ? ["depends on local history record source"] : [] },
     { row: "Recurring Flooding Location", fieldsUsed: ["hazardEvents", "hazardType", "roadName", "count", "averageDurationMinutes", "latestAt"], source: "hazard history filtered by flood/high water/water and grouped by road", derivedFields: ["recurring_flooding_location", "Usually clears", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["hazardEvents seed/demo records"] : [] },
     { row: "Frequently Blocked Crossing", fieldsUsed: ["crossingEvents", "crossingId", "crossingName", "count", "durationMinutes", "latestAt"], source: "crossing history grouped by crossing location key", derivedFields: ["most_blocked_crossing", "Most reported", "Typical delay", "community report count", "Last reported"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["crossingEvents seed/demo records"] : [] },
     { row: "Community Hotspot", fieldsUsed: ["confirmationCount", "confirmations", "roadName/crossingName", "count", "latestAt"], source: "confirmed crossing/hazard events grouped by road or crossing", derivedFields: ["community_confirmed_hotspot", "communityMemberEstimate", "confirmationCount"], placeholderFields: [], seededOrDemoFields: seededDataDetected ? ["confirmation seed/demo fields"] : [] },
