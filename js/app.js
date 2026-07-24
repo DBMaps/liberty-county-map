@@ -2546,16 +2546,44 @@ function gridlyTravelBriefWeatherLines(weather) {
   return [...new Set(lines.filter(Boolean))].slice(0, 2);
 }
 
+function gridlyTravelBriefSettledFreshnessCopy(prefix, minutes) {
+  const safePrefix = /checked/i.test(prefix || "") ? "Checked" : "Updated";
+  if (Number.isFinite(minutes)) {
+    const rounded = Math.max(0, Math.round(minutes));
+    if (rounded <= 1) return `${safePrefix} just now`;
+    return `${safePrefix} ${rounded} minutes ago`;
+  }
+  return `${safePrefix} just now`;
+}
+
 function gridlyTravelBriefFreshnessLine(records = [], driveTexasRecords = []) {
-  const domFreshness = gridlyTravelBriefCleanLine(typeof gridlyBriefInteractionText === "function" ? gridlyBriefInteractionText("#lastUpdated") : "");
-  if (/updated|minute|checking|reports/i.test(domFreshness)) return domFreshness.replace(/^Reports:\s*/i, "");
+  const domFreshness = gridlyTravelBriefCleanLine(typeof gridlyBriefInteractionText === "function" ? gridlyBriefInteractionText("#lastUpdated") : "").replace(/^Reports:\s*/i, "");
+  const domMinutes = domFreshness.match(/(\d+)\s*(?:m|min|minute|minutes)\s*ago/i);
+  if (/updated/i.test(domFreshness) && domMinutes) return gridlyTravelBriefSettledFreshnessCopy("Updated", Number(domMinutes[1]));
+  if (/updated\s+just now|just now/i.test(domFreshness) && !/checking/i.test(domFreshness)) return gridlyTravelBriefSettledFreshnessCopy(/checked/i.test(domFreshness) ? "Checked" : "Updated");
   const timestamps = records.concat(driveTexasRecords).map((record) => Date.parse(record?.updatedAt || record?.updated_at || record?.lastUpdated || record?.last_updated || record?.createdAt || record?.created_at || record?.submittedAt || record?.startTime || record?.start_time || "")).filter(Number.isFinite);
   if (timestamps.length) {
     const minutes = Math.max(0, Math.round((Date.now() - Math.max(...timestamps)) / 60000));
-    if (minutes <= 1) return "Updated just now.";
-    return `Updated ${minutes} minutes ago.`;
+    return gridlyTravelBriefSettledFreshnessCopy("Updated", minutes);
   }
-  return "Checked just now.";
+  return gridlyTravelBriefSettledFreshnessCopy("Checked");
+}
+
+function gridlyTravelBriefSectionHasActiveIncident(section) {
+  const lines = Array.isArray(section?.lines) ? section.lines.map((line) => gridlyTravelBriefCleanLine(line)).filter(Boolean) : [];
+  const text = lines.join(" ");
+  if (!text || /no community travel conditions reported|no official roadway advisories nearby|no travel-impacting weather/i.test(text)) return false;
+  return /active|reported|blocked|delayed|closed|closure|crash|flood|debris|hazard|construction|traffic|advisory|concern|impact/i.test(text);
+}
+
+function gridlyTravelBriefIncidentActionApplicability(model) {
+  const sections = Array.isArray(model?.sections) ? model.sections : [];
+  const community = sections.find((section) => section?.key === "community");
+  const communityActive = gridlyTravelBriefSectionHasActiveIncident(community);
+  return Object.freeze({
+    confirm: communityActive,
+    markCleared: communityActive
+  });
 }
 
 function gridlyTravelBriefDecisionReason(story = {}, evidence = {}) {
@@ -2648,12 +2676,16 @@ function gridlyLp061DriverDecisionPatternAudit() {
   const lines = Array.isArray(decision?.lines) ? decision.lines.map((line) => String(line || "").trim()).filter(Boolean) : [];
   const renderedSections = typeof document !== "undefined" ? Array.from(document.querySelectorAll("[data-gridly-travel-brief-section]")) : [];
   const renderedFirstKey = renderedSections[0]?.dataset?.gridlyTravelBriefSection || decision?.key || "";
-  const decisionRenderedText = typeof document !== "undefined" ? String(document.querySelector('[data-gridly-travel-brief-section="driver-decision"]')?.textContent || "") : lines.join(" ");
+  const decisionNode = typeof document !== "undefined" ? document.querySelector('[data-gridly-travel-brief-section="driver-decision"]') : null;
+  const decisionRenderedText = typeof document !== "undefined" ? String(decisionNode?.textContent || "") : lines.join(" ");
+  const freshnessNode = decisionNode?.querySelector?.('[data-gridly-decision-role="freshness"]') || null;
+  const confidenceNode = decisionNode?.querySelector?.('[data-gridly-decision-role="confidence"]') || null;
+  const renderedFreshnessText = gridlyTravelBriefCleanLine(freshnessNode?.textContent || lines[3] || "");
+  const renderedConfidenceText = gridlyTravelBriefCleanLine(confidenceNode?.textContent || lines[2] || "");
   const actionNodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("button, a, [role='button']")) : [];
   const actionText = actionNodes.map((node) => String(node.textContent || node.getAttribute("aria-label") || node.getAttribute("data-action") || node.getAttribute("data-unified-action") || "").trim()).join(" | ");
   const actionMarkup = typeof document !== "undefined" ? String(document.body?.innerHTML || "") : "View Map View Evidence Watch Route Report data-unified-action=confirm data-unified-action=cleared confirmHazardStillThere clearHazard";
-  const activeCommunityRecords = typeof gridlyGetLifecycleCorrectActiveCommunityRecords === "function" ? gridlyGetLifecycleCorrectActiveCommunityRecords() : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : []) || Array.isArray(typeof activeReports !== "undefined" ? activeReports : []) ? [...(Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : []) ? activeHazards : []), ...(Array.isArray(typeof activeReports !== "undefined" ? activeReports : []) ? activeReports : [])] : []);
-  const contextualIncidentActionsApplicable = activeCommunityRecords.length > 0 || actionNodes.some((node) => /confirm|clear|cleared/i.test(`${node.getAttribute("data-action") || ""} ${node.getAttribute("data-unified-action") || ""} ${node.textContent || ""}`));
+  const contextualIncidentActionsApplicable = gridlyTravelBriefIncidentActionApplicability(model);
   const confirmPathPreserved = Boolean((typeof window !== "undefined" && typeof window.confirmHazardStillThere === "function") || /data-(?:unified-)?action=["'](?:confirm|confirm-hazard)["']|confirmHazardStillThere/i.test(actionMarkup));
   const clearPathPreserved = Boolean((typeof window !== "undefined" && typeof window.clearHazard === "function") || /data-(?:unified-)?action=["'](?:cleared|clear-hazard)["']|clearHazard|Mark Cleared/i.test(actionMarkup));
   const quietText = gridlyBuildTravelBriefDecisionSection({ story: buildGridlyAwarenessStory({ records: [], transportationRecords: [], weather: null }), records: [], driveTexasRecords: [] }).lines.join(" ");
@@ -2663,17 +2695,17 @@ function gridlyLp061DriverDecisionPatternAudit() {
     viewEvidence: /evidence|alert|details/i.test(actionText) || /alert|details|evidence/i.test(actionMarkup),
     watchRoute: /route|watch/i.test(actionText) || /start-route-watch|route_watch|Route Watch/i.test(actionMarkup),
     report: /report/i.test(actionText) || /report-tap-map|start-map-placement|submitReport|Report/i.test(actionMarkup),
-    confirm: Object.freeze({ applicable: contextualIncidentActionsApplicable, preserved: confirmPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable || /confirm|still there/i.test(actionText) }),
-    markCleared: Object.freeze({ applicable: contextualIncidentActionsApplicable, preserved: clearPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable || /mark cleared|cleared/i.test(actionText) })
+    confirm: Object.freeze({ applicable: contextualIncidentActionsApplicable.confirm, preserved: confirmPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable.confirm || /confirm|still there/i.test(actionText) }),
+    markCleared: Object.freeze({ applicable: contextualIncidentActionsApplicable.markCleared, preserved: clearPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable.markCleared || /mark cleared|cleared/i.test(actionText) })
   });
   const preservedActionValues = Object.values(preservedActionPatterns).map((value) => typeof value === "object" ? Boolean(value.preserved && value.visibleWhenApplicable) : Boolean(value));
   const checks = Object.freeze({
     driverDecisionPatternPresent: Boolean(model?.driverDecisionPattern && decision?.key === "driver-decision" && decision?.pattern === "LP061 Driver Decision Pattern"),
     interpretationDisplayedFirst: Boolean(renderedFirstKey === "driver-decision" && lines[0] && /travel normally|check|allow extra|stay aware|avoid|drive|route|water/i.test(lines[0])),
     reasonDisplayedSecond: Boolean(lines[1] && /because|community|official roadway|weather|no active concerns|available local intelligence/i.test(lines[1])),
-    confidenceDisplayed: Boolean(lines[2] && /evidence|signals|developing|quiet conditions/i.test(lines[2])),
+    confidenceDisplayed: Boolean(renderedConfidenceText && /evidence|signals|developing|quiet conditions/i.test(renderedConfidenceText)),
     consumerPresentationLabelsSuppressed: !/gridly interpretation|\bInterpretation\b|\bReason\b|\bConfidence\b|\bFreshness\b/i.test(decisionRenderedText),
-    freshnessDisplayed: Boolean(lines[3] && /updated|checked|report/i.test(lines[3])),
+    freshnessDisplayed: Boolean(freshnessNode && renderedFreshnessText && /\b(?:updated|checked)\b.*\b(?:just now|\d+\s*minutes?\s*ago)\b/i.test(renderedFreshnessText) && !/checking now/i.test(renderedFreshnessText)),
     existingActionsPreserved: preservedActionValues.every(Boolean),
     quietStateWordingValidated: /no active concerns.*available local intelligence|travel normally and stay aware/i.test(quietText) && !/safe|guaranteed|all clear/i.test(quietText),
     activeStateWordingValidated: /allow extra time|check|community reports|developing|updated|checked/i.test(activeText),
