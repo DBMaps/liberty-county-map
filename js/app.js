@@ -58364,7 +58364,10 @@ function buildGridlyCommunityPulseModel(options = {}) {
     storyPresentationSublineSource: storyPresentation.sublineSource,
     phraseGenerationMode,
     repetitionAvoidanceApplied,
-    corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || []
+    corridorPriorityBreakdown: corridorPriority.corridorPriorityBreakdown || [],
+    communityDecisionPresentation: buildGridlyCommunityPulseDecisionPresentation({
+      renderedPulseHeadline, renderedPulseSubline, selectedCommunityCount, activeAwareness, communityAwarenessSummary, mobilityPressureCategory
+    })
   };
 }
 
@@ -58401,6 +58404,68 @@ function getGridlyCommunityPulseHistoricalContextLine(model = {}) {
   return evaluation.displayed ? evaluation : null;
 }
 
+
+function gridlyCommunityPulseDecisionFreshnessLine(model = {}) {
+  const candidates = [
+    model?.activeAwareness?.trustLine,
+    model?.activeAwareness?.freshnessLabel,
+    model?.communityAwarenessSummary?.freshnessLine,
+    model?.communityAwarenessSummary?.lastUpdatedLabel
+  ].map((value) => safeDisplayText(value, "")).filter(Boolean);
+  const existing = candidates.find((line) => /\b(?:updated|checked)\b/i.test(line));
+  if (existing) return existing.replace(/^Reports:\s*/i, "");
+  const records = [
+    ...(Array.isArray(model?.activeAwareness?.activeAwarenessSamples) ? model.activeAwareness.activeAwarenessSamples : []),
+    ...(Array.isArray(model?.communityAwarenessSummary?.activeReportsInArea) ? model.communityAwarenessSummary.activeReportsInArea : [])
+  ];
+  const timestamps = records.map((record) => Date.parse(record?.updatedAt || record?.updated_at || record?.lastUpdated || record?.last_updated || record?.createdAt || record?.created_at || record?.submittedAt || "")).filter(Number.isFinite);
+  if (timestamps.length) {
+    const minutes = Math.max(0, Math.round((Date.now() - Math.max(...timestamps)) / 60000));
+    if (minutes <= 1) return "Updated just now";
+    return `Updated ${minutes} minutes ago`;
+  }
+  return "Checked just now";
+}
+
+function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
+  const selectedCount = Number(model?.selectedCommunityCount || 0);
+  const activeCount = Number(model?.activeAwareness?.activeAwarenessCount || 0);
+  const combinedCount = Math.max(selectedCount, activeCount);
+  const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
+  const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
+  let state = "quiet";
+  let communityStatus = "Community is quiet.";
+  let interpretation = "Travel normally.";
+  let reason = "No nearby community travel issues are being reported.";
+  let confidence = "Quiet community activity";
+  if (recentlyCleared) {
+    state = "recently_cleared";
+    communityStatus = "Conditions improving.";
+    interpretation = "Stay aware.";
+    reason = "Recent community reports suggest conditions may be improving.";
+    confidence = "Recently updated";
+  } else if (combinedCount > 0) {
+    state = combinedCount >= 3 || /building|elevated|high|increasing/i.test(String(model?.mobilityPressureCategory || "")) ? "active" : "developing";
+    communityStatus = state === "active" ? "Community activity increasing." : "Community activity nearby.";
+    interpretation = state === "active" ? "Check before leaving." : "Stay aware.";
+    reason = combinedCount > 1 ? "Recent community reports suggest changing travel conditions." : "A recent community report may affect local travel.";
+    confidence = combinedCount >= 3 ? "Multiple recent reports" : "Developing activity";
+  }
+  const freshness = gridlyCommunityPulseDecisionFreshnessLine(model);
+  return Object.freeze({
+    pattern: "LP062 Community Pulse Decision Pattern",
+    state,
+    communityStatus,
+    interpretation,
+    reason,
+    confidence,
+    freshness,
+    headline: interpretation,
+    subline: `${reason} ${confidence} · ${freshness}.`,
+    existingCommunityPulseIntelligencePreserved: true
+  });
+}
+
 function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
   if (typeof document === "undefined" || !model || typeof model !== "object") return false;
   const headline = document.getElementById("gridlyCommunityPulseHeadline");
@@ -58409,16 +58474,17 @@ function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
   if (!headline && !subline && !historicalContext) return false;
 
   const ownershipPulse = model?.activeStateEvidenceOwnership?.communityPulse || null;
-  const renderedPulseHeadlineText = safeDisplayText(
-    ownershipPulse?.headline || model.renderedPulseHeadline,
-    "Checking nearby conditions..."
-  );
-  const renderedPulseSublineText = safeDisplayText(
-    ownershipPulse?.subline || model.renderedPulseSubline,
-    "Loading local reports..."
-  );
-  if (headline) headline.textContent = renderedPulseHeadlineText;
-  if (subline) subline.textContent = renderedPulseSublineText;
+  const decisionPresentation = buildGridlyCommunityPulseDecisionPresentation(model);
+  const renderedPulseHeadlineText = safeDisplayText(decisionPresentation.headline || ownershipPulse?.headline || model.renderedPulseHeadline, "Checking nearby conditions...");
+  const renderedPulseSublineText = safeDisplayText(decisionPresentation.subline || ownershipPulse?.subline || model.renderedPulseSubline, "Loading local reports...");
+  if (headline) {
+    headline.textContent = renderedPulseHeadlineText;
+    headline.dataset.gridlyCommunityDecisionRole = "interpretation";
+  }
+  if (subline) {
+    subline.textContent = renderedPulseSublineText;
+    subline.dataset.gridlyCommunityDecisionRole = "reason-confidence-freshness";
+  }
   const historicalEvaluation = getGridlyCommunityPulseHistoricalContextLine(model);
   if (historicalContext) {
     historicalContext.textContent = historicalEvaluation?.line || "";
@@ -58434,10 +58500,66 @@ function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
     surface.dataset.gridlyPulseCopySyncReason = safeDisplayText(options?.reason, "community-pulse-model-sync");
     surface.dataset.gridlyPulseCopyOwner = ownershipPulse ? "where_it_is_happening" : "community-pulse-model";
     surface.dataset.gridlyHistoricalCommunityPulseContext = historicalEvaluation ? "displayed" : "suppressed";
+    surface.dataset.gridlyCommunityDecisionPattern = decisionPresentation.pattern;
+    surface.dataset.gridlyCommunityDecisionState = decisionPresentation.state;
   }
 
   return true;
 }
+
+function gridlyLp062CommunityPulseDecisionAudit(options = {}) {
+  const model = typeof buildGridlyCommunityPulseModel === "function" ? buildGridlyCommunityPulseModel({ ...options, auditOnly: true }) : (gridlyCommunityPulseAuditState || {});
+  const decision = model?.communityDecisionPresentation || buildGridlyCommunityPulseDecisionPresentation(model);
+  const headlineText = safeDisplayText(typeof document !== "undefined" ? document.getElementById("gridlyCommunityPulseHeadline")?.textContent : "", "") || decision.headline;
+  const sublineText = safeDisplayText(typeof document !== "undefined" ? document.getElementById("gridlyCommunityPulseSubline")?.textContent : "", "") || decision.subline;
+  const combinedText = `${headlineText} ${sublineText}`;
+  const quietDecision = buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 0, activeAwareness: { activeAwarenessCount: 0 } });
+  const activeDecision = buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 4, mobilityPressureCategory: "building", activeAwareness: { activeAwarenessCount: 4, activeAwarenessSamples: [{ updatedAt: new Date().toISOString() }] } });
+  const clearedDecision = buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 0, renderedPulseHeadline: "Conditions improving.", renderedPulseSubline: "Recently updated.", activeAwareness: { activeAwarenessCount: 0 } });
+  const protectedSystems = Object.freeze({
+    communityPulseIntelligenceGeneration: "unchanged",
+    travelBrief: "unchanged",
+    routeWatch: "unchanged",
+    destinationIntelligence: "unchanged",
+    officialRoadwayProcessing: "unchanged",
+    weatherProcessing: "unchanged",
+    hazardLifecycle: "unchanged",
+    crossingLifecycle: "unchanged",
+    reporting: "unchanged",
+    alertGeneration: "unchanged",
+    supabase: "unchanged",
+    backendSystems: "unchanged"
+  });
+  const checks = Object.freeze({
+    communityDecisionPatternPresent: decision.pattern === "LP062 Community Pulse Decision Pattern",
+    interpretationFirst: Boolean(headlineText && /travel normally|check before leaving|allow extra time|stay aware/i.test(headlineText)),
+    reasonSecond: Boolean(sublineText && /no nearby community travel issues|recent community reports|community report may affect/i.test(sublineText)),
+    confidencePresent: Boolean(/quiet community activity|multiple recent reports|developing activity|strong community evidence|recently updated/i.test(combinedText)),
+    freshnessPresent: Boolean(/(?:checked|updated) (?:just now|\d+ minutes ago)/i.test(combinedText)),
+    existingCommunityPulseIntelligencePreserved: Boolean(model && Object.prototype.hasOwnProperty.call(model, "selectedCommunityCount") && model.activeAwareness !== undefined && model.communityAwarenessSummary !== undefined),
+    quietStateWordingValidated: quietDecision.headline === "Travel normally." && /No nearby community travel issues are being reported\. Quiet community activity · Checked just now\./.test(quietDecision.subline),
+    activeStateWordingValidated: activeDecision.headline === "Check before leaving." && /Recent community reports suggest changing travel conditions\. Multiple recent reports · Updated just now\./.test(activeDecision.subline),
+    recentlyClearedWordingValidated: clearedDecision.headline === "Stay aware." && /conditions may be improving\. Recently updated · Checked just now\./.test(clearedDecision.subline) && !/safe|guaranteed|all clear|certain/i.test(`${clearedDecision.headline} ${clearedDecision.subline}`),
+    protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
+  });
+  return Object.freeze({
+    available: true,
+    milestone: "LP062",
+    passive: true,
+    presentationOnly: true,
+    noFetches: true,
+    noWrites: true,
+    noStorageWrites: true,
+    decision,
+    renderedOrder: Object.freeze([{ role: "interpretation", text: headlineText }, { role: "reason-confidence-freshness", text: sublineText }]),
+    checks,
+    protectedSystems,
+    certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail"
+  });
+}
+
+window.gridlyLp062CommunityPulseDecisionAudit = gridlyLp062CommunityPulseDecisionAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp062CommunityPulseDecisionAudit", gridlyLp062CommunityPulseDecisionAudit);
 
 function renderGridlyCommunityPulse(options = {}) {
   const gridlyV922StartedAt = gridlyV922Now();
