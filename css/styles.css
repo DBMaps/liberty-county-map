@@ -25280,6 +25280,53 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   overflow-wrap: anywhere;
 }
 
+/* LP061.1 — Driver Decision mobile presentation refinement. */
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "lines";
+  row-gap: 5px;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] .gridly-travel-brief-lines {
+  display: block;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] .gridly-travel-brief-lines p + p {
+  margin-top: 4px;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] [data-gridly-decision-role="interpretation"] {
+  font-size: 1rem;
+  font-weight: 840;
+  line-height: 1.18;
+  overflow-wrap: normal;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] [data-gridly-decision-role="reason"] {
+  color: rgba(226, 238, 247, 0.9);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.28;
+  overflow-wrap: normal;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] [data-gridly-decision-role="confidence"],
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] [data-gridly-decision-role="freshness"] {
+  display: inline;
+  color: rgba(189, 204, 224, 0.82);
+  font-size: 0.72rem;
+  font-weight: 720;
+  line-height: 1.2;
+  overflow-wrap: normal;
+}
+
+#gridlyPortraitV2 .gridly-travel-brief-item[data-gridly-travel-brief-section="driver-decision"] [data-gridly-decision-role="confidence"]::after {
+  content: " · ";
+  color: rgba(124, 255, 238, 0.58);
+}
+
 /* LP020 — Premium awareness popup and official roadway marker polish */
 #map .leaflet-popup-content-wrapper { border-radius: 18px; }
 #map .leaflet-popup-content { margin: 11px 13px; }
