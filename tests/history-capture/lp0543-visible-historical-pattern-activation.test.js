@@ -7,7 +7,7 @@ assert.match(source, /history:\s*\{\s*title:\s*"Historical Intelligence",\s*html
 assert.match(source, /data-lp0543-visible-pattern="true"/, 'eligible Pattern Intelligence renders inside the existing sheet');
 assert.match(source, /<strong>Typical Pattern<\/strong>/, 'Typical Pattern heading is visible');
 assert.match(source, /data-lp0543-insufficient-history="true"/, 'insufficient evidence has a consumer-safe state');
-assert.match(source, /Gridly needs more community observations before identifying a reliable pattern here\./, 'insufficient history copy is consumer safe');
+assert.match(source, /More cleared community reports are needed before Gridly identifies a reliable local pattern here\./, 'insufficient history copy is consumer safe');
 assert.match(source, /GRIDLY_LP0543_MIN_INDEPENDENT_INCIDENTS\s*=\s*3/, 'minimum independent incident threshold exists');
 assert.match(source, /gridlyLp0543IncidentKey[\s\S]*incidentId[\s\S]*episodeId[\s\S]*Math\.floor\(start \/ 5400000\)/, 'incident grouping prevents same-event reports from becoming recurring occurrences');
 assert.match(source, /GRIDLY_LP0543_MIN_DAY_PATTERN_INCIDENTS\s*=\s*3/, 'Monday/day pattern requires multiple independent incidents');
