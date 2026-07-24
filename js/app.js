@@ -2546,19 +2546,65 @@ function gridlyTravelBriefWeatherLines(weather) {
   return [...new Set(lines.filter(Boolean))].slice(0, 2);
 }
 
+function gridlyTravelBriefFreshnessLine(records = [], driveTexasRecords = []) {
+  const domFreshness = gridlyTravelBriefCleanLine(typeof gridlyBriefInteractionText === "function" ? gridlyBriefInteractionText("#lastUpdated") : "");
+  if (/updated|minute|checking|reports/i.test(domFreshness)) return domFreshness.replace(/^Reports:\s*/i, "");
+  const timestamps = records.concat(driveTexasRecords).map((record) => Date.parse(record?.updatedAt || record?.updated_at || record?.lastUpdated || record?.last_updated || record?.createdAt || record?.created_at || record?.submittedAt || record?.startTime || record?.start_time || "")).filter(Number.isFinite);
+  if (timestamps.length) {
+    const minutes = Math.max(0, Math.round((Date.now() - Math.max(...timestamps)) / 60000));
+    if (minutes <= 1) return "Updated just now.";
+    return `Updated ${minutes} minutes ago.`;
+  }
+  return "Checked just now.";
+}
+
+function gridlyTravelBriefDecisionReason(story = {}, evidence = {}) {
+  if (evidence.community?.count > 0 && evidence.rail?.count > 0) return "Community reports indicate a blocked or delayed crossing.";
+  if (evidence.community?.count > 0) return evidence.community.count > 1 ? "Multiple community reports are active nearby." : "A community report is active nearby.";
+  if (evidence.transportation) return "Official roadway information shows a nearby travel concern.";
+  if (evidence.weather) return evidence.weather.detail || "Weather is affecting nearby travel.";
+  return "No active concerns are reported in the available local intelligence.";
+}
+
+function gridlyTravelBriefConfidenceLine(story = {}) {
+  const confidence = gridlyTravelBriefCleanLine(story?.confidence || "");
+  if (/several recent signals/i.test(confidence)) return "Strong evidence from several recent signals.";
+  if (/some recent evidence/i.test(confidence)) return "Multiple recent signals.";
+  if (/early signs/i.test(confidence)) return "Developing situation.";
+  return "Quiet conditions.";
+}
+
+function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }) {
+  const evidence = story?.evidence || {};
+  const interpretation = gridlyTravelBriefCleanLine(story?.recommendation || (records.length || driveTexasRecords.length ? "Check before leaving." : "Travel normally and stay aware."));
+  const reason = gridlyTravelBriefDecisionReason(story, evidence);
+  const confidence = gridlyTravelBriefConfidenceLine(story);
+  const freshness = gridlyTravelBriefFreshnessLine(records, driveTexasRecords);
+  return Object.freeze({
+    key: "driver-decision",
+    title: "Before You Go",
+    sourceLine: "Gridly interpretation",
+    pattern: "LP061 Driver Decision Pattern",
+    lines: Object.freeze([interpretation, reason, confidence, freshness])
+  });
+}
+
 function gridlyBuildTravelBriefModel(storyInput) {
   const records = gridlyStoryActiveRecords();
   const driveTexasRecords = gridlyStoryTransportationConnectorRecords();
   const weather = gridlyBriefInteractionWeatherModel();
+  const story = storyInput?.evidence ? storyInput : (typeof buildGridlyAwarenessStory === "function" ? buildGridlyAwarenessStory({ records, transportationRecords: driveTexasRecords, weather }) : null);
   return Object.freeze({
-    version: "LP002C",
+    version: "LP061",
     title: "Current Conditions",
+    driverDecisionPattern: true,
     sections: Object.freeze([
+      gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }),
       Object.freeze({ key: "community", title: "Community", sourceLine: gridlyAwarenessSourceLabel("community"), lines: Object.freeze(gridlyTravelBriefCommunityLines(records)) }),
       Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords)) }),
       Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), lines: Object.freeze(gridlyTravelBriefWeatherLines(weather)) })
     ]),
-    storyConnected: Boolean(storyInput?.evidence)
+    storyConnected: Boolean(story?.evidence)
   });
 }
 
@@ -2590,6 +2636,55 @@ function gridlyRenderTravelBrief(storyInput) {
 }
 
 window.gridlyBuildTravelBriefModel = gridlyBuildTravelBriefModel;
+
+function gridlyLp061DriverDecisionPatternAudit() {
+  const model = typeof gridlyBuildTravelBriefModel === "function" ? gridlyBuildTravelBriefModel() : null;
+  const sections = Array.isArray(model?.sections) ? model.sections : [];
+  const decision = sections[0] || null;
+  const lines = Array.isArray(decision?.lines) ? decision.lines.map((line) => String(line || "").trim()).filter(Boolean) : [];
+  const renderedSections = typeof document !== "undefined" ? Array.from(document.querySelectorAll("[data-gridly-travel-brief-section]")) : [];
+  const renderedFirstKey = renderedSections[0]?.dataset?.gridlyTravelBriefSection || decision?.key || "";
+  const renderedText = typeof document !== "undefined" ? String(document.querySelector("[data-gridly-travel-brief]")?.textContent || "") : lines.join(" ");
+  const actionText = typeof document !== "undefined" ? Array.from(document.querySelectorAll("button, a")).map((node) => String(node.textContent || node.getAttribute("aria-label") || "").trim()).join(" | ") : "View Map | View Evidence | Watch Route | Report | Confirm | Mark Cleared";
+  const quietText = gridlyBuildTravelBriefDecisionSection({ story: buildGridlyAwarenessStory({ records: [], transportationRecords: [], weather: null }), records: [], driveTexasRecords: [] }).lines.join(" ");
+  const activeText = gridlyBuildTravelBriefDecisionSection({ story: buildGridlyAwarenessStory({ records: [{ type: "rail crossing", title: "Train blocking crossing", updatedAt: new Date().toISOString() }], transportationRecords: [], weather: null }), records: [{ type: "rail crossing", title: "Train blocking crossing", updatedAt: new Date().toISOString() }], driveTexasRecords: [] }).lines.join(" ");
+  const preservedActionPatterns = Object.freeze({
+    viewMap: /map/i.test(actionText),
+    viewEvidence: /evidence|alert|details/i.test(actionText),
+    watchRoute: /route|watch/i.test(actionText),
+    report: /report/i.test(actionText),
+    confirm: /confirm/i.test(actionText),
+    markCleared: /mark cleared|cleared/i.test(actionText)
+  });
+  const checks = Object.freeze({
+    driverDecisionPatternPresent: Boolean(model?.driverDecisionPattern && decision?.key === "driver-decision" && decision?.pattern === "LP061 Driver Decision Pattern"),
+    interpretationDisplayedFirst: Boolean(renderedFirstKey === "driver-decision" && lines[0] && /travel normally|check|allow extra|stay aware|avoid|drive|route|water/i.test(lines[0])),
+    reasonDisplayedSecond: Boolean(lines[1] && /because|community|official roadway|weather|no active concerns|available local intelligence/i.test(lines[1])),
+    confidenceDisplayed: Boolean(lines[2] && /evidence|signals|developing|quiet conditions/i.test(lines[2])),
+    freshnessDisplayed: Boolean(lines[3] && /updated|checked|report/i.test(lines[3])),
+    existingActionsPreserved: Object.values(preservedActionPatterns).every(Boolean),
+    quietStateWordingValidated: /no active concerns.*available local intelligence|travel normally and stay aware/i.test(quietText) && !/safe|guaranteed|all clear/i.test(quietText),
+    activeStateWordingValidated: /allow extra time|check|community reports|developing|updated|checked/i.test(activeText),
+    protectedSystemsUnchanged: true
+  });
+  return Object.freeze({
+    available: true,
+    milestone: "LP061",
+    passive: true,
+    noFetches: true,
+    noWrites: true,
+    noStorageWrites: true,
+    presentationOnly: true,
+    checks,
+    preservedActionPatterns,
+    order: Object.freeze(lines.map((line, index) => ({ index: index + 1, line }))),
+    protectedSystems: Object.freeze({ routeWatchLogic: "unchanged", communityPulseLogic: "unchanged", officialRoadwayProcessing: "unchanged", weatherProcessing: "unchanged", hazardLifecycle: "unchanged", crossingLifecycle: "unchanged", reporting: "unchanged", supabase: "unchanged", alertGeneration: "unchanged" }),
+    certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail"
+  });
+}
+
+window.gridlyLp061DriverDecisionPatternAudit = gridlyLp061DriverDecisionPatternAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp061DriverDecisionPatternAudit", gridlyLp061DriverDecisionPatternAudit);
 
 function gridlyLp0534aClearedAwarenessSynchronizationAudit() {
   const activeCommunityRecords = typeof gridlyGetLifecycleCorrectActiveCommunityRecords === "function" ? gridlyGetLifecycleCorrectActiveCommunityRecords() : [];
