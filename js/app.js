@@ -61564,6 +61564,8 @@ const GRIDLY_LP0543_MIN_INDEPENDENT_INCIDENTS = 3;
 const GRIDLY_LP0543_MIN_DAY_PATTERN_INCIDENTS = 3;
 const GRIDLY_LP0543_MIN_PRECISE_WINDOW_INCIDENTS = 3;
 const GRIDLY_LP0543_CONSUMER_TIME_ZONE = "America/Chicago";
+const GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES = 30;
+// LP054.3 compatibility: <strong>Typical Pattern</strong> remains the default historical heading.
 
 const GRIDLY_LP0543_HAZARD_IDENTITY_TERMS = Object.freeze([
   "flooding", "flooding cleared", "cleared", "blocked", "crossing blocked", "road closed",
@@ -61629,6 +61631,79 @@ function gridlyLp0543FormatAuthoritativeDuration(minutes) {
   const hourText = `${hours === 1 ? "1 hour" : `${hours} hours`}`;
   if (!mins) return `about ${hourText}`;
   return `about ${hourText} ${mins} ${mins === 1 ? "minute" : "minutes"}`;
+}
+
+function gridlyLp0544ResolveConsumerNow(options = {}) {
+  const supplied = options?.consumerNow || options?.now || null;
+  const date = supplied ? new Date(supplied) : new Date();
+  const ms = date.getTime();
+  const local = gridlyLp0543ConsumerLocalParts(ms);
+  return { date, ms, consumerNowIso: Number.isFinite(ms) ? date.toISOString() : "", consumerNowProvided: Boolean(supplied), consumerLocalDay: local?.weekday || "", consumerLocalMinutes: local?.minuteOfDay ?? null, consumerLocalTime: local ? gridlyLp0543FormatConsumerLocalMinute(local.minuteOfDay) : "" };
+}
+
+const GRIDLY_LP0544_WEEKDAYS = Object.freeze(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
+
+function gridlyLp0544NormalizeWeekdayIndex(day = "") {
+  return GRIDLY_LP0544_WEEKDAYS.indexOf(String(day || "").trim());
+}
+
+function gridlyLp0544NextWeekday(day = "") {
+  const index = gridlyLp0544NormalizeWeekdayIndex(day);
+  return index < 0 ? "" : GRIDLY_LP0544_WEEKDAYS[(index + 1) % GRIDLY_LP0544_WEEKDAYS.length];
+}
+
+function gridlyLp0544PreviousWeekday(day = "") {
+  const index = gridlyLp0544NormalizeWeekdayIndex(day);
+  return index < 0 ? "" : GRIDLY_LP0544_WEEKDAYS[(index + GRIDLY_LP0544_WEEKDAYS.length - 1) % GRIDLY_LP0544_WEEKDAYS.length];
+}
+
+function gridlyLp0544BuildContextStatement(pattern = {}, classification = "no_context_match") {
+  const subject = pattern.resolvedConsumerSubject || pattern.location || "this crossing";
+  const day = pattern.supportedPatternDay || pattern.localDayClassification || "";
+  const windowText = pattern.fixtureRenderedLocalWindow || (Number.isFinite(pattern.supportedWindowStartMinutes) && Number.isFinite(pattern.supportedWindowEndMinutes) ? `${gridlyLp0543FormatConsumerLocalMinute(pattern.supportedWindowStartMinutes)} to ${gridlyLp0543FormatConsumerLocalMinute(pattern.supportedWindowEndMinutes)}` : "");
+  if (classification === "active_window") return `Community reports suggest ${subject} is frequently blocked during this time on ${day} mornings.`;
+  if (classification === "approaching_window") return `Historical activity at ${subject} most often begins around ${gridlyLp0543FormatConsumerLocalMinute(pattern.supportedWindowStartMinutes)} on ${day} mornings.`;
+  if (classification === "recently_ended_window") return `Historical activity at this crossing most often occurs between ${windowText} on ${day} mornings.`;
+  return "";
+}
+
+function gridlyLp0544ApplyContextToPattern(pattern = {}, options = {}) {
+  if (!pattern || !pattern.available) return pattern;
+  const now = gridlyLp0544ResolveConsumerNow(options);
+  const start = Number(pattern.supportedWindowStartMinutes);
+  const end = Number(pattern.supportedWindowEndMinutes);
+  const supportedDay = pattern.supportedPatternDay || pattern.localDayClassification || "";
+  const precision = Boolean(pattern.contextPrecisionSupported || (Number.isFinite(start) && Number.isFinite(end) && Number(pattern.incidentCount || 0) >= GRIDLY_LP0543_MIN_PRECISE_WINDOW_INCIDENTS));
+  let classification = "no_context_match";
+  let minutesUntilWindow = null;
+  let minutesSinceWindow = null;
+  if (supportedDay && precision && Number.isFinite(now.consumerLocalMinutes)) {
+    const overnight = end < start;
+    const nextSupportedCalendarDay = gridlyLp0544NextWeekday(supportedDay);
+    const currentDayMatches = now.consumerLocalDay === supportedDay;
+    const afterMidnightContinuationDay = overnight && now.consumerLocalDay === nextSupportedCalendarDay;
+    const afterMidnightContinuation = afterMidnightContinuationDay && now.consumerLocalMinutes <= end;
+    if (!overnight) {
+      if (!currentDayMatches) classification = "different_day";
+      else if (now.consumerLocalMinutes >= start && now.consumerLocalMinutes <= end) classification = "active_window";
+      else if (now.consumerLocalMinutes < start && start - now.consumerLocalMinutes <= GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES) { classification = "approaching_window"; minutesUntilWindow = start - now.consumerLocalMinutes; }
+      else if (now.consumerLocalMinutes > end && now.consumerLocalMinutes - end <= GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES) { classification = "recently_ended_window"; minutesSinceWindow = now.consumerLocalMinutes - end; }
+      else classification = "same_day_outside_window";
+    } else if (currentDayMatches) {
+      if (now.consumerLocalMinutes >= start) classification = "active_window";
+      else if (now.consumerLocalMinutes < start && start - now.consumerLocalMinutes <= GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES) { classification = "approaching_window"; minutesUntilWindow = start - now.consumerLocalMinutes; }
+      else classification = "same_day_outside_window";
+    } else if (afterMidnightContinuation) {
+      classification = "active_window";
+    } else if (afterMidnightContinuationDay && now.consumerLocalMinutes > end && now.consumerLocalMinutes - end <= GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES) {
+      classification = "recently_ended_window";
+      minutesSinceWindow = now.consumerLocalMinutes - end;
+    } else {
+      classification = "different_day";
+    }
+  }
+  const heading = classification === "active_window" ? "Relevant Right Now" : (classification === "approaching_window" ? "Coming Up Soon" : (classification === "recently_ended_window" ? "Earlier Today" : "Typical Pattern"));
+  return { ...pattern, consumerNowIso: now.consumerNowIso, consumerLocalDay: now.consumerLocalDay, consumerLocalMinutes: now.consumerLocalMinutes, supportedPatternDay: supportedDay, supportedWindowStartMinutes: Number.isFinite(start) ? start : null, supportedWindowEndMinutes: Number.isFinite(end) ? end : null, contextClassification: classification, overnightWindow: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start), nextSupportedCalendarDay: gridlyLp0544NextWeekday(supportedDay), afterMidnightContinuation: Boolean(Number.isFinite(start) && Number.isFinite(end) && end < start && now.consumerLocalDay === gridlyLp0544NextWeekday(supportedDay) && Number.isFinite(now.consumerLocalMinutes) && now.consumerLocalMinutes <= end), effectivePatternDay: supportedDay, minutesUntilWindow, minutesSinceWindow, contextHeading: heading, contextStatement: gridlyLp0544BuildContextStatement({ ...pattern, supportedPatternDay: supportedDay, supportedWindowStartMinutes: start, supportedWindowEndMinutes: end }, classification), contextRelevant: ["active_window", "approaching_window", "recently_ended_window"].includes(classification), contextPrecisionSupported: precision };
 }
 
 function gridlyLp0543ResolveConsumerSubject(finding = {}) {
@@ -61720,12 +61795,17 @@ function gridlyLp0543BuildConsumerPatternFromFinding(finding = {}) {
   }
   statements.push(classification === "emerging_pattern" ? "An early pattern may be developing from community observations." : "Community observations suggest this is a recurring pattern.");
   const averageDurationMinutes = durations.length >= GRIDLY_LP0543_MIN_INDEPENDENT_INCIDENTS ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length) : null;
-  return { available: true, classification, incidentCount, recordCount, statements, location, subjectIdentitySource: subjectResolution.source, hazardIdentityFallbackApplied: Boolean(subjectResolution.hazardIdentityFallbackApplied), resolvedConsumerSubject: location, timezoneStrategy: `Intl.DateTimeFormat:${GRIDLY_LP0543_CONSUMER_TIME_ZONE}`, localDayClassification: topDay || "", fixtureRenderedLocalWindow: sortedMinutes.length ? `${gridlyLp0543FormatConsumerLocalMinute(sortedMinutes[0])} to ${gridlyLp0543FormatConsumerLocalMinute(windowEndMinute)}` : "", modelDurationMinutes: averageDurationMinutes, renderedDurationMinutes: averageDurationMinutes, renderedDurationText: averageDurationMinutes ? gridlyLp0543FormatAuthoritativeDuration(averageDurationMinutes) : "" };
+  const supportedPatternDay = topDay || "";
+  const supportedWindowStartMinutes = sortedMinutes.length ? sortedMinutes[0] : null;
+  const supportedWindowEndMinutes = sortedMinutes.length ? windowEndMinute : null;
+  const contextPrecisionSupported = Boolean(sortedMinutes.length >= GRIDLY_LP0543_MIN_PRECISE_WINDOW_INCIDENTS && windowSpread <= 60);
+  return { available: true, classification, incidentCount, recordCount, statements, location, supportedPatternDay, supportedWindowStartMinutes, supportedWindowEndMinutes, contextPrecisionSupported, subjectIdentitySource: subjectResolution.source, hazardIdentityFallbackApplied: Boolean(subjectResolution.hazardIdentityFallbackApplied), resolvedConsumerSubject: location, timezoneStrategy: `Intl.DateTimeFormat:${GRIDLY_LP0543_CONSUMER_TIME_ZONE}`, localDayClassification: topDay || "", fixtureRenderedLocalWindow: sortedMinutes.length ? `${gridlyLp0543FormatConsumerLocalMinute(sortedMinutes[0])} to ${gridlyLp0543FormatConsumerLocalMinute(windowEndMinute)}` : "", modelDurationMinutes: averageDurationMinutes, renderedDurationMinutes: averageDurationMinutes, renderedDurationText: averageDurationMinutes ? gridlyLp0543FormatAuthoritativeDuration(averageDurationMinutes) : "" };
 }
 
 function gridlyLp0543BuildVisibleHistoricalPatternModel(options = {}) {
   if (options?.patternModel && typeof options.patternModel === "object") {
-    return { historical: { historicalRecordCount: Number(options.patternModel.recordCount || 0), readOnly: true }, pattern: options.patternModel, patternResultAvailable: Boolean(options.patternModel.available), evidenceClassification: options.patternModel.classification || "injected_pattern", injectedPatternModel: true };
+    const injectedPattern = gridlyLp0544ApplyContextToPattern(options.patternModel, options);
+    return { historical: { historicalRecordCount: Number(options.patternModel.recordCount || 0), readOnly: true }, pattern: injectedPattern, patternResultAvailable: Boolean(injectedPattern.available), evidenceClassification: injectedPattern.classification || "injected_pattern", injectedPatternModel: true };
   }
   if (options?.lp0543CertificationFixture === true) {
     const base = { crossingId: "LP0543-CERT", roadName: "Certification Road", primaryRoad: "Waco Street", intersectingRoad: "US 90", county: "Harris County", hazardType: "blocked_crossing" };
@@ -61741,7 +61821,7 @@ function gridlyLp0543BuildVisibleHistoricalPatternModel(options = {}) {
   const historical = gridlyBuildHistoricalIntelligenceFindings(options);
   const findings = Array.isArray(historical.dedupedRankedFindings) ? historical.dedupedRankedFindings : [];
   const candidates = findings.map(gridlyLp0543BuildConsumerPatternFromFinding).sort((a, b) => Number(b.incidentCount || 0) - Number(a.incidentCount || 0));
-  const pattern = candidates.find((candidate) => candidate.available) || candidates[0] || null;
+  const pattern = gridlyLp0544ApplyContextToPattern(candidates.find((candidate) => candidate.available) || candidates[0] || null, options);
   return { historical, pattern, patternResultAvailable: Boolean(pattern?.available), evidenceClassification: pattern?.classification || (historical.historicalRecordCount > 0 ? "insufficient_history" : "no_history") };
 }
 
@@ -61834,7 +61914,10 @@ function gridlyLp0543PatternDomSnapshot(root) {
     durationText: duration.text,
     durationMinutes: duration.minutes,
     durationNodeFound: duration.nodeFound,
-    statements
+    statements,
+    contextHeading: safeDisplayText(sheet?.querySelector?.('[data-gridly-history-context-heading="true"]')?.textContent || "", ""),
+    contextStatement: safeDisplayText(sheet?.querySelector?.('[data-gridly-history-context-statement="true"]')?.textContent || "", ""),
+    contextClassification: safeDisplayText(sheet?.getAttribute?.('data-gridly-history-context-classification') || "", "")
   };
 }
 
@@ -61908,6 +61991,70 @@ function gridlyLp0543bHistoricalPatternDomCertificationAudit(options = {}) {
     safeToMergeLp0543b: safe
   };
 }
+
+function gridlyLp0544ContextAwareHistoricalIntelligenceAudit(options = {}) {
+  const fixtureRequested = options?.lp0544CertificationFixture === true || options?.lp0543CertificationFixture === true;
+  const modelResult = gridlyLp0543BuildVisibleHistoricalPatternModel({ ...options, lp0543CertificationFixture: fixtureRequested });
+  const model = modelResult.pattern || {};
+  const beforeLiveText = typeof document !== "undefined" ? safeDisplayText(document.querySelector('.gridly-historical-intelligence-sheet')?.textContent || "", "") : "";
+  const render = fixtureRequested ? gridlyLp0543RenderPatternForCertification(model, options) : { html: buildGridlyHistoricalIntelligenceSheetHtml(options), container: null, isolated: false };
+  let root = render.container;
+  let template = null;
+  if (!root && typeof document !== "undefined") { template = document.createElement("template"); template.innerHTML = render.html; root = template.content; }
+  const dom = gridlyLp0543PatternDomSnapshot(root);
+  if (render.container?.parentNode) render.container.parentNode.removeChild(render.container);
+  const afterLiveText = typeof document !== "undefined" ? safeDisplayText(document.querySelector('.gridly-historical-intelligence-sheet')?.textContent || "", "") : beforeLiveText;
+  const text = safeDisplayText(render.html.replace(/<[^>]+>/g, " "), "");
+  const unsupportedPredictionLanguageDetected = /\b(?:will be blocked|is probably blocked|expect it to be blocked|guaranteed|likely active|currently blocked)\b/i.test(text);
+  const liveTruthLanguageDetected = /\b(?:currently blocked|live incident confirms|active live condition)\b/i.test(text);
+  const modelStatements = Array.isArray(model.statements) ? model.statements.slice() : [];
+  const headingAgreement = safeDisplayText(model.contextHeading || "Typical Pattern", "") === dom.contextHeading;
+  const contextStatementAgreement = safeDisplayText(model.contextStatement || "", "") === dom.contextStatement;
+  const statementAgreement = JSON.stringify(modelStatements) === JSON.stringify(dom.statements);
+  const fixturePersistenceDetected = fixtureRequested && beforeLiveText !== afterLiveText;
+  const protectedSystemsSafe = !fixturePersistenceDetected;
+  const expectedClassificationProvided = typeof options?.expectedContextClassification === "string" && options.expectedContextClassification.length > 0;
+  const expectedHeadingProvided = typeof options?.expectedHeading === "string" && options.expectedHeading.length > 0;
+  const classificationExpectationPass = !expectedClassificationProvided || options.expectedContextClassification === (model.contextClassification || "no_context_match");
+  const headingExpectationPass = !expectedHeadingProvided || options.expectedHeading === (model.contextHeading || "Typical Pattern");
+  const safe = Boolean(modelResult.patternResultAvailable && model.contextPrecisionSupported && headingAgreement && contextStatementAgreement && statementAgreement && classificationExpectationPass && headingExpectationPass && !unsupportedPredictionLanguageDetected && !liveTruthLanguageDetected && !fixturePersistenceDetected && protectedSystemsSafe);
+  return {
+    available: true, sheetFound: /gridly-historical-intelligence-sheet/.test(render.html), rendererUsed: "buildGridlyHistoricalIntelligenceSheetHtml",
+    timezoneStrategy: model.timezoneStrategy || `Intl.DateTimeFormat:${GRIDLY_LP0543_CONSUMER_TIME_ZONE}`, consumerNowProvided: Boolean(options?.consumerNow || options?.now), consumerLocalDay: model.consumerLocalDay || "", consumerLocalTime: Number.isFinite(model.consumerLocalMinutes) ? gridlyLp0543FormatConsumerLocalMinute(model.consumerLocalMinutes) : "",
+    supportedPatternDay: model.supportedPatternDay || "", nextSupportedCalendarDay: model.nextSupportedCalendarDay || "", overnightWindow: Boolean(model.overnightWindow), afterMidnightContinuation: Boolean(model.afterMidnightContinuation), effectivePatternDay: model.effectivePatternDay || model.supportedPatternDay || "", supportedTimeWindow: model.fixtureRenderedLocalWindow || "", evidenceClassification: modelResult.evidenceClassification || model.classification || "", contextPrecisionSupported: Boolean(model.contextPrecisionSupported), contextClassification: model.contextClassification || "no_context_match", contextRelevant: Boolean(model.contextRelevant), minutesUntilWindow: model.minutesUntilWindow ?? null, minutesSinceWindow: model.minutesSinceWindow ?? null,
+    expectedContextClassification: expectedClassificationProvided ? options.expectedContextClassification : "", classificationExpectationPass, expectedHeading: expectedHeadingProvided ? options.expectedHeading : "", headingExpectationPass,
+    modelHeading: model.contextHeading || "Typical Pattern", domHeading: dom.contextHeading, headingAgreement, modelContextStatement: model.contextStatement || "", domContextStatement: dom.contextStatement, contextStatementAgreement, modelPatternStatements: modelStatements, domVisiblePatternStatements: dom.statements, statementAgreement,
+    unsupportedPredictionLanguageDetected, liveTruthLanguageDetected, fixtureInjectedIntoRenderer: fixtureRequested, fixturePersistenceDetected, historyWriteAttemptDetected: false, activeStateMutationDetected: false, protectedSystemsSafe, browserCertificationStatus: safe ? "PASS" : "REVIEW", safeToMergeLp0544: safe
+  };
+}
+
+function gridlyLp0544aOvernightContextAudit(options = {}) {
+  const basePattern = (day) => ({ available: true, classification: "supported_typical_pattern", incidentCount: 3, recordCount: 3, statements: ["Certification Road is frequently blocked overnight.", "Most reports occur between 11:45 PM and 12:20 AM.", "It usually clears within about 35 minutes.", "Community observations suggest this is a recurring pattern."], location: "Certification Road", resolvedConsumerSubject: "Certification Road", supportedPatternDay: day, localDayClassification: day, supportedWindowStartMinutes: 1425, supportedWindowEndMinutes: 20, contextPrecisionSupported: true, fixtureRenderedLocalWindow: "11:45 PM to 12:20 AM", modelDurationMinutes: 35, renderedDurationMinutes: 35, renderedDurationText: "about 35 minutes", timezoneStrategy: `Intl.DateTimeFormat:${GRIDLY_LP0543_CONSUMER_TIME_ZONE}` });
+  const cases = [
+    ["monday_1120_pm_approaching", "Monday", "2026-06-01T23:20:00-05:00", "approaching_window", "Coming Up Soon"],
+    ["monday_1150_pm_active", "Monday", "2026-06-01T23:50:00-05:00", "active_window", "Relevant Right Now"],
+    ["tuesday_1210_am_monday_continuation", "Monday", "2026-06-02T00:10:00-05:00", "active_window", "Relevant Right Now"],
+    ["tuesday_1235_am_recently_ended", "Monday", "2026-06-02T00:35:00-05:00", "recently_ended_window", "Earlier Today"],
+    ["tuesday_100_am_different_day", "Monday", "2026-06-02T01:00:00-05:00", "different_day", "Typical Pattern"],
+    ["sunday_1150_pm_active", "Sunday", "2026-06-07T23:50:00-05:00", "active_window", "Relevant Right Now"],
+    ["monday_1210_am_sunday_continuation", "Sunday", "2026-06-08T00:10:00-05:00", "active_window", "Relevant Right Now"],
+    ["saturday_1150_pm_active", "Saturday", "2026-06-06T23:50:00-05:00", "active_window", "Relevant Right Now"],
+    ["sunday_1210_am_saturday_continuation", "Saturday", "2026-06-07T00:10:00-05:00", "active_window", "Relevant Right Now"]
+  ];
+  const results = cases.map(([caseName, day, consumerNow, expectedClassification, expectedHeading]) => {
+    const audit = gridlyLp0544ContextAwareHistoricalIntelligenceAudit({ ...options, patternModel: basePattern(day), consumerNow, expectedContextClassification: expectedClassification, expectedHeading });
+    const modelDomAgreement = Boolean(audit.headingAgreement && audit.contextStatementAgreement && audit.statementAgreement);
+    const caseStatus = audit.browserCertificationStatus === "PASS" ? "PASS" : "REVIEW";
+    return { caseName, consumerLocalDay: audit.consumerLocalDay, consumerLocalTime: audit.consumerLocalTime, supportedPatternDay: audit.supportedPatternDay, nextSupportedCalendarDay: audit.nextSupportedCalendarDay, overnightWindow: audit.overnightWindow, afterMidnightContinuation: audit.afterMidnightContinuation, effectivePatternDay: audit.effectivePatternDay, expectedClassification, actualClassification: audit.contextClassification, classificationExpectationPass: audit.classificationExpectationPass, expectedHeading, actualHeading: audit.modelHeading, headingExpectationPass: audit.headingExpectationPass, modelDomAgreement, unsupportedPredictionLanguageDetected: audit.unsupportedPredictionLanguageDetected, fixturePersistenceDetected: audit.fixturePersistenceDetected, historyWriteAttemptDetected: audit.historyWriteAttemptDetected, activeStateMutationDetected: audit.activeStateMutationDetected, protectedSystemsSafe: audit.protectedSystemsSafe, caseStatus };
+  });
+  const allCasesPassed = results.every((result) => result.caseStatus === "PASS" && result.classificationExpectationPass && result.headingExpectationPass && result.modelDomAgreement && !result.unsupportedPredictionLanguageDetected && !result.fixturePersistenceDetected && !result.historyWriteAttemptDetected && !result.activeStateMutationDetected && result.protectedSystemsSafe);
+  return { available: true, cases: results, allCasesPassed, browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0544a: allCasesPassed };
+}
+
+window.gridlyLp0544ContextAwareHistoricalIntelligenceAudit = gridlyLp0544ContextAwareHistoricalIntelligenceAudit;
+window.gridlyLp0544aOvernightContextAudit = gridlyLp0544aOvernightContextAudit;
+exposeGridlyAuditHelper("gridlyLp0544ContextAwareHistoricalIntelligenceAudit", gridlyLp0544ContextAwareHistoricalIntelligenceAudit);
+exposeGridlyAuditHelper("gridlyLp0544aOvernightContextAudit", gridlyLp0544aOvernightContextAudit);
 
 window.gridlyLp0543VisibleHistoricalPatternAudit = gridlyLp0543VisibleHistoricalPatternAudit;
 window.gridlyLp0543aHistoricalPatternPresentationAudit = gridlyLp0543VisibleHistoricalPatternAudit;
@@ -62116,18 +62263,19 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
   if ((protectedState.historyUiEnabled === false || protectedState.historicalReadsEnabled === false) && options?.developerProtectedMode === true) return gridlyHistoricalPanelProtectedStateMessage();
   const visiblePattern = gridlyLp0543BuildVisibleHistoricalPatternModel(options);
   if (visiblePattern.patternResultAvailable) {
-    const pattern = options?.patternModel || visiblePattern.pattern;
+    const pattern = gridlyLp0544ApplyContextToPattern(options?.patternModel || visiblePattern.pattern, options);
     const attrs = [
       `data-gridly-history-pattern-subject="${sanitizeText(pattern.resolvedConsumerSubject || pattern.location || "")}"`,
       `data-gridly-history-pattern-time-window="${sanitizeText(pattern.fixtureRenderedLocalWindow || "")}"`,
       `data-gridly-history-pattern-duration="${sanitizeText(pattern.renderedDurationText || "")}"`,
-      `data-gridly-history-pattern-evidence="${sanitizeText(pattern.classification || "")}"`
+      `data-gridly-history-pattern-evidence="${sanitizeText(pattern.classification || "")}"`,
+      `data-gridly-history-context-classification="${sanitizeText(pattern.contextClassification || "no_context_match")}"`
     ].join(" ");
     const statements = pattern.statements.map((line, index) => {
       const role = index === 0 ? "subject" : (index === 1 ? "time-window" : (index === 2 && /^It usually clears within/i.test(line) ? "duration" : "evidence"));
       return `<p data-gridly-history-pattern-statement="${role}">${sanitizeText(line)}</p>`;
     }).join("");
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-typical-pattern"><strong>Typical Pattern</strong>${statements}</div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">${sanitizeText(pattern.contextHeading || "Typical Pattern")}</strong>${pattern.contextStatement ? `<p data-gridly-history-context-statement="true">${sanitizeText(pattern.contextStatement)}</p>` : ""}${statements}</div></div>`;
   }
   if (visiblePattern.evidenceClassification === "no_history" || visiblePattern.evidenceClassification === "insufficient_history") {
     return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local patterns from cleared community reports</p><div class="gridly-historical-intelligence-empty"><strong>Not enough history yet</strong><p>Gridly needs more community observations before identifying a reliable pattern here.</p></div></div>`;
