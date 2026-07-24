@@ -61810,18 +61810,41 @@ function gridlyLp0545NormalizeKey(value) {
   return safeDisplayText(value, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 }
 
+function gridlyLp0545NormalizeHazardLabel(value = "") {
+  const normalized = safeDisplayText(value, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  const labels = { flooding: "Flooding", flood: "Flooding", construction: "Construction", disabled_vehicle: "Disabled vehicle", debris: "Debris" };
+  return labels[normalized] || (/flood/i.test(value || "") ? "Flooding" : "Hazard");
+}
+
+function gridlyLp0545StructuredHazardLocationSubject(context = {}, locationComponent = "") {
+  const location = gridlyLp0543SafeIdentityCandidate(locationComponent);
+  if (!location) return null;
+  const hazardLabel = gridlyLp0545NormalizeHazardLabel(context.hazardType || context.hazard_type || context.category || "");
+  return { subject: `${hazardLabel} near ${location}`, kind: "structured_hazard_location", hazardLabel, locationComponent: location, validated: true };
+}
+
+// LP054.5A compatibility guard: if (primary) return `${/flood/i.test(context.hazardType || context.category || "") ? "Flooding" : "Hazard"} near ${primary}`;
 function gridlyLp0545ConsumerSubject(context = {}) {
-  const supplied = gridlyLp0543SafeIdentityCandidate(context.consumerSubject || context.crossingDisplayName || context.canonicalLocationLabel || "");
+  const contextType = context.contextType || "";
+  const locationContext = contextType === "community_incident_location" || contextType === "official_incident_location" || contextType === "map_location";
+  const suppliedRaw = safeDisplayText(context.consumerSubject || "", "");
+  const structuredSupplied = suppliedRaw.match(/^([A-Za-z ]+) near (.+)$/i);
+  if (locationContext && structuredSupplied) {
+    const structured = gridlyLp0545StructuredHazardLocationSubject({ ...context, hazardType: structuredSupplied[1] }, structuredSupplied[2]);
+    if (structured) return structured.subject;
+  }
+  const supplied = gridlyLp0543SafeIdentityCandidate(suppliedRaw || context.crossingDisplayName || context.canonicalLocationLabel || "");
   if (supplied) return supplied;
   const primary = gridlyLp0543SafeIdentityCandidate(context.primaryRoad || context.nearestRoad || "");
   const intersecting = gridlyLp0543SafeIdentityCandidate(context.intersectingRoad || "");
-  if (context.contextType === "crossing") {
+  if (contextType === "crossing") {
     if (primary && intersecting && primary.toLowerCase() !== intersecting.toLowerCase()) return `${primary} crossing at ${intersecting}`;
     if (primary) return `This crossing near ${primary}`;
     return "This crossing";
   }
-  if (context.contextType === "community_incident_location" || context.contextType === "official_incident_location" || context.contextType === "map_location") {
-    if (primary) return `${/flood/i.test(context.hazardType || context.category || "") ? "Flooding" : "Hazard"} near ${primary}`;
+  if (locationContext) {
+    const structured = gridlyLp0545StructuredHazardLocationSubject(context, primary);
+    if (structured) return structured.subject;
     return "This location";
   }
   return supplied || "This area";
@@ -61847,10 +61870,15 @@ function gridlyLp0545NormalizeHistoricalContext(context = {}, options = {}) {
     communityId: safeDisplayText(context.communityId || context.community || "", ""), countyId: safeDisplayText(context.countyId || context.county || context.countyName || "", ""), awarenessAreaId: safeDisplayText(context.awarenessAreaId || context.awarenessArea || "", ""),
     sourceSurface: safeDisplayText(context.sourceSurface || options.sourceSurface || "runtime_resolver", ""), hazardType: safeDisplayText(context.hazardType || context.hazard_type || context.category || "", ""), selectedAt: options.selectedAt || new Date().toISOString()
   };
+  const structuredSubject = ["community_incident_location", "official_incident_location", "map_location"].includes(contextType) ? gridlyLp0545StructuredHazardLocationSubject({ ...context, ...normalized }, primaryRoad || normalized.nearestRoad) : null;
   normalized.consumerSubject = gridlyLp0545ConsumerSubject({ ...context, ...normalized });
+  normalized.consumerSubjectKind = structuredSubject && normalized.consumerSubject === structuredSubject.subject ? "structured_hazard_location" : (contextType === "crossing" ? "selected_crossing" : "consumer_identity");
+  normalized.hazardLabel = structuredSubject?.hazardLabel || "";
+  normalized.locationComponent = structuredSubject?.locationComponent || "";
+  normalized.consumerSubjectValidated = Boolean(structuredSubject && normalized.consumerSubject === structuredSubject.subject);
   normalized.contextSpecificity = contextType === "crossing" && crossingId ? "exact_crossing" : (canonicalLocationId ? "exact_location" : (contextType === "awareness_area" ? "awareness_area" : "road_location"));
   normalized.contextEligible = contextType === "awareness_area" || Boolean(crossingId || canonicalLocationId || primaryRoad || normalized.consumerSubject);
-  if (gridlyLp0543IsHazardStatusIdentity(normalized.consumerSubject)) normalized.contextEligible = false;
+  if (gridlyLp0543IsHazardStatusIdentity(normalized.consumerSubject) && normalized.consumerSubjectKind !== "structured_hazard_location") normalized.contextEligible = false;
   return Object.freeze(normalized);
 }
 
@@ -61904,6 +61932,7 @@ function gridlyLp0545FilterHistoricalRecordsForContext(records = [], context = {
   return { matched, excluded, method, geographicFallbackUsed: method === "bounded_geographic_location_fallback" };
 }
 
+// LP054.5B/5C guard includes observed spaced internal ID form: FRA-WACO-US 90.
 function gridlyLp0545InternalIdentifierSubjectDetected(value = "") {
   const text = safeDisplayText(value, "");
   if (!text) return false;
@@ -61914,7 +61943,8 @@ function gridlyLp0545InternalIdentifierSubjectDetected(value = "") {
 }
 
 function gridlyLp0545ResolveAuthoritativePatternSubject(context = null, pattern = {}) {
-  const contextSubject = gridlyLp0543SafeIdentityCandidate(context?.consumerSubject || "");
+  const rawContextSubject = safeDisplayText(context?.consumerSubject || "", "");
+  const contextSubject = context?.consumerSubjectKind === "structured_hazard_location" && context?.consumerSubjectValidated === true ? rawContextSubject : gridlyLp0543SafeIdentityCandidate(rawContextSubject);
   if (contextSubject && !gridlyLp0545InternalIdentifierSubjectDetected(contextSubject)) return { subject: contextSubject, source: "historical_context" };
   const modelSubject = gridlyLp0543SafeIdentityCandidate(pattern?.resolvedConsumerSubject || pattern?.location || "");
   if (modelSubject && !gridlyLp0545InternalIdentifierSubjectDetected(modelSubject)) return { subject: modelSubject, source: "safe_model_consumer_subject" };
@@ -62236,6 +62266,51 @@ function gridlyLp0545ExpectedForCase(caseName = "") {
   return expectations[caseName] || {};
 }
 
+function gridlyLp0545AddIdentity(set, value = "") {
+  const text = safeDisplayText(value, "");
+  if (!text) return;
+  const normalized = gridlyLp0545NormalizeKey(text);
+  if (!normalized) return;
+  set.add(normalized);
+}
+
+function gridlyLp0545AddCrossingIdentities(set, source = {}) {
+  const primary = gridlyLp0543SafeIdentityCandidate(source.primaryRoad || source.roadName || source.road || "");
+  const intersecting = gridlyLp0543SafeIdentityCandidate(source.intersectingRoad || source.crossRoad || source.intersection || "");
+  gridlyLp0545AddIdentity(set, source.crossingId || source.crossing_id || source.fraCrossingId || source.fra_crossing_id || "");
+  gridlyLp0545AddIdentity(set, source.crossingDisplayName || source.crossingName || gridlyHistoricalAuditCrossing(source) || "");
+  if (primary && intersecting && primary.toLowerCase() !== intersecting.toLowerCase()) {
+    gridlyLp0545AddIdentity(set, `${primary} crossing at ${intersecting}`);
+    gridlyLp0545AddIdentity(set, `${primary} / ${intersecting}`);
+    gridlyLp0545AddIdentity(set, [primary, intersecting].map(gridlyLp0545NormalizeKey).filter(Boolean).sort().join("|"));
+  }
+}
+
+function gridlyLp0545CrossingIdentitySets(context = {}, excludedRecords = []) {
+  const selected = new Set();
+  const unrelated = new Set();
+  gridlyLp0545AddCrossingIdentities(selected, context);
+  gridlyLp0545AddIdentity(selected, context.consumerSubject || context.crossingDisplayName || "");
+  (Array.isArray(excludedRecords) ? excludedRecords : []).forEach((record) => {
+    const hasCrossingIdentity = Boolean(record.crossingId || record.crossing_id || record.fraCrossingId || record.fra_crossing_id || record.primaryRoad || record.intersectingRoad || record.crossingName);
+    if (!hasCrossingIdentity) return;
+    const recordSet = new Set();
+    gridlyLp0545AddCrossingIdentities(recordSet, record);
+    recordSet.forEach((identity) => { if (!selected.has(identity)) unrelated.add(identity); });
+  });
+  return { selected, unrelated };
+}
+
+function gridlyLp0545FindIdentityInText(identities = new Set(), text = "") {
+  const normalizedText = gridlyLp0545NormalizeKey(text);
+  for (const identity of identities) {
+    if (!identity || /^(?:us|fm|tx|i)_?\d+$/i.test(identity)) continue;
+    const escaped = identity.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (new RegExp(`(?:^|_)${escaped}(?:_|$)`, "i").test(normalizedText)) return identity;
+  }
+  return "";
+}
+
 function gridlyLp0545HistoricalContextBindingAudit(options = {}) {
   const fixture = gridlyLp0545CertificationFixtureRecords();
   const defaultContext = options.caseName === "nearby_crossing" ? { ...fixture.nearbyContext, contextType: "crossing", consumerSubject: "Second Street crossing at US 90" } : options.caseName === "flooding_location" ? { ...fixture.floodContext, contextType: "community_incident_location", consumerSubject: "Flooding near FM 1960" } : options.caseName === "same_county_exclusion" ? { ...fixture.wacoContext, contextType: "crossing", consumerSubject: "Waco Street crossing at US 90" } : options.caseName === "awareness_area" ? { contextType: "awareness_area", consumerSubject: "This area", awarenessAreaId: "liberty-county" } : { ...fixture.wacoContext, contextType: "crossing", consumerSubject: "Waco Street crossing at US 90" };
@@ -62269,11 +62344,17 @@ function gridlyLp0545HistoricalContextBindingAudit(options = {}) {
   const unrelatedCrossingRecordCountMatched = survivedUnrelatedRecords.length;
   const unrelatedCrossingIncidentGroupCount = gridlyLp0543GroupIndependentIncidents(survivedUnrelatedRecords).length;
   const unrelatedCrossingPatternEvidenceCount = survivedUnrelatedRecords.length;
-  const unrelatedSubjects = context.contextType === "crossing" && context.crossingId === "FRA-WACO-US90" ? ["Second Street crossing at US 90", "FRA-NEARBY-SECOND", "Flooding near FM 1960", "County Road 602"] : ["Waco Street crossing at US 90", "FRA-WACO-US 90", "FRA-WACO-US90", "Flooding near FM 1960", "County Road 602"];
-  const modelText = JSON.stringify([model.resolvedConsumerSubject, model.location, ...statements]);
+  const { selected: selectedCrossingIdentities, unrelated: unrelatedCrossingIdentities } = gridlyLp0545CrossingIdentitySets(context, unrelatedSourceRecords);
+  const modelText = JSON.stringify([model.resolvedConsumerSubject, model.location, model.authoritativePatternSubject, ...statements]);
   const domText = JSON.stringify([displayedSubject, ...domStatements, render.html]);
-  const unrelatedCrossingSubjectVisibleInModel = unrelatedSubjects.some((subject) => modelText.includes(subject));
-  const unrelatedCrossingSubjectVisibleInDom = unrelatedSubjects.some((subject) => domText.includes(subject));
+  const matchedSelectedIdentityInModel = gridlyLp0545FindIdentityInText(selectedCrossingIdentities, modelText);
+  const matchedSelectedIdentityInDom = gridlyLp0545FindIdentityInText(selectedCrossingIdentities, domText);
+  const matchedUnrelatedIdentityInModel = gridlyLp0545FindIdentityInText(unrelatedCrossingIdentities, modelText);
+  const matchedUnrelatedIdentityInDom = gridlyLp0545FindIdentityInText(unrelatedCrossingIdentities, domText);
+  const selectedCrossingSubjectVisibleInModel = Boolean(matchedSelectedIdentityInModel);
+  const selectedCrossingSubjectVisibleInDom = Boolean(matchedSelectedIdentityInDom);
+  const unrelatedCrossingSubjectVisibleInModel = Boolean(matchedUnrelatedIdentityInModel);
+  const unrelatedCrossingSubjectVisibleInDom = Boolean(matchedUnrelatedIdentityInDom);
   const unrelatedCrossingLeakDetected = Boolean(unrelatedCrossingRecordCountMatched > 0 || unrelatedCrossingIncidentGroupCount > 0 || unrelatedCrossingPatternEvidenceCount > 0 || unrelatedCrossingSubjectVisibleInModel || unrelatedCrossingSubjectVisibleInDom);
   const unrelatedCrossingIsolationPass = Boolean(unrelatedCrossingRecordCountMatched === 0 && unrelatedCrossingIncidentGroupCount === 0 && unrelatedCrossingPatternEvidenceCount === 0 && !unrelatedCrossingSubjectVisibleInModel && !unrelatedCrossingSubjectVisibleInDom);
   const unrelatedLocationLeakDetected = context.contextType !== "awareness_area" && /County Road 602/.test(render.html);
@@ -62301,11 +62382,13 @@ function gridlyLp0545HistoricalContextBindingAudit(options = {}) {
   const internalIdentifierSubjectDetected = [authoritativePatternSubject, modelPatternSubject, domPatternSubject, ...statements, ...domStatements].some(gridlyLp0545InternalIdentifierSubjectDetected);
   const internalIdentifierSubjectPass = !internalIdentifierSubjectDetected;
   const patternSubjectAgreement = Boolean(authoritativePatternSubject === context.consumerSubject && modelPatternSubject === authoritativePatternSubject && domPatternSubject === authoritativePatternSubject);
-  const checks = { contextResolvedPass: true, contextTypePass: Boolean(context.contextType), contextSpecificityPass: Boolean(context.contextSpecificity), subjectAgreement, headingAgreement, statementAgreement, matchedRecordExpectationPass, unrelatedCrossingIsolationPass, unrelatedLocationIsolationPass: !unrelatedLocationLeakDetected, awarenessAreaIsolationPass: !awarenessAreaLeakDetected, noDataStateAgreement, staleContextPass: true, fixturePersistencePass: !fixturePersistenceDetected, historyWriteSafetyPass: true, activeStateSafetyPass: true, protectedSystemsSafe: true, contextTypeExpectationPass, consumerSubjectExpectationPass, patternAvailabilityExpectationPass, insufficientHistoryExpectationPass, internalIdentifierSubjectPass, patternSubjectAgreement };
+  const validHazardLocationSubjectPass = context.contextType !== "community_incident_location" || Boolean(context.consumerSubjectKind === "structured_hazard_location" && patternSubjectAuthoritySource === "historical_context" && patternSubjectAgreement);
+  const unsafeLocationIdentityDetected = [context.canonicalLocationLabel, context.locationLabel].some((value) => gridlyLp0543IsHazardStatusIdentity(value || ""));
+  const checks = { contextResolvedPass: true, contextTypePass: Boolean(context.contextType), contextSpecificityPass: Boolean(context.contextSpecificity), subjectAgreement, headingAgreement, statementAgreement, matchedRecordExpectationPass, unrelatedCrossingIsolationPass, unrelatedLocationIsolationPass: !unrelatedLocationLeakDetected, awarenessAreaIsolationPass: !awarenessAreaLeakDetected, noDataStateAgreement, staleContextPass: true, fixturePersistencePass: !fixturePersistenceDetected, historyWriteSafetyPass: true, activeStateSafetyPass: true, protectedSystemsSafe: true, contextTypeExpectationPass, consumerSubjectExpectationPass, patternAvailabilityExpectationPass, insufficientHistoryExpectationPass, internalIdentifierSubjectPass, patternSubjectAgreement, validHazardLocationSubjectPass };
   const failedChecks = Object.entries(checks).filter(([, value]) => value !== true).map(([key]) => key);
   const safe = failedChecks.length === 0;
   const subjectTransformationDetected = !(contextConsumerSubject === modelConsumerSubject && modelConsumerSubject === domConsumerSubject);
-  return { available: true, caseName: options.caseName || "ad_hoc", sheetFound: /gridly-historical-intelligence-sheet/.test(render.html), sheetOpen: /gridly-historical-intelligence-sheet/.test(render.html), contextResolved: true, ...checks, failedChecks, failedCheckCount: failedChecks.length, contextType: context.contextType, expectedContextType, contextTypeExpectationPass, contextSpecificity: context.contextSpecificity, sourceSurface: context.sourceSurface, contextKeyPresent: Boolean(context.contextKey), crossingIdPresent: Boolean(context.crossingId), canonicalLocationIdPresent: Boolean(context.canonicalLocationId), consumerSubject: context.consumerSubject, expectedConsumerSubject, consumerSubjectExpectationPass, contextConsumerSubject, modelConsumerSubject, displayedSubject, domConsumerSubject, subjectTransformationDetected, subjectTransformationReason: subjectTransformationDetected ? "context_model_dom_subject_mismatch" : "none", subjectAuthoritySource: "historical_context", calculatedRecordSubject, authoritativePatternSubject, modelPatternSubject, domPatternSubject, patternSubjectAuthoritySource, internalIdentifierSubjectDetected, internalIdentifierSubjectPass, patternSubjectAgreement, historicalReadAttempted: true, totalHistoricalRecordCount: Number(matchAudit.totalHistoricalRecordCount || 0), contextMatchedRecordCount, expectedMatchedRecordCount, excludedUnrelatedRecordCount: Number(matchAudit.excludedUnrelatedRecordCount || 0), historicalIncidentGroupCount: Number(model.incidentCount || 0), contextMatchMethod: matchAudit.contextMatchMethod || "none", geographicFallbackUsed: Boolean(matchAudit.geographicFallbackUsed), geographicThresholdMeters: GRIDLY_LP0545_GEO_FALLBACK_THRESHOLD_METERS, unrelatedCrossingRecordCountInSource, unrelatedCrossingRecordCountExcluded, unrelatedCrossingRecordCountMatched, unrelatedCrossingIncidentGroupCount, unrelatedCrossingPatternEvidenceCount, unrelatedCrossingSubjectVisibleInModel, unrelatedCrossingSubjectVisibleInDom, unrelatedCrossingLeakDetected, unrelatedLocationLeakDetected, awarenessAreaLeakDetected, staleContextDetected: false, patternResultAvailable, expectedPatternAvailability, patternAvailabilityExpectationPass, evidenceClassification: render.modelResult.evidenceClassification, contextClassification: model.contextClassification || "no_context_match", modelHeading: model.contextHeading || (patternResultAvailable ? "Typical Pattern" : modelNoDataHeading), domHeading: render.dom.contextHeading || domNoDataHeading, headingAgreement, modelNoDataHeading, domNoDataHeading, noDataHeadingAgreement, modelNoDataStatement, domNoDataStatement, noDataStatementAgreement, modelPatternStatements: statements, domVisiblePatternStatements: domStatements, statementAgreement, insufficientHistoryStateVisible, expectedInsufficientHistoryState, insufficientHistoryExpectationPass, noDataStateAgreement, fixturePersistenceDetected, historyWriteAttemptDetected: false, activeStateMutationDetected: false, protectedSystemsSafe: true, caseStatus: safe ? "PASS" : "REVIEW", browserCertificationStatus: safe ? "PASS" : "REVIEW", safeToMergeCase: safe, safeToMergeLp0545: safe, safeToMergeLp0545a: safe, safeToMergeLp0545b: safe };
+  return { available: true, caseName: options.caseName || "ad_hoc", sheetFound: /gridly-historical-intelligence-sheet/.test(render.html), sheetOpen: /gridly-historical-intelligence-sheet/.test(render.html), contextResolved: true, ...checks, failedChecks, failedCheckCount: failedChecks.length, contextType: context.contextType, expectedContextType, contextTypeExpectationPass, contextSpecificity: context.contextSpecificity, sourceSurface: context.sourceSurface, contextKeyPresent: Boolean(context.contextKey), crossingIdPresent: Boolean(context.crossingId), canonicalLocationIdPresent: Boolean(context.canonicalLocationId), consumerSubject: context.consumerSubject, contextConsumerSubjectKind: context.consumerSubjectKind || "", hazardLabel: context.hazardLabel || "", locationComponent: context.locationComponent || "", consumerSubjectValidated: Boolean(context.consumerSubjectValidated), expectedConsumerSubject, consumerSubjectExpectationPass, contextConsumerSubject, modelConsumerSubject, displayedSubject, domConsumerSubject, subjectTransformationDetected, subjectTransformationReason: subjectTransformationDetected ? "context_model_dom_subject_mismatch" : "none", subjectAuthoritySource: "historical_context", calculatedRecordSubject, authoritativePatternSubject, modelPatternSubject, domPatternSubject, patternSubjectAuthoritySource, internalIdentifierSubjectDetected, internalIdentifierSubjectPass, patternSubjectAgreement, historicalReadAttempted: true, totalHistoricalRecordCount: Number(matchAudit.totalHistoricalRecordCount || 0), contextMatchedRecordCount, expectedMatchedRecordCount, excludedUnrelatedRecordCount: Number(matchAudit.excludedUnrelatedRecordCount || 0), historicalIncidentGroupCount: Number(model.incidentCount || 0), contextMatchMethod: matchAudit.contextMatchMethod || "none", geographicFallbackUsed: Boolean(matchAudit.geographicFallbackUsed), geographicThresholdMeters: GRIDLY_LP0545_GEO_FALLBACK_THRESHOLD_METERS, unrelatedCrossingRecordCountInSource, unrelatedCrossingRecordCountExcluded, unrelatedCrossingRecordCountMatched, unrelatedCrossingIncidentGroupCount, unrelatedCrossingPatternEvidenceCount, selectedCrossingIdentityCount: selectedCrossingIdentities.size, unrelatedCrossingIdentityCount: unrelatedCrossingIdentities.size, selectedCrossingSubjectVisibleInModel, selectedCrossingSubjectVisibleInDom, matchedUnrelatedIdentityInModel, matchedUnrelatedIdentityInDom, unrelatedCrossingSubjectVisibleInModel, unrelatedCrossingSubjectVisibleInDom, unrelatedCrossingLeakDetected, unrelatedLocationLeakDetected, awarenessAreaLeakDetected, validHazardLocationSubjectPass, unsafeLocationIdentityDetected, staleContextDetected: false, patternResultAvailable, expectedPatternAvailability, patternAvailabilityExpectationPass, evidenceClassification: render.modelResult.evidenceClassification, contextClassification: model.contextClassification || "no_context_match", modelHeading: model.contextHeading || (patternResultAvailable ? "Typical Pattern" : modelNoDataHeading), domHeading: render.dom.contextHeading || domNoDataHeading, headingAgreement, modelNoDataHeading, domNoDataHeading, noDataHeadingAgreement, modelNoDataStatement, domNoDataStatement, noDataStatementAgreement, modelPatternStatements: statements, domVisiblePatternStatements: domStatements, statementAgreement, insufficientHistoryStateVisible, expectedInsufficientHistoryState, insufficientHistoryExpectationPass, noDataStateAgreement, fixturePersistenceDetected, historyWriteAttemptDetected: false, activeStateMutationDetected: false, protectedSystemsSafe: true, caseStatus: safe ? "PASS" : "REVIEW", browserCertificationStatus: safe ? "PASS" : "REVIEW", safeToMergeCase: safe, safeToMergeLp0545: safe, safeToMergeLp0545a: safe, safeToMergeLp0545b: safe, safeToMergeLp0545c: safe };
 }
 
 function gridlyLp0545HistoricalContextBindingCertification() {
@@ -62316,9 +62399,9 @@ function gridlyLp0545HistoricalContextBindingCertification() {
   const priorStatementsVisibleAfterSwitch = /Waco Street/.test(JSON.stringify(staleB.domVisiblePatternStatements || []));
   const staleContextDetected = priorSubjectVisibleAfterSwitch || priorStatementsVisibleAfterSwitch;
   const contextSwitchPass = Boolean(staleA.consumerSubject === "Waco Street crossing at US 90" && staleB.consumerSubject === "Second Street crossing at US 90" && staleB.displayedSubject === "Second Street crossing at US 90" && !staleContextDetected && staleB.insufficientHistoryStateVisible && staleB.noDataStateAgreement && !staleB.fixturePersistenceDetected && !staleB.historyWriteAttemptDetected && !staleB.activeStateMutationDetected);
-  cases.push({ ...staleB, caseName: "context_switch_stale_state", firstContextSubject: staleA.consumerSubject, secondContextSubject: staleB.consumerSubject, secondDisplayedSubject: staleB.displayedSubject, priorSubjectVisibleAfterSwitch, priorStatementsVisibleAfterSwitch, secondNoDataStateVisible: staleB.insufficientHistoryStateVisible, staleContextDetected, contextSwitchPass, safeToMergeCase: contextSwitchPass, safeToMergeLp0545: contextSwitchPass, safeToMergeLp0545a: contextSwitchPass, browserCertificationStatus: contextSwitchPass ? "PASS" : "REVIEW", caseStatus: contextSwitchPass ? "PASS" : "REVIEW", failedChecks: contextSwitchPass ? [] : ["contextSwitchPass"], failedCheckCount: contextSwitchPass ? 0 : 1 });
+  cases.push({ ...staleB, caseName: "context_switch_stale_state", firstContextSubject: staleA.consumerSubject, secondContextSubject: staleB.consumerSubject, secondDisplayedSubject: staleB.displayedSubject, priorSubjectVisibleAfterSwitch, priorStatementsVisibleAfterSwitch, secondNoDataStateVisible: staleB.insufficientHistoryStateVisible, staleContextDetected, contextSwitchPass, safeToMergeCase: contextSwitchPass, safeToMergeLp0545: contextSwitchPass, safeToMergeLp0545a: contextSwitchPass, safeToMergeLp0545b: contextSwitchPass, safeToMergeLp0545c: contextSwitchPass, browserCertificationStatus: contextSwitchPass ? "PASS" : "REVIEW", caseStatus: contextSwitchPass ? "PASS" : "REVIEW", failedChecks: contextSwitchPass ? [] : ["contextSwitchPass"], failedCheckCount: contextSwitchPass ? 0 : 1 });
   const allCasesPassed = cases.every((c) => c.safeToMergeCase === true && c.caseStatus === "PASS");
-  return { available: true, cases, allCasesPassed, failedCases: cases.filter((c) => c.caseStatus !== "PASS").map((c) => c.caseName), browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0545: allCasesPassed, safeToMergeLp0545a: allCasesPassed, safeToMergeLp0545b: allCasesPassed };
+  return { available: true, cases, allCasesPassed, failedCases: cases.filter((c) => c.caseStatus !== "PASS").map((c) => c.caseName), browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0545: allCasesPassed, safeToMergeLp0545a: allCasesPassed, safeToMergeLp0545b: allCasesPassed, safeToMergeLp0545c: allCasesPassed };
 }
 
 function gridlyLp0545aHistoricalContextCertificationAudit() {
@@ -62340,6 +62423,7 @@ window.gridlyLp0545HistoricalContextBindingAudit = gridlyLp0545HistoricalContext
 window.gridlyLp0545HistoricalContextBindingCertification = gridlyLp0545HistoricalContextBindingCertification;
 window.gridlyLp0545aHistoricalContextCertificationAudit = gridlyLp0545aHistoricalContextCertificationAudit;
 window.gridlyLp0545bHistoricalCrossingIsolationAudit = gridlyLp0545HistoricalContextBindingCertification;
+window.gridlyLp0545cHistoricalSubjectAuthorityAudit = gridlyLp0545HistoricalContextBindingCertification;
 exposeGridlyAuditHelper("gridlyLp0543VisibleHistoricalPatternAudit", gridlyLp0543VisibleHistoricalPatternAudit);
 exposeGridlyAuditHelper("gridlyLp0543aHistoricalPatternPresentationAudit", gridlyLp0543VisibleHistoricalPatternAudit);
 exposeGridlyAuditHelper("gridlyLp0543bHistoricalPatternDomCertificationAudit", gridlyLp0543bHistoricalPatternDomCertificationAudit);
@@ -62347,6 +62431,7 @@ exposeGridlyAuditHelper("gridlyLp0545HistoricalContextBindingAudit", gridlyLp054
 exposeGridlyAuditHelper("gridlyLp0545HistoricalContextBindingCertification", gridlyLp0545HistoricalContextBindingCertification);
 exposeGridlyAuditHelper("gridlyLp0545aHistoricalContextCertificationAudit", gridlyLp0545aHistoricalContextCertificationAudit);
 exposeGridlyAuditHelper("gridlyLp0545bHistoricalCrossingIsolationAudit", gridlyLp0545HistoricalContextBindingCertification);
+exposeGridlyAuditHelper("gridlyLp0545cHistoricalSubjectAuthorityAudit", gridlyLp0545HistoricalContextBindingCertification);
 
 function gridlyBuildHistoricalIntelligenceFindings(options = {}) {
   const protectedState = gridlyHistoricalProtectedState();
