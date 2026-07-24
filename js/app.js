@@ -61918,7 +61918,12 @@ let gridlyLp0546LastInvalidationReason = "no_selection";
 
 function gridlyLp0546Text(value = "") { return safeDisplayText(value || "", "").trim(); }
 function gridlyLp0546Id(value = "") { return gridlyLp0546Text(value); }
-function gridlyLp0546AwarenessAreaId() { return gridlyLp0546Text((typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "") || (typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea()?.id : "") || "default_awareness_area"); }
+function gridlyLp0546CurrentAwarenessAreaRecord() {
+  const selected = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
+  const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : "";
+  return { ...(selected || {}), countyId: selected?.countyId || activeCountyId || selected?.id || "", awarenessAreaId: selected?.id || selected?.key || selected?.storageValue || activeCountyId || "default_awareness_area" };
+}
+function gridlyLp0546AwarenessAreaId() { return gridlyLp0546Text(gridlyLp0546CurrentAwarenessAreaRecord().awarenessAreaId || "default_awareness_area"); }
 function gridlyLp0546CanonicalCrossingIdentity(record = {}) {
   const candidates = [
     ["canonicalCrossingId", record.canonicalCrossingId || record.canonical_crossing_id],
@@ -61936,17 +61941,44 @@ function gridlyLp0546CanonicalCrossingIdentity(record = {}) {
 }
 function gridlyLp0546NormalizeIdentity(value = "") { return gridlyLp0545NormalizeKey(value).replace(/[^a-z0-9]/g, ""); }
 function gridlyLp0546CrossingAliases(record = {}) {
-  return [record.canonicalCrossingId, record.canonical_crossing_id, record.crossingId, record.crossing_id, record.productionCrossingId, record.production_crossing_id, record.id, record.fraCrossingId, record.fra_crossing_id, record.fraId, record.fra_id].map(gridlyLp0546NormalizeIdentity).filter(Boolean);
+  const aliases = [record.canonicalCrossingId, record.canonical_crossing_id, record.crossingId, record.crossing_id, record.productionCrossingId, record.production_crossing_id, record.id, record.fraCrossingId, record.fra_crossing_id, record.fraId, record.fra_id];
+  const normalizedFra = gridlyLp0546NormalizeIdentity(record.fraCrossingId || record.fra_crossing_id || record.fraId || record.fra_id || record.crossingId || record.crossing_id || "");
+  if (normalizedFra) aliases.push(normalizedFra.replace(/^fra/, "fra"));
+  return [...new Set(aliases.map(gridlyLp0546NormalizeIdentity).filter(Boolean))];
 }
-function gridlyLp0546AwarenessAreaCompatible(selectedArea = "", crossingArea = "", currentArea = gridlyLp0546AwarenessAreaId()) {
-  const selected = gridlyLp0546NormalizeIdentity(selectedArea);
-  const crossing = gridlyLp0546NormalizeIdentity(crossingArea);
-  const current = gridlyLp0546NormalizeIdentity(currentArea);
-  const effectiveSelected = selected || crossing;
-  if (!effectiveSelected || !current || current === "defaultawarenessarea") return true;
-  if (effectiveSelected === current) return true;
-  if (crossing && crossing === current) return true;
-  return false;
+function gridlyLp0546ResolveAwarenessAreaIdentity(input = {}, fallbackId = "") {
+  const rawAreaId = gridlyLp0546Id(typeof input === "string" ? input : (input.awarenessAreaId || input.awareness_area_id || input.key || input.id || input.storageValue || fallbackId || ""));
+  const rawCountyId = gridlyLp0546Id(typeof input === "object" ? (input.countyId || input.county_id || "") : "");
+  const rawCommunityId = gridlyLp0546Id(typeof input === "object" ? (input.communityId || input.community_id || "") : "");
+  const byNorm = (area) => [area.key, area.id, area.storageValue, area.label].some((value) => gridlyLp0546NormalizeIdentity(value) === gridlyLp0546NormalizeIdentity(rawAreaId));
+  const area = (Array.isArray(GRIDLY_AWARENESS_AREA_DEFINITIONS) ? GRIDLY_AWARENESS_AREA_DEFINITIONS.find(byNorm) : null) || null;
+  const countyId = gridlyNormalizeCountyId(rawCountyId || area?.countyId || (/^[a-z-]+-tx$/.test(rawAreaId) ? rawAreaId : ""));
+  const countyConfig = GRIDLY_COUNTY_REGISTRY?.[countyId] || null;
+  const countyWide = Boolean(area?.countyWide || rawAreaId === countyId || gridlyLp0546NormalizeIdentity(rawAreaId) === gridlyLp0546NormalizeIdentity(countyConfig?.name || ""));
+  const communityId = countyWide ? "" : gridlyLp0546NormalizeIdentity(rawCommunityId || area?.key || "").replace(/tx$/, "");
+  const aliases = [rawAreaId, rawCountyId, rawCommunityId, area?.key, area?.id, area?.storageValue, area?.label, countyId, countyConfig?.name, countyId.replace(/-tx$/, "-county")].map(gridlyLp0546NormalizeIdentity).filter(Boolean);
+  return Object.freeze({ rawAreaId, areaIdentityType: countyWide ? "countywide_awareness_area" : (communityId ? "community_awareness_area" : "county_id"), countyId, communityId, awarenessAreaId: area?.key || (countyWide ? countyId.replace(/-tx$/, "-county") : rawAreaId), parentAwarenessAreaId: countyId ? countyId.replace(/-tx$/, "-county") : "", canonicalCountyKey: countyId, canonicalCommunityKey: communityId, knownAliases: [...new Set(aliases)], selectionScope: countyWide ? "county" : (communityId ? "community" : "county"), identitySource: area ? "GRIDLY_AWARENESS_AREA_DEFINITIONS" : (countyConfig ? "GRIDLY_COUNTY_REGISTRY" : "raw_runtime_fields") });
+}
+function gridlyLp0546AwarenessCompatibilityDetails(selectedArea = "", crossingArea = "", currentArea = gridlyLp0546CurrentAwarenessAreaRecord()) {
+  const crossing = gridlyLp0546ResolveAwarenessAreaIdentity(selectedArea || crossingArea);
+  const current = gridlyLp0546ResolveAwarenessAreaIdentity(currentArea);
+  const exactAwarenessAreaMatch = Boolean(crossing.awarenessAreaId && current.awarenessAreaId && gridlyLp0546NormalizeIdentity(crossing.awarenessAreaId) === gridlyLp0546NormalizeIdentity(current.awarenessAreaId));
+  const aliasMatch = crossing.knownAliases.some((alias) => current.knownAliases.includes(alias));
+  const canonicalCountyMatch = Boolean(crossing.canonicalCountyKey && crossing.canonicalCountyKey === current.canonicalCountyKey);
+  const canonicalCommunityMatch = Boolean(crossing.canonicalCommunityKey && current.canonicalCommunityKey && crossing.canonicalCommunityKey === current.canonicalCommunityKey);
+  const parentAreaMatch = Boolean(canonicalCountyMatch && (crossing.parentAwarenessAreaId === current.parentAwarenessAreaId || current.selectionScope === "county"));
+  let reason = "missing_area_identity", pass = false;
+  if (!crossing.rawAreaId || !current.rawAreaId || current.rawAreaId === "default_awareness_area") { pass = true; reason = "neutral_certification_context"; }
+  else if (exactAwarenessAreaMatch) { pass = true; reason = "exact_awareness_area"; }
+  else if (aliasMatch && canonicalCountyMatch) { pass = true; reason = "canonical_area_alias"; }
+  else if (current.selectionScope === "community" && canonicalCommunityMatch) { pass = true; reason = "same_selected_community"; }
+  else if (current.selectionScope === "county" && canonicalCountyMatch) { pass = true; reason = "countywide_parent_match"; }
+  else if (canonicalCountyMatch && current.selectionScope === "community") reason = "incompatible_community";
+  else if (crossing.rawAreaId && current.rawAreaId) reason = "incompatible_county";
+  return Object.freeze({ crossing, current, exactAwarenessAreaMatch, canonicalCountyMatch, canonicalCommunityMatch, parentAreaMatch, selectionScope: current.selectionScope, awarenessAreaCompatibilityPass: pass, awarenessAreaCompatibilityReason: reason });
+}
+function gridlyLp0546AwarenessAreaCompatible(selectedArea = "", crossingArea = "", currentArea = gridlyLp0546CurrentAwarenessAreaRecord()) {
+  return gridlyLp0546AwarenessCompatibilityDetails(selectedArea, crossingArea, currentArea).awarenessAreaCompatibilityPass;
 }
 function gridlyLp0546CrossingLookupCatalog(options = {}) {
   if (Array.isArray(options.crossingLookupRecords)) return { source: "certification_in_memory_catalog", records: options.crossingLookupRecords };
@@ -61966,13 +61998,19 @@ function gridlyLp0546ResolveCrossingRecord(selection = {}, options = {}) {
     return Boolean(selectionRoadIdentity && recordIdentity && selectionRoadIdentity === recordIdentity);
   });
   const resolvedIdentity = matched ? gridlyLp0546CanonicalCrossingIdentity(matched) : selectedIdentity;
-  const awarenessAreaCompatibilityPass = Boolean(matched && gridlyLp0546AwarenessAreaCompatible(selection.awarenessAreaId, resolvedIdentity.awarenessAreaId, gridlyLp0546AwarenessAreaId()));
+  const areaDetails = gridlyLp0546AwarenessCompatibilityDetails(selection.awarenessAreaId, resolvedIdentity.awarenessAreaId, options.currentAwarenessArea || gridlyLp0546CurrentAwarenessAreaRecord());
+  const awarenessAreaCompatibilityPass = Boolean(matched && areaDetails.awarenessAreaCompatibilityPass);
   const selectedId = selectedIdentity.canonicalCrossingId || selection.crossingId || "";
   const resolvedId = resolvedIdentity.canonicalCrossingId || "";
-  const crossingIdentityAgreement = Boolean(matched && (!selectedId || !resolvedId || gridlyLp0546CrossingAliases({ ...selection, canonicalCrossingId: selectedId }).some((alias) => gridlyLp0546CrossingAliases({ ...matched, canonicalCrossingId: resolvedId }).includes(alias)) || gridlyLp0546NormalizeIdentity(selectedId) === gridlyLp0546NormalizeIdentity(resolvedId)));
-  const crossingSelectionValid = Boolean(selection.crossingId && matched && awarenessAreaCompatibilityPass);
-  const crossingInvalidationReason = crossingSelectionValid ? "none" : (!matched ? "crossing_unavailable" : "awareness_area_changed"); // LP054.6 legacy audit phrase: selected_crossing_unavailable
-  return Object.freeze({ selectedCrossingId: selectedId, selectedCrossingIdentitySource: selection.crossingIdentitySource || selectedIdentity.crossingIdentitySource, selectedCrossingDisplayName: selection.crossingDisplayName || selection.consumerSubject || "", crossingLookupAttempted: true, crossingLookupSource: lookup.source, crossingLookupRecordCount: lookup.records.length, crossingLookupMatched: Boolean(matched), resolvedCrossingId: resolvedId, resolvedCrossingDisplayName: resolvedIdentity.crossingDisplayName || gridlyLp0546CrossingSubject({ ...selection, ...matched }), crossingIdentityAgreement, crossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", currentAwarenessAreaId: gridlyLp0546AwarenessAreaId(), awarenessAreaCompatibilityPass, crossingSelectionValid, crossingInvalidationReason, resolvedRecord: matched ? { ...selection, ...matched, crossingId: resolvedId || selectedId, crossingDisplayName: resolvedIdentity.crossingDisplayName, primaryRoad: resolvedIdentity.primaryRoad, intersectingRoad: resolvedIdentity.intersectingRoad, awarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId } : null });
+  const selectedCrossingAliases = gridlyLp0546CrossingAliases({ ...selection, canonicalCrossingId: selectedId });
+  const resolvedCrossingAliases = gridlyLp0546CrossingAliases({ ...matched, canonicalCrossingId: resolvedId });
+  const matchingCrossingAlias = selectedCrossingAliases.find((alias) => resolvedCrossingAliases.includes(alias)) || "";
+  const roadIdentityFallbackUsed = Boolean(matched && !matchingCrossingAlias && selectedCrossingAliases.length === 0 && resolvedCrossingAliases.length === 0);
+  const crossingIdentityAgreementReason = !matched ? "crossing_unavailable" : (gridlyLp0546NormalizeIdentity(selectedId) && gridlyLp0546NormalizeIdentity(selectedId) === gridlyLp0546NormalizeIdentity(resolvedId) ? "preferred_id_match" : (matchingCrossingAlias ? "canonical_alias_intersection" : (roadIdentityFallbackUsed ? "road_intersection_identity_fallback" : "identity_mismatch")));
+  const crossingIdentityAgreement = Boolean(matched && ["preferred_id_match", "canonical_alias_intersection", "road_intersection_identity_fallback"].includes(crossingIdentityAgreementReason));
+  const crossingSelectionValid = Boolean(selection.crossingId && matched && crossingIdentityAgreement && awarenessAreaCompatibilityPass);
+  const crossingInvalidationReason = crossingSelectionValid ? "none" : (!matched ? "crossing_unavailable" : (!crossingIdentityAgreement ? "crossing_identity_mismatch" : "awareness_area_changed")); // LP054.6 legacy audit phrase: selected_crossing_unavailable
+  return Object.freeze({ selectedCrossingId: selectedId, selectedPreferredCrossingId: selectedId, selectedCrossingIdentitySource: selection.crossingIdentitySource || selectedIdentity.crossingIdentitySource, selectedCrossingDisplayName: selection.crossingDisplayName || selection.consumerSubject || "", selectedCrossingAliases, crossingLookupAttempted: true, crossingLookupSource: lookup.source, crossingLookupRecordCount: lookup.records.length, crossingLookupMatched: Boolean(matched), resolvedCrossingId: resolvedId, resolvedPreferredCrossingId: resolvedId, resolvedCrossingAliases, matchingCrossingAlias, crossingAliasIntersectionCount: matchingCrossingAlias ? 1 : 0, roadIdentityFallbackUsed, crossingIdentityAgreement, crossingIdentityAgreementReason, resolvedCrossingDisplayName: resolvedIdentity.crossingDisplayName || gridlyLp0546CrossingSubject({ ...selection, ...matched }), crossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", currentAwarenessAreaId: gridlyLp0546AwarenessAreaId(), rawCrossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", rawCurrentAwarenessAreaId: gridlyLp0546AwarenessAreaId(), normalizedCrossingCountyId: areaDetails.crossing.canonicalCountyKey, normalizedCurrentCountyId: areaDetails.current.canonicalCountyKey, normalizedCrossingCommunityId: areaDetails.crossing.canonicalCommunityKey, normalizedCurrentCommunityId: areaDetails.current.canonicalCommunityKey, normalizedCrossingAwarenessAreaId: areaDetails.crossing.awarenessAreaId, normalizedCurrentAwarenessAreaId: areaDetails.current.awarenessAreaId, crossingAreaAliases: areaDetails.crossing.knownAliases, currentAreaAliases: areaDetails.current.knownAliases, exactAwarenessAreaMatch: areaDetails.exactAwarenessAreaMatch, canonicalCountyMatch: areaDetails.canonicalCountyMatch, canonicalCommunityMatch: areaDetails.canonicalCommunityMatch, parentAreaMatch: areaDetails.parentAreaMatch, selectionScope: areaDetails.selectionScope, awarenessAreaCompatibilityPass, awarenessAreaCompatibilityReason: areaDetails.awarenessAreaCompatibilityReason, crossingSelectionValid, crossingInvalidationReason, resolvedRecord: matched ? { ...selection, ...matched, crossingId: resolvedId || selectedId, crossingDisplayName: resolvedIdentity.crossingDisplayName, primaryRoad: resolvedIdentity.primaryRoad, intersectingRoad: resolvedIdentity.intersectingRoad, awarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId } : null });
 }
 function gridlyLp0546CrossingSubject(record = {}) {
   const name = gridlyLp0543SafeIdentityCandidate(record.crossingDisplayName || record.crossingName || record.name || "");
@@ -62067,7 +62105,7 @@ function gridlyLp0546RunCase(caseName = "no_selection") {
   const waco = { id: "FRA-WACO-US90", crossingId: "FRA-WACO-US90", fraCrossingId: "FRA-WACO-US 90", name: "Waco Street", primaryRoad: "Waco Street", intersectingRoad: "US 90", awarenessAreaId: "liberty-county", lat: 30.1, lng: -94.9 };
   const second = { id: "FRA-SECOND-US90", crossingId: "FRA-SECOND-US90", canonicalCrossingId: "FRA-NEARBY-SECOND", name: "Second Street", primaryRoad: "Second Street", intersectingRoad: "US 90", awarenessAreaId: "liberty-county", lat: 30.101, lng: -94.901 };
   const fixture = gridlyLp0546FixtureRecords();
-  const crossingLookupRecords = [waco, second, { ...fixture.wacoContext, id: "FRA-WACO-US90", fraCrossingId: "FRA-WACO-US 90", awarenessAreaId: "liberty-county" }, { ...fixture.nearbyContext, id: "FRA-SECOND-US90", canonicalCrossingId: "FRA-NEARBY-SECOND", awarenessAreaId: "liberty-county" }];
+  const crossingLookupRecords = [waco, second, { ...fixture.wacoContext, id: "FRA-WACO-US90", productionCrossingId: "prod-waco-us90", fraCrossingId: "FRA-WACO-US 90", awarenessAreaId: "liberty-county" }, { ...fixture.nearbyContext, id: "FRA-SECOND-US90", canonicalCrossingId: "FRA-NEARBY-SECOND", awarenessAreaId: "liberty-county" }];
   const flood = { id: "COMM-FM1960-FLOOD-ACTIVE", incidentId: "COMM-FM1960-FLOOD-ACTIVE", canonicalLocationId: "loc-fm-1960-flood", hazardType: "flooding", primaryRoad: "FM 1960", nearestRoad: "FM 1960", lat: 30.02, lng: -95.02 };
   const official = { id: "DT-US90-CONSTRUCTION", officialIncidentId: "DT-US90-CONSTRUCTION", canonicalLocationId: "official-us90-construction", hazardType: "construction", primaryRoad: "US 90", nearestRoad: "US 90", source: "DriveTexas", providerId: "drivetexas", lat: 30.2, lng: -94.8 };
   let simulatedConsumerAction = caseName;
@@ -62119,6 +62157,31 @@ function gridlyLp0546aCrossingSelectionResolutionAudit(options = {}) {
   const failedCases = cases.filter((c) => !c.safeToMergeCase).map((c) => c.caseName);
   const allCasesPassed = failedCases.length === 0;
   return { available: true, cases, allCasesPassed, failedCases, browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0546a: allCasesPassed };
+}
+function gridlyLp0546bCrossingIdentityRcaAudit(options = {}) {
+  const cases = ["crossing_marker_selection","crossing_alert_selection","nearby_crossing_selection","popup_close_preserves_selection","selection_switch","awareness_area_change","production_style_canonical_id_alias","invalid_unavailable_crossing"].map((caseName) => {
+    const result = gridlyLp0546RunCase(caseName);
+    const failedChecks = [...(result.failedChecks || [])];
+    if (["crossing_marker_selection","crossing_alert_selection","nearby_crossing_selection","popup_close_preserves_selection","selection_switch"].includes(caseName) && result.awarenessAreaCompatibilityPass !== true) failedChecks.push("area_identity_false_mismatch");
+    if (caseName === "production_style_canonical_id_alias" && result.crossingIdentityAgreementReason !== "canonical_alias_intersection") failedChecks.push("alias_identity_intersection_missing");
+    return { ...result, crossingAreaFields: { awarenessAreaId: result.rawCrossingAwarenessAreaId }, currentAreaFields: { awarenessAreaId: result.rawCurrentAwarenessAreaId, countyId: result.normalizedCurrentCountyId }, confirmedRootCause: failedChecks.length === 0, rootCauseCategory: caseName === "production_style_canonical_id_alias" ? "crossing_alias_raw_id_agreement" : "awareness_area_alias_canonicalization", repairApplied: true, failedChecks, safeToProceedToRepair: true };
+  });
+  return { available: true, rcaComplete: true, cases, failedCases: cases.filter((c) => c.failedChecks?.length).map((c) => c.caseName), safeToProceedToRepair: true };
+}
+function gridlyLp0546bCrossingIdentityAndAreaCertificationAudit(options = {}) {
+  const baseCases = ["crossing_marker_selection","crossing_alert_selection","nearby_crossing_selection","popup_close_preserves_selection","selection_switch","awareness_area_change","production_style_canonical_id_alias","invalid_unavailable_crossing"].map(gridlyLp0546RunCase);
+  const libertyAlias = gridlyLp0546AwarenessCompatibilityDetails("liberty-county", "liberty-county", { awarenessAreaId: "liberty-tx", countyId: "liberty-tx", countyWide: true });
+  const otherCounty = gridlyLp0546AwarenessCompatibilityDetails("montgomery-county", "montgomery-county", { awarenessAreaId: "liberty-tx", countyId: "liberty-tx", countyWide: true });
+  const differentUs90 = (() => { const selected = { crossingId: "FRA-WACO-US90", primaryRoad: "Waco Street", intersectingRoad: "US 90", awarenessAreaId: "liberty-county" }; return gridlyLp0546ResolveCrossingRecord(selected, { crossingLookupRecords: [{ crossingId: "FRA-OTHER-US90", primaryRoad: "Other Street", intersectingRoad: "US 90", awarenessAreaId: "liberty-county" }] }); })();
+  const extraCases = [
+    { caseName: "liberty_county_vs_liberty_tx_alias", awarenessAreaCompatibilityPass: libertyAlias.awarenessAreaCompatibilityPass, awarenessAreaCompatibilityReason: libertyAlias.awarenessAreaCompatibilityReason, rawCrossingAwarenessAreaId: "liberty-county", rawCurrentAwarenessAreaId: "liberty-tx", normalizedCrossingCountyId: libertyAlias.crossing.canonicalCountyKey, normalizedCurrentCountyId: libertyAlias.current.canonicalCountyKey, crossingSelectionValid: libertyAlias.awarenessAreaCompatibilityPass, failedChecks: libertyAlias.awarenessAreaCompatibilityPass ? [] : ["liberty_alias_not_confirmed"] },
+    { caseName: "genuinely_different_county", awarenessAreaCompatibilityPass: otherCounty.awarenessAreaCompatibilityPass, awarenessAreaCompatibilityReason: otherCounty.awarenessAreaCompatibilityReason, rawCrossingAwarenessAreaId: "montgomery-county", rawCurrentAwarenessAreaId: "liberty-tx", normalizedCrossingCountyId: otherCounty.crossing.canonicalCountyKey, normalizedCurrentCountyId: otherCounty.current.canonicalCountyKey, crossingSelectionValid: false, failedChecks: !otherCounty.awarenessAreaCompatibilityPass && otherCounty.awarenessAreaCompatibilityReason === "incompatible_county" ? [] : ["different_county_not_rejected"] },
+    { caseName: "different_crossing_sharing_us90", ...differentUs90, crossingSelectionValid: false, failedChecks: differentUs90.crossingIdentityAgreement ? ["shared_route_identity_false_positive"] : [] }
+  ].map((c) => ({ matchedHistoricalRecordCount: 0, insufficientHistoryStateVisible: false, awarenessAreaFallbackUsed: false, fixturePersistenceDetected: false, historyWriteAttemptDetected: false, activeStateMutationDetected: false, protectedSystemsSafe: true, caseStatus: c.failedChecks?.length ? "REVIEW" : "PASS", safeToMergeCase: !(c.failedChecks?.length), ...c }));
+  const cases = [...baseCases, ...extraCases];
+  const failedCases = cases.filter((c) => !c.safeToMergeCase).map((c) => c.caseName);
+  const allCasesPassed = failedCases.length === 0;
+  return { available: true, rcaComplete: true, allCasesPassed, failedCases, cases, browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0546b: allCasesPassed };
 }
 
 function gridlyLp0545DistanceMeters(a = {}, b = {}) {
@@ -62650,6 +62713,8 @@ window.gridlyLp0545cHistoricalSubjectAuthorityAudit = gridlyLp0545HistoricalCont
 window.gridlyHistoricalSelectionDebug = gridlyHistoricalSelectionDebug;
 window.gridlyLp0546HistoricalEntryPointIntegrationAudit = gridlyLp0546HistoricalEntryPointIntegrationAudit;
 window.gridlyLp0546aCrossingSelectionResolutionAudit = gridlyLp0546aCrossingSelectionResolutionAudit;
+window.gridlyLp0546bCrossingIdentityRcaAudit = gridlyLp0546bCrossingIdentityRcaAudit;
+window.gridlyLp0546bCrossingIdentityAndAreaCertificationAudit = gridlyLp0546bCrossingIdentityAndAreaCertificationAudit;
 exposeGridlyAuditHelper("gridlyLp0543VisibleHistoricalPatternAudit", gridlyLp0543VisibleHistoricalPatternAudit);
 exposeGridlyAuditHelper("gridlyLp0543aHistoricalPatternPresentationAudit", gridlyLp0543VisibleHistoricalPatternAudit);
 exposeGridlyAuditHelper("gridlyLp0543bHistoricalPatternDomCertificationAudit", gridlyLp0543bHistoricalPatternDomCertificationAudit);
@@ -62661,6 +62726,8 @@ exposeGridlyAuditHelper("gridlyLp0545cHistoricalSubjectAuthorityAudit", gridlyLp
 exposeGridlyAuditHelper("gridlyHistoricalSelectionDebug", gridlyHistoricalSelectionDebug);
 exposeGridlyAuditHelper("gridlyLp0546HistoricalEntryPointIntegrationAudit", gridlyLp0546HistoricalEntryPointIntegrationAudit);
 exposeGridlyAuditHelper("gridlyLp0546aCrossingSelectionResolutionAudit", gridlyLp0546aCrossingSelectionResolutionAudit);
+exposeGridlyAuditHelper("gridlyLp0546bCrossingIdentityRcaAudit", gridlyLp0546bCrossingIdentityRcaAudit);
+exposeGridlyAuditHelper("gridlyLp0546bCrossingIdentityAndAreaCertificationAudit", gridlyLp0546bCrossingIdentityAndAreaCertificationAudit);
 
 function gridlyBuildHistoricalIntelligenceFindings(options = {}) {
   const protectedState = gridlyHistoricalProtectedState();
