@@ -10,7 +10,7 @@ const contextSection = source.slice(source.indexOf('function gridlyLp0544Resolve
 assert.doesNotMatch(contextSection, /getTimezoneOffset\(|-05:00|-06:00|UTC offset/i, 'LP054.4 does not implement context with hardcoded UTC offsets');
 ['active_window', 'approaching_window', 'recently_ended_window', 'same_day_outside_window', 'different_day', 'no_context_match'].forEach((classification) => assert.ok(contextSection.includes(classification), `required context classification ${classification} is present`));
 assert.match(source, /GRIDLY_LP0544_CONTEXT_WINDOW_THRESHOLD_MINUTES = 30/, 'approaching and recently-ended thresholds remain conservative at 30 minutes');
-assert.match(source, /const overnight = end < start[\s\S]*gridlyLp0544PreviousWeekday\(supportedDay\)[\s\S]*active_window/, 'overnight windows are handled without assuming start precedes end');
+assert.match(source, /const overnight = end < start[\s\S]*gridlyLp0544NextWeekday\(supportedDay\)[\s\S]*active_window/, 'overnight windows are handled without assuming start precedes end');
 assert.match(source, /contextPrecisionSupported[\s\S]*GRIDLY_LP0543_MIN_PRECISE_WINDOW_INCIDENTS/, 'context precision remains gated by existing precise-window evidence threshold');
 assert.match(source, /incidentCount < GRIDLY_LP0543_MIN_INDEPENDENT_INCIDENTS/, 'existing minimum independent incident threshold remains unchanged');
 assert.match(source, /function gridlyLp0543IncidentKey[\s\S]*incidentId[\s\S]*Math\.floor\(start \/ 5400000\)/, 'multiple confirmations in one incident remain grouped before context is applied');
@@ -20,6 +20,7 @@ assert.match(source, /buildGridlyHistoricalIntelligenceSheetHtml\([\s\S]*pattern
 assert.match(source, /unsupportedPredictionLanguageDetected[\s\S]*will be blocked\|is probably blocked\|expect it to be blocked\|guaranteed\|likely active\|currently blocked/, 'audit rejects unsupported prediction language');
 assert.match(source, /liveTruthLanguageDetected[\s\S]*currently blocked/, 'audit rejects live-truth language for historical context');
 assert.match(source, /fixturePersistenceDetected[\s\S]*historyWriteAttemptDetected: false[\s\S]*activeStateMutationDetected: false[\s\S]*protectedSystemsSafe/, 'audit checks fixture persistence and read-only protected systems');
+assert.match(source, /expectedContextClassification[\s\S]*classificationExpectationPass[\s\S]*expectedHeading[\s\S]*headingExpectationPass/, 'audit can validate optional deterministic classification and heading expectations');
 assert.match(source, /window\.gridlyLp0544ContextAwareHistoricalIntelligenceAudit = gridlyLp0544ContextAwareHistoricalIntelligenceAudit/, 'LP054.4 browser audit is exposed');
 
 console.log('LP054.4 context-aware historical intelligence static coverage passed');
