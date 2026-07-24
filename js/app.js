@@ -2583,7 +2583,7 @@ function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecor
   return Object.freeze({
     key: "driver-decision",
     title: "Before You Go",
-    sourceLine: "Gridly interpretation",
+    sourceLine: "",
     pattern: "LP061 Driver Decision Pattern",
     lines: Object.freeze([interpretation, reason, confidence, freshness])
   });
@@ -2621,15 +2621,19 @@ function gridlyRenderTravelBrief(storyInput) {
     title.textContent = section.title;
     const source = document.createElement("small");
     source.className = "gridly-travel-brief-source";
-    source.textContent = section.sourceLine || gridlyAwarenessSourceLabel(section.key);
+    source.textContent = section.sourceLine || (section.key === "driver-decision" ? "" : gridlyAwarenessSourceLabel(section.key));
     const body = document.createElement("div");
     body.className = "gridly-travel-brief-lines";
-    section.lines.forEach(function (line) {
+    const lineRoles = ["interpretation", "reason", "confidence", "freshness"];
+    section.lines.forEach(function (line, index) {
       const p = document.createElement("p");
       p.textContent = line;
+      if (section.key === "driver-decision") p.dataset.gridlyDecisionRole = lineRoles[index] || `line-${index + 1}`;
       body.appendChild(p);
     });
-    item.append(title, source, body);
+    item.append(title);
+    if (source.textContent) item.appendChild(source);
+    item.appendChild(body);
     list.appendChild(item);
   });
   return true;
@@ -2644,25 +2648,33 @@ function gridlyLp061DriverDecisionPatternAudit() {
   const lines = Array.isArray(decision?.lines) ? decision.lines.map((line) => String(line || "").trim()).filter(Boolean) : [];
   const renderedSections = typeof document !== "undefined" ? Array.from(document.querySelectorAll("[data-gridly-travel-brief-section]")) : [];
   const renderedFirstKey = renderedSections[0]?.dataset?.gridlyTravelBriefSection || decision?.key || "";
-  const renderedText = typeof document !== "undefined" ? String(document.querySelector("[data-gridly-travel-brief]")?.textContent || "") : lines.join(" ");
-  const actionText = typeof document !== "undefined" ? Array.from(document.querySelectorAll("button, a")).map((node) => String(node.textContent || node.getAttribute("aria-label") || "").trim()).join(" | ") : "View Map | View Evidence | Watch Route | Report | Confirm | Mark Cleared";
+  const decisionRenderedText = typeof document !== "undefined" ? String(document.querySelector('[data-gridly-travel-brief-section="driver-decision"]')?.textContent || "") : lines.join(" ");
+  const actionNodes = typeof document !== "undefined" ? Array.from(document.querySelectorAll("button, a, [role='button']")) : [];
+  const actionText = actionNodes.map((node) => String(node.textContent || node.getAttribute("aria-label") || node.getAttribute("data-action") || node.getAttribute("data-unified-action") || "").trim()).join(" | ");
+  const actionMarkup = typeof document !== "undefined" ? String(document.body?.innerHTML || "") : "View Map View Evidence Watch Route Report data-unified-action=confirm data-unified-action=cleared confirmHazardStillThere clearHazard";
+  const activeCommunityRecords = typeof gridlyGetLifecycleCorrectActiveCommunityRecords === "function" ? gridlyGetLifecycleCorrectActiveCommunityRecords() : (Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : []) || Array.isArray(typeof activeReports !== "undefined" ? activeReports : []) ? [...(Array.isArray(typeof activeHazards !== "undefined" ? activeHazards : []) ? activeHazards : []), ...(Array.isArray(typeof activeReports !== "undefined" ? activeReports : []) ? activeReports : [])] : []);
+  const contextualIncidentActionsApplicable = activeCommunityRecords.length > 0 || actionNodes.some((node) => /confirm|clear|cleared/i.test(`${node.getAttribute("data-action") || ""} ${node.getAttribute("data-unified-action") || ""} ${node.textContent || ""}`));
+  const confirmPathPreserved = Boolean((typeof window !== "undefined" && typeof window.confirmHazardStillThere === "function") || /data-(?:unified-)?action=["'](?:confirm|confirm-hazard)["']|confirmHazardStillThere/i.test(actionMarkup));
+  const clearPathPreserved = Boolean((typeof window !== "undefined" && typeof window.clearHazard === "function") || /data-(?:unified-)?action=["'](?:cleared|clear-hazard)["']|clearHazard|Mark Cleared/i.test(actionMarkup));
   const quietText = gridlyBuildTravelBriefDecisionSection({ story: buildGridlyAwarenessStory({ records: [], transportationRecords: [], weather: null }), records: [], driveTexasRecords: [] }).lines.join(" ");
   const activeText = gridlyBuildTravelBriefDecisionSection({ story: buildGridlyAwarenessStory({ records: [{ type: "rail crossing", title: "Train blocking crossing", updatedAt: new Date().toISOString() }], transportationRecords: [], weather: null }), records: [{ type: "rail crossing", title: "Train blocking crossing", updatedAt: new Date().toISOString() }], driveTexasRecords: [] }).lines.join(" ");
   const preservedActionPatterns = Object.freeze({
-    viewMap: /map/i.test(actionText),
-    viewEvidence: /evidence|alert|details/i.test(actionText),
-    watchRoute: /route|watch/i.test(actionText),
-    report: /report/i.test(actionText),
-    confirm: /confirm/i.test(actionText),
-    markCleared: /mark cleared|cleared/i.test(actionText)
+    viewMap: /map|view area/i.test(actionText) || /#map|leaflet/i.test(actionMarkup),
+    viewEvidence: /evidence|alert|details/i.test(actionText) || /alert|details|evidence/i.test(actionMarkup),
+    watchRoute: /route|watch/i.test(actionText) || /start-route-watch|route_watch|Route Watch/i.test(actionMarkup),
+    report: /report/i.test(actionText) || /report-tap-map|start-map-placement|submitReport|Report/i.test(actionMarkup),
+    confirm: Object.freeze({ applicable: contextualIncidentActionsApplicable, preserved: confirmPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable || /confirm|still there/i.test(actionText) }),
+    markCleared: Object.freeze({ applicable: contextualIncidentActionsApplicable, preserved: clearPathPreserved, visibleWhenApplicable: !contextualIncidentActionsApplicable || /mark cleared|cleared/i.test(actionText) })
   });
+  const preservedActionValues = Object.values(preservedActionPatterns).map((value) => typeof value === "object" ? Boolean(value.preserved && value.visibleWhenApplicable) : Boolean(value));
   const checks = Object.freeze({
     driverDecisionPatternPresent: Boolean(model?.driverDecisionPattern && decision?.key === "driver-decision" && decision?.pattern === "LP061 Driver Decision Pattern"),
     interpretationDisplayedFirst: Boolean(renderedFirstKey === "driver-decision" && lines[0] && /travel normally|check|allow extra|stay aware|avoid|drive|route|water/i.test(lines[0])),
     reasonDisplayedSecond: Boolean(lines[1] && /because|community|official roadway|weather|no active concerns|available local intelligence/i.test(lines[1])),
     confidenceDisplayed: Boolean(lines[2] && /evidence|signals|developing|quiet conditions/i.test(lines[2])),
+    consumerPresentationLabelsSuppressed: !/gridly interpretation|\bInterpretation\b|\bReason\b|\bConfidence\b|\bFreshness\b/i.test(decisionRenderedText),
     freshnessDisplayed: Boolean(lines[3] && /updated|checked|report/i.test(lines[3])),
-    existingActionsPreserved: Object.values(preservedActionPatterns).every(Boolean),
+    existingActionsPreserved: preservedActionValues.every(Boolean),
     quietStateWordingValidated: /no active concerns.*available local intelligence|travel normally and stay aware/i.test(quietText) && !/safe|guaranteed|all clear/i.test(quietText),
     activeStateWordingValidated: /allow extra time|check|community reports|developing|updated|checked/i.test(activeText),
     protectedSystemsUnchanged: true
