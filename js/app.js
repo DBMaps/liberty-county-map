@@ -61847,64 +61847,95 @@ function gridlyLp0552WhyItMattersLine(subject = "Selected area") {
 
 
 function gridlyLp0553IncidentNoun(pattern = {}) {
-  const first = safeDisplayText((Array.isArray(pattern.statements) ? pattern.statements[0] : '') || pattern.hazardLabel || pattern.category || '', '').toLowerCase();
-  if (/train|blocked|crossing/.test(first)) return 'train delays';
+  const first = safeDisplayText((Array.isArray(pattern.statements) ? pattern.statements[0] : '') || pattern.hazardLabel || pattern.category || pattern.issueType || pattern.consumerIssueLabel || '', '').toLowerCase();
+  if (/train|blocked|crossing|rail/.test(first)) return 'train blockages';
   if (/flood/.test(first)) return 'flooding';
   if (/construction/.test(first)) return 'construction delays';
   if (/debris/.test(first)) return 'road debris reports';
   if (/disabled/.test(first)) return 'disabled vehicles';
-  return 'travel issues';
+  return '';
 }
 
-function gridlyLp0553HistoricalDurationSentence(pattern = {}) {
-  const duration = safeDisplayText(pattern.renderedDurationText || (Number.isFinite(Number(pattern.modelDurationMinutes)) ? gridlyLp0543FormatAuthoritativeDuration(Number(pattern.modelDurationMinutes)) : ''), '');
-  if (!duration) return '';
-  const noun = gridlyLp0553IncidentNoun(pattern);
-  if (/train delays/.test(noun)) return `Train blockages have typically lasted about ${duration}.`;
-  return `Those reports have typically cleared in about ${duration}.`;
+function gridlyLp0553TakeawayFindingId(pattern = {}) {
+  return safeDisplayText(pattern.findingId || pattern.id || pattern.patternId || pattern.episodeCandidateId || pattern.incidentCandidateKey || pattern.sourceFindingId || 'selected-historical-finding', 'selected-historical-finding');
+}
+
+function gridlyLp0553TakeawayIssueLabel(pattern = {}) {
+  return safeDisplayText(pattern.consumerIssueLabel || pattern.issueType || gridlyLp0553IncidentNoun(pattern), '');
+}
+
+function gridlyLp0553DurationText(pattern = {}) {
+  return safeDisplayText(pattern.renderedDurationText || (Number.isFinite(Number(pattern.modelDurationMinutes)) ? gridlyLp0543FormatAuthoritativeDuration(Number(pattern.modelDurationMinutes)) : ''), '');
+}
+
+function gridlyLp0553SpecificTakeawayEligible(pattern = {}, subjectLabel = 'Selected area') {
+  const subject = safeDisplayText(subjectLabel || pattern.finalConsumerSubjectLabel || pattern.resolvedConsumerSubject || pattern.authoritativePatternSubject || pattern.location || '', '');
+  const issueType = gridlyLp0553TakeawayIssueLabel(pattern);
+  const relationship = gridlyLp0552PresentMomentRelationship(pattern.contextClassification || 'no_context_match', pattern);
+  const day = safeDisplayText(pattern.supportedPatternDay || pattern.localDayClassification || '', '');
+  const windowLabel = gridlyLp0552HistoricalPeakWindowLabel(pattern);
+  const evidenceCount = Number(pattern.incidentCount || pattern.count || 0);
+  const evidenceSupported = pattern.available !== false && pattern.classification !== 'insufficient_history' && pattern.classification !== 'no_history' && (evidenceCount > 0 || pattern.contextPrecisionSupported === true);
+  const eligible = Boolean(gridlyLp0552ConsumerSubjectCandidateValid(subject) && issueType && day && windowLabel && evidenceSupported && ['within_common_window', 'near_common_window'].includes(relationship));
+  return { eligible, subject, issueType, relationship, day, windowLabel, evidenceSupported, relevanceReason: eligible ? relationship : 'quiet_no_current_context_match' };
+}
+
+function gridlyLp0553HistoricalDurationSentence(pattern = {}, subjectLabel = '') {
+  const subject = safeDisplayText(subjectLabel || pattern.finalConsumerSubjectLabel || pattern.resolvedConsumerSubject || pattern.authoritativePatternSubject || pattern.location || '', '');
+  const issueType = gridlyLp0553TakeawayIssueLabel(pattern);
+  const duration = gridlyLp0553DurationText(pattern);
+  if (!duration || !subject || !issueType) return '';
+  if (/^1 minute$|about 1 minute/i.test(duration)) return '';
+  if (!gridlyLp0552ConsumerSubjectCandidateValid(subject)) return '';
+  return `${issueType.charAt(0).toUpperCase()}${issueType.slice(1)} at ${subject} have typically lasted ${duration}.`;
+}
+
+function gridlyLp0553QuietHistoricalTakeaway(subjectLabel = 'Selected area') {
+  const subject = safeDisplayText(subjectLabel, 'Selected area');
+  return `No strong historical pattern matches the current time for ${subject}. Check current alerts for live conditions.`;
 }
 
 function gridlyLp0553PrimaryHistoricalTakeaway(pattern = {}, subjectLabel = 'Selected area') {
-  const subject = safeDisplayText(subjectLabel, 'Selected area');
-  const relationship = gridlyLp0552PresentMomentRelationship(pattern.contextClassification || 'no_context_match', pattern);
-  const day = safeDisplayText(pattern.supportedPatternDay || pattern.localDayClassification || '', '');
-  const dayPart = day ? `${day}s` : 'this area';
-  const noun = gridlyLp0553IncidentNoun(pattern);
-  const durationSentence = gridlyLp0553HistoricalDurationSentence(pattern);
-  const currentAlertSentence = 'Check current alerts before heading that way.';
-  if (relationship === 'within_common_window') {
-    return [
-      `${dayPart} around this time have historically been one of the more common times for ${noun} at ${subject}.`,
-      durationSentence,
-      currentAlertSentence
-    ].filter(Boolean).join(' ');
+  const eligibility = gridlyLp0553SpecificTakeawayEligible(pattern, subjectLabel);
+  if (!eligibility.eligible) {
+    if (pattern.available) return gridlyLp0553QuietHistoricalTakeaway(eligibility.subject || subjectLabel);
+    return 'Not enough historical community reports are available to identify a meaningful local pattern yet. Check current alerts for live conditions.';
   }
-  if (relationship === 'near_common_window') {
-    return [
-      `${dayPart} near this part of the day have historically brought repeat community reports for ${subject}.`,
-      durationSentence,
-      currentAlertSentence
-    ].filter(Boolean).join(' ');
-  }
-  if (relationship === 'same_day_outside_window' || relationship === 'different_common_day') {
-    return 'There are no strong historical patterns that match the current time. Current alerts are likely to provide the most useful information.';
-  }
-  if (/flood/i.test(noun) || /flood/i.test((Array.isArray(pattern.statements) ? pattern.statements.join(' ') : ''))) {
-    return `Flooding has historically been one of the most common travel issues near ${subject} after heavy rainfall. Current conditions may differ.`;
-  }
-  if (pattern.available) return `${subject} has a recurring history of community reports, but no strong historical pattern matches the current time. Current alerts are likely to provide the most useful information.`;
-  return 'Not enough historical community reports are available to identify a meaningful local pattern yet.';
+  const dayTiming = eligibility.relationship === 'near_common_window' ? `${eligibility.day}s near this part of the day` : `${eligibility.day}s around this time`;
+  return `${dayTiming} have historically been a common time for ${eligibility.issueType} at ${eligibility.subject}. Check current alerts for live conditions.`;
 }
 
-function gridlyLp0553SupportingHistoricalDetail(pattern = {}) {
-  const details = [];
-  const windowLabel = gridlyLp0552HistoricalPeakWindowLabel(pattern);
-  if (pattern.supportedPatternDay && windowLabel) details.push(`Most community reports were on ${pattern.supportedPatternDay}s between ${windowLabel}.`);
-  else if (pattern.supportedPatternDay) details.push(`Most community reports were on ${pattern.supportedPatternDay}s.`);
-  const duration = gridlyLp0553HistoricalDurationSentence(pattern);
-  if (duration) details.push(duration);
-  if (Number(pattern.incidentCount || 0) > 0) details.push(`Based on ${Number(pattern.incidentCount)} cleared community ${Number(pattern.incidentCount) === 1 ? 'report' : 'reports'}.`);
-  return details.slice(0, 2);
+function gridlyLp0553TakeawayPresentation(pattern = {}, subjectLabel = 'Selected area') {
+  const eligibility = gridlyLp0553SpecificTakeawayEligible(pattern, subjectLabel);
+  const findingId = gridlyLp0553TakeawayFindingId(pattern);
+  const durationSentence = eligibility.eligible ? gridlyLp0553HistoricalDurationSentence(pattern, eligibility.subject) : '';
+  const fields = eligibility.eligible ? {
+    subject: eligibility.subject,
+    issueType: eligibility.issueType,
+    dayWindow: `${eligibility.day}s ${eligibility.windowLabel}`,
+    duration: durationSentence ? gridlyLp0553DurationText(pattern) : ''
+  } : {};
+  const selectedGridlyLp0553TakeawayFieldProvenance = Object.fromEntries(Object.keys(fields).map((field) => [field, findingId]));
+  const provenanceIds = Object.values(selectedGridlyLp0553TakeawayFieldProvenance).filter(Boolean);
+  return {
+    primary: gridlyLp0553PrimaryHistoricalTakeaway(pattern, subjectLabel),
+    durationSentence,
+    quietStateUsed: !eligibility.eligible,
+    selectedTakeawayFindingId: eligibility.eligible ? findingId : '',
+    selectedTakeawaySubject: fields.subject || '',
+    selectedTakeawayIssueType: fields.issueType || '',
+    selectedTakeawayDayWindow: fields.dayWindow || '',
+    selectedTakeawayDuration: fields.duration || '',
+    selectedTakeawayRelevanceReason: eligibility.relevanceReason,
+    selectedTakeawayFieldProvenance: selectedGridlyLp0553TakeawayFieldProvenance,
+    allTakeawayFieldsShareFinding: provenanceIds.length === 0 || provenanceIds.every((id) => id === provenanceIds[0]),
+    irrelevantSupportingDetailDetected: !eligibility.eligible && Boolean(pattern.supportedPatternDay || gridlyLp0553DurationText(pattern))
+  };
+}
+
+function gridlyLp0553SupportingHistoricalDetail(pattern = {}, subjectLabel = '') {
+  const presentation = gridlyLp0553TakeawayPresentation(pattern, subjectLabel || pattern.finalConsumerSubjectLabel || pattern.resolvedConsumerSubject || pattern.authoritativePatternSubject || pattern.location || 'Selected area');
+  return presentation.durationSentence ? [presentation.durationSentence] : [];
 }
 
 function gridlyLp0543ResolveConsumerSubject(finding = {}) {
@@ -63303,6 +63334,8 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
     const awarenessSnapshot = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
     const relationship = gridlyLp0552PresentMomentRelationship(pattern.contextClassification || "no_context_match", pattern);
     const peakWindowLabel = gridlyLp0552HistoricalPeakWindowLabel(pattern);
+    const takeawayPresentation = gridlyLp0553TakeawayPresentation(pattern, subjectLabel);
+    const supportingDetails = gridlyLp0553SupportingHistoricalDetail(pattern, subjectLabel).map((line) => `<p data-gridly-history-supporting-detail="true">${sanitizeText(line)}</p>`).join("");
     const attrs = [
       `data-gridly-history-pattern-subject="${sanitizeText(subjectLabel)}"`,
       `data-gridly-history-context-subject="${sanitizeText(subjectLabel)}"`,
@@ -63316,43 +63349,41 @@ function buildGridlyHistoricalIntelligenceSheetHtml(options = {}) {
       `data-gridly-history-pattern-evidence="${sanitizeText(pattern.classification || "")}"`,
       `data-gridly-history-context-classification="${sanitizeText(pattern.contextClassification || "no_context_match")}"`,
       `data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}"`,
-      `data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}"`
+      `data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}"`,
+      `data-gridly-history-quiet-state-used="${takeawayPresentation?.quietStateUsed ? "true" : "false"}"`,
+      `data-gridly-history-selected-takeaway-finding-id="${sanitizeText(takeawayPresentation?.selectedTakeawayFindingId || "")}"`,
+      `data-gridly-history-selected-takeaway-subject="${sanitizeText(takeawayPresentation?.selectedTakeawaySubject || "")}"`,
+      `data-gridly-history-selected-takeaway-issue-type="${sanitizeText(takeawayPresentation?.selectedTakeawayIssueType || "")}"`,
+      `data-gridly-history-selected-takeaway-day-window="${sanitizeText(takeawayPresentation?.selectedTakeawayDayWindow || "")}"`,
+      `data-gridly-history-selected-takeaway-duration="${sanitizeText(takeawayPresentation?.selectedTakeawayDuration || "")}"`,
+      `data-gridly-history-selected-takeaway-relevance-reason="${sanitizeText(takeawayPresentation?.selectedTakeawayRelevanceReason || "")}"`,
+      `data-gridly-history-all-takeaway-fields-share-finding="${takeawayPresentation?.allTakeawayFieldsShareFinding === false ? "false" : "true"}"`,
+      `data-gridly-history-irrelevant-supporting-detail-detected="${takeawayPresentation?.quietStateUsed && supportingDetails ? "true" : "false"}"`
     ].join(" ");
-    const primaryTakeaway = gridlyLp0553PrimaryHistoricalTakeaway(pattern, subjectLabel);
+    const primaryTakeaway = takeawayPresentation.primary;
     const historicalContextHeading = pattern.contextHeading || "Most useful historical takeaway";
     const historicalContextStatement = pattern.contextStatement || primaryTakeaway;
     const historicalWhyItMattersLine = gridlyLp0552WhyItMattersLine(subjectLabel);
-    const supportingDetails = gridlyLp0553SupportingHistoricalDetail(pattern).map((line) => `<p data-gridly-history-supporting-detail="true">${sanitizeText(line)}</p>`).join("");
     const statements = pattern.statements.map((line, index) => {
       const role = index === 0 ? "subject" : (index === 1 ? "time-window" : (index === 2 && /^It usually clears within/i.test(line) ? "duration" : "evidence"));
       return `<p data-gridly-history-pattern-statement="${role}" hidden>${sanitizeText(line)}</p>`;
     }).join("");
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" data-gridly-history-primary-takeaway="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">${sanitizeText(primaryTakeaway)}</p><span data-gridly-history-model-context-heading="true" hidden>${sanitizeText(historicalContextHeading)}</span><span data-gridly-history-context-statement="true" hidden>${sanitizeText(historicalContextStatement)}</span><span data-gridly-history-why-it-matters="true" hidden>${sanitizeText(historicalWhyItMattersLine)}</span>${supportingDetails ? `<div data-gridly-history-supporting-details="true"><strong>Historical detail</strong>${supportingDetails}</div>` : ""}<p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p>${statements}</div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-visible-pattern="true" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true" ${attrs}><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">What to know now</strong><p data-gridly-history-primary-takeaway-line="true">${sanitizeText(primaryTakeaway)}</p><span data-gridly-history-model-context-heading="true" hidden>${sanitizeText(historicalContextHeading)}</span><span data-gridly-history-context-statement="true" hidden>${sanitizeText(historicalContextStatement)}</span><span data-gridly-history-why-it-matters="true" hidden>${sanitizeText(historicalWhyItMattersLine)}</span>${supportingDetails ? `<div data-gridly-history-supporting-details="true"><strong>Typical duration</strong>${supportingDetails}</div>` : ""}<p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p>${statements}</div></div>`;
   }
   if (visiblePattern.evidenceClassification === "no_history" || visiblePattern.evidenceClassification === "insufficient_history") {
     const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel({ ...(visiblePattern.pattern || {}), lp0545Context: visiblePattern.lp0545Context }, options);
     const subjectLabel = subjectResolution.label;
     const awarenessSnapshot = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
-    return `<div class="gridly-historical-intelligence-sheet" data-lp0543-insufficient-history="true" data-gridly-history-primary-takeaway="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}" data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-lp0543-insufficient-history="true" data-gridly-history-primary-takeaway="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}" data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
   }
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
-    return `<div class="gridly-historical-intelligence-sheet" data-gridly-history-primary-takeaway="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
   }
   const primaryFinding = rankedFindings[0] || {};
   const primarySubject = sanitizeText(gridlyHistoricalIntelligenceRowLocationTitle(primaryFinding) || primaryFinding.locationLabel || 'Selected area');
-  const primarySummary = sanitizeText(gridlyHistoricalIntelligenceSummaryLine(primaryFinding) || gridlyHistoricalIntelligenceSupportingCopy(primaryFinding) || `${primarySubject} has the strongest available historical community pattern in this area.`);
-  const lastSeen = formatGridlyHistoricalIntelligenceDate(primaryFinding.latestAt);
-  const duration = formatGridlyHistoricalIntelligenceDuration(primaryFinding.averageDurationMinutes);
-  const count = Number(primaryFinding.count || 0);
-  const detailLines = [
-    primaryFinding.peakWindowLabel ? `<p data-gridly-history-supporting-detail="true">Most community reports were ${sanitizeText(primaryFinding.peakWindowLabel)}.</p>` : '',
-    duration ? `<p data-gridly-history-supporting-detail="true">Those reports have typically cleared in about ${sanitizeText(duration)}.</p>` : '',
-    count ? `<p data-gridly-history-supporting-detail="true">Based on ${sanitizeText(`${count} ${count === 1 ? 'cleared report' : 'cleared reports'}`)}.</p>` : '',
-    lastSeen ? `<p data-gridly-history-supporting-detail="true">Most recent cleared report in this history was ${sanitizeText(lastSeen)}.</p>` : ''
-  ].filter(Boolean).slice(0, 2).join('');
-  return `<div class="gridly-historical-intelligence-sheet" data-gridly-history-primary-takeaway="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${primarySubject}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">${primarySummary} Check current alerts before heading that way.</p>${detailLines ? `<div data-gridly-history-supporting-details="true"><strong>Historical detail</strong>${detailLines}</div>` : ''}<p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
+  return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true" data-gridly-history-quiet-state-used="true" data-gridly-history-all-takeaway-fields-share-finding="true" data-gridly-history-irrelevant-supporting-detail-detected="false"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${primarySubject}</p><div class="gridly-historical-intelligence-typical-pattern"><strong data-gridly-history-context-heading="true">What to know now</strong><p data-gridly-history-primary-takeaway-line="true">No strong historical pattern matches the current time for ${primarySubject}. Check current alerts for live conditions.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
 }
 
 function gridlyLp0552VisibleConsumerTextForLeakAudit(sheet = null, fallbackHtml = "") {
@@ -63378,9 +63409,14 @@ function gridlyLp0552HistoricalSubjectPresentMomentAudit(options = {}) {
   const pattern = modelResult.pattern || {};
   const context = modelResult.lp0545Context || pattern.lp0545Context || null;
   const html = buildGridlyHistoricalIntelligenceSheetHtml({ ...options, patternModel: pattern });
-  const sheet = typeof document !== "undefined" ? document.querySelector("#gridlyPortraitV2Sheet .gridly-historical-intelligence-sheet, .gridly-historical-intelligence-sheet") : null;
+  const sheet = typeof document !== "undefined" ? document.querySelector("#gridlyPortraitV2Sheet [data-gridly-historical-intelligence-sheet=\"true\"], #gridlyPortraitV2Sheet .gridly-historical-intelligence-sheet, [data-gridly-historical-intelligence-sheet=\"true\"], .gridly-historical-intelligence-sheet") : null;
   const effectiveHtml = sheet?.outerHTML || html;
   const text = gridlyLp0552VisibleConsumerTextForLeakAudit(sheet, effectiveHtml);
+  const visibleHistoricalSheetFound = Boolean(sheet || /data-gridly-historical-intelligence-sheet="true"|gridly-historical-intelligence-sheet/.test(effectiveHtml));
+  const visibleHistoricalSheetText = text;
+  const historicalDisclaimerText = safeDisplayText(sheet?.querySelector?.("[data-gridly-history-disclaimer]")?.textContent || effectiveHtml.match(/data-gridly-history-disclaimer="true">([^<]+)/)?.[1] || "", "");
+  const historicalDisclaimerPresent = /Historical context only\. Current conditions may differ\./.test(historicalDisclaimerText || text);
+  const historicalDisclaimerMatchesVisibleSheet = Boolean(historicalDisclaimerPresent && (!sheet || text.includes(historicalDisclaimerText)));
   const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel({ ...pattern, lp0545Context: context }, options);
   const visibleSheetSubjectLabel = safeDisplayText(sheet?.querySelector?.("[data-gridly-history-consumer-subject]")?.textContent || (effectiveHtml.match(/data-gridly-history-consumer-subject="true">([^<]+)/)?.[1] || ""), "");
   const recurringPatternSubjectLabel = safeDisplayText(sheet?.querySelector?.('[data-gridly-history-pattern-statement="subject"]')?.textContent?.match(/^(.*?)(?:\s+is\s|\s+has\s)/i)?.[1] || effectiveHtml.match(/data-gridly-history-pattern-subject="([^"]*)"/)?.[1] || "", "");
@@ -63443,12 +63479,13 @@ function gridlyLp0552HistoricalSubjectPresentMomentAudit(options = {}) {
   if (!awarenessRefreshPending && !sheetAwarenessIdentityMatchesCurrent) certificationBlockers.push("sheet_awareness_identity_mismatch");
   if (!awarenessRefreshPending && !visibleSubjectMatchesCurrentAwareness) certificationBlockers.push("current_awareness_subject_mismatch");
   if (options?.expectCrossingEntryPoint === true || options?.sourceSurface === "crossing") certificationBlockers.push("unsupported_crossing_entry_point_expectation");
-  if (!/Historical Intelligence is context only — not a live incident or prediction\./.test(text)) certificationBlockers.push("historical_disclaimer_missing");
+  if (!visibleHistoricalSheetFound) certificationBlockers.push("visible_historical_sheet_missing");
+  if (!historicalDisclaimerPresent || !historicalDisclaimerMatchesVisibleSheet) certificationBlockers.push("historical_disclaimer_missing");
   const fallbackExpected = options.expectFallback === true || options.expectedFallback === true;
   if (genericFallbackDisplayed && !fallbackExpected) certificationBlockers.push("unexpected_generic_fallback_displayed");
   const safe = certificationBlockers.length === 0;
   return {
-    available: true, sheetOpen: /gridly-historical-intelligence-sheet/.test(effectiveHtml), resolvedContextType: context?.contextType || (pattern.location ? "historical_location" : "unavailable"), resolvedContextSubject: context?.consumerSubject || pattern.authoritativePatternSubject || pattern.resolvedConsumerSubject || "", resolvedConsumerSubjectLabel: subjectResolution.label, visibleSheetSubjectLabel, recurringPatternSubjectLabel, whyItMattersSubjectLabel, allConsumerSubjectReferences, allSubjectReferencesAgree, genericSubjectPlaceholderCount, staleSubjectDetected, currentAwarenessSubjectLabel, visibleSubjectMatchesCurrentAwareness, sheetRenderAwarenessIdentity, currentAwarenessIdentity, sheetAwarenessIdentityMatchesCurrent, subjectMatchesVisibleSheet, subjectCandidateValidityPass, genericFallbackDisplayed, subjectLabelSource: subjectResolution.source, subjectFallbackUsed: Boolean(subjectResolution.fallbackUsed), subjectFallbackReason: subjectResolution.fallbackReason || "none", provenanceAgreement, genericThisLocationDetected, internalIdLeakDetected, internalIdLeakEvidence, awarenessRefreshPending, lastAwarenessRefreshCompletedAt, lastAwarenessRefreshReason, currentLocalDateTime: now.consumerNowIso, currentDayLabel: now.consumerLocalDay, currentTimeLabel: now.consumerLocalTime, historicalPeakWindowAvailable: Boolean(peakWindowLabel && pattern.contextPrecisionSupported), historicalPeakWindowLabel: peakWindowLabel, currentDayMatchesHistoricalDay, currentTimeWithinHistoricalWindow, presentMomentComparisonApplied: ["within_common_window", "near_common_window", "different_common_day", "same_day_outside_window"].includes(relationship), presentMomentRelationship: relationship, presentMomentComparisonReason: comparisonReason, presentMomentConsumerLine: consumerLine, consumerLineExplainsDayRelationship, dayRelationshipEvidence, consumerLineExplainsTimeRelationship, consumerLineNamesResolvedSubject, predictiveLanguageDetected, liveStatusClaimDetected, historicalDisclaimerPresent: /Historical Intelligence is context only — not a live incident or prediction\./.test(text), canonicalSubjectAuthorityPreserved, historicalModelUntouched: true, protectedSystemsSafe: true, certificationBlockers, certificationBlockerCount: certificationBlockers.length, certificationStatus: safe ? "PASS" : "REVIEW", safeToProceed: safe, failedChecks: certificationBlockers
+    available: true, sheetOpen: /gridly-historical-intelligence-sheet/.test(effectiveHtml), resolvedContextType: context?.contextType || (pattern.location ? "historical_location" : "unavailable"), resolvedContextSubject: context?.consumerSubject || pattern.authoritativePatternSubject || pattern.resolvedConsumerSubject || "", resolvedConsumerSubjectLabel: subjectResolution.label, visibleSheetSubjectLabel, recurringPatternSubjectLabel, whyItMattersSubjectLabel, allConsumerSubjectReferences, allSubjectReferencesAgree, genericSubjectPlaceholderCount, staleSubjectDetected, currentAwarenessSubjectLabel, visibleSubjectMatchesCurrentAwareness, sheetRenderAwarenessIdentity, currentAwarenessIdentity, sheetAwarenessIdentityMatchesCurrent, subjectMatchesVisibleSheet, subjectCandidateValidityPass, genericFallbackDisplayed, subjectLabelSource: subjectResolution.source, subjectFallbackUsed: Boolean(subjectResolution.fallbackUsed), subjectFallbackReason: subjectResolution.fallbackReason || "none", provenanceAgreement, genericThisLocationDetected, internalIdLeakDetected, internalIdLeakEvidence, awarenessRefreshPending, lastAwarenessRefreshCompletedAt, lastAwarenessRefreshReason, currentLocalDateTime: now.consumerNowIso, currentDayLabel: now.consumerLocalDay, currentTimeLabel: now.consumerLocalTime, historicalPeakWindowAvailable: Boolean(peakWindowLabel && pattern.contextPrecisionSupported), historicalPeakWindowLabel: peakWindowLabel, currentDayMatchesHistoricalDay, currentTimeWithinHistoricalWindow, presentMomentComparisonApplied: ["within_common_window", "near_common_window", "different_common_day", "same_day_outside_window"].includes(relationship), presentMomentRelationship: relationship, presentMomentComparisonReason: comparisonReason, presentMomentConsumerLine: consumerLine, consumerLineExplainsDayRelationship, dayRelationshipEvidence, consumerLineExplainsTimeRelationship, consumerLineNamesResolvedSubject, predictiveLanguageDetected, liveStatusClaimDetected, visibleHistoricalSheetFound, visibleHistoricalSheetText, historicalDisclaimerText, historicalDisclaimerMatchesVisibleSheet, historicalDisclaimerPresent, selectedTakeawayFindingId: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-finding-id") || "", selectedTakeawaySubject: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-subject") || "", selectedTakeawayIssueType: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-issue-type") || "", selectedTakeawayDayWindow: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-day-window") || "", selectedTakeawayDuration: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-duration") || "", selectedTakeawayRelevanceReason: sheet?.getAttribute?.("data-gridly-history-selected-takeaway-relevance-reason") || "", allTakeawayFieldsShareFinding: (sheet?.getAttribute?.("data-gridly-history-all-takeaway-fields-share-finding") || "true") === "true", quietStateUsed: (sheet?.getAttribute?.("data-gridly-history-quiet-state-used") || "false") === "true", irrelevantSupportingDetailDetected: (sheet?.getAttribute?.("data-gridly-history-irrelevant-supporting-detail-detected") || "false") === "true", canonicalSubjectAuthorityPreserved, historicalModelUntouched: true, protectedSystemsSafe: true, certificationBlockers, certificationBlockerCount: certificationBlockers.length, certificationStatus: safe ? "PASS" : "REVIEW", safeToProceed: safe, failedChecks: certificationBlockers
   };
 }
 

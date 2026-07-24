@@ -15,7 +15,12 @@ const end = source.indexOf('function gridlyLp0543ResolveConsumerSubject');
 const slice = source.slice(start, end);
 const context = {
   safeDisplayText: (value, fallback = '') => String(value || fallback || '').trim(),
+  gridlyLp0543SafeIdentityCandidate: (value) => String(value || '').trim(),
+  gridlyLp0545InternalIdentifierSubjectDetected: () => false,
+  gridlyLp0545NormalizeKey: (value) => String(value || '').toLowerCase(),
+  GRIDLY_AWARENESS_AREA_BY_KEY: {},
   gridlyLp0543FormatAuthoritativeDuration: (minutes) => `${minutes} minutes`,
+  gridlyLp0543FormatConsumerLocalMinute: (minutes) => `${minutes}`,
   Number,
   Boolean,
   String,
@@ -30,11 +35,24 @@ const relevant = context.gridlyLp0553PrimaryHistoricalTakeaway({
   contextClassification: 'active_window',
   contextPrecisionSupported: true,
   supportedPatternDay: 'Friday',
+  supportedWindowStartMinutes: 420,
+  supportedWindowEndMinutes: 600,
+  incidentCount: 6,
   statements: ['Waco Street Crossing is frequently blocked on Friday mornings.'],
   renderedDurationText: '45 minutes'
 }, 'Waco Street Crossing');
 assert.match(relevant, /Friday.*historically/i, 'Relevant current-time history produces contextual local-knowledge copy');
-assert.match(relevant, /45 minutes/i, 'Relevant current-time history includes existing duration output');
+assert.match(context.gridlyLp0553TakeawayPresentation({
+  available: true,
+  contextClassification: 'active_window',
+  contextPrecisionSupported: true,
+  supportedPatternDay: 'Friday',
+  supportedWindowStartMinutes: 420,
+  supportedWindowEndMinutes: 600,
+  incidentCount: 6,
+  statements: ['Waco Street Crossing is frequently blocked on Friday mornings.'],
+  renderedDurationText: '45 minutes'
+}, 'Waco Street Crossing').durationSentence, /45 minutes/i, 'Relevant current-time history includes existing duration output');
 assert.match(relevant, /Check current alerts/i, 'Relevant current-time history defers live-condition ownership to current alerts');
 
 const irrelevant = context.gridlyLp0553PrimaryHistoricalTakeaway({
@@ -42,9 +60,12 @@ const irrelevant = context.gridlyLp0553PrimaryHistoricalTakeaway({
   contextClassification: 'same_day_outside_window',
   contextPrecisionSupported: true,
   supportedPatternDay: 'Friday',
+  supportedWindowStartMinutes: 420,
+  supportedWindowEndMinutes: 600,
+  incidentCount: 6,
   statements: ['Waco Street Crossing is frequently blocked on Friday mornings.']
 }, 'Waco Street Crossing');
-assert.match(irrelevant, /no strong historical patterns that match the current time/i, 'Strong but current-time-irrelevant history suppresses the old record-viewer summary');
+assert.match(irrelevant, /No strong historical pattern matches the current time/i, 'Strong but current-time-irrelevant history suppresses the old record-viewer summary');
 
 const sparse = context.gridlyLp0553PrimaryHistoricalTakeaway({ available: false }, 'Dayton');
 assert.match(sparse, /Not enough historical community reports/i, 'Little-history context produces the approved sparse-history takeaway');
