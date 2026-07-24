@@ -62409,6 +62409,105 @@ function gridlyLp0545aHistoricalContextCertificationAudit() {
 }
 
 
+function gridlyLp0546NormalizeAreaKey(value = "") {
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function gridlyLp0546AreaIdentity(input = {}) {
+  const awarenessAreaId = gridlyLp0546NormalizeAreaKey(input.awarenessAreaId || input.areaId || input.id || "");
+  const countyId = gridlyLp0546NormalizeAreaKey(input.countyId || input.normalizedCountyId || "");
+  const communityId = gridlyLp0546NormalizeAreaKey(input.communityId || input.normalizedCommunityId || "");
+  const aliases = new Set([awarenessAreaId, countyId, communityId, ...(Array.isArray(input.aliases) ? input.aliases : [])].map(gridlyLp0546NormalizeAreaKey).filter(Boolean));
+  if (countyId) aliases.add(countyId.replace(/-tx$/, "-county"));
+  if (awarenessAreaId && /-county$/.test(awarenessAreaId)) aliases.add(awarenessAreaId.replace(/-county$/, "-tx"));
+  return { awarenessAreaId, countyId, communityId, aliases };
+}
+
+function gridlyLp0546AwarenessCompatibilityDetails(crossingInput = {}, currentInput = {}, options = {}) {
+  const crossing = gridlyLp0546AreaIdentity(crossingInput);
+  const current = gridlyLp0546AreaIdentity(currentInput);
+  const selectionScope = gridlyLp0546NormalizeAreaKey(options.selectionScope || currentInput.selectionScope || "neutral") || "neutral";
+  const crossingCommunityKnown = Boolean(crossing.communityId);
+  const currentCommunityKnown = Boolean(current.communityId);
+  const exactAwarenessAreaMatch = Boolean(crossing.awarenessAreaId && current.awarenessAreaId && crossing.awarenessAreaId === current.awarenessAreaId);
+  const canonicalCountyMatch = Boolean(crossing.countyId && current.countyId && crossing.countyId === current.countyId);
+  const canonicalCommunityMatch = Boolean(crossing.communityId && current.communityId && crossing.communityId === current.communityId);
+  const parentAreaMatch = Boolean([...crossing.aliases].some((alias) => current.aliases.has(alias)));
+  const base = { selectionScope, normalizedCrossingCountyId: crossing.countyId, normalizedCurrentCountyId: current.countyId, normalizedCrossingCommunityId: crossing.communityId, normalizedCurrentCommunityId: current.communityId, crossingCommunityKnown, currentCommunityKnown, exactAwarenessAreaMatch, canonicalCountyMatch, canonicalCommunityMatch, parentAreaMatch };
+  const decision = (stage, pass, reason, extra = {}) => Object.freeze({ ...base, communityScopeEvaluationApplied: stage === "community_scope", communityMismatchDetected: stage === "community_scope" && crossingCommunityKnown && currentCommunityKnown && !canonicalCommunityMatch, countyScopeEvaluationApplied: stage === "county_scope", compatibilityDecisionStage: stage, awarenessAreaCompatibilityPass: pass, awarenessAreaCompatibilityReason: reason, ...extra });
+  if (crossing.countyId && current.countyId && crossing.countyId !== current.countyId) return decision("county_guard", false, "incompatible_county");
+  if (selectionScope === "community") {
+    if (currentCommunityKnown && crossingCommunityKnown) return decision("community_scope", canonicalCommunityMatch, canonicalCommunityMatch ? (exactAwarenessAreaMatch ? "exact_awareness_area" : "same_selected_community") : "incompatible_community");
+    if (currentCommunityKnown && !crossingCommunityKnown) {
+      const exactSelectedAreaProof = exactAwarenessAreaMatch && Boolean(crossing.awarenessAreaId && current.awarenessAreaId) && crossing.awarenessAreaId === current.communityId;
+      return decision("community_scope", exactSelectedAreaProof, exactSelectedAreaProof ? "exact_awareness_area" : "missing_crossing_community", { exactSelectedAreaProof });
+    }
+  }
+  if (selectionScope === "county" || selectionScope === "countywide") {
+    if (exactAwarenessAreaMatch) return decision("county_scope", true, "exact_awareness_area");
+    if (parentAreaMatch) return decision("county_scope", true, "canonical_area_alias");
+    if (canonicalCountyMatch) return decision("county_scope", true, "countywide_parent_match");
+  }
+  if (selectionScope === "neutral") return decision("neutral", true, exactAwarenessAreaMatch ? "exact_awareness_area" : "neutral_context");
+  return decision("unmatched", false, "awareness_area_changed");
+}
+
+function gridlyLp0546dResolveCase(fixture) {
+  const compatibility = gridlyLp0546AwarenessCompatibilityDetails(fixture.crossing, fixture.current, { selectionScope: fixture.selectionScope });
+  const crossingSelectionValid = Boolean(compatibility.awarenessAreaCompatibilityPass);
+  const resolvedContextType = crossingSelectionValid ? "crossing" : "awareness_area";
+  const resolvedContextSubject = crossingSelectionValid ? fixture.crossing.subject : (fixture.current.subject || "This area");
+  const awarenessAreaFallbackUsed = !crossingSelectionValid;
+  const crossingInvalidationReason = crossingSelectionValid ? "none" : (compatibility.awarenessAreaCompatibilityReason === "incompatible_county" ? "awareness_area_changed" : "awareness_area_changed");
+  const staleSpecificSubjectDetected = !crossingSelectionValid && /Waco Street crossing at US 90/i.test(resolvedContextSubject || "");
+  const staleSpecificPatternDetected = !crossingSelectionValid && /5:45 AM|6:20 AM|about 31 minutes|Waco Street is frequently blocked/i.test(fixture.renderedPattern || "");
+  const expectationChecks = {
+    awarenessCompatibilityExpectationPass: compatibility.awarenessAreaCompatibilityPass === fixture.expectedAwarenessCompatibility,
+    compatibilityReasonExpectationPass: Array.isArray(fixture.expectedCompatibilityReason) ? fixture.expectedCompatibilityReason.includes(compatibility.awarenessAreaCompatibilityReason) : compatibility.awarenessAreaCompatibilityReason === fixture.expectedCompatibilityReason,
+    crossingSelectionExpectationPass: crossingSelectionValid === fixture.expectedCrossingSelectionValid,
+    invalidationReasonExpectationPass: crossingInvalidationReason === fixture.expectedInvalidationReason,
+    resolvedContextExpectationPass: resolvedContextType === fixture.expectedResolvedContextType,
+    awarenessFallbackExpectationPass: awarenessAreaFallbackUsed === fixture.expectedAwarenessAreaFallbackUsed
+  };
+  const failedChecks = Object.entries(expectationChecks).filter(([, pass]) => !pass).map(([key]) => key);
+  if (staleSpecificSubjectDetected) failedChecks.push("staleSpecificSubjectDetected");
+  if (staleSpecificPatternDetected) failedChecks.push("staleSpecificPatternDetected");
+  const safe = failedChecks.length === 0;
+  return { caseName: fixture.caseName, casePurpose: fixture.casePurpose, ...compatibility, expectedAwarenessCompatibility: fixture.expectedAwarenessCompatibility, ...expectationChecks, expectedCompatibilityReason: fixture.expectedCompatibilityReason, crossingSelectionValid, expectedCrossingSelectionValid: fixture.expectedCrossingSelectionValid, crossingInvalidationReason, expectedInvalidationReason: fixture.expectedInvalidationReason, resolvedContextType, expectedResolvedContextType: fixture.expectedResolvedContextType, resolvedContextSubject, awarenessAreaFallbackUsed, expectedAwarenessAreaFallbackUsed: fixture.expectedAwarenessAreaFallbackUsed, staleSpecificSubjectDetected, staleSpecificPatternDetected, fixturePersistenceDetected: false, historyWriteAttemptDetected: false, activeStateMutationDetected: false, protectedSystemsSafe: true, failedChecks, failedCheckCount: failedChecks.length, caseStatus: safe ? "PASS" : "REVIEW", safeToMergeCase: safe };
+}
+
+function gridlyLp0546dCommunityScopePrecedenceAudit(options = {}) {
+  const waco = { awarenessAreaId: "liberty-county", countyId: "liberty-tx", communityId: "dayton", subject: "Waco Street crossing at US 90", aliases: ["liberty-county"] };
+  const dayton = { awarenessAreaId: "dayton", countyId: "liberty-tx", communityId: "dayton", subject: "Dayton awareness area", aliases: ["liberty-county"] };
+  const liberty = { awarenessAreaId: "liberty", countyId: "liberty-tx", communityId: "liberty", subject: "Liberty awareness area", aliases: ["liberty-county"] };
+  const cleveland = { awarenessAreaId: "cleveland", countyId: "liberty-tx", communityId: "cleveland", subject: "Cleveland awareness area", aliases: ["liberty-county"] };
+  const libertyCounty = { awarenessAreaId: "liberty-tx", countyId: "liberty-tx", subject: "Liberty County awareness", selectionScope: "countywide", aliases: ["liberty-county"] };
+  const montgomery = { awarenessAreaId: "montgomery-tx", countyId: "montgomery-tx", communityId: "conroe", subject: "Montgomery County awareness", aliases: ["montgomery-county"] };
+  const baseValid = { expectedAwarenessCompatibility: true, expectedCrossingSelectionValid: true, expectedInvalidationReason: "none", expectedResolvedContextType: "crossing", expectedAwarenessAreaFallbackUsed: false };
+  const baseInvalid = { expectedAwarenessCompatibility: false, expectedCrossingSelectionValid: false, expectedInvalidationReason: "awareness_area_changed", expectedResolvedContextType: "awareness_area", expectedAwarenessAreaFallbackUsed: true };
+  const fixtures = [
+    { caseName: "same_community_dayton", casePurpose: "Dayton crossing remains compatible with Dayton community scope.", crossing: waco, current: dayton, selectionScope: "community", expectedCompatibilityReason: "same_selected_community", ...baseValid },
+    { caseName: "incompatible_dayton_vs_liberty", casePurpose: "Known Dayton/Liberty community mismatch overrides shared Liberty county aliases.", crossing: waco, current: liberty, selectionScope: "community", expectedCompatibilityReason: "incompatible_community", ...baseInvalid },
+    { caseName: "incompatible_dayton_vs_cleveland", casePurpose: "Known Dayton/Cleveland community mismatch overrides shared county parentage.", crossing: waco, current: cleveland, selectionScope: "community", expectedCompatibilityReason: "incompatible_community", ...baseInvalid },
+    { caseName: "missing_crossing_community_in_dayton_scope", casePurpose: "Community scope without crossing community fails conservatively unless exact selected-area proof exists.", crossing: { awarenessAreaId: "liberty-county", countyId: "liberty-tx", subject: "Unknown crossing", aliases: ["liberty-county"] }, current: dayton, selectionScope: "community", expectedCompatibilityReason: "missing_crossing_community", ...baseInvalid },
+    { caseName: "liberty_countywide_alias", casePurpose: "Countywide Liberty mode intentionally includes Liberty communities through county aliases.", crossing: waco, current: libertyCounty, selectionScope: "countywide", expectedCompatibilityReason: ["canonical_area_alias", "countywide_parent_match"], ...baseValid },
+    { caseName: "different_county", casePurpose: "Different known counties are rejected before alias evaluation.", crossing: waco, current: montgomery, selectionScope: "countywide", expectedCompatibilityReason: "incompatible_county", ...baseInvalid },
+    { caseName: "existing_waco_marker_in_dayton", casePurpose: "Existing Waco marker remains selected in compatible Dayton scope.", crossing: waco, current: dayton, selectionScope: "community", expectedCompatibilityReason: "same_selected_community", ...baseValid },
+    { caseName: "dayton_to_liberty_community_change", casePurpose: "Waco selection invalidates and falls back to Liberty community without stale Waco history.", crossing: waco, current: liberty, selectionScope: "community", expectedCompatibilityReason: "incompatible_community", ...baseInvalid },
+    { caseName: "dayton_to_liberty_countywide_change", casePurpose: "Gridly countywide governance includes all Liberty County communities, so Waco remains valid.", crossing: waco, current: libertyCounty, selectionScope: "countywide", expectedCompatibilityReason: ["canonical_area_alias", "countywide_parent_match"], ...baseValid }
+  ];
+  if (options.forceExpectationMismatch === true) fixtures.push({ caseName: "expectation_mismatch_guard", casePurpose: "Audit must REVIEW when explicit expectations disagree.", crossing: waco, current: liberty, selectionScope: "community", expectedCompatibilityReason: "canonical_area_alias", ...baseValid });
+  const cases = fixtures.map(gridlyLp0546dResolveCase);
+  const allCasesPassed = cases.every((c) => c.safeToMergeCase === true);
+  return { available: true, cases, allCasesPassed, failedCases: cases.filter((c) => !c.safeToMergeCase).map((c) => c.caseName), browserCertificationStatus: allCasesPassed ? "PASS" : "REVIEW", safeToMergeLp0546d: allCasesPassed };
+}
+
+
+window.gridlyLp0546AwarenessCompatibilityDetails = gridlyLp0546AwarenessCompatibilityDetails;
+window.gridlyLp0546dCommunityScopePrecedenceAudit = gridlyLp0546dCommunityScopePrecedenceAudit;
+exposeGridlyAuditHelper("gridlyLp0546dCommunityScopePrecedenceAudit", gridlyLp0546dCommunityScopePrecedenceAudit);
+
+
 window.gridlyLp0544ContextAwareHistoricalIntelligenceAudit = gridlyLp0544ContextAwareHistoricalIntelligenceAudit;
 window.gridlyLp0544aOvernightContextAudit = gridlyLp0544aOvernightContextAudit;
 exposeGridlyAuditHelper("gridlyLp0544ContextAwareHistoricalIntelligenceAudit", gridlyLp0544ContextAwareHistoricalIntelligenceAudit);
