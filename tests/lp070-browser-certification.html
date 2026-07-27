@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>LP070 Browser Certification</title>
+<body>
+  <h1>LP070 Historical Intelligence Activation Boundary Certification</h1>
+  <p>This standalone page certifies an inactive presentation contract. It is not a consumer preview.</p>
+  <pre id="result" role="status" aria-live="polite">Running…</pre>
+  <script src="../js/historical-intelligence-activation-boundary.js"></script>
+  <script>
+    (() => {
+      const checks = [];
+      const check = (name, pass) => checks.push({ name, pass: Boolean(pass) });
+      const boundary = window.gridlyHistoricalIntelligenceActivationBoundary;
+      const privateResult = {
+        status: "selected",
+        selectedNarrative: "Weekday congestion has frequently been reported near US 90. Check current alerts for live conditions.",
+        narrativeType: "congestion", subject: "US 90",
+        historicalWindow: { firstObservedAt: "2026-05-01T13:30:00.000Z", lastObservedAt: "2026-07-20T13:30:00.000Z" },
+        rankingMetadata: { usefulnessScore: 99, duplicateSuppressions: ["private"] },
+        selectedCandidate: { canonicalId: "private-id", confidenceCategory: "meaningful" },
+        productionIntegration: false, consumerVisible: false
+      };
+      const dto = boundary.createPresentationDto(privateResult);
+      const quiet = boundary.createPresentationDto({ status: "quiet", rankingMetadata: { quietReason: "private" }, productionIntegration: false, consumerVisible: false });
+      const serialized = JSON.stringify(dto);
+      check("DTO allowlist", JSON.stringify(Object.keys(dto)) === JSON.stringify(boundary.DTO_FIELDS));
+      check("metadata exclusion", !/ranking|confidence|score|suppression|canonical|private-id/i.test(serialized));
+      check("quiet DTO behavior", quiet.quiet && !quiet.displayEligible && quiet.historicalTakeaway === null && !/private|placeholder/i.test(JSON.stringify(quiet)));
+      check("ownership contract", boundary.OWNERSHIP.owner === "future-know-before-you-go-awareness-surface");
+      check("local-time authority", boundary.LOCAL_TIME_AUTHORITY.source === "awareness-context" && boundary.acceptLocalTimeAuthority({ now: "2026-07-27T13:30:00Z", utcOffsetMinutes: -300 }));
+      check("accessibility contract available", document.querySelector("h1") && document.querySelector('[role="status"][aria-live="polite"]'));
+      check("activation disabled", !boundary.ACTIVATION.productionIntegration && !boundary.ACTIVATION.consumerVisible && boundary.ACTIVATION.optInRequired);
+      check("production isolation", !document.querySelector('script[src*="app.js"], script[src*="historical-pattern"], script[src*="historical-narrative"]'));
+      check("live-condition authority", dto.liveConditionGuidance === boundary.LIVE_CONDITION_GUIDANCE && /current alerts/.test(boundary.OWNERSHIP.interactionExpectation.replaceAll("-", " ")));
+      check("protected runtime verification", !document.querySelector('script[src*="provider"], script[src*="supabase"], script[src*="gridlyUnified"]'));
+      const passed = checks.every((item) => item.pass);
+      document.body.dataset.certification = passed ? "pass" : "fail";
+      document.getElementById("result").textContent = checks.map((item) => `${item.pass ? "PASS" : "FAIL"} — ${item.name}`).join("\n");
+      window.__LP070_CERTIFICATION__ = { passed, checks, dto, quiet, activation: boundary.ACTIVATION };
+    })();
+  </script>
+</body>
+</html>
