@@ -41,6 +41,7 @@
     "test:lp089": "node tests/lp089-historical-presentation-invocation-governance.test.js",
     "test:lp090": "node tests/lp090-historical-presentation-output-validation.test.js",
     "test:lp091": "node tests/lp091-historical-pipeline-certification.test.js",
-    "test:lp092": "node tests/lp092-historical-activation-readiness-revalidation.test.js"
+    "test:lp092": "node tests/lp092-historical-activation-readiness-revalidation.test.js",
+    "test:lp093": "node tests/lp093-historical-operational-rollout.test.js"
   }
 }
