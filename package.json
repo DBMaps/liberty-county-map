@@ -30,6 +30,7 @@
     "test:lp078": "node tests/lp078-historical-pattern-lifecycle.test.js",
     "test:lp079": "node tests/lp079-historical-learning-orchestration.test.js",
     "test:lp080": "node tests/lp080-historical-learning-quality.test.js",
-    "test:lp081": "node tests/lp081-historical-knowledge-base.test.js"
+    "test:lp081": "node tests/lp081-historical-knowledge-base.test.js",
+    "test:lp082": "node tests/lp082-historical-knowledge-retrieval.test.js"
   }
 }
