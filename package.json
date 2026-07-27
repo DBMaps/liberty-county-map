@@ -39,6 +39,7 @@
     "test:lp087": "node tests/lp087-historical-ranking-input-governance.test.js",
     "test:lp088": "node tests/lp088-historical-ranking-output-governance.test.js",
     "test:lp089": "node tests/lp089-historical-presentation-invocation-governance.test.js",
-    "test:lp090": "node tests/lp090-historical-presentation-output-validation.test.js"
+    "test:lp090": "node tests/lp090-historical-presentation-output-validation.test.js",
+    "test:lp091": "node tests/lp091-historical-pipeline-certification.test.js"
   }
 }
