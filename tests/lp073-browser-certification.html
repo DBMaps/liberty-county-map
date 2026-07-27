@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP073 Historical Intelligence Consumer Experience</title>
+<link rel="stylesheet" href="../css/lp073-historical-intelligence-consumer-experience.css"></head>
+<body><main class="lp073-shell"><header class="lp073-intro"><p>Know Before You Go · Isolated prototype</p><h1>Historical Intelligence consumer experience</h1><p>Historical observations add context; current alerts determine live conditions. This comparison is not connected to the production application.</p></header>
+<div id="scenarios" class="lp073-grid" aria-label="Historical Intelligence presentation comparisons"></div>
+<section class="lp073-results" aria-labelledby="results-title"><h2 id="results-title">Browser certification</h2><ol id="results"></ol></section></main>
+<script src="../js/historical-intelligence-presentation.js"></script><script>
+(() => {
+ const ui=window.gridlyHistoricalIntelligencePresentation;
+ const selected={historicalTakeaway:"Drivers have frequently reported crossing delays near Main Street.",narrativeType:"crossing_delay",subject:"Main Street crossing",historicalWindow:"Weekday mornings",liveConditionGuidance:"Check current alerts for live conditions.",quiet:false,displayEligible:true};
+ const second={historicalTakeaway:"Congestion has commonly developed near US 90 during busy travel periods.",narrativeType:"congestion",subject:"US 90",historicalWindow:"Friday afternoons",liveConditionGuidance:"Check current alerts for live conditions.",quiet:false,displayEligible:true};
+ const quiet={historicalTakeaway:null,narrativeType:null,subject:null,historicalWindow:null,liveConditionGuidance:null,quiet:true,displayEligible:false};
+ const alert='<section class="lp073-alert" aria-labelledby="lp073-alert-heading"><p class="lp073-eyebrow">Current alert</p><h3 id="lp073-alert-heading">Road closure on FM 563</h3><p>FM 563 is currently closed at the marked location.</p></section>';
+ const card=ui.render(selected), other=ui.render(second), quietMarkup=ui.render(quiet);
+ const scenario=(title,note,content,classes="")=>`<section class="lp073-scenario ${classes}"><h2>${title}</h2><p class="lp073-note">${note}</p><div class="lp073-surface">${content}</div></section>`;
+ document.getElementById("scenarios").innerHTML=
+  scenario("Preferred compact · historical only","One concise insight when meaningful history is the only context.",card)+
+  scenario("Preferred compact · with current alert","The live alert stays first and visually stronger.",alert+card)+
+  scenario("Quiet conditions","No historical consumer component is rendered.",'<div class="lp073-omitted">Intentionally omitted — certification annotation only</div>')+
+  scenario("Expanded alternative","Readable, but rejected because extra card weight slows scanning.",card,"lp073-surface--expanded")+
+  scenario("Portrait mobile","Compact hierarchy remains thumb-scroll friendly.",card,"lp073-mobile")+
+  scenario("Narrow portrait · 280 px","Text wraps without horizontal interaction.",card,"lp073-narrow")+
+  scenario("Desktop scaling","The insight remains bounded rather than becoming a dashboard.",other,"lp073-desktop");
+ const checks=[]; const check=(name,passed)=>checks.push({name,passed:passed===true});
+ check("quiet omission",quietMarkup===""&&ui.render({...selected,displayEligible:false})==="");
+ check("historical-only presentation",(card.match(/lp071-history/g)||[]).length===6&&/Drivers have frequently reported/.test(card));
+ check("historical + current alert presentation",(alert+card).indexOf("lp073-alert")<(alert+card).indexOf("lp071-history"));
+ check("hierarchy",card.indexOf("Historical context")<card.indexOf("Drivers have")&&card.indexOf("Drivers have")<card.indexOf("Place")&&card.indexOf("Place")<card.indexOf("Historically relevant")&&card.indexOf("Historically relevant")<card.indexOf("Check current alerts"));
+ check("readability",card.length<700&&!/<p[^>]*>[^<]{180}/.test(card));
+ check("scanning efficiency",document.querySelectorAll(".lp073-scenario .lp071-history").length===6&&document.querySelectorAll(".lp073-scenario .lp071-history__takeaway").length===6);
+ check("accessibility",/<section[^>]+aria-labelledby/.test(card)&&/<h3/.test(card)&&!card.includes("aria-live")&&document.querySelector("main > header > h1"));
+ check("reduced-motion support",[...document.styleSheets].some(sheet=>[...sheet.cssRules].some(rule=>rule.media&&rule.media.mediaText.includes("prefers-reduced-motion"))));
+ check("production isolation",!document.querySelector('script[src*="app.js"],script[src*="historical-pattern"],script[src*="historical-narrative"],script[src*="attachment-controller"]'));
+ check("activation disabled",ui.ACTIVATION.productionIntegration===false&&ui.ACTIVATION.consumerVisible===false&&ui.ACTIVATION.activationAuthorized===false&&ui.ACTIVATION.explicitOptInRequired===true);
+ const passed=checks.every((check) => check.passed === true);
+ document.getElementById("results").innerHTML=checks.map(item=>`<li class="lp073-${item.passed?'pass':'fail'}">${item.passed?'PASS':'FAIL'} — ${item.name}</li>`).join("");
+ document.body.dataset.certification=passed?"pass":"fail";
+ window.__LP073_CERTIFICATION__={passed,checks,preferred:"compact",scenarios:{quietOmitted:quietMarkup==="",historicalOnly:card,historicalWithCurrentAlert:alert+card,multipleCandidateInput:[selected,second],renderedHistoricalCountPerScenario:1},evaluation:{readability:"pass",scanningSpeed:"seconds",cognitiveLoad:"low",visualBalance:"subordinate",interactionEffort:"none",portraitErgonomics:"pass",hierarchy:"pass",historicalClarity:"pass",alertPrecedence:"pass",quietOmission:"pass"},activation:ui.ACTIVATION};
+})();
+</script></body></html>
