@@ -75327,8 +75327,11 @@ function buildGridlyHazardPopupConsumerModel(incident = {}, options = {}) {
   const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = formatGridlyHazardPopupFreshnessLine(incident);
   const confidenceLine = trustModel.trustLine;
+  const guidanceLine = /(?:flood|water|closed|closure|crash|wreck|debris|power|livestock|disabled|traffic|construction)/i.test(title)
+    ? "Expect slower travel and use caution."
+    : "Check current alerts before leaving.";
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
-  const visibleText = [title, locationLine, reportCountLine, freshnessLine, confidenceLine].join(" ");
+  const visibleText = [title, locationLine, guidanceLine, reportCountLine, confidenceLine, freshnessLine].join(" ");
   const containsTechnicalMetadata = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
   return {
     title,
@@ -75339,6 +75342,7 @@ function buildGridlyHazardPopupConsumerModel(incident = {}, options = {}) {
     reportCountLine,
     freshnessLine,
     confidenceLine,
+    guidanceLine,
     containsTechnicalMetadata,
     consumerFriendlyPass: Boolean(title && locationLine && reportCountLine && freshnessLine && confidenceLine && !containsTechnicalMetadata)
   };
@@ -75430,8 +75434,11 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}, options = {}) {
   const reportCountLine = trustModel.reportCountLine;
   const freshnessLine = popupState === "no_report" ? "Ready for reports" : formatGridlyHazardPopupFreshnessLine(incident);
   const confidenceLine = trustModel.trustLine;
+  const guidanceLine = popupState === "active"
+    ? "Expect a delay and use caution."
+    : (popupState === "recently_cleared" ? "Travel normally, but stay alert." : "Check current alerts before leaving.");
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
-  const visibleText = [title, locationLine, freshnessLine, reportCountLine, confidenceLine].join(" ");
+  const visibleText = [title, locationLine, guidanceLine, reportCountLine, confidenceLine, freshnessLine].join(" ");
   const technicalMetadataDetected = GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN.test(visibleText);
   const model = {
     popupState,
@@ -75440,6 +75447,7 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}, options = {}) {
     freshnessLine,
     reportCountLine,
     confidenceLine,
+    guidanceLine,
     technicalMetadataDetected,
     consumerLocation: lp023ConsumerLocation,
     consumerFriendlyPass: Boolean(title && locationLine && freshnessLine && reportCountLine && confidenceLine && !technicalMetadataDetected)
@@ -76833,8 +76841,10 @@ function buildUnifiedIncidentPopup(incident, options = {}){
     const popupLines = `
       <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
       <span class="gridly-popup-location" data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span>
-      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community report · Driver shared · ${sanitizeText(model.freshnessLine)}</span>
+      <span class="gridly-popup-guidance" data-gridly-crossing-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
+      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
       <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+      <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
     `;
     gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
     if (!isActive) {
@@ -76852,8 +76862,10 @@ function buildUnifiedIncidentPopup(incident, options = {}){
   const popupLines = `
     <strong data-gridly-hazard-popup-field="title">${sanitizeText(model.title)}</strong>
     <span class="gridly-popup-location" data-gridly-hazard-popup-field="locationLine">${sanitizeText(model.locationLine)}</span>
-    <span class="gridly-popup-meta" data-gridly-hazard-popup-field="sourceLine">Community report · Driver shared · ${sanitizeText(String(model.freshnessLine || "").replace(/^Updated\s*/i, "Updated "))}</span>
+    <span class="gridly-popup-guidance" data-gridly-hazard-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
+    <span class="gridly-popup-meta" data-gridly-hazard-popup-field="sourceLine">Community reports</span>
     <span class="gridly-popup-trust" data-gridly-hazard-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+    <span class="gridly-popup-freshness" data-gridly-hazard-popup-field="freshnessLine">${sanitizeText(String(model.freshnessLine || "").replace(/^Updated\s*/i, "Updated "))}</span>
   `;
   gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
 
@@ -81828,8 +81840,10 @@ function buildPopup(crossing, report) {
     <div class="gridly-popup gridly-premium-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="leaflet" data-gridly-crossing-popup-state="${sanitizeText(model.popupState)}">
       <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
       <span class="gridly-popup-location" data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span>
-      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community report · Driver shared · ${sanitizeText(model.freshnessLine)}</span>
+      <span class="gridly-popup-guidance" data-gridly-crossing-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
+      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
       <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+      <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
 
       <div class="popup-report-grid">
         ${actionButtons}
@@ -96117,8 +96131,8 @@ function gridlyLp019OfficialPopupHtml(record = {}) {
       <strong data-gridly-official-popup-field="title">${sanitizeText(presentation?.title || category)}</strong>
       <span class="gridly-popup-location" data-gridly-official-popup-field="locationLine">${sanitizeText(location)}</span>
       <span class="gridly-popup-description" data-gridly-official-popup-field="description">${description}</span>
-      <span class="gridly-popup-meta" data-gridly-official-popup-field="trustLine">Official Source · DriveTexas</span>
       ${guidanceHtml}
+      <span class="gridly-popup-meta" data-gridly-official-popup-field="trustLine">Official Source · DriveTexas</span>
       <span class="gridly-popup-freshness" data-gridly-official-popup-field="freshnessLine">${sanitizeText(freshnessLine)}</span>
     </div>
   `;
@@ -97149,7 +97163,7 @@ function gridlyLp0393ConsumerDriveTexasPopupHtml(situation) {
   const guidance = sanitizeText(presentation?.impactSentence || "");
   const guidanceHtml = guidance && !desc.toLowerCase().includes(guidance.toLowerCase()) ? `<small>What drivers should know</small><p>${guidance}</p>` : "";
   const updated = sanitizeText(gridlyLp0393OfficialPopupFreshnessLine(situation));
-  return `<div class="gridly-official-roadway-popup"><strong>${title}</strong><p>${location}</p><p>${desc}</p><small>Official Source · DriveTexas</small>${guidanceHtml}<small>${updated}</small></div>`;
+  return `<div class="gridly-official-roadway-popup"><strong>${title}</strong><p>${location}</p><p>${desc}</p>${guidanceHtml}<small>Official Source · DriveTexas</small><small>${updated}</small></div>`;
 }
 
 
