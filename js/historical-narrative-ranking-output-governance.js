@@ -5,7 +5,7 @@
   const rankingInputGovernance = scope.gridlyHistoricalNarrativeRankingInputGovernance || (typeof require !== "undefined" ? require("./historical-narrative-ranking-input-governance.js") : null);
   const boundary = scope.gridlyHistoricalIntelligenceActivationBoundary || (typeof require !== "undefined" ? require("./historical-intelligence-activation-boundary.js") : null);
   const renderer = scope.gridlyHistoricalIntelligencePresentation || (typeof require !== "undefined" ? require("./historical-intelligence-presentation.js") : null);
-  const attachment = scope.gridlyHistoricalIntelligenceAttachment || (typeof require !== "undefined" ? require("./historical-intelligence-attachment-controller.js") : null);
+  const attachment = scope.gridlyHistoricalIntelligenceAttachmentController || (typeof require !== "undefined" ? require("./historical-intelligence-attachment-controller.js") : null);
   const VERSION = "LP088.historical-ranking-output-governance.v1";
   const VERSIONS = Object.freeze({ rankingOutputContract: "LP088.output.v1", normalizationPolicy: "LP088.normalization.v1", integrityPolicy: "LP088.integrity.v1", oneOrQuietPolicy: "LP088.one-or-quiet.v1", winnerPolicy: "LP088.winner.v1", quietPolicy: "LP088.quiet.v1", consistencyPolicy: "LP088.consistency.v1", compatibilityPolicy: "LP088.compatibility.v1", eligibilityPolicy: "LP088.eligibility.v1", explainabilityPolicy: "LP088.explainability.v1" });
   const FAILURE_CODES = Object.freeze({ UNSUPPORTED_VERSION: "unsupported_ranking_output_policy_version", UNSUPPORTED_FIELD: "unsupported_ranking_output_field", INVALID_INPUT: "accepted_lp087_ranking_input_required", AMBIGUOUS: "exactly_one_winner_or_quiet_required", INVALID_WINNER: "selected_winner_not_in_governed_input", IDENTITY: "ranking_identity_integrity_failure", EVIDENCE: "ranking_evidence_integrity_failure", FINGERPRINT: "ranking_fingerprint_integrity_failure", QUIET: "quiet_output_integrity_failure", COMPATIBILITY: "presentation_compatibility_failure" });
@@ -17,6 +17,19 @@
   function fingerprint(value) { let hash = 2166136261; for (const character of stable(value)) { hash ^= character.charCodeAt(0); hash = Math.imul(hash, 16777619); } return `lp088-fnv1a32:${(hash >>> 0).toString(16).padStart(8, "0")}`; }
   const policiesSupported = versions => Object.keys(VERSIONS).every(key => versions?.[key] === VERSIONS[key]);
   const RAW_FIELDS = new Set(["status", "selectedNarrative", "selectedCandidate", "narrativeType", "subject", "relevanceReason", "selectionReason", "confidenceCategory", "historicalWindow", "rankingMetadata", "productionIntegration", "consumerVisible", "selectedCandidateIdentity", "selectedNarrativeIdentity", "rankingEvidence", "quietOutcome", "contractVersion", "policyVersions"]);
+
+  function presentationCompatibilityValidationAvailable() {
+    if (typeof boundary?.createPresentationDto !== "function" || typeof renderer?.exactContract !== "function" ||
+        typeof renderer?.render !== "function" || typeof attachment?.exactDto !== "function" ||
+        typeof attachment?.approvedRenderer !== "function") return false;
+    const dto = boundary.createPresentationDto({ status: "selected", selectedNarrative: "Compatibility validation narrative.",
+      narrativeType: "congestion", subject: "Compatibility validation subject", historicalWindow: null,
+      productionIntegration: false, consumerVisible: false });
+    return boundary.VERSION === renderer.CONTRACT_ID && attachment.DTO_CONTRACT === boundary.VERSION &&
+      attachment.RENDERER_CONTRACT === "LP071.historical-intelligence-presentation.v1" &&
+      renderer.exactContract(dto) === true && attachment.exactDto(dto) === true &&
+      attachment.approvedRenderer(renderer) === true && /^<section class="lp071-history"/.test(renderer.render(dto));
+  }
 
   function candidateFor(raw, input) {
     const candidates = input?.candidateGroup?.candidates || [];
@@ -75,7 +88,7 @@
   }
 
   function governRankingOutput(raw, rankingInput, options) { return validateRankingOutput(normalizeRankingOutput(raw, rankingInput, options), rankingInput); }
-  function certificationAudit() { const checks = { passive: true, productionIsolationPreserved: true, rankingOutputContractAvailable: !!VERSIONS.rankingOutputContract, outputNormalizationAvailable: !!normalizeRankingOutput, rankingIntegrityValidationAvailable: !!validateRankingOutput, oneOrQuietValidationAvailable: true, winnerValidationAvailable: true, quietValidationAvailable: true, rankingConsistencyValidationAvailable: true, presentationCompatibilityValidationAvailable: !!boundary && !!renderer && !!attachment, duplicateRankingOutputGovernanceAvailable: true, presentationEligibilityAvailable: true, explainabilityAvailable: true, fingerprintGovernanceAvailable: !!fingerprint, policyVersionGovernanceAvailable: Object.keys(VERSIONS).length === 10, diagnosticsAvailable: true, deterministicRankingOutputPass: fingerprint({ b: 2, a: 1 }) === fingerprint({ a: 1, b: 2 }), lp069CompatibilityPreserved: !!ranking, lp070CompatibilityPreserved: !!boundary, lp071CompatibilityPreserved: !!renderer, lp087CompatibilityPreserved: !!rankingInputGovernance, activationStillDisabled: !ACTIVATION.productionIntegration, protectedSystemsUnchanged: true }; checks.safeToMerge = Object.values(checks).every(Boolean); return immutable(checks); }
+  function certificationAudit() { const checks = { passive: true, productionIsolationPreserved: true, rankingOutputContractAvailable: !!VERSIONS.rankingOutputContract, outputNormalizationAvailable: !!normalizeRankingOutput, rankingIntegrityValidationAvailable: !!validateRankingOutput, oneOrQuietValidationAvailable: true, winnerValidationAvailable: true, quietValidationAvailable: true, rankingConsistencyValidationAvailable: true, presentationCompatibilityValidationAvailable: presentationCompatibilityValidationAvailable(), duplicateRankingOutputGovernanceAvailable: true, presentationEligibilityAvailable: true, explainabilityAvailable: true, fingerprintGovernanceAvailable: !!fingerprint, policyVersionGovernanceAvailable: Object.keys(VERSIONS).length === 10, diagnosticsAvailable: true, deterministicRankingOutputPass: fingerprint({ b: 2, a: 1 }) === fingerprint({ a: 1, b: 2 }), lp069CompatibilityPreserved: !!ranking, lp070CompatibilityPreserved: !!boundary, lp071CompatibilityPreserved: !!renderer, lp087CompatibilityPreserved: !!rankingInputGovernance, activationStillDisabled: !ACTIVATION.productionIntegration, protectedSystemsUnchanged: true }; checks.safeToMerge = Object.values(checks).every(Boolean); return immutable(checks); }
   const api = Object.freeze({ VERSION, VERSIONS, FAILURE_CODES, ACTIVATION, deepFreeze, fingerprint, normalizeRankingOutput, validateRankingOutput, governRankingOutput, certificationAudit });
   scope.gridlyHistoricalNarrativeRankingOutputGovernance = api;
   scope.gridlyLp088HistoricalRankingOutputCertificationAudit = certificationAudit;
