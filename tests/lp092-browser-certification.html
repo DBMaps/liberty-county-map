@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>LP092 Browser Certification</title></head>
+<body>
+<h1>LP092 Historical Activation Readiness Browser Certification</h1>
+<p>Open the console and paste the complete certification block shown below.</p>
+<pre id="command"></pre>
+<script src="../js/historical-activation-readiness-revalidation.js"></script>
+<script>
+const block = `(() => {
+  const required = ["passive", "productionIsolationPreserved", "architectureInventoryAvailable", "dependencyMatrixAvailable", "technicalReadinessAssessmentAvailable", "productReadinessAssessmentAvailable", "consumerExperienceAssessmentAvailable", "productionIsolationAssessmentAvailable", "protectedSystemsAssessmentAvailable", "activationChecklistAvailable", "readinessReportAvailable", "policyVersionGovernanceAvailable", "deterministicAssessmentPass", "activationStillDisabled", "protectedSystemsUnchanged", "safeToMerge"];
+  const audit = window.gridlyLp092HistoricalActivationReadinessAudit();
+  const rows = required.map(check => ({ check, passed: audit[check] === true, value: audit[check] }));
+  console.table(rows);
+  const failed = rows.filter(row => !row.passed).map(row => row.check);
+  if (failed.length) { console.error("LP092 BROWSER CERTIFICATION FAILED", failed); return false; }
+  console.log("✅ LP092 BROWSER CERTIFICATION PASSED — SAFE TO MERGE");
+  return true;
+})();`;
+document.getElementById("command").textContent = block;
+</script>
+</body></html>
