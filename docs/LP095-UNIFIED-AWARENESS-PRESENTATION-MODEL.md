@@ -162,3 +162,25 @@ Portrait certification covers 390 × 844 and 360 × 800: open Alerts, activate a
 ### Preservation confirmation
 
 LP095 ordering and LP095.1 official-popup spacing are unchanged. Hazard and official alert interactions remain on the shared alert-focus contract. Community Pulse, Travel Brief, filters, hazard/crossing lifecycle, unified evidence, reporting, Supabase synchronization, official-source integration and retention, Destination Intelligence, Route Watch, bottom dock, Settings, and all other protected systems are unchanged. Historical Intelligence remains inactive; no activation, retrieval, learning, narrative, ranking, or presentation-governance behavior changed.
+
+## LP095.2A — Crossing alert interactive contract repair
+
+### Live failure and exact DOM mismatch
+
+Live certification found the consumer-visible **Train Blocking Crossing** card, its canonical crossing identity, and both focus/popup functions, but reported `crossingAlertInteractive: false` while incorrectly allowing `safeToMerge: true`. The visible card came from the current portrait Alerts builder rather than `RenderCompleteAlertCard`. Its outer `.gridly-alert-row[data-gridly-alert-row="true"]` was the node received by the delegated click handler and inspected by the audit, but that node lacked `role="button"`, `tabindex="0"`, and `data-gridly-alert-focus="true"`. The complete renderer already placed these semantics on its outer card. The mismatch was renderer divergence, not an inner-node, clone, sanitizer, or post-render replacement issue.
+
+### Authoritative card contract and repair
+
+The authoritative card selector is now `[data-gridly-alert-focus='true'][data-gridly-alert-row='true']`. Both `RenderCompleteAlertCard` and the current portrait Alerts builder apply one shared interaction-attribute helper to that exact outer `.gridly-alert-row` tap target. The helper emits `role="button"`, `tabindex="0"`, the stable focus/row selector attributes, and `data-gridly-alert-crossing-id` from the canonical crossing resolver. The current builder also uses the resolved crossing coordinates when raw coordinates are absent. No direct card listener, duplicate delegated listener, marker, popup, or interaction path was added.
+
+The existing delegated handler continues to own click/tap and keyboard activation. Enter and Space prevent their default browser behavior and dispatch exactly one card click; repeated keydown events are ignored so holding a key cannot request duplicate popup openings. Existing visual presentation is unchanged, and the whole card remains the focus/tap target.
+
+### Passive audit and merge gate
+
+`window.gridlyLp0952CrossingAlertInteractionAudit?.()` now queries the authoritative live-card selector and requires a rendered crossing card, non-empty canonical crossing identity, delegated-selector compatibility, `role="button"`, and `tabindex="0"`. It remains frozen, passive, read-only, and performs no activation or mutation. `safeToMerge` is derived from every required boolean check, so a missing card, role, tabindex, crossing identity, selector match, focus path, or popup path fails the merge gate.
+
+### Certification and preservation status
+
+Focused DOM-contract regression coverage verifies the passing card and independently proves failure for a missing role, tabindex, canonical crossing ID, or authoritative-selector match, including the `safeToMerge` dependency. Browser certification remains required at 390 × 844 and 360 × 800 for real tap, Enter, and Space activation before merge approval; it must report both `crossingAlertInteractive: true` and `safeToMerge: true` and demonstrate exactly one correct popup per activation.
+
+LP095 presentation and LP095.1 official-popup spacing are unchanged. Hazard and official cards retain the same delegated focus path and marker popup fallback. Community Pulse, Travel Brief, Route Watch, Destination Intelligence, alert filtering and generation, hazard/crossing lifecycle, Supabase synchronization, official-source data, marker inventory, and all other protected systems are unchanged. Historical Intelligence remains inactive, and none of its activation, retrieval, learning, narrative, ranking, or presentation-governance implementation changed.

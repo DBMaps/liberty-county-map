@@ -33899,7 +33899,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       };
 
       const RenderCompleteAlertCard = (phase2Contract) => {
-        const { id, index, isHidden, lat, lng, coordAttrs, metadataAttrs, displaySubtitle, cleanedAlertLocationLabel, historicalAlertLine, eventEvidenceHtml, freshnessLine, trustLine, alertRowSummary } = phase2Contract;
+        const { id, index, isHidden, lat, lng, coordAttrs, metadataAttrs, crossingId, displaySubtitle, cleanedAlertLocationLabel, historicalAlertLine, eventEvidenceHtml, freshnessLine, trustLine, alertRowSummary } = phase2Contract;
         let displayTitle;
         let displayCondition;
         let canonicalHazardType;
@@ -33920,7 +33920,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
           displayCondition = phase2Contract.situationSummary || phase2Contract.conditionLabel || "";
         }
         return `
-  <div class="gridly-alert-row gridly-alert-intel-card" role="button" tabindex="0" data-gridly-alert-focus="true" data-gridly-alert-row="true" data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-condition="${esc(displayCondition)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}" data-gridly-alert-historical-context="${esc(historicalAlertLine)}" data-gridly-alert-historical-context-source="${historicalAlertLine ? "historical_awareness_adapter" : "suppressed"}"${coordAttrs}${lockMetadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
+  <div class="gridly-alert-row gridly-alert-intel-card"${gridlyLp0952AlertCardInteractionAttributes(crossingId, esc)} data-gridly-alert-id="${esc(id)}" data-gridly-alert-title="${esc(displayTitle)}" data-gridly-alert-condition="${esc(displayCondition)}" data-gridly-alert-summary="${esc(alertRowSummary)}" data-gridly-alert-location="${esc(cleanedAlertLocationLabel)}" data-gridly-alert-historical-context="${esc(historicalAlertLine)}" data-gridly-alert-historical-context-source="${historicalAlertLine ? "historical_awareness_adapter" : "suppressed"}"${coordAttrs}${lockMetadataAttrs} data-gridly-alert-hidden="${isHidden ? "true" : "false"}" style="display:${isHidden ? "none" : "flex"};gap:10px;align-items:flex-start;padding:12px 12px ${index === 2 ? 12 : 10}px 12px;border:1px solid rgba(255,255,255,0.09);border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));box-shadow:0 6px 20px rgba(0,0,0,0.28);margin-bottom:${index === 2 ? 0 : 8}px;cursor:${Number.isFinite(lat) && Number.isFinite(lng) ? "pointer" : "default"};">
     <div style="width:18px;min-width:18px;height:18px;margin-top:1px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,179,71,0.18);border:1px solid rgba(255,179,71,0.5);color:#ffd28a;font-size:11px;line-height:1;">!</div>
     <div style="min-width:0;flex:1;">
       <div style="display:grid;gap:4px;">
@@ -33954,7 +33954,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
   const resolvedTitle = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "title creation", () => displayTitle);
   const resolvedHelper = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "summary formatting", () => helperTextFor(alert));
   const consumerCard = alert?.__gridlyNarrowConsumerCard || gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "trust/participation model", () => buildNarrowAlertTrustDisplayModel(alert, resolvedTitle));
-  const metadataAttrs = ` data-gridly-canonical-incident-id="${esc(canonicalIncidentId || id || "")}" data-gridly-source-report-id="${esc(sourceReportId || "")}" data-gridly-canonical-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-canonical-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-canonical-title="${esc(displayTitle || "")}" data-gridly-canonical-condition-label="${esc(displayCondition || "")}" data-gridly-canonical-presentation="true" data-gridly-alert-report-id="${esc(sourceReportId || "")}" data-gridly-alert-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-alert-condition="${esc(displayCondition || "")}" data-gridly-canonical-event-presentation="true" data-gridly-alert-crossing-id="${esc(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-alert-awareness-area="${esc(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}" data-gridly-crossing-label-source="${esc(consumerCard.crossingLabelSource || "")}" data-gridly-crossing-display-name="${esc(consumerCard.crossingDisplayName || "")}" data-gridly-crossing-primary-road="${esc(consumerCard.crossingPrimaryRoad || "")}" data-gridly-crossing-secondary-road="${esc(consumerCard.crossingSecondaryRoad || "")}" data-gridly-reviewed-label-applied="${consumerCard.reviewedLabelApplied ? "true" : "false"}" data-gridly-fallback-label-used="${consumerCard.fallbackLabelUsed ? "true" : "false"}"`;
+  const metadataAttrs = ` data-gridly-canonical-incident-id="${esc(canonicalIncidentId || id || "")}" data-gridly-source-report-id="${esc(sourceReportId || "")}" data-gridly-canonical-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-canonical-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-canonical-title="${esc(displayTitle || "")}" data-gridly-canonical-condition-label="${esc(displayCondition || "")}" data-gridly-canonical-presentation="true" data-gridly-alert-report-id="${esc(sourceReportId || "")}" data-gridly-alert-condition-family="${esc(canonicalConditionFamily || "")}" data-gridly-alert-condition="${esc(displayCondition || "")}" data-gridly-canonical-event-presentation="true" data-gridly-alert-hazard-type="${esc(canonicalHazardType || "")}" data-gridly-alert-awareness-area="${esc(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}" data-gridly-crossing-label-source="${esc(consumerCard.crossingLabelSource || "")}" data-gridly-crossing-display-name="${esc(consumerCard.crossingDisplayName || "")}" data-gridly-crossing-primary-road="${esc(consumerCard.crossingPrimaryRoad || "")}" data-gridly-crossing-secondary-road="${esc(consumerCard.crossingSecondaryRoad || "")}" data-gridly-reviewed-label-applied="${consumerCard.reviewedLabelApplied ? "true" : "false"}" data-gridly-fallback-label-used="${consumerCard.fallbackLabelUsed ? "true" : "false"}"`;
   const alertLocationLabel = gridlyAlertsOpenAuditMeasureMicro("domGenerationSubphases", "location formatting", () => getNarrowAlertLocationLabel(alert, consumerCard));
   const normalizeAlertDisplayMatch = value => cleanDisplayValue(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const eventTokenLabels = [
@@ -34102,6 +34102,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     coordAttrs,
     consumerCard,
     metadataAttrs,
+    crossingId: crossingAlertTarget.crossingId,
     displaySubtitle,
     situationSummary,
     cleanedAlertLocationLabel,
@@ -98042,6 +98043,11 @@ function gridlyLp019ResolveAlertRecord(id = "") {
   }) || null;
 }
 
+function gridlyLp0952AlertCardInteractionAttributes(crossingId, escapeAttribute = gridlyLp019SafeText) {
+  const canonicalCrossingId = gridlyLp019SafeText(crossingId);
+  return ` role="button" tabindex="0" data-gridly-alert-focus="true" data-gridly-alert-row="true" data-gridly-alert-crossing-id="${escapeAttribute(canonicalCrossingId)}"`;
+}
+
 function gridlyLp0952ResolveCrossingAlertTarget(record = {}, row = null) {
   const crossingId = gridlyLp019SafeText(
     row?.getAttribute?.("data-gridly-alert-crossing-id") || record?.crossingId || record?.crossing_id ||
@@ -98117,7 +98123,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
       window.__gridlyLp019AlertFocusDebug.mapMovementDispatched = Boolean(focused);
     });
     panel.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
+      if ((event.key !== "Enter" && event.key !== " ") || event.repeat) return;
       const row = event.target?.closest?.("[data-gridly-alert-row='true'], [data-gridly-alert-id]");
       if (!row || event.target !== row || !panel.contains(row)) return;
       event.preventDefault();
@@ -106760,13 +106766,14 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const cleanedAlertLocationLabel = canonicalEventPresentation.locationLabel || consumerCard.locationLabel || normalizeGridlyLightweightLocationLabelText(roadLabel || getGridlyLightweightLocationFromHeadline(`${title} ${locationTimeLine}`) || "");
     const evidenceLine = canonicalLivePresentation.conditionLabel || "";
     const alertRowSummary = normalizeGridlyUserFacingRoadText(`${displayTitle} ${locationTimeLine} ${evidenceLine}`);
-    const alertLat = Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat);
-    const alertLng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng);
+    const crossingAlertTarget = gridlyLp0952ResolveCrossingAlertTarget(alert, null);
+    const alertLat = Number(alert?.lat ?? alert?.latitude ?? alert?.rawLat ?? crossingAlertTarget.coords?.lat);
+    const alertLng = Number(alert?.lng ?? alert?.lon ?? alert?.longitude ?? alert?.rawLng ?? crossingAlertTarget.coords?.lng);
     const alertCoordAttrs = Number.isFinite(alertLat) && Number.isFinite(alertLng)
       ? ` data-gridly-alert-lat="${sanitizeText(alertLat)}" data-gridly-alert-lng="${sanitizeText(alertLng)}"`
       : "";
     return `
-    <div class="gridly-alert-row" data-gridly-alert-row="true" data-gridly-alert-id="${sanitizeText(canonicalLivePresentation.incidentId || alert?.id || alert?.reportId || alert?.incidentId || alert?.crossingId || "")}" data-gridly-alert-report-id="${sanitizeText(canonicalLivePresentation.reportId || alert?.reportId || alert?.report_id || "")}" data-gridly-alert-condition-family="${sanitizeText(canonicalLivePresentation.conditionFamily || "")}" data-gridly-alert-condition="${sanitizeText(canonicalLivePresentation.conditionLabel || "")}" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" data-gridly-alert-crossing-id="${sanitizeText(alert?.crossingId || alert?.crossing_id || alert?.raw?.crossingId || alert?.raw?.crossing_id || "")}" data-gridly-alert-hazard-type="${sanitizeText(canonicalLivePresentation.hazardType || "")}" data-gridly-canonical-incident-id="${sanitizeText(canonicalLivePresentation.incidentId || "")}" data-gridly-source-report-id="${sanitizeText(canonicalLivePresentation.reportId || "")}" data-gridly-canonical-hazard-type="${sanitizeText(canonicalLivePresentation.hazardType || "")}" data-gridly-canonical-condition-family="${sanitizeText(canonicalLivePresentation.conditionFamily || "")}" data-gridly-canonical-title="${sanitizeText(canonicalLivePresentation.title || "")}" data-gridly-canonical-condition-label="${sanitizeText(canonicalLivePresentation.conditionLabel || "")}" data-gridly-canonical-presentation="true" data-gridly-alert-awareness-area="${sanitizeText(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}" data-gridly-canonical-event-presentation="true" data-gridly-event-layer-1="primaryEvent" data-gridly-event-layer-2="locationContext" data-gridly-event-layer-3="evidence"${alertCoordAttrs} style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
+    <div class="gridly-alert-row"${gridlyLp0952AlertCardInteractionAttributes(crossingAlertTarget.crossingId, sanitizeText)} data-gridly-alert-id="${sanitizeText(canonicalLivePresentation.incidentId || alert?.id || alert?.reportId || alert?.incidentId || alert?.crossingId || "")}" data-gridly-alert-report-id="${sanitizeText(canonicalLivePresentation.reportId || alert?.reportId || alert?.report_id || "")}" data-gridly-alert-condition-family="${sanitizeText(canonicalLivePresentation.conditionFamily || "")}" data-gridly-alert-condition="${sanitizeText(canonicalLivePresentation.conditionLabel || "")}" data-gridly-alert-title="${sanitizeText(displayTitle)}" data-gridly-alert-summary="${sanitizeText(alertRowSummary)}" data-gridly-alert-location="${sanitizeText(cleanedAlertLocationLabel)}" data-gridly-alert-hazard-type="${sanitizeText(canonicalLivePresentation.hazardType || "")}" data-gridly-canonical-incident-id="${sanitizeText(canonicalLivePresentation.incidentId || "")}" data-gridly-source-report-id="${sanitizeText(canonicalLivePresentation.reportId || "")}" data-gridly-canonical-hazard-type="${sanitizeText(canonicalLivePresentation.hazardType || "")}" data-gridly-canonical-condition-family="${sanitizeText(canonicalLivePresentation.conditionFamily || "")}" data-gridly-canonical-title="${sanitizeText(canonicalLivePresentation.title || "")}" data-gridly-canonical-condition-label="${sanitizeText(canonicalLivePresentation.conditionLabel || "")}" data-gridly-canonical-presentation="true" data-gridly-alert-awareness-area="${sanitizeText(alert?.awarenessArea || alert?.awareness_area || alert?.area || alert?.city || alert?.town || alert?.raw?.awarenessArea || alert?.raw?.city || "")}" data-gridly-canonical-event-presentation="true" data-gridly-event-layer-1="primaryEvent" data-gridly-event-layer-2="locationContext" data-gridly-event-layer-3="evidence"${alertCoordAttrs} style="padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;background:rgba(255,255,255,0.02);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
         <div class="gridly-alert-title" data-gridly-alert-title-node="true" style="font-size:14px;font-weight:800;line-height:1.28;letter-spacing:0.01em;">${sanitizeText(displayTitle)}</div>
       </div>
