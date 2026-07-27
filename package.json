@@ -35,6 +35,7 @@
     "test:lp083": "node tests/lp083-historical-retrieval-session.test.js",
     "test:lp084": "node tests/lp084-historical-narrative-input-assembly.test.js",
     "test:lp085": "node tests/lp085-historical-narrative-invocation-governance.test.js",
-    "test:lp086": "node tests/lp086-historical-narrative-output-validation.test.js"
+    "test:lp086": "node tests/lp086-historical-narrative-output-validation.test.js",
+    "test:lp087": "node tests/lp087-historical-ranking-input-governance.test.js"
   }
 }
