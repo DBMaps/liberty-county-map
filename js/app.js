@@ -26515,6 +26515,85 @@ function cancelPendingCrossingPopup(reason = "") {
 }
 
 
+/* LP095.3: passive, opt-in trace of the existing crossing-alert interaction path. */
+let gridlyLp0953TraceState = null;
+let gridlyLp0953TraceCaptureInstalled = false;
+
+function gridlyLp0953Snapshot() {
+  if (!gridlyLp0953TraceState) return Object.freeze({ traceCaptured: false, tracingEnabled: false, milestone: "LP095.3" });
+  return Object.freeze({ ...gridlyLp0953TraceState, coordinates: gridlyLp0953TraceState.coordinates ? Object.freeze({ ...gridlyLp0953TraceState.coordinates }) : null, events: Object.freeze(gridlyLp0953TraceState.events.map((event) => Object.freeze({ ...event }))) });
+}
+
+function gridlyLp0953Record(stage, values = {}, status = "PASS") {
+  if (!gridlyLp0953TraceState?.tracingEnabled) return;
+  if (stage !== "Tap received" && !gridlyLp0953TraceState.tapReceived) return;
+  Object.assign(gridlyLp0953TraceState, values);
+  const event = { sequence: gridlyLp0953TraceState.events.length + 1, stage, status, at: new Date().toISOString(), ...values };
+  gridlyLp0953TraceState.events.push(event);
+  console.groupCollapsed("LP095.3 TRACE");
+  console.log(stage);
+  console.log(status);
+  Object.entries(values).forEach(([key, value]) => console.log(key, value));
+  console.groupEnd();
+}
+
+function gridlyLp0953Fail(failureStage, failureReason, details = {}) {
+  if (!gridlyLp0953TraceState?.tracingEnabled || gridlyLp0953TraceState.completed) return;
+  gridlyLp0953Record("Final result", { ...details, failureStage, failureReason, completed: false, finalResult: "FAIL", traceCaptured: true }, "FAIL");
+  gridlyLp0953TraceState.tracingEnabled = false;
+}
+
+function gridlyLp0953Pass(details = {}) {
+  if (!gridlyLp0953TraceState?.tracingEnabled) return;
+  gridlyLp0953Record("Final result", { ...details, failureStage: null, failureReason: null, completed: true, finalResult: "PASS", traceCaptured: true }, "PASS");
+  gridlyLp0953TraceState.tracingEnabled = false;
+}
+
+function gridlyLp0953MarkerId(marker) {
+  return String(marker?.options?.crossingId || marker?.options?.id || marker?._leaflet_id || "") || null;
+}
+
+function gridlyLp0953InstallTapCapture() {
+  if (gridlyLp0953TraceCaptureInstalled || typeof document === "undefined") return;
+  document.addEventListener("click", (event) => {
+    if (!gridlyLp0953TraceState?.tracingEnabled || gridlyLp0953TraceState.tapReceived) return;
+    const row = event.target?.closest?.("[data-gridly-alert-row='true'], [data-gridly-alert-id]");
+    if (!row || !row.hasAttribute?.("data-gridly-alert-crossing-id")) return;
+    gridlyLp0953Record("Tap received", {
+      traceCaptured: true,
+      tapReceived: true,
+      alertId: gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id")) || null,
+      crossingId: gridlyLp019SafeText(row.getAttribute("data-gridly-alert-crossing-id")) || null,
+      returnPath: "document capture → delegated alerts handler"
+    });
+  }, true);
+  gridlyLp0953TraceCaptureInstalled = true;
+}
+
+if (typeof window !== "undefined") {
+  window.gridlyLp0953CrossingTrace = function gridlyLp0953CrossingTrace(options = {}) {
+    if (!gridlyLp0953TraceState || options?.reset === true) {
+      gridlyLp0953TraceState = {
+        milestone: "LP095.3", tracingEnabled: true, traceCaptured: false, tapReceived: false,
+        delegatedHandlerEntered: false, alertRowIdentified: false, alertRecordResolved: false,
+        alertType: null, alertId: null, crossingId: null, crossingResolverExecuted: false,
+        crossingRecordFound: false, markerLookupAttempted: false, markerFound: false, markerId: null,
+        coordinatesAvailable: false, coordinates: null, mapFocusRequested: false, mapFocusCompleted: false,
+        popupRequested: false, popupSuppressionEvaluated: false, duplicatePopupSuppressed: false,
+        suppressionReason: null, popupOpenRequested: false, popupOpened: false, popupState: null,
+        failureStage: null, failureReason: null, returnPath: null, completed: false, finalResult: null, events: []
+      };
+      gridlyLp0953InstallTapCapture();
+      console.info("LP095.3 TRACE enabled. Tap the next Train Blocking Crossing alert card.");
+    }
+    return gridlyLp0953Snapshot();
+  };
+  window.gridlyLp0953RuntimeTraceAudit = () => Object.freeze({
+    available: true, milestone: "LP095.3", passive: true, tracingInstalled: true,
+    noRuntimeBehaviorChanged: true, protectedSystemsUnchanged: true, historicalIntelligenceInactive: true
+  });
+}
+
 function isGridlyCrossingPopupVisible(marker) {
   const popup = marker?.getPopup?.();
   const popupEl = popup?.getElement?.();
@@ -26713,6 +26792,8 @@ function enforceGridlyCrossingPopupContainment(marker, session, reason = "post-o
 }
 
 function completeVerifiedCrossingPopupOpen(marker, session, reason) {
+  gridlyLp0953Record("Popup opened", { popupOpened: true, popupState: "open", crossingId: session?.crossing?.id || marker?.options?.crossingId || null, markerId: gridlyLp0953MarkerId(marker), returnPath: reason });
+  gridlyLp0953Pass({ popupOpened: true, popupState: "open", crossingId: session?.crossing?.id || marker?.options?.crossingId || null, markerId: gridlyLp0953MarkerId(marker), returnPath: reason });
   session.opened = true;
   if (session.openTimer) clearTimeout(session.openTimer);
   session.openTimer = null;
@@ -26799,6 +26880,7 @@ function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
   gridlyCrossingPopupOpeningAuditState.popupReopened = gridlyCrossingPopupOpeningAuditState.openPopupCallCount > 1;
   gridlyCrossingPopupOpeningAuditState.lastOpenReason = reason;
   recordGridlyCrossingPopupClickTrace("popup_open_requested", { crossingId: session.marker?.options?.crossingId || gridlyCrossingPopupOpeningAuditState.lastCrossingId, openReason: reason, markerStableId: getGridlyCrossingMarkerStableId(marker), popupBoundBeforeOpen: Boolean(marker?.getPopup?.()), openPopupCalled: true });
+  gridlyLp0953Record("Popup open requested", { popupOpenRequested: true, crossingId: session.marker?.options?.crossingId || null, markerId: gridlyLp0953MarkerId(marker), popupState: "opening" });
   marker.openPopup();
 
   const verifyOpen = () => {
@@ -26812,6 +26894,7 @@ function finalizeOpenCrossingPopup(marker, token, reason = "unknown") {
     activeSession.visibilityRetryCount = Number(activeSession.visibilityRetryCount || 0) + 1;
     if (activeSession.visibilityRetryCount > 1) {
       gridlyPopupLastFailureReason = "popup-not-visible-after-retry";
+      gridlyLp0953Fail("popup_visibility", "popup not visible after retry", { crossingId: activeSession.crossing?.id || null, markerId: gridlyLp0953MarkerId(marker), popupState: "closed", returnPath: "popup visibility retry exhausted" });
       gridlyPopupEarlyReturnReason = "popup-not-visible-after-retry";
       gridlyCrossingPopupOpeningAuditState.popupOpenPending = false;
       window.__gridlyPopupPanSession = null;
@@ -26878,11 +26961,13 @@ function updateGridlySelectedCrossingMarkerInPlace(selectedCrossingId = "") {
 function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "click") {
   const now = Date.now();
   const crossingId = String(crossing?.id || marker?.options?.crossingId || "");
+  gridlyLp0953Record("Popup suppression evaluated", { popupSuppressionEvaluated: true, crossingId: crossingId || null, markerId: gridlyLp0953MarkerId(marker), popupState: isGridlyCrossingPopupVisible(marker) ? "open" : "closed", returnPath: source });
   if (source !== "click") {
     const candidate = rememberGridlyCrossingEarlyTapCandidate(crossingId, source);
     if (!candidate.accepted) {
       gridlyCrossingPopupOpeningAuditState.duplicateOpenSuppressed = true;
       recordGridlyCrossingPopupClickTrace("early_tap_open_ignored", { crossingId, openReason: source, multipleEarlyTapOpenDetected: gridlyCrossingPopupOpeningAuditState.multipleEarlyTapOpenDetected, earlyTapOpenCandidateIds: gridlyCrossingPopupOpeningAuditState.earlyTapOpenCandidateIds, lockedTapCrossingId: candidate.lockedTapCrossingId, ignoredEarlyTapCrossingIds: candidate.ignoredEarlyTapCrossingIds, duplicateOpenSuppressed: true });
+      gridlyLp0953Fail("popup_suppression", "early tap candidate rejected", { crossingId, markerId: gridlyLp0953MarkerId(marker), duplicatePopupSuppressed: true, suppressionReason: "early tap candidate rejected", popupState: "closed", returnPath: "early tap guard" });
       return false;
     }
   }
@@ -26892,6 +26977,8 @@ function openCrossingPopupFromMarkerInteraction(marker, crossing, source = "clic
     gridlyCrossingPopupOpeningAuditState.popupOpenSameCrossingDuplicateSuppressed += 1;
     gridlyCrossingRenderLifecycleAuditState.popupOpenSameCrossingDuplicateSuppressed += 1;
     recordGridlyCrossingPopupClickTrace("duplicate_open_suppressed", { crossingId, openReason: `${source}-already-visible`, duplicateOpenSuppressed: true, markerStableId: getGridlyCrossingMarkerStableId(marker), popupBoundBeforeOpen: Boolean(marker?.getPopup?.()) });
+    gridlyLp0953Record("Popup suppression", { duplicatePopupSuppressed: true, suppressionReason: "popup already visible", popupState: "open", returnPath: "already-visible early return" }, "PASS");
+    gridlyLp0953Pass({ crossingId, markerId: gridlyLp0953MarkerId(marker), popupOpened: true, popupOpenRequested: false });
     return true;
   }
   updateGridlySelectedCrossingMarkerInPlace(crossingId);
@@ -97943,6 +98030,7 @@ function focusGridlyAlertIncident(focus = {}) {
     debug.finalMarkerHorizontallyCentered = Boolean(pixelDelta && Math.abs(pixelDelta.x) <= thresholdPx);
     debug.usableViewportCenteringCompleted = Boolean(debug.viewportCenteringCompleted && debug.finalMarkerInsideUsableViewport && (debug.finalPopupInsideUsableViewport || !debug.popupRequested));
     debug.mapMovementCompleted = Boolean(debug.sheetCloseCompleted && debug.mapInvalidateCompleted && debug.movementSettlementCompleted && zoomCompleted && debug.usableViewportCenteringCompleted && awarenessSelectionPreserved);
+    gridlyLp0953Record("Map focus completed", { mapFocusCompleted: Boolean(debug.mapMovementCompleted), returnPath: reason || "focus completion callback" }, debug.mapMovementCompleted ? "PASS" : "FAIL");
     if (!marker && debug.mapMovementCompleted && !debug.failureReason) debug.failureReason = "coordinate_focus_completed_without_matching_marker";
     if (!debug.mapMovementCompleted && debug.visibilityFailureReason && !debug.failureReason) debug.failureReason = debug.visibilityFailureReason;
     if (reason && !debug.failureReason) debug.failureReason = reason;
@@ -97967,6 +98055,11 @@ function focusGridlyAlertIncident(focus = {}) {
     } else if (!marker) {
       debug.popupStateVerified = false;
       debug.markerVisibleAfterPopupAutoPan = Boolean(debug.usableViewportVisibilityCompleted);
+    }
+    if (!debug.mapMovementCompleted && !officialMarkerMatched) {
+      gridlyLp0953Fail("map_focus_completion", debug.failureReason || reason || "map focus did not complete", { crossingId: gridlyLp0953TraceState?.crossingId || null, markerId: gridlyLp0953MarkerId(marker), popupState: marker?.isPopupOpen?.() === true ? "open" : "closed", returnPath: "focus completion criteria" });
+    } else if (marker && focus?.openPopup !== false && typeof marker.openPopup !== "function") {
+      gridlyLp0953Fail("popup_request", "resolved marker has no openPopup function", { crossingId: gridlyLp0953TraceState?.crossingId || null, markerId: gridlyLp0953MarkerId(marker), popupState: null, returnPath: "popup capability guard" });
     }
     gridlyLp019CrossingVisibilityState.afterFocus = gridlyLp019ReadCrossingVisibilitySnapshot(`after_focus:${reason || "completed"}`);
     window.__gridlyLp019AlertFocusDebug = debug;
@@ -98053,14 +98146,22 @@ function gridlyLp0952ResolveCrossingAlertTarget(record = {}, row = null) {
     row?.getAttribute?.("data-gridly-alert-crossing-id") || record?.crossingId || record?.crossing_id ||
     record?.raw?.crossingId || record?.raw?.crossing_id || record?.latestReport?.crossingId || record?.latestReport?.crossing_id
   );
-  if (!crossingId) return Object.freeze({ crossingId: "", crossing: null, marker: null, coords: null });
+  gridlyLp0953Record("Crossing resolver executed", { crossingResolverExecuted: true, crossingId: crossingId || null });
+  if (!crossingId) {
+    gridlyLp0953Fail("crossing_identity", "canonical crossing ID missing", { crossingId: null, markerId: null, popupState: null, returnPath: "crossing resolver early return" });
+    return Object.freeze({ crossingId: "", crossing: null, marker: null, coords: null });
+  }
+  gridlyLp0953Record("Canonical crossing ID", { crossingId });
   const crossing = (Array.isArray(crossings) ? crossings : []).find((item) => gridlyLp019SafeText(item?.id || item?.crossingId) === crossingId) || null;
+  gridlyLp0953Record("Crossing record lookup", { crossingRecordFound: Boolean(crossing), crossingId }, crossing ? "PASS" : "FAIL");
   const marker = crossingMarkers instanceof Map ? crossingMarkers.get(crossingId) || null : null;
+  gridlyLp0953Record("Marker lookup", { markerLookupAttempted: true, markerFound: Boolean(marker), markerId: gridlyLp0953MarkerId(marker), crossingId }, marker ? "PASS" : "FAIL");
   const markerCoords = marker?.getLatLng?.();
   const coords = normalizeCoordinatePair(
     crossing?.lat ?? crossing?.latitude ?? markerCoords?.lat,
     crossing?.lng ?? crossing?.lon ?? crossing?.longitude ?? markerCoords?.lng
   );
+  gridlyLp0953Record("Coordinates", { coordinatesAvailable: Boolean(coords), coordinates: coords ? { lat: coords.lat, lng: coords.lng } : null }, coords ? "PASS" : "FAIL");
   return Object.freeze({ crossingId, crossing, marker, coords });
 }
 
@@ -98069,11 +98170,16 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
   panels.forEach((panel) => {
     if (!(panel instanceof HTMLElement) || panel.dataset.alertFocusBound === "true") return;
     panel.addEventListener("click", (event) => {
+      gridlyLp0953Record("Delegated handler", { delegatedHandlerEntered: true });
       const row = event.target?.closest?.("[data-gridly-alert-row='true'], [data-gridly-alert-id]");
-      if (!row || !panel.contains(row)) return;
-      if (event.target?.closest?.("button, a, input, select, textarea, [data-v2-action], [data-gridly-alert-expand]") && event.target?.closest?.("[role='button']") !== row) return;
+      if (!row || !panel.contains(row)) { gridlyLp0953Fail("alert_row", "delegated handler did not identify an alert row", { returnPath: "delegated handler row guard" }); return; }
+      gridlyLp0953Record("Alert row identified", { alertRowIdentified: true });
+      if (event.target?.closest?.("button, a, input, select, textarea, [data-v2-action], [data-gridly-alert-expand]") && event.target?.closest?.("[role='button']") !== row) { gridlyLp0953Fail("delegated_guard", "nested interactive control guard returned", { returnPath: "delegated handler nested control guard" }); return; }
       const id = gridlyLp019SafeText(row.getAttribute("data-gridly-alert-id"));
       const record = gridlyLp019ResolveAlertRecord(id);
+      gridlyLp0953Record("Alert record lookup", { alertId: id || null, alertRecordResolved: Boolean(record) }, record ? "PASS" : "FAIL");
+      const crossingType = Boolean(row.getAttribute("data-gridly-alert-crossing-id") || record?.crossingId || record?.crossing_id);
+      gridlyLp0953Record("Alert type determined", { alertType: crossingType ? "crossing" : String(record?.type || "unknown") });
       const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(record, row);
       const coords = crossingTarget.coords || normalizeCoordinatePair(
         row.getAttribute("data-gridly-alert-lat") ?? record?.lat ?? record?.latitude ?? record?.rawLat ?? record?.raw?.lat ?? record?.source?.lat,
@@ -98098,7 +98204,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         popupOpened: false,
         failureReason: coords ? "" : "alert_has_no_trustworthy_location"
       };
-      if (!coords) return;
+      if (!coords) { gridlyLp0953Fail("coordinates", "crossing coordinates unavailable", { crossingId: crossingTarget.crossingId || null, markerId: gridlyLp0953MarkerId(crossingTarget.marker), popupState: null, returnPath: "alert handler coordinate guard" }); return; }
       event.preventDefault();
       const marker = findGridlyAlertMarker(coords, { incidentId: id, id, record });
       const closeSurface = () => {
@@ -98109,6 +98215,8 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
       };
       window.__gridlyLp019AlertFocusDebug.mapMovementRequested = true;
       window.__gridlyLp019AlertFocusDebug.popupRequested = Boolean(marker);
+      gridlyLp0953Record("Map focus requested", { mapFocusRequested: true, markerFound: Boolean(marker), markerId: gridlyLp0953MarkerId(marker), coordinates: { lat: coords.lat, lng: coords.lng } });
+      gridlyLp0953Record("Popup request issued", { popupRequested: Boolean(marker), popupState: marker?.isPopupOpen?.() === true ? "open" : "closed" }, marker ? "PASS" : "FAIL");
       window.__gridlyLp019AwarenessSelectionBeforeFocus = typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null;
       const focused = focusGridlyAlertIncident({
         id,
@@ -98121,6 +98229,7 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         record
       });
       window.__gridlyLp019AlertFocusDebug.mapMovementDispatched = Boolean(focused);
+      if (!focused) gridlyLp0953Fail("map_focus_request", "map focus request was rejected", { crossingId: crossingTarget.crossingId || null, markerId: gridlyLp0953MarkerId(marker), popupState: marker?.isPopupOpen?.() === true ? "open" : "closed", returnPath: "focusGridlyAlertIncident returned false" });
     });
     panel.addEventListener("keydown", (event) => {
       if ((event.key !== "Enter" && event.key !== " ") || event.repeat) return;
