@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>LP069 Browser Certification</title>
+<body>
+  <h1>LP069 Historical Narrative Ranking Browser Certification</h1>
+  <pre id="result">Running…</pre>
+  <script src="../js/historical-pattern-intelligence.js"></script>
+  <script src="../js/historical-narrative-generator.js"></script>
+  <script src="../js/historical-narrative-ranking.js"></script>
+  <script>
+    (() => {
+      const checks = [];
+      const check = (name, pass) => checks.push({ name, pass: Boolean(pass) });
+      const reports = (place, road, hazard, prefix) => [
+        ["2026-06-15T13:20:00Z", 35], ["2026-06-24T13:35:00Z", 40], ["2026-07-08T13:25:00Z", 45], ["2026-07-20T13:30:00Z", 40]
+      ].map(([observed_at, duration_minutes], index) => ({ id: `${prefix}-${index}`, observed_at, awareness_area: "Dayton", community: "Dayton", county: "Liberty County", crossing_name: place, road_name: road, hazard_type: hazard, event_type: place ? "rail_delay" : hazard, duration_minutes }));
+      const context = { now: "2026-07-27T13:30:00Z", awarenessArea: "Dayton", community: "Dayton", county: "Liberty County", crossing: "Waco Street", nearbyCrossings: ["Waco Street"], roadway: "US 90", nearbyRoads: ["US 90", "Waco Street"] };
+      const engine = window.gridlyHistoricalPatternIntelligence;
+      const generator = window.gridlyHistoricalNarrativeGenerator;
+      const ranking = window.gridlyHistoricalNarrativeRanking;
+      const make = (rows) => {
+        const flow = engine.evaluate(rows, context);
+        return { relevance: flow.relevance, pattern: flow.relevance.pattern, narrativeRecord: generator.buildNarrativeRecord(flow.relevance) };
+      };
+      const crossing = make(reports("Waco Street", "Waco Street", "blocked_crossing", "crossing"));
+      const road = make(reports(null, "US 90", "congestion", "road"));
+      const winner = ranking.selectPrimary([road, crossing], context);
+      const repeat = Array.from({ length: 10 }, () => ranking.selectPrimary([road, crossing], context).selectedCandidate.canonicalId);
+      const duplicate = ranking.selectPrimary([crossing, crossing], context);
+      const quiet = ranking.selectPrimary([{ ...road, pattern: { ...road.pattern, centerMinute: 20 }, relevance: { status: "relevant", pattern: { ...road.pattern, centerMinute: 20 } } }], context);
+      check("candidate construction", Boolean(ranking.buildCandidate(crossing, context)?.rankingMetadata));
+      check("deterministic ranking", new Set(repeat).size === 1);
+      check("current relevance priority", winner.selectedCandidate.rankingMetadata.temporalMatchQuality > 0);
+      check("subject specificity priority", winner.selectedCandidate.crossing === "Waco Street");
+      check("duplicate suppression", duplicate.rankingMetadata.duplicateSuppressions.length === 1);
+      check("quiet-state governance", quiet.status === "quiet" && quiet.selectedNarrative === null);
+      check("one-primary-takeaway contract", winner.status === "selected" && typeof winner.selectedNarrative === "string" && !Array.isArray(winner.selectedNarrative));
+      check("ranking explainability", Boolean(winner.selectionReason && winner.rankingMetadata.factors));
+      check("non-predictive wording", /current alerts for live conditions/.test(winner.selectedNarrative) && !/predict|forecast|probab|\bwill\b|avoid|detour/i.test(winner.selectedNarrative));
+      check("protected runtime isolation", winner.productionIntegration === false && winner.consumerVisible === false && !document.querySelector('script[src*="app.js"]'));
+      const passed = checks.every((item) => item.pass);
+      document.body.dataset.certification = passed ? "pass" : "fail";
+      document.getElementById("result").textContent = checks.map((item) => `${item.pass ? "PASS" : "FAIL"} — ${item.name}`).join("\n");
+      window.__LP069_CERTIFICATION__ = { passed, checks, winner, quiet, duplicate };
+    })();
+  </script>
+</body>
+</html>
