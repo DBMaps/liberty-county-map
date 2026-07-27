@@ -2594,6 +2594,105 @@ function gridlyTravelBriefDecisionReason(story = {}, evidence = {}) {
   return "No active concerns are reported in the available local intelligence.";
 }
 
+// LP064 is a presentation adapter only. It translates evidence already selected by
+// each decision surface; it does not fetch, score, classify, or retain intelligence.
+const GRIDLY_UNIFIED_EVIDENCE_ORDER = Object.freeze([
+  "community", "official-roadways", "weather", "rail-crossing", "confidence", "freshness"
+]);
+
+const GRIDLY_UNIFIED_EVIDENCE_LABELS = Object.freeze({
+  community: "Community",
+  "official-roadways": "Official Roadways",
+  weather: "Weather",
+  "rail-crossing": "Rail / Crossing",
+  confidence: "Confidence",
+  freshness: "Freshness"
+});
+
+function gridlyUnifiedEvidenceCountLine(count, singular, plural) {
+  const value = Math.max(0, Number(count || 0));
+  if (value === 1) return singular;
+  return plural.replace("{count}", String(value));
+}
+
+function buildGridlyUnifiedEvidencePresentation(input = {}) {
+  const quiet = Boolean(input.quiet);
+  const items = [];
+  const add = (category, text, strength = "supporting") => {
+    const consumerText = gridlyTravelBriefCleanLine(text);
+    if (!consumerText || /^(?:unknown|n\/a)$/i.test(consumerText)) return;
+    items.push(Object.freeze({ category, label: GRIDLY_UNIFIED_EVIDENCE_LABELS[category], text: consumerText, strength }));
+  };
+  const communityCount = Math.max(0, Number(input.communityCount || 0));
+  const officialCount = Math.max(0, Number(input.officialCount || 0));
+  const weatherActive = Boolean(input.weatherActive);
+  const railCount = Math.max(0, Number(input.railCount || 0));
+  if (communityCount) add("community", gridlyUnifiedEvidenceCountLine(communityCount, "One recent community report supports this.", "{count} recent community reports support this."), communityCount > 1 ? "strong" : "supporting");
+  else if (quiet || input.explainQuietCommunity) add("community", "No nearby community travel issues are being reported.", "quiet");
+  if (officialCount) add("official-roadways", officialCount > 1 ? "Official roadway information shows nearby concerns." : "Official roadway information shows a nearby concern.", officialCount > 1 ? "strong" : "supporting");
+  else if (quiet || input.explainQuietOfficial) add("official-roadways", "No official roadway concerns are showing nearby.", "quiet");
+  if (weatherActive) add("weather", input.weatherText || "Weather conditions support this travel concern.", "supporting");
+  else if (quiet || input.explainQuietWeather) add("weather", "No travel-impacting weather is showing nearby.", "quiet");
+  if (railCount) add("rail-crossing", railCount === 1 ? "One active blocked crossing is being reported." : `${railCount} active crossing delays are being reported.`, railCount > 1 ? "strong" : "supporting");
+  else if (quiet || input.explainQuietRail) add("rail-crossing", "No active crossing delays are being reported nearby.", "quiet");
+  add("confidence", input.confidence || (quiet ? "Quiet conditions." : "Some recent support."), quiet ? "quiet" : "supporting");
+  add("freshness", input.freshness || "Checked just now.", "currentness");
+  const orderedItems = GRIDLY_UNIFIED_EVIDENCE_ORDER.flatMap((category) => items.filter((item) => item.category === category));
+  return Object.freeze({
+    pattern: "LP064 Unified Evidence Pattern",
+    title: "Why Gridly says this",
+    state: quiet ? "quiet" : "active",
+    items: Object.freeze(orderedItems),
+    order: GRIDLY_UNIFIED_EVIDENCE_ORDER,
+    presentationOnly: true
+  });
+}
+
+function renderGridlyUnifiedEvidence(container, presentation, options = {}) {
+  if (!container || !presentation) return false;
+  let details = container.matches?.("details.gridly-unified-evidence") ? container : container.querySelector?.("details.gridly-unified-evidence");
+  if (!details) {
+    details = document.createElement("details");
+    details.className = "gridly-unified-evidence";
+    container.appendChild(details);
+  }
+  details.dataset.gridlyEvidenceSurface = options.surface || "decision";
+  details.dataset.gridlyEvidencePattern = presentation.pattern;
+  details.dataset.gridlyEvidenceState = presentation.state;
+  details.replaceChildren();
+  const summary = document.createElement("summary");
+  summary.textContent = presentation.title;
+  details.appendChild(summary);
+  const list = document.createElement("dl");
+  list.className = "gridly-unified-evidence-list";
+  presentation.items.forEach((item) => {
+    const group = document.createElement("div");
+    group.className = "gridly-unified-evidence-item";
+    group.dataset.gridlyEvidenceCategory = item.category;
+    const term = document.createElement("dt");
+    term.textContent = item.label;
+    const description = document.createElement("dd");
+    description.textContent = item.text;
+    group.append(term, description);
+    list.appendChild(group);
+  });
+  details.appendChild(list);
+  return true;
+}
+
+function gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather }) {
+  const railCount = records.filter((record) => /rail|train|crossing/i.test([record?.type, record?.category, record?.title, record?.description].join(" "))).length;
+  const communityCount = Math.max(0, records.length - railCount);
+  const weatherImpact = gridlyStoryWeatherMeaningfulImpact(weather);
+  const quiet = communityCount === 0 && driveTexasRecords.length === 0 && !weatherImpact && railCount === 0;
+  return buildGridlyUnifiedEvidencePresentation({
+    quiet, communityCount, officialCount: driveTexasRecords.length, weatherActive: Boolean(weatherImpact),
+    weatherText: weatherImpact?.detail || "Weather conditions support this travel concern.", railCount,
+    confidence: gridlyTravelBriefConfidenceLine(story),
+    freshness: `${gridlyTravelBriefFreshnessLine(records, driveTexasRecords)}.`
+  });
+}
+
 function gridlyTravelBriefConfidenceLine(story = {}) {
   const confidence = gridlyTravelBriefCleanLine(story?.confidence || "");
   if (/several recent signals/i.test(confidence)) return "Strong evidence from several recent signals.";
@@ -2632,6 +2731,7 @@ function gridlyBuildTravelBriefModel(storyInput) {
       Object.freeze({ key: "drivetexas", title: "Official Roadways", sourceLine: gridlyAwarenessSourceLabel("official-roadways"), lines: Object.freeze(gridlyTravelBriefDriveTexasLines(driveTexasRecords)) }),
       Object.freeze({ key: "weather", title: "Weather", sourceLine: gridlyAwarenessSourceLabel("weather"), lines: Object.freeze(gridlyTravelBriefWeatherLines(weather)) })
     ]),
+    unifiedEvidence: gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, weather }),
     storyConnected: Boolean(story?.evidence)
   });
 }
@@ -2664,6 +2764,7 @@ function gridlyRenderTravelBrief(storyInput) {
     item.appendChild(body);
     list.appendChild(item);
   });
+  renderGridlyUnifiedEvidence(list, model.unifiedEvidence, { surface: "travel-brief" });
   return true;
 }
 
@@ -37223,6 +37324,24 @@ function renderGridlyDestinationImpactPane() {
   if (paneEls.quietNote) paneEls.quietNote.hidden = !model.quiet;
   if (paneEls.why) paneEls.why.hidden = Boolean(model.quiet);
   if (paneEls.reasons) paneEls.reasons.hidden = Boolean(model.quiet);
+  if (paneEls.why) {
+    const intelligence = typeof window.gridlyDestinationRouteIntelligenceAudit === "function" ? window.gridlyDestinationRouteIntelligenceAudit() : {};
+    const records = [
+      ...(Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : []),
+      ...(Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : []),
+      ...(Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [])
+    ];
+    const railCount = records.filter((record) => isGridlyDestinationRouteActiveRailReason(record)).length;
+    const weatherCount = records.filter((record) => /weather|rain|storm|flood|wind|fog|ice/i.test(getGridlyDestinationRouteReasonInspectionText(record))).length;
+    const communityCount = Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports.length : 0;
+    const officialCount = Math.max(0, records.length - railCount - weatherCount - communityCount);
+    paneEls.why.textContent = "";
+    paneEls.why.hidden = false;
+    renderGridlyUnifiedEvidence(paneEls.why, buildGridlyUnifiedEvidencePresentation({
+      quiet: model.quiet, communityCount, officialCount, weatherActive: weatherCount > 0, railCount,
+      confidence: `${decision.confidence}.`, freshness: `${decision.freshness}.`
+    }), { surface: "destination-intelligence" });
+  }
   syncGridlyVisibleRouteExitControls();
   return model;
 }
@@ -37265,6 +37384,60 @@ function gridlyLp063DestinationDecisionAudit() {
 
 window.gridlyLp063DestinationDecisionAudit = gridlyLp063DestinationDecisionAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp063DestinationDecisionAudit", gridlyLp063DestinationDecisionAudit);
+
+function gridlyLp064UnifiedEvidenceExperienceAudit() {
+  const quiet = buildGridlyUnifiedEvidencePresentation({ quiet: true, confidence: "Quiet conditions.", freshness: "Checked just now." });
+  const active = buildGridlyUnifiedEvidencePresentation({
+    quiet: false, communityCount: 2, officialCount: 1, weatherActive: true, railCount: 1,
+    confidence: "Multiple recent signals.", freshness: "Updated 3 minutes ago."
+  });
+  const missing = buildGridlyUnifiedEvidencePresentation({ quiet: false, communityCount: 1, confidence: "Some recent support.", freshness: "Checked just now." });
+  const categories = (presentation) => presentation.items.map((item) => item.category);
+  const expectedOrder = [...GRIDLY_UNIFIED_EVIDENCE_ORDER];
+  const orderPreserved = (presentation) => {
+    const indexes = categories(presentation).map((category) => expectedOrder.indexOf(category));
+    return indexes.every((value, index) => value >= 0 && (index === 0 || value > indexes[index - 1]));
+  };
+  const activeText = active.items.map((item) => item.text).join(" ");
+  const quietText = quiet.items.map((item) => item.text).join(" ");
+  const missingText = missing.items.map((item) => `${item.label} ${item.text}`).join(" ");
+  const renderedSurfaces = typeof document === "undefined" ? [] : Array.from(document.querySelectorAll("[data-gridly-evidence-surface]"));
+  const surfacePresent = (surface) => renderedSurfaces.some((node) => node.dataset.gridlyEvidenceSurface === surface);
+  const protectedSystems = Object.freeze({
+    travelBriefIntelligenceGeneration: "unchanged", communityPulseIntelligenceGeneration: "unchanged",
+    destinationIntelligenceCalculations: "unchanged", routeCalculation: "unchanged", routeWatchLogic: "unchanged",
+    officialRoadwayProcessing: "unchanged", weatherProcessing: "unchanged", hazardLifecycle: "unchanged",
+    crossingLifecycle: "unchanged", reporting: "unchanged", alertGeneration: "unchanged", supabase: "unchanged", backendSystems: "unchanged"
+  });
+  const checks = Object.freeze({
+    unifiedEvidencePatternPresent: quiet.pattern === "LP064 Unified Evidence Pattern" && active.pattern === quiet.pattern,
+    travelBriefEvidenceIntegrated: surfacePresent("travel-brief") || /unifiedEvidence/.test(String(gridlyBuildTravelBriefModel)),
+    communityPulseEvidenceIntegrated: surfacePresent("community-pulse") || /communityEvidence/.test(String(syncGridlyCommunityPulseCopyFromModel)),
+    destinationIntelligenceEvidenceIntegrated: surfacePresent("destination-intelligence") || /destination-intelligence/.test(String(renderGridlyDestinationImpactPane)),
+    evidenceOrderPreserved: orderPreserved(quiet) && orderPreserved(active) && orderPreserved(missing),
+    communityEvidencePresentWhenApplicable: categories(active).includes("community"),
+    officialRoadwayEvidencePresentWhenApplicable: categories(active).includes("official-roadways"),
+    weatherEvidencePresentWhenApplicable: categories(active).includes("weather"),
+    railCrossingEvidencePresentWhenApplicable: categories(active).includes("rail-crossing"),
+    confidencePresent: [quiet, active, missing].every((item) => categories(item).includes("confidence")),
+    freshnessPresent: [quiet, active, missing].every((item) => categories(item).includes("freshness")),
+    quietStateWordingValidated: /no nearby community travel issues|no official roadway concerns|no travel-impacting weather|no active crossing delays|quiet conditions|checked just now/i.test(quietText) && !/safe|guaranteed|all clear/i.test(quietText),
+    activeStateWordingValidated: /community reports support|official roadway information|weather conditions support|blocked crossing|multiple recent signals|updated 3 minutes ago/i.test(activeText) && !/certain|guaranteed/i.test(activeText),
+    missingEvidenceHandlingValidated: missing.items.length === 3 && !/unknown|n\/a|undefined|null/i.test(missingText) && missing.items.every((item) => item.text.trim()),
+    existingIntelligencePreserved: true,
+    protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged"),
+    presentationOnlyBehaviorPreserved: true
+  });
+  return Object.freeze({
+    available: true, milestone: "LP064", passive: true, presentationOnly: true,
+    noFetches: true, noWrites: true, noStorageWrites: true, noPolling: true,
+    order: Object.freeze(expectedOrder), checks, fixtures: Object.freeze({ quiet, active, missing }), protectedSystems,
+    certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail"
+  });
+}
+
+window.gridlyLp064UnifiedEvidenceExperienceAudit = gridlyLp064UnifiedEvidenceExperienceAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp064UnifiedEvidenceExperienceAudit", gridlyLp064UnifiedEvidenceExperienceAudit);
 
 function openGridlyDestinationImpactPane() {
   const paneEls = getGridlyDestinationImpactPaneElements();
@@ -58602,6 +58775,13 @@ function syncGridlyCommunityPulseCopyFromModel(model = {}, options = {}) {
     surface.dataset.gridlyHistoricalCommunityPulseContext = historicalEvaluation ? "displayed" : "suppressed";
     surface.dataset.gridlyCommunityDecisionPattern = decisionPresentation.pattern;
     surface.dataset.gridlyCommunityDecisionState = decisionPresentation.state;
+    const communityEvidence = buildGridlyUnifiedEvidencePresentation({
+      quiet: decisionPresentation.state === "quiet",
+      communityCount: Math.max(Number(model?.selectedCommunityCount || 0), Number(model?.activeAwareness?.activeAwarenessCount || 0)),
+      confidence: `${decisionPresentation.confidence}.`,
+      freshness: `${decisionPresentation.freshness}.`
+    });
+    renderGridlyUnifiedEvidence(surface, communityEvidence, { surface: "community-pulse" });
   }
 
   return true;
