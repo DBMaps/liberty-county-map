@@ -1,0 +1,13 @@
+:root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; color: #172033; background: #eef2f5; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.lp072-shell { width: min(100% - 2rem, 72rem); margin: auto; padding: 2rem 0 4rem; }
+.lp072-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1rem; }
+.lp072-scenario, .lp072-results { padding: 1rem; border: 1px solid #a8b3bf; border-radius: .75rem; background: white; overflow-wrap: anywhere; }
+.lp072-alert { border: 3px solid #a32222; border-left-width: .6rem; padding: .8rem; background: #fff1f1; }
+[data-lp072-attachment] { margin-top: .75rem; }
+.lp071-history { border: 1px solid #64748b; padding: .8rem; background: #f8fafc; }
+.lp071-history__label, .lp071-history span { display: block; font-weight: 700; }
+.lp072-pass { color: #075f2c; font-weight: 700; } .lp072-fail { color: #8b1515; font-weight: 700; }
+.lp072-mobile { max-width: 20rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition: none !important; } }
