@@ -22,6 +22,7 @@
     "test:lp070": "node tests/lp070-historical-intelligence-activation-boundary.test.js",
     "test:lp071": "node tests/lp071-historical-intelligence-presentation.test.js",
     "test:lp072": "node tests/lp072-historical-intelligence-attachment.test.js",
-    "test:lp073": "node tests/lp073-historical-intelligence-consumer-experience.test.js"
+    "test:lp073": "node tests/lp073-historical-intelligence-consumer-experience.test.js",
+    "test:lp074": "node tests/lp074-historical-intelligence-activation-readiness.test.js"
   }
 }
