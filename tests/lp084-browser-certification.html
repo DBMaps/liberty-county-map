@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><title>LP084 isolated certification</title>
+<script src="../js/historical-knowledge-retrieval.js"></script><script src="../js/historical-retrieval-session.js"></script><script src="../js/historical-narrative-input-assembly.js"></script>
+<h1>LP084 isolated browser certification</h1><p>Open the console and run:</p>
+<pre>(() =&gt; {
+  const result = window.gridlyLp084HistoricalNarrativeInputCertificationAudit();
+  const required = ["passive","productionIsolationPreserved","narrativeInputContractAvailable","assemblyPipelineAvailable","candidateAssemblyAvailable","subjectSelectionAvailable","contextAssemblyAvailable","durationGovernanceAvailable","quietStateAssemblyAvailable","rankingPreparationAvailable","explainabilityAvailable","compatibilityValidationAvailable","fingerprintGovernanceAvailable","policyVersionGovernanceAvailable","diagnosticsAvailable","deterministicNarrativeInputPass","lp068CompatibilityPreserved","lp069CompatibilityPreserved","lp070CompatibilityPreserved","lp082CompatibilityPreserved","lp083CompatibilityPreserved","activationStillDisabled","protectedSystemsUnchanged","safeToMerge"];
+  const rows = required.map(check =&gt; ({check, pass: result[check] === true})); console.table(rows);
+  const failed = rows.filter(row =&gt; !row.pass).map(row =&gt; row.check);
+  console.log(failed.length ? "❌ LP084 BROWSER CERTIFICATION FAILED" : "✅ LP084 BROWSER CERTIFICATION PASSED — SAFE TO MERGE", failed); return result;
+})()</pre>
