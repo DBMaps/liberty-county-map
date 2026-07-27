@@ -142,3 +142,23 @@ Wording, presentation order, width, typography, marker and popup behavior, provi
 6. Put freshness last and distinguish `Reported`, `Updated`, `Observed`, and `Current conditions` accurately.
 7. Treat the sequence as a comprehension guide, not a mandatory visual template.
 8. If an existing presentation is clearer, preserve it and document why.
+
+## LP095.2 — Crossing alert card interaction repair
+
+### User-observed failure and root cause
+
+A rendered **Train Blocking Crossing** card could contain the canonical crossing ID while omitting direct latitude/longitude fields. The delegated alert handler resolved focus only from coordinates on the alert record/card, so it returned before closing the Alerts sheet or focusing the map. The same renderer also lacked the interactive semantics needed for keyboard activation. This was a consumer interaction-contract defect, not an alert-generation, crossing-lifecycle, or external-feed defect.
+
+### Exact repair and canonical path
+
+The alert renderer now resolves a crossing card's location from its canonical `crossingId` through the existing crossing inventory/marker registry and serializes the resulting coordinates without changing identity. The shared delegated alert-focus handler uses the same resolver for cached and current cards, supports click/tap, Enter, and Space, and continues through `focusGridlyAlertIncident`. After map focus settles, crossing records alone open through the existing `openCrossingPopupFromMarkerInteraction` path; hazard and official markers retain their existing `marker.openPopup()` behavior. The crossing popup path already suppresses same-crossing duplicate opens and reuses the existing marker.
+
+The whole card is a focusable `role="button"` target. No second crossing marker, popup, alert generator, or document-level click handler was added.
+
+### Browser certification
+
+Portrait certification covers 390 × 844 and 360 × 800: open Alerts, activate a live Train Blocking Crossing card, verify the sheet closes, the matching canonical crossing marker receives focus, exactly one matching popup opens, Confirm Active and Mark Cleared remain available, and reopening Alerts creates no duplicate card. The same pass verifies one community hazard card and one available official card retain their prior focus/popup behavior. The passive `window.gridlyLp0952CrossingAlertInteractionAudit?.()` helper inspects contracts only and never clicks, focuses, opens, clears, submits, or mutates runtime state.
+
+### Preservation confirmation
+
+LP095 ordering and LP095.1 official-popup spacing are unchanged. Hazard and official alert interactions remain on the shared alert-focus contract. Community Pulse, Travel Brief, filters, hazard/crossing lifecycle, unified evidence, reporting, Supabase synchronization, official-source integration and retention, Destination Intelligence, Route Watch, bottom dock, Settings, and all other protected systems are unchanged. Historical Intelligence remains inactive; no activation, retrieval, learning, narrative, ranking, or presentation-governance behavior changed.
