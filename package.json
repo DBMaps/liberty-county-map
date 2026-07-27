@@ -20,6 +20,7 @@
     "test:lp068": "node tests/lp068-historical-narrative-generation.test.js",
     "test:lp069": "node tests/lp069-historical-narrative-ranking.test.js",
     "test:lp070": "node tests/lp070-historical-intelligence-activation-boundary.test.js",
-    "test:lp071": "node tests/lp071-historical-intelligence-presentation.test.js"
+    "test:lp071": "node tests/lp071-historical-intelligence-presentation.test.js",
+    "test:lp072": "node tests/lp072-historical-intelligence-attachment.test.js"
   }
 }

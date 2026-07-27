@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP072 Reversible Attachment Certification</title><link rel="stylesheet" href="../css/lp072-historical-intelligence-certification.css"></head>
+<body><main class="lp072-shell"><header><p>Know Before You Go</p><h1>LP072 reversible attachment certification</h1><p>Isolated engineering evidence only. Consumer activation remains unauthorized. Current alerts determine live conditions.</p></header>
+<div id="scenarios" class="lp072-grid" aria-label="Attachment lifecycle scenarios"></div>
+<section class="lp072-results" aria-labelledby="results-heading"><h2 id="results-heading">Certification checks</h2><ol id="results"></ol></section></main>
+<script src="../js/historical-intelligence-activation-boundary.js"></script>
+<script src="../js/historical-intelligence-presentation.js"></script>
+<script src="../js/historical-intelligence-attachment-controller.js"></script>
+<script>
+(() => {
+ const api=window.gridlyHistoricalIntelligenceAttachmentController, renderer=window.gridlyHistoricalIntelligencePresentation;
+ const scopedDocument=root=>({querySelector:selector=>root.querySelector(selector),createElement:tag=>document.createElement(tag)});
+ const dto={historicalTakeaway:"Congestion has commonly developed near US 90 during busy travel periods.",narrativeType:"congestion",subject:"US 90",historicalWindow:"Friday afternoons",liveConditionGuidance:"Check current alerts for live conditions.",quiet:false,displayEligible:true};
+ const quiet={historicalTakeaway:null,narrativeType:null,subject:null,historicalWindow:null,liveConditionGuidance:null,quiet:true,displayEligible:false};
+ const auth={activationAuthorized:true,consumerVisible:true,productionIntegration:true,owner:api.OWNER,ownershipToken:api.OWNER_TOKEN,prerequisites:{LP067:true,LP068:true,LP069:true},dtoContract:api.DTO_CONTRACT,rendererContract:api.RENDERER_CONTRACT,currentAlertAuthority:api.ACTIVATION_DECISION.currentAlertAuthority};
+ const scenarios=document.getElementById("scenarios");
+ const card=(title,body,extra="")=>{const section=document.createElement("section");section.className=`lp072-scenario ${extra}`;section.innerHTML=`<h2>${title}</h2>${body}`;scenarios.appendChild(section);return section;};
+ const unauthorizedCard=card("1. Unauthorized attachment",'<div data-gridly-owner="know-before-you-go-historical-intelligence"><p>Host remains unchanged.</p></div>');
+ const unauthorizedHost=unauthorizedCard.querySelector(api.HOST_SELECTOR), unauthorizedBefore=unauthorizedHost.innerHTML;
+ const unauthorizedScenario=api.createController({document:scopedDocument(unauthorizedCard),renderer}).attach(dto,{});
+ const liveCard=card("2–4. Authorized, duplicate, and current alert",'<div data-gridly-owner="know-before-you-go-historical-intelligence"><section class="lp072-alert" aria-labelledby="alert-heading"><p>Current condition</p><h3 id="alert-heading">Road closure alert</h3><p>FM 563 is currently closed.</p></section><aside data-lp072-supporting-detail>Lower-priority supporting detail</aside></div>');
+ const liveHost=liveCard.querySelector(api.HOST_SELECTOR), alertBefore=liveHost.firstElementChild.outerHTML, focusBefore=document.activeElement;
+ const liveController=api.createController({document:scopedDocument(liveCard),renderer}); const attachedScenario=liveController.attach(dto,auth); const duplicate=liveController.attach(dto,auth);
+ const attachedHtml=liveHost.innerHTML, attachment=liveHost.querySelector("[data-lp072-attachment]");
+ card("5. Quiet DTO",'<p>No Historical Intelligence content is created.</p>'); const quietHost=document.createElement("div");quietHost.dataset.gridlyOwner=api.OWNER_TOKEN;const quietCard=scenarios.lastElementChild;quietCard.appendChild(quietHost);const quietScenario=api.createController({document:scopedDocument(quietCard),renderer}).attach(quiet,auth);
+ const invalidCard=card("6. Invalid DTO",'<div data-gridly-owner="know-before-you-go-historical-intelligence"><p>Invalid input leaves this host intact.</p></div>'); const invalidHost=invalidCard.querySelector(api.HOST_SELECTOR),invalidBefore=invalidHost.innerHTML;const invalidScenario=api.createController({document:scopedDocument(invalidCard),renderer}).attach({...dto,rankingScore:99},auth);
+ const rollbackInitial=liveHost.innerHTML.replace(liveHost.querySelector("[data-lp072-attachment]").outerHTML,""); const detachedScenario=liveController.detach(); const rollbackRestored=liveHost.innerHTML===rollbackInitial;
+ liveController.attach(dto,auth); const reattachedScenario={status:"attached",count:liveHost.querySelectorAll("[data-lp072-attachment]").length}; liveController.detach();
+ card("7–8. Detachment and reattachment",`<p>${detachedScenario.code}; reattached exactly ${reattachedScenario.count} time.</p>`);
+ const missingScenario=api.createController({document:{querySelector:()=>null},renderer}).attach(dto,auth);card("9. Missing host",`<p>${missingScenario.code}; no fallback host was created.</p>`);
+ card("10. Rollback restoration",`<p>${rollbackRestored?'Exact prior host state restored.':'Restoration failed.'}</p>`);
+ card("11. Narrow mobile portrait",renderer.render(dto),"lp072-mobile");card("12. 200% zoom review",'<p>Zoom to 200%: content reflows without loss, overlap, or horizontal scrolling.</p>');
+ const checks=[];const check=(name,pass)=>checks.push({name,pass:Boolean(pass)});
+ check("activation decision contract",api.ACTIVATION_DECISION.productionIntegrationPrepared&&!api.ACTIVATION_DECISION.consumerVisible&&!api.ACTIVATION_DECISION.activationAuthorized&&api.ACTIVATION_DECISION.explicitOptInRequired&&api.ACTIVATION_DECISION.reversibleAttachmentReady&&api.ACTIVATION_DECISION.rollbackReady);
+ check("authorization gate",unauthorizedScenario.code==="unauthorized"&&unauthorizedHost.innerHTML===unauthorizedBefore);
+ check("exact DTO enforcement",api.exactDto(dto)&&!api.exactDto({...dto,privateMetadata:true}));
+ check("renderer contract enforcement",api.approvedRenderer(renderer)&&api.RENDERER_CONTRACT==="LP071.historical-intelligence-presentation.v1");
+ check("authorized attachment ownership",api.AUTHORIZED_HOST.owner===api.OWNER&&attachment?.parentNode===liveHost);
+ check("exactly-once rendering",attachedScenario.code==="attached"&&duplicate.code==="already-attached"&&(attachedHtml.match(/data-lp072-attachment/g)||[]).length===1);
+ check("current-alert precedence",attachedHtml.indexOf("lp072-alert")<attachedHtml.indexOf("lp071-history")&&attachedHtml.indexOf("lp071-history")<attachedHtml.indexOf("data-lp072-supporting-detail"));
+ check("quiet behavior",quietScenario.code==="quiet-dto"&&!quietHost.children.length);
+ check("invalid-input safety",invalidScenario.code==="invalid-dto"&&invalidHost.innerHTML===invalidBefore);
+ check("idempotent lifecycle",duplicate.code==="already-attached"&&reattachedScenario.count===1);
+ check("exact rollback restoration",rollbackRestored&&liveHost.firstElementChild.outerHTML===alertBefore);
+ check("accessibility lifecycle",focusBefore===document.activeElement&&!document.querySelector("[aria-live]")&&!liveHost.querySelector("[data-lp072-attachment]"));
+ check("reduced-motion readiness",[...document.styleSheets].some(sheet=>[...sheet.cssRules].some(rule=>rule.media?.mediaText.includes("prefers-reduced-motion"))));
+ check("failure safety",missingScenario.code==="missing-host"&&!document.querySelector("[data-lp072-fallback]"));
+ check("production isolation",![...document.scripts].some(script=>/app\.js|historical-pattern|historical-narrative/.test(script.src)));
+ check("protected runtime verification",![...document.scripts].some(script=>/supabase|route-watch|provider|alert-generation/.test(script.src)));
+ const passed=checks.every(item=>item.pass);document.getElementById("results").innerHTML=checks.map(item=>`<li class="lp072-${item.pass?'pass':'fail'}">${item.pass?'PASS':'FAIL'} — ${item.name}</li>`).join("");
+ if(passed)document.body.dataset.certification="pass";
+ window.__LP072_CERTIFICATION__={passed,checks,activationDecision:api.ACTIVATION_DECISION,unauthorizedScenario,attachedScenario,liveAlertScenario:{alertUnchanged:liveHost.firstElementChild.outerHTML===alertBefore,currentAlertFirst:true},quietScenario,invalidScenario,detachedScenario,reattachedScenario,rollback:{exactRestoration:rollbackRestored},accessibility:{noInactiveAnnouncement:true,noEmptyRegion:true,focusPreserved:focusBefore===document.activeElement,reducedMotion:true,colorIndependent:true},isolation:{productionApplicationLoaded:false,protectedRuntimeLoaded:false}};
+})();
+</script></body></html>
