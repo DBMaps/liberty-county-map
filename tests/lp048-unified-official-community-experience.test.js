@@ -8,7 +8,8 @@ assert(app.includes('function gridlyAwarenessSourceLabel'), 'shared awareness so
 assert(app.includes('Official Source · DriveTexas'), 'official authority attribution remains visible');
 assert(app.includes('Community reports from nearby drivers'), 'community source context remains community-driven');
 assert(!app.includes('Official advisory · Official Source · DriveTexas'), 'official popups omit redundant advisory metadata before authority');
-assert(app.includes('Community report · Driver shared ·'), 'community popups use complementary source/freshness language');
+assert(app.includes('data-gridly-hazard-popup-field="sourceLine">Community reports</span>'), 'community popups use calm evidence language');
+assert(/data-gridly-hazard-popup-field="confidenceLine"[\s\S]*data-gridly-hazard-popup-field="freshnessLine"/.test(app), 'community popup freshness concludes the presentation after trust');
 assert(app.includes('data-gridly-official-popup-field="guidanceText"'), 'official consumer popup can render practical driver guidance text');
 assert(!app.includes('What drivers should know · ${category}'), 'official consumer popup does not render category as guidance text');
 assert(app.includes('No official roadway advisories nearby.'), 'official quiet state matches nearby-awareness framing');
