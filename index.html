@@ -755,10 +755,10 @@
     </div>
     <div id="gridlyPortraitBottomRegion" class="gridly-v2-bottom-region" aria-label="Portrait bottom actions">
       <div class="gridly-v2-bottom-dock" aria-label="Primary actions">
-        <button type="button" data-v2-sheet="report" aria-label="Open Report flow"><span class="dock-icon"><img src="assets/UI/icons/dock/report-map-pin.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><span class="gridly-v2-sr-label">Report</span></button>
-        <button type="button" data-v2-sheet="alerts" aria-label="Open Alerts"><span class="dock-icon"><img src="assets/UI/icons/dock/alerts-bell.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><span class="gridly-v2-sr-label">Alerts</span></button>
-        <button type="button" id="gridlyHistoryDockButton" data-v2-sheet="history" aria-label="Open historical intelligence" aria-haspopup="dialog"><span class="dock-icon"><img src="assets/UI/icons/dock/history-clock-arrow.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><span class="gridly-v2-sr-label">History</span></button>
-        <button type="button" data-v2-sheet="settings" data-action="settings" data-dock-action="settings" data-gridly-action="settings" aria-label="Open Settings" aria-haspopup="dialog"><span class="dock-icon"><img src="assets/UI/icons/dock/settings-gear.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><span class="gridly-v2-sr-label">Settings</span></button>
+        <button type="button" data-v2-sheet="report" aria-label="Open Report flow"><span class="dock-icon"><img src="assets/UI/icons/dock/report-map-pin.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>Report</em></button>
+        <button type="button" data-v2-sheet="alerts" aria-label="Open Alerts"><span class="dock-icon"><img src="assets/UI/icons/dock/alerts-bell.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>Alerts</em></button>
+        <button type="button" id="gridlyHistoryDockButton" data-v2-sheet="history" aria-label="Open historical intelligence" aria-haspopup="dialog"><span class="dock-icon"><img src="assets/UI/icons/dock/history-clock-arrow.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>History</em></button>
+        <button type="button" data-v2-sheet="settings" data-action="settings" data-dock-action="settings" data-gridly-action="settings" aria-label="Open Settings" aria-haspopup="dialog"><span class="dock-icon"><img src="assets/UI/icons/dock/settings-gear.png" alt="" aria-hidden="true" loading="eager" decoding="async"></span><em>Settings</em></button>
       </div>
     </div>
     <div id="gridlyPortraitV2SheetBackdrop" class="gridly-v2-sheet-backdrop" hidden></div>
@@ -909,7 +909,6 @@
       </div>
       <h2 id="smartAlertsStatus">Alert preferences</h2>
       <p class="smart-alerts-subtitle">Choose what Gridly should watch for you.</p>
-      <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
       <div id="smartAlertsBanner" class="smart-alerts-banner" hidden></div>
       <div class="smart-alert-options-grid">
         <label class="smart-alert-option"><input type="checkbox" id="smartAlertNearbyBlocked"><span class="smart-alert-option-label">Nearby blocked crossings</span></label>
@@ -995,7 +994,6 @@
             <span class="settings-list-meta">Alerts · Map · Display · Location</span>
           </summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note settings-notification-notice">Notification delivery is currently in development. Your notification preferences will be saved and used when future notification features become available.</p>
             <div class="settings-toggle-grid">
               <label class="settings-toggle-row"><input type="checkbox" id="settingsRouteAlertsToggle"><span>Saved trip updates</span></label>
               <label class="settings-toggle-row"><input type="checkbox" id="settingsRailAlertsToggle"><span>Rail crossing updates</span></label>
@@ -1043,7 +1041,6 @@
           </summary>
           <div class="settings-list-detail">
             <p><strong>Gridly V198</strong><br><span id="settingsBuildValue">Build 1710</span></p>
-            <p class="settings-placeholder-note" id="settingsDataTestingSection">No cleanup or test tools are available in Settings for this phase. Historical data is not changed from this panel.</p>
             <section class="settings-pwa-install-card" data-gridly-pwa-install-card hidden aria-label="Install Gridly">
               <div class="settings-pwa-install-copy">
                 <strong>Install Gridly</strong>
@@ -1071,14 +1068,6 @@
                     <p>A portion of future proceeds will be reinvested into the communities we serve.</p>
                     <p>Public safety partnerships remain a priority.</p>
                     <p>Dispatch and first responder use will always remain free.</p>
-                  </div>
-                </details>
-                <details class="settings-about-gridly-block settings-about-gridly-accordion-item">
-                  <summary class="settings-about-gridly-item-summary">Beta Notice</summary>
-                  <div class="settings-about-gridly-item-panel">
-                    <h3>Beta Notice</h3>
-                    <p>Gridly is currently in beta.</p>
-                    <p>Features, reports, and community activity may evolve as the platform continues to improve.</p>
                   </div>
                 </details>
                 <details class="settings-about-gridly-block settings-about-gridly-accordion-item">
@@ -1229,7 +1218,7 @@
             <select id="gridlyWelcomeCountySelect" class="gridly-premium-select" data-gridly-county-select data-gridly-county-option-list aria-label="Select County">
               <option value="liberty-tx">Liberty County</option>
               <option value="montgomery-tx">Montgomery County</option>
-              <option value="san-jacinto-tx" data-gridly-county-option="san-jacinto-tx" data-gridly-validation-only="true">San Jacinto County (validation only)</option>
+              <option value="san-jacinto-tx" data-gridly-county-option="san-jacinto-tx" data-gridly-validation-only="true">San Jacinto County</option>
             </select>
           </label>
           <label class="gridly-welcome-select-label">
@@ -1387,10 +1376,10 @@
     <script src="js/gridlyCrossingPackageValidationAudit.js"></script>
     <script src="js/gridlyCrossingPackageAdapter.js"></script>
     <script src="js/gridlyCrossingProvider.js"></script>
-    <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
+  <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
+  <script src="js/gridlyLp0941LaunchSurfaceAudit.js"></script>
 </body>
 </html>
-
 
 
 

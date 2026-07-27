@@ -91545,14 +91545,6 @@ function buildGridlyAboutGuidanceHtml() {
           </div>
         </details>
         <details class="settings-about-gridly-block settings-about-gridly-accordion-item">
-          <summary class="settings-about-gridly-item-summary">Beta Notice</summary>
-          <div class="settings-about-gridly-item-panel">
-            <h3>Beta Notice</h3>
-            <p>Gridly is currently in beta.</p>
-            <p>Features, reports, and community activity may evolve as the platform continues to improve.</p>
-          </div>
-        </details>
-        <details class="settings-about-gridly-block settings-about-gridly-accordion-item">
           <summary class="settings-about-gridly-item-summary">Important Safety Notice</summary>
           <div class="settings-about-gridly-item-panel">
             <h3>Important</h3>
@@ -106821,9 +106813,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           </div>
         </details>
         <details class="settings-modal-section settings-list-section settings-section-notifications">
-          <summary class="settings-list-summary"><span class="settings-list-title">Notifications</span><span class="settings-list-meta">Saved preferences · Coming later</span></summary>
+          <summary class="settings-list-summary"><span class="settings-list-title">Notifications</span><span class="settings-list-meta">Alert preferences</span></summary>
           <div class="settings-list-detail">
-            <p class="settings-placeholder-note settings-notification-notice">Notifications are not live yet. These choices are saved now so Gridly can honor them when notification delivery becomes available.</p>
+            <p class="settings-placeholder-note settings-notification-notice">Choose the updates that matter to you. Preferences are saved on this device.</p>
             <div class="settings-toggle-grid">
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.routeAlerts"${checked(settings.notifications.routeAlerts)}><span>Route Watch updates</span></label>
               <label class="settings-toggle-row"><input type="checkbox" data-v2-settings-field="notifications.railAlerts"${checked(settings.notifications.railAlerts)}><span>Rail crossing updates</span></label>
@@ -106846,7 +106838,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section settings-section-support" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">Support</span><span class="settings-list-meta">Help · About · Privacy · Version</span></summary>
-          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Help, setup replay, install, feedback, privacy, terms, and beta information live here. Settings does not expose cleanup, testing, data-sync, or protected system controls.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Find help, installation, feedback, privacy, terms, and product information here.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
