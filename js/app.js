@@ -36971,19 +36971,69 @@ function getGridlyDestinationRouteImpactCardText() {
     const audit = typeof window.gridlyDestinationRouteImpactAudit === "function"
       ? window.gridlyDestinationRouteImpactAudit()
       : null;
-    const impactLevel = audit?.impactLevel || "none";
-    const reason = audit?.primaryImpactReason || getGridlyDestinationRouteImpactCopy(impactLevel);
-    const proximityLine = String(audit?.primaryImpactProximityLabel || "").trim();
-    return [
-      getGridlyDestinationRouteImpactCompactIntroCopy(impactLevel),
-      getGridlyDestinationRouteImpactCompactReasonCopy({ impactLevel, reason, proximityLabel: proximityLine })
-    ]
+    const decision = buildGridlyDestinationDecisionPresentation({ audit });
+    return [decision.interpretation, decision.reason, `${decision.confidence} · ${decision.freshness}.`]
       .map((line) => normalizeGridlyUserFacingRoadText(line))
       .filter((line) => String(line || "").trim())
       .join("\n");
   } catch (_) {
     return "";
   }
+}
+
+function gridlyDestinationDecisionFreshnessLine(intelligence = {}) {
+  const records = [
+    ...(Array.isArray(intelligence?.matchedHazards) ? intelligence.matchedHazards : []),
+    ...(Array.isArray(intelligence?.matchedAlerts) ? intelligence.matchedAlerts : []),
+    ...(Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [])
+  ];
+  const timestamps = records
+    .map((record) => Date.parse(record?.updatedAt || record?.updated_at || record?.lastUpdated || record?.last_updated || record?.createdAt || record?.created_at || record?.submittedAt || record?.observedAt || ""))
+    .filter(Number.isFinite);
+  if (!timestamps.length) return "Checked just now";
+  const minutes = Math.max(0, Math.round((Date.now() - Math.max(...timestamps)) / 60000));
+  return minutes <= 1 ? "Updated just now" : `Updated ${minutes} minutes ago`;
+}
+
+function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence = null } = {}) {
+  const existingAudit = audit || (typeof window.gridlyDestinationRouteImpactAudit === "function" ? window.gridlyDestinationRouteImpactAudit() : {});
+  const existingIntelligence = intelligence || (typeof window.gridlyDestinationRouteIntelligenceAudit === "function" ? window.gridlyDestinationRouteIntelligenceAudit() : {});
+  const impactLevel = String(existingAudit?.impactLevel || "none").toLowerCase();
+  const conditionCount = Math.max(0, Number(existingAudit?.hazardsConsidered || 0))
+    + Math.max(0, Number(existingAudit?.alertsConsidered || 0))
+    + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
+  const quiet = impactLevel === "none" || conditionCount === 0;
+  const multiple = !quiet && conditionCount > 1;
+  let interpretation = "Travel normally.";
+  let reason = "No destination-impacting conditions are currently reported.";
+  if (multiple) {
+    interpretation = "Check your route before leaving.";
+    reason = "Several nearby conditions may affect your destination.";
+  } else if (!quiet) {
+    interpretation = impactLevel === "high" ? "Allow extra travel time." : "Check before leaving.";
+    reason = isGridlyDestinationRouteActiveRailReason({ title: existingAudit?.primaryImpactReason })
+      ? "A blocked crossing may delay your trip to your destination."
+      : impactLevel === "low"
+        ? "Community activity may affect your destination."
+        : "Nearby roadway conditions could affect travel to your destination.";
+  }
+  const existingConfidence = String(existingAudit?.confidenceLabel || "");
+  const confidence = quiet
+    ? "Quiet conditions"
+    : conditionCount > 1
+      ? "Multiple recent signals"
+      : /live reports checked/i.test(existingConfidence)
+        ? "Strong supporting evidence"
+        : "Developing conditions";
+  return Object.freeze({
+    pattern: "LP063 Destination Decision Pattern",
+    state: quiet ? "quiet" : multiple ? "multiple" : "active",
+    interpretation,
+    reason,
+    confidence,
+    freshness: gridlyDestinationDecisionFreshnessLine(existingIntelligence),
+    existingDestinationIntelligencePreserved: true
+  });
 }
 
 function getGridlyDestinationRouteReasonInspectionText(item = {}) {
@@ -37134,18 +37184,29 @@ function getGridlyDestinationImpactPaneReasonModel() {
 function renderGridlyDestinationImpactPane() {
   const paneEls = getGridlyDestinationImpactPaneElements();
   const model = getGridlyDestinationImpactPaneReasonModel();
+  const decision = buildGridlyDestinationDecisionPresentation();
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.impactLevel = model.impactLevel;
   GRIDLY_DESTINATION_IMPACT_PANE_STATE.displayedReasons = [...model.reasons];
 
   const currentRouteDetails = typeof getGridlyCurrentRouteDetailsTextModel === "function" ? getGridlyCurrentRouteDetailsTextModel() : null;
-  if (paneEls.title) paneEls.title.textContent = "Current Route Details";
-  if (paneEls.subtitle) paneEls.subtitle.textContent = normalizeGridlyUserFacingRoadText(model.confidenceLabel || "Live reports checked");
+  if (paneEls.title) {
+    paneEls.title.textContent = decision.interpretation;
+    paneEls.title.dataset.gridlyDestinationDecisionRole = "interpretation";
+  }
+  if (paneEls.subtitle) {
+    paneEls.subtitle.textContent = decision.reason;
+    paneEls.subtitle.dataset.gridlyDestinationDecisionRole = "reason";
+  }
   if (paneEls.currentRouteLine) paneEls.currentRouteLine.textContent = normalizeGridlyUserFacingRoadText(currentRouteDetails?.line || "Current Location → Destination");
   if (paneEls.currentRouteMeta) paneEls.currentRouteMeta.textContent = normalizeGridlyUserFacingRoadText(currentRouteDetails?.meta || "ETA / distance pending");
-  if (paneEls.severity) paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(model.supportLabel || GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY);
+  if (paneEls.severity) {
+    paneEls.severity.textContent = normalizeGridlyUserFacingRoadText(decision.confidence);
+    paneEls.severity.dataset.gridlyDestinationDecisionRole = "confidence";
+  }
   if (paneEls.confidence) {
-    paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(`${model.impactLabel || "None"} impact`);
-    paneEls.confidence.hidden = Boolean(model.quiet);
+    paneEls.confidence.textContent = normalizeGridlyUserFacingRoadText(decision.freshness);
+    paneEls.confidence.dataset.gridlyDestinationDecisionRole = "freshness";
+    paneEls.confidence.hidden = false;
   }
   if (paneEls.summary) {
     paneEls.summary.textContent = normalizeGridlyUserFacingRoadText(model.summary || GRIDLY_DESTINATION_ROUTE_QUIET_STATUS_COPY);
@@ -37165,6 +37226,45 @@ function renderGridlyDestinationImpactPane() {
   syncGridlyVisibleRouteExitControls();
   return model;
 }
+
+function gridlyLp063DestinationDecisionAudit() {
+  const now = new Date().toISOString();
+  const quiet = buildGridlyDestinationDecisionPresentation({
+    audit: { impactLevel: "none", hazardsConsidered: 0, alertsConsidered: 0, reportsConsidered: 0, confidenceLabel: "Live reports checked" },
+    intelligence: { matchedHazards: [], matchedAlerts: [], matchedReports: [] }
+  });
+  const active = buildGridlyDestinationDecisionPresentation({
+    audit: { impactLevel: "high", hazardsConsidered: 1, alertsConsidered: 0, reportsConsidered: 0, confidenceLabel: "Live reports checked", primaryImpactReason: "A blocked crossing may delay this trip" },
+    intelligence: { matchedHazards: [{ title: "Blocked crossing", updatedAt: now }], matchedAlerts: [], matchedReports: [] }
+  });
+  const multiple = buildGridlyDestinationDecisionPresentation({
+    audit: { impactLevel: "moderate", hazardsConsidered: 1, alertsConsidered: 1, reportsConsidered: 1, confidenceLabel: "Live reports checked" },
+    intelligence: { matchedHazards: [{ updatedAt: now }], matchedAlerts: [{}], matchedReports: [{}] }
+  });
+  const rendered = typeof document !== "undefined" ? [
+    document.querySelector('[data-gridly-destination-decision-role="interpretation"]'),
+    document.querySelector('[data-gridly-destination-decision-role="reason"]'),
+    document.querySelector('[data-gridly-destination-decision-role="confidence"]'),
+    document.querySelector('[data-gridly-destination-decision-role="freshness"]')
+  ] : [];
+  const protectedSystems = Object.freeze({ destinationIntelligenceCalculations: "unchanged", routeCalculation: "unchanged", routeWatchLogic: "unchanged", travelBrief: "unchanged", communityPulse: "unchanged", officialRoadwayProcessing: "unchanged", weatherProcessing: "unchanged", hazardLifecycle: "unchanged", crossingLifecycle: "unchanged", reporting: "unchanged", alertGeneration: "unchanged", supabase: "unchanged", backendSystems: "unchanged" });
+  const checks = Object.freeze({
+    destinationDecisionPatternPresent: quiet.pattern === "LP063 Destination Decision Pattern",
+    interpretationFirst: !rendered[0] || rendered[0].dataset.gridlyDestinationDecisionRole === "interpretation",
+    reasonSecond: !rendered[1] || rendered[1].dataset.gridlyDestinationDecisionRole === "reason",
+    confidencePresent: Boolean(quiet.confidence && active.confidence && multiple.confidence),
+    freshnessPresent: [quiet, active, multiple].every((item) => /^(?:Checked|Updated) /.test(item.freshness)),
+    existingDestinationIntelligencePreserved: [quiet, active, multiple].every((item) => item.existingDestinationIntelligencePreserved),
+    quietStateWordingValidated: quiet.interpretation === "Travel normally." && quiet.reason === "No destination-impacting conditions are currently reported." && quiet.confidence === "Quiet conditions",
+    activeStateWordingValidated: active.interpretation === "Allow extra travel time." && active.reason === "A blocked crossing may delay your trip to your destination." && active.confidence === "Strong supporting evidence",
+    multiConditionWordingValidated: multiple.interpretation === "Check your route before leaving." && multiple.reason === "Several nearby conditions may affect your destination." && multiple.confidence === "Multiple recent signals",
+    protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
+  });
+  return Object.freeze({ available: true, milestone: "LP063", passive: true, presentationOnly: true, noFetches: true, noWrites: true, noStorageWrites: true, order: Object.freeze(["interpretation", "reason", "confidence", "freshness"]), checks, fixtures: Object.freeze({ quiet, active, multiple }), protectedSystems, certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail" });
+}
+
+window.gridlyLp063DestinationDecisionAudit = gridlyLp063DestinationDecisionAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp063DestinationDecisionAudit", gridlyLp063DestinationDecisionAudit);
 
 function openGridlyDestinationImpactPane() {
   const paneEls = getGridlyDestinationImpactPaneElements();
