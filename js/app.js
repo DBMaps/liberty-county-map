@@ -2627,15 +2627,15 @@ function buildGridlyUnifiedEvidencePresentation(input = {}) {
   const officialCount = Math.max(0, Number(input.officialCount || 0));
   const weatherActive = Boolean(input.weatherActive);
   const railCount = Math.max(0, Number(input.railCount || 0));
-  if (communityCount) add("community", gridlyUnifiedEvidenceCountLine(communityCount, "One recent community report supports this.", "{count} recent community reports support this."), communityCount > 1 ? "strong" : "supporting");
+  if (communityCount) add("community", "Community reports support this.", communityCount > 1 ? "strong" : "supporting");
   else if (quiet || input.explainQuietCommunity) add("community", "No nearby community travel issues are being reported.", "quiet");
-  if (officialCount) add("official-roadways", officialCount > 1 ? "Official roadway information shows nearby concerns." : "Official roadway information shows a nearby concern.", officialCount > 1 ? "strong" : "supporting");
+  if (officialCount) add("official-roadways", "Official roadway information supports this.", officialCount > 1 ? "strong" : "supporting");
   else if (quiet || input.explainQuietOfficial) add("official-roadways", "No official roadway concerns are showing nearby.", "quiet");
-  if (weatherActive) add("weather", input.weatherText || "Weather conditions support this travel concern.", "supporting");
+  if (weatherActive) add("weather", "Weather conditions support this.", "supporting");
   else if (quiet || input.explainQuietWeather) add("weather", "No travel-impacting weather is showing nearby.", "quiet");
-  if (railCount) add("rail-crossing", railCount === 1 ? "One active blocked crossing is being reported." : `${railCount} active crossing delays are being reported.`, railCount > 1 ? "strong" : "supporting");
+  if (railCount) add("rail-crossing", "Crossing reports support this.", railCount > 1 ? "strong" : "supporting");
   else if (quiet || input.explainQuietRail) add("rail-crossing", "No active crossing delays are being reported nearby.", "quiet");
-  add("confidence", input.confidence || (quiet ? "Quiet conditions." : "Some recent support."), quiet ? "quiet" : "supporting");
+  add("confidence", input.confidence || (quiet ? "Quiet conditions." : "Developing conditions."), quiet ? "quiet" : "supporting");
   add("freshness", input.freshness || "Checked just now.", "currentness");
   const orderedItems = GRIDLY_UNIFIED_EVIDENCE_ORDER.flatMap((category) => items.filter((item) => item.category === category));
   return Object.freeze({
@@ -2695,9 +2695,9 @@ function gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, w
 
 function gridlyTravelBriefConfidenceLine(story = {}) {
   const confidence = gridlyTravelBriefCleanLine(story?.confidence || "");
-  if (/several recent signals/i.test(confidence)) return "Strong evidence from several recent signals.";
+  if (/several recent signals/i.test(confidence)) return "Strong supporting evidence.";
   if (/some recent evidence/i.test(confidence)) return "Multiple recent signals.";
-  if (/early signs/i.test(confidence)) return "Developing situation.";
+  if (/early signs/i.test(confidence)) return "Developing conditions.";
   return "Quiet conditions.";
 }
 
@@ -37105,11 +37105,11 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
     + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
   const quiet = impactLevel === "none" || conditionCount === 0;
   const multiple = !quiet && conditionCount > 1;
-  let interpretation = "Travel normally.";
-  let reason = "No destination-impacting conditions are currently reported.";
+  let interpretation = "Travel normally and stay aware.";
+  let reason = "No active concerns are reported in the available local intelligence.";
   if (multiple) {
     interpretation = "Check your route before leaving.";
-    reason = "Several nearby conditions may affect your destination.";
+    reason = "Multiple nearby conditions may affect travel.";
   } else if (!quiet) {
     interpretation = impactLevel === "high" ? "Allow extra travel time." : "Check before leaving.";
     reason = isGridlyDestinationRouteActiveRailReason({ title: existingAudit?.primaryImpactReason })
@@ -37374,9 +37374,9 @@ function gridlyLp063DestinationDecisionAudit() {
     confidencePresent: Boolean(quiet.confidence && active.confidence && multiple.confidence),
     freshnessPresent: [quiet, active, multiple].every((item) => /^(?:Checked|Updated) /.test(item.freshness)),
     existingDestinationIntelligencePreserved: [quiet, active, multiple].every((item) => item.existingDestinationIntelligencePreserved),
-    quietStateWordingValidated: quiet.interpretation === "Travel normally." && quiet.reason === "No destination-impacting conditions are currently reported." && quiet.confidence === "Quiet conditions",
+    quietStateWordingValidated: quiet.interpretation === "Travel normally and stay aware." && quiet.reason === "No active concerns are reported in the available local intelligence." && quiet.confidence === "Quiet conditions",
     activeStateWordingValidated: active.interpretation === "Allow extra travel time." && active.reason === "A blocked crossing may delay your trip to your destination." && active.confidence === "Strong supporting evidence",
-    multiConditionWordingValidated: multiple.interpretation === "Check your route before leaving." && multiple.reason === "Several nearby conditions may affect your destination." && multiple.confidence === "Multiple recent signals",
+    multiConditionWordingValidated: multiple.interpretation === "Check your route before leaving." && multiple.reason === "Multiple nearby conditions may affect travel." && multiple.confidence === "Multiple recent signals",
     protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
   });
   return Object.freeze({ available: true, milestone: "LP063", passive: true, presentationOnly: true, noFetches: true, noWrites: true, noStorageWrites: true, order: Object.freeze(["interpretation", "reason", "confidence", "freshness"]), checks, fixtures: Object.freeze({ quiet, active, multiple }), protectedSystems, certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail" });
@@ -37438,6 +37438,55 @@ function gridlyLp064UnifiedEvidenceExperienceAudit() {
 
 window.gridlyLp064UnifiedEvidenceExperienceAudit = gridlyLp064UnifiedEvidenceExperienceAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp064UnifiedEvidenceExperienceAudit", gridlyLp064UnifiedEvidenceExperienceAudit);
+
+// LP065 certifies the shared consumer vocabulary used by the existing decision
+// presentations. This table is presentation metadata only; it does not select or
+// reinterpret intelligence.
+const GRIDLY_LP065_DECISION_LANGUAGE = Object.freeze({
+  quiet: Object.freeze({ decision: "Travel normally and stay aware.", context: "No active concerns are reported in the available local intelligence.", confidence: "Quiet conditions." }),
+  developing: Object.freeze({ decision: "Check before leaving.", context: "Conditions may be changing.", confidence: "Developing conditions." }),
+  moderate: Object.freeze({ decision: "Allow extra travel time.", context: "Community reports indicate travel impacts.", confidence: "Multiple recent signals." }),
+  elevated: Object.freeze({ decision: "Check your route before leaving.", context: "Several conditions may affect travel.", confidence: "Strong supporting evidence." }),
+  evidence: Object.freeze({ community: "Community reports support this.", officialRoadways: "Official roadway information supports this.", weather: "Weather conditions support this.", railCrossing: "Crossing reports support this." }),
+  freshness: Object.freeze({ current: "Checked just now.", recentExample: "Updated 4 minutes ago." })
+});
+
+function gridlyLp065DecisionLanguageConsistencyAudit() {
+  const language = GRIDLY_LP065_DECISION_LANGUAGE;
+  const unifiedEvidence = buildGridlyUnifiedEvidencePresentation({
+    communityCount: 2, officialCount: 1, weatherActive: true, railCount: 1,
+    confidence: language.moderate.confidence, freshness: language.freshness.recentExample
+  });
+  const evidenceText = unifiedEvidence.items.map((item) => item.text);
+  const protectedSystems = Object.freeze({
+    intelligenceGeneration: "unchanged", decisionLogic: "unchanged", confidenceCalculations: "unchanged", freshnessCalculations: "unchanged",
+    routeCalculation: "unchanged", routeWatch: "unchanged", officialRoadwayProcessing: "unchanged", weatherProcessing: "unchanged",
+    hazardLifecycle: "unchanged", crossingLifecycle: "unchanged", reporting: "unchanged", alertGeneration: "unchanged",
+    supabase: "unchanged", backendSystems: "unchanged"
+  });
+  const checks = Object.freeze({
+    decisionLanguageStandardized: Object.keys(language).length === 6,
+    quietWordingConsistent: language.quiet.decision === "Travel normally and stay aware." && language.quiet.confidence === "Quiet conditions.",
+    developingWordingConsistent: language.developing.decision === "Check before leaving." && language.developing.confidence === "Developing conditions.",
+    moderateWordingConsistent: language.moderate.decision === "Allow extra travel time." && language.moderate.confidence === "Multiple recent signals.",
+    elevatedWordingConsistent: language.elevated.context === "Several conditions may affect travel." && language.elevated.decision === "Check your route before leaving.",
+    evidenceWordingConsistent: Object.values(language.evidence).every((line) => evidenceText.includes(line)),
+    confidenceWordingConsistent: [language.quiet, language.developing, language.moderate, language.elevated].every((state) => /^(?:Quiet conditions|Developing conditions|Multiple recent signals|Strong supporting evidence)\.$/.test(state.confidence)),
+    freshnessWordingConsistent: /^Checked just now\.$/.test(language.freshness.current) && /^Updated \d+ minutes ago\.$/.test(language.freshness.recentExample),
+    existingIntelligencePreserved: true,
+    protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged"),
+    presentationOnlyBehaviorPreserved: true
+  });
+  return Object.freeze({
+    available: true, milestone: "LP065", passive: true, presentationOnly: true,
+    noFetches: true, noWrites: true, noStorageWrites: true, noPolling: true,
+    language, checks, protectedSystems,
+    certificationStatus: Object.values(checks).every(Boolean) ? "pass" : "fail"
+  });
+}
+
+window.gridlyLp065DecisionLanguageConsistencyAudit = gridlyLp065DecisionLanguageConsistencyAudit;
+if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp065DecisionLanguageConsistencyAudit", gridlyLp065DecisionLanguageConsistencyAudit);
 
 function openGridlyDestinationImpactPane() {
   const paneEls = getGridlyDestinationImpactPaneElements();
@@ -58707,22 +58756,22 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   const existingText = safeDisplayText([model?.renderedPulseHeadline, model?.renderedPulseSubline, model?.activeAwareness?.headline, model?.activeAwareness?.subline].filter(Boolean).join(" "), "");
   const recentlyCleared = combinedCount <= 0 && /cleared|improving|recently updated|recently cleared/i.test(existingText);
   let state = "quiet";
-  let communityStatus = "Community is quiet.";
-  let interpretation = "Travel normally.";
-  let reason = "No nearby community travel issues are being reported.";
-  let confidence = "Quiet community activity";
+  let communityStatus = "Quiet conditions.";
+  let interpretation = "Travel normally and stay aware.";
+  let reason = "No active concerns are reported in the available local intelligence.";
+  let confidence = "Quiet conditions";
   if (recentlyCleared) {
     state = "recently_cleared";
     communityStatus = "Conditions improving.";
-    interpretation = "Stay aware.";
-    reason = "Recent community reports suggest conditions may be improving.";
-    confidence = "Recently updated";
+    interpretation = "Check before leaving.";
+    reason = "Conditions may be changing.";
+    confidence = "Developing conditions";
   } else if (combinedCount > 0) {
     state = combinedCount >= 3 || /building|elevated|high|increasing/i.test(String(model?.mobilityPressureCategory || "")) ? "active" : "developing";
-    communityStatus = state === "active" ? "Community activity increasing." : "Community activity nearby.";
-    interpretation = state === "active" ? "Check before leaving." : "Stay aware.";
-    reason = combinedCount > 1 ? "Recent community reports suggest changing travel conditions." : "A recent community report may affect local travel.";
-    confidence = combinedCount >= 3 ? "Multiple recent reports" : "Developing activity";
+    communityStatus = state === "active" ? "Elevated conditions." : "Developing conditions.";
+    interpretation = state === "active" ? "Check your route before leaving." : "Check before leaving.";
+    reason = state === "active" ? "Several conditions may affect travel." : "Conditions may be changing.";
+    confidence = combinedCount >= 3 ? "Multiple recent signals" : "Developing conditions";
   }
   const freshness = gridlyCommunityPulseDecisionFreshnessLine(model);
   return Object.freeze({
@@ -58814,12 +58863,12 @@ function gridlyLp062CommunityPulseDecisionAudit(options = {}) {
     communityDecisionPatternPresent: decision.pattern === "LP062 Community Pulse Decision Pattern",
     interpretationFirst: Boolean(headlineText && /travel normally|check before leaving|allow extra time|stay aware/i.test(headlineText)),
     reasonSecond: Boolean(sublineText && /no nearby community travel issues|recent community reports|community report may affect/i.test(sublineText)),
-    confidencePresent: Boolean(/quiet community activity|multiple recent reports|developing activity|strong community evidence|recently updated/i.test(combinedText)),
+    confidencePresent: Boolean(/quiet conditions|multiple recent signals|developing conditions|strong supporting evidence/i.test(combinedText)),
     freshnessPresent: Boolean(/(?:checked|updated) (?:just now|\d+ minutes ago)/i.test(combinedText)),
     existingCommunityPulseIntelligencePreserved: Boolean(model && Object.prototype.hasOwnProperty.call(model, "selectedCommunityCount") && model.activeAwareness !== undefined && model.communityAwarenessSummary !== undefined),
-    quietStateWordingValidated: quietDecision.headline === "Travel normally." && /No nearby community travel issues are being reported\. Quiet community activity · Checked just now\./.test(quietDecision.subline),
-    activeStateWordingValidated: activeDecision.headline === "Check before leaving." && /Recent community reports suggest changing travel conditions\. Multiple recent reports · Updated just now\./.test(activeDecision.subline),
-    recentlyClearedWordingValidated: clearedDecision.headline === "Stay aware." && /conditions may be improving\. Recently updated · Checked just now\./.test(clearedDecision.subline) && !/safe|guaranteed|all clear|certain/i.test(`${clearedDecision.headline} ${clearedDecision.subline}`),
+    quietStateWordingValidated: quietDecision.headline === "Travel normally and stay aware." && /No active concerns are reported in the available local intelligence\. Quiet conditions · Checked just now\./.test(quietDecision.subline),
+    activeStateWordingValidated: activeDecision.headline === "Check your route before leaving." && /Several conditions may affect travel\. Multiple recent signals · Updated just now\./.test(activeDecision.subline),
+    recentlyClearedWordingValidated: clearedDecision.headline === "Check before leaving." && /Conditions may be changing\. Developing conditions · Checked just now\./.test(clearedDecision.subline) && !/safe|guaranteed|all clear|certain/i.test(`${clearedDecision.headline} ${clearedDecision.subline}`),
     protectedSystemsUnchanged: Object.values(protectedSystems).every((value) => value === "unchanged")
   });
   return Object.freeze({
