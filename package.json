@@ -27,6 +27,7 @@
     "test:lp075": "node tests/lp075-historical-intelligence-product-validation.test.js",
     "test:lp076": "node tests/lp076-historical-intelligence-learning-foundation.test.js",
     "test:lp077": "node tests/lp077-historical-archive-persistence.test.js",
-    "test:lp078": "node tests/lp078-historical-pattern-lifecycle.test.js"
+    "test:lp078": "node tests/lp078-historical-pattern-lifecycle.test.js",
+    "test:lp079": "node tests/lp079-historical-learning-orchestration.test.js"
   }
 }
