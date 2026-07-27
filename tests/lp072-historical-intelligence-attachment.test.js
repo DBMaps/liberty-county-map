@@ -15,10 +15,10 @@ class Element {
 const createDocument = (host) => ({ activeElement: null, createElement: (tag) => new Element(tag), querySelector: (selector) => selector === controllerApi.HOST_SELECTOR ? host : null });
 const selected = { historicalTakeaway: "Congestion has commonly developed near US 90 during busy travel periods.", narrativeType: "congestion", subject: "US 90", historicalWindow: "Friday afternoons", liveConditionGuidance: "Check current alerts for live conditions.", quiet: false, displayEligible: true };
 const quiet = { historicalTakeaway: null, narrativeType: null, subject: null, historicalWindow: null, liveConditionGuidance: null, quiet: true, displayEligible: false };
-const authorization = { activationAuthorized: true, consumerVisible: true, productionIntegration: true, owner: controllerApi.OWNER, ownershipToken: controllerApi.OWNER_TOKEN, prerequisites: { LP067: true, LP068: true, LP069: true }, dtoContract: controllerApi.DTO_CONTRACT, rendererContract: controllerApi.RENDERER_CONTRACT, currentAlertAuthority: controllerApi.ACTIVATION_DECISION.currentAlertAuthority };
+const authorization = { activationAuthorized: true, consumerVisible: true, productionIntegration: true, owner: controllerApi.OWNER, ownershipToken: controllerApi.OWNER_TOKEN, authorizedHost: controllerApi.HOST_SELECTOR, lifecycleOwner: controllerApi.OWNERSHIP_CONTRACT.lifecycleOwner, detachOwner: controllerApi.OWNERSHIP_CONTRACT.detachOwner, prerequisites: { LP067: true, LP068: true, LP069: true }, dtoContract: controllerApi.DTO_CONTRACT, rendererContract: controllerApi.RENDERER_CONTRACT, currentAlertAuthority: controllerApi.ACTIVATION_DECISION.currentAlertAuthority };
 
 const decision = controllerApi.ACTIVATION_DECISION;
-assert.deepEqual(Object.keys(decision), ["milestone", "productionIntegrationPrepared", "consumerVisible", "activationAuthorized", "explicitOptInRequired", "reversibleAttachmentReady", "rollbackReady", "currentAlertAuthority", "approvedDtoContract", "approvedRendererContract"]);
+assert.deepEqual(Object.keys(decision), ["milestone", "productionIntegrationPrepared", "consumerVisible", "activationAuthorized", "explicitOptInRequired", "reversibleAttachmentReady", "rollbackReady", "currentAlertAuthority", "approvedDtoContract", "approvedRendererContract", "owner", "ownershipToken", "authorizedHost", "lifecycleOwner", "detachOwner"]);
 assert.equal(decision.productionIntegrationPrepared, true); assert.equal(decision.consumerVisible, false); assert.equal(decision.activationAuthorized, false);
 assert.equal(decision.explicitOptInRequired, true); assert.equal(decision.reversibleAttachmentReady, true); assert.equal(decision.rollbackReady, true);
 assert.equal(controllerApi.exactDto(selected), true); assert.equal(controllerApi.exactDto({ ...selected, rankingMetadata: {} }), false);
@@ -42,6 +42,9 @@ assert.equal(badRenderer.attach(selected, authorization).code, "renderer-unavail
 
 assert.equal(controller.attach(selected, authorization).code, "attached");
 assert.equal(host.childNodes.length, 3); assert.equal(host.childNodes[0], alert); assert.equal(host.childNodes[1].getAttribute("data-lp072-attachment"), controllerApi.OWNER_TOKEN); assert.equal(host.childNodes[2], detail);
+assert.equal(host.childNodes[1].getAttribute("data-lp072-controller-owner"), controllerApi.OWNER_TOKEN);
+assert.equal(host.childNodes[1].getAttribute("data-lp072-lifecycle-owner"), controllerApi.OWNER_TOKEN);
+assert.equal(host.childNodes[1].getAttribute("data-lp072-detach-owner"), controllerApi.OWNER_TOKEN);
 assert.equal(alert.innerHTML, initialAlert); assert.doesNotMatch(host.childNodes[1].innerHTML, /ranking|confidence|score|candidate|DTO/i);
 assert.equal(controller.attach(selected, authorization).code, "already-attached"); assert.equal(host.childNodes.length, 3);
 assert.equal(controller.detach().code, "rollback-complete"); assert.deepEqual(host.childNodes, initialNodes); assert.equal(alert.innerHTML, initialAlert);
@@ -62,4 +65,9 @@ for (const file of ["index.html", "js/app.js"]) {
   assert.doesNotMatch(source, /data-gridly-owner=["']know-before-you-go-historical-intelligence/i);
 }
 assert.equal(fs.existsSync("tests/lp072-browser-certification.html"), true);
+const browserCertification = fs.readFileSync("tests/lp072-browser-certification.html", "utf8");
+assert.match(browserCertification, /checks\.push\(\{name,passed:passed===true\}\)/);
+assert.match(browserCertification, /const passed = checks\.every\(\(check\) => check\.passed === true\);/);
+assert.doesNotMatch(browserCertification, /checks\.every\([^\n]*\.pass\b/);
+assert.match(browserCertification, /attachedOwnership\.parentIsAuthorizedHost/);
 console.log("LP072 Historical Intelligence reversible attachment certification passed (45 requirements covered)");
