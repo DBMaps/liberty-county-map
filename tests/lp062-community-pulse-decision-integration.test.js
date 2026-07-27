@@ -36,16 +36,16 @@ ${helperBlock}
 `, context);
 
 const quiet = context.buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 0, activeAwareness: { activeAwarenessCount: 0 } });
-assert.strictEqual(quiet.headline, 'Travel normally.', 'Quiet-state interpretation is first');
-assert.match(quiet.subline, /No nearby community travel issues are being reported\. Quiet community activity · Checked just now\./, 'Quiet-state wording is validated');
+assert.strictEqual(quiet.headline, 'Travel normally and stay aware.', 'Quiet-state interpretation is first');
+assert.match(quiet.subline, /No active concerns are reported in the available local intelligence\. Quiet conditions · Checked just now\./, 'Quiet-state wording is validated');
 
 const active = context.buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 4, mobilityPressureCategory: 'building', activeAwareness: { activeAwarenessCount: 4, activeAwarenessSamples: [{ updatedAt: new Date().toISOString() }] } });
-assert.strictEqual(active.headline, 'Check before leaving.', 'Active-state interpretation is first');
-assert.match(active.subline, /Recent community reports suggest changing travel conditions\. Multiple recent reports · Updated just now\./, 'Active-state wording is validated');
+assert.strictEqual(active.headline, 'Check your route before leaving.', 'Elevated-state interpretation is first');
+assert.match(active.subline, /Several conditions may affect travel\. Multiple recent signals · Updated just now\./, 'Elevated-state wording is validated');
 
 const cleared = context.buildGridlyCommunityPulseDecisionPresentation({ selectedCommunityCount: 0, renderedPulseHeadline: 'Conditions improving.', renderedPulseSubline: 'Recently updated.', activeAwareness: { activeAwarenessCount: 0 } });
-assert.strictEqual(cleared.headline, 'Stay aware.', 'Recently-cleared interpretation is first');
-assert.match(cleared.subline, /Recent community reports suggest conditions may be improving\. Recently updated · Checked just now\./, 'Recently-cleared wording is validated without overstatement');
+assert.strictEqual(cleared.headline, 'Check before leaving.', 'Recently-cleared interpretation is first');
+assert.match(cleared.subline, /Conditions may be changing\. Developing conditions · Checked just now\./, 'Recently-cleared wording is validated without overstatement');
 assert.doesNotMatch(`${quiet.headline} ${quiet.subline} ${active.headline} ${active.subline} ${cleared.headline} ${cleared.subline}`, /safe|guaranteed|all clear|certain/i, 'LP062 avoids overstating certainty');
 
 console.log('LP062 Community Pulse Decision Integration regression passed');

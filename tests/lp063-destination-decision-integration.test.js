@@ -12,9 +12,9 @@ for (const role of ['interpretation', 'reason', 'confidence', 'freshness']) {
 }
 const positions = ['interpretation', 'reason', 'confidence', 'freshness'].map((role) => html.indexOf(`data-gridly-destination-decision-role="${role}"`));
 assert.ok(positions.every((position) => position >= 0) && positions.every((position, index) => index === 0 || position > positions[index - 1]), 'decision fields render in Driver Decision order');
-assert.match(app, /No destination-impacting conditions are currently reported\./, 'quiet-state reason is present');
+assert.match(app, /No active concerns are reported in the available local intelligence\./, 'quiet-state reason is present');
 assert.match(app, /A blocked crossing may delay your trip to your destination\./, 'active-state reason is present');
-assert.match(app, /Several nearby conditions may affect your destination\./, 'multi-condition reason is present');
+assert.match(app, /Multiple nearby conditions may affect travel\./, 'multi-condition reason is present');
 assert.match(app, /existingDestinationIntelligencePreserved: true/, 'existing Destination Intelligence is preserved');
 for (const system of ['destinationIntelligenceCalculations', 'routeCalculation', 'routeWatchLogic', 'travelBrief', 'communityPulse', 'officialRoadwayProcessing', 'weatherProcessing', 'hazardLifecycle', 'crossingLifecycle', 'reporting', 'alertGeneration', 'supabase', 'backendSystems']) {
   assert.match(app, new RegExp(`${system}: "unchanged"`), `${system} is protected`);
