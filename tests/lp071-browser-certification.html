@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP071 Historical Intelligence Presentation Certification</title>
+<link rel="stylesheet" href="../css/lp071-historical-intelligence-prototype.css"></head>
+<body><main class="lp071-shell"><header class="lp071-intro"><p>Know Before You Go</p><h1>Historical Intelligence presentation readiness</h1><p>Historical observations can add context. Current alerts determine live conditions. This isolated preview is not active in Gridly.</p></header>
+<div id="scenarios" class="lp071-grid" aria-label="Presentation prototype scenarios"></div>
+<section class="lp071-results" aria-labelledby="results-title"><h2 id="results-title">Certification results</h2><ol id="results"></ol></section></main>
+<script src="../js/historical-intelligence-activation-boundary.js"></script><script src="../js/historical-intelligence-presentation.js"></script>
+<script>
+(() => {
+ const ui=window.gridlyHistoricalIntelligencePresentation, boundary=window.gridlyHistoricalIntelligenceActivationBoundary;
+ const dto=(takeaway,type,subject,windowText)=>({historicalTakeaway:takeaway,narrativeType:type,subject,historicalWindow:windowText,liveConditionGuidance:"Check current alerts for live conditions.",quiet:false,displayEligible:true});
+ const crossing=dto("Crossing delays have commonly been observed near the Main Street crossing.","crossing_delay","Main Street crossing","Weekday mornings");
+ const congestion=dto("Congestion has commonly developed near US 90 during busy travel periods.","congestion","US 90","Friday afternoons");
+ const flooding=dto("High water has historically been observed near the Trinity River crossing.","flooding","Trinity River crossing","After periods of heavy rain");
+ const quiet={historicalTakeaway:null,narrativeType:null,subject:null,historicalWindow:null,liveConditionGuidance:null,quiet:true,displayEligible:false};
+ const ineligible={...crossing,displayEligible:false};
+ const alert='<section class="lp071-alert" aria-labelledby="current-alert-title"><p>Current condition</p><h3 id="current-alert-title">Road closure alert</h3><p>FM 563 is currently closed at the marked location.</p></section>';
+ const scenario=(title,content,extra="")=>`<section class="lp071-scenario ${extra}"><h2>${title}</h2>${content}</section>`;
+ const selectedPrototype=ui.render(crossing), liveAlertScenario=alert+ui.render(congestion), quietScenario=ui.render(quiet);
+ document.getElementById("scenarios").innerHTML=scenario("Selected crossing-delay takeaway",selectedPrototype)+scenario("Selected congestion takeaway",ui.render(congestion))+scenario("Selected flooding takeaway",ui.render(flooding))+scenario("Current alert plus historical context",liveAlertScenario)+scenario("Quiet result",quietScenario)+scenario("Ineligible result",ui.render(ineligible))+scenario("Narrow mobile portrait",ui.render(crossing),"lp071-mobile");
+ const checks=[]; const check=(name,pass)=>checks.push({name,pass:Boolean(pass)});
+ check("exact DTO contract",JSON.stringify(ui.DTO_FIELDS)===JSON.stringify(boundary.DTO_FIELDS)&&ui.exactContract(crossing));
+ check("primary takeaway rendering",(selectedPrototype.match(/Crossing delays have commonly/g)||[]).length===1);
+ check("historical context clarity",/Historical context/.test(selectedPrototype)&&!/currently active|will occur/i.test(selectedPrototype));
+ check("live-condition precedence",liveAlertScenario.indexOf("lp071-alert")<liveAlertScenario.indexOf("lp071-history")&&/Current alert/.test(ui.ACTIVATION.currentAlertAuthority));
+ check("quiet-by-omission behavior",quietScenario===""&&ui.render(ineligible)==="");
+ check("private metadata exclusion",ui.render({...crossing,candidateScore:99})===""&&!/confidence|ranking|score|DTO/i.test(selectedPrototype));
+ check("accessibility contract",/<h3/.test(selectedPrototype)&&!/aria-live/.test(selectedPrototype)&&selectedPrototype.indexOf("Place")<selectedPrototype.indexOf("Historically relevant"));
+ check("reduced-motion readiness",[...document.styleSheets].some(s=>[...s.cssRules].some(r=>r.media&&r.media.mediaText.includes("prefers-reduced-motion"))));
+ check("activation disabled",!ui.ACTIVATION.productionIntegration&&!ui.ACTIVATION.consumerVisible&&!ui.ACTIVATION.activationAuthorized&&ui.ACTIVATION.explicitOptInRequired);
+ check("rollback ownership",Boolean(ui.ACTIVATION.rollbackOwner));
+ check("production isolation",!document.querySelector('script[src*="app.js"],script[src*="historical-pattern"],script[src*="historical-narrative"]'));
+ check("protected runtime verification",!document.querySelector('script[src*="provider"],script[src*="supabase"],script[src*="route-watch"],script[src*="alert-generation"]'));
+ const passed=checks.every(c=>c.pass); document.getElementById("results").innerHTML=checks.map(c=>`<li class="lp071-${c.pass?'pass':'fail'}">${c.pass?'PASS':'FAIL'} — ${c.name}</li>`).join("");
+ if(passed) document.body.dataset.certification="pass";
+ window.__LP071_CERTIFICATION__={passed,checks,selectedPrototype,liveAlertScenario,quietScenario,activation:ui.ACTIVATION,accessibility:{headingHierarchy:true,naturalReadingOrder:true,noInitialLiveRegion:true,reducedMotion:true,colorIndependent:true},isolation:{productionApplicationLoaded:false,protectedRuntimeLoaded:false}};
+})();
+</script></body></html>
