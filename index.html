@@ -782,21 +782,21 @@
     <article class="gridly-destination-impact-card" role="dialog" aria-modal="true" aria-labelledby="gridlyDestinationImpactPaneTitle" aria-describedby="gridlyDestinationImpactPaneSubtitle">
       <header class="gridly-destination-impact-head">
         <div>
-          <p class="eyebrow">Route details</p>
-          <h2 id="gridlyDestinationImpactPaneTitle">Travel looks normal right now</h2>
+          <p class="eyebrow">Destination intelligence</p>
+          <h2 id="gridlyDestinationImpactPaneTitle" data-gridly-destination-decision-role="interpretation">Travel normally.</h2>
         </div>
         <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">X</button>
       </header>
-      <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle">Live route context.</p>
+      <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle" data-gridly-destination-decision-role="reason">No destination-impacting conditions are currently reported.</p>
       <div class="gridly-current-route-details" id="gridlyCurrentRouteDetailsBlock" aria-label="Current route summary">
         <strong id="gridlyCurrentRouteLine">Current Location → Destination</strong>
         <span id="gridlyCurrentRouteMeta">ETA and distance pending</span>
       </div>
       <section class="gridly-destination-impact-body" aria-label="Why Gridly is showing this route awareness summary">
         <div class="gridly-destination-impact-significance" aria-label="Route context summary">
-          <span>Route Conditions</span>
-          <strong id="gridlyDestinationImpactPaneSeverity">No active hazards reported along this route.</strong>
-          <em id="gridlyDestinationImpactPaneConfidence">Live reports checked</em>
+          <span>Know before you go</span>
+          <strong id="gridlyDestinationImpactPaneSeverity" data-gridly-destination-decision-role="confidence">Quiet conditions</strong>
+          <em id="gridlyDestinationImpactPaneConfidence" data-gridly-destination-decision-role="freshness">Checked just now</em>
         </div>
         <strong id="gridlyDestinationImpactPaneSummary">No active hazards reported along this route.</strong>
         <p class="gridly-destination-impact-why" id="gridlyDestinationImpactPaneWhy">Route Impact</p>
@@ -1390,7 +1390,6 @@
     <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
 </body>
 </html>
-
 
 
 
