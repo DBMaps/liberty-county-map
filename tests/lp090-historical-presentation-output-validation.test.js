@@ -1,0 +1,24 @@
+const assert = require("node:assert/strict");
+const fs = require("node:fs"); const path = require("node:path"); const vm = require("node:vm");
+const rankingGovernance = require("../js/historical-narrative-ranking-output-governance.js");
+const invocationGovernance = require("../js/historical-presentation-invocation-governance.js");
+const governance = require("../js/historical-presentation-output-validation.js");
+const candidate = Object.freeze({ candidateIdentity:"candidate:a", narrativeOutputIdentity:"narrative:a", invocationIdentity:"invoke:a", narrativeInputIdentity:"input:a", retrievalIdentity:"retrieval:a", sessionIdentity:"session:a", requestIdentity:"request:a", knowledgeBaseFingerprint:"kb:a", subjectIdentity:"Waco Street", eligibilityState:"ranking-ready", historicalEvidence:{candidateIdentities:["e:1"]}, rankingEvidence:{subjectIdentity:"Waco Street",historicalEvidence:{candidateIdentities:["e:1"]}} });
+const input={accepted:true,failClosed:false,rankingInputIdentity:"input:a",fingerprints:{rankingInput:"lp087-fnv1a32:12345678"},candidateGroup:{candidates:[candidate]},knowledgeBaseFingerprint:["kb:a"]};
+function presentation(quiet=false) { const raw=quiet ? {status:"quiet",selectedNarrative:null,selectedCandidate:null,rankingMetadata:{quietReason:"no_meaningful_candidates",candidateCount:0},productionIntegration:false,consumerVisible:false} : {status:"selected",selectedNarrative:"Historically, Waco Street has often been reported blocked.",selectedCandidate:{candidateIdentity:candidate.candidateIdentity},rankingMetadata:{subjectIdentity:"Waco Street",narrativeType:"congestion",winningCanonicalId:"a"},productionIntegration:false,consumerVisible:false}; const ranking=rankingGovernance.governRankingOutput(raw,input); return invocationGovernance.governPresentationInvocation(ranking,{authorizationState:"presentation authorized",presentationMetadata:quiet?{}:{subject:"Waco Street",narrativeType:"congestion",historicalWindow:null}}); }
+const selectedSource=presentation(); const governed=governance.governPresentationOutput(selectedSource);
+assert.equal(governed.accepted,true); assert.equal(governed.rendererEligibility,"renderer-ready");
+assert.equal(governed.normalizedOutput.presentationDto.historicalTakeaway,selectedSource.presentationPackage.presentationDto.historicalTakeaway);
+assert.ok(Object.isFrozen(governed)&&Object.isFrozen(governed.contract.explainability)&&Object.isFrozen(governed.diagnostics.fingerprints));
+assert.equal(governed.contract.contractVersion,governance.VERSIONS.presentationOutputContract); assert.deepEqual(governed.contract.policyVersions,governance.VERSIONS);
+const second=governance.governPresentationOutput(presentation()); assert.equal(second.contract.presentationOutputIdentity,governed.contract.presentationOutputIdentity); assert.deepEqual(second.fingerprints,governed.fingerprints); assert.equal(second.rendererEligibility,governed.rendererEligibility);
+assert.equal(governance.fingerprint({b:2,a:1}),governance.fingerprint({a:1,b:2}));
+assert.equal(governance.governPresentationOutput(selectedSource,{contractVersion:"LP090.presentation-output-contract.v0"}).rendererEligibility,"rejected");
+assert.ok(governance.governPresentationOutput(selectedSource,{policyVersions:{...governance.VERSIONS,quiet:"LP090.quiet.v0"}}).failureCodes.includes(governance.FAILURE_CODES.UNSUPPORTED_VERSION));
+const quiet=governance.governPresentationOutput(presentation(true)); assert.equal(quiet.accepted,true); assert.equal(quiet.rendererEligibility,"quiet-renderer-ready"); assert.ok(quiet.contract.quietIdentity); assert.equal(quiet.contract.selectedNarrativeIdentity,null);
+const extra={...selectedSource.presentationPackage,unexpected:true}; assert.ok(governance.governPresentationOutput(extra).failureCodes.includes(governance.FAILURE_CODES.UNSUPPORTED_FIELD));
+const incomplete={...selectedSource.presentationPackage,presentationDto:{...selectedSource.presentationPackage.presentationDto,subject:null}}; assert.equal(governance.governPresentationOutput(incomplete).rendererEligibility,"rejected");
+assert.equal(governance.certificationAudit().safeToMerge,true);
+const fixture=fs.readFileSync("tests/lp090-browser-certification.html","utf8"); const scripts=[...fixture.matchAll(/<script src="([^"]+)"><\/script>/g)].map(x=>x[1]); const window={}; window.window=window; window.globalThis=window; const context=vm.createContext(window); scripts.forEach(relative=>vm.runInContext(fs.readFileSync(path.resolve("tests",relative),"utf8"),context)); assert.equal(window.gridlyLp090HistoricalPresentationOutputCertificationAudit().safeToMerge,true);
+for(const file of ["index.html","js/app.js"]) assert.doesNotMatch(fs.readFileSync(file,"utf8"),/LP090|historical-presentation-output-validation/i);
+console.log("LP090 Historical Presentation Output Validation & Contract Governance passed");
