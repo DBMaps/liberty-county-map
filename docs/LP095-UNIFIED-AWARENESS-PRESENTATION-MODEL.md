@@ -126,6 +126,12 @@ LP095 does not modify Community Pulse logic, Travel Brief logic, reporting, Rout
 
 Historical Intelligence remains inactive. Its implementation, activation boundary, activation state, retrieval, narrative, ranking, and presentation-governance modules were not modified. The existing historical sheet was reviewed as a presentation surface only and intentionally left unchanged.
 
+## LP095.1 — Official popup spacing refinement
+
+Mobile browser review found that the official DriveTexas popup had excess vertical separation between its location, guidance, source attribution, and freshness. LP095.1 removes the shared flex gap for the official popup only, then applies deliberate spacing of 2px above the description, 3px above the optional guidance label, 1px above guidance text, 4px above `Official Source · DriveTexas`, and 1px above freshness. This keeps the lower section readable while making it feel like one continuous awareness story.
+
+Wording, presentation order, width, typography, marker and popup behavior, provider data, and provider integration are unchanged. Community and crossing popup styles are also unchanged. The refined popup was reviewed at 390 × 844, 360 × 800, and 320 × 700 with no clipping, overlap, obstructed close control, or awkward wrapping. Browser certification via `window.gridlyLp095UnifiedPresentationAudit?.()` passed, including the LP095.1 read-only `officialPopupSpacingRefined: true` result; protected systems remained unchanged and Historical Intelligence remained inactive.
+
 ## Future guidance for new awareness surfaces
 
 1. Draft the five answers in plain text before designing layout.

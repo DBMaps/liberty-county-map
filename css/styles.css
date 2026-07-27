@@ -26296,3 +26296,10 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
     transition: none;
   }
 }
+
+/* LP095.1 — Keep the official awareness story connected without changing shared popups. */
+.gridly-official-roadway-popup { gap: 0; }
+.gridly-official-roadway-popup [data-gridly-official-popup-field="description"] { margin-top: 2px; }
+.gridly-official-roadway-popup [data-gridly-official-popup-field="guidanceLabel"] { margin-top: 3px; }
+.gridly-official-roadway-popup [data-gridly-official-popup-field="guidanceText"] { margin-top: 1px; }
+.gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] { margin-top: 4px; }

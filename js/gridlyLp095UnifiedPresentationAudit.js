@@ -8,6 +8,7 @@
       passive: true,
       presentationModelEstablished: true,
       officialPresentationAligned: true,
+      officialPopupSpacingRefined: true,
       communityPresentationAligned: true,
       destinationPresentationAligned: true,
       historicalPresentationAligned: true,
