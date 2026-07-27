@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>LP067 Browser Certification</title>
+<body>
+  <h1>LP067 Historical Pattern Intelligence Browser Certification</h1>
+  <pre id="result">Running…</pre>
+  <script src="../js/historical-pattern-intelligence.js"></script>
+  <script>
+    (() => {
+      const checks = [];
+      const check = (name, pass) => checks.push({ name, pass: Boolean(pass) });
+      const reports = [
+        ["a", "2026-06-15T11:00:00Z"], ["b", "2026-06-23T11:10:00Z"],
+        ["c", "2026-07-01T10:55:00Z"], ["d", "2026-07-09T11:20:00Z"]
+      ].map(([id, observed_at]) => ({ id, observed_at, awareness_area: "Dayton", community: "Dayton", county: "Liberty County", crossing_name: "Waco Street", road_name: "Waco Street", hazard_type: "blocked_crossing", event_type: "rail_delay", duration_minutes: 30 }));
+      const context = { now: "2026-07-27T11:05:00Z", awarenessArea: "Dayton", community: "Dayton", nearbyCrossings: ["Waco Street"] };
+      const engine = window.gridlyHistoricalPatternIntelligence;
+      const result = engine.evaluate(reports, context);
+      check("historical observation normalization", result.observations.length === 4 && result.observations[0].dayOfWeek === "Monday");
+      check("pattern discovery", result.patterns.length === 1 && result.patterns[0].subject === "Waco Street");
+      check("confidence evaluation", result.patterns[0].confidence === "meaningful" && result.patterns[0].basis.stableTimeContext);
+      check("relevance determination", result.relevance.status === "relevant");
+      check("quiet-state behavior", engine.determineCurrentRelevance(result.patterns, { ...context, now: "2026-07-27T20:00:00Z" }).status === "quiet");
+      check("summary generation", /^Weekday rail delays/.test(result.summary) && /live conditions\.$/.test(result.summary));
+      check("protected runtime isolation", result.productionIntegration === false && !document.querySelector('script[src*="app.js"]'));
+      check("non-predictive language regression", !/predict|forecast|probab|will|%/i.test(result.summary));
+      const passed = checks.every((item) => item.pass);
+      document.body.dataset.certification = passed ? "pass" : "fail";
+      document.getElementById("result").textContent = checks.map((item) => `${item.pass ? "PASS" : "FAIL"} — ${item.name}`).join("\n");
+      window.__LP067_CERTIFICATION__ = { passed, checks, result };
+    })();
+  </script>
+</body>
+</html>
