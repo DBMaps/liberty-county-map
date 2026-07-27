@@ -16,6 +16,7 @@
     "verify:county-geometry-deterministic": "node tools/build-gridly-authoritative-county-geometry.js --verify-deterministic",
     "copy:county-geometry:android": "node tools/copy-gridly-runtime-county-geometry-to-android.js",
     "test:lp0540": "node tests/lp0540-production-historical-runtime-integration.test.js",
-    "test:lp067": "node tests/lp067-historical-pattern-intelligence.test.js"
+    "test:lp067": "node tests/lp067-historical-pattern-intelligence.test.js",
+    "test:lp068": "node tests/lp068-historical-narrative-generation.test.js"
   }
 }

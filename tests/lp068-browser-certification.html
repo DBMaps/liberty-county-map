@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>LP068 Browser Certification</title>
+<body>
+  <h1>LP068 Historical Narrative Generation Browser Certification</h1>
+  <pre id="result">Running…</pre>
+  <script src="../js/historical-pattern-intelligence.js"></script>
+  <script src="../js/historical-narrative-generator.js"></script>
+  <script>
+    (() => {
+      const checks = [];
+      const check = (name, pass) => checks.push({ name, pass: Boolean(pass) });
+      const reports = [
+        ["a", "2026-06-15T11:00:00Z"], ["b", "2026-06-23T11:10:00Z"],
+        ["c", "2026-07-01T10:55:00Z"], ["d", "2026-07-09T11:20:00Z"]
+      ].map(([id, observed_at]) => ({ id, observed_at, awareness_area: "Dayton", community: "Dayton", county: "Liberty County", crossing_name: "Waco Street", road_name: "Waco Street", hazard_type: "blocked_crossing", event_type: "rail_delay", duration_minutes: 45 }));
+      const context = { now: "2026-07-27T11:05:00Z", awarenessArea: "Dayton", community: "Dayton", nearbyCrossings: ["Waco Street"] };
+      const intelligence = window.gridlyHistoricalPatternIntelligence.evaluate(reports, context);
+      const generator = window.gridlyHistoricalNarrativeGenerator;
+      const record = generator.buildNarrativeRecord(intelligence.relevance);
+      const narrative = generator.generateNarrative(intelligence.relevance);
+      const flood = generator.generateNarrative({ status: "relevant", pattern: { ...intelligence.relevance.pattern, crossing: null, roadway: "FM 1960", subject: "FM 1960", hazardType: "flooding", eventType: "road hazard" } });
+      check("narrative generation", narrative === record.narrative && /Waco Street crossing/.test(narrative));
+      check("quiet-state behavior", generator.generateNarrative({ status: "quiet", pattern: null }) === null);
+      check("pattern-specific wording", /^Drivers/.test(narrative) && /^Flooding/.test(flood));
+      check("consumer language", /45 minutes/.test(narrative) && /current alerts for live conditions/.test(narrative));
+      check("internal metadata", record.metadata.narrativeType === "crossing_delay" && record.metadata.historicalWindow.lastObservedAt);
+      check("non-predictive wording", !/predict|forecast|probab|\bwill\b|route|detour|avoid|%/i.test(narrative));
+      check("protected runtime isolation", record.productionIntegration === false && !document.querySelector('script[src*="app.js"]'));
+      const passed = checks.every((item) => item.pass);
+      document.body.dataset.certification = passed ? "pass" : "fail";
+      document.getElementById("result").textContent = checks.map((item) => `${item.pass ? "PASS" : "FAIL"} — ${item.name}`).join("\n");
+      window.__LP068_CERTIFICATION__ = { passed, checks, narrative, flood, record };
+    })();
+  </script>
+</body>
+</html>
