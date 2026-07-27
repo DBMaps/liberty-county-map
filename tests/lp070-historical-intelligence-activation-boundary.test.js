@@ -37,7 +37,11 @@ assert.equal(boundary.ACTIVATION.productionIntegration, false);
 assert.equal(boundary.ACTIVATION.consumerVisible, false);
 assert.equal(boundary.ACTIVATION.optInRequired, true);
 assert.deepEqual(boundary.ACTIVATION.prerequisiteMilestones, ["LP067", "LP068", "LP069", "LP070", "future-presentation-milestone"]);
-assert.equal(boundary.OWNERSHIP.owner, "future-know-before-you-go-awareness-surface");
+assert.equal(boundary.OWNERSHIP.owner, "Know Before You Go Historical Intelligence surface");
+assert.equal(boundary.OWNERSHIP.ownershipToken, "know-before-you-go-historical-intelligence");
+assert.equal(boundary.OWNERSHIP.authorizedHost, '[data-gridly-owner="know-before-you-go-historical-intelligence"]');
+assert.equal(boundary.OWNERSHIP.lifecycleOwner, boundary.OWNERSHIP.owner);
+assert.equal(boundary.OWNERSHIP.detachOwner, boundary.OWNERSHIP.owner);
 assert.match(boundary.OWNERSHIP.interactionExpectation, /current-alerts-remain-authoritative/);
 
 const authority = { now: "2026-07-27T13:30:00Z", utcOffsetMinutes: -300 };

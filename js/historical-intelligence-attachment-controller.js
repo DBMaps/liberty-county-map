@@ -3,9 +3,12 @@
 
   const DTO_CONTRACT = "LP070.historical-intelligence-activation-boundary.v1";
   const RENDERER_CONTRACT = "LP071.historical-intelligence-presentation.v1";
-  const OWNER = "Know Before You Go Historical Intelligence surface";
-  const OWNER_TOKEN = "know-before-you-go-historical-intelligence";
-  const HOST_SELECTOR = '[data-gridly-owner="know-before-you-go-historical-intelligence"]';
+  const activationBoundary = globalScope.gridlyHistoricalIntelligenceActivationBoundary ||
+    (typeof module !== "undefined" && module.exports ? require("./historical-intelligence-activation-boundary.js") : null);
+  const OWNERSHIP_CONTRACT = activationBoundary?.OWNERSHIP;
+  const OWNER = OWNERSHIP_CONTRACT?.owner;
+  const OWNER_TOKEN = OWNERSHIP_CONTRACT?.ownershipToken;
+  const HOST_SELECTOR = OWNERSHIP_CONTRACT?.authorizedHost;
   const DTO_FIELDS = Object.freeze([
     "historicalTakeaway", "narrativeType", "subject", "historicalWindow",
     "liveConditionGuidance", "quiet", "displayEligible"
@@ -20,7 +23,12 @@
     rollbackReady: true,
     currentAlertAuthority: "Current alerts determine live conditions",
     approvedDtoContract: DTO_CONTRACT,
-    approvedRendererContract: RENDERER_CONTRACT
+    approvedRendererContract: RENDERER_CONTRACT,
+    owner: OWNER,
+    ownershipToken: OWNER_TOKEN,
+    authorizedHost: HOST_SELECTOR,
+    lifecycleOwner: OWNERSHIP_CONTRACT?.lifecycleOwner,
+    detachOwner: OWNERSHIP_CONTRACT?.detachOwner
   });
   const AUTHORIZED_HOST = Object.freeze({
     owner: OWNER,
@@ -28,9 +36,9 @@
     selector: HOST_SELECTOR,
     attachmentLocation: "after live current-condition content and before [data-lp072-supporting-detail], otherwise last",
     domOrdering: "current alerts, Historical Intelligence, lower-priority supporting detail",
-    lifecycleOwner: "Know Before You Go release owner",
+    lifecycleOwner: OWNERSHIP_CONTRACT?.lifecycleOwner,
     refreshOwner: "Historical Intelligence attachment controller",
-    detachOwner: "Know Before You Go release owner",
+    detachOwner: OWNERSHIP_CONTRACT?.detachOwner,
     absentHostFallback: "fail closed with missing-host and no DOM changes"
   });
 
@@ -56,7 +64,9 @@
       const auth = authorization || {};
       if (!auth.activationAuthorized) return status("unauthorized");
       if (!auth.consumerVisible || !auth.productionIntegration) return status("activation-disabled");
-      if (auth.owner !== OWNER || auth.ownershipToken !== OWNER_TOKEN) return status("owner-mismatch");
+      if (auth.owner !== OWNER || auth.ownershipToken !== OWNER_TOKEN ||
+          auth.authorizedHost !== HOST_SELECTOR || auth.lifecycleOwner !== OWNERSHIP_CONTRACT.lifecycleOwner ||
+          auth.detachOwner !== OWNERSHIP_CONTRACT.detachOwner) return status("owner-mismatch");
       if (!auth.prerequisites || !["LP067", "LP068", "LP069"].every((key) => auth.prerequisites[key] === true)) return status("unauthorized", { reason: "prerequisite-mismatch" });
       if (auth.dtoContract !== DTO_CONTRACT) return status("dto-contract-mismatch");
       if (auth.rendererContract !== RENDERER_CONTRACT || !approvedRenderer(renderer)) return status("renderer-unavailable");
@@ -93,11 +103,16 @@
         if (attachment) detach("refresh");
         const wrapper = documentRef.createElement("div");
         wrapper.setAttribute("data-lp072-attachment", OWNER_TOKEN);
+        wrapper.setAttribute("data-lp072-controller-owner", OWNER_TOKEN);
+        wrapper.setAttribute("data-lp072-lifecycle-owner", OWNER_TOKEN);
+        wrapper.setAttribute("data-lp072-detach-owner", OWNER_TOKEN);
         wrapper.innerHTML = markup;
         const supportingDetail = result.host.querySelector("[data-lp072-supporting-detail]");
         result.host.insertBefore(wrapper, supportingDetail || null);
-        attachment = { host: result.host, node: wrapper, markup };
-        return status("attached");
+        attachment = { host: result.host, node: wrapper, markup, owner: OWNER, ownershipToken: OWNER_TOKEN,
+          authorizedHost: HOST_SELECTOR, lifecycleOwner: OWNERSHIP_CONTRACT.lifecycleOwner, detachOwner: OWNERSHIP_CONTRACT.detachOwner };
+        return status("attached", { owner: attachment.owner, ownershipToken: attachment.ownershipToken,
+          authorizedHost: attachment.authorizedHost, lifecycleOwner: attachment.lifecycleOwner, detachOwner: attachment.detachOwner });
       } catch (_) {
         return status("invalid-dto", { reason: "safe-failure" });
       }
@@ -106,7 +121,7 @@
     return Object.freeze({ attach, detach, state: () => Object.freeze({ attached: Boolean(attachment), ownedListeners: owned.listeners.length, ownedObservers: owned.observers.length, ownedTimers: owned.timers.length }) });
   }
 
-  const api = Object.freeze({ DTO_CONTRACT, RENDERER_CONTRACT, OWNER, OWNER_TOKEN, HOST_SELECTOR, DTO_FIELDS, ACTIVATION_DECISION, AUTHORIZED_HOST, exactDto, approvedRenderer, createController });
+  const api = Object.freeze({ DTO_CONTRACT, RENDERER_CONTRACT, OWNERSHIP_CONTRACT, OWNER, OWNER_TOKEN, HOST_SELECTOR, DTO_FIELDS, ACTIVATION_DECISION, AUTHORIZED_HOST, exactDto, approvedRenderer, createController });
   globalScope.gridlyHistoricalIntelligenceAttachmentController = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

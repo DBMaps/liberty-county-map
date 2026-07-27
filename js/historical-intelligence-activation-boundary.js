@@ -17,7 +17,11 @@
     prerequisiteMilestones: Object.freeze(["LP067", "LP068", "LP069", "LP070", "future-presentation-milestone"])
   });
   const OWNERSHIP = Object.freeze({
-    owner: "future-know-before-you-go-awareness-surface",
+    owner: "Know Before You Go Historical Intelligence surface",
+    ownershipToken: "know-before-you-go-historical-intelligence",
+    authorizedHost: '[data-gridly-owner="know-before-you-go-historical-intelligence"]',
+    lifecycleOwner: "Know Before You Go Historical Intelligence surface",
+    detachOwner: "Know Before You Go Historical Intelligence surface",
     renderingResponsibility: "owner-renders-one-approved-dto-or-no-container",
     interactionExpectation: "context-only-current-alerts-remain-authoritative",
     activationPrerequisite: "explicit-future-presentation-milestone"

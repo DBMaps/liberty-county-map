@@ -13,7 +13,7 @@
  const scopedDocument=root=>({querySelector:selector=>root.querySelector(selector),createElement:tag=>document.createElement(tag)});
  const dto={historicalTakeaway:"Congestion has commonly developed near US 90 during busy travel periods.",narrativeType:"congestion",subject:"US 90",historicalWindow:"Friday afternoons",liveConditionGuidance:"Check current alerts for live conditions.",quiet:false,displayEligible:true};
  const quiet={historicalTakeaway:null,narrativeType:null,subject:null,historicalWindow:null,liveConditionGuidance:null,quiet:true,displayEligible:false};
- const auth={activationAuthorized:true,consumerVisible:true,productionIntegration:true,owner:api.OWNER,ownershipToken:api.OWNER_TOKEN,prerequisites:{LP067:true,LP068:true,LP069:true},dtoContract:api.DTO_CONTRACT,rendererContract:api.RENDERER_CONTRACT,currentAlertAuthority:api.ACTIVATION_DECISION.currentAlertAuthority};
+ const auth={activationAuthorized:true,consumerVisible:true,productionIntegration:true,owner:api.OWNER,ownershipToken:api.OWNER_TOKEN,authorizedHost:api.HOST_SELECTOR,lifecycleOwner:api.OWNERSHIP_CONTRACT.lifecycleOwner,detachOwner:api.OWNERSHIP_CONTRACT.detachOwner,prerequisites:{LP067:true,LP068:true,LP069:true},dtoContract:api.DTO_CONTRACT,rendererContract:api.RENDERER_CONTRACT,currentAlertAuthority:api.ACTIVATION_DECISION.currentAlertAuthority};
  const scenarios=document.getElementById("scenarios");
  const card=(title,body,extra="")=>{const section=document.createElement("section");section.className=`lp072-scenario ${extra}`;section.innerHTML=`<h2>${title}</h2>${body}`;scenarios.appendChild(section);return section;};
  const unauthorizedCard=card("1. Unauthorized attachment",'<div data-gridly-owner="know-before-you-go-historical-intelligence"><p>Host remains unchanged.</p></div>');
@@ -23,6 +23,7 @@
  const liveHost=liveCard.querySelector(api.HOST_SELECTOR), alertBefore=liveHost.firstElementChild.outerHTML, focusBefore=document.activeElement;
  const liveController=api.createController({document:scopedDocument(liveCard),renderer}); const attachedScenario=liveController.attach(dto,auth); const duplicate=liveController.attach(dto,auth);
  const attachedHtml=liveHost.innerHTML, attachment=liveHost.querySelector("[data-lp072-attachment]");
+ const attachedOwnership={parentIsAuthorizedHost:attachment?.parentNode===liveHost,controllerOwner:attachment?.getAttribute("data-lp072-controller-owner"),lifecycleOwner:attachment?.getAttribute("data-lp072-lifecycle-owner"),detachOwner:attachment?.getAttribute("data-lp072-detach-owner")};
  card("5. Quiet DTO",'<p>No Historical Intelligence content is created.</p>'); const quietHost=document.createElement("div");quietHost.dataset.gridlyOwner=api.OWNER_TOKEN;const quietCard=scenarios.lastElementChild;quietCard.appendChild(quietHost);const quietScenario=api.createController({document:scopedDocument(quietCard),renderer}).attach(quiet,auth);
  const invalidCard=card("6. Invalid DTO",'<div data-gridly-owner="know-before-you-go-historical-intelligence"><p>Invalid input leaves this host intact.</p></div>'); const invalidHost=invalidCard.querySelector(api.HOST_SELECTOR),invalidBefore=invalidHost.innerHTML;const invalidScenario=api.createController({document:scopedDocument(invalidCard),renderer}).attach({...dto,rankingScore:99},auth);
  const rollbackInitial=liveHost.innerHTML.replace(liveHost.querySelector("[data-lp072-attachment]").outerHTML,""); const detachedScenario=liveController.detach(); const rollbackRestored=liveHost.innerHTML===rollbackInitial;
@@ -31,12 +32,12 @@
  const missingScenario=api.createController({document:{querySelector:()=>null},renderer}).attach(dto,auth);card("9. Missing host",`<p>${missingScenario.code}; no fallback host was created.</p>`);
  card("10. Rollback restoration",`<p>${rollbackRestored?'Exact prior host state restored.':'Restoration failed.'}</p>`);
  card("11. Narrow mobile portrait",renderer.render(dto),"lp072-mobile");card("12. 200% zoom review",'<p>Zoom to 200%: content reflows without loss, overlap, or horizontal scrolling.</p>');
- const checks=[];const check=(name,pass)=>checks.push({name,pass:Boolean(pass)});
+ const checks=[];const check=(name,passed)=>checks.push({name,passed:passed===true});
  check("activation decision contract",api.ACTIVATION_DECISION.productionIntegrationPrepared&&!api.ACTIVATION_DECISION.consumerVisible&&!api.ACTIVATION_DECISION.activationAuthorized&&api.ACTIVATION_DECISION.explicitOptInRequired&&api.ACTIVATION_DECISION.reversibleAttachmentReady&&api.ACTIVATION_DECISION.rollbackReady);
  check("authorization gate",unauthorizedScenario.code==="unauthorized"&&unauthorizedHost.innerHTML===unauthorizedBefore);
  check("exact DTO enforcement",api.exactDto(dto)&&!api.exactDto({...dto,privateMetadata:true}));
  check("renderer contract enforcement",api.approvedRenderer(renderer)&&api.RENDERER_CONTRACT==="LP071.historical-intelligence-presentation.v1");
- check("authorized attachment ownership",api.AUTHORIZED_HOST.owner===api.OWNER&&attachment?.parentNode===liveHost);
+ check("authorized attachment ownership",api.ACTIVATION_DECISION.owner===api.OWNERSHIP_CONTRACT.owner&&api.ACTIVATION_DECISION.ownershipToken===api.OWNERSHIP_CONTRACT.ownershipToken&&api.ACTIVATION_DECISION.authorizedHost===api.OWNERSHIP_CONTRACT.authorizedHost&&api.AUTHORIZED_HOST.lifecycleOwner===api.OWNERSHIP_CONTRACT.lifecycleOwner&&api.AUTHORIZED_HOST.detachOwner===api.OWNERSHIP_CONTRACT.detachOwner&&attachedScenario.owner===api.OWNERSHIP_CONTRACT.owner&&attachedScenario.ownershipToken===api.OWNERSHIP_CONTRACT.ownershipToken&&attachedScenario.authorizedHost===api.OWNERSHIP_CONTRACT.authorizedHost&&attachedScenario.lifecycleOwner===api.OWNERSHIP_CONTRACT.lifecycleOwner&&attachedScenario.detachOwner===api.OWNERSHIP_CONTRACT.detachOwner&&attachedOwnership.parentIsAuthorizedHost&&attachedOwnership.controllerOwner===api.OWNERSHIP_CONTRACT.ownershipToken&&attachedOwnership.lifecycleOwner===api.OWNERSHIP_CONTRACT.ownershipToken&&attachedOwnership.detachOwner===api.OWNERSHIP_CONTRACT.ownershipToken&&!liveHost.querySelector("[data-lp072-attachment]"));
  check("exactly-once rendering",attachedScenario.code==="attached"&&duplicate.code==="already-attached"&&(attachedHtml.match(/data-lp072-attachment/g)||[]).length===1);
  check("current-alert precedence",attachedHtml.indexOf("lp072-alert")<attachedHtml.indexOf("lp071-history")&&attachedHtml.indexOf("lp071-history")<attachedHtml.indexOf("data-lp072-supporting-detail"));
  check("quiet behavior",quietScenario.code==="quiet-dto"&&!quietHost.children.length);
@@ -48,7 +49,7 @@
  check("failure safety",missingScenario.code==="missing-host"&&!document.querySelector("[data-lp072-fallback]"));
  check("production isolation",![...document.scripts].some(script=>/app\.js|historical-pattern|historical-narrative/.test(script.src)));
  check("protected runtime verification",![...document.scripts].some(script=>/supabase|route-watch|provider|alert-generation/.test(script.src)));
- const passed=checks.every(item=>item.pass);document.getElementById("results").innerHTML=checks.map(item=>`<li class="lp072-${item.pass?'pass':'fail'}">${item.pass?'PASS':'FAIL'} — ${item.name}</li>`).join("");
+ const passed = checks.every((check) => check.passed === true);document.getElementById("results").innerHTML=checks.map(item=>`<li class="lp072-${item.passed?'pass':'fail'}">${item.passed?'PASS':'FAIL'} — ${item.name}</li>`).join("");
  if(passed)document.body.dataset.certification="pass";
  window.__LP072_CERTIFICATION__={passed,checks,activationDecision:api.ACTIVATION_DECISION,unauthorizedScenario,attachedScenario,liveAlertScenario:{alertUnchanged:liveHost.firstElementChild.outerHTML===alertBefore,currentAlertFirst:true},quietScenario,invalidScenario,detachedScenario,reattachedScenario,rollback:{exactRestoration:rollbackRestored},accessibility:{noInactiveAnnouncement:true,noEmptyRegion:true,focusPreserved:focusBefore===document.activeElement,reducedMotion:true,colorIndependent:true},isolation:{productionApplicationLoaded:false,protectedRuntimeLoaded:false}};
 })();
