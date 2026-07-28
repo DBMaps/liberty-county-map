@@ -282,3 +282,33 @@ history, and it writes no persistent evidence. Its console output is one concise
 by `LP101.5A ADDRESS STATUS DIAGNOSTIC COMPLETE`; it deliberately prints no pass or merge authorization.
 
 Do not merge until the production diagnostic is run and reviewed.
+
+## LP101.5B — active address-case status capture
+
+LP101.5A could be invoked after the visible certification had cleared the address case or advanced to
+the business case. At that point it inspected an inactive DOM, so an empty container was reported as
+`absent` even though it was not authoritative evidence about the settled address render. LP101.5B
+distinguishes those states: `absent` is reserved for a settled, canonical, identity-matched active
+address render that truly has no status node; without an active or fresh same-session certification
+capture the diagnostic returns `statusClassification: "not_captured"`, `diagnosticValid: false`, and
+`capturePhase: "not_captured"`.
+
+The visible certification now captures status evidence after the address search reaches its final
+settled render, canonical evidence and current-case identity are observed, and render/DOM counts are
+read, but before the clear action resets the case and before the business case begins. The address case
+directly returns the bounded `statusClassification`; total, visible, hidden, and stale status-node
+counts; active-container containment; settled-render and current-case agreement; the existing
+no-result, truthful-no-result, canonical acceptance, and address-outcome fields; plus
+`diagnosticValid`, `capturePhase: "active_address_final_render"`, and `capturedBeforeCaseReset: true`.
+No raw status, address, query, coordinates, provider details, payload, or credentials are captured.
+
+The standalone helper may return that same run's retained evidence as
+`capturePhase: "fresh_session_capture"`; it never treats an empty post-reset DOM as an address result.
+The certification acceptance and `safeToMerge` expressions are unchanged, and no no-result wording
+has been broadened. Production browser validation requires only:
+
+```js
+await window.gridlyLp101VisibleSearchCertification?.()
+```
+
+Do not merge until the active address-case classification is captured and reviewed.
