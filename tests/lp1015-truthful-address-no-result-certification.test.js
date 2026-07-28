@@ -88,6 +88,17 @@ function harness(options = {}) {
   assert.equal(address.canonicalNoResultAccepted, true);
   assert.equal(address.addressOutcome, 'truthful_no_result');
   assert.equal(address.visibleResultCount, 0);
+  assert.equal(address.statusClassification, 'confirmed_no_result');
+  assert.equal(address.statusNodeCount, 1);
+  assert.equal(address.visibleStatusNodeCount, 1);
+  assert.equal(address.hiddenStatusNodeCount, 0);
+  assert.equal(address.staleStatusNodeCount, 0);
+  assert.equal(address.statusInsideActiveContainer, true);
+  assert.equal(address.settledFinalRenderObserved, true);
+  assert.equal(address.currentCaseIdentityAgreement, true);
+  assert.equal(address.diagnosticValid, true);
+  assert.equal(address.capturePhase, 'active_address_final_render');
+  assert.equal(address.capturedBeforeCaseReset, true);
   assert.equal(certification.result.safeToMerge, true, 'truthful complete aggregation is safe to merge');
   assert.equal(certification.result.milestone, 'LP101.5');
   assert.equal(certification.result.cases[1].passed, true, 'business remains passing');
@@ -97,6 +108,10 @@ function harness(options = {}) {
   assert.ok(certification.run.evidence.every((entry) => entry.providerBoundaryUsed), 'provider boundary remains unchanged');
   assert.ok(certification.run.evidence.every((entry) => !entry.directProviderRequestDetected), 'no direct upstream browser call');
   assert.doesNotMatch(JSON.stringify(certification.result), /274 County Road|Dayton Walmart|Hospital|Liberty Courthouse/, 'certification remains privacy safe');
+  const capturedDiagnostic = certification.run.window.gridlyLp101AddressStatusDiagnostic();
+  assert.equal(capturedDiagnostic.capturePhase, 'fresh_session_capture');
+  assert.equal(capturedDiagnostic.statusClassification, 'confirmed_no_result', 'business transition does not overwrite address evidence');
+  assert.equal(capturedDiagnostic.diagnosticValid, true, 'fresh certification capture remains valid after reset');
 
   for (const [options, reason] of [
     [{ missingNoResultMessage: true }, 'visible settled no-result message is required'],

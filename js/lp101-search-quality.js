@@ -217,9 +217,12 @@
     return "unrecognized";
   }
 
-  function addressStatusDiagnostic() {
+  let latestAddressStatusCapture = null;
+  let visibleCertificationRunId = 0;
+
+  function captureAddressStatus(options = {}) {
     const document = global.document;
-    const results = document?.getElementById?.("gridlySearchResults") || null;
+    const results = options.results || document?.getElementById?.("gridlySearchResults") || null;
     const selector = ADDRESS_STATUS_SELECTORS.join(", ");
     const allStatusNodes = Array.from(document?.querySelectorAll?.(selector) || []);
     if (results && !allStatusNodes.length) {
@@ -254,7 +257,7 @@
     const currentCaseIdentityAgreement = Boolean(results && currentCase === "address"
       && statusEvidence.every((entry) => !entry.inside || !entry.node.dataset?.lp101Case || entry.node.dataset.lp101Case === "address")
       && visibleCards(results).every((card) => card.dataset?.lp101Case === "address"));
-    const runtime = runtimeSummary(typeof global.gridlyGeocodingClient?.evidence === "function"
+    const runtime = options.runtime || runtimeSummary(typeof global.gridlyGeocodingClient?.evidence === "function"
       ? global.gridlyGeocodingClient.evidence() : []);
     const canonicalResponseObserved = runtime.canonicalSuccessResponseObserved || runtime.canonicalFailureResponseObserved;
     const findings = [];
@@ -266,7 +269,10 @@
     if (semanticClasses.includes("unrecognized")) findings.push("visible_status_semantics_unrecognized");
     findings.push(`classification_${statusClassification}`);
     const result = Object.freeze({
-      available: Boolean(document), milestone: "LP101.5A", caseName: "address",
+      available: Boolean(document), milestone: "LP101.5B", caseName: "address",
+      diagnosticValid: settledFinalRenderObserved && currentCaseIdentityAgreement && canonicalResponseObserved,
+      capturePhase: options.capturePhase || "active_address_final_render",
+      capturedBeforeCaseReset: true,
       settledFinalRenderObserved, activeResultsContainerFound: Boolean(results),
       statusNodeCount: allStatusNodes.length,
       visibleStatusNodeCount: statusEvidence.filter((entry) => entry.visible).length,
@@ -278,8 +284,38 @@
       canonicalResponseObserved, boundaryReachable: runtime.boundaryReachable,
       httpSuccessObserved: runtime.httpSuccessObserved, statusClassification,
       noResultMessageObserved: Boolean(results && noResultMessageObserved(results)),
+      truthfulNoResultObserved: Boolean(options.truthfulNoResultObserved),
+      canonicalNoResultAccepted: Boolean(options.canonicalNoResultAccepted),
+      addressOutcome: options.addressOutcome || "failed",
       findings: Object.freeze(findings)
     });
+    return result;
+  }
+
+  function notCapturedAddressStatus() {
+    return Object.freeze({
+      available: Boolean(global.document), milestone: "LP101.5B", caseName: "address",
+      diagnosticValid: false, capturePhase: "not_captured", capturedBeforeCaseReset: false,
+      statusClassification: "not_captured", statusNodeCount: 0, visibleStatusNodeCount: 0,
+      hiddenStatusNodeCount: 0, staleStatusNodeCount: 0, statusInsideActiveContainer: false,
+      settledFinalRenderObserved: false, currentCaseIdentityAgreement: false,
+      noResultMessageObserved: false, truthfulNoResultObserved: false,
+      canonicalNoResultAccepted: false, addressOutcome: "failed"
+    });
+  }
+
+  function addressStatusDiagnostic() {
+    const results = global.document?.getElementById?.("gridlySearchResults") || null;
+    const runtime = runtimeSummary(typeof global.gridlyGeocodingClient?.evidence === "function"
+      ? global.gridlyGeocodingClient.evidence() : []);
+    const activeAddressFinalRender = results?.dataset?.lp101Case === "address"
+      && results.dataset?.lp101RenderPhase === "final"
+      && !/checking nearby places/i.test(String(results.textContent || ""));
+    let result;
+    if (activeAddressFinalRender) result = captureAddressStatus({ results, runtime });
+    else if (latestAddressStatusCapture?.runId === visibleCertificationRunId) {
+      result = Object.freeze({ ...latestAddressStatusCapture.evidence, capturePhase: "fresh_session_capture" });
+    } else result = notCapturedAddressStatus();
     global.console?.table?.([{
       statusClassification: result.statusClassification, statusNodeCount: result.statusNodeCount,
       visibleStatusNodeCount: result.visibleStatusNodeCount,
@@ -322,6 +358,8 @@
   }
 
   async function visibleSearchCertification(options = {}) {
+    const certificationRunId = ++visibleCertificationRunId;
+    latestAddressStatusCapture = null;
     const timeoutMs = Math.max(100, Number(options.timeoutMs) || 15000);
     const routeTimeoutMs = Math.max(100, Number(options.routeTimeoutMs) || timeoutMs);
     const document = global.document;
@@ -395,6 +433,23 @@
             noResultMessageObserved: noResultMessage, canonicalNoResultAccepted,
             addressOutcome: relevantAddressResultObserved ? "relevant_result" : (canonicalNoResultAccepted ? "truthful_no_result" : "failed"),
             misleadingRoadFallbackAbsent };
+          const statusEvidence = captureAddressStatus({
+            results, runtime, truthfulNoResultObserved: truthfulNoResult,
+            canonicalNoResultAccepted, addressOutcome: result.addressOutcome
+          });
+          latestAddressStatusCapture = Object.freeze({ runId: certificationRunId, evidence: statusEvidence });
+          Object.assign(result, {
+            statusClassification: statusEvidence.statusClassification,
+            statusNodeCount: statusEvidence.statusNodeCount,
+            visibleStatusNodeCount: statusEvidence.visibleStatusNodeCount,
+            hiddenStatusNodeCount: statusEvidence.hiddenStatusNodeCount,
+            staleStatusNodeCount: statusEvidence.staleStatusNodeCount,
+            statusInsideActiveContainer: statusEvidence.statusInsideActiveContainer,
+            settledFinalRenderObserved: statusEvidence.settledFinalRenderObserved,
+            diagnosticValid: statusEvidence.diagnosticValid,
+            capturePhase: statusEvidence.capturePhase,
+            capturedBeforeCaseReset: statusEvidence.capturedBeforeCaseReset
+          });
           result.passed = settled && runtimeCasePassed && renderDomAgreement && misleadingRoadFallbackAbsent
             && (relevantAddressResultObserved || canonicalNoResultAccepted);
           if (!misleadingRoadFallbackAbsent) fail("misleadingRoadFallbackAbsent");
