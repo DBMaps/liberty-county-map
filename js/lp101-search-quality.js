@@ -192,6 +192,109 @@
     });
   }
 
+  const ADDRESS_STATUS_SELECTORS = Object.freeze([
+    ".gridly-search-results-status"
+  ]);
+  const ADDRESS_STATUS_CLASSIFICATIONS = Object.freeze({
+    confirmed_no_result: /\b(?:(?:couldnt|could not) confirm(?: the destination| that exact address)?|no matching destinations? found|no valid destination results?)\b/,
+    temporarily_unavailable: /\b(?:search is temporarily unavailable|address search is temporarily unavailable|destination search unavailable|please try again)\b/,
+    temporarily_paused: /\b(?:search is temporarily paused|temporarily paused|try again shortly)\b/,
+    empty_state: /\b(?:no destinations? to (?:show|display)|search for a destination|enter (?:a )?destination)\b/
+  });
+
+  function statusNodeVisible(node) {
+    if (!node || node.hidden || node.getAttribute?.("aria-hidden") === "true") return false;
+    const style = typeof global.getComputedStyle === "function" ? global.getComputedStyle(node) : null;
+    return !style || (style.display !== "none" && style.visibility !== "hidden");
+  }
+
+  function classifyAddressStatusText(value) {
+    const text = normalize(value);
+    if (ADDRESS_STATUS_CLASSIFICATIONS.confirmed_no_result.test(text)) return "confirmed_no_result";
+    if (ADDRESS_STATUS_CLASSIFICATIONS.temporarily_paused.test(text)) return "temporarily_paused";
+    if (ADDRESS_STATUS_CLASSIFICATIONS.temporarily_unavailable.test(text)) return "temporarily_unavailable";
+    if (ADDRESS_STATUS_CLASSIFICATIONS.empty_state.test(text)) return "empty_state";
+    return "unrecognized";
+  }
+
+  function addressStatusDiagnostic() {
+    const document = global.document;
+    const results = document?.getElementById?.("gridlySearchResults") || null;
+    const selector = ADDRESS_STATUS_SELECTORS.join(", ");
+    const allStatusNodes = Array.from(document?.querySelectorAll?.(selector) || []);
+    if (results && !allStatusNodes.length) {
+      ADDRESS_STATUS_SELECTORS.forEach((candidateSelector) => {
+        Array.from(results.querySelectorAll?.(candidateSelector) || []).forEach((node) => {
+          if (!allStatusNodes.includes(node)) allStatusNodes.push(node);
+        });
+      });
+    }
+    const currentCase = results?.dataset?.lp101Case || "";
+    const statusEvidence = allStatusNodes.map((node) => {
+      const inside = Boolean(results && node.closest?.("#gridlySearchResults") === results);
+      const nodeCase = node.dataset?.lp101Case || "";
+      const stale = !inside || (nodeCase && nodeCase !== "address") || (inside && currentCase !== "address");
+      return { node, inside, visible: statusNodeVisible(node), stale };
+    });
+    const insideNodes = statusEvidence.filter((entry) => entry.inside);
+    const currentNodes = insideNodes.filter((entry) => !entry.stale);
+    const visibleCurrentNodes = currentNodes.filter((entry) => entry.visible);
+    const semanticClasses = visibleCurrentNodes.map((entry) => classifyAddressStatusText(entry.node.textContent));
+    let statusClassification = "absent";
+    if (allStatusNodes.length && !insideNodes.length) statusClassification = "outside_active_container";
+    else if (insideNodes.length && !currentNodes.length) statusClassification = "stale";
+    else if (currentNodes.length && !visibleCurrentNodes.length) statusClassification = "hidden";
+    else if (semanticClasses.length) statusClassification = semanticClasses.every((entry) => entry === semanticClasses[0]) ? semanticClasses[0] : "unrecognized";
+
+    const cards = results ? visibleCards(results, "address") : [];
+    const finalRenderInputCount = Number(results?.dataset?.lp101RenderInputCount || 0);
+    const settledFinalRenderObserved = Boolean(results && currentCase === "address"
+      && results.dataset?.lp101RenderPhase === "final"
+      && !/checking nearby places/i.test(String(results.textContent || "")));
+    const currentCaseIdentityAgreement = Boolean(results && currentCase === "address"
+      && statusEvidence.every((entry) => !entry.inside || !entry.node.dataset?.lp101Case || entry.node.dataset.lp101Case === "address")
+      && visibleCards(results).every((card) => card.dataset?.lp101Case === "address"));
+    const runtime = runtimeSummary(typeof global.gridlyGeocodingClient?.evidence === "function"
+      ? global.gridlyGeocodingClient.evidence() : []);
+    const canonicalResponseObserved = runtime.canonicalSuccessResponseObserved || runtime.canonicalFailureResponseObserved;
+    const findings = [];
+    if (!results) findings.push("active_results_container_absent");
+    if (!allStatusNodes.length) findings.push("status_node_absent");
+    if (statusEvidence.some((entry) => !entry.inside)) findings.push("status_outside_active_container_observed");
+    if (statusEvidence.some((entry) => entry.stale)) findings.push("stale_status_observed");
+    if (currentNodes.some((entry) => !entry.visible)) findings.push("hidden_status_observed");
+    if (semanticClasses.includes("unrecognized")) findings.push("visible_status_semantics_unrecognized");
+    findings.push(`classification_${statusClassification}`);
+    const result = Object.freeze({
+      available: Boolean(document), milestone: "LP101.5A", caseName: "address",
+      settledFinalRenderObserved, activeResultsContainerFound: Boolean(results),
+      statusNodeCount: allStatusNodes.length,
+      visibleStatusNodeCount: statusEvidence.filter((entry) => entry.visible).length,
+      hiddenStatusNodeCount: statusEvidence.filter((entry) => !entry.visible).length,
+      statusInsideActiveContainer: insideNodes.length > 0,
+      staleStatusNodeCount: statusEvidence.filter((entry) => entry.stale).length,
+      currentCaseIdentityAgreement, finalRenderInputCount,
+      activeVisibleResultCount: cards.length,
+      canonicalResponseObserved, boundaryReachable: runtime.boundaryReachable,
+      httpSuccessObserved: runtime.httpSuccessObserved, statusClassification,
+      noResultMessageObserved: Boolean(results && noResultMessageObserved(results)),
+      findings: Object.freeze(findings)
+    });
+    global.console?.table?.([{
+      statusClassification: result.statusClassification, statusNodeCount: result.statusNodeCount,
+      visibleStatusNodeCount: result.visibleStatusNodeCount,
+      statusInsideActiveContainer: result.statusInsideActiveContainer,
+      currentCaseIdentityAgreement: result.currentCaseIdentityAgreement,
+      settledFinalRenderObserved: result.settledFinalRenderObserved,
+      finalRenderInputCount: result.finalRenderInputCount,
+      activeVisibleResultCount: result.activeVisibleResultCount,
+      canonicalResponseObserved: result.canonicalResponseObserved,
+      noResultMessageObserved: result.noResultMessageObserved
+    }]);
+    global.console?.log?.("LP101.5A ADDRESS STATUS DIAGNOSTIC COMPLETE");
+    return result;
+  }
+
   function runtimeSummary(entries) {
     const searches = entries.filter((entry) => entry?.requestType === "destination_search");
     const statuses = searches.map((entry) => entry.httpStatus).filter(Number.isInteger);
@@ -371,4 +474,5 @@
   global.GRIDLY_LP101_SEARCH_QUALITY = Object.freeze({ normalize, understand, evaluate, roadwayIdentity, roadwayMatchesAddress, businessResultRelevant, providerQueryVariants });
   global.gridlyLp101BrowserCertification = audit;
   global.gridlyLp101VisibleSearchCertification = visibleSearchCertification;
+  global.gridlyLp101AddressStatusDiagnostic = addressStatusDiagnostic;
 })(window);
