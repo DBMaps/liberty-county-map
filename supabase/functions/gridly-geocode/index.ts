@@ -7,7 +7,7 @@ const CONFIG = Object.freeze({
   timeoutMs: 8000, intervalMs: 1000, maxAttempts: 3, maxBodyBytes: 8192,
   attribution: "© OpenStreetMap contributors"
 });
-const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080").split(",").map((x) => x.trim()));
+const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
 const inflight = new Map<string, Promise<Response>>();
 const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId"]);
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);

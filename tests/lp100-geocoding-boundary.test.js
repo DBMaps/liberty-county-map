@@ -4,6 +4,7 @@ const vm = require('node:vm');
 const app = fs.readFileSync('js/app.js', 'utf8');
 const client = fs.readFileSync('js/gridly-geocoding-client.js', 'utf8');
 const edge = fs.readFileSync('supabase/functions/gridly-geocode/index.ts', 'utf8');
+const edgeBytes = fs.readFileSync('supabase/functions/gridly-geocode/index.ts');
 const migration = fs.readFileSync('supabase/migrations/202607280100_lp100_geocoding_governance.sql', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 assert.doesNotMatch(app, /fetch\(`https:\/\/nominatim\.openstreetmap\.org\/search/);
@@ -27,8 +28,24 @@ assert.match(edge, /Retry-After/);
 assert.match(edge, /controller\.abort/);
 assert.match(edge, /inflight\.has\(key\)/);
 assert.match(edge, /gridly_reserve_geocode_provider_slot/);
+assert.doesNotThrow(() => new TextDecoder('utf-8', { fatal: true }).decode(edgeBytes));
+assert.match(edge, /attribution: "© OpenStreetMap contributors"/);
+assert.doesNotMatch(edge, /Â© OpenStreetMap contributors/);
+assert.match(edge, /http:\/\/localhost:5500/);
+assert.match(edge, /http:\/\/127\.0\.0\.1:5500/);
 assert.match(migration, /cache_key text primary key check \(cache_key ~ '\^\[a-f0-9\]\{64\}\$'\)/);
 assert.match(migration, /greatest\(next_allowed_at, cooldown_until, clock_timestamp\(\)\)/);
+for (const table of ['gridly_geocode_cache', 'gridly_geocode_provider_state']) {
+  assert.match(migration, new RegExp(`alter table public\\.${table} enable row level security;`));
+  assert.match(migration, new RegExp(`revoke all on public\\.${table} from anon, authenticated;`));
+  assert.match(migration, new RegExp(`grant select, insert, update, delete\\s+on table public\\.${table}\\s+to service_role;`));
+  assert.doesNotMatch(migration, new RegExp(`grant [^;]+on (?:table )?public\\.${table}[^;]+to (?:anon|authenticated|public)`, 'i'));
+}
+for (const rpc of ['gridly_reserve_geocode_provider_slot', 'gridly_cooldown_geocode_provider']) {
+  assert.match(migration, new RegExp(`revoke all on function public\\.${rpc}\\(text, integer\\) from public, anon, authenticated;`));
+  assert.match(migration, new RegExp(`grant execute\\s+on function public\\.${rpc}\\(text, integer\\)\\s+to service_role;`));
+  assert.doesNotMatch(migration, new RegExp(`grant execute\\s+on function public\\.${rpc}\\(text, integer\\)\\s+to (?:anon|authenticated|public)`, 'i'));
+}
 assert.doesNotMatch(client, /localStorage|sessionStorage|console\./i);
 assert.match(app, /safeToMerge: false, safeForPublicLaunch: false/);
 const sandbox = { window: { crypto: { randomUUID: () => 'id' } }, fetch: async () => ({ json: async () => ({ ok: true, status: 'success', providerBoundary: 'gridly', cached: false, requestId: 'id', results: [] }) }) };
