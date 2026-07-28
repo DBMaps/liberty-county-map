@@ -228,3 +228,73 @@ Use a fresh private/incognito session at approximately 390 × 844 CSS pixels.
 5. **Curated destinations:** select Dayton City Hall, Liberty County Courthouse, Liberty-Dayton Regional Medical Center, Cleveland Emergency Hospital, Dayton Police Department, Liberty County Sheriff's Office, US Post Office Dayton, Jones Public Library, Dayton High School, Walmart Supercenter Liberty, Dayton City Park, and Liberty Municipal Airport. For each verify canonical/alias match, community, category, valid coordinates, no duplicate, precedence over generic roads, and route preview.
 6. **Regressions:** verify US 90, TX 146, County Road, Saved Places, Home, Work, Favorites, Route Watch, crossing alert focus, Reporting, and Awareness Filtering.
 7. Only after all checks pass, run the certification block and retain pass/fail evidence only—never the private address.
+
+## LP097.2 — Geographic exactness and curated medical identity repair
+
+### 1. Browser-Confirmed False Exact Finding
+
+Browser testing showed that number and road agreement could promote a same-road result in the wrong county. LP097.2 treats that observation as a classification defect: number and street agreement are necessary, but never sufficient, evidence of an exact address. The private owner address is not included in source, fixtures, diagnostics, or this document.
+
+### 2. Geographic Exactness Model
+
+The deterministic evaluator checks house number, normalized street, state, supplied or enriched ZIP, city/community, county, and bounded distance from an expected local center when available. It returns internal reason codes including `house_number_mismatch`, `street_mismatch`, `state_mismatch`, `city_conflict`, `county_conflict`, `postal_code_conflict`, `enriched_locality_conflict`, `outside_expected_geography`, and `insufficient_exactness_evidence`. These codes support audit evidence and ranking only; consumer rows continue to use plain-language types.
+
+### 3. Explicit Locality Conflict Rules
+
+Explicit city, county, state, and ZIP values are authoritative. A provider result that contradicts any supplied value cannot be **Exact address**. Explicit Ohio, Colorado, Houston, and Denver intent disables the local-distance constraint rather than imposing a global local-only rule.
+
+### 4. Enriched Locality Conflict Rules
+
+When locality is omitted, the active awareness/map anchor and configured Liberty County/Texas context provide expected geography. Conflicting provider locality disqualifies exactness. Enrichment never replaces explicitly typed out-of-area geography.
+
+### 5. Wrong-County Suppression
+
+A same-number/same-road result with a county, ZIP, state, enriched-locality, or expected-distance conflict receives a severe address-ranking penalty. It may remain as an honestly labeled fallback, but cannot receive the exact-address boost. When no exact result remains, the existing consumer notice says: **Exact address not confirmed. Nearby matches are shown.**
+
+### 6. Medical Duplicate Root Cause
+
+LP097.1 required exact normalized name identity before comparing locality/proximity. Provider rows can instead expose the facility name in provider identity or display-name fields and can use a campus, mailing, or differently formatted street. This prevented safe comparison with the governed record.
+
+### 7. Curated Medical Identity Governance
+
+LP097.2 considers canonical names, governed aliases, provider name/display-name fields, compatible medical category, distinctive non-generic tokens, community/county/ZIP, and bounded coordinates. Generic words such as “medical,” “hospital,” “regional,” “center,” and “clinic” do not establish identity. Confirmed pairs use `confirmed_alias_identity`, `confirmed_name_locality_identity`, or `confirmed_name_coordinate_identity`; ambiguous address, coordinate, category, and evidence disagreements remain separate. The curated object survives without mutation.
+
+### 8. Runtime Evidence
+
+The passive audit adds false-exact prevention, bounded geographic-conflict counts and reason counts, wrong-county/wrong-ZIP exact counts, geography pass state, medical duplicate candidates/groups, curated medical survivors, and unresolved duplicates. Evidence is runtime-memory-only and excludes raw query text, exact coordinates, provider URLs, and user data.
+
+### 9. Browser Certification
+
+The recorder milestone is `LP097.2`. It accepts exactly the twelve governed fields in the LP097.2 certification block, rejects missing/unknown/private fields, and resets on reload. It does not use Local Storage, Session Storage, Supabase, fetch, or console output. Browser success is never inferred from source presence.
+
+### 10. `safeToMerge` Decision
+
+`safeToMerge` remains false until one same-session record confirms the top address result, geography agreement and wrong-county prevention, valid coordinates, route handoff, the single curated medical survivor, locality priority, explicit out-of-area behavior, and private-persistence protection—and runtime evidence separately confirms provider request, response, success, and a rendered provider result.
+
+### 11. `safeForPublicLaunch` Decision
+
+`safeForPublicLaunch` is unconditionally false. LP097.2 does not authorize public launch.
+
+### 12. 28-County Requirement
+
+The Gridly-owned provider boundary remains pending, and every one of the 28 supported counties still requires governed destination expansion and browser certification before public launch.
+
+### 13. Files Changed
+
+`js/lp097-search-governance.js` owns deterministic geography and conservative identity decisions. `js/app.js` supplies query context, ranking penalties, passive evidence, and runtime certification. `index.html` advances the governance cache key. LP097.2 tests, package command, and this section document the contracts.
+
+### 14. Tests Performed
+
+Deterministic fixtures cover wrong county, ZIP, state, correct locality, explicit out-of-area intent, enriched conflicts, honest fallback, street variation, governed aliases, proximity, generic-name separation, departments, coordinate/category disagreement, single-source records, and curated survival. Existing LP097 and LP097.1 suites remain regression checks. Live provider, visible route handoff, and persistence claims still require the documented private/incognito mobile browser session.
+
+### 15. Merge Recommendation
+
+Do not recommend merge from static evidence alone. Recommend merge only after the exact LP097.2 browser block in the change request returns `passed: true` and `safeToMerge: true`. Never recommend public launch from this milestone.
+
+### LP097.2 browser console certification block
+
+Use the exact **BROWSER CERTIFICATION** block supplied with LP097.2 after completing its visible tests in the same fresh private session. Its milestone check must be `audit?.milestone === "LP097.2"`; LP097 or LP097.1 are not accepted as current certification.
+
+### LP097.2 exact mobile portrait testing steps
+
+At approximately 390 × 844 CSS pixels in a fresh private/incognito session: manually test the owner address without console/persistence; test the public-safe partial County Road scenario and honest fallback; verify `Liberty-Dayton Medical` renders one governed **Medical** row and routes; verify Dayton, Dayton City Hall, Houston City Hall, Denver City Hall, and Dayton Ohio locality behavior; then regress US 90, TX 146, County Road, Saved Places, Home, Work, Favorites, Route Watch, crossing focus, Reporting, and Awareness Filtering. Only then record the twelve certification fields and run the supplied LP097.2 block.

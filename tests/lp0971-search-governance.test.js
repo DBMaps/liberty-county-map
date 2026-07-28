@@ -42,7 +42,7 @@ assert.match(app, /gridlyLp097HasExplicitOutOfAreaIntent/);
 assert.match(app, /preserveGridlyLp097StrongLocalResults/);
 for (const phrase of ['providerRequestObservedThisSession', 'providerResponseObservedThisSession', 'providerResultRenderedThisSession', 'safeForPublicLaunch: false', 'queryRedacted: true']) assert.ok(app.includes(phrase), phrase);
 assert.match(app, /window\.gridlyRecordLp097BrowserCertification/);
-assert.match(app, /Unknown LP097\.1 certification field/);
+assert.match(app, /Unknown LP097\.2 certification field/);
 assert.doesNotMatch(app + fs.readFileSync('js/lp097-search-governance.js', 'utf8'), /localStorage\.(?:setItem|getItem).*Lp097/i);
 assert.doesNotMatch(app, /console\.(?:log|info|warn)\([^\n]*originalQuery/);
 
