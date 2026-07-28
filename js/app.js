@@ -62932,6 +62932,12 @@ function gridlyLp0546ResolveCrossingRecord(selection = {}, options = {}) {
   const resolvedIdentity = matched ? gridlyLp0546CanonicalCrossingIdentity(matched) : selectedIdentity;
   const currentAwareness = gridlyLp0546ResolveCurrentAwarenessContext(options);
   const areaDetails = gridlyLp0546AwarenessCompatibilityDetails(selection.awarenessAreaId, resolvedIdentity.awarenessAreaId, currentAwareness.record);
+  // LP095.4B: callers may legitimately have no selected-awareness cache entry.
+  // Keep this canonical boundary total rather than dereferencing the optional
+  // wrapper shape returned by older/live awareness state.
+  const currentIdentity = currentAwareness?.identity || gridlyLp0546ResolveAwarenessAreaIdentity(currentAwareness?.record || {});
+  const crossingAreaIdentity = areaDetails?.crossing || gridlyLp0546ResolveAwarenessAreaIdentity(resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "");
+  const currentAreaIdentity = areaDetails?.current || currentIdentity;
   const awarenessAreaCompatibilityPass = Boolean(matched && areaDetails.awarenessAreaCompatibilityPass);
   const selectedId = selectedIdentity.canonicalCrossingId || selection.crossingId || "";
   const resolvedId = resolvedIdentity.canonicalCrossingId || "";
@@ -62951,7 +62957,7 @@ function gridlyLp0546ResolveCrossingRecord(selection = {}, options = {}) {
   const crossingIdentityAgreement = Boolean(matched && ["preferred_id_match", "canonical_alias_intersection", "controlled_road_identity_fallback"].includes(crossingIdentityAgreementReason) && !(crossingIdentityAgreementReason === "controlled_road_identity_fallback" && conflictingAuthoritativeIdsDetected));
   const crossingSelectionValid = Boolean(selection.crossingId && matched && crossingIdentityAgreement && awarenessAreaCompatibilityPass);
   const crossingInvalidationReason = crossingSelectionValid ? "none" : (!matched ? "crossing_unavailable" : (!crossingIdentityAgreement ? "crossing_identity_mismatch" : "awareness_area_changed")); // LP054.6 legacy audit phrase: selected_crossing_unavailable
-  return Object.freeze({ selectedCrossingId: selectedId, selectedPreferredCrossingId: selectedId, selectedCrossingIdentitySource: selection.crossingIdentitySource || selectedIdentity.crossingIdentitySource, selectedCrossingDisplayName: selection.crossingDisplayName || selection.consumerSubject || "", selectedCrossingAliases, crossingLookupAttempted: true, crossingLookupSource: lookup.source, crossingLookupRecordCount: lookup.records.length, crossingLookupMatched: Boolean(matched), resolvedCrossingId: resolvedId, resolvedPreferredCrossingId: resolvedId, selectedAliasDetails, resolvedAliasDetails, resolvedCrossingAliases, lookupMatchedBy: lookupMatch.lookupMatchedBy, lookupMatchedAlias: lookupMatch.lookupMatchedAlias, lookupMatchedSelectedField: lookupMatch.lookupMatchedSelectedField, lookupMatchedResolvedField: lookupMatch.lookupMatchedResolvedField, matchingCrossingAlias, matchingCrossingAliasSelectedSource: matchingSelectedSource, matchingCrossingAliasResolvedSource: matchingResolvedSource, crossingAliasIntersectionCount, roadIdentityFallbackUsed, conflictingAuthoritativeIdsDetected, crossingIdentityAgreement, crossingIdentityAgreementReason, resolvedCrossingDisplayName: resolvedIdentity.crossingDisplayName || gridlyLp0546CrossingSubject({ ...selection, ...matched }), crossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", currentAwarenessAreaId: currentAwareness.identity.rawAreaId, currentAwarenessOverrideProvided: currentAwareness.overrideProvided, currentAwarenessSource: currentAwareness.source, currentAwarenessOverridePersisted: false, rawInjectedAwarenessAreaId: currentAwareness.overrideProvided ? currentAwareness.identity.rawAreaId : "", rawInjectedCountyId: currentAwareness.overrideProvided ? currentAwareness.identity.canonicalCountyKey : "", resolverConsumedInjectedAwareness: currentAwareness.overrideProvided ? areaDetails.current.rawAreaId === currentAwareness.identity.rawAreaId : false, normalizedInjectedCountyId: currentAwareness.overrideProvided ? currentAwareness.identity.canonicalCountyKey : "", normalizedInjectedCommunityId: currentAwareness.overrideProvided ? currentAwareness.identity.canonicalCommunityKey : "", rawCrossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", rawCurrentAwarenessAreaId: currentAwareness.identity.rawAreaId, normalizedCrossingCountyId: areaDetails.crossing.canonicalCountyKey, normalizedCurrentCountyId: areaDetails.current.canonicalCountyKey, normalizedCrossingCommunityId: areaDetails.crossing.canonicalCommunityKey, normalizedCurrentCommunityId: areaDetails.current.canonicalCommunityKey, normalizedCrossingAwarenessAreaId: areaDetails.crossing.awarenessAreaId, normalizedCurrentAwarenessAreaId: areaDetails.current.awarenessAreaId, crossingAreaAliases: areaDetails.crossing.knownAliases, currentAreaAliases: areaDetails.current.knownAliases, exactAwarenessAreaMatch: areaDetails.exactAwarenessAreaMatch, canonicalCountyMatch: areaDetails.canonicalCountyMatch, canonicalCommunityMatch: areaDetails.canonicalCommunityMatch, parentAreaMatch: areaDetails.parentAreaMatch, selectionScope: areaDetails.selectionScope, awarenessAreaCompatibilityPass, awarenessAreaCompatibilityReason: areaDetails.awarenessAreaCompatibilityReason, crossingSelectionValid, crossingInvalidationReason, resolvedRecord: matched ? { ...selection, ...matched, crossingId: resolvedId || selectedId, crossingDisplayName: resolvedIdentity.crossingDisplayName, primaryRoad: resolvedIdentity.primaryRoad, intersectingRoad: resolvedIdentity.intersectingRoad, awarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId } : null });
+  return Object.freeze({ selectedCrossingId: selectedId, selectedPreferredCrossingId: selectedId, selectedCrossingIdentitySource: selection.crossingIdentitySource || selectedIdentity.crossingIdentitySource, selectedCrossingDisplayName: selection.crossingDisplayName || selection.consumerSubject || "", selectedCrossingAliases, crossingLookupAttempted: true, crossingLookupSource: lookup.source, crossingLookupRecordCount: lookup.records.length, crossingLookupMatched: Boolean(matched), resolvedCrossingId: resolvedId, resolvedPreferredCrossingId: resolvedId, selectedAliasDetails, resolvedAliasDetails, resolvedCrossingAliases, lookupMatchedBy: lookupMatch.lookupMatchedBy, lookupMatchedAlias: lookupMatch.lookupMatchedAlias, lookupMatchedSelectedField: lookupMatch.lookupMatchedSelectedField, lookupMatchedResolvedField: lookupMatch.lookupMatchedResolvedField, matchingCrossingAlias, matchingCrossingAliasSelectedSource: matchingSelectedSource, matchingCrossingAliasResolvedSource: matchingResolvedSource, crossingAliasIntersectionCount, roadIdentityFallbackUsed, conflictingAuthoritativeIdsDetected, crossingIdentityAgreement, crossingIdentityAgreementReason, resolvedCrossingDisplayName: resolvedIdentity.crossingDisplayName || gridlyLp0546CrossingSubject({ ...selection, ...matched }), crossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", currentAwarenessAreaId: currentIdentity.rawAreaId, currentAwarenessOverrideProvided: currentAwareness.overrideProvided, currentAwarenessSource: currentAwareness.source, currentAwarenessOverridePersisted: false, rawInjectedAwarenessAreaId: currentAwareness.overrideProvided ? currentIdentity.rawAreaId : "", rawInjectedCountyId: currentAwareness.overrideProvided ? currentIdentity.canonicalCountyKey : "", resolverConsumedInjectedAwareness: currentAwareness.overrideProvided ? currentAreaIdentity.rawAreaId === currentIdentity.rawAreaId : false, normalizedInjectedCountyId: currentAwareness.overrideProvided ? currentIdentity.canonicalCountyKey : "", normalizedInjectedCommunityId: currentAwareness.overrideProvided ? currentIdentity.canonicalCommunityKey : "", rawCrossingAwarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId || "", rawCurrentAwarenessAreaId: currentIdentity.rawAreaId, normalizedCrossingCountyId: crossingAreaIdentity.canonicalCountyKey, normalizedCurrentCountyId: currentAreaIdentity.canonicalCountyKey, normalizedCrossingCommunityId: crossingAreaIdentity.canonicalCommunityKey, normalizedCurrentCommunityId: currentAreaIdentity.canonicalCommunityKey, normalizedCrossingAwarenessAreaId: crossingAreaIdentity.awarenessAreaId, normalizedCurrentAwarenessAreaId: currentAreaIdentity.awarenessAreaId, crossingAreaAliases: crossingAreaIdentity.knownAliases, currentAreaAliases: currentAreaIdentity.knownAliases, exactAwarenessAreaMatch: areaDetails.exactAwarenessAreaMatch, canonicalCountyMatch: areaDetails.canonicalCountyMatch, canonicalCommunityMatch: areaDetails.canonicalCommunityMatch, parentAreaMatch: areaDetails.parentAreaMatch, selectionScope: areaDetails.selectionScope, awarenessAreaCompatibilityPass, awarenessAreaCompatibilityReason: areaDetails.awarenessAreaCompatibilityReason, crossingSelectionValid, crossingInvalidationReason, resolvedRecord: matched ? { ...selection, ...matched, crossingId: resolvedId || selectedId, crossingDisplayName: resolvedIdentity.crossingDisplayName, primaryRoad: resolvedIdentity.primaryRoad, intersectingRoad: resolvedIdentity.intersectingRoad, awarenessAreaId: resolvedIdentity.awarenessAreaId || selection.awarenessAreaId } : null });
 }
 function gridlyLp0546CrossingSubject(record = {}) {
   const name = gridlyLp0543SafeIdentityCandidate(record.crossingDisplayName || record.crossingName || record.name || "");
@@ -97935,12 +97941,41 @@ function gridlyLp0954MapFocusCompleted(debug = {}) {
   );
 }
 
+function gridlyLp0954bResolveCrossingCanonicalContext(record = null, marker = null) {
+  gridlyLp0953Record("Canonical context lookup entered", { canonicalContextLookupEntered: true });
+  const crossingId = gridlyLp019SafeText(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || "");
+  const crossing = crossingId ? (Array.isArray(crossings) ? crossings : []).find((item) => gridlyLp019SafeText(item?.id || item?.crossingId) === crossingId) || null : null;
+  const selected = gridlySelectedAwarenessAreaResolutionCache?.area || null;
+  const countyValue = (source) => source?.canonicalCountyKey || source?.countyId || source?.normalizedCountyId || source?.county_id || source?.county || source?.countyName || source?.COUNTYNAME || source?.awarenessAreaId || source?.awareness_area_id || "";
+  const countyKey = (source) => {
+    const raw = countyValue(source);
+    if (!raw) return "";
+    const awarenessAreaId = source?.awarenessAreaId || source?.awareness_area_id || "";
+    if (awarenessAreaId) return gridlyLp0546ResolveAwarenessAreaIdentity({ awarenessAreaId }).canonicalCountyKey;
+    const normalized = String(raw).trim().toLowerCase().replace(/\s+county$/, "");
+    const county = Object.values(GRIDLY_COUNTY_REGISTRY || {}).find((entry) => [entry?.id, entry?.name, String(entry?.name || "").replace(/\s+county$/i, "")].some((value) => String(value || "").trim().toLowerCase() === normalized));
+    return county?.id || "";
+  };
+  const crossingCountyKey = countyKey(crossing);
+  const alertCountyKey = countyKey(record);
+  const markerCountyKey = countyKey(marker?.options?.record || marker?.options);
+  const selectedAwarenessCountyKey = countyKey(selected);
+  const resolvedCountyKey = crossingCountyKey || alertCountyKey || markerCountyKey;
+  const source = crossingCountyKey ? "crossing_record" : (alertCountyKey ? "alert_record" : (markerCountyKey ? "marker_context" : "none"));
+  gridlyLp0953Record("Context source inspected", { contextSourceInspected: true, contextSource: source, crossingCountyKey: crossingCountyKey || null, alertCountyKey: alertCountyKey || null, markerCountyKey: markerCountyKey || null, selectedAwarenessCountyKey: selectedAwarenessCountyKey || null });
+  const compatible = !resolvedCountyKey || !selectedAwarenessCountyKey || resolvedCountyKey === selectedAwarenessCountyKey;
+  const optional = !resolvedCountyKey && Boolean(crossing && marker);
+  gridlyLp0953Record("Context compatibility evaluated", { contextCompatibilityEvaluated: true, canonicalContextResolved: Boolean(resolvedCountyKey), canonicalCountyKey: resolvedCountyKey || null, contextAbsentButOptional: optional, contextCompatible: compatible });
+  if (!compatible) gridlyLp0953Record("Context incompatibility terminal failure", { contextIncompatibilityTerminalFailure: true, crossingCountyKey: resolvedCountyKey, selectedAwarenessCountyKey }, "FAIL");
+  return Object.freeze({ crossingId, crossing, resolvedCountyKey, crossingCountyKey, alertCountyKey, markerCountyKey, selectedAwarenessCountyKey, source, optional, compatible, focusAllowed: compatible && (Boolean(resolvedCountyKey) || optional) });
+}
+
 function gridlyLp0954CrossingFocusCompletionAudit() {
   const delegatedPanels = Array.from(document?.querySelectorAll?.(".gridly-alerts-active, #alertsList, #gridlyPortraitV2SheetBody") || []);
   const duplicateHandlerPathAbsent = delegatedPanels.every((panel) => !panel.dataset.alertFocusOwner || panel.dataset.alertFocusOwner === "gridlyLp019BindAlertFocusHandlers");
   const checks = {
     available: true,
-    milestone: "LP095.4A",
+    milestone: "LP095.4B",
     passive: true,
     lp0953TraceAvailable: typeof window?.gridlyLp0953CrossingTrace === "function",
     postPopupRequestDispatchAvailable: typeof focusGridlyAlertIncident === "function",
@@ -97951,6 +97986,11 @@ function gridlyLp0954CrossingFocusCompletionAudit() {
     traceSessionsFailClosed: true,
     crossingAlertContractAvailable: typeof gridlyLp0952ResolveCrossingAlertTarget === "function",
     canonicalCrossingResolverAvailable: typeof gridlyLp0952ResolveCrossingAlertTarget === "function",
+    canonicalCrossingContextResolverAvailable: typeof gridlyLp0954bResolveCrossingCanonicalContext === "function",
+    undefinedCanonicalContextGuarded: true,
+    countyContainmentPreserved: typeof gridlyLp0546AwarenessCompatibilityDetails === "function",
+    postDispatchExceptionPathAbsent: typeof gridlyLp0954bResolveCrossingCanonicalContext === "function",
+    liveCertificationRequired: true,
     existingMarkerFocusPathAvailable: typeof focusGridlyAlertIncident === "function" && crossingMarkers instanceof Map,
     focusCompletionContractAvailable: typeof gridlyLp0954MapFocusCompleted === "function",
     alreadyVisibleMarkerSupported: gridlyLp0954MapFocusCompleted({ sheetCloseCompleted: true, mapInvalidateCompleted: true, movementSettlementCompleted: true, zoomCompleted: true, markerInsideUsableViewport: true, awarenessSelectionPreserved: true }),
@@ -98298,6 +98338,15 @@ function gridlyLp019BindAlertFocusHandlers(root = document) {
         // instrumented getter here entered its connector refresh side effect before
         // focus dispatch and could escape this interaction altogether.
         window.__gridlyLp019AwarenessSelectionBeforeFocus = gridlySelectedAwarenessAreaResolutionCache?.area || null;
+        if (crossingType) {
+          const canonicalContext = gridlyLp0954bResolveCrossingCanonicalContext(record, marker);
+          Object.assign(window.__gridlyLp019AlertFocusDebug, { canonicalContextSource: canonicalContext.source, canonicalCountyKey: canonicalContext.resolvedCountyKey || null, contextCompatibilityEvaluated: true, contextCompatible: canonicalContext.compatible });
+          if (!canonicalContext.focusAllowed) {
+            gridlyLp0953Fail("canonical_context_compatibility", canonicalContext.compatible ? "canonical crossing county context unavailable" : "crossing is outside selected awareness county", { crossingId: crossingTarget.crossingId || null, markerId: gridlyLp0953MarkerId(marker), returnPath: "canonical context fail-closed guard" });
+            return;
+          }
+        }
+        gridlyLp0953Record("Focus call continued", { focusCallContinued: true });
         gridlyLp0953Record("Post-popup-request focus call entered", { postPopupRequestFocusCallEntered: true });
         focused = focusGridlyAlertIncident({
         id,
