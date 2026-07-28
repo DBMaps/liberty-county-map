@@ -38,11 +38,12 @@ assert(app.includes('finishAfterMove') && app.includes('finishAfterPanSettle'), 
 assert(app.includes('latLngToContainerPoint') && app.includes('intendedViewportTargetPoint') && app.includes('finalViewportPixelDelta'), 'LP019 measures viewport-offset focus completion in container pixels');
 assert(app.includes('viewportCenteringCompleted') && app.includes('viewportCompletionThresholdPx'), 'LP019 retains exact-center pixel threshold as diagnostic only');
 assert(!/mapMovementCompleted = Boolean\([^)]*viewportCenteringCompleted/.test(app), 'LP019 movement completion is not gated by exact center-distance');
-assert(/mapMovementCompleted = Boolean\([\s\S]*usableViewportVisibilityCompleted/.test(app), 'LP019 movement completion is gated by usable viewport visibility');
+assert(app.includes('debug.mapMovementCompleted = gridlyLp0954MapFocusCompleted(debug)'), 'LP019 movement completion uses the settled visible-marker contract');
+assert(/function gridlyLp0954MapFocusCompleted[\s\S]*markerInsideUsableViewport/.test(app), 'LP019 movement completion is gated by marker visibility in the usable viewport');
 assert(/safeForMerge:[\s\S]*usableViewportVisibilityCompleted === true/.test(app), 'LP019 merge gate requires usable viewport visibility');
 assert(!/safeForMerge:[\s\S]{0,900}finalViewportPixelDelta[\s\S]{0,120}<=/.test(app), 'LP019 merge gate does not require exact pixel delta');
 assert(!/finalCenterDeltaMeters[\s\S]{0,120}<= 160/.test(app.match(/safeForMerge:[\s\S]*?reasons:/)?.[0] || ''), 'LP019 merge gate no longer fails offset focus on raw map-center meters');
-assert(app.includes('popupRequested: Boolean(marker') && app.includes('if (marker && debug.mapMovementCompleted)'), 'LP019 requests popup only after matching marker resolution');
+assert(app.includes('popupRequested: Boolean(marker') && app.includes('if (marker && (debug.mapMovementCompleted || officialMarkerMatched))'), 'LP019 requests popup only after matching marker resolution or the preserved official-marker allowance');
 assert(app.includes('marker.openPopup()') && app.includes('marker.isPopupOpen'), 'LP019 verifies existing marker popup state after opening');
 const focusBody = app.match(/function focusGridlyAlertIncident[\s\S]*?function focusAlertLocation/)?.[0] || '';
 assert(focusBody.includes('coordinate_focus_completed_without_matching_marker') && !focusBody.includes('L.marker('), 'LP019 coordinate-only fallback completes without fabricating a marker');

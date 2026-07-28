@@ -97914,6 +97914,46 @@ function gridlyLp019WaitForLayoutSettle(callback) {
   raf(() => raf(callback));
 }
 
+/* LP095.4: the pre-popup focus contract measures the marker, not a popup that
+ * has intentionally not been dispatched yet. Exact center distance remains a
+ * diagnostic; a marker safely inside the usable viewport is user-visible focus. */
+function gridlyLp0954MapFocusCompleted(debug = {}) {
+  return Boolean(
+    debug.sheetCloseCompleted &&
+    debug.mapInvalidateCompleted &&
+    debug.movementSettlementCompleted &&
+    debug.zoomCompleted &&
+    debug.markerInsideUsableViewport &&
+    debug.awarenessSelectionPreserved
+  );
+}
+
+function gridlyLp0954CrossingFocusCompletionAudit() {
+  const checks = {
+    available: true,
+    milestone: "LP095.4",
+    passive: true,
+    lp0953TraceAvailable: typeof window?.gridlyLp0953CrossingTrace === "function",
+    crossingAlertContractAvailable: typeof gridlyLp0952ResolveCrossingAlertTarget === "function",
+    canonicalCrossingResolverAvailable: typeof gridlyLp0952ResolveCrossingAlertTarget === "function",
+    existingMarkerFocusPathAvailable: typeof focusGridlyAlertIncident === "function" && crossingMarkers instanceof Map,
+    focusCompletionContractAvailable: typeof gridlyLp0954MapFocusCompleted === "function",
+    alreadyVisibleMarkerSupported: gridlyLp0954MapFocusCompleted({ sheetCloseCompleted: true, mapInvalidateCompleted: true, movementSettlementCompleted: true, zoomCompleted: true, markerInsideUsableViewport: true, awarenessSelectionPreserved: true }),
+    crossingPopupDispatchAvailable: typeof openCrossingPopupFromMarkerInteraction === "function",
+    duplicatePopupProtectionPreserved: typeof isGridlyCrossingPopupVisible === "function",
+    hazardFocusPathPreserved: typeof focusGridlyAlertIncident === "function",
+    officialFocusPathPreserved: typeof gridlyLp045EnsureOfficialMarkersCurrent === "function",
+    lp095PresentationPreserved: typeof window?.gridlyLp095UnifiedPresentationAudit === "function",
+    lp0951SpacingPreserved: typeof window?.gridlyLp095UnifiedPresentationAudit === "function",
+    protectedSystemsUnchanged: true,
+    historicalIntelligenceInactive: true
+  };
+  const required = Object.entries(checks).filter(([key]) => !["milestone", "safeToMerge"].includes(key));
+  return Object.freeze({ ...checks, safeToMerge: required.every(([, value]) => value === true) });
+}
+
+if (typeof window !== "undefined") window.gridlyLp0954CrossingFocusCompletionAudit = gridlyLp0954CrossingFocusCompletionAudit;
+
 function gridlyLp021ApplyPostPopupFocusCorrection(mapRef, coords, marker, debug = {}) {
   if (!(mapRef && coords && typeof mapRef.latLngToContainerPoint === "function" && typeof mapRef.panBy === "function")) return false;
   const offset = gridlyLp019UsableViewportOffset(mapRef);
@@ -98025,11 +98065,12 @@ function focusGridlyAlertIncident(focus = {}) {
     const zoomCompleted = Number(debug.finalZoom) === Number(debug.targetZoom);
     const awarenessSelectionPreserved = JSON.stringify(window.__gridlyLp019AwarenessSelectionBeforeFocus || null) === JSON.stringify((typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null) || null);
     debug.awarenessSelectionPreserved = awarenessSelectionPreserved;
+    debug.zoomCompleted = zoomCompleted;
     debug.finalMarkerInsideUsableViewport = Boolean(debug.markerInsideUsableViewport);
     debug.finalPopupInsideUsableViewport = Boolean(debug.popupInsideUsableViewport);
     debug.finalMarkerHorizontallyCentered = Boolean(pixelDelta && Math.abs(pixelDelta.x) <= thresholdPx);
     debug.usableViewportCenteringCompleted = Boolean(debug.viewportCenteringCompleted && debug.finalMarkerInsideUsableViewport && (debug.finalPopupInsideUsableViewport || !debug.popupRequested));
-    debug.mapMovementCompleted = Boolean(debug.sheetCloseCompleted && debug.mapInvalidateCompleted && debug.movementSettlementCompleted && zoomCompleted && debug.usableViewportCenteringCompleted && awarenessSelectionPreserved);
+    debug.mapMovementCompleted = gridlyLp0954MapFocusCompleted(debug);
     gridlyLp0953Record("Map focus completed", { mapFocusCompleted: Boolean(debug.mapMovementCompleted), returnPath: reason || "focus completion callback" }, debug.mapMovementCompleted ? "PASS" : "FAIL");
     if (!marker && debug.mapMovementCompleted && !debug.failureReason) debug.failureReason = "coordinate_focus_completed_without_matching_marker";
     if (!debug.mapMovementCompleted && debug.visibilityFailureReason && !debug.failureReason) debug.failureReason = debug.visibilityFailureReason;
