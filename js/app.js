@@ -35644,6 +35644,7 @@ const LOCAL_PLACE_LOOKUP = {
 const GRIDLY_DESTINATION_INTENTS = {
   GENERIC_LOCAL: "generic_local",
   EXPLICIT_DESTINATION: "explicit_destination",
+  BUSINESS_PLACE: "business_place",
   ADDRESS: "address"
 };
 
@@ -36100,6 +36101,9 @@ function classifyGridlyLp097Result(result, addressModel = null) {
   else if (/postcode/i.test(String(result?.type || ""))) { consumerType = "Approximate location"; precision = "approximate"; }
   else if (/road|residential|highway/i.test(String(result?.type || ""))) { consumerType = /motorway|trunk|highway/i.test(String(result?.type || "")) ? "Highway" : "Road"; precision = "road"; }
   else if (addressModel?.hasHouseNumber) { consumerType = "Approximate location"; precision = "approximate"; }
+  if (consumerType === "Place" && window.GRIDLY_LP099_BUSINESS_SEARCH?.category) {
+    consumerType = window.GRIDLY_LP099_BUSINESS_SEARCH.category(result);
+  }
   return { consumerType, precision, exactAddress: precision === "exact_address", approximate: precision === "approximate", houseAgreement, roadAgreement, geographyPass: geographic?.exact === true, conflictReasons: geographic?.reasons || [] };
 }
 
@@ -36143,6 +36147,8 @@ function classifyGridlyDestinationSearchIntent(query = "") {
   if (gridlySearchQueryHasAddressIndicator(normalized)) {
     return { type: GRIDLY_DESTINATION_INTENTS.ADDRESS, reason: "address_indicator" };
   }
+  const businessIntent = window.GRIDLY_LP099_BUSINESS_SEARCH?.classifyIntent?.(query);
+  if (businessIntent) return businessIntent;
   if (gridlySearchQueryHasDestinationIndicator(normalized)) {
     return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "destination_indicator" };
   }
@@ -36595,6 +36601,9 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       : distanceMiles;
     let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
     const lp097Classification = classifyGridlyLp097Result(result, options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(options.query || "") : null));
+    const lp099Classification = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
+      ? window.GRIDLY_LP099_BUSINESS_SEARCH?.evaluate?.(options.query || "", result)
+      : null;
     if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.houseAgreement && lp097Classification.roadAgreement && lp097Classification.conflictReasons.length) {
       gridlyLp097RuntimeEvidence.falseExactAddressPrevented = true;
       gridlyLp097RuntimeEvidence.geographicConflictCandidateCount += 1;
@@ -36605,6 +36614,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     if (lp097Classification.exactAddress) score += 2000;
     else if (lp097Classification.precision === "address") score += 700;
     else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && ["road", "approximate"].includes(lp097Classification.precision)) score -= 300;
+    if (lp099Classification) score += lp099Classification.boost;
     if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) score -= 1800;
     if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && getGridlySearchResultTitleMatchScore(result, options.query || "") >= 20) score += 900;
     if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
