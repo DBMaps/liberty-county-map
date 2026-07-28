@@ -18,6 +18,14 @@ create table if not exists public.gridly_geocode_provider_state (
 alter table public.gridly_geocode_provider_state enable row level security;
 revoke all on public.gridly_geocode_provider_state from anon, authenticated;
 
+grant select, insert, update, delete
+on table public.gridly_geocode_cache
+to service_role;
+
+grant select, insert, update, delete
+on table public.gridly_geocode_provider_state
+to service_role;
+
 create or replace function public.gridly_reserve_geocode_provider_slot(p_namespace text, p_interval_ms integer)
 returns timestamptz language plpgsql security definer set search_path = public as $$
 declare reserved_at timestamptz;
@@ -31,6 +39,9 @@ begin
   return reserved_at;
 end $$;
 revoke all on function public.gridly_reserve_geocode_provider_slot(text, integer) from public, anon, authenticated;
+grant execute
+on function public.gridly_reserve_geocode_provider_slot(text, integer)
+to service_role;
 
 create or replace function public.gridly_cooldown_geocode_provider(p_namespace text, p_seconds integer)
 returns void language sql security definer set search_path = public as $$
@@ -40,5 +51,8 @@ returns void language sql security definer set search_path = public as $$
     set cooldown_until = greatest(gridly_geocode_provider_state.cooldown_until, excluded.cooldown_until);
 $$;
 revoke all on function public.gridly_cooldown_geocode_provider(text, integer) from public, anon, authenticated;
+grant execute
+on function public.gridly_cooldown_geocode_provider(text, integer)
+to service_role;
 
 create index if not exists gridly_geocode_cache_expiry_idx on public.gridly_geocode_cache(expires_at);

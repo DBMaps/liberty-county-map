@@ -36,7 +36,7 @@ SHA-256 keys cover normalized intent/query/structured fields/context/limit/provi
 Typing searches Saved Places and governed/static seeds only. Search button or Enter initiates remote search. Focus/click cannot initiate remote traffic. This preserves local instant results without prohibited public-provider autocomplete.
 
 ## 12. CORS
-Default allowed origins: `https://gridly.app`, localhost and 127.0.0.1 on ports 3000 and 8080. Production should set `GRIDLY_GEOCODE_ALLOWED_ORIGINS` to the exact deployed origin list. OPTIONS is supported. Unknown/missing origins receive no allow-origin header and a 403 canonical failure. No wildcard is used.
+Default allowed origins: `https://gridly.app`, localhost and 127.0.0.1 on ports 3000, 8080, and 5500. Production should set `GRIDLY_GEOCODE_ALLOWED_ORIGINS` to the exact deployed origin list. OPTIONS is supported. Unknown/missing origins receive no allow-origin header and a 403 canonical failure. No wildcard is used.
 
 ## 13. Privacy
 Neither client nor function logs queries or full URLs. Runtime evidence contains request ID, intent, length bucket, status, cache state, count, and `queryRedacted:true`; it is memory-only. No query is written to browser storage or analytics. Hash keys are irreversible; bounded canonical cache payloads expire. Do not use private addresses in certification evidence.
@@ -48,6 +48,8 @@ The map already renders OpenStreetMap attribution through Leaflet. Provider attr
 Change `GRIDLY_GEOCODE_PROVIDER`, `GRIDLY_GEOCODE_PROVIDER_URL`, and `GRIDLY_GEOCODE_CACHE_NAMESPACE`, then replace/extend the server adapter if response/request semantics differ. Browser code and LP097/LP099 ranking do not change.
 
 ## 16. Deployment
+The owner's current VS Code Live Server origins are `http://127.0.0.1:5500` and `http://localhost:5500`. Include both in the comma-separated allowed-origin value when that development environment needs access. The deployed `GRIDLY_GEOCODE_ALLOWED_ORIGINS` secret remains authoritative.
+
 PowerShell 5.1 copy/paste block (prompts keep secrets out of history/output):
 
 ```powershell
