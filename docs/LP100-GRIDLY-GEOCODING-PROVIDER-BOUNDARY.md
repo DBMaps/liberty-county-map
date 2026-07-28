@@ -141,3 +141,188 @@ Run `npm run test:lp100`, `npm run test:lp097`, `npm run test:lp0971`, `npm run 
 4. Explicitly search H-E-B, McDonald’s, Walmart Liberty, Buc-ee’s Baytown, and Houston City Hall; verify businesses outrank roads and route preview works.
 5. Repeat a public-safe business query and inspect sanitized cache evidence.
 6. Simulate canonical failures and verify consumer language. Recheck County Road, US 90, TX 146, Saved/Home/Work/Favorites, governed destinations, Route Watch, crossing focus, Reporting, and Awareness Filtering.
+
+# LP100.1 — Deployed Boundary Certification Evidence Completion
+
+## 1. Purpose
+LP100.1 adds only a same-page, runtime-memory certification recorder for externally observed database governance and rejected-origin behavior. It does not test either system, send a request, persist evidence, or change search or Edge Function behavior.
+
+## 2. Existing Deployed Evidence
+The Gridly-owned endpoint is deployed and reachable, the migration is applied, destination requests cross the boundary, explicit-action and sanitized cache evidence are observable, and LP097–LP099 are regression-free. Those browser observations remain separate from the external SQL and rejected-origin observations below.
+
+## 3. Global Provider Governance Verification
+After a successful browser request through `gridly-geocode`, run exactly:
+
+```sql
+select
+  provider_namespace,
+  next_allowed_at,
+  cooldown_until,
+  now() as checked_at
+from public.gridly_geocode_provider_state;
+```
+
+Certify only if at least one row exists, `provider_namespace` is `nominatim-public-v1`, `next_allowed_at` is non-null, and it reflects Edge Function reservation activity. Pass only the resulting booleans to JavaScript; never pass SQL row values.
+
+## 4. Rejected-Origin Verification
+Run this exact Windows PowerShell 5.1-compatible test:
+
+```powershell
+$FunctionUrl = "https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-geocode"
+
+$Headers = @{
+    "Origin" = "https://not-gridly.example"
+    "Content-Type" = "application/json"
+}
+
+$Body = @{
+    intent = "business_place"
+    query = "Dayton City Hall"
+    limit = 5
+    requestId = "lp100-rejected-origin-test"
+} | ConvertTo-Json -Depth 5
+
+try {
+    Invoke-WebRequest `
+        -Uri $FunctionUrl `
+        -Method POST `
+        -Headers $Headers `
+        -Body $Body `
+        -UseBasicParsing
+
+    Write-Host "❌ Unexpected: rejected origin was accepted." -ForegroundColor Red
+}
+catch {
+    $response = $_.Exception.Response
+
+    if ($response) {
+        Write-Host "HTTP status:" ([int]$response.StatusCode)
+    }
+
+    if ($response -and [int]$response.StatusCode -eq 403) {
+        Write-Host "✅ Unapproved origin was rejected with HTTP 403." -ForegroundColor Green
+    }
+    else {
+        Write-Host "❌ Rejection occurred, but HTTP 403 was not confirmed." -ForegroundColor Red
+    }
+}
+```
+
+Record `rejectedOriginHttp403Observed: true` only when HTTP 403 is visibly confirmed. Do not record true for DNS or connection failure, timeout, 401, 404, 500, or any other status. Do not include credentials or paste the endpoint response body into the recorder.
+
+## 5. Runtime-Only Recorder
+`window.gridlyRecordLp100InfrastructureCertification(payload)` requires exactly all six governed fields and strict boolean values. It rejects missing, additional, string, query, URL, Origin/header, credential, coordinate, timestamp, and database-row fields. A valid call copies only the six booleans into module memory and returns the updated passive audit. Reloading recreates empty evidence.
+
+## 6. Privacy Restrictions
+The recorder performs no storage, IndexedDB, Supabase, analytics, network, or console operation. Never supply a query, private address, endpoint URL, Origin, headers, credentials or keys, SQL content, timestamps, or coordinates.
+
+## 7. Browser Certification Sequence
+Run the following only after (1) a successful Gridly boundary browser search in the same page session, (2) SQL provider-state verification, (3) visible HTTP 403 confirmation from the PowerShell test, and (4) no intervening reload.
+
+```js
+(() => {
+  console.clear();
+
+  const record =
+    typeof window.gridlyRecordLp100InfrastructureCertification === "function"
+      ? window.gridlyRecordLp100InfrastructureCertification({
+          globalRateGovernanceVerified: true,
+          rejectedOriginPass: true,
+          providerStateRowObserved: true,
+          providerNamespaceObserved: true,
+          persistentReservationTimestampObserved: true,
+          rejectedOriginHttp403Observed: true
+        })
+      : null;
+
+  const audit =
+    typeof window.gridlyLp100GeocodingBoundaryAudit === "function"
+      ? window.gridlyLp100GeocodingBoundaryAudit()
+      : record;
+
+  const checks = {
+    auditAvailable: !!audit,
+    milestoneCorrect: audit?.milestone === "LP100.1" || audit?.milestone === "LP100",
+    passive: audit?.passive === true,
+    gridlyBoundaryConfigured: audit?.gridlyBoundaryConfigured === true,
+    gridlyBoundaryReachable: audit?.gridlyBoundaryReachable === true,
+    edgeFunctionDetected: audit?.edgeFunctionDetected === true,
+    edgeFunctionDeployed: audit?.edgeFunctionDeployed === true,
+    noDirectBrowserNominatim: audit?.directBrowserNominatimRemoved === true && Number(audit?.directBrowserNominatimSearchCount || 0) === 0,
+    addressSearchUsesGridlyBoundary: audit?.addressSearchUsesGridlyBoundary === true,
+    businessSearchUsesGridlyBoundary: audit?.businessSearchUsesGridlyBoundary === true,
+    governedLocalSearchPreserved: audit?.governedDestinationLocalSearchPreserved === true,
+    explicitRemoteActionAvailable: audit?.explicitRemoteSearchActionAvailable === true,
+    explicitRemoteActionObserved: audit?.remoteSearchExplicitActionObserved === true,
+    remoteAutocompleteDisabled: audit?.remoteAutocompleteDisabled === true,
+    localWhileTypingPreserved: audit?.localWhileTypingSearchPreserved === true,
+    providerAdapterAvailable: audit?.providerAdapterAvailable === true,
+    providerSwitchingAvailable: audit?.providerSwitchingAvailable === true,
+    structuredAddressSupportPreserved: audit?.structuredAddressSupportPreserved === true,
+    businessPlaceSupportPreserved: audit?.businessPlaceSupportPreserved === true,
+    corsConfigured: audit?.corsConfigured === true,
+    approvedOriginPass: audit?.approvedOriginPass === true,
+    rejectedOriginPass: audit?.rejectedOriginPass === true,
+    rejectedOriginHttp403Observed: audit?.rejectedOriginHttp403Observed === true,
+    requestValidationAvailable: audit?.requestValidationAvailable === true,
+    requestRateGovernanceAvailable: audit?.requestRateGovernanceAvailable === true,
+    globalRateGovernanceVerified: audit?.globalRateGovernanceVerified === true,
+    providerStateRowObserved: audit?.providerStateRowObserved === true,
+    providerNamespaceObserved: audit?.providerNamespaceObserved === true,
+    persistentReservationTimestampObserved: audit?.persistentReservationTimestampObserved === true,
+    duplicateInflightReuseAvailable: audit?.duplicateInflightReuseAvailable === true,
+    cacheAvailable: audit?.cacheAvailable === true,
+    cachePrivacyPass: audit?.cachePrivacyPass === true,
+    retryAfterHandlingAvailable: audit?.retryAfterHandlingAvailable === true,
+    providerTimeoutAvailable: audit?.providerTimeoutAvailable === true,
+    providerCooldownAvailable: audit?.providerCooldownAvailable === true,
+    noRawQueryLogging: audit?.rawQueryLoggingDetected === false,
+    noRawQueryPersistence: audit?.rawQueryPersistenceDetected === false,
+    queryRedactionPass: audit?.queryRedactionPass === true,
+    canonicalSuccessContractPass: audit?.canonicalSuccessContractPass === true,
+    canonicalFailureContractPass: audit?.canonicalFailureContractPass === true,
+    lp097RegressionFree: audit?.lp097AddressSearchRegressionDetected === false,
+    lp098RegressionFree: audit?.lp098DestinationCoverageRegressionDetected === false,
+    lp099RegressionFree: audit?.lp099BusinessSearchRegressionDetected === false,
+    routePreviewRegressionFree: audit?.routePreviewRegressionDetected === false,
+    routeWatchRegressionFree: audit?.routeWatchRegressionDetected === false,
+    infrastructureCertificationRecorded: audit?.infrastructureCertificationRecordedThisSession === true,
+    publicLaunchStillBlocked: audit?.safeForPublicLaunch === false,
+    productionCapacityStillUnapproved: audit?.productionProviderCapacityApproved === false,
+    safeToMerge: audit?.safeToMerge === true
+  };
+
+  const failedChecks = Object.entries(checks)
+    .filter(([, passed]) => !passed)
+    .map(([name]) => name);
+
+  console.table(checks);
+  console.log("Full LP100.1 audit:", audit);
+
+  if (failedChecks.length) {
+    console.error("❌ LP100.1 BROWSER CERTIFICATION FAILED", failedChecks);
+    return { passed: false, failedChecks, audit };
+  }
+
+  console.log("✅ LP100.1 BROWSER CERTIFICATION PASSED — SAFE TO MERGE");
+  return { passed: true, failedChecks: [], audit };
+})();
+```
+
+## 8. safeToMerge Decision
+The audit is fail-closed. `safeToMerge` can become true only when same-session endpoint and explicit-action evidence, all pre-existing LP100 contracts/regressions, all provider-state observations, and confirmed rejected-origin HTTP 403 evidence pass.
+
+## 9. safeForPublicLaunch Decision
+**False.** `temporaryPublicNominatimUpstream` remains true and `productionProviderCapacityApproved` remains false; operational monitoring and launch-scale provider approval remain pending.
+
+## 10. Known Limitations
+The recorder records human-verified outcomes; it cannot independently inspect SQL or forge a browser Origin test. Evidence is intentionally lost on reload. Public launch, monitoring, capacity, and the separately inventoried reverse-geocode path remain outside this certification.
+
+## 11. Tests Performed
+Run `npm run test:lp100`, LP097/LP097.1/LP097.2/LP098/LP099 suites, JavaScript syntax checks, and `git diff --check`. The LP100 suite covers strict schema/privacy rejection, fail-closed derivation, complete evidence, session-only state, preserved evidence, and the permanent public-launch block.
+
+## 12. Files Changed
+Only the LP100 passive audit/recorder in `js/app.js`, deterministic LP100 tests, and this certification document change. Search, Edge Function, database schema, migrations, and protected systems are untouched.
+
+## 13. Merge Recommendation
+Recommend merge only after the live sequence above returns `passed: true`, `safeToMerge: true`, and `safeForPublicLaunch: false`. Repository tests alone do not assert that the external checks were performed.
