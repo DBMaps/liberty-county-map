@@ -36021,6 +36021,14 @@ function getGridlyCanonicalSearchTerms(value = "") {
 
 const GRIDLY_LP097_MAX_PROVIDER_ATTEMPTS = 3;
 const GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT = 15;
+const gridlyLp097RuntimeEvidence = {
+  requestAttempted: false, responseReceived: false, responseStatus: "not_attempted",
+  providerCandidateCount: 0, exactAddressCandidateFound: false, visibleProviderResultCount: 0,
+  selectedResultSource: null, providerErrorOccurred: false, cooldownOccurred: false,
+  successfulRequestObservedThisSession: false,
+  deduplication: { candidateCountBeforeDeduplication: 0, candidateCountAfterDeduplication: 0, duplicateGroupCount: 0, curatedOverProviderSurvivorCount: 0, unresolvedPossibleDuplicateCount: 0, duplicateReasonCodes: [] }
+};
+let gridlyLp097BrowserCertification = null;
 
 function buildGridlyLp097AddressModel(rawQuery = "") {
   const originalQuery = String(rawQuery || "").trim().replace(/\s+/g, " ");
@@ -36647,9 +36655,15 @@ function dedupeGridlySearchResults(results, options = {}) {
   const maxResults = Number.isFinite(parsedLimit)
     ? Math.min(Math.max(Math.floor(parsedLimit), 1), 25)
     : GRIDLY_SEARCH_RENDER_LIMIT;
+  const governed = window.GRIDLY_LP097_SEARCH_GOVERNANCE?.deduplicate
+    ? window.GRIDLY_LP097_SEARCH_GOVERNANCE.deduplicate(results)
+    : { results, evidence: null };
+  if (governed.evidence && (governed.evidence.duplicateGroupCount > 0 || gridlyLp097RuntimeEvidence.deduplication.candidateCountBeforeDeduplication === 0)) {
+    gridlyLp097RuntimeEvidence.deduplication = { ...governed.evidence };
+  }
   const seen = new Set();
   const deduped = [];
-  for (const result of results) {
+  for (const result of governed.results) {
     const display = buildGridlySearchDisplayLines(result);
     const labelKey = normalizeGridlySearchDisplayLabel(display.title);
     const hasCoords = Number.isFinite(result?.lat) && Number.isFinite(result?.lng);
@@ -36822,6 +36836,7 @@ function renderGridlySearchResults(results = [], options = {}) {
   }
   const prioritizedResults = prioritizeGridlySearchResults(normalizedResults, { query: options?.query || ensureGridlySearchState().activeQuery || "" });
   const renderedResults = dedupeGridlySearchResults(prioritizedResults);
+  gridlyLp097RuntimeEvidence.visibleProviderResultCount = renderedResults.filter((result) => result?.provider !== "local_poi_seed" && result?.provider !== "saved_place").length;
   gridlySearchUiState.lastRenderedResults = renderedResults;
   gridlySearchUiState.lastRenderedResultsPreview = renderedResults.map((result) => summarizeGridlyDestinationSearchResult(result)).filter(Boolean);
 
@@ -41136,6 +41151,11 @@ function selectGridlySearchResult(result, options = {}) {
   gridlyDestinationPerformanceAuditState.destinationFlowStartedAt = destinationSelectStartedAt;
   const normalized = normalizeGridlySearchResult(result);
   if (!normalized) return null;
+  if (normalized.provider !== "local_poi_seed" && normalized.provider !== "saved_place") {
+    gridlyLp097RuntimeEvidence.selectedResultSource = "provider";
+  } else if (normalized.raw?.seedSource === "lp097_governed_curated") {
+    gridlyLp097RuntimeEvidence.selectedResultSource = "curated";
+  } else gridlyLp097RuntimeEvidence.selectedResultSource = normalized.provider;
   if (!Number.isFinite(normalized?.lat) || !Number.isFinite(normalized?.lng)) {
     if (!gridlySearchUiState.debugWarningsSeen.has("select-invalid-normalized-result")) {
       console.warn("Gridly selection aborted: normalized result missing coordinates.");
@@ -85298,6 +85318,24 @@ function getGridlyExplicitQueryLocationTokens(query = "") {
   return tokens.filter((token) => !brandTokens.has(token) && !categoryTokens.has(token));
 }
 
+function gridlyLp097HasExplicitOutOfAreaIntent(query = "", searchContext = null) {
+  const normalized = normalizeGridlySearchDisplayLabel(query);
+  if (/\b(alabama|alaska|arizona|arkansas|california|colorado|connecticut|delaware|florida|georgia|hawaii|idaho|illinois|indiana|iowa|kansas|kentucky|louisiana|maine|maryland|massachusetts|michigan|minnesota|mississippi|missouri|montana|nebraska|nevada|new hampshire|new jersey|new mexico|new york|north carolina|north dakota|ohio|oklahoma|oregon|pennsylvania|rhode island|south carolina|south dakota|tennessee|utah|vermont|virginia|washington|west virginia|wisconsin|wyoming)\b/.test(normalized)) return true;
+  const anchor = getGridlySearchAnchorContext(searchContext || getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext()));
+  const anchorTokens = new Set(getGridlySearchQueryTokens(anchor?.label || ""));
+  const locationTokens = getGridlyExplicitQueryLocationTokens(query);
+  const knownAreaTokens = locationTokens.filter((token) => Object.prototype.hasOwnProperty.call(LOCAL_PLACE_LOOKUP, token));
+  return knownAreaTokens.length > 0 && !knownAreaTokens.some((token) => anchorTokens.has(token));
+}
+
+function preserveGridlyLp097StrongLocalResults(results = [], options = {}) {
+  if (!Array.isArray(results) || results.length < 2 || gridlyLp097HasExplicitOutOfAreaIntent(options.query, options.searchContext)) return results;
+  const strongLocal = results.filter((result) => isGridlyLocalQualitySearchResult(result));
+  if (strongLocal.length < 2) return results;
+  const distant = results.filter((result) => !isGridlyLocalQualitySearchResult(result));
+  return [...strongLocal, ...distant];
+}
+
 function gridlySeedMatchesQuery(seed, rawQuery = "", intent = null) {
   const queryInfo = getGridlyCanonicalSearchTerms(rawQuery);
   if (!queryInfo.normalized) return false;
@@ -85436,18 +85474,29 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
     error: event.error || ""
   });
   if (event.attempted) diagnostics.providerAttempted = true;
+  if (event.attempted) gridlyLp097RuntimeEvidence.requestAttempted = true;
   if (event.cacheHit) diagnostics.cacheHit = true;
   if (event.cooldownActive) diagnostics.cooldownActive = true;
+  if (event.cooldownActive) gridlyLp097RuntimeEvidence.cooldownOccurred = true;
   if (event.duplicateSuppressed) diagnostics.duplicateSuppressed = true;
   if (event.throttled) diagnostics.throttled = true;
   if (event.skippedReason && !diagnostics.providerSkippedReason) diagnostics.providerSkippedReason = event.skippedReason;
   if (event.error && !diagnostics.providerError) diagnostics.providerError = event.error;
+  if (event.error) gridlyLp097RuntimeEvidence.providerErrorOccurred = true;
   if (event.status === "rate_limited") diagnostics.providerStatus = "rate_limited";
   else if (event.status === "failed" && diagnostics.providerStatus !== "rate_limited") diagnostics.providerStatus = "failed";
   else if (event.status === "ok" && !["failed", "rate_limited"].includes(diagnostics.providerStatus)) diagnostics.providerStatus = "ok";
   else if (event.status === "cache_hit" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cache_hit";
   else if (event.status === "cooldown" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cooldown";
   else if (event.status === "duplicate_reused" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "duplicate_reused";
+  if (["ok", "failed", "rate_limited"].includes(event.status)) {
+    gridlyLp097RuntimeEvidence.responseReceived = true;
+    gridlyLp097RuntimeEvidence.responseStatus = event.status === "ok" ? "success" : event.status;
+  }
+  if (event.status === "ok") {
+    gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession = true;
+    gridlyLp097RuntimeEvidence.providerCandidateCount += Number(event.count) || 0;
+  }
 }
 
 function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResultCount, finalResultCount) {
@@ -85598,6 +85647,7 @@ async function gridlySearchAddress(query, options = {}) {
     const exactInAttempt = variantResults.map((item) => normalizeGridlySearchResult(item)).filter(Boolean)
       .map((item) => ({ ...item, ...classifyGridlyLp097Result(item, addressModel) }))
       .some((item) => item.exactAddress);
+    if (exactInAttempt) gridlyLp097RuntimeEvidence.exactAddressCandidateFound = true;
     if (exactInAttempt) break;
 
     const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
@@ -85628,7 +85678,8 @@ async function gridlySearchAddress(query, options = {}) {
   const containmentFilteredResults = filterGridlyDestinationSearchContainmentResults(prioritizedResults, { query: rawQuery, intent, searchContext });
   const dedupedResults = dedupeGridlySearchResults(containmentFilteredResults, { limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT });
   const qualityFilteredResults = filterGridlyGenericLocalQualityResults(dedupedResults, { query: rawQuery, intent, diagnostics });
-  const finalResults = qualityFilteredResults.slice(0, limit);
+  const localityReservedResults = preserveGridlyLp097StrongLocalResults(qualityFilteredResults, { query: rawQuery, intent, searchContext });
+  const finalResults = localityReservedResults.slice(0, limit);
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
   return finalResults;
@@ -114657,11 +114708,22 @@ function gridlyLp097AddressResolutionAudit() {
   const fixtures = { total: 60, rural: 15, publicPlaces: 15 };
   const duplicates = ids.length - new Set(ids).size;
   const invalidCoordinates = curated.filter((record) => !parseValidCoordinatePair(record.lat, record.lng)).length;
+  const certification = gridlyLp097BrowserCertification || {};
+  const providerObserved = gridlyLp097RuntimeEvidence.requestAttempted && gridlyLp097RuntimeEvidence.responseReceived
+    && gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession;
+  const certificationComplete = certification.addressExactResultObserved === true && certification.addressRank === 1
+    && certification.addressCoordinateValidityPass === true && certification.addressRouteHandoffPass === true
+    && certification.curatedMedicalResultObserved === true && certification.curatedGovernmentResultObserved === true
+    && certification.duplicateMedicalResultResolved === true && certification.localityPriorityPass === true
+    && certification.distantFallbackPreserved === true && certification.privatePersistencePass === true;
+  const safeToMerge = providerObserved && gridlyLp097RuntimeEvidence.visibleProviderResultCount > 0 && certificationComplete;
   return {
-    available: true, milestone: "LP097", passive: true, productionIsolationPreserved: true,
-    providerBoundaryAvailable: false, providerName: "OpenStreetMap Nominatim (temporary direct browser boundary)",
+    available: true, milestone: "LP097.1", passive: true, productionIsolationPreserved: true,
+    providerBoundaryAvailable: false, ownedProviderBoundaryAvailable: false,
+    temporaryDirectProviderBoundaryActive: true, ownedProviderBoundaryRequiredBeforePublicLaunch: true,
+    providerName: "OpenStreetMap Nominatim (temporary direct browser boundary)",
     providerComplianceReviewed: true, providerRequestLimitAvailable: true, providerCacheAvailable: true,
-    providerFailureClassificationAvailable: true, providerIntegrationStatus: "not_executed",
+    providerFailureClassificationAvailable: true, providerIntegrationStatus: providerObserved ? "observed_success_this_session" : "not_executed",
     addressIntentDetectionAvailable: true, houseNumberDetectionAvailable: true,
     countyRoadNormalizationAvailable: true, crExpansionAvailable: true, localityEnrichmentAvailable: true,
     structuredAddressQueryAvailable: true, controlledFallbackAvailable: true,
@@ -114670,6 +114732,8 @@ function gridlyLp097AddressResolutionAudit() {
     evaluatedCandidatePoolExpanded: true, visibleResultLimitPreserved: true,
     consumerProviderFailureStateAvailable: true, consumerNoExactMatchStateAvailable: true,
     consumerApproximateLabelAvailable: true,
+    crossSourceDeduplicationAvailable: Boolean(window.GRIDLY_LP097_SEARCH_GOVERNANCE?.deduplicate),
+    localityPriorityAvailable: true, distantResultSuppressionAvailable: true, explicitOutOfAreaQueryPreserved: true,
     curatedDestinationInventoryAvailable: curated.length > 0, curatedDestinationCount: curated.length,
     medicalDestinationCount: categoryCount(/medical|hospital|emergency|urgent/),
     governmentDestinationCount: categoryCount(/government|courthouse|sheriff|police|city hall/),
@@ -114678,7 +114742,21 @@ function gridlyLp097AddressResolutionAudit() {
     communityDestinationCount: categoryCount(/community.destination|grocery|retail|park|airport/),
     duplicateCuratedDestinationCount: duplicates, invalidCuratedCoordinateCount: invalidCoordinates,
     certificationFixtureCount: fixtures.total, ruralAddressFixtureCount: fixtures.rural,
-    publicPlaceFixtureCount: fixtures.publicPlaces, providerIntegrationExecuted: false,
+    publicPlaceFixtureCount: fixtures.publicPlaces, providerIntegrationExecuted: providerObserved,
+    providerRequestObservedThisSession: gridlyLp097RuntimeEvidence.requestAttempted,
+    providerResponseObservedThisSession: gridlyLp097RuntimeEvidence.responseReceived,
+    providerResponseStatus: gridlyLp097RuntimeEvidence.responseStatus,
+    providerCandidatesReturnedThisSession: gridlyLp097RuntimeEvidence.providerCandidateCount > 0,
+    providerCandidateCount: gridlyLp097RuntimeEvidence.providerCandidateCount,
+    exactAddressProviderResultNormalizedThisSession: gridlyLp097RuntimeEvidence.exactAddressCandidateFound,
+    providerResultRenderedThisSession: gridlyLp097RuntimeEvidence.visibleProviderResultCount > 0,
+    visibleProviderResultCount: gridlyLp097RuntimeEvidence.visibleProviderResultCount,
+    providerResultSelectedThisSession: gridlyLp097RuntimeEvidence.selectedResultSource === "provider",
+    selectedResultSource: gridlyLp097RuntimeEvidence.selectedResultSource,
+    providerErrorOccurredThisSession: gridlyLp097RuntimeEvidence.providerErrorOccurred,
+    providerCooldownOccurredThisSession: gridlyLp097RuntimeEvidence.cooldownOccurred,
+    mostRecentSuccessfulRequestThisSession: gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession,
+    queryRedacted: true, ...gridlyLp097RuntimeEvidence.deduplication,
     successfulResolutionRate: null, coordinateValidityPass: invalidCoordinates === 0,
     routeHandoffPass: true, exactAddressRankingPass: true, curatedNameRankingPass: true,
     honestApproximationPass: true, privateAddressPersistencePass: true,
@@ -114687,7 +114765,24 @@ function gridlyLp097AddressResolutionAudit() {
     historicalIntelligenceUnchanged: true, crossingInteractionsUnchanged: true, savedPlacesUnchanged: true,
     homeWorkPersonalizationUnchanged: true,
     deterministicAssessmentPass: duplicates === 0 && invalidCoordinates === 0 && curated.length > 0,
-    browserCertificationRequired: true, safeToMerge: false
+    browserAddressResultObserved: certification.addressExactResultObserved === true,
+    browserCuratedDestinationObserved: certification.curatedMedicalResultObserved === true && certification.curatedGovernmentResultObserved === true,
+    browserRouteHandoffObserved: certification.addressRouteHandoffPass === true,
+    browserPrivatePersistenceCheckRecorded: certification.privatePersistencePass === true,
+    duplicateMedicalResultResolved: certification.duplicateMedicalResultResolved === true,
+    browserCertificationRequired: true, browserCertificationRecordedThisSession: certificationComplete,
+    safeToMerge, safeForPublicLaunch: false
   };
 }
 window.gridlyLp097AddressResolutionAudit = gridlyLp097AddressResolutionAudit;
+window.gridlyRecordLp097BrowserCertification = function gridlyRecordLp097BrowserCertification(record) {
+  const accepted = new Set(["addressExactResultObserved", "addressRank", "addressCoordinateValidityPass", "addressRouteHandoffPass", "curatedMedicalResultObserved", "curatedGovernmentResultObserved", "duplicateMedicalResultResolved", "localityPriorityPass", "distantFallbackPreserved", "privatePersistencePass"]);
+  if (!record || typeof record !== "object" || Array.isArray(record)) throw new TypeError("LP097.1 certification must be an object.");
+  const unknown = Object.keys(record).filter((key) => !accepted.has(key));
+  if (unknown.length) throw new TypeError(`Unknown LP097.1 certification field: ${unknown.join(", ")}`);
+  if (Object.keys(record).length !== accepted.size || [...accepted].some((key) => !Object.prototype.hasOwnProperty.call(record, key))) throw new TypeError("LP097.1 certification requires every governed field.");
+  if (!Number.isInteger(record.addressRank) || record.addressRank < 1 || record.addressRank > GRIDLY_SEARCH_RENDER_LIMIT) throw new TypeError("addressRank must be a visible integer rank.");
+  for (const [key, value] of Object.entries(record)) if (key !== "addressRank" && typeof value !== "boolean") throw new TypeError(`${key} must be boolean.`);
+  gridlyLp097BrowserCertification = Object.freeze({ ...record });
+  return gridlyLp097AddressResolutionAudit();
+};
