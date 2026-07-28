@@ -35998,6 +35998,7 @@ function getGridlySearchQueryTokens(query = "") {
 }
 
 function normalizeGridlyBrandSearchText(value = "") {
+  if (window.GRIDLY_LP101_SEARCH_QUALITY?.normalize) return window.GRIDLY_LP101_SEARCH_QUALITY.normalize(value);
   let normalized = normalizeGridlySearchDisplayLabel(value)
     .replace(/[’']/g, "")
     .replace(/&/g, " and ")
@@ -36149,6 +36150,8 @@ function classifyGridlyDestinationSearchIntent(query = "") {
   }
   const businessIntent = window.GRIDLY_LP099_BUSINESS_SEARCH?.classifyIntent?.(query);
   if (businessIntent) return businessIntent;
+  const lp101Intent = window.GRIDLY_LP101_SEARCH_QUALITY?.understand?.(query);
+  if (lp101Intent?.category) return { type: GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE, reason: "category_intent", category: lp101Intent.category };
   if (gridlySearchQueryHasDestinationIndicator(normalized)) {
     return { type: GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION, reason: "destination_indicator" };
   }
@@ -36604,6 +36607,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     const lp099Classification = intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE
       ? window.GRIDLY_LP099_BUSINESS_SEARCH?.evaluate?.(options.query || "", result)
       : null;
+    const lp101Classification = window.GRIDLY_LP101_SEARCH_QUALITY?.evaluate?.(options.query || "", result, { distanceMiles: anchorDistanceMiles });
     if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.houseAgreement && lp097Classification.roadAgreement && lp097Classification.conflictReasons.length) {
       gridlyLp097RuntimeEvidence.falseExactAddressPrevented = true;
       gridlyLp097RuntimeEvidence.geographicConflictCandidateCount += 1;
@@ -36615,6 +36619,7 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
     else if (lp097Classification.precision === "address") score += 700;
     else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && ["road", "approximate"].includes(lp097Classification.precision)) score -= 300;
     if (lp099Classification) score += lp099Classification.boost;
+    if (lp101Classification) score += lp101Classification.boost;
     if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) score -= 1800;
     if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && getGridlySearchResultTitleMatchScore(result, options.query || "") >= 20) score += 900;
     if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
@@ -85446,7 +85451,8 @@ function searchGridlyLocalPoiSeeds(rawQuery = "", options = {}) {
 }
 
 function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
-  const query = String(rawQuery || "").trim();
+  const originalQuery = String(rawQuery || "").trim();
+  const query = window.GRIDLY_LP101_SEARCH_QUALITY?.normalize?.(originalQuery) || originalQuery;
   if (!query) return [];
   const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
   const addressModel = buildGridlyLp097AddressModel(query);
