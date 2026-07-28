@@ -157,3 +157,52 @@ LP097 exact-address behavior, LP098 governed destinations, LP099 classification,
 Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
 
 Merge only when the LP097–LP101.3 automated suite passes and the one-line browser certification reports `failedChecks: []`, `routePreviewVerified: true`, and `safeToMerge: true`.
+
+## LP101.4 — visible candidate pipeline resolution
+
+### Proven runtime failures
+
+The production renderer was a second candidate-combination boundary. `gridlySearchAddress()` applied the
+LP101.3 relevance gate, but `renderGridlySearchResults()` subsequently merged Saved Places and normalized
+and ranked that new list without applying the gate again. More importantly for the observed road cards, the
+live UI intentionally rendered local seeds before the canonical request completed. LP101.3 certification
+treated the first canonical evidence entry as “settled,” even though later provider variants and the final
+render were still pending. It therefore inspected the immediate seed list (or DOM left from a prior case),
+not the gated final array. The proven address fallback injection stage was the **immediate local-seed render
+before remote completion**; the renderer's later merge was the schema boundary that lacked a final guard.
+
+The business failure was the same observation race: certification could settle after the first canonical
+evidence record while additional provider variants were still running, then inspect immediate or prior DOM.
+A canonical Walmart candidate uses the production legacy shape
+(`title`, `type`, and `raw.address`/`raw.categories`) and is preserved by the business-target gate. If none
+of the canonical variants returns that target, diagnostics now identify
+`canonical_provider_recall_no_business_target`; unrelated local roads are not relabeled as a business result.
+
+### Exact production correction and agreement
+
+The renderer now applies the existing explicit-intent relevance contract once, after its final Saved Place
+merge and normalization and before ranking/deduplication. This is the smallest production correction: it
+does not add a ranking rule or alter the provider, canonical response, containment, or routing models. It
+also covers the immediate seed render, so an address canonical no-result has zero unrelated cards and a
+returned Walmart candidate remains eligible with Dayton/Liberty geographic context.
+
+Every governed certification render is tagged with its safe case identity, render phase, and final input
+count. Certification waits for the `final` phase, scopes cards to the active `#gridlySearchResults`
+container and current case, and excludes hidden, aria-hidden, stale, prior-case, and external nodes. Each
+case reports `renderInputCount`, `activeVisibleNodeCount`, `renderDomAgreement`, and
+`currentCaseIdentityAgreement`; aggregate `candidatePipelineAgreement` and `renderDomAgreement` fail
+closed. The session-only `window.gridlyLp101CandidatePipelineDebug?.("address" | "business")` helper runs
+only a governed case and returns privacy-safe candidate summaries without raw addresses, coordinates,
+provider payloads, credentials, history, or persistent logs.
+
+### Tests, browser command, and merge recommendation
+
+LP101.4 adds production-schema, final-gate, seed-injection, address no-result, Walmart preservation and
+recall, DOM agreement/scoping, protected category/governed cases, Route Preview, and canonical-boundary
+contracts. The complete LP097 through LP101.4 suite and JavaScript/diff checks are required.
+
+Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
+
+Merge only when the production browser returns `failedChecks: []`, `candidatePipelineAgreement: true`,
+`renderDomAgreement: true`, `routePreviewVerified: true`, and `safeToMerge: true`. A provider-recall finding
+or any render/DOM disagreement is a do-not-merge result.
