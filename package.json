@@ -47,6 +47,7 @@
     "test:lp0971": "node tests/lp0971-search-governance.test.js",
     "test:lp0972": "node tests/lp0972-geographic-exactness-and-medical-deduplication.test.js",
     "test:lp098": "node tests/lp098-28-county-destination-coverage.test.js",
-    "test:lp099": "node tests/lp099-business-and-place-search.test.js"
+    "test:lp099": "node tests/lp099-business-and-place-search.test.js",
+    "test:lp100": "node tests/lp100-geocoding-boundary.test.js"
   }
 }
