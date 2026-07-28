@@ -114745,6 +114745,8 @@ function gridlyLp097AddressResolutionAudit() {
   const certification = gridlyLp097BrowserCertification || {};
   const providerObserved = gridlyLp097RuntimeEvidence.requestAttempted && gridlyLp097RuntimeEvidence.responseReceived
     && gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession;
+  const falseExactAddressProtectionPass = gridlyLp097RuntimeEvidence.geographicConflictCandidateCount === 0
+    || gridlyLp097RuntimeEvidence.falseExactAddressPrevented === true;
   const certificationComplete = certification.addressExactResultObserved === true && certification.addressRank === 1
     && certification.addressGeographyMatchPass === true && certification.wrongCountyExactPrevented === true
     && certification.addressCoordinateValidityPass === true && certification.addressRouteHandoffPass === true
@@ -114796,6 +114798,7 @@ function gridlyLp097AddressResolutionAudit() {
     queryRedacted: true, ...gridlyLp097RuntimeEvidence.deduplication,
     falseExactAddressPrevented: gridlyLp097RuntimeEvidence.falseExactAddressPrevented,
     geographicConflictCandidateCount: gridlyLp097RuntimeEvidence.geographicConflictCandidateCount,
+    falseExactAddressProtectionPass,
     exactAddressConflictReasonCounts: { ...gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts },
     wrongCountyExactAddressCount: gridlyLp097RuntimeEvidence.wrongCountyExactAddressCount,
     wrongZipExactAddressCount: gridlyLp097RuntimeEvidence.wrongZipExactAddressCount,
