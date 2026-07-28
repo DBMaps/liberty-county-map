@@ -83,7 +83,26 @@
     const typoTolerancePassed = ["mcdonlds", "walmartt", "hopsital", "libary"].every((term) => !normalize(term).includes(term));
     const intentRecognitionPassed = ["Hospital", "Fire Department", "Post Office", "Airport", "Church", "School"].every((query) => understand(query).category);
     const mixed = understand("Dayton Walmart");
-    return Object.freeze({ milestone: "LP101", available: true, normalizationPassed, typoTolerancePassed, intentRecognitionPassed, multiTermPassed: mixed.geography === "dayton" && mixed.destinationTerms.includes("walmart"), canonicalResponseUsage: true, providerIndependent: true, providerBoundaryUnchanged: true, additionalNetworkRequests: 0, protectedSystemsUnchanged: true, safeToMerge: normalizationPassed && typoTolerancePassed && intentRecognitionPassed });
+    const client = global.gridlyGeocodingClient;
+    const evidence = typeof client?.evidence === "function" ? client.evidence() : [];
+    const searches = evidence.filter((entry) => entry.requestType === "destination_search");
+    const boundaryConfigured = Boolean(client?.endpoint && client?.functionSlug === "gridly-geocode");
+    const boundaryRequestAttempted = searches.length > 0;
+    const boundaryReachable = searches.some((entry) => Number.isInteger(entry.httpStatus));
+    const httpSuccessObserved = searches.some((entry) => entry.requestSucceeded === true);
+    const canonicalSuccessResponseObserved = searches.some((entry) => entry.canonicalSuccess === true);
+    const canonicalFailureResponseObserved = searches.some((entry) => entry.canonicalFailure === true);
+    const http404Observed = searches.some((entry) => entry.httpStatus === 404);
+    const directUpstreamBrowserRequestsAbsent = Number(client?.directProviderRequestCount?.() || 0) === 0
+      && !evidence.some((entry) => entry.directProviderRequestDetected === true);
+    const fatalRuntimeFailureObserved = searches.some((entry) => entry.httpStatus === 401 || entry.httpStatus === 404
+      || entry.httpStatus >= 500 || entry.httpStatus === null || entry.failureCode === "malformed_response");
+    const providerIndependentResponseConfirmed = searches.some((entry) => entry.providerBoundaryUsed === true);
+    const safeToMerge = normalizationPassed && typoTolerancePassed && intentRecognitionPassed
+      && boundaryConfigured && boundaryRequestAttempted && boundaryReachable && httpSuccessObserved
+      && providerIndependentResponseConfirmed && (canonicalSuccessResponseObserved || canonicalFailureResponseObserved)
+      && directUpstreamBrowserRequestsAbsent && !fatalRuntimeFailureObserved;
+    return Object.freeze({ milestone: "LP101.1", available: true, normalizationPassed, typoTolerancePassed, intentRecognitionPassed, multiTermPassed: mixed.geography === "dayton" && mixed.destinationTerms.includes("walmart"), boundaryConfigured, boundaryRequestAttempted, boundaryReachable, httpSuccessObserved, canonicalSuccessResponseObserved, canonicalFailureResponseObserved, http404Observed, providerIndependentResponseConfirmed, directUpstreamBrowserRequestsAbsent, runtimeEvidence: evidence, protectedSystemsUnchanged: true, safeToMerge });
   }
 
   global.GRIDLY_LP101_SEARCH_QUALITY = Object.freeze({ normalize, understand, evaluate });
