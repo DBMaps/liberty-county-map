@@ -1,5 +1,5 @@
-const GRIDLY_SW_VERSION = "lp052.2-update-lifecycle";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp0522-v1";
+const GRIDLY_SW_VERSION = "lp101.1-runtime-recovery";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp1011-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",

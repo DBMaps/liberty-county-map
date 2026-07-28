@@ -61,7 +61,8 @@ async function execute(body: any, key: string, requestId: string, origin: string
   const rows = await upstream.json(); const results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
   const payload = results.length ? { ok: true, status: "success", provider: CONFIG.provider, providerBoundary: "gridly", cached: false, requestId, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
-  return new Response(JSON.stringify(payload), { status: results.length ? 200 : 404, headers: cors(origin) });
+  // A valid canonical no-result is an application outcome, not a missing HTTP resource.
+  return new Response(JSON.stringify(payload), { status: 200, headers: cors(origin) });
 }
 
 Deno.serve(async (request) => {

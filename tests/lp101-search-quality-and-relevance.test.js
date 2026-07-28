@@ -19,9 +19,9 @@ assert.ok(quality.evaluate('Walmart', governed).boost > quality.evaluate('Walmar
 assert.ok(quality.evaluate('Nearest Hospital', { title: 'Liberty Hospital', type: 'hospital', raw: { categories: ['hospital'] } }, { distanceMiles: 2 }).boost > quality.evaluate('Nearest Hospital', { title: 'Regional Hospital', type: 'hospital', raw: { categories: ['hospital'] } }, { distanceMiles: 60 }).boost);
 
 const certification = sandbox.window.gridlyLp101BrowserCertification();
-assert.equal(certification.safeToMerge, true);
-assert.equal(certification.providerIndependent, true);
-assert.equal(certification.additionalNetworkRequests, 0);
+assert.equal(certification.safeToMerge, false, 'runtime evidence is required');
+assert.equal(certification.boundaryRequestAttempted, false);
+assert.equal(certification.directUpstreamBrowserRequestsAbsent, true);
 
 const app = fs.readFileSync('js/app.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');

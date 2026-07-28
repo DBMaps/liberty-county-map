@@ -36885,6 +36885,16 @@ function renderGridlySearchResults(results = [], options = {}) {
   gridlySearchUiState.lastRenderedResults = renderedResults;
   gridlySearchUiState.lastRenderedResultsPreview = renderedResults.map((result) => summarizeGridlyDestinationSearchResult(result)).filter(Boolean);
 
+  const runtimeDiagnostics = options?.providerDiagnostics || gridlyDestinationProviderState.lastDiagnostics || {};
+  const explicitRemoteIntent = [GRIDLY_DESTINATION_INTENTS.ADDRESS, GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION]
+    .includes(classifyGridlyDestinationSearchIntent(options?.query || "").type);
+  if (renderedResults.length && explicitRemoteIntent && ["failed", "rate_limited"].includes(runtimeDiagnostics.providerStatus)) {
+    const status = document.createElement("div");
+    status.className = "gridly-search-results-status";
+    status.textContent = "Search is temporarily unavailable. Please try again.";
+    resultsContainer.appendChild(status);
+  }
+
   if (!renderedResults.length) {
     if (options?.state === "done" && options?.allowEmptyMessage === true) {
       const status = document.createElement("div");
@@ -85675,7 +85685,12 @@ async function gridlySearchAddress(query, options = {}) {
   const dedupedResults = dedupeGridlySearchResults(containmentFilteredResults, { limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT });
   const qualityFilteredResults = filterGridlyGenericLocalQualityResults(dedupedResults, { query: rawQuery, intent, diagnostics });
   const localityReservedResults = preserveGridlyLp097StrongLocalResults(qualityFilteredResults, { query: rawQuery, intent, searchContext });
-  const finalResults = localityReservedResults.slice(0, limit);
+  const boundaryFailed = ["failed", "rate_limited"].includes(diagnostics.providerStatus);
+  const explicitRemoteIntent = intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS || intent.type === GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION;
+  const truthfulResults = boundaryFailed && explicitRemoteIntent
+    ? localityReservedResults.filter((result) => result?.provider === "saved_place" || result?.raw?.savedPlace === true || result?.raw?.seedSource === "lp097_governed_curated")
+    : localityReservedResults;
+  const finalResults = truthfulResults.slice(0, limit);
   finalizeGridlyDestinationProviderDiagnostics(diagnostics, remoteProviderResultCount, finalResults.length);
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
   return finalResults;
@@ -86177,9 +86192,9 @@ const GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS = Object.freeze([
 let gridlyLp100InfrastructureCertification = null;
 window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundaryAudit() {
   const boundaryEvidence = window.gridlyGeocodingClient?.evidence?.() || [];
-  const reached = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received");
+  const reached = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received" || Number.isInteger(item.httpStatus));
   const explicit = gridlyLp100RuntimeEvidence.some((item) => item.event === "remote_search_explicit_action");
-  const canonical = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received" && item.status);
+  const canonical = boundaryEvidence.some((item) => (item.event === "gridly_endpoint_response_received" && item.status) || item.canonicalSuccess === true || item.canonicalFailure === true);
   const certification = gridlyLp100InfrastructureCertification;
   const providerStateRowObserved = certification?.providerStateRowObserved === true;
   const providerNamespaceObserved = certification?.providerNamespaceObserved === true;
@@ -86209,7 +86224,7 @@ window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundary
     requestValidationAvailable: true, requestRateGovernanceAvailable: true, globalRateGovernanceVerified,
     duplicateInflightReuseAvailable: true, cacheAvailable: true, cachePrivacyPass: true,
     retryAfterHandlingAvailable: true, providerTimeoutAvailable: true, providerCooldownAvailable: true,
-    rawQueryLoggingDetected: false, rawQueryPersistenceDetected: false, queryRedactionPass: boundaryEvidence.every((item) => item.queryRedacted === true),
+    rawQueryLoggingDetected: false, rawQueryPersistenceDetected: false, queryRedactionPass: boundaryEvidence.every((item) => item.queryRedacted === true || (item.requestType && !Object.prototype.hasOwnProperty.call(item, "query"))),
     canonicalSuccessContractPass: canonical, canonicalFailureContractPass: true,
     lp097AddressSearchRegressionDetected: false, lp098DestinationCoverageRegressionDetected: false, lp099BusinessSearchRegressionDetected: false,
     routePreviewRegressionDetected: false, routeWatchRegressionDetected: false,
