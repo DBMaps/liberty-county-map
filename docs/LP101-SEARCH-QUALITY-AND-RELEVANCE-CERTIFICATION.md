@@ -206,3 +206,53 @@ Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
 Merge only when the production browser returns `failedChecks: []`, `candidatePipelineAgreement: true`,
 `renderDomAgreement: true`, `routePreviewVerified: true`, and `safeToMerge: true`. A provider-recall finding
 or any render/DOM disagreement is a do-not-merge result.
+
+## LP101.5 — truthful address no-result certification
+
+### LP101.4 production result and contradiction
+
+The authoritative LP101.4 production run reported pipeline agreement, DOM agreement, and Route Preview
+verification. Business, category, and governed-destination cases passed. The address request reached the
+Gridly boundary, observed a canonical response, rendered zero result cards, and displayed no unrelated
+road fallback, but `address:passed` was false. This contradicted the established address contract: the
+product intentionally prefers an honest settled no-result to a fabricated destination.
+
+The defect was confined to certification outcome recognition, not search ranking, provider queries,
+routing, or the candidate pipeline. The address branch did not make its two accepted outcomes explicit
+and relied on a narrow message check rather than certifying the complete active-container no-result state.
+
+### Corrected address outcomes and UI evidence
+
+The address case now reports one privacy-safe `addressOutcome`:
+
+- `relevant_result` when a matching address or roadway is visibly rendered after a canonical response;
+- `truthful_no_result` when the canonical boundary settles successfully, the final gated render and active
+  DOM both contain zero candidates, and the active search container visibly presents the governed
+  consumer-safe no-result meaning; or
+- `failed` for every other state.
+
+The companion fields `relevantAddressResultObserved`, `truthfulNoResultObserved`,
+`noResultMessageObserved`, and `canonicalNoResultAccepted` expose which contract path was proven without
+returning a query, address, coordinates, or provider data. Semantic recognition accepts the approved
+“couldn’t confirm” or “no matching destination(s) found” meanings without depending on capitalization or
+punctuation. It inspects visible status content only inside the active search results container.
+
+Truthful no-result acceptance remains fail-closed: it requires settled final-phase and current-case
+identity, canonical and successful HTTP evidence through the Gridly boundary, no direct provider call,
+zero final render inputs, zero current cards, no stale prior-case nodes, pipeline/DOM agreement, and no
+unrelated roadway fallback. A blank container, HTTP/provider failure, missing boundary evidence, stale
+cards, or count disagreement cannot pass.
+
+### Tests, browser command, and merge criteria
+
+LP101.5 covers relevant-result and truthful-no-result paths; visible settled-message, canonical, HTTP,
+stale-node, roadway-rejection, pipeline, and DOM failure cases; preservation of business, medical
+category, governed destination, Route Preview, and provider boundary behavior; direct-provider
+protection; privacy; and truthful `safeToMerge` aggregation. The full LP097 through LP101.5 suites plus
+JavaScript syntax and diff checks are required.
+
+Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
+
+Merge only after the production browser reports the address as `truthful_no_result` (or a relevant
+result), `failedChecks: []`, both agreement fields and Route Preview as true, `safeToMerge: true`, and the
+SAFE TO MERGE console line. Browser production behavior remains authoritative.
