@@ -47,7 +47,68 @@ for (const rpc of ['gridly_reserve_geocode_provider_slot', 'gridly_cooldown_geoc
   assert.doesNotMatch(migration, new RegExp(`grant execute\\s+on function public\\.${rpc}\\(text, integer\\)\\s+to (?:anon|authenticated|public)`, 'i'));
 }
 assert.doesNotMatch(client, /localStorage|sessionStorage|console\./i);
-assert.match(app, /safeToMerge: false, safeForPublicLaunch: false/);
+const auditStart = app.indexOf('const gridlyLp100RuntimeEvidence = [];');
+const auditEnd = app.indexOf('\nwindow.gridlySearchAddress = gridlySearchAddress;', auditStart);
+assert.ok(auditStart >= 0 && auditEnd > auditStart);
+const auditSource = app.slice(auditStart, auditEnd);
+assert.doesNotMatch(auditSource, /localStorage|sessionStorage|indexedDB|console\.|supabase/i);
+const certificationFields = {
+  globalRateGovernanceVerified: true,
+  rejectedOriginPass: true,
+  providerStateRowObserved: true,
+  providerNamespaceObserved: true,
+  persistentReservationTimestampObserved: true,
+  rejectedOriginHttp403Observed: true
+};
+function loadAudit({ reached = false, explicit = false } = {}) {
+  const evidence = reached ? [{ event: 'gridly_endpoint_response_received', status: 'success', queryRedacted: true }] : [];
+  const source = explicit
+    ? auditSource.replace('const gridlyLp100RuntimeEvidence = [];', "const gridlyLp100RuntimeEvidence = [{ event: 'remote_search_explicit_action' }];")
+    : auditSource;
+  const context = {
+    window: { gridlyGeocodingClient: { endpoint: 'gridly-geocode', evidence: () => evidence, directProviderRequestCount: () => 0 } },
+    document: { getElementById: () => ({}) }, Object, Array, Boolean, Number, TypeError
+  };
+  vm.runInNewContext(source, context);
+  return context.window;
+}
+let auditWindow = loadAudit();
+assert.equal(typeof auditWindow.gridlyRecordLp100InfrastructureCertification, 'function');
+assert.equal(auditWindow.gridlyLp100GeocodingBoundaryAudit().milestone, 'LP100.1');
+assert.equal(auditWindow.gridlyLp100GeocodingBoundaryAudit().globalRateGovernanceVerified, false);
+assert.equal(auditWindow.gridlyLp100GeocodingBoundaryAudit().rejectedOriginPass, null);
+assert.equal(auditWindow.gridlyLp100GeocodingBoundaryAudit().safeToMerge, false);
+for (const invalid of [
+  { ...certificationFields, query: 'private' },
+  { ...certificationFields, url: 'https://example.test' },
+  { ...certificationFields, Origin: 'https://example.test' },
+  { ...certificationFields, authorizationHeader: 'secret' },
+  { ...certificationFields, coordinates: [1, 2] },
+  { ...certificationFields, providerStateRow: { next_allowed_at: 'value' } },
+  { ...certificationFields, checkedAt: 'timestamp' },
+  { ...certificationFields, providerStateRowObserved: 'true' },
+  Object.fromEntries(Object.entries(certificationFields).slice(1))
+]) assert.throws(() => auditWindow.gridlyRecordLp100InfrastructureCertification(invalid), TypeError);
+assert.equal(auditWindow.gridlyLp100GeocodingBoundaryAudit().infrastructureCertificationRecordedThisSession, false);
+let recorded = auditWindow.gridlyRecordLp100InfrastructureCertification(certificationFields);
+assert.equal(recorded.globalRateGovernanceVerified, false, 'endpoint evidence is required');
+assert.equal(recorded.rejectedOriginPass, null, 'approved-origin evidence is required');
+assert.equal(recorded.safeToMerge, false);
+auditWindow = loadAudit({ reached: true, explicit: true });
+recorded = auditWindow.gridlyRecordLp100InfrastructureCertification({ ...certificationFields, persistentReservationTimestampObserved: false });
+assert.equal(recorded.globalRateGovernanceVerified, false, 'all provider-state evidence is required');
+assert.equal(recorded.safeToMerge, false);
+auditWindow = loadAudit({ reached: true, explicit: true });
+recorded = auditWindow.gridlyRecordLp100InfrastructureCertification({ ...certificationFields, rejectedOriginHttp403Observed: false });
+assert.equal(recorded.rejectedOriginPass, null, 'HTTP 403 evidence is required');
+assert.equal(recorded.safeToMerge, false);
+auditWindow = loadAudit({ reached: true, explicit: true });
+recorded = auditWindow.gridlyRecordLp100InfrastructureCertification(certificationFields);
+assert.equal(recorded.globalRateGovernanceVerified, true);
+assert.equal(recorded.rejectedOriginPass, true);
+assert.equal(recorded.safeToMerge, true);
+assert.equal(recorded.safeForPublicLaunch, false);
+assert.equal(recorded.runtimeEvidence.length, 2, 'existing runtime evidence is preserved');
 const sandbox = { window: { crypto: { randomUUID: () => 'id' } }, fetch: async () => ({ json: async () => ({ ok: true, status: 'success', providerBoundary: 'gridly', cached: false, requestId: 'id', results: [] }) }) };
 vm.runInNewContext(client, sandbox);
 assert.equal(sandbox.window.gridlyGeocodingClient.endpoint.includes('gridly-geocode'), true);

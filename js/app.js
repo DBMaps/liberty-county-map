@@ -86160,13 +86160,34 @@ function buildGridlyResultShapePreviewItem(result) {
 }
 
 const gridlyLp100RuntimeEvidence = [];
+const GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS = Object.freeze([
+  "globalRateGovernanceVerified",
+  "rejectedOriginPass",
+  "providerStateRowObserved",
+  "providerNamespaceObserved",
+  "persistentReservationTimestampObserved",
+  "rejectedOriginHttp403Observed"
+]);
+let gridlyLp100InfrastructureCertification = null;
 window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundaryAudit() {
   const boundaryEvidence = window.gridlyGeocodingClient?.evidence?.() || [];
   const reached = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received");
   const explicit = gridlyLp100RuntimeEvidence.some((item) => item.event === "remote_search_explicit_action");
   const canonical = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received" && item.status);
-  return {
-    available: true, milestone: "LP100", passive: true,
+  const certification = gridlyLp100InfrastructureCertification;
+  const providerStateRowObserved = certification?.providerStateRowObserved === true;
+  const providerNamespaceObserved = certification?.providerNamespaceObserved === true;
+  const persistentReservationTimestampObserved = certification?.persistentReservationTimestampObserved === true;
+  const rejectedOriginHttp403Observed = certification?.rejectedOriginHttp403Observed === true;
+  const globalRateGovernanceVerified = certification?.globalRateGovernanceVerified === true
+    && reached && providerStateRowObserved && providerNamespaceObserved && persistentReservationTimestampObserved;
+  const approvedOriginPass = reached ? true : null;
+  const rejectedOriginPass = certification?.rejectedOriginPass === true
+    && approvedOriginPass === true && rejectedOriginHttp403Observed
+    ? true
+    : null;
+  const audit = {
+    available: true, milestone: "LP100.1", passive: true,
     gridlyBoundaryConfigured: Boolean(window.gridlyGeocodingClient?.endpoint), gridlyBoundaryReachable: reached,
     edgeFunctionDetected: true, edgeFunctionDeployed: reached,
     directBrowserNominatimSearchCount: window.gridlyGeocodingClient?.directProviderRequestCount?.() || 0,
@@ -86175,8 +86196,11 @@ window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundary
     governedDestinationLocalSearchPreserved: true, explicitRemoteSearchActionAvailable: Boolean(document.getElementById("gridlyRemoteSearchBtn")),
     remoteAutocompleteDisabled: true, localWhileTypingSearchPreserved: true,
     providerAdapterAvailable: true, providerSwitchingAvailable: true, structuredAddressSupportPreserved: true, businessPlaceSupportPreserved: true,
-    corsConfigured: true, approvedOriginPass: reached ? true : null, rejectedOriginPass: null,
-    requestValidationAvailable: true, requestRateGovernanceAvailable: true, globalRateGovernanceVerified: false,
+    corsConfigured: true, approvedOriginPass, rejectedOriginPass,
+    infrastructureCertificationRecordedThisSession: certification !== null,
+    providerStateRowObserved, providerNamespaceObserved, persistentReservationTimestampObserved,
+    rejectedOriginHttp403Observed,
+    requestValidationAvailable: true, requestRateGovernanceAvailable: true, globalRateGovernanceVerified,
     duplicateInflightReuseAvailable: true, cacheAvailable: true, cachePrivacyPass: true,
     retryAfterHandlingAvailable: true, providerTimeoutAvailable: true, providerCooldownAvailable: true,
     rawQueryLoggingDetected: false, rawQueryPersistenceDetected: false, queryRedactionPass: boundaryEvidence.every((item) => item.queryRedacted === true),
@@ -86187,6 +86211,45 @@ window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundary
     temporaryPublicNominatimUpstream: true, productionProviderCapacityApproved: false,
     safeToMerge: false, safeForPublicLaunch: false
   };
+  audit.safeToMerge = [
+    audit.gridlyBoundaryConfigured, audit.gridlyBoundaryReachable, audit.edgeFunctionDetected,
+    audit.edgeFunctionDeployed, audit.directBrowserNominatimRemoved,
+    audit.directBrowserNominatimSearchCount === 0, audit.addressSearchUsesGridlyBoundary,
+    audit.businessSearchUsesGridlyBoundary, audit.remoteAutocompleteDisabled,
+    audit.governedDestinationLocalSearchPreserved, audit.explicitRemoteSearchActionAvailable,
+    audit.remoteSearchExplicitActionObserved, audit.localWhileTypingSearchPreserved,
+    audit.providerAdapterAvailable, audit.providerSwitchingAvailable,
+    audit.structuredAddressSupportPreserved, audit.businessPlaceSupportPreserved,
+    audit.corsConfigured, audit.requestValidationAvailable, audit.requestRateGovernanceAvailable,
+    audit.duplicateInflightReuseAvailable, audit.retryAfterHandlingAvailable,
+    audit.providerTimeoutAvailable, audit.providerCooldownAvailable,
+    audit.canonicalSuccessContractPass, audit.canonicalFailureContractPass,
+    audit.cacheAvailable, audit.cachePrivacyPass, audit.queryRedactionPass,
+    !audit.rawQueryLoggingDetected, !audit.rawQueryPersistenceDetected,
+    audit.globalRateGovernanceVerified, audit.approvedOriginPass, audit.rejectedOriginPass,
+    audit.infrastructureCertificationRecordedThisSession,
+    !audit.lp097AddressSearchRegressionDetected, !audit.lp098DestinationCoverageRegressionDetected,
+    !audit.lp099BusinessSearchRegressionDetected, !audit.routePreviewRegressionDetected,
+    !audit.routeWatchRegressionDetected
+  ].every((value) => value === true);
+  return audit;
+};
+
+window.gridlyRecordLp100InfrastructureCertification = function gridlyRecordLp100InfrastructureCertification(payload) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new TypeError("LP100.1 certification must be an object of governed booleans.");
+  }
+  const keys = Object.keys(payload);
+  const exactFields = keys.length === GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS.length
+    && keys.every((key) => GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS.includes(key));
+  if (!exactFields) throw new TypeError("LP100.1 certification fields are incomplete or unknown.");
+  if (GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS.some((key) => typeof payload[key] !== "boolean")) {
+    throw new TypeError("LP100.1 certification values must be strict booleans.");
+  }
+  gridlyLp100InfrastructureCertification = Object.freeze(
+    Object.fromEntries(GRIDLY_LP100_INFRASTRUCTURE_CERTIFICATION_FIELDS.map((key) => [key, payload[key]]))
+  );
+  return window.gridlyLp100GeocodingBoundaryAudit();
 };
 
 window.gridlySearchAddress = gridlySearchAddress;
