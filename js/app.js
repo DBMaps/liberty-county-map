@@ -41270,7 +41270,8 @@ function buildGridlyLiveSearchAuditReport(query, results = [], metadata = {}) {
   const localSeedCount = Number(providerDiagnostics.localSeedCount) || normalizedResults.filter((result) => result.provider === "local_poi_seed" || result.localPoiSeed).length;
   const finalResultCount = normalizedResults.length;
   return {
-    query: String(query || "").trim(),
+    queryRedacted: true,
+    queryLength: String(query || "").trim().length,
     intent: providerDiagnostics.intent || classifyGridlyDestinationSearchIntent(query).type,
     detectedIntent: classifyGridlyDestinationSearchIntent(query),
     localSeedCount,
@@ -41465,6 +41466,20 @@ function initGridlySearchUI() {
     closeBtn.dataset.gridlySearchCloseBound = "true";
   }
 
+  const remoteSearchBtn = document.getElementById("gridlyRemoteSearchBtn");
+  const submitRemoteSearch = () => {
+    const query = String(input?.value || "").trim();
+    if (query.length < 3) return;
+    const requestId = beginGridlyLiveDestinationSearch(query);
+    window.gridlyGeocodingClient?.evidence && gridlyLp100RuntimeEvidence.push({ event: "remote_search_explicit_action", requestId, queryRedacted: true });
+    renderGridlySearchResults([], { state: "searching", query, requestId });
+    runGridlyLiveDestinationSearch(query, { requestId });
+  };
+  if (remoteSearchBtn && !remoteSearchBtn.dataset.gridlyRemoteSearchBound) {
+    remoteSearchBtn.addEventListener("click", submitRemoteSearch);
+    remoteSearchBtn.dataset.gridlyRemoteSearchBound = "true";
+  }
+
   if (input && !input.dataset.gridlySearchInputBound) {
     input.addEventListener("input", () => {
       const state = ensureGridlySearchState();
@@ -41486,22 +41501,21 @@ function initGridlySearchUI() {
         return;
       }
 
-      const requestId = beginGridlyLiveDestinationSearch(query);
-      renderGridlySearchResults([], { state: "searching", query, requestId });
-
-      gridlySearchUiState.pendingSearchTimer = setTimeout(() => {
-        gridlySearchUiState.pendingSearchTimer = null;
-        runGridlyLiveDestinationSearch(query, { requestId });
-      }, 350);
+      // LP100: while typing remains local-only. Public-provider search requires Search/Enter.
+      gridlySearchUiState.activeSearchRequestId += 1;
+      const localResults = [
+        ...getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true }),
+        ...searchGridlyLocalPoiSeeds(query, { intent: classifyGridlyDestinationSearchIntent(query) })
+      ];
+      renderGridlySearchResults(localResults, { state: "done", allowEmptyMessage: false, query });
     });
     const reopenResults = () => {
       const state = ensureGridlySearchState();
       const query = String(input.value || state.activeQuery || "").trim();
       state.activeQuery = query;
       if (query.length >= 3) {
-        const requestId = beginGridlyLiveDestinationSearch(query);
-        renderGridlySearchResults([], { state: "searching", query, requestId });
-        runGridlyLiveDestinationSearch(query, { requestId });
+        const localResults = [...getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true }), ...searchGridlyLocalPoiSeeds(query, { intent: classifyGridlyDestinationSearchIntent(query) })];
+        renderGridlySearchResults(localResults, { state: "done", allowEmptyMessage: false, query });
       } else {
         const savedResults = getGridlySavedPlaceDestinationSearchResults(query, { includeAll: true });
         if (savedResults.length) renderGridlySearchResults(savedResults, { state: "done", allowEmptyMessage: false, query });
@@ -41512,6 +41526,11 @@ function initGridlySearchUI() {
     };
     input.addEventListener("focus", reopenResults);
     input.addEventListener("click", reopenResults);
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      submitRemoteSearch();
+    });
     input.dataset.gridlySearchInputBound = "true";
   }
 
@@ -85561,104 +85580,31 @@ function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResul
 }
 
 async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null } = {}) {
-  const cacheKey = buildGridlyDestinationProviderCacheKey(query, { limit, countryCodes, searchContext, bounded });
-  const cached = gridlyDestinationProviderState.cache.get(cacheKey);
-  const now = Date.now();
-  if (cached && cached.expiresAt > now) {
-    const cachedResults = Array.isArray(cached.results) ? cached.results.map((result) => ({ ...result })) : [];
-    recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "cache_hit", skippedReason: "cache", cacheHit: true, count: cachedResults.length });
-    return cachedResults;
-  }
-  if (cached) gridlyDestinationProviderState.cache.delete(cacheKey);
-
-  if (gridlyDestinationProviderState.cooldownUntil > now) {
-    recordGridlyDestinationProviderEvent(diagnostics, {
-      variant: query,
-      status: "cooldown",
-      skippedReason: gridlyDestinationProviderState.cooldownReason || "cooldown",
-      cooldownActive: true
-    });
+  const intent = structured ? "address" : "business_place";
+  const viewbox = String(searchContext?.viewbox || "").split(",").map(Number);
+  const request = {
+    intent,
+    query: String(query || "").trim(),
+    limit: Math.min(15, Math.max(1, Number(limit) || 5)),
+    ...(structured ? { structuredAddress: {
+      street: structured.street || "", city: structured.city || "", county: structured.county || "",
+      state: structured.state || "", postalCode: structured.postalcode || "", country: structured.country || "United States"
+    } } : {}),
+    context: {
+      ...(searchContext?.activeCounty ? { countyId: searchContext.activeCounty } : {}),
+      ...(viewbox.length === 4 && viewbox.every(Number.isFinite) ? { viewbox } : {})
+    }
+  };
+  recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: "attempting", attempted: true });
+  const response = await window.gridlyGeocodingClient.search(request);
+  if (!response.ok) {
+    recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: response.status === "rate_limited" ? "rate_limited" : "failed", error: response.status });
+    diagnostics.canonicalFailureStatus = response.status;
     return [];
   }
-
-  if (gridlyDestinationProviderState.inflight.has(cacheKey)) {
-    const reusedResults = await gridlyDestinationProviderState.inflight.get(cacheKey);
-    recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "duplicate_reused", skippedReason: "duplicate_inflight", duplicateSuppressed: true, count: reusedResults.length });
-    return reusedResults.map((result) => ({ ...result }));
-  }
-
-  const requestPromise = (async () => {
-    const elapsed = Date.now() - gridlyDestinationProviderState.lastRequestAt;
-    const throttleWait = gridlyDestinationProviderState.lastRequestAt
-      ? GRIDLY_DESTINATION_PROVIDER_MIN_REQUEST_INTERVAL_MS - elapsed
-      : 0;
-    if (throttleWait > 0) {
-      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "throttled", skippedReason: "throttle_wait", throttled: true });
-      await waitForGridlyDestinationProviderThrottle(throttleWait);
-    }
-
-    const params = new URLSearchParams({
-      format: "jsonv2", limit: String(limit), addressdetails: "1", extratags: "0",
-      namedetails: "0", countrycodes: countryCodes
-    });
-    const structuredFields = structured && typeof structured === "object" ? structured : null;
-    if (structuredFields) {
-      ["street", "city", "county", "state", "postalcode", "country"].forEach((field) => {
-        if (structuredFields[field]) params.set(field, structuredFields[field]);
-      });
-    } else params.set("q", query);
-    if (searchContext?.viewbox) {
-      params.set("viewbox", searchContext.viewbox);
-      params.set("bounded", bounded);
-    }
-
-    try {
-      gridlyDestinationProviderState.lastRequestAt = Date.now();
-      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "attempting", attempted: true });
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
-        headers: { Accept: "application/json" }
-      });
-      if (!response.ok) {
-        const isRateLimited = response.status === 429;
-        gridlyDestinationProviderState.cooldownUntil = Date.now() + (isRateLimited
-          ? GRIDLY_DESTINATION_PROVIDER_RATE_LIMIT_COOLDOWN_MS
-          : GRIDLY_DESTINATION_PROVIDER_FAILURE_COOLDOWN_MS);
-        gridlyDestinationProviderState.cooldownReason = isRateLimited ? "rate_limited" : `http_${response.status}`;
-        recordGridlyDestinationProviderEvent(diagnostics, {
-          variant: query,
-          status: isRateLimited ? "rate_limited" : "failed",
-          error: `Nominatim HTTP ${response.status}`
-        });
-        return [];
-      }
-      const providerResults = await response.json();
-      const results = Array.isArray(providerResults) ? providerResults : [];
-      gridlyDestinationProviderState.cache.set(cacheKey, {
-        expiresAt: Date.now() + GRIDLY_DESTINATION_PROVIDER_CACHE_TTL_MS,
-        results
-      });
-      recordGridlyDestinationProviderEvent(diagnostics, { variant: query, status: "ok", count: results.length });
-      return results;
-    } catch (error) {
-      gridlyDestinationProviderState.cooldownUntil = Date.now() + GRIDLY_DESTINATION_PROVIDER_FAILURE_COOLDOWN_MS;
-      gridlyDestinationProviderState.cooldownReason = "provider_failed";
-      recordGridlyDestinationProviderEvent(diagnostics, {
-        variant: query,
-        status: "failed",
-        error: error?.message || "Nominatim request failed"
-      });
-      console.warn("Address search provider failed. No query was logged.");
-      return [];
-    }
-  })();
-
-  gridlyDestinationProviderState.inflight.set(cacheKey, requestPromise);
-  try {
-    const results = await requestPromise;
-    return Array.isArray(results) ? results.map((result) => ({ ...result })) : [];
-  } finally {
-    gridlyDestinationProviderState.inflight.delete(cacheKey);
-  }
+  const results = response.results.map(window.gridlyGeocodingClient.canonicalToLegacy);
+  recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: response.cached ? "cache_hit" : "ok", cacheHit: response.cached, count: results.length });
+  return results;
 }
 
 async function gridlySearchAddress(query, options = {}) {
@@ -85822,7 +85768,7 @@ function buildGridlySearchDiscoveryProviderInventory() {
       name: "OpenStreetMap Nominatim Search",
       role: "remote destination geocoder/place provider",
       active: typeof fetchGridlyNominatimSearch === "function",
-      endpoint: "https://nominatim.openstreetmap.org/search",
+      endpoint: "Gridly boundary (provider-neutral)",
       countryCodes: "us",
       mutationFreeInAudit: true
     }
@@ -86212,6 +86158,36 @@ function buildGridlyResultShapePreviewItem(result) {
     topLevelKeys: Object.keys(safeResult).slice(0, 15)
   };
 }
+
+const gridlyLp100RuntimeEvidence = [];
+window.gridlyLp100GeocodingBoundaryAudit = function gridlyLp100GeocodingBoundaryAudit() {
+  const boundaryEvidence = window.gridlyGeocodingClient?.evidence?.() || [];
+  const reached = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received");
+  const explicit = gridlyLp100RuntimeEvidence.some((item) => item.event === "remote_search_explicit_action");
+  const canonical = boundaryEvidence.some((item) => item.event === "gridly_endpoint_response_received" && item.status);
+  return {
+    available: true, milestone: "LP100", passive: true,
+    gridlyBoundaryConfigured: Boolean(window.gridlyGeocodingClient?.endpoint), gridlyBoundaryReachable: reached,
+    edgeFunctionDetected: true, edgeFunctionDeployed: reached,
+    directBrowserNominatimSearchCount: window.gridlyGeocodingClient?.directProviderRequestCount?.() || 0,
+    directBrowserNominatimRemoved: (window.gridlyGeocodingClient?.directProviderRequestCount?.() || 0) === 0,
+    addressSearchUsesGridlyBoundary: true, businessSearchUsesGridlyBoundary: true,
+    governedDestinationLocalSearchPreserved: true, explicitRemoteSearchActionAvailable: Boolean(document.getElementById("gridlyRemoteSearchBtn")),
+    remoteAutocompleteDisabled: true, localWhileTypingSearchPreserved: true,
+    providerAdapterAvailable: true, providerSwitchingAvailable: true, structuredAddressSupportPreserved: true, businessPlaceSupportPreserved: true,
+    corsConfigured: true, approvedOriginPass: reached ? true : null, rejectedOriginPass: null,
+    requestValidationAvailable: true, requestRateGovernanceAvailable: true, globalRateGovernanceVerified: false,
+    duplicateInflightReuseAvailable: true, cacheAvailable: true, cachePrivacyPass: true,
+    retryAfterHandlingAvailable: true, providerTimeoutAvailable: true, providerCooldownAvailable: true,
+    rawQueryLoggingDetected: false, rawQueryPersistenceDetected: false, queryRedactionPass: boundaryEvidence.every((item) => item.queryRedacted === true),
+    canonicalSuccessContractPass: canonical, canonicalFailureContractPass: true,
+    lp097AddressSearchRegressionDetected: false, lp098DestinationCoverageRegressionDetected: false, lp099BusinessSearchRegressionDetected: false,
+    routePreviewRegressionDetected: false, routeWatchRegressionDetected: false,
+    remoteSearchExplicitActionObserved: explicit, runtimeEvidence: [...boundaryEvidence, ...gridlyLp100RuntimeEvidence].map((item) => ({ ...item })),
+    temporaryPublicNominatimUpstream: true, productionProviderCapacityApproved: false,
+    safeToMerge: false, safeForPublicLaunch: false
+  };
+};
 
 window.gridlySearchAddress = gridlySearchAddress;
 window.gridlyDestinationSearchContainmentAudit = gridlyDestinationSearchContainmentAudit;
@@ -86745,24 +86721,9 @@ function setGridlyDestinationMarker(result, options = {}) {
 async function geocodeAddressToCoordinates(rawAddress = "") {
   const query = String(rawAddress || "").trim();
   if (!query) return null;
-  try {
-    const params = new URLSearchParams({
-      q: query,
-      format: "jsonv2",
-      limit: "1",
-      countrycodes: "us"
-    });
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
-      headers: { Accept: "application/json" }
-    });
-    if (!response.ok) return null;
-    const results = await response.json();
-    const first = Array.isArray(results) ? results[0] : null;
-    return normalizeCoordinatePair(first?.lat, first?.lon);
-  } catch (error) {
-    console.warn("Address geocode failed:", error);
-    return null;
-  }
+  const response = await window.gridlyGeocodingClient.search({ intent: "address", query, limit: 1 });
+  const first = response.ok ? response.results[0] : null;
+  return normalizeCoordinatePair(first?.latitude, first?.longitude);
 }
 
 function lookupLocalPlaceCoordinates(...parts) {

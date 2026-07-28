@@ -4,3 +4,6 @@
 [api]
 schemas = ["public", "graphql_public", "history_capture"]
 extra_search_path = ["public", "extensions"]
+
+[functions.gridly-geocode]
+verify_jwt = false
