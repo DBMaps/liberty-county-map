@@ -94,3 +94,44 @@ Browser certification is not complete until all four visible searches and route 
 ### Merge recommendation
 
 **Do not merge based on repository tests alone.** Deploy the function, complete the four-search production sequence, and merge only if the exact browser block passes with no misleading fallback and no direct upstream browser request.
+
+## LP101.2 — automated visible-search certification
+
+LP101.2 replaces the manual four-search and network-panel procedure with the asynchronous
+`window.gridlyLp101VisibleSearchCertification?.()` helper. It opens the production destination-search
+sheet, writes to the real search input, clicks the real Search button, waits for the rendered state,
+reads the consumer-visible cards and message, selects the first actionable result through its real
+click handler, verifies Route Preview, resets, and continues sequentially. It does not introduce a
+test-only search pipeline or change routing.
+
+The four cases and expectations are:
+
+- `address`: the Dayton street address must reach the Gridly boundary with an HTTP/canonical response;
+  either a valid exact result or a truthful canonical no-result is accepted, while an unrelated roadway
+  shown as a successful Best Match fails.
+- `business`: Walmart must be visibly relevant and carry Dayton, Liberty County, or appropriate nearby
+  context; a roadway-only first result fails.
+- `category`: a hospital or medical destination must be visible and must not be outranked by a roadway.
+- `governed_destination`: the first visible result must preserve the governed Liberty courthouse.
+
+The certification fails closed for missing sheet/input/action/results, a search timeout, missing boundary
+evidence, HTTP 401/404/5xx or malformed/network evidence, direct upstream access, relevance or precedence
+failure, misleading roadway fallback, or unavailable Route Preview. `safeToMerge` is true only when every
+case, every required runtime check, and Route Preview pass.
+
+Evidence remains in session memory through the LP101.1 recorder. The returned audit uses only safe case
+labels, counts, booleans, and bounded check names. It does not return or persist raw queries, the complete
+address, coordinates, credentials, response/provider payloads, or personal destinations.
+
+### One-step production browser validation
+
+1. Open Gridly and open DevTools Console.
+2. Run exactly:
+
+```js
+await window.gridlyLp101VisibleSearchCertification?.()
+```
+
+3. Read the unmistakable PASS/FAIL line and concise case table. Merge only for
+   `✅ LP101.2 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE` and a returned
+   `safeToMerge: true`. Browser production behavior remains authoritative.

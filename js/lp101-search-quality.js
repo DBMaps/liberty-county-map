@@ -105,6 +105,189 @@
     return Object.freeze({ milestone: "LP101.1", available: true, normalizationPassed, typoTolerancePassed, intentRecognitionPassed, multiTermPassed: mixed.geography === "dayton" && mixed.destinationTerms.includes("walmart"), boundaryConfigured, boundaryRequestAttempted, boundaryReachable, httpSuccessObserved, canonicalSuccessResponseObserved, canonicalFailureResponseObserved, http404Observed, providerIndependentResponseConfirmed, directUpstreamBrowserRequestsAbsent, runtimeEvidence: evidence, protectedSystemsUnchanged: true, safeToMerge });
   }
 
+  const VISIBLE_CASES = Object.freeze([
+    Object.freeze({ caseName: "address", query: "274 County Road 677, Dayton, TX 77535" }),
+    Object.freeze({ caseName: "business", query: "Dayton Walmart" }),
+    Object.freeze({ caseName: "category", query: "Hospital" }),
+    Object.freeze({ caseName: "governed_destination", query: "Liberty Courthouse" })
+  ]);
+  const MEDICAL_PATTERN = /\b(hospital|medical|clinic|emergency|health|urgent care)\b/i;
+  const ROAD_PATTERN = /\b(county road|farm to market|\b(?:cr|fm)\s*\d+|road|highway|hwy|street|st\.)\b/i;
+
+  function waitFor(predicate, timeoutMs, intervalMs = 50) {
+    const started = Date.now();
+    return new Promise((resolve) => {
+      const inspect = () => {
+        let value = false;
+        try { value = predicate(); } catch (_error) { value = false; }
+        if (value) return resolve(value);
+        if (Date.now() - started >= timeoutMs) return resolve(false);
+        global.setTimeout(inspect, intervalMs);
+      };
+      inspect();
+    });
+  }
+
+  function dispatchInput(input) {
+    const EventCtor = global.Event;
+    if (typeof EventCtor === "function") input.dispatchEvent(new EventCtor("input", { bubbles: true }));
+    else if (global.document?.createEvent) {
+      const event = global.document.createEvent("Event");
+      event.initEvent("input", true, false);
+      input.dispatchEvent(event);
+    }
+  }
+
+  function visibleCards(results) {
+    return Array.from(results?.querySelectorAll?.(".gridly-search-result-item") || []).filter((card) => {
+      if (card.hidden) return false;
+      return !card.getAttribute?.("aria-hidden") || card.getAttribute("aria-hidden") !== "true";
+    });
+  }
+
+  function runtimeSummary(entries) {
+    const searches = entries.filter((entry) => entry?.requestType === "destination_search");
+    const statuses = searches.map((entry) => entry.httpStatus).filter(Number.isInteger);
+    return {
+      boundaryRequestAttempted: searches.length > 0,
+      boundaryReachable: statuses.length > 0,
+      httpSuccessObserved: searches.some((entry) => entry.requestSucceeded === true),
+      canonicalSuccessResponseObserved: searches.some((entry) => entry.canonicalSuccess === true),
+      canonicalFailureResponseObserved: searches.some((entry) => entry.canonicalFailure === true),
+      http404Observed: statuses.includes(404),
+      fatalHttpObserved: statuses.some((status) => status === 401 || status === 404 || status >= 500)
+        || searches.some((entry) => entry.httpStatus === null || entry.failureCode === "malformed_response"),
+      providerIndependentResponseConfirmed: searches.some((entry) => entry.providerBoundaryUsed === true),
+      directUpstreamBrowserRequestsAbsent: !searches.some((entry) => entry.directProviderRequestDetected === true)
+    };
+  }
+
+  function routePreviewAvailable() {
+    const performance = typeof global.gridlyDestinationPerformanceAudit === "function"
+      ? global.gridlyDestinationPerformanceAudit() : null;
+    const status = String(performance?.routePreviewStatus || "").toLowerCase();
+    if (["ready", "success", "available", "complete", "fallback"].includes(status)) return true;
+    if (global.__gridlyRoutePreviewLayer) return true;
+    return Boolean(performance?.routePreviewAvailable === true || performance?.routePreviewRendered === true);
+  }
+
+  async function visibleSearchCertification(options = {}) {
+    const timeoutMs = Math.max(100, Number(options.timeoutMs) || 15000);
+    const routeTimeoutMs = Math.max(100, Number(options.routeTimeoutMs) || timeoutMs);
+    const document = global.document;
+    const client = global.gridlyGeocodingClient;
+    const failedChecks = [];
+    const cases = [];
+    let routePreviewVerified = false;
+    const fail = (check) => { if (!failedChecks.includes(check)) failedChecks.push(check); };
+    const shell = document?.getElementById?.("gridlySearchShell");
+
+    if (!document || !shell) fail("searchSheetAvailable");
+    if (shell) {
+      const opener = global.openGridlyDestinationSearchSurface || global.showGridlySearchShell;
+      if (shell.hidden && typeof opener === "function") opener({ source: "lp1012_visible_certification" });
+      else if (shell.hidden) fail("searchSheetAvailable");
+    }
+    const input = document?.getElementById?.("gridlyAddressSearchInput");
+    const action = document?.getElementById?.("gridlyRemoteSearchBtn");
+    const results = document?.getElementById?.("gridlySearchResults");
+    const clear = document?.getElementById?.("gridlySearchClearBtn");
+    if (!input) fail("searchInputAvailable");
+    if (!action || typeof action.click !== "function") fail("searchActionAvailable");
+    if (!results) fail("resultStateAvailable");
+
+    if (input && action && results && failedChecks.length === 0) {
+      for (const definition of VISIBLE_CASES) {
+        const evidenceBefore = typeof client?.evidence === "function" ? client.evidence().length : 0;
+        input.value = definition.query;
+        dispatchInput(input);
+        action.click();
+        const settled = await waitFor(() => {
+          const evidence = typeof client?.evidence === "function" ? client.evidence() : [];
+          return evidence.length > evidenceBefore && !/checking nearby places/i.test(String(results.textContent || ""));
+        }, timeoutMs);
+        const allEvidence = typeof client?.evidence === "function" ? client.evidence() : [];
+        const caseEvidence = allEvidence.slice(evidenceBefore);
+        const runtime = runtimeSummary(caseEvidence);
+        const cards = visibleCards(results);
+        const texts = cards.map((card) => String(card.textContent || "").replace(/\s+/g, " ").trim());
+        const message = String(results.querySelector?.(".gridly-search-results-status")?.textContent || "");
+        const firstText = texts[0] || "";
+        const canonicalResponseObserved = runtime.canonicalSuccessResponseObserved || runtime.canonicalFailureResponseObserved;
+        const runtimeCasePassed = runtime.boundaryRequestAttempted && runtime.boundaryReachable
+          && runtime.httpSuccessObserved && canonicalResponseObserved && !runtime.fatalHttpObserved
+          && runtime.providerIndependentResponseConfirmed && runtime.directUpstreamBrowserRequestsAbsent;
+        let result;
+
+        if (definition.caseName === "address") {
+          const validAddress = texts.some((text) => /\b274\b/.test(text) && /\b(?:county road|cr)\s*677\b/i.test(text));
+          const truthfulNoResult = cards.length === 0 && /couldn.t confirm|no matching destination/i.test(message);
+          const misleadingRoadFallbackAbsent = validAddress || truthfulNoResult
+            || !texts.some((text) => ROAD_PATTERN.test(text));
+          result = { caseName: definition.caseName, passed: false, visibleResultCount: cards.length,
+            canonicalResponseObserved,
+            misleadingRoadFallbackAbsent };
+          result.passed = settled && runtimeCasePassed && misleadingRoadFallbackAbsent && (validAddress || truthfulNoResult);
+          if (!misleadingRoadFallbackAbsent) fail("misleadingRoadFallbackAbsent");
+        } else if (definition.caseName === "business") {
+          const relevantResultObserved = texts.some((text) => /walmart/i.test(text) && /dayton|liberty county|nearby/i.test(text));
+          const roadwayOutranks = ROAD_PATTERN.test(firstText) && !/walmart/i.test(firstText);
+          result = { caseName: definition.caseName, passed: settled && relevantResultObserved && !roadwayOutranks && runtimeCasePassed,
+          relevantResultObserved };
+          if (!relevantResultObserved || roadwayOutranks) fail("businessResultRelevant");
+        } else if (definition.caseName === "category") {
+          const relevantResultObserved = texts.some((text) => MEDICAL_PATTERN.test(text));
+          const roadwayOutranks = ROAD_PATTERN.test(firstText) && !MEDICAL_PATTERN.test(firstText);
+          result = { caseName: definition.caseName, passed: settled && relevantResultObserved && !roadwayOutranks && runtimeCasePassed,
+          relevantResultObserved };
+          if (!relevantResultObserved || roadwayOutranks) fail("categoryResultRelevant");
+        } else {
+          const governedPrecedencePreserved = /liberty.*courthouse|courthouse.*liberty/i.test(firstText);
+          result = { caseName: definition.caseName, passed: settled && governedPrecedencePreserved && runtimeCasePassed,
+          governedPrecedencePreserved };
+          if (!governedPrecedencePreserved) fail("governedDestinationPreserved");
+        }
+        if (!settled) fail(`${definition.caseName}:resultStateSettled`);
+        if (!runtime.boundaryRequestAttempted) fail(`${definition.caseName}:boundaryRequestAttempted`);
+        if (!runtime.boundaryReachable) fail(`${definition.caseName}:boundaryReachable`);
+        if (!runtime.httpSuccessObserved) fail(`${definition.caseName}:httpSuccessObserved`);
+        if (!canonicalResponseObserved) fail(`${definition.caseName}:canonicalResponseObserved`);
+        if (!runtime.providerIndependentResponseConfirmed) fail(`${definition.caseName}:providerIndependentResponseConfirmed`);
+        if (runtime.fatalHttpObserved) fail(`${definition.caseName}:httpFailure`);
+        if (!runtime.directUpstreamBrowserRequestsAbsent) fail("directUpstreamBrowserRequestsAbsent");
+        if (!result.passed) fail(`${definition.caseName}:passed`);
+        cases.push(Object.freeze(result));
+
+        if (!routePreviewVerified && cards[0] && typeof cards[0].click === "function") {
+          cards[0].click();
+          routePreviewVerified = Boolean(await waitFor(routePreviewAvailable, routeTimeoutMs));
+          if (typeof global.clearGridlyDestinationRoutePreview === "function") global.clearGridlyDestinationRoutePreview({ silent: true });
+          if (typeof global.openGridlyDestinationSearchSurface === "function") global.openGridlyDestinationSearchSurface({ source: "lp1012_visible_certification_reset" });
+        }
+        if (clear && typeof clear.click === "function") clear.click();
+        else { input.value = ""; dispatchInput(input); }
+      }
+    }
+    if (!routePreviewVerified) fail("routePreviewVerified");
+
+    const finalAudit = audit();
+    const requiredRuntime = ["boundaryConfigured", "boundaryRequestAttempted", "boundaryReachable", "httpSuccessObserved",
+      "providerIndependentResponseConfirmed", "directUpstreamBrowserRequestsAbsent", "protectedSystemsUnchanged"];
+    requiredRuntime.forEach((check) => { if (finalAudit[check] !== true) fail(check); });
+    if (!finalAudit.canonicalSuccessResponseObserved && !finalAudit.canonicalFailureResponseObserved) fail("canonicalResponseObserved");
+    if (finalAudit.http404Observed) fail("http404Observed");
+    const safeToMerge = failedChecks.length === 0 && cases.length === VISIBLE_CASES.length
+      && cases.every((entry) => entry.passed) && routePreviewVerified;
+    const result = Object.freeze({ available: true, milestone: "LP101.2", cases: Object.freeze(cases), routePreviewVerified,
+      failedChecks: Object.freeze(failedChecks), safeToMerge });
+    global.console?.table?.(cases.map((entry) => ({ caseName: entry.caseName, passed: entry.passed })));
+    global.console?.log?.(safeToMerge
+      ? "✅ LP101.2 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE"
+      : "❌ LP101.2 VISIBLE SEARCH CERTIFICATION FAILED — DO NOT MERGE");
+    return result;
+  }
+
   global.GRIDLY_LP101_SEARCH_QUALITY = Object.freeze({ normalize, understand, evaluate });
   global.gridlyLp101BrowserCertification = audit;
+  global.gridlyLp101VisibleSearchCertification = visibleSearchCertification;
 })(window);

@@ -50,6 +50,7 @@
     "test:lp099": "node tests/lp099-business-and-place-search.test.js",
     "test:lp100": "node tests/lp100-geocoding-boundary.test.js",
     "test:lp101": "node tests/lp101-search-quality-and-relevance.test.js",
-    "test:lp1011": "node tests/lp1011-geocoding-runtime-recovery.test.js"
+    "test:lp1011": "node tests/lp1011-geocoding-runtime-recovery.test.js",
+    "test:lp1012": "node tests/lp1012-visible-search-certification.test.js"
   }
 }
