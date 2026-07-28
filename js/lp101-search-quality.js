@@ -168,10 +168,13 @@
     }
   }
 
-  function visibleCards(results) {
+  function visibleCards(results, caseName = "") {
     return Array.from(results?.querySelectorAll?.(".gridly-search-result-item") || []).filter((card) => {
-      if (card.hidden) return false;
-      return !card.getAttribute?.("aria-hidden") || card.getAttribute("aria-hidden") !== "true";
+      if (card.hidden || card.getAttribute?.("aria-hidden") === "true") return false;
+      if (caseName && card.dataset?.lp101Case !== caseName) return false;
+      if (card.closest?.("#gridlySearchResults") !== results) return false;
+      const style = typeof global.getComputedStyle === "function" ? global.getComputedStyle(card) : null;
+      return !style || (style.display !== "none" && style.visibility !== "hidden");
     });
   }
 
@@ -234,12 +237,20 @@
         action.click();
         const settled = await waitFor(() => {
           const evidence = typeof client?.evidence === "function" ? client.evidence() : [];
-          return evidence.length > evidenceBefore && !/checking nearby places/i.test(String(results.textContent || ""));
+          return evidence.length > evidenceBefore
+            && results.dataset?.lp101Case === definition.caseName
+            && results.dataset?.lp101RenderPhase === "final"
+            && !/checking nearby places/i.test(String(results.textContent || ""));
         }, timeoutMs);
         const allEvidence = typeof client?.evidence === "function" ? client.evidence() : [];
         const caseEvidence = allEvidence.slice(evidenceBefore);
         const runtime = runtimeSummary(caseEvidence);
-        const cards = visibleCards(results);
+        const cards = visibleCards(results, definition.caseName);
+        const renderInputCount = Number(results.dataset?.lp101RenderInputCount || 0);
+        const activeVisibleNodeCount = cards.length;
+        const currentCaseIdentityAgreement = results.dataset?.lp101Case === definition.caseName
+          && cards.every((card) => card.dataset?.lp101Case === definition.caseName);
+        const renderDomAgreement = renderInputCount === activeVisibleNodeCount && currentCaseIdentityAgreement;
         const texts = cards.map((card) => String(card.textContent || "").replace(/\s+/g, " ").trim());
         const message = String(results.querySelector?.(".gridly-search-results-status")?.textContent || "");
         const firstText = texts[0] || "";
@@ -277,6 +288,14 @@
           governedPrecedencePreserved };
           if (!governedPrecedencePreserved) fail("governedDestinationPreserved");
         }
+        result.renderInputCount = renderInputCount;
+        result.activeVisibleNodeCount = activeVisibleNodeCount;
+        result.renderDomAgreement = renderDomAgreement;
+        result.currentCaseIdentityAgreement = currentCaseIdentityAgreement;
+        result.visibleResultCount = activeVisibleNodeCount;
+        result.passed = result.passed && renderDomAgreement;
+        if (!renderDomAgreement) fail(`${definition.caseName}:renderDomAgreement`);
+        if (!currentCaseIdentityAgreement) fail(`${definition.caseName}:currentCaseIdentityAgreement`);
         if (!settled) fail(`${definition.caseName}:resultStateSettled`);
         if (!runtime.boundaryRequestAttempted) fail(`${definition.caseName}:boundaryRequestAttempted`);
         if (!runtime.boundaryReachable) fail(`${definition.caseName}:boundaryReachable`);
@@ -306,9 +325,15 @@
     requiredRuntime.forEach((check) => { if (finalAudit[check] !== true) fail(check); });
     if (!finalAudit.canonicalSuccessResponseObserved && !finalAudit.canonicalFailureResponseObserved) fail("canonicalResponseObserved");
     if (finalAudit.http404Observed) fail("http404Observed");
+    const candidatePipelineAgreement = cases.length === VISIBLE_CASES.length
+      && cases.every((entry) => entry.currentCaseIdentityAgreement === true);
+    const renderDomAgreement = cases.length === VISIBLE_CASES.length
+      && cases.every((entry) => entry.renderDomAgreement === true);
+    if (!candidatePipelineAgreement) fail("candidatePipelineAgreement");
+    if (!renderDomAgreement) fail("renderDomAgreement");
     const safeToMerge = failedChecks.length === 0 && cases.length === VISIBLE_CASES.length
-      && cases.every((entry) => entry.passed) && routePreviewVerified;
-    const result = Object.freeze({ available: true, milestone: "LP101.3", cases: Object.freeze(cases), routePreviewVerified,
+      && cases.every((entry) => entry.passed) && candidatePipelineAgreement && renderDomAgreement && routePreviewVerified;
+    const result = Object.freeze({ available: true, milestone: "LP101.4", cases: Object.freeze(cases), candidatePipelineAgreement, renderDomAgreement, routePreviewVerified,
       failedChecks: Object.freeze(failedChecks), safeToMerge });
     global.console?.table?.(cases.map((entry) => ({ caseName: entry.caseName, passed: entry.passed })));
     global.console?.log?.(safeToMerge

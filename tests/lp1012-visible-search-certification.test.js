@@ -14,11 +14,12 @@ function harness(options = {}) {
   const shell = { hidden: true };
   const command = { textContent: 'Choose where you are going' };
   const results = {
+    dataset: {},
     get textContent() { return [status, ...cards.map((card) => card.textContent)].join(' '); },
     querySelectorAll(selector) { return selector === '.gridly-search-result-item' ? cards : []; },
     querySelector(selector) { return selector === '.gridly-search-results-status' && status ? { textContent: status } : null; }
   };
-  const card = (text) => ({ textContent: text, hidden: false, getAttribute: () => null, click() {
+  const card = (text) => ({ textContent: text, hidden: false, dataset: { lp101Case: order.at(-1) }, closest: () => results, getAttribute: () => null, click() {
     window.GridlySearchState.selectedDestination = { selected: true };
     command.textContent = `Route preview for ${text}`;
     previewReady = true;
@@ -42,6 +43,9 @@ function harness(options = {}) {
       } else if (order.at(-1) === 'business') cards = [card('Walmart Supercenter Dayton, Liberty County retail')];
       else if (order.at(-1) === 'category') cards = [card('Liberty Dayton Regional Hospital medical')];
       else cards = [card('Liberty County Courthouse Liberty government')];
+      results.dataset.lp101Case = order.at(-1);
+      results.dataset.lp101RenderPhase = 'final';
+      results.dataset.lp101RenderInputCount = String(cards.length);
     }, 2);
   } };
   const clear = { click() { input.value = ''; cards = []; status = ''; } };
