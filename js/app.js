@@ -36026,6 +36026,8 @@ const gridlyLp097RuntimeEvidence = {
   providerCandidateCount: 0, exactAddressCandidateFound: false, visibleProviderResultCount: 0,
   selectedResultSource: null, providerErrorOccurred: false, cooldownOccurred: false,
   successfulRequestObservedThisSession: false,
+  falseExactAddressPrevented: false, geographicConflictCandidateCount: 0,
+  exactAddressConflictReasonCounts: {}, wrongCountyExactAddressCount: 0, wrongZipExactAddressCount: 0,
   deduplication: { candidateCountBeforeDeduplication: 0, candidateCountAfterDeduplication: 0, duplicateGroupCount: 0, curatedOverProviderSurvivorCount: 0, unresolvedPossibleDuplicateCount: 0, duplicateReasonCodes: [] }
 };
 let gridlyLp097BrowserCertification = null;
@@ -36042,15 +36044,27 @@ function buildGridlyLp097AddressModel(rawQuery = "") {
   const highwayAddress = /\b(?:FM|TX|US|State Highway)\s*\d+\b/i.test(normalizedDisplayQuery);
   const pieces = normalizedDisplayQuery.split(",").map((part) => part.trim()).filter(Boolean);
   const street = pieces[0] || normalizedDisplayQuery;
-  const city = pieces.find((part, index) => index > 0 && /^[a-z .'-]+$/i.test(part) && !/^(?:tx|texas)$/i.test(part)) || "";
+  const explicitStateMatch = normalizedDisplayQuery.match(/(?:,|\s)\s*(Texas|TX|Ohio|OH|Colorado|CO)\s*(?:\d{5})?\s*$/i);
+  const explicitState = explicitStateMatch?.[1] || "";
+  const explicitCounty = normalizedDisplayQuery.match(/\b([a-z .'-]+?)\s+County\b/i)?.[1] || "";
+  const city = pieces.find((part, index) => index > 0 && /^[a-z .'-]+$/i.test(part) && !/^(?:tx|texas|oh|ohio|co|colorado)$/i.test(part)) || "";
   const anchor = typeof getGridlySearchAnchorContext === "function" ? getGridlySearchAnchorContext() : null;
-  const locality = city || (anchor?.label && anchor.label !== "Map center" && !/county/i.test(anchor.label) ? anchor.label : "");
-  const enriched = [street, locality, "Liberty County", "Texas", postalCode].filter(Boolean).join(", ");
+  const trailingOutOfArea = normalizedDisplayQuery.match(/\b(Dayton|Denver|Houston)\s+(Ohio|OH|Colorado|CO|Texas|TX)\b/i);
+  const explicitCity = city || trailingOutOfArea?.[1] || "";
+  const explicitOutOfArea = Boolean(explicitState && !/^(?:tx|texas)$/i.test(explicitState)) || /\b(?:Denver|Houston)\b/i.test(explicitCity);
+  const locality = explicitCity || (anchor?.label && anchor.label !== "Map center" && !/county/i.test(anchor.label) ? anchor.label : "");
+  const expectedCounty = explicitCounty ? `${explicitCounty} County` : (explicitOutOfArea ? "" : "Liberty County");
+  const expectedState = explicitState || "Texas";
+  const enriched = [street, locality, expectedCounty, expectedState, postalCode].filter(Boolean).join(", ");
   const providerVariants = [enriched, [street, locality, "Texas"].filter(Boolean).join(", "), originalQuery]
     .filter((value, index, values) => value && values.findIndex((item) => normalizeGridlySearchDisplayLabel(item) === normalizeGridlySearchDisplayLabel(value)) === index)
     .slice(0, GRIDLY_LP097_MAX_PROVIDER_ATTEMPTS);
   return {
     originalQuery, normalizedDisplayQuery, houseNumber, street, city: locality, postalCode,
+    explicitOutOfArea,
+    explicitGeography: { city: explicitCity, county: explicitCounty ? `${explicitCounty} County` : "", state: explicitState, postalCode },
+    expectedGeography: { city: locality, county: expectedCounty, state: expectedState, postalCode },
+    expectedCenter: !explicitOutOfArea && Number.isFinite(anchor?.lat) && Number.isFinite(anchor?.lng) ? { lat: anchor.lat, lng: anchor.lng } : null,
     countyRoad, highwayAddress, hasHouseNumber: Boolean(houseNumber),
     isCompleteAddress: Boolean(houseNumber && (countyRoad || highwayAddress || GRIDLY_SEARCH_ADDRESS_WORDS.has(getGridlySearchQueryTokens(street).find((token) => GRIDLY_SEARCH_ADDRESS_WORDS.has(token))))),
     structured: houseNumber ? { street, city: locality, county: "Liberty County", state: "Texas", postalcode: postalCode, country: "United States" } : null,
@@ -36064,8 +36078,11 @@ function classifyGridlyLp097Result(result, addressModel = null) {
   const house = String(rawAddress.house_number || "").trim();
   const road = String(rawAddress.road || rawAddress.residential || "").trim();
   const queryRoad = String(addressModel?.street || "").replace(/^\s*\d{1,6}[a-z]?\s*/i, "").trim();
-  const houseAgreement = Boolean(addressModel?.houseNumber && house && house.toLowerCase() === addressModel.houseNumber.toLowerCase());
-  const roadAgreement = Boolean(queryRoad && road && (normalizeGridlySearchDisplayLabel(road).includes(normalizeGridlySearchDisplayLabel(queryRoad)) || normalizeGridlySearchDisplayLabel(queryRoad).includes(normalizeGridlySearchDisplayLabel(road))));
+  const geographic = addressModel?.hasHouseNumber && window.GRIDLY_LP097_SEARCH_GOVERNANCE?.evaluateAddressExactness
+    ? window.GRIDLY_LP097_SEARCH_GOVERNANCE.evaluateAddressExactness(addressModel, result)
+    : null;
+  const houseAgreement = geographic ? geographic.houseAgreement : Boolean(addressModel?.houseNumber && house && house.toLowerCase() === addressModel.houseNumber.toLowerCase());
+  const roadAgreement = geographic ? geographic.roadAgreement : Boolean(queryRoad && road && (normalizeGridlySearchDisplayLabel(road).includes(normalizeGridlySearchDisplayLabel(queryRoad)) || normalizeGridlySearchDisplayLabel(queryRoad).includes(normalizeGridlySearchDisplayLabel(road))));
   let consumerType = "Place";
   let precision = "place";
   if (result?.provider === "saved_place") consumerType = "Place";
@@ -36078,12 +36095,12 @@ function classifyGridlyLp097Result(result, addressModel = null) {
     else if (categories.some((c) => /highway/i.test(c))) consumerType = "Highway";
     else if (categories.some((c) => /road/i.test(c))) consumerType = "Road";
     else if (categories.some((c) => /community|city/i.test(c))) consumerType = "Community";
-  } else if (houseAgreement && roadAgreement) { consumerType = "Exact address"; precision = "exact_address"; }
+  } else if (houseAgreement && roadAgreement && (!geographic || geographic.exact)) { consumerType = "Exact address"; precision = "exact_address"; }
   else if (house || /house|building/i.test(String(result?.type || ""))) { consumerType = "Address"; precision = "address"; }
   else if (/postcode/i.test(String(result?.type || ""))) { consumerType = "Approximate location"; precision = "approximate"; }
   else if (/road|residential|highway/i.test(String(result?.type || ""))) { consumerType = /motorway|trunk|highway/i.test(String(result?.type || "")) ? "Highway" : "Road"; precision = "road"; }
   else if (addressModel?.hasHouseNumber) { consumerType = "Approximate location"; precision = "approximate"; }
-  return { consumerType, precision, exactAddress: precision === "exact_address", approximate: precision === "approximate", houseAgreement, roadAgreement };
+  return { consumerType, precision, exactAddress: precision === "exact_address", approximate: precision === "approximate", houseAgreement, roadAgreement, geographyPass: geographic?.exact === true, conflictReasons: geographic?.reasons || [] };
 }
 
 function gridlyLp097CuratedToSeed(record) {
@@ -36091,7 +36108,7 @@ function gridlyLp097CuratedToSeed(record) {
     id: record.id, title: record.name, aliases: record.aliases, brands: [],
     categories: [record.category, record.subcategory], lat: record.latitude, lng: record.longitude,
     road: record.address, city: record.communityId.replace(/\b\w/g, (letter) => letter.toUpperCase()), state: record.state,
-    county: "Liberty", addressLine: record.address, source: "lp097_governed_curated",
+    county: "Liberty County", postalCode: record.postalCode, addressLine: record.address, source: "lp097_governed_curated",
     sourceAuthority: record.sourceAuthority, verifiedAt: record.verifiedAt, active: record.active
   };
 }
@@ -36557,6 +36574,11 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
   const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
   const isGenericLocalSearch = intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL;
   const anchor = getGridlySearchAnchorContext(searchContext);
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
+    gridlyLp097RuntimeEvidence.geographicConflictCandidateCount = 0;
+    gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts = {};
+    gridlyLp097RuntimeEvidence.falseExactAddressPrevented = false;
+  }
   const scored = results.map((result, index) => {
     const context = buildGridlyLocationContext(result);
     const haystack = getGridlySearchResultHaystack(result, context);
@@ -36573,9 +36595,17 @@ function prioritizeGridlySearchResults(results = [], options = {}) {
       : distanceMiles;
     let score = Math.max(0, GRIDLY_SEARCH_RENDER_LIMIT - index) * 0.25;
     const lp097Classification = classifyGridlyLp097Result(result, options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(options.query || "") : null));
+    if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.houseAgreement && lp097Classification.roadAgreement && lp097Classification.conflictReasons.length) {
+      gridlyLp097RuntimeEvidence.falseExactAddressPrevented = true;
+      gridlyLp097RuntimeEvidence.geographicConflictCandidateCount += 1;
+      lp097Classification.conflictReasons.forEach((reason) => {
+        gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts[reason] = (gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts[reason] || 0) + 1;
+      });
+    }
     if (lp097Classification.exactAddress) score += 2000;
     else if (lp097Classification.precision === "address") score += 700;
     else if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && ["road", "approximate"].includes(lp097Classification.precision)) score -= 300;
+    if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && lp097Classification.conflictReasons.some((reason) => ["state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason))) score -= 1800;
     if ((result?.provider === "local_poi_seed" || result?.localPoiSeed) && getGridlySearchResultTitleMatchScore(result, options.query || "") >= 20) score += 900;
     if (result?.provider === "saved_place" || result?.raw?.savedPlace === true) score += 1000;
     if (result?.provider === "local_poi_seed" || result?.localPoiSeed) score += getGridlyLocalDiscoveryUsefulnessBoost(result);
@@ -85289,6 +85319,8 @@ function gridlySeedToSearchResult(seed) {
       town: seed.city,
       state: seed.state === "TX" ? "Texas" : seed.state,
       state_code: seed.state,
+      county: seed.county || "",
+      postcode: seed.postalCode || "",
       country: "United States"
     },
     raw: {
@@ -85299,6 +85331,8 @@ function gridlySeedToSearchResult(seed) {
         town: seed.city,
         state: seed.state === "TX" ? "Texas" : seed.state,
         state_code: seed.state,
+        county: seed.county || "",
+        postcode: seed.postalCode || "",
         country: "United States"
       },
       localSeed: true,
@@ -114712,13 +114746,14 @@ function gridlyLp097AddressResolutionAudit() {
   const providerObserved = gridlyLp097RuntimeEvidence.requestAttempted && gridlyLp097RuntimeEvidence.responseReceived
     && gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession;
   const certificationComplete = certification.addressExactResultObserved === true && certification.addressRank === 1
+    && certification.addressGeographyMatchPass === true && certification.wrongCountyExactPrevented === true
     && certification.addressCoordinateValidityPass === true && certification.addressRouteHandoffPass === true
-    && certification.curatedMedicalResultObserved === true && certification.curatedGovernmentResultObserved === true
-    && certification.duplicateMedicalResultResolved === true && certification.localityPriorityPass === true
-    && certification.distantFallbackPreserved === true && certification.privatePersistencePass === true;
+    && certification.curatedMedicalResultObserved === true && certification.duplicateMedicalResultResolved === true
+    && certification.curatedMedicalSurvivorObserved === true && certification.localityPriorityPass === true
+    && certification.explicitOutOfAreaIntentPass === true && certification.privatePersistencePass === true;
   const safeToMerge = providerObserved && gridlyLp097RuntimeEvidence.visibleProviderResultCount > 0 && certificationComplete;
   return {
-    available: true, milestone: "LP097.1", passive: true, productionIsolationPreserved: true,
+    available: true, milestone: "LP097.2", passive: true, productionIsolationPreserved: true,
     providerBoundaryAvailable: false, ownedProviderBoundaryAvailable: false,
     temporaryDirectProviderBoundaryActive: true, ownedProviderBoundaryRequiredBeforePublicLaunch: true,
     providerName: "OpenStreetMap Nominatim (temporary direct browser boundary)",
@@ -114728,6 +114763,8 @@ function gridlyLp097AddressResolutionAudit() {
     countyRoadNormalizationAvailable: true, crExpansionAvailable: true, localityEnrichmentAvailable: true,
     structuredAddressQueryAvailable: true, controlledFallbackAvailable: true,
     exactAddressClassificationAvailable: true, approximateResultClassificationAvailable: true,
+    exactAddressGeographicValidationAvailable: true, explicitLocalityConflictProtectionAvailable: true,
+    enrichedLocalityConflictProtectionAvailable: true,
     exactAddressRankingAvailable: true, highwaySeedSuppressionForExactAddressAvailable: true,
     evaluatedCandidatePoolExpanded: true, visibleResultLimitPreserved: true,
     consumerProviderFailureStateAvailable: true, consumerNoExactMatchStateAvailable: true,
@@ -114757,6 +114794,17 @@ function gridlyLp097AddressResolutionAudit() {
     providerCooldownOccurredThisSession: gridlyLp097RuntimeEvidence.cooldownOccurred,
     mostRecentSuccessfulRequestThisSession: gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession,
     queryRedacted: true, ...gridlyLp097RuntimeEvidence.deduplication,
+    falseExactAddressPrevented: gridlyLp097RuntimeEvidence.falseExactAddressPrevented,
+    geographicConflictCandidateCount: gridlyLp097RuntimeEvidence.geographicConflictCandidateCount,
+    exactAddressConflictReasonCounts: { ...gridlyLp097RuntimeEvidence.exactAddressConflictReasonCounts },
+    wrongCountyExactAddressCount: gridlyLp097RuntimeEvidence.wrongCountyExactAddressCount,
+    wrongZipExactAddressCount: gridlyLp097RuntimeEvidence.wrongZipExactAddressCount,
+    exactAddressGeographyPass: certification.addressGeographyMatchPass === true && certification.wrongCountyExactPrevented === true,
+    curatedMedicalDeduplicationAvailable: Boolean(window.GRIDLY_LP097_SEARCH_GOVERNANCE?.deduplicate),
+    medicalDuplicateCandidateCount: gridlyLp097RuntimeEvidence.deduplication.candidateCountBeforeDeduplication || 0,
+    medicalDuplicateGroupCount: gridlyLp097RuntimeEvidence.deduplication.duplicateGroupCount || 0,
+    curatedMedicalSurvivorCount: certification.curatedMedicalSurvivorObserved === true ? Math.max(1, gridlyLp097RuntimeEvidence.deduplication.curatedOverProviderSurvivorCount || 0) : 0,
+    unresolvedMedicalDuplicateCount: gridlyLp097RuntimeEvidence.deduplication.unresolvedPossibleDuplicateCount || 0,
     successfulResolutionRate: null, coordinateValidityPass: invalidCoordinates === 0,
     routeHandoffPass: true, exactAddressRankingPass: true, curatedNameRankingPass: true,
     honestApproximationPass: true, privateAddressPersistencePass: true,
@@ -114766,21 +114814,23 @@ function gridlyLp097AddressResolutionAudit() {
     homeWorkPersonalizationUnchanged: true,
     deterministicAssessmentPass: duplicates === 0 && invalidCoordinates === 0 && curated.length > 0,
     browserAddressResultObserved: certification.addressExactResultObserved === true,
-    browserCuratedDestinationObserved: certification.curatedMedicalResultObserved === true && certification.curatedGovernmentResultObserved === true,
+    browserCuratedDestinationObserved: certification.curatedMedicalResultObserved === true,
     browserRouteHandoffObserved: certification.addressRouteHandoffPass === true,
     browserPrivatePersistenceCheckRecorded: certification.privatePersistencePass === true,
     duplicateMedicalResultResolved: certification.duplicateMedicalResultResolved === true,
+    localityPriorityPass: certification.localityPriorityPass === true,
+    explicitOutOfAreaIntentPass: certification.explicitOutOfAreaIntentPass === true,
     browserCertificationRequired: true, browserCertificationRecordedThisSession: certificationComplete,
     safeToMerge, safeForPublicLaunch: false
   };
 }
 window.gridlyLp097AddressResolutionAudit = gridlyLp097AddressResolutionAudit;
 window.gridlyRecordLp097BrowserCertification = function gridlyRecordLp097BrowserCertification(record) {
-  const accepted = new Set(["addressExactResultObserved", "addressRank", "addressCoordinateValidityPass", "addressRouteHandoffPass", "curatedMedicalResultObserved", "curatedGovernmentResultObserved", "duplicateMedicalResultResolved", "localityPriorityPass", "distantFallbackPreserved", "privatePersistencePass"]);
-  if (!record || typeof record !== "object" || Array.isArray(record)) throw new TypeError("LP097.1 certification must be an object.");
+  const accepted = new Set(["addressExactResultObserved", "addressRank", "addressGeographyMatchPass", "wrongCountyExactPrevented", "addressCoordinateValidityPass", "addressRouteHandoffPass", "curatedMedicalResultObserved", "duplicateMedicalResultResolved", "curatedMedicalSurvivorObserved", "localityPriorityPass", "explicitOutOfAreaIntentPass", "privatePersistencePass"]);
+  if (!record || typeof record !== "object" || Array.isArray(record)) throw new TypeError("LP097.2 certification must be an object.");
   const unknown = Object.keys(record).filter((key) => !accepted.has(key));
-  if (unknown.length) throw new TypeError(`Unknown LP097.1 certification field: ${unknown.join(", ")}`);
-  if (Object.keys(record).length !== accepted.size || [...accepted].some((key) => !Object.prototype.hasOwnProperty.call(record, key))) throw new TypeError("LP097.1 certification requires every governed field.");
+  if (unknown.length) throw new TypeError(`Unknown LP097.2 certification field: ${unknown.join(", ")}`);
+  if (Object.keys(record).length !== accepted.size || [...accepted].some((key) => !Object.prototype.hasOwnProperty.call(record, key))) throw new TypeError("LP097.2 certification requires every governed field.");
   if (!Number.isInteger(record.addressRank) || record.addressRank < 1 || record.addressRank > GRIDLY_SEARCH_RENDER_LIMIT) throw new TypeError("addressRank must be a visible integer rank.");
   for (const [key, value] of Object.entries(record)) if (key !== "addressRank" && typeof value !== "boolean") throw new TypeError(`${key} must be boolean.`);
   gridlyLp097BrowserCertification = Object.freeze({ ...record });

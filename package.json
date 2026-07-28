@@ -44,6 +44,7 @@
     "test:lp092": "node tests/lp092-historical-activation-readiness-revalidation.test.js",
     "test:lp093": "node tests/lp093-historical-operational-rollout.test.js",
     "test:lp097": "node tests/lp097-address-resolution-and-destinations.test.js",
-    "test:lp0971": "node tests/lp0971-search-governance.test.js"
+    "test:lp0971": "node tests/lp0971-search-governance.test.js",
+    "test:lp0972": "node tests/lp0972-geographic-exactness-and-medical-deduplication.test.js"
   }
 }
