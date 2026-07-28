@@ -1,0 +1,426 @@
+{
+  "milestone": "LP097",
+  "privacy": "Public facilities and clearly synthetic contract cases only.",
+  "fixtures": [
+    {
+      "id": "address-1",
+      "query": "117 Cook Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-2",
+      "query": "1923 Sam Houston Street, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-3",
+      "query": "3200 North Cleveland Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-4",
+      "query": "1600 East Houston Street, Cleveland, TX 77327",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-5",
+      "query": "801 South Cleveland Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-6",
+      "query": "1710 Sam Houston Street, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-7",
+      "query": "110 South Main Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-8",
+      "query": "1510 Trinity Street, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-9",
+      "query": "2121 Highway 146 Bypass, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-10",
+      "query": "831 Highway 59 South, Cleveland, TX 77327",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-11",
+      "query": "2004 North Cleveland Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-12",
+      "query": "1914 Lakeland Drive, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-13",
+      "query": "1353 North Travis Street, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-14",
+      "query": "2400 Beaumont Avenue, Liberty, TX 77575",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "address-15",
+      "query": "309 South Cleveland Street, Dayton, TX 77535",
+      "kind": "complete_address",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "rural-1",
+      "query": "100 County Road 2001, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-2",
+      "query": "101 County Road 2002, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-3",
+      "query": "102 County Road 2003, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-4",
+      "query": "103 County Road 2004, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-5",
+      "query": "104 County Road 2005, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-6",
+      "query": "105 County Road 2006, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-7",
+      "query": "106 County Road 2007, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-8",
+      "query": "107 County Road 2008, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-9",
+      "query": "108 County Road 2009, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "rural-10",
+      "query": "109 County Road 2010, Liberty County, TX",
+      "kind": "rural_address",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "cr-1",
+      "query": "200 CR 2101, Liberty County, TX",
+      "kind": "cr_abbreviation",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "cr-2",
+      "query": "201 CR 2102, Liberty County, TX",
+      "kind": "cr_abbreviation",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "cr-3",
+      "query": "202 CR 2103, Liberty County, TX",
+      "kind": "cr_abbreviation",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "cr-4",
+      "query": "203 CR 2104, Liberty County, TX",
+      "kind": "cr_abbreviation",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "cr-5",
+      "query": "204 CR 2105, Liberty County, TX",
+      "kind": "cr_abbreviation",
+      "expected": "contract_only",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "highway-1",
+      "query": "123 FM 1960, Dayton, TX",
+      "kind": "highway",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "highway-2",
+      "query": "400 FM 1011, Liberty, TX",
+      "kind": "highway",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "highway-3",
+      "query": "500 TX 146, Liberty, TX",
+      "kind": "highway",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "highway-4",
+      "query": "600 US 90, Dayton, TX",
+      "kind": "highway",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "highway-5",
+      "query": "700 State Highway 321, Dayton, TX",
+      "kind": "highway",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "medical-1",
+      "query": "Liberty-Dayton Regional Medical Center",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "medical-2",
+      "query": "Cleveland Emergency Hospital",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "medical-3",
+      "query": "hospital Liberty TX",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "medical-4",
+      "query": "emergency room Cleveland TX",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "medical-5",
+      "query": "urgent care Dayton TX",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "government-1",
+      "query": "Dayton City Hall",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "government-2",
+      "query": "Liberty County Courthouse",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "government-3",
+      "query": "Liberty County Sheriff",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "government-4",
+      "query": "Dayton Police Department",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "government-5",
+      "query": "Liberty Police Department",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "service-1",
+      "query": "Dayton High School",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "service-2",
+      "query": "Cleveland High School",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "service-3",
+      "query": "Jones Public Library",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "service-4",
+      "query": "Liberty Municipal Library",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "service-5",
+      "query": "US Post Office Dayton",
+      "kind": "public_place",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "broad-1",
+      "query": "US 90",
+      "kind": "broad",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "broad-2",
+      "query": "TX 146",
+      "kind": "broad",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "broad-3",
+      "query": "FM 1960",
+      "kind": "broad",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "broad-4",
+      "query": "77535",
+      "kind": "broad",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "broad-5",
+      "query": "Dayton Texas",
+      "kind": "broad",
+      "expected": "resolve",
+      "dataClass": "public_facility"
+    },
+    {
+      "id": "no_match-1",
+      "query": "999999 Imaginary Road, Dayton, TX",
+      "kind": "no_match",
+      "expected": "no_match_or_approximate",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "no_match-2",
+      "query": "Unknown County Road ZZ",
+      "kind": "no_match",
+      "expected": "no_match_or_approximate",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "no_match-3",
+      "query": "Springfield City Hall Texas",
+      "kind": "no_match",
+      "expected": "no_match_or_approximate",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "no_match-4",
+      "query": "Main Street",
+      "kind": "no_match",
+      "expected": "no_match_or_approximate",
+      "dataClass": "synthetic"
+    },
+    {
+      "id": "no_match-5",
+      "query": "00000",
+      "kind": "no_match",
+      "expected": "no_match_or_approximate",
+      "dataClass": "synthetic"
+    }
+  ]
+}
