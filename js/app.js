@@ -36799,6 +36799,24 @@ function filterGridlyGenericLocalQualityResults(results = [], options = {}) {
 }
 
 
+function filterGridlyExplicitIntentRelevance(results = [], options = {}) {
+  if (!Array.isArray(results) || !results.length) return [];
+  const query = options.query || ensureGridlySearchState().activeQuery || "";
+  const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
+  const addressModel = options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(query) : null);
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
+    return results.filter((result) => {
+      const classification = classifyGridlyLp097Result(result, addressModel);
+      return classification.exactAddress || classification.roadAgreement
+        || window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
+    });
+  }
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE) {
+    return results.filter((result) => window.GRIDLY_LP101_SEARCH_QUALITY?.businessResultRelevant?.(query, result) === true);
+  }
+  return results;
+}
+
 function filterGridlyDestinationSearchContainmentResults(results = [], options = {}) {
   const intent = options.intent || classifyGridlyDestinationSearchIntent(options.query || ensureGridlySearchState().activeQuery || "");
   const searchContext = options.searchContext || getGridlyDestinationSearchContainmentContext(getGridlySearchMapContext());
@@ -85469,6 +85487,9 @@ function buildGridlySearchQueryVariants(rawQuery = "", options = {}) {
   const variants = intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS
     ? addressModel.providerVariants
     : [query];
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE) {
+    variants.push(...(window.GRIDLY_LP101_SEARCH_QUALITY?.providerQueryVariants?.(originalQuery) || []));
+  }
   if (shouldAddGridlyLocalSearchExpansions(query, intent)) {
     const searchContext = getGridlySearchMapContext();
     const anchor = getGridlySearchAnchorContext(searchContext);
@@ -85683,7 +85704,8 @@ async function gridlySearchAddress(query, options = {}) {
   );
   const containmentFilteredResults = filterGridlyDestinationSearchContainmentResults(prioritizedResults, { query: rawQuery, intent, searchContext });
   const dedupedResults = dedupeGridlySearchResults(containmentFilteredResults, { limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT });
-  const qualityFilteredResults = filterGridlyGenericLocalQualityResults(dedupedResults, { query: rawQuery, intent, diagnostics });
+  const explicitRelevantResults = filterGridlyExplicitIntentRelevance(dedupedResults, { query: rawQuery, intent, addressModel });
+  const qualityFilteredResults = filterGridlyGenericLocalQualityResults(explicitRelevantResults, { query: rawQuery, intent, diagnostics });
   const localityReservedResults = preserveGridlyLp097StrongLocalResults(qualityFilteredResults, { query: rawQuery, intent, searchContext });
   const boundaryFailed = ["failed", "rate_limited"].includes(diagnostics.providerStatus);
   const explicitRemoteIntent = intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS || intent.type === GRIDLY_DESTINATION_INTENTS.EXPLICIT_DESTINATION;

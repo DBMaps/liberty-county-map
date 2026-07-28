@@ -133,5 +133,27 @@ await window.gridlyLp101VisibleSearchCertification?.()
 ```
 
 3. Read the unmistakable PASS/FAIL line and concise case table. Merge only for
-   `✅ LP101.2 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE` and a returned
+   `✅ LP101 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE` and a returned
    `safeToMerge: true`. Browser production behavior remains authoritative.
+
+## LP101.3 — address fallback removal and business query recovery
+
+### Address fallback root cause
+
+Explicit address searches entered the shared result pipeline with local transportation seeds. Address ranking penalized approximate roads, but no minimum relevance gate removed them, so nearby highways could still appear under **Best matches** after the canonical boundary returned no result.
+
+LP101.3 applies an explicit-intent relevance gate before the final visible list. An address candidate must be an exact address, agree with the parsed street, or match the normalized roadway identity. `County Road 677` and `CR 677` share an identity; unrelated US 90, TX 321, and FM 1960 do not. A canonical no-result now reaches the existing truthful no-result presentation instead of displaying roadway filler.
+
+### Business query root cause
+
+LP099 correctly classified `Dayton Walmart`, and LP101 correctly separated Dayton from Walmart, but the provider path sent only the normalized literal phrase. Explicit business searches also lacked a final target-term relevance floor, allowing proximity-only roads to remain visible when provider recall was weak.
+
+LP101.3 preserves Walmart as the business target and Dayton as geographic context while constructing provider-independent variants for Walmart in Dayton, near Dayton, and in Liberty County. Every request still passes through the canonical Gridly boundary. The final relevance gate requires the business target in visible business results, allowing a remote Walmart result to survive while removing unrelated road filler. Existing Saved Place/governed boosts, community and county context, canonical confidence, and distance signals remain in the ranker.
+
+### Preserved behavior and merge guidance
+
+LP097 exact-address behavior, LP098 governed destinations, LP099 classification, the LP100 boundary, Hospital category search, Liberty Courthouse precedence, and Route Preview certification remain covered. No direct upstream browser request was added.
+
+Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
+
+Merge only when the LP097–LP101.3 automated suite passes and the one-line browser certification reports `failedChecks: []`, `routePreviewVerified: true`, and `safeToMerge: true`.
