@@ -36108,7 +36108,7 @@ function gridlyLp097CuratedToSeed(record) {
     id: record.id, title: record.name, aliases: record.aliases, brands: [],
     categories: [record.category, record.subcategory], lat: record.latitude, lng: record.longitude,
     road: record.address, city: record.communityId.replace(/\b\w/g, (letter) => letter.toUpperCase()), state: record.state,
-    county: "Liberty County", postalCode: record.postalCode, addressLine: record.address, source: "lp097_governed_curated",
+    county: record.county || record.countyId.replace(/-tx$/, "").replace(/(^|-)\w/g, part => part.replace("-", " ").toUpperCase()) + " County", postalCode: record.postalCode, addressLine: record.address, source: "lp097_governed_curated",
     sourceAuthority: record.sourceAuthority, verifiedAt: record.verifiedAt, active: record.active
   };
 }
