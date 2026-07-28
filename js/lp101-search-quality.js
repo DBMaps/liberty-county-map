@@ -517,7 +517,7 @@
     if (!renderDomAgreement) fail("renderDomAgreement");
     const safeToMerge = failedChecks.length === 0 && cases.length === VISIBLE_CASES.length
       && cases.every((entry) => entry.passed) && candidatePipelineAgreement && renderDomAgreement && routePreviewVerified;
-    const result = Object.freeze({ available: true, milestone: "LP101.5", cases: Object.freeze(cases), candidatePipelineAgreement, renderDomAgreement, routePreviewVerified,
+    const result = Object.freeze({ available: true, milestone: "LP101.6", cases: Object.freeze(cases), candidatePipelineAgreement, renderDomAgreement, routePreviewVerified,
       failedChecks: Object.freeze(failedChecks), safeToMerge });
     global.console?.table?.(cases.map((entry) => ({ caseName: entry.caseName, passed: entry.passed })));
     global.console?.log?.(safeToMerge
