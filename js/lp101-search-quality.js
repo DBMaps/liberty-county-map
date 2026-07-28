@@ -178,6 +178,20 @@
     });
   }
 
+  function noResultMessageObserved(results) {
+    const statuses = Array.from(results?.querySelectorAll?.(".gridly-search-results-status") || []);
+    if (!statuses.length) {
+      const status = results?.querySelector?.(".gridly-search-results-status");
+      if (status) statuses.push(status);
+    }
+    return statuses.some((status) => {
+      if (status.hidden || status.getAttribute?.("aria-hidden") === "true") return false;
+      if (typeof status.closest === "function" && status.closest("#gridlySearchResults") !== results) return false;
+      const text = normalize(status.textContent);
+      return /\b(?:couldnt confirm|no matching destination(?:s)? found)\b/.test(text);
+    });
+  }
+
   function runtimeSummary(entries) {
     const searches = entries.filter((entry) => entry?.requestType === "destination_search");
     const statuses = searches.map((entry) => entry.httpStatus).filter(Number.isInteger);
@@ -245,14 +259,16 @@
         const allEvidence = typeof client?.evidence === "function" ? client.evidence() : [];
         const caseEvidence = allEvidence.slice(evidenceBefore);
         const runtime = runtimeSummary(caseEvidence);
+        const activeContainerCards = visibleCards(results);
         const cards = visibleCards(results, definition.caseName);
         const renderInputCount = Number(results.dataset?.lp101RenderInputCount || 0);
         const activeVisibleNodeCount = cards.length;
+        const staleVisibleNodeCount = activeContainerCards.filter((card) => card.dataset?.lp101Case !== definition.caseName).length;
         const currentCaseIdentityAgreement = results.dataset?.lp101Case === definition.caseName
+          && staleVisibleNodeCount === 0
           && cards.every((card) => card.dataset?.lp101Case === definition.caseName);
         const renderDomAgreement = renderInputCount === activeVisibleNodeCount && currentCaseIdentityAgreement;
         const texts = cards.map((card) => String(card.textContent || "").replace(/\s+/g, " ").trim());
-        const message = String(results.querySelector?.(".gridly-search-results-status")?.textContent || "");
         const firstText = texts[0] || "";
         const canonicalResponseObserved = runtime.canonicalSuccessResponseObserved || runtime.canonicalFailureResponseObserved;
         const runtimeCasePassed = runtime.boundaryRequestAttempted && runtime.boundaryReachable
@@ -262,13 +278,22 @@
 
         if (definition.caseName === "address") {
           const validAddress = texts.some((text) => /\b274\b/.test(text) && /\b(?:county road|cr)\s*677\b/i.test(text));
-          const truthfulNoResult = cards.length === 0 && /couldn.t confirm|no matching destination/i.test(message);
-          const misleadingRoadFallbackAbsent = validAddress || truthfulNoResult
+          const noResultMessage = noResultMessageObserved(results);
+          const finalGateHasNoCandidates = renderInputCount === 0;
+          const truthfulNoResult = settled && canonicalResponseObserved && finalGateHasNoCandidates
+            && cards.length === 0 && staleVisibleNodeCount === 0 && noResultMessage;
+          const canonicalNoResultAccepted = truthfulNoResult && runtimeCasePassed && renderDomAgreement;
+          const relevantAddressResultObserved = validAddress && cards.length > 0;
+          const misleadingRoadFallbackAbsent = relevantAddressResultObserved || truthfulNoResult
             || !texts.some((text) => ROAD_PATTERN.test(text));
           result = { caseName: definition.caseName, passed: false, visibleResultCount: cards.length,
             canonicalResponseObserved,
+            relevantAddressResultObserved, truthfulNoResultObserved: truthfulNoResult,
+            noResultMessageObserved: noResultMessage, canonicalNoResultAccepted,
+            addressOutcome: relevantAddressResultObserved ? "relevant_result" : (canonicalNoResultAccepted ? "truthful_no_result" : "failed"),
             misleadingRoadFallbackAbsent };
-          result.passed = settled && runtimeCasePassed && misleadingRoadFallbackAbsent && (validAddress || truthfulNoResult);
+          result.passed = settled && runtimeCasePassed && renderDomAgreement && misleadingRoadFallbackAbsent
+            && (relevantAddressResultObserved || canonicalNoResultAccepted);
           if (!misleadingRoadFallbackAbsent) fail("misleadingRoadFallbackAbsent");
         } else if (definition.caseName === "business") {
           const relevantResultObserved = texts.some((text) => /walmart/i.test(text) && /dayton|liberty county|nearby/i.test(text));
@@ -292,6 +317,7 @@
         result.activeVisibleNodeCount = activeVisibleNodeCount;
         result.renderDomAgreement = renderDomAgreement;
         result.currentCaseIdentityAgreement = currentCaseIdentityAgreement;
+        result.staleVisibleNodeCount = staleVisibleNodeCount;
         result.visibleResultCount = activeVisibleNodeCount;
         result.passed = result.passed && renderDomAgreement;
         if (!renderDomAgreement) fail(`${definition.caseName}:renderDomAgreement`);
@@ -333,7 +359,7 @@
     if (!renderDomAgreement) fail("renderDomAgreement");
     const safeToMerge = failedChecks.length === 0 && cases.length === VISIBLE_CASES.length
       && cases.every((entry) => entry.passed) && candidatePipelineAgreement && renderDomAgreement && routePreviewVerified;
-    const result = Object.freeze({ available: true, milestone: "LP101.4", cases: Object.freeze(cases), candidatePipelineAgreement, renderDomAgreement, routePreviewVerified,
+    const result = Object.freeze({ available: true, milestone: "LP101.5", cases: Object.freeze(cases), candidatePipelineAgreement, renderDomAgreement, routePreviewVerified,
       failedChecks: Object.freeze(failedChecks), safeToMerge });
     global.console?.table?.(cases.map((entry) => ({ caseName: entry.caseName, passed: entry.passed })));
     global.console?.log?.(safeToMerge
