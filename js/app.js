@@ -85867,6 +85867,84 @@ window.gridlySearchDiscoveryAudit = buildGridlySearchDiscoveryAudit;
 window.gridlySearchCertificationDataset = buildGridlySearchCertificationDataset;
 window.gridlyRunSearchCertificationAudit = gridlyRunSearchCertificationAudit;
 
+// LP096 is deliberately passive: this helper summarizes the current in-memory search
+// state and the most recent live-search diagnostics. It never starts a search, fetches,
+// writes storage, or records the query outside the already-existing runtime state.
+window.gridlyDestinationAddressSearchAudit = function gridlyDestinationAddressSearchAudit() {
+  const live = gridlySearchUiState.lastLiveSearchAudit || {};
+  const query = String(getGridlySearchActiveInputQuery() || live.query || "").trim();
+  const normalizedQuery = normalizeGridlyBrandSearchText(query);
+  const queryLooksLikeAddress = classifyGridlyDestinationSearchIntent(query).type === GRIDLY_DESTINATION_INTENTS.ADDRESS;
+  const renderedResults = Array.isArray(gridlySearchUiState.lastRenderedResults)
+    ? gridlySearchUiState.lastRenderedResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
+    : [];
+  const isAddressResult = (result) => {
+    const rawAddress = result?.raw?.address && typeof result.raw.address === "object" ? result.raw.address : {};
+    const text = `${result?.title || ""} ${result?.display_name || ""} ${result?.raw?.display_name || ""}`;
+    return Boolean(rawAddress.house_number && (rawAddress.road || rawAddress.pedestrian))
+      || /^\s*\d{1,6}\s+\S+/i.test(text);
+  };
+  const renderedAddressResults = renderedResults.filter(isAddressResult);
+  const exactAddressResult = renderedAddressResults.find((result) => {
+    const resultText = normalizeGridlyBrandSearchText(`${result.title || ""} ${result.display_name || ""} ${result.raw?.display_name || ""}`);
+    return normalizedQuery.length > 0 && (resultText.includes(normalizedQuery) || normalizedQuery.includes(resultText));
+  }) || null;
+  const approximateAddressResult = exactAddressResult || renderedAddressResults[0] || null;
+  const selected = normalizeGridlySearchResult(ensureGridlySearchState().selectedDestination);
+  const selectedHasCoordinates = Boolean(selected && Number.isFinite(selected.lat) && Number.isFinite(selected.lng));
+  const roadwayResults = renderedResults.filter((result) => {
+    const categories = Array.isArray(result?.raw?.categories) ? result.raw.categories.join(" ") : "";
+    return /\b(road|highway|transportation|fm road)\b/i.test(`${result?.type || ""} ${categories}`);
+  });
+  const addressRendered = renderedAddressResults.length > 0;
+  const providerResponseReceived = ["ok", "cache_hit", "duplicate_reused"].includes(String(live.providerStatus || ""));
+  const addressNormalized = Boolean(approximateAddressResult);
+  // Existing diagnostics count provider rows but do not retain rejected provider rows,
+  // so absence from the rendered set cannot safely be labeled a normalization rejection.
+  const addressRejected = false;
+  const rejectionNotObservable = queryLooksLikeAddress
+    && Number(live.providerResultCount) > 0
+    && !addressNormalized;
+  const fullStreetAddressSearchSupported = queryLooksLikeAddress && Boolean(exactAddressResult);
+  const ruralCountyRoadSearchSupported = fullStreetAddressSearchSupported
+    && /\b(?:county road|cr)\s*\d+\b/i.test(query);
+
+  return {
+    available: true,
+    milestone: "LP096",
+    passive: true,
+    productionBehaviorChanged: false,
+    query,
+    normalizedQuery,
+    queryLooksLikeAddress,
+    localSeedSearchAvailable: Array.isArray(GRIDLY_LOCAL_POI_SEEDS),
+    roadwaySearchAvailable: Array.isArray(GRIDLY_LOCAL_POI_SEEDS)
+      && GRIDLY_LOCAL_POI_SEEDS.some((seed) => (seed.categories || []).some((category) => /road|highway/i.test(category))),
+    savedPlaceSearchAvailable: typeof getGridlySavedPlaceDestinationSearchResults === "function",
+    externalGeocoderAvailable: typeof fetchGridlyNominatimSearch === "function",
+    externalProviderName: "OpenStreetMap Nominatim Search",
+    externalProviderRequestAttempted: Boolean(live.providerAttempted),
+    externalProviderResponseReceived: providerResponseReceived,
+    externalProviderResultCount: Number(live.providerResultCount) || 0,
+    exactAddressResultFound: Boolean(exactAddressResult),
+    approximateAddressResultFound: Boolean(approximateAddressResult && !exactAddressResult),
+    addressResultNormalized: addressNormalized,
+    addressResultRejected: addressRejected,
+    addressResultRejectionReason: rejectionNotObservable ? "not_determined_provider_payload_not_retained" : "none",
+    addressResultRendered: addressRendered,
+    roadwayResultsPresent: roadwayResults.length > 0,
+    roadwayResultsOutrankAddress: roadwayResults.length > 0 && (!addressRendered || renderedResults.indexOf(roadwayResults[0]) < renderedResults.indexOf(approximateAddressResult)),
+    selectedResultHasCoordinates: selectedHasCoordinates,
+    selectedResultCanBecomeDestination: selectedHasCoordinates,
+    fullStreetAddressSearchSupported,
+    ruralCountyRoadSearchSupported,
+    launchRisk: fullStreetAddressSearchSupported ? "medium" : "high",
+    recommendedNextAction: "LP097: add a compliant server-side address-geocoding path and certify rural address ranking, rendering, and route handoff.",
+    protectedSystemsUnchanged: true,
+    safeToProceed: fullStreetAddressSearchSupported && selectedHasCoordinates
+  };
+};
+
 async function gridlyReverseGeocode(lat, lng, options = {}) {
   const coordinates = normalizeCoordinatePair(lat, lng);
   if (!coordinates) return null;
