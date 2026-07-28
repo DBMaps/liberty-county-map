@@ -26303,3 +26303,13 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .gridly-official-roadway-popup [data-gridly-official-popup-field="guidanceLabel"] { margin-top: 3px; }
 .gridly-official-roadway-popup [data-gridly-official-popup-field="guidanceText"] { margin-top: 1px; }
 .gridly-official-roadway-popup [data-gridly-official-popup-field="trustLine"] { margin-top: 4px; }
+
+/* LP097 consumer-safe destination classification. */
+.gridly-search-result-type {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-muted, #667085);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
