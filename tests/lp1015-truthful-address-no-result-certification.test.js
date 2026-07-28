@@ -100,7 +100,7 @@ function harness(options = {}) {
   assert.equal(address.capturePhase, 'active_address_final_render');
   assert.equal(address.capturedBeforeCaseReset, true);
   assert.equal(certification.result.safeToMerge, true, 'truthful complete aggregation is safe to merge');
-  assert.equal(certification.result.milestone, 'LP101.5');
+  assert.equal(certification.result.milestone, 'LP101.6');
   assert.equal(certification.result.cases[1].passed, true, 'business remains passing');
   assert.equal(certification.result.cases[2].passed, true, 'category remains passing');
   assert.equal(certification.result.cases[3].passed, true, 'governed destination remains passing');

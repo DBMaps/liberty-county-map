@@ -85628,7 +85628,24 @@ function createGridlyDestinationProviderDiagnostics(query, intent, localSeedCoun
 function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
   if (!diagnostics || typeof diagnostics !== "object") return;
   diagnostics.variants.push({
-    variant: String(event.variant || ""),
+    variantIndex: Number.isInteger(event.variantIndex) ? event.variantIndex : diagnostics.variants.length,
+    intentType: event.intentType || diagnostics.intent || "unknown",
+    requestAttempted: event.attempted === true,
+    endpointOrigin: event.endpointOrigin || "",
+    functionSlug: event.functionSlug || "",
+    httpStatus: Number.isInteger(event.httpStatus) ? event.httpStatus : null,
+    canonicalSuccess: event.canonicalSuccess === true,
+    canonicalFailure: event.canonicalFailure === true,
+    canonicalResultCount: Number(event.canonicalResultCount) || 0,
+    failureCode: event.failureCode || "none",
+    retryable: event.retryable === true,
+    retryAfterPresent: event.retryAfterPresent === true,
+    providerCooldownObserved: event.providerCooldownObserved === true,
+    providerReservationDenied: event.providerReservationDenied === true,
+    timeoutObserved: event.timeoutObserved === true,
+    malformedResponseObserved: event.malformedResponseObserved === true,
+    networkFailureObserved: event.networkFailureObserved === true,
+    finalDisposition: event.finalDisposition || "unknown",
     status: event.status || "unknown",
     skippedReason: event.skippedReason || "",
     count: Number(event.count) || 0,
@@ -85646,18 +85663,34 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
   if (event.error) gridlyLp097RuntimeEvidence.providerErrorOccurred = true;
   if (event.status === "rate_limited") diagnostics.providerStatus = "rate_limited";
   else if (event.status === "failed" && diagnostics.providerStatus !== "rate_limited") diagnostics.providerStatus = "failed";
-  else if (event.status === "ok" && !["failed", "rate_limited"].includes(diagnostics.providerStatus)) diagnostics.providerStatus = "ok";
+  else if (["ok", "no_results"].includes(event.status)) diagnostics.providerStatus = event.status === "no_results" ? "no_results" : "ok";
   else if (event.status === "cache_hit" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cache_hit";
   else if (event.status === "cooldown" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "cooldown";
   else if (event.status === "duplicate_reused" && diagnostics.providerStatus === "not_attempted") diagnostics.providerStatus = "duplicate_reused";
-  if (["ok", "failed", "rate_limited"].includes(event.status)) {
+  if (["ok", "no_results", "failed", "rate_limited"].includes(event.status)) {
     gridlyLp097RuntimeEvidence.responseReceived = true;
-    gridlyLp097RuntimeEvidence.responseStatus = event.status === "ok" ? "success" : event.status;
+    gridlyLp097RuntimeEvidence.responseStatus = ["ok", "no_results"].includes(event.status) ? "success" : event.status;
   }
   if (event.status === "ok") {
     gridlyLp097RuntimeEvidence.successfulRequestObservedThisSession = true;
     gridlyLp097RuntimeEvidence.providerCandidateCount += Number(event.count) || 0;
   }
+}
+
+function aggregateGridlyAddressVariantOutcomes(variants = []) {
+  const completed = variants.filter((entry) => entry?.requestAttempted === true);
+  const anyRelevantResult = completed.some((entry) => entry.canonicalSuccess && entry.canonicalResultCount > 0);
+  const anyCanonicalNoResult = completed.some((entry) => entry.finalDisposition === "canonical_no_result");
+  const anyCanonicalSuccess = completed.some((entry) => entry.canonicalSuccess || entry.finalDisposition === "canonical_no_result");
+  const anyTemporaryFailure = completed.some((entry) => ["temporary_failure", "provider_cooldown", "provider_reservation_denied"].includes(entry.finalDisposition));
+  const allVariantsCanonicalNoResult = completed.length > 0 && completed.every((entry) => entry.finalDisposition === "canonical_no_result");
+  const allVariantsTemporaryFailure = completed.length > 0 && completed.every((entry) => ["temporary_failure", "provider_cooldown", "provider_reservation_denied"].includes(entry.finalDisposition));
+  const paused = allVariantsTemporaryFailure && completed.some((entry) => entry.providerCooldownObserved || entry.failureCode === "rate_limited");
+  return Object.freeze({
+    anyCanonicalSuccess, anyRelevantResult, anyCanonicalNoResult, allVariantsCanonicalNoResult,
+    anyTemporaryFailure, allVariantsTemporaryFailure,
+    finalConsumerClassification: anyRelevantResult ? "relevant_result" : anyCanonicalNoResult ? "confirmed_no_result" : paused ? "temporarily_paused" : "temporarily_unavailable"
+  });
 }
 
 function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResultCount, finalResultCount) {
@@ -85677,7 +85710,7 @@ function finalizeGridlyDestinationProviderDiagnostics(diagnostics, providerResul
   return diagnostics;
 }
 
-async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null } = {}) {
+async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchContext, bounded = "0", diagnostics = null, structured = null, variantIndex = 0 } = {}) {
   const intent = structured ? "address" : "business_place";
   const viewbox = String(searchContext?.viewbox || "").split(",").map(Number);
   const request = {
@@ -85693,15 +85726,37 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
       ...(viewbox.length === 4 && viewbox.every(Number.isFinite) ? { viewbox } : {})
     }
   };
-  recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: "attempting", attempted: true });
+  const evidenceBefore = window.gridlyGeocodingClient.evidence().length;
   const response = await window.gridlyGeocodingClient.search(request);
+  const transport = window.gridlyGeocodingClient.evidence().slice(evidenceBefore).at(-1) || {};
+  const common = {
+    variantIndex, intentType: intent, attempted: true,
+    endpointOrigin: transport.endpointOrigin || "", functionSlug: transport.functionSlug || "",
+    httpStatus: transport.httpStatus, canonicalSuccess: response.ok === true || response.status === "no_results",
+    canonicalFailure: response.ok !== true && response.status !== "no_results",
+    canonicalResultCount: Array.isArray(response.results) ? response.results.length : 0,
+    failureCode: response.ok || response.status === "no_results" ? "none" : (transport.failureCode || response.status || "unknown"),
+    retryable: ["rate_limited", "provider_unavailable", "provider_timeout", "configuration_error"].includes(response.status),
+    retryAfterPresent: response.retryAfterSeconds !== null && response.retryAfterSeconds !== undefined && Number.isFinite(Number(response.retryAfterSeconds)),
+    providerCooldownObserved: response.status === "rate_limited",
+    providerReservationDenied: response.status === "configuration_error",
+    timeoutObserved: response.status === "provider_timeout",
+    malformedResponseObserved: transport.failureCode === "malformed_response",
+    networkFailureObserved: transport.failureCode === "network_failure"
+  };
   if (!response.ok) {
-    recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: response.status === "rate_limited" ? "rate_limited" : "failed", error: response.status });
+    if (response.status === "no_results") {
+      recordGridlyDestinationProviderEvent(diagnostics, { ...common, status: "no_results", finalDisposition: "canonical_no_result" });
+      return [];
+    }
+    const disposition = response.status === "rate_limited" ? "provider_cooldown"
+      : response.status === "configuration_error" ? "provider_reservation_denied" : "temporary_failure";
+    recordGridlyDestinationProviderEvent(diagnostics, { ...common, status: response.status === "rate_limited" ? "rate_limited" : "failed", error: response.status, finalDisposition: disposition });
     diagnostics.canonicalFailureStatus = response.status;
     return [];
   }
   const results = response.results.map(window.gridlyGeocodingClient.canonicalToLegacy);
-  recordGridlyDestinationProviderEvent(diagnostics, { variant: "[redacted]", status: response.cached ? "cache_hit" : "ok", cacheHit: response.cached, count: results.length });
+  recordGridlyDestinationProviderEvent(diagnostics, { ...common, status: response.cached ? "cache_hit" : "ok", cacheHit: response.cached, count: results.length, finalDisposition: results.length ? "relevant_results" : "canonical_no_result" });
   return results;
 }
 
@@ -85730,6 +85785,7 @@ async function gridlySearchAddress(query, options = {}) {
       searchContext,
       bounded: options.bounded === "1" || (intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL && searchContext.boundedSearchEnabled) ? "1" : "0",
       diagnostics,
+      variantIndex,
       structured: intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && variantIndex === 0 ? addressModel.structured : null
     });
     remoteProviderResultCount += variantResults.length;
@@ -85761,6 +85817,14 @@ async function gridlySearchAddress(query, options = {}) {
     if (hasRelevantMatch && providerResults.length >= limit && intent.type === GRIDLY_DESTINATION_INTENTS.GENERIC_LOCAL) break;
   }
 
+  diagnostics.aggregate = aggregateGridlyAddressVariantOutcomes(diagnostics.variants);
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
+    diagnostics.providerStatus = diagnostics.aggregate.finalConsumerClassification === "confirmed_no_result"
+      ? "no_results" : diagnostics.aggregate.finalConsumerClassification === "temporarily_paused" ? "rate_limited"
+        : diagnostics.aggregate.finalConsumerClassification === "temporarily_unavailable" ? "failed" : "ok";
+    diagnostics.cooldownActive = diagnostics.aggregate.finalConsumerClassification === "temporarily_paused";
+  }
+
   const prioritizedResults = prioritizeGridlySearchResults(
     providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean)
       .map((result) => ({ ...result, ...classifyGridlyLp097Result(result, addressModel) })),
@@ -85786,6 +85850,39 @@ async function gridlySearchAddress(query, options = {}) {
   Object.defineProperty(finalResults, "gridlyProviderDiagnostics", { value: diagnostics, enumerable: false });
   return finalResults;
 }
+
+window.gridlyAggregateAddressVariantOutcomes = aggregateGridlyAddressVariantOutcomes;
+window.gridlyLp101AddressProviderRca = async function gridlyLp101AddressProviderRca() {
+  const governedAddress = ["274", "County Road 677,", "Dayton,", "TX", "77535"].join(" ");
+  const results = await gridlySearchAddress(governedAddress, { limit: GRIDLY_SEARCH_RENDER_LIMIT });
+  const diagnostics = results?.gridlyProviderDiagnostics || {};
+  const variants = (diagnostics.variants || []).map((entry) => Object.freeze({
+    variantIndex: entry.variantIndex, intentType: entry.intentType, requestAttempted: entry.requestAttempted,
+    endpointOrigin: entry.endpointOrigin, functionSlug: entry.functionSlug, httpStatus: entry.httpStatus,
+    canonicalSuccess: entry.canonicalSuccess, canonicalFailure: entry.canonicalFailure,
+    canonicalResultCount: entry.canonicalResultCount, failureCode: entry.failureCode, retryable: entry.retryable,
+    retryAfterPresent: entry.retryAfterPresent, providerCooldownObserved: entry.providerCooldownObserved,
+    providerReservationDenied: entry.providerReservationDenied, timeoutObserved: entry.timeoutObserved,
+    malformedResponseObserved: entry.malformedResponseObserved, networkFailureObserved: entry.networkFailureObserved,
+    finalDisposition: entry.finalDisposition
+  }));
+  const aggregate = aggregateGridlyAddressVariantOutcomes(variants);
+  const findings = [];
+  if (aggregate.anyCanonicalNoResult && aggregate.anyTemporaryFailure) findings.push("canonical_no_result_preserved_over_non_blocking_temporary_variant_failure");
+  if (aggregate.allVariantsTemporaryFailure) findings.push("all_variants_temporarily_failed");
+  if (aggregate.allVariantsCanonicalNoResult) findings.push("all_variants_returned_canonical_no_result");
+  if (aggregate.anyRelevantResult) findings.push("relevant_result_returned");
+  const classificationAgreement = diagnostics.providerStatus === "no_results"
+    ? aggregate.finalConsumerClassification === "confirmed_no_result"
+    : diagnostics.providerStatus === "rate_limited" ? aggregate.finalConsumerClassification === "temporarily_paused"
+      : diagnostics.providerStatus === "failed" ? aggregate.finalConsumerClassification === "temporarily_unavailable" : true;
+  return Object.freeze({
+    available: true, milestone: "LP101.6-RCA", caseName: "address", variants: Object.freeze(variants),
+    aggregate: Object.freeze({ ...aggregate, classificationAgreement }),
+    provenFailureStage: aggregate.anyCanonicalNoResult ? "client_variant_status_aggregation" : "provider_or_gridly_boundary",
+    findings: Object.freeze(findings)
+  });
+};
 
 window.gridlyLp101CandidatePipelineDebug = async function gridlyLp101CandidatePipelineDebug(caseName) {
   if (caseName !== "address" && caseName !== "business") {

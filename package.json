@@ -56,6 +56,7 @@
     "test:lp1014": "node tests/lp1014-visible-candidate-pipeline-resolution.test.js",
     "test:lp1015": "node tests/lp1015-truthful-address-no-result-certification.test.js",
     "test:lp1015a": "node tests/lp1015a-address-status-diagnostic.test.js",
-    "test:lp1015b": "node tests/lp1015b-active-address-status-capture.test.js"
+    "test:lp1015b": "node tests/lp1015b-active-address-status-capture.test.js",
+    "test:lp1016": "node tests/lp1016-address-provider-availability-resolution.test.js"
   }
 }
