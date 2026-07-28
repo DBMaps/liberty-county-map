@@ -54,6 +54,7 @@
     "test:lp1012": "node tests/lp1012-visible-search-certification.test.js",
     "test:lp1013": "node tests/lp1013-address-fallback-and-business-recovery.test.js",
     "test:lp1014": "node tests/lp1014-visible-candidate-pipeline-resolution.test.js",
-    "test:lp1015": "node tests/lp1015-truthful-address-no-result-certification.test.js"
+    "test:lp1015": "node tests/lp1015-truthful-address-no-result-certification.test.js",
+    "test:lp1015a": "node tests/lp1015a-address-status-diagnostic.test.js"
   }
 }

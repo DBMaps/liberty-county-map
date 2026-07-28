@@ -256,3 +256,29 @@ Browser certification: `await window.gridlyLp101VisibleSearchCertification?.()`
 Merge only after the production browser reports the address as `truthful_no_result` (or a relevant
 result), `failedChecks: []`, both agreement fields and Route Preview as true, `safeToMerge: true`, and the
 SAFE TO MERGE console line. Browser production behavior remains authoritative.
+
+## LP101.5A — address no-result status diagnostic
+
+LP101.5A is an observation-only, session-memory browser diagnostic. It does not change the LP101.5
+pass expression, search behavior, ranking, provider queries, rendering, canonical response handling, or
+routing. Run it while the governed address case is the active final render:
+
+```js
+await window.gridlyLp101AddressStatusDiagnostic?.()
+```
+
+The production renderer uses `.gridly-search-results-status` for searching, temporarily unavailable,
+temporarily paused, confirmed no-result, and approximate-result notices. The active
+`#gridlySearchResults` container is also an `aria-live="polite"` region, but is the inspection boundary,
+not a candidate status node. The diagnostic recognizes the bounded classifications
+`confirmed_no_result`, `temporarily_unavailable`, `temporarily_paused`, `empty_state`, `unrecognized`,
+`hidden`, `outside_active_container`, `stale`, and `absent`.
+
+The returned contract contains only the milestone and safe case name; final-render, container,
+visibility, containment, staleness, identity, count, canonical/boundary/HTTP booleans; the bounded
+classification; the existing no-result detector boolean; and bounded findings. It never returns status
+text, the governed address, a query, coordinates, provider identity or payload, credentials, or search
+history, and it writes no persistent evidence. Its console output is one concise evidence table followed
+by `LP101.5A ADDRESS STATUS DIAGNOSTIC COMPLETE`; it deliberately prints no pass or merge authorization.
+
+Do not merge until the production diagnostic is run and reviewed.
