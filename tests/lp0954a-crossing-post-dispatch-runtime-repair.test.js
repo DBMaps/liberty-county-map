@@ -1,0 +1,26 @@
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const app = fs.readFileSync("js/app.js", "utf8");
+const handler = app.match(/function gridlyLp019BindAlertFocusHandlers[\s\S]*?\n}\n\nif \(typeof window/)?.[0] || "";
+const focus = app.match(/function focusGridlyAlertIncident[\s\S]*?function focusAlertLocation/)?.[0] || "";
+const audit = app.match(/function gridlyLp0954CrossingFocusCompletionAudit[\s\S]*?\n}/)?.[0] || "";
+
+for (const token of ["traceSessionId", "interactionAttempt", "handlerEntryCount", "physicalTapCount", "terminalStateReached"]) assert(app.includes(token), `missing session field ${token}`);
+for (const stage of ["Post-popup-request dispatch entered", "Post-popup-request focus call entered", "Post-popup-request focus call returned", "Focus completion callback registered", "Focus completion callback invoked", "Focus completion evaluated", "Focus completion promise resolved", "Exception after popup request", "Handler re-entry detected"]) assert(app.includes(`\"${stage}\"`), `missing stage ${stage}`);
+assert(handler.indexOf('gridlyLp0953Record("Post-popup-request dispatch entered"') > handler.indexOf('gridlyLp0953Record("Popup request issued"'), "post-dispatch line follows popup intent");
+assert.match(handler, /handlerEntryCount > 0[\s\S]*delegated_handler_reentry/);
+assert.match(handler, /try \{[\s\S]*focusGridlyAlertIncident[\s\S]*catch \(error\)[\s\S]*post_popup_request_dispatch/);
+assert.match(handler, /gridlySelectedAwarenessAreaResolutionCache\?\.area \|\| null/);
+assert.doesNotMatch(handler, /AwarenessSelectionBeforeFocus = typeof getGridlySelectedAwarenessArea/);
+assert.strictEqual((focus.match(/openCrossingPopupFromMarkerInteraction\(/g) || []).length, 1);
+assert.match(focus, /Focus completion evaluated[\s\S]*complete\(\)/);
+assert.match(focus, /catch \(error\)[\s\S]*focus_completion_callback/);
+assert.match(app, /terminalStateReached: true, completed: true, finalResult: "FAIL"/);
+assert.match(app, /terminalStateReached: true, completed: true, finalResult: "PASS"/);
+assert.match(app, /panel\.dataset\.alertFocusOwner = "gridlyLp019BindAlertFocusHandlers"/);
+assert.match(app, /"card click-handler wiring", \(\) => gridlyLp019BindAlertFocusHandlers\(document\)/);
+assert.doesNotMatch(app, /"card click-handler wiring", \(\) => bindAlertsPanelClick\(\)/);
+for (const key of ["postPopupRequestDispatchAvailable", "focusCompletionEvaluationAvailable", "terminalTraceContractAvailable", "oneDelegatedHandlerContract", "duplicateHandlerPathAbsent", "canonicalCrossingPopupDispatchAvailable", "existingMarkerReusePreserved", "hazardFocusPathPreserved", "officialFocusPathPreserved", "historicalIntelligenceInactive"]) assert(audit.includes(key), `audit missing ${key}`);
+assert.match(audit, /required\.every/);
+assert(!/\.click\(|\.focus\(|flyTo\(|setView\(|openPopup\(|localStorage/.test(audit), "audit must be passive");
+console.log("LP095.4A post-dispatch runtime regression checks passed.");
