@@ -47,7 +47,37 @@
     const category = INTENTS.find(([, pattern]) => pattern.test(normalizedQuery))?.[0] || null;
     const geography = COMMUNITIES.find((place) => new RegExp(`\\b${place}\\b`).test(normalizedQuery)) || null;
     const destinationTerms = normalizedQuery.split(" ").filter((token) => token && token !== geography && token !== "nearest");
-    return Object.freeze({ normalizedQuery, category, geography, destinationTerms, nearest: /^nearest\b/.test(normalize(query)), type: category ? "category" : "text" });
+    const businessTerm = destinationTerms.join(" ");
+    return Object.freeze({ normalizedQuery, category, geography, destinationTerms, businessTerm, nearest: /^nearest\b/.test(normalize(query)), type: category ? "category" : "text" });
+  }
+
+  function roadwayIdentity(value) {
+    const text = normalize(value).replace(/^\d{1,6}[a-z]?\s+/, " ");
+    const route = text.match(/\b(county road|farm to market road|us|tx|sh|highway|interstate|i)\s*(\d+[a-z]?)\b/);
+    if (!route) return "";
+    const family = { "county road": "cr", "farm to market road": "fm", highway: "highway", interstate: "i" }[route[1]] || route[1];
+    return `${family} ${route[2]}`;
+  }
+
+  function roadwayMatchesAddress(query, result) {
+    const wanted = roadwayIdentity(query);
+    if (!wanted) return false;
+    const rawAddress = result?.address && typeof result.address === "object" ? result.address : result?.raw?.address || {};
+    return [rawAddress.road, result?.title, result?.label, result?.display_name, result?.raw?.display_name]
+      .some((candidate) => roadwayIdentity(candidate) === wanted);
+  }
+
+  function businessResultRelevant(query, result) {
+    const intent = understand(query);
+    if (!intent.destinationTerms.length) return false;
+    const words = new Set(resultText(result).split(" ").filter(Boolean));
+    return intent.destinationTerms.every((term) => words.has(term));
+  }
+
+  function providerQueryVariants(query) {
+    const intent = understand(query);
+    if (!intent.geography || !intent.businessTerm || intent.category) return Object.freeze([]);
+    return Object.freeze([`${intent.businessTerm} ${intent.geography} Texas`, `${intent.businessTerm} near ${intent.geography} Texas`, `${intent.businessTerm} Liberty County Texas`]);
   }
 
   function resultText(result) {
@@ -278,16 +308,16 @@
     if (finalAudit.http404Observed) fail("http404Observed");
     const safeToMerge = failedChecks.length === 0 && cases.length === VISIBLE_CASES.length
       && cases.every((entry) => entry.passed) && routePreviewVerified;
-    const result = Object.freeze({ available: true, milestone: "LP101.2", cases: Object.freeze(cases), routePreviewVerified,
+    const result = Object.freeze({ available: true, milestone: "LP101.3", cases: Object.freeze(cases), routePreviewVerified,
       failedChecks: Object.freeze(failedChecks), safeToMerge });
     global.console?.table?.(cases.map((entry) => ({ caseName: entry.caseName, passed: entry.passed })));
     global.console?.log?.(safeToMerge
-      ? "✅ LP101.2 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE"
-      : "❌ LP101.2 VISIBLE SEARCH CERTIFICATION FAILED — DO NOT MERGE");
+      ? "✅ LP101 VISIBLE SEARCH CERTIFICATION PASSED — SAFE TO MERGE"
+      : "❌ LP101 VISIBLE SEARCH CERTIFICATION FAILED — DO NOT MERGE");
     return result;
   }
 
-  global.GRIDLY_LP101_SEARCH_QUALITY = Object.freeze({ normalize, understand, evaluate });
+  global.GRIDLY_LP101_SEARCH_QUALITY = Object.freeze({ normalize, understand, evaluate, roadwayIdentity, roadwayMatchesAddress, businessResultRelevant, providerQueryVariants });
   global.gridlyLp101BrowserCertification = audit;
   global.gridlyLp101VisibleSearchCertification = visibleSearchCertification;
 })(window);
