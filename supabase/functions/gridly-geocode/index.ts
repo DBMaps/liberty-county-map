@@ -6,6 +6,10 @@ const CONFIG = Object.freeze({
   namespace: Deno.env.get("GRIDLY_GEOCODE_CACHE_NAMESPACE") || "nominatim-public-v1",
   timeoutMs: 8000, intervalMs: 1000, maxAttempts: 3, maxBodyBytes: 8192,
   attribution: "© OpenStreetMap contributors",
+  authoritativeRuralProvider: Deno.env.get("GRIDLY_AUTHORITATIVE_RURAL_PROVIDER") || "disabled",
+  authoritativeRuralUrl: Deno.env.get("GRIDLY_AUTHORITATIVE_RURAL_URL") || "https://maps.googleapis.com/maps/api/geocode/json",
+  authoritativeRuralKey: Deno.env.get("GRIDLY_AUTHORITATIVE_RURAL_API_KEY") || "",
+  authoritativeRuralTimeoutMs: Math.min(10000, Math.max(1000, Number(Deno.env.get("GRIDLY_AUTHORITATIVE_RURAL_TIMEOUT_MS")) || 6500)),
   ruralFallbackEnabled: Deno.env.get("GRIDLY_RURAL_FALLBACK_ENABLED") === "true",
   ruralFallbackUrl: Deno.env.get("GRIDLY_RURAL_FALLBACK_URL") || "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress",
   ruralFallbackBenchmark: Deno.env.get("GRIDLY_RURAL_FALLBACK_BENCHMARK") || "Public_AR_Current",
@@ -18,6 +22,11 @@ const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
 const allowedContext = new Set(["communityId", "countyId", "postalCode", "viewbox"]);
 const control = /[\u0000-\u001f\u007f]/;
+const supportedTexasCounties = new Set(["liberty", "montgomery", "san jacinto", "chambers", "jefferson", "hardin", "polk", "walker", "orange", "jasper", "newton", "tyler", "galveston", "brazoria", "fort bend", "waller", "austin", "washington", "brazos", "grimes", "wharton", "colorado", "fayette", "lavaca", "jackson", "matagorda", "calhoun", "harris"]);
+// LP102's original eligibility subset remains included in the expanded regional modes.
+const lp102ModeCompatible = (body: any) => ["explicit_search", "lp102_certification"].includes(body.requestMode);
+const lp103ApprovedPrecision = ["interpolated_address", "verified_address_point", "verified_entrance"];
+const approvedRuralPrecision = new Set([...lp103ApprovedPrecision, "address_point", "rooftop", "parcel_centroid"]);
 
 function cors(origin: string) { return { "Access-Control-Allow-Origin": origin, Vary: "Origin", "Access-Control-Allow-Headers": "authorization, apikey, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", "Content-Type": "application/json" }; }
 function failure(status: string, requestId = "", retryAfterSeconds: number | null = null, http = 400, origin = "") {
@@ -28,7 +37,7 @@ function textValid(value: unknown, max = 200) { return typeof value === "string"
 function validate(body: any): string | null {
   if (!fieldsAllowed(body, allowedTop)) return "unknown_field";
   if (!["address", "business_place"].includes(body.intent)) return "intent";
-  if (body.requestMode !== undefined && !["explicit_search", "lp102_certification", "lp103_certification"].includes(body.requestMode)) return "request_mode";
+  if (body.requestMode !== undefined && !["explicit_search", "lp102_certification", "lp103_certification", "lp104_certification"].includes(body.requestMode)) return "request_mode";
   if (!textValid(body.query) || body.query.trim().length < 3) return "query";
   if (!Number.isInteger(body.limit) || body.limit < 1 || body.limit > 15) return "limit";
   if (body.requestId !== undefined && (!textValid(body.requestId, 80) || !/^[A-Za-z0-9._:-]+$/.test(body.requestId))) return "request_id";
@@ -45,11 +54,15 @@ function normalize(body: any) {
     diagnosticContractVersion: body.requestMode === "lp102_certification" ? "lp102-rejection-v2" : "consumer",
     requestMode: body.requestMode || "", intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
 }
-function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: row.type || "", resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
+function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: a.house_number ? "house" : (row.type || ""), resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
 
 function ruralFallbackEligible(body: any) {
-  if (!CONFIG.ruralFallbackEnabled || body.intent !== "address"
-    || !(["explicit_search", "lp102_certification"].includes(body.requestMode) || body.requestMode === "lp103_certification")) return false;
+  if (!CONFIG.ruralFallbackEnabled) return false;
+  return ruralAddressEligible(body);
+}
+function ruralAddressEligible(body: any) {
+  if (body.intent !== "address"
+    || !(lp102ModeCompatible(body) || ["lp103_certification", "lp104_certification"].includes(body.requestMode))) return false;
   const street = String(body.structuredAddress?.street || body.query || "").trim();
   const hasHouse = /^\s*\d{1,6}[A-Za-z]?\b/.test(street);
   const hasRoad = /\b(?:county\s+(?:road|rd)|co\.?\s*rd|cr\s*\d|fm\s*\d|farm(?:-to-|\s+to\s+)market|state\s+highway|sh\s*\d|tx\s*[- ]?\d|us\s+(?:highway\s+)?\d|road|rd\.?|highway|hwy\.?)\b/i.test(street);
@@ -96,6 +109,10 @@ function normalizeGeography(value: unknown) {
   const normalized = String(value || "").toLowerCase().replace(/\bcounty\b/g, "").replace(/[^a-z0-9]/g, "");
   return ({ texas: "tx", tx: "tx" } as Record<string, string>)[normalized] || normalized;
 }
+function coordinateInSupportedTexasRegion(latitude: unknown, longitude: unknown) {
+  const lat = Number(latitude); const lon = Number(longitude);
+  return Number.isFinite(lat) && Number.isFinite(lon) && lat >= 25.7 && lat <= 33.1 && lon >= -106.7 && lon <= -93.4;
+}
 function evaluateRuralCandidate(body: any, candidate: any) {
   const requested = requestedAddressEvidence(body); const returned = candidate.address || {};
   const normalizedRequestedHouseNumber = normalizeHouseNumber(requested.houseNumber);
@@ -113,8 +130,11 @@ function evaluateRuralCandidate(body: any, candidate: any) {
   if (requested.county && returned.county && normalizeGeography(requested.county) !== normalizeGeography(returned.county)) conflicts.push("county_conflict");
   if (requested.state && returned.state && normalizeGeography(requested.state) !== normalizeGeography(returned.state)) conflicts.push("state_conflict");
   if (!Number.isFinite(candidate.latitude) || !Number.isFinite(candidate.longitude) || Math.abs(candidate.latitude) > 90 || Math.abs(candidate.longitude) > 180) conflicts.push("malformed_or_missing_coordinates");
+  else if (!coordinateInSupportedTexasRegion(candidate.latitude, candidate.longitude)) conflicts.push("outside_supported_region");
+  const returnedCounty = normalizeGeography(returned.county);
+  if (!returnedCounty || !supportedTexasCounties.has(returnedCounty)) conflicts.push("unsupported_or_missing_county");
   if (normalizedRequestedHouseNumber && (candidate.resultType !== "address" || candidate.type !== "house")) conflicts.push("road_only_result_promoted_as_house");
-  if (!["interpolated_address", "verified_address_point", "verified_entrance"].includes(candidate.precision)) conflicts.push("unsupported_precision_claim");
+  if (!approvedRuralPrecision.has(candidate.precision)) conflicts.push("unsupported_precision_claim");
   const rejectionRule = conflicts[0] || "none"; const accepted = conflicts.length === 0;
   return { requestedHouseNumber: requested.houseNumber, returnedHouseNumber: returned.houseNumber || "", normalizedRequestedHouseNumber,
     normalizedReturnedHouseNumber, houseNumberAgreement, requestedRoadIdentity, returnedRoadIdentity, roadIdentityAgreement,
@@ -124,8 +144,47 @@ function evaluateRuralCandidate(body: any, candidate: any) {
     finalRenderInput: accepted, finalVisibleOutcome: accepted ? "eligible_for_relevance_gate" : "confirmed_no_result" };
 }
 
+function googleAddressComponent(row: any, type: string, short = false) {
+  const component = (Array.isArray(row?.address_components) ? row.address_components : []).find((entry: any) => Array.isArray(entry.types) && entry.types.includes(type));
+  return String(component?.[short ? "short_name" : "long_name"] || "");
+}
+function canonicalizeGoogleRural(row: any) {
+  const locationType = String(row?.geometry?.location_type || "").toUpperCase();
+  const houseNumber = googleAddressComponent(row, "street_number"); const road = googleAddressComponent(row, "route");
+  const precision = locationType === "ROOFTOP" ? "rooftop" : "unsupported";
+  return { providerResultId: String(row.place_id || ""), name: [houseNumber, road].filter(Boolean).join(" "),
+    displayName: String(row.formatted_address || ""), formattedAddress: String(row.formatted_address || ""),
+    latitude: Number(row?.geometry?.location?.lat), longitude: Number(row?.geometry?.location?.lng), category: "", type: "house", resultType: "address",
+    precision, confidenceBasis: `commercial_${locationType.toLowerCase() || "unknown"}`, sourceClassification: "authoritative_rural_geocoder",
+    routePreviewEligible: false, address: { houseNumber, road, community: googleAddressComponent(row, "sublocality"),
+      city: googleAddressComponent(row, "locality") || googleAddressComponent(row, "postal_town"), mailingCity: "",
+      county: googleAddressComponent(row, "administrative_area_level_2"), state: googleAddressComponent(row, "administrative_area_level_1", true),
+      postalCode: googleAddressComponent(row, "postal_code"), country: googleAddressComponent(row, "country") },
+    providerIdentity: { provider: "google", placeId: String(row.place_id || ""), locationType } };
+}
+async function resolveAuthoritativeRuralProvider(body: any) {
+  if (!ruralAddressEligible(body)) return { outcome: "ineligible", results: [], candidateDiagnostics: [] };
+  if (CONFIG.authoritativeRuralProvider !== "google" || !CONFIG.authoritativeRuralKey) return { outcome: "not_configured", results: [], candidateDiagnostics: [] };
+  const params = new URLSearchParams({ address: String(body.query), key: CONFIG.authoritativeRuralKey, region: "us", components: "administrative_area:TX|country:US" });
+  const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), CONFIG.authoritativeRuralTimeoutMs);
+  try {
+    const response = await fetch(`${CONFIG.authoritativeRuralUrl}?${params}`, { headers: { Accept: "application/json" }, signal: controller.signal });
+    if (response.status === 429) return { outcome: "rate_limited", results: [], candidateDiagnostics: [] };
+    if (!response.ok) return { outcome: "temporary_failure", results: [], candidateDiagnostics: [] };
+    const json = await response.json();
+    if (!["OK", "ZERO_RESULTS"].includes(String(json?.status || ""))) return { outcome: "temporary_failure", results: [], candidateDiagnostics: [] };
+    const evaluated = (Array.isArray(json?.results) ? json.results : []).map(canonicalizeGoogleRural)
+      .map((candidate: any) => ({ candidate, diagnostic: evaluateRuralCandidate(body, candidate) }));
+    const accepted = evaluated.filter((entry: any) => entry.diagnostic.accepted)
+      .map((entry: any) => ({ ...entry.candidate, routePreviewEligible: true }));
+    return { outcome: accepted.length ? "relevant_result" : "confirmed_no_result", results: accepted,
+      candidateDiagnostics: evaluated.filter((entry: any) => !entry.diagnostic.accepted).map((entry: any) => privacySafeRejectionDiagnostic(body, entry.candidate, entry.diagnostic)) };
+  } catch (error) { return { outcome: error instanceof DOMException && error.name === "AbortError" ? "timeout" : "temporary_failure", results: [], candidateDiagnostics: [] }; }
+  finally { clearTimeout(timer); }
+}
+
 async function resolveGovernedRuralRegistry(body: any, db: any) {
-  if (body.intent !== "address" || !["explicit_search", "lp102_certification", "lp103_certification"].includes(body.requestMode)) {
+  if (body.intent !== "address" || !["explicit_search", "lp102_certification", "lp103_certification", "lp104_certification"].includes(body.requestMode)) {
     return { outcome: "ineligible", results: [] };
   }
   const lookupHash = await hash(normalizedRegistryLookup(body));
@@ -212,7 +271,16 @@ async function execute(body: any, key: string, requestId: string, origin: string
   if (upstream.status === 429) { const retry = Math.min(3600, Math.max(1, Number(upstream.headers.get("Retry-After")) || 60)); await db.rpc("gridly_cooldown_geocode_provider", { p_namespace: CONFIG.namespace, p_seconds: retry }); return failure("rate_limited", requestId, retry, 429, origin); }
   if (!upstream.ok) return failure("provider_unavailable", requestId, null, 503, origin);
   const rows = await upstream.json(); let results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
+  if (ruralAddressEligible(body)) results = results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted);
   const primaryOutcome = results.length ? "relevant_result" : "confirmed_no_result";
+  let authoritativeRuralOutcome = results.length ? "not_invoked" : "ineligible";
+  let authoritativeCandidateDiagnostics: any[] = [];
+  if (!results.length && body.intent === "address") {
+    const authoritative = await resolveAuthoritativeRuralProvider(body);
+    authoritativeRuralOutcome = authoritative.outcome;
+    authoritativeCandidateDiagnostics = authoritative.candidateDiagnostics;
+    results = authoritative.results.slice(0, body.limit);
+  }
   let registryOutcome = results.length ? "not_invoked" : "confirmed_no_result";
   if (!results.length && body.intent === "address") {
     const registry = await resolveGovernedRuralRegistry(body, db);
@@ -223,9 +291,14 @@ async function execute(body: any, key: string, requestId: string, origin: string
   let fallbackOutcome = fallbackEligible ? "not_invoked" : "ineligible";
   let fallbackCandidateDiagnostics: any[] = [];
   if (fallbackEligible) { const fallback = await resolveRuralFallback(body); fallbackOutcome = fallback.outcome; results = fallback.results.slice(0, body.limit); fallbackCandidateDiagnostics = "candidateDiagnostics" in fallback ? fallback.candidateDiagnostics : []; }
-  const diagnosticRequest = ["lp102_certification", "lp103_certification"].includes(body.requestMode);
+  const diagnosticRequest = ["lp102_certification", "lp103_certification", "lp104_certification"].includes(body.requestMode);
+  const legacyFallbackDiagnostics = diagnosticRequest ? { fallbackCandidateDiagnostics } : {};
   const diagnostics = { primaryProviderOutcome: primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome,
-    registryOutcome, ...(diagnosticRequest ? { fallbackCandidateDiagnostics } : {}),
+    authoritativeRuralOutcome, registryOutcome, ...legacyFallbackDiagnostics, ...(diagnosticRequest ? {
+      authoritativeCandidateDiagnostics: authoritativeCandidateDiagnostics.map((entry: any) => ({ candidateDisposition: entry.candidateDisposition,
+        houseNumberAgreement: entry.houseNumberAgreement, roadIdentityAgreement: entry.roadIdentityAgreement,
+        countyAgreement: entry.countyAgreement, stateAgreement: entry.stateAgreement, postalCodeAgreement: entry.postalCodeAgreement,
+        precision: entry.precision, routePreviewEligible: false })) } : {}),
     sourceClassification: results.length ? results[0].sourceClassification : "none" };
   const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, diagnostics, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, diagnostics, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
