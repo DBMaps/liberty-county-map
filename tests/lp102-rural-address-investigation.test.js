@@ -43,9 +43,10 @@ assert.match(app, /exactnessReviewAvailable: true/);
 assert.match(app, /aliasInventoryAvailable: true/);
 assert.match(app, /pipelineDomAgreement/);
 assert.match(app, /routePreviewPreserved/);
-for (const field of ['requestedHouseNumber', 'returnedHouseNumber', 'normalizedRequestedHouseNumber', 'normalizedReturnedHouseNumber',
+for (const field of ['candidateDisposition', 'requestedHouseNumber', 'returnedHouseNumber', 'normalizedRequestedHouseNumber', 'normalizedReturnedHouseNumber',
   'houseNumberAgreement', 'requestedRoadIdentity', 'returnedRoadIdentity', 'roadIdentityAgreement', 'hardBlockingConflicts',
-  'fallbackCandidateDisposition', 'finalVisibleOutcome']) assert.match(edge, new RegExp(field));
+  'requestedState', 'returnedState', 'stateAgreement', 'requestedPostalCode', 'returnedPostalCode', 'postalCodeAgreement',
+  'requestedCounty', 'returnedCounty', 'countyAgreement', 'resultType', 'precision', 'routePreviewEligible']) assert.match(edge, new RegExp(field));
 for (const field of ['houseNumberSafetyPass', 'roadwayNormalizationPass', 'mismatchedCandidateRejected', 'truthfulNoResultObserved']) {
   assert.match(app, new RegExp(field));
 }
@@ -68,7 +69,8 @@ assert.ok(certificationSource.indexOf('let houseNumberSafetyPass = false') < cer
   'houseNumberSafetyPass must be declared before failedChecks and safeToMerge assembly');
 
 async function runCertification(investigation) {
-  const context = { window: { gridlyLp102RuralAddressInvestigation: investigation }, console: { error() {} }, Object, Array, Number };
+  const context = { window: { gridlyLp102RuralAddressInvestigation: investigation,
+    GRIDLY_LP101_SEARCH_QUALITY: { roadwayIdentity: qualityContext.window.GRIDLY_LP101_SEARCH_QUALITY.roadwayIdentity } }, console: { error() {} }, Object, Array, Number };
   vm.runInNewContext(certificationSource, context);
   return context.window.gridlyLp102VisibleRuralAddressCertification();
 }
@@ -91,6 +93,44 @@ async function runCertification(investigation) {
   assert.equal(rateLimited.rateLimitBehaviorPass, false);
   assert.ok(rateLimited.failedChecks.includes('rateLimitBehaviorPass'));
   assert.equal(rateLimited.safeToMerge, false);
+
+  const rejectionDiagnostic = { candidateDisposition: 'rejected_house_number_mismatch', rejectionRule: 'house_number_mismatch',
+    rejectionStage: 'fallback_acceptance_gate', rejectionPhase: 'pre_relevance', hardBlockingConflicts: ['house_number_mismatch'],
+    requestedHouseNumber: '274', returnedHouseNumber: '698', normalizedRequestedHouseNumber: '274',
+    normalizedReturnedHouseNumber: '698', houseNumberAgreement: false, requestedRoadIdentity: 'cr 677',
+    returnedRoadIdentity: 'cr 677', roadIdentityAgreement: true, routePreviewEligible: false };
+  const emptyPipeline = { providerCandidates: [], relevanceGateOutput: [], finalRenderInput: [] };
+  const goodCases = [
+    { caseName: 'county_road_full', canonicalResultCount: 0, visibleResultCount: 0, routePreviewAvailable: false,
+      providerOutcomeClassification: 'confirmed_no_result', pipelineDomAgreement: true, misleadingFallbackDetected: false,
+      candidatePipeline: emptyPipeline, resolutionEvents: [{ primaryProviderOutcome: 'confirmed_no_result', fallbackEligible: true,
+        fallbackInvoked: true, fallbackOutcome: 'confirmed_no_result', fallbackCandidateDiagnostics: [rejectionDiagnostic] }], transport: [{ httpStatus: 200 }] },
+    ...['county_rd', 'cr', 'co_rd'].map((caseName) => ({ caseName, canonicalResultCount: 0, visibleResultCount: 0,
+      providerOutcomeClassification: 'confirmed_no_result', pipelineDomAgreement: true, misleadingFallbackDetected: false,
+      candidatePipeline: emptyPipeline, resolutionEvents: [], transport: [{ httpStatus: 200 }] })),
+    { caseName: 'invalid_rural_control', providerOutcomeClassification: 'confirmed_no_result', visibleResultCount: 0,
+      pipelineDomAgreement: true, misleadingFallbackDetected: false, resolutionEvents: [], transport: [{ httpStatus: 200 }] },
+    { caseName: 'business_control', visibleResultCount: 1, pipelineDomAgreement: true, misleadingFallbackDetected: false,
+      resolutionEvents: [], transport: [{ httpStatus: 200 }] },
+    { caseName: 'governed_control', visibleResultCount: 1, pipelineDomAgreement: true, misleadingFallbackDetected: false,
+      resolutionEvents: [], transport: [{ httpStatus: 200 }] }
+  ];
+  const successfulInvestigation = async (options = {}) => ({ available: true, productionBehaviorObserved: true,
+    providerBoundaryPreserved: true, browserDirectProviderAccessAbsent: true, protectedSystemsUnchanged: true,
+    routePreviewPreserved: true, unknownCaseNames: [], executedCaseNames: options.caseNames || goodCases.map((entry) => entry.caseName), cases: goodCases });
+  const certified = await runCertification(successfulInvestigation);
+  assert.equal(certified.houseNumberSafetyPass, true);
+  assert.equal(certified.mismatchedCandidateRejected, true);
+  assert.equal(certified.ruralPrecisionTruthful, true, 'truthful no-result after unsafe interpolation rejection is precision-truthful');
+  assert.equal(certified.safeToMerge, true, `unexpected failures: ${[...certified.failedChecks].join(', ')}`);
+  assert.deepEqual([...certified.failedChecks], []);
+
+  const contradictory = await runCertification(async (options = {}) => ({ ...(await successfulInvestigation(options)),
+    cases: goodCases.map((entry) => entry.caseName === 'county_road_full' ? { ...entry,
+      resolutionEvents: [{ ...entry.resolutionEvents[0], fallbackCandidateDiagnostics: [{ ...rejectionDiagnostic, houseNumberAgreement: true }] }] } : entry) }));
+  assert.equal(contradictory.houseNumberSafetyPass, false);
+  assert.equal(contradictory.mismatchedCandidateRejected, false);
+  assert.equal(contradictory.safeToMerge, false, 'contradictory rejection evidence must fail closed');
 
   const internalFailure = await runCertification(async () => { throw new Error('secret upstream token detail'); });
   requiredCertificationFields.forEach((field) => assert.notEqual(internalFailure[field], undefined, `${field} must be defined after an internal error`));
@@ -127,7 +167,12 @@ assert.ok(evaluate(model, candidate({ county: 'Harris County' })).reasons.includ
 
 assert.match(edge, /GRIDLY_RURAL_FALLBACK_ENABLED/);
 assert.match(edge, /geocoding\.geo\.census\.gov/);
-assert.match(edge, /body\.requestMode !== "explicit_search"/);
+assert.match(edge, /\["explicit_search", "lp102_certification"\]\.includes\(body\.requestMode\)/);
+assert.match(edge, /diagnosticRequest \? \{ fallbackCandidateDiagnostics \} : \{\}/,
+  'ordinary consumer responses must not expose rejection diagnostics');
+assert.match(edge, /requestMode: body\.requestMode \|\| ""/,
+  'diagnostic mode must be isolated in the cache key so stale consumer no-results cannot erase evidence');
+assert.match(app, /gridlyLp102DiagnosticRequestActive === true \? "lp102_certification" : "explicit_search"/);
 assert.match(edge, /body\.intent !== "address"/);
 assert.match(edge, /hasHouse && hasRoad && hasGeography/);
 assert.match(edge, /primaryOutcome = results\.length/);
@@ -155,6 +200,9 @@ assert.match(edge, /rejectionPhase: accepted \? "none" : "pre_relevance"/);
 assert.match(edge, /finalRenderInput: accepted/);
 assert.match(edge, /accepted\.length \? "relevant_result" : "confirmed_no_result"/);
 assert.match(edge, /routePreviewEligible: true/);
+assert.match(edge, /routePreviewEligible: false/);
+assert.doesNotMatch(edge.slice(edge.indexOf('function privacySafeRejectionDiagnostic'), edge.indexOf('function canonicalizeRuralMatch')), /providerIdentity|matchedAddress|tigerLine|coordinates|baseUrl|headers/,
+  'privacy-safe diagnostics must not contain raw provider identity, payload, URL, or transport data');
 assert.doesNotMatch(edge, /houseNumber\s*[:=][^\n]*(?:body\.query|requested\.houseNumber)/, 'provider house number must not be copied from the request');
 
 const identities = ['County Road 677', 'County Rd 677', 'CR 677', 'Co Rd 677', 'CO RD 677'].map((value) => qualityContext.window.GRIDLY_LP101_SEARCH_QUALITY.roadwayIdentity(value));
