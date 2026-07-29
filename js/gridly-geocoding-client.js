@@ -53,7 +53,8 @@
     return {
       place_id: result.providerResultId, osm_type: result.providerIdentity?.osmType || "", osm_id: result.providerIdentity?.osmId || "",
       name: result.name, display_name: result.displayName, lat: String(result.latitude), lon: String(result.longitude), category: result.category, type: result.type,
-      address: { house_number: result.address?.houseNumber || "", road: result.address?.road || "", village: result.address?.community || "", city: result.address?.city || "", county: result.address?.county || "", state: result.address?.state || "", postcode: result.address?.postalCode || "", country: result.address?.country || "" }
+      address: { house_number: result.address?.houseNumber || "", road: result.address?.road || "", village: result.address?.community || "", city: result.address?.city || "", county: result.address?.county || "", state: result.address?.state || "", postcode: result.address?.postalCode || "", country: result.address?.country || "" },
+      gridlyResolution: { precision: result.precision || "unknown", confidenceBasis: result.confidenceBasis || "unspecified", sourceClassification: result.sourceClassification || "unknown", routePreviewEligible: result.routePreviewEligible === true }
     };
   }
 
