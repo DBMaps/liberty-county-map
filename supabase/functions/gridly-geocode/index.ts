@@ -5,11 +5,16 @@ const CONFIG = Object.freeze({
   baseUrl: Deno.env.get("GRIDLY_GEOCODE_PROVIDER_URL") || "https://nominatim.openstreetmap.org/search",
   namespace: Deno.env.get("GRIDLY_GEOCODE_CACHE_NAMESPACE") || "nominatim-public-v1",
   timeoutMs: 8000, intervalMs: 1000, maxAttempts: 3, maxBodyBytes: 8192,
-  attribution: "© OpenStreetMap contributors"
+  attribution: "© OpenStreetMap contributors",
+  ruralFallbackEnabled: Deno.env.get("GRIDLY_RURAL_FALLBACK_ENABLED") === "true",
+  ruralFallbackUrl: Deno.env.get("GRIDLY_RURAL_FALLBACK_URL") || "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress",
+  ruralFallbackBenchmark: Deno.env.get("GRIDLY_RURAL_FALLBACK_BENCHMARK") || "Public_AR_Current",
+  ruralFallbackVintage: Deno.env.get("GRIDLY_RURAL_FALLBACK_VINTAGE") || "Current_Current",
+  ruralFallbackTimeoutMs: Math.min(10000, Math.max(1000, Number(Deno.env.get("GRIDLY_RURAL_FALLBACK_TIMEOUT_MS")) || 6000))
 });
 const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "https://gridly.app,http://localhost:3000,http://127.0.0.1:3000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500").split(",").map((x) => x.trim()));
 const inflight = new Map<string, Promise<Response>>();
-const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId"]);
+const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId", "requestMode"]);
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
 const allowedContext = new Set(["communityId", "countyId", "postalCode", "viewbox"]);
 const control = /[\u0000-\u001f\u007f]/;
@@ -23,6 +28,7 @@ function textValid(value: unknown, max = 200) { return typeof value === "string"
 function validate(body: any): string | null {
   if (!fieldsAllowed(body, allowedTop)) return "unknown_field";
   if (!["address", "business_place"].includes(body.intent)) return "intent";
+  if (body.requestMode !== undefined && body.requestMode !== "explicit_search") return "request_mode";
   if (!textValid(body.query) || body.query.trim().length < 3) return "query";
   if (!Number.isInteger(body.limit) || body.limit < 1 || body.limit > 15) return "limit";
   if (body.requestId !== undefined && (!textValid(body.requestId, 80) || !/^[A-Za-z0-9._:-]+$/.test(body.requestId))) return "request_id";
@@ -35,9 +41,42 @@ function validate(body: any): string | null {
 async function hash(value: unknown) { const bytes = new TextEncoder().encode(JSON.stringify(value)); return [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((b) => b.toString(16).padStart(2, "0")).join(""); }
 function normalize(body: any) {
   const clean = (v: unknown) => String(v || "").trim().toLowerCase().replace(/\s+/g, " ");
-  return { namespace: CONFIG.namespace, intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
+  return { namespace: CONFIG.namespace, ruralFallbackEnabled: CONFIG.ruralFallbackEnabled, requestMode: body.requestMode || "", intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
 }
-function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: row.type || "", address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
+function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: row.type || "", resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
+
+function ruralFallbackEligible(body: any) {
+  if (!CONFIG.ruralFallbackEnabled || body.intent !== "address" || body.requestMode !== "explicit_search") return false;
+  const street = String(body.structuredAddress?.street || body.query || "").trim();
+  const hasHouse = /^\s*\d{1,6}[A-Za-z]?\b/.test(street);
+  const hasRoad = /\b(?:county\s+(?:road|rd)|co\.?\s*rd|cr\s*\d|fm\s*\d|farm(?:-to-|\s+to\s+)market|state\s+highway|sh\s*\d|tx\s*[- ]?\d|us\s+(?:highway\s+)?\d|road|rd\.?|highway|hwy\.?)\b/i.test(street);
+  const geography = body.structuredAddress || {};
+  const hasGeography = Boolean(geography.city || geography.county || geography.state || geography.postalCode || /\b[A-Z]{2}\s+\d{5}(?:-\d{4})?\b/i.test(body.query));
+  return hasHouse && hasRoad && hasGeography;
+}
+
+function censusRoad(a: any) {
+  return [a.preQualifier, a.preDirection, a.preType, a.streetName, a.suffixType, a.suffixDirection, a.suffixQualifier].filter(Boolean).join(" ");
+}
+function canonicalizeRuralMatch(match: any) {
+  const a = match.addressComponents || {}; const coordinates = match.coordinates || {};
+  const houseNumber = String(a.fromAddress || ""); const road = censusRoad(a);
+  return { providerResultId: String(match.tigerLine?.tigerLineId || ""), name: [houseNumber, road].filter(Boolean).join(" "), displayName: match.matchedAddress || "", formattedAddress: match.matchedAddress || "", latitude: Number(coordinates.y), longitude: Number(coordinates.x), category: "", type: "house", resultType: "address", precision: "interpolated_address", confidenceBasis: "authoritative_address_range_match", sourceClassification: "government_address_range", routePreviewEligible: Boolean(houseNumber && road), address: { houseNumber, road, community: "", city: a.city || "", mailingCity: a.city || "", county: "", state: a.state || "", postalCode: a.zip || "", country: "United States" }, providerIdentity: {} };
+}
+async function resolveRuralFallback(body: any) {
+  const params = new URLSearchParams({ address: body.query, benchmark: CONFIG.ruralFallbackBenchmark, vintage: CONFIG.ruralFallbackVintage, format: "json" });
+  const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), CONFIG.ruralFallbackTimeoutMs);
+  try {
+    const response = await fetch(`${CONFIG.ruralFallbackUrl}?${params}`, { headers: { Accept: "application/json" }, signal: controller.signal });
+    if (response.status === 429) return { outcome: "rate_limited", results: [] };
+    if (!response.ok) return { outcome: "temporary_failure", results: [] };
+    const json = await response.json();
+    const matches = json?.result?.addressMatches;
+    const results = (Array.isArray(matches) ? matches : []).map(canonicalizeRuralMatch).filter((x: any) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude) && x.address.houseNumber && x.address.road);
+    return { outcome: results.length ? "relevant_result" : "confirmed_no_result", results };
+  } catch (error) { return { outcome: error instanceof DOMException && error.name === "AbortError" ? "timeout" : "temporary_failure", results: [] }; }
+  finally { clearTimeout(timer); }
+}
 
 async function execute(body: any, key: string, requestId: string, origin: string, db: any): Promise<Response> {
   const { data: cached } = await db.from("gridly_geocode_cache").select("response,status,expires_at").eq("cache_key", key).gt("expires_at", new Date().toISOString()).maybeSingle();
@@ -58,8 +97,13 @@ async function execute(body: any, key: string, requestId: string, origin: string
   clearTimeout(timer);
   if (upstream.status === 429) { const retry = Math.min(3600, Math.max(1, Number(upstream.headers.get("Retry-After")) || 60)); await db.rpc("gridly_cooldown_geocode_provider", { p_namespace: CONFIG.namespace, p_seconds: retry }); return failure("rate_limited", requestId, retry, 429, origin); }
   if (!upstream.ok) return failure("provider_unavailable", requestId, null, 503, origin);
-  const rows = await upstream.json(); const results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
-  const payload = results.length ? { ok: true, status: "success", provider: CONFIG.provider, providerBoundary: "gridly", cached: false, requestId, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [] };
+  const rows = await upstream.json(); let results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
+  const primaryOutcome = results.length ? "relevant_result" : "confirmed_no_result";
+  const fallbackEligible = !results.length && ruralFallbackEligible(body);
+  let fallbackOutcome = fallbackEligible ? "not_invoked" : "ineligible";
+  if (fallbackEligible) { const fallback = await resolveRuralFallback(body); fallbackOutcome = fallback.outcome; results = fallback.results.slice(0, body.limit); }
+  const resolution = { primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome, sourceClassification: results.length ? results[0].sourceClassification : "none" };
+  const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, resolution, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, resolution, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
   // A valid canonical no-result is an application outcome, not a missing HTTP resource.
   return new Response(JSON.stringify(payload), { status: 200, headers: cors(origin) });

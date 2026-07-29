@@ -79,25 +79,9 @@
       else if (wanted && !actual) reasons.push("insufficient_exactness_evidence");
     };
     compare("state", ["state", "state_code"], "state_mismatch");
+    compare("city", ["city", "town", "village", "hamlet", "municipality"], explicit.city ? "city_conflict" : "enriched_locality_conflict");
     compare("county", ["county"], explicit.county ? "county_conflict" : "enriched_locality_conflict");
     compare("postalCode", ["postcode", "postalcode"], "postal_code_conflict");
-    const wantedCity = comparable(explicit.city || expected.city);
-    const actualCity = comparable(resultValue(["city", "town", "village", "hamlet", "municipality"]));
-    if (wantedCity && actualCity && wantedCity !== actualCity) {
-      // Rural postal addresses commonly use a mailing city that differs from the
-      // canonical physical locality.  Keep that difference as non-exactness
-      // evidence, but do not turn it into a geographic conflict when the
-      // independently supplied county and ZIP agree.
-      const wantedCounty = comparable(explicit.county || expected.county);
-      const actualCounty = comparable(resultValue(["county"]));
-      const wantedPostal = comparable(explicit.postalCode || expected.postalCode);
-      const actualPostal = comparable(resultValue(["postcode", "postalcode"]));
-      const rural = model.countyRoad === true || model.highwayAddress === true;
-      const countySupports = Boolean(wantedCounty && actualCounty && wantedCounty === actualCounty);
-      const postalSupports = Boolean(wantedPostal && actualPostal && wantedPostal === actualPostal);
-      reasons.push(rural && countySupports && postalSupports ? "mailing_city_difference"
-        : (explicit.city ? "city_conflict" : "enriched_locality_conflict"));
-    } else if (wantedCity && !actualCity) reasons.push("insufficient_exactness_evidence");
     const maxMiles = Number(options.maxExpectedDistanceMiles || 100);
     if (!model.explicitOutOfArea && model.expectedCenter && milesBetween(model.expectedCenter, result) > maxMiles) reasons.push("outside_expected_geography");
     const uniqueReasons = [...new Set(reasons)];

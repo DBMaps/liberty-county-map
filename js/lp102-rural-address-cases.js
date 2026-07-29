@@ -15,7 +15,9 @@
     ["business_control", "Dayton Walmart"],
     ["numbered_road_control", "County Road 676, Dayton, TX 77535"],
     ["invalid_rural_control", "999999 County Road 999999, Dayton, TX 77535"],
+    ["invalid_named_road_control", "999999 Nonexistent Rural Road, Dayton, TX 77535"],
     ["out_of_area_control", "100 County Road 67, Muleshoe, TX 79347"],
+    ["out_of_area_highway_control", "100 State Highway 214, Muleshoe, TX 79347"],
     ["governed_control", "Liberty Courthouse"]
   ].map((entry) => Object.freeze(entry)));
 })(window);

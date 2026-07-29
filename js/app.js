@@ -36079,6 +36079,7 @@ function classifyGridlyLp097Result(result, addressModel = null) {
   const categories = result?.raw?.categories || [];
   const house = String(rawAddress.house_number || "").trim();
   const road = String(rawAddress.road || rawAddress.residential || "").trim();
+  const canonicalPrecision = String(result?.raw?.gridlyResolution?.precision || "");
   const queryRoad = String(addressModel?.street || "").replace(/^\s*\d{1,6}[a-z]?\s*/i, "").trim();
   const geographic = addressModel?.hasHouseNumber && window.GRIDLY_LP097_SEARCH_GOVERNANCE?.evaluateAddressExactness
     ? window.GRIDLY_LP097_SEARCH_GOVERNANCE.evaluateAddressExactness(addressModel, result)
@@ -36097,7 +36098,8 @@ function classifyGridlyLp097Result(result, addressModel = null) {
     else if (categories.some((c) => /highway/i.test(c))) consumerType = "Highway";
     else if (categories.some((c) => /road/i.test(c))) consumerType = "Road";
     else if (categories.some((c) => /community|city/i.test(c))) consumerType = "Community";
-  } else if (houseAgreement && roadAgreement && (!geographic || geographic.exact)) { consumerType = "Exact address"; precision = "exact_address"; }
+  } else if (houseAgreement && roadAgreement && (!geographic || geographic.exact) && canonicalPrecision !== "interpolated_address") { consumerType = "Exact address"; precision = "exact_address"; }
+  else if (canonicalPrecision === "interpolated_address" && houseAgreement && roadAgreement) { consumerType = "Address"; precision = "address"; }
   else if (house || /house|building/i.test(String(result?.type || ""))) { consumerType = "Address"; precision = "address"; }
   else if (/postcode/i.test(String(result?.type || ""))) { consumerType = "Approximate location"; precision = "approximate"; }
   else if (/road|residential|highway/i.test(String(result?.type || ""))) { consumerType = /motorway|trunk|highway/i.test(String(result?.type || "")) ? "Highway" : "Road"; precision = "road"; }
@@ -36807,12 +36809,8 @@ function filterGridlyExplicitIntentRelevance(results = [], options = {}) {
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     return results.filter((result) => {
       const classification = classifyGridlyLp097Result(result, addressModel);
-      const blockingConflict = classification.conflictReasons.some((reason) => ["house_number_mismatch", "street_mismatch", "state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason));
-      const supportedRuralAddress = addressModel?.hasHouseNumber && classification.houseAgreement && classification.roadAgreement && !blockingConflict;
-      const canonicalRoadMatch = window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
-      return classification.exactAddress || classification.roadAgreement && (supportedRuralAddress || !addressModel?.hasHouseNumber)
-        || (!addressModel?.hasHouseNumber && canonicalRoadMatch)
-        || (addressModel?.hasHouseNumber && classification.houseAgreement && canonicalRoadMatch && !blockingConflict);
+      return classification.exactAddress || classification.roadAgreement
+        || window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
     });
   }
   if (intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE) {
@@ -85667,7 +85665,11 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
     status: event.status || "unknown",
     skippedReason: event.skippedReason || "",
     count: Number(event.count) || 0,
-    error: event.error || ""
+    error: event.error || "",
+    primaryOutcome: event.primaryOutcome || "unknown",
+    fallbackEligible: event.fallbackEligible === true,
+    fallbackInvoked: event.fallbackInvoked === true,
+    fallbackOutcome: event.fallbackOutcome || "ineligible"
   });
   if (event.attempted) diagnostics.providerAttempted = true;
   if (event.attempted) gridlyLp097RuntimeEvidence.requestAttempted = true;
@@ -85733,6 +85735,7 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
   const viewbox = String(searchContext?.viewbox || "").split(",").map(Number);
   const request = {
     intent,
+    requestMode: "explicit_search",
     query: String(query || "").trim(),
     limit: Math.min(15, Math.max(1, Number(limit) || 5)),
     ...(structured ? { structuredAddress: {
@@ -85760,7 +85763,11 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
     providerReservationDenied: response.status === "configuration_error",
     timeoutObserved: response.status === "provider_timeout",
     malformedResponseObserved: transport.failureCode === "malformed_response",
-    networkFailureObserved: transport.failureCode === "network_failure"
+    networkFailureObserved: transport.failureCode === "network_failure",
+    primaryOutcome: response.resolution?.primaryOutcome || "unknown",
+    fallbackEligible: response.resolution?.fallbackEligible === true,
+    fallbackInvoked: response.resolution?.fallbackInvoked === true,
+    fallbackOutcome: response.resolution?.fallbackOutcome || "ineligible"
   };
   if (!response.ok) {
     if (response.status === "no_results") {
@@ -85814,6 +85821,9 @@ async function gridlySearchAddress(query, options = {}) {
       .some((item) => item.exactAddress);
     if (exactInAttempt) gridlyLp097RuntimeEvidence.exactAddressCandidateFound = true;
     if (exactInAttempt) break;
+    // One governed secondary resolution attempt is sufficient for an explicit
+    // search; do not repeat it across primary-provider query variants.
+    if (diagnostics.variants.at(-1)?.fallbackInvoked) break;
 
     const normalizedPreview = providerResults.map((result) => normalizeGridlySearchResult(result)).filter(Boolean);
     const prioritizedPreview = prioritizeGridlySearchResults(normalizedPreview, { query: rawQuery, intent });
@@ -85993,8 +86003,11 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
   const selectedNames = Array.isArray(options.caseNames) ? new Set(options.caseNames.map((name) => String(name))) : null;
   const validNames = new Set(allDefinitions.map(([name]) => name));
   const unknownCaseNames = selectedNames ? [...selectedNames].filter((name) => !validNames.has(name)) : [];
-  const definitions = allDefinitions
-    .filter(([name]) => !selectedNames || selectedNames.has(name));
+  const manualDefinitions = Array.isArray(options.manualCases) ? options.manualCases
+    .filter((item) => item && item.expectedIntent === "address" && String(item.caseName || "").trim() && String(item.query || "").trim())
+    .map((item) => [String(item.caseName).trim(), String(item.query).trim()]) : [];
+  const definitions = allDefinitions.filter(([name]) => !selectedNames || selectedNames.has(name)).concat(manualDefinitions);
+  const delayMs = Math.min(10000, Math.max(0, Number(options.delayMs) || 1100));
   const cases = [];
   let routePreviewPreserved = false;
   for (const [caseName, query] of definitions) {
@@ -86035,10 +86048,11 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
       routePreviewPreserved = routePreviewAvailable;
       clearGridlyDestinationRoutePreview({ silent: true });
     }
-    cases.push(Object.freeze({ caseName, originalQuery: query, normalizationTrace: Object.freeze({ ...trace, providerBoundQueries: Object.freeze([...actualProviderQueries]) }), browserRequestPayload: Object.freeze({ intent: classifyGridlyDestinationSearchIntent(query).type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? "address" : "business_place", queries: Object.freeze([...actualProviderQueries]) }),
+    const resolutionEvents = (diagnostics.variants || []).map((event) => Object.freeze({ primaryProviderOutcome: event.primaryOutcome, fallbackEligible: event.fallbackEligible, fallbackInvoked: event.fallbackInvoked, fallbackOutcome: event.fallbackOutcome }));
+    cases.push(Object.freeze({ caseName, originalQuery: query, normalizationTrace: Object.freeze({ ...trace, providerBoundQueries: Object.freeze([...actualProviderQueries]) }), browserRequestPayload: Object.freeze({ intent: classifyGridlyDestinationSearchIntent(query).type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? "address" : "business_place", requestMode: "explicit_search", queries: Object.freeze([...actualProviderQueries]) }),
       edgeRequestPayload: Object.freeze({ observable: false, reason: "browser_observes_gridly_boundary_request_not_edge_upstream_query" }),
       canonicalGridlyResponseStatus: aggregate.finalConsumerClassification, canonicalResultCount: Number(diagnostics.providerResultCount) || 0,
-      providerOutcomeClassification: aggregate.finalConsumerClassification, providerIndependentResultIdentity: candidates.map((candidate) => candidate.identity),
+      providerOutcomeClassification: aggregate.finalConsumerClassification, resolutionEvents: Object.freeze(resolutionEvents), providerIndependentResultIdentity: candidates.map((candidate) => candidate.identity),
       candidates: Object.freeze(candidates), candidatePipeline: Object.freeze({ ...pipeline }),
       rejectionTrace: Object.freeze((pipeline.providerCandidates || []).map((candidate) => {
         const stages = ["combinedCandidates", "relevanceGateInput", "rankedCandidates", "relevanceGateOutput", "finalRenderInput"];
@@ -86053,6 +86067,7 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
       roadOnlyFallbackDetected, misleadingFallbackDetected, finalVisibleOutcome: dom.visibleCardCount ? "results" : (dom.status[0] || "empty"),
       visibleResultCount: dom.visibleCardCount, pipelineDomAgreement: dom.visibleCardCount === (pipeline.finalRenderInput || []).length,
       routePreviewAvailable, transport: Object.freeze(transport), diagnosticNotes: Object.freeze([]) }));
+    if (delayMs && cases.length < definitions.length) await waitForGridlyDestinationProviderThrottle(delayMs);
   }
   gridlyLp101CandidatePipelineState.activeCaseName = "";
   gridlyLp101CandidatePipelineState.activeQuery = "";
@@ -86104,9 +86119,16 @@ window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102V
   const routePreviewVerified = retainedCases.some((entry) => entry.routePreviewAvailable) || investigation.routePreviewPreserved;
   const targetedCaseFilteringPass = targeted.unknownCaseNames?.length === 0 && targeted.executedCaseNames?.length === targetedNames.length
     && targetedNames.every((name, index) => targeted.executedCaseNames[index] === name);
-  const checks = { productionBehaviorObserved: investigation.productionBehaviorObserved, ruralCandidateObserved, ruralCandidateRetained,
-    ruralCandidateRendered, ruralPrecisionTruthful, candidatePipelineAgreement, renderDomAgreement, misleadingFallbackAbsent,
-    canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified, targetedCaseFilteringPass,
+  const resolutionEvents = cases.flatMap((entry) => entry.resolutionEvents || []);
+  const primaryProviderOutcomeObserved = resolutionEvents.some((entry) => entry.primaryProviderOutcome !== "unknown");
+  const fallbackResolverAvailable = resolutionEvents.some((entry) => entry.fallbackEligible || entry.fallbackOutcome !== "ineligible");
+  const fallbackInvokedOnlyWhenEligible = resolutionEvents.every((entry) => !entry.fallbackInvoked || entry.fallbackEligible);
+  const rateLimitBehaviorPass = cases.every((entry) => !(entry.transport || []).some((event) => event.failureCode === "rate_limited"))
+    || cases.some((entry) => (entry.transport || []).some((event) => Number(event.httpStatus) === 429));
+  const checks = { productionBehaviorObserved: investigation.productionBehaviorObserved, primaryProviderOutcomeObserved, fallbackResolverAvailable,
+    fallbackInvokedOnlyWhenEligible, ruralAddressCandidateObserved: ruralCandidateObserved, ruralAddressCandidateRendered: ruralCandidateRendered,
+    ruralPrecisionTruthful, candidatePipelineAgreement, renderDomAgreement, misleadingFallbackAbsent,
+    canonicalNoResultHandlingPass, invalidAddressControlPass: canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified, targetedCaseFilteringPass, rateLimitBehaviorPass,
     providerBoundaryPreserved: investigation.providerBoundaryPreserved, browserDirectProviderAccessAbsent: investigation.browserDirectProviderAccessAbsent,
     protectedSystemsUnchanged: investigation.protectedSystemsUnchanged };
   const failedChecks = Object.entries(checks).filter(([, pass]) => pass !== true).map(([name]) => name);
