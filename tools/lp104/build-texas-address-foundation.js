@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+'use strict';
+const fs=require('node:fs'),path=require('node:path'); const {normalizeRecord,precedence}=require('../../lib/lp104/address-foundation');
+const args=Object.fromEntries(process.argv.slice(2).map(x=>x.split('='))); const inventory=require('../../data/lp104/texas-counties.json');
+if(Object.hasOwn(args,'--inventory-only')) { console.log(JSON.stringify({countyCount:inventory.counties.length,state:'TX'})); process.exit(0); }
+if(!args['--input']||!args['--source-manifest']||!args['--out']||!args['--build-version']) throw Error('required: --input=NDJSON --source-manifest=JSON --out=DIR --build-version=VERSION [--county-fips=48NNN]');
+const manifest=JSON.parse(fs.readFileSync(args['--source-manifest'])); if(manifest.productionEligible!==true) throw Error('source manifest is not production eligible');
+const selected=args['--county-fips']; const known=new Set(inventory.counties.map(x=>x.fips)); if(selected&&!known.has(selected)) throw Error('unknown Texas county FIPS');
+const raw=fs.readFileSync(args['--input'],'utf8').split(/\r?\n/).filter(Boolean).map(JSON.parse).filter(x=>!selected||x.countyFips===selected); const rejects=[]; const grouped=new Map();
+for(const item of raw){ if(!known.has(String(item.countyFips))){rejects.push({reason:'unknown_county'});continue} const row=normalizeRecord(item,manifest,args['--build-version']); if(!row.houseNumber||!row.canonicalRoadIdentity||!row.consumerEligible){rejects.push({reason:'acceptance_gate'});continue} const list=grouped.get(row.lookupHash)||[];list.push(row);grouped.set(row.lookupHash,list); }
+const accepted=[],duplicates=[]; for(const list of grouped.values()){list.sort(precedence);accepted.push(list[0]);duplicates.push(...list.slice(1).map(x=>({id:x.id,reason:'lower_precedence_duplicate'})));} accepted.sort((a,b)=>a.id.localeCompare(b.id));
+fs.mkdirSync(args['--out'],{recursive:true}); const counties=[...new Set(accepted.map(x=>x.countyFips))].sort(); for(const fips of counties) fs.writeFileSync(path.join(args['--out'],`${fips}.ndjson`),accepted.filter(x=>x.countyFips===fips).map(JSON.stringify).join('\n')+'\n');
+const output={schemaVersion:'lp104.1-build-v1',buildVersion:args['--build-version'],sourceId:manifest.sourceId,counties,rawRecordCount:raw.length,acceptedRecordCount:accepted.length,rejectedRecordCount:rejects.length,duplicateCount:duplicates.length,packageHashes:Object.fromEntries(counties.map(f=>[f,require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(args['--out'],`${f}.ndjson`))).digest('hex')]))}; fs.writeFileSync(path.join(args['--out'],'manifest.json'),JSON.stringify(output,null,2)+'\n'); console.log(JSON.stringify(output));

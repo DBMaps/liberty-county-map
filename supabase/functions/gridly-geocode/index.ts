@@ -20,7 +20,7 @@ const origins = new Set((Deno.env.get("GRIDLY_GEOCODE_ALLOWED_ORIGINS") || "http
 const inflight = new Map<string, Promise<Response>>();
 const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "limit", "requestId", "requestMode"]);
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
-const allowedContext = new Set(["communityId", "countyId", "postalCode", "viewbox"]);
+const allowedContext = new Set(["communityId", "countyId", "countyFips", "postalCode", "viewbox"]);
 const control = /[\u0000-\u001f\u007f]/;
 const supportedTexasCounties = new Set(["liberty", "montgomery", "san jacinto", "chambers", "jefferson", "hardin", "polk", "walker", "orange", "jasper", "newton", "tyler", "galveston", "brazoria", "fort bend", "waller", "austin", "washington", "brazos", "grimes", "wharton", "colorado", "fayette", "lavaca", "jackson", "matagorda", "calhoun", "harris"]);
 // LP102's original eligibility subset remains included in the expanded regional modes.
@@ -162,6 +162,19 @@ function canonicalizeGoogleRural(row: any) {
       postalCode: googleAddressComponent(row, "postal_code"), country: googleAddressComponent(row, "country") },
     providerIdentity: { provider: "google", placeId: String(row.place_id || ""), locationType } };
 }
+async function sha256Text(value: string) { const bytes = new TextEncoder().encode(value); return [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((b) => b.toString(16).padStart(2, "0")).join(""); }
+async function resolveTexasAddressIndex(body: any, db: any) {
+  if (!ruralAddressEligible(body)) return { outcome: "ineligible", results: [] };
+  const requested = requestedAddressEvidence(body); const countyFips = String(body.context?.countyFips || "");
+  if (!/^48\d{3}$/.test(countyFips)) return { outcome: "county_required", results: [] };
+  const key = [normalizeHouseNumber(requested.houseNumber), normalizeRoadIdentity(requested.road), String(requested.postalCode || "").slice(0, 5), countyFips, "tx"].join("|");
+  const { data, error } = await db.rpc("gridly_lookup_texas_address", { p_lookup_hash: await sha256Text(key), p_county_fips: countyFips });
+  if (error) return { outcome: "temporary_failure", results: [] };
+  const candidates = (data || []).map((row: any) => ({ providerResultId: row.id, name: `${row.house_number} ${row.canonical_road_identity}`, displayName: "", formattedAddress: "", latitude: Number(row.latitude), longitude: Number(row.longitude), category: "", type: "house", resultType: "address", precision: row.precision, confidenceBasis: "gridly_owned_address_point", sourceClassification: "gridly_texas_address_foundation", routePreviewEligible: true, address: { houseNumber: row.house_number, road: row.canonical_road_identity, community: "", city: row.locality, mailingCity: row.locality, county: row.county_id, state: "TX", postalCode: row.postal_code, country: "United States" }, providerIdentity: { sourceId: row.source_id, buildVersion: row.build_version } }));
+  const accepted = candidates.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted);
+  return { outcome: accepted.length ? "relevant_result" : "confirmed_no_result", results: accepted };
+}
+
 async function resolveAuthoritativeRuralProvider(body: any) {
   if (!ruralAddressEligible(body)) return { outcome: "ineligible", results: [], candidateDiagnostics: [] };
   if (CONFIG.authoritativeRuralProvider !== "google" || !CONFIG.authoritativeRuralKey) return { outcome: "not_configured", results: [], candidateDiagnostics: [] };
@@ -273,8 +286,11 @@ async function execute(body: any, key: string, requestId: string, origin: string
   const rows = await upstream.json(); let results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
   if (ruralAddressEligible(body)) results = results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted);
   const primaryOutcome = results.length ? "relevant_result" : "confirmed_no_result";
+  let texasAddressFoundationOutcome = results.length ? "not_invoked" : "ineligible";
+  if (!results.length && body.intent === "address") { const foundation = await resolveTexasAddressIndex(body, db); texasAddressFoundationOutcome = foundation.outcome; results = foundation.results.slice(0, body.limit); }
   let authoritativeRuralOutcome = results.length ? "not_invoked" : "ineligible";
   let authoritativeCandidateDiagnostics: any[] = [];
+  // Legacy commercial adapter is disabled by default and is not part of LP104.1 completion.
   if (!results.length && body.intent === "address") {
     const authoritative = await resolveAuthoritativeRuralProvider(body);
     authoritativeRuralOutcome = authoritative.outcome;
@@ -294,7 +310,7 @@ async function execute(body: any, key: string, requestId: string, origin: string
   const diagnosticRequest = ["lp102_certification", "lp103_certification", "lp104_certification"].includes(body.requestMode);
   const legacyFallbackDiagnostics = diagnosticRequest ? { fallbackCandidateDiagnostics } : {};
   const diagnostics = { primaryProviderOutcome: primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome,
-    authoritativeRuralOutcome, registryOutcome, ...legacyFallbackDiagnostics, ...(diagnosticRequest ? {
+    texasAddressFoundationOutcome, authoritativeRuralOutcome, registryOutcome, ...legacyFallbackDiagnostics, ...(diagnosticRequest ? {
       authoritativeCandidateDiagnostics: authoritativeCandidateDiagnostics.map((entry: any) => ({ candidateDisposition: entry.candidateDisposition,
         houseNumberAgreement: entry.houseNumberAgreement, roadIdentityAgreement: entry.roadIdentityAgreement,
         countyAgreement: entry.countyAgreement, stateAgreement: entry.stateAgreement, postalCodeAgreement: entry.postalCodeAgreement,

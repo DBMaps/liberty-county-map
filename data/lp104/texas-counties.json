@@ -1,0 +1,1532 @@
+{
+  "schemaVersion": "lp104.1-texas-counties-v1",
+  "state": "TX",
+  "count": 254,
+  "source": "US Census county boundary inventory already packaged by Gridly",
+  "counties": [
+    {
+      "countyId": "anderson",
+      "countyName": "Anderson",
+      "fips": "48001",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "andrews",
+      "countyName": "Andrews",
+      "fips": "48003",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "angelina",
+      "countyName": "Angelina",
+      "fips": "48005",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "aransas",
+      "countyName": "Aransas",
+      "fips": "48007",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "archer",
+      "countyName": "Archer",
+      "fips": "48009",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "armstrong",
+      "countyName": "Armstrong",
+      "fips": "48011",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "atascosa",
+      "countyName": "Atascosa",
+      "fips": "48013",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "austin",
+      "countyName": "Austin",
+      "fips": "48015",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "bailey",
+      "countyName": "Bailey",
+      "fips": "48017",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bandera",
+      "countyName": "Bandera",
+      "fips": "48019",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bastrop",
+      "countyName": "Bastrop",
+      "fips": "48021",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "baylor",
+      "countyName": "Baylor",
+      "fips": "48023",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bee",
+      "countyName": "Bee",
+      "fips": "48025",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bell",
+      "countyName": "Bell",
+      "fips": "48027",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bexar",
+      "countyName": "Bexar",
+      "fips": "48029",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "blanco",
+      "countyName": "Blanco",
+      "fips": "48031",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "borden",
+      "countyName": "Borden",
+      "fips": "48033",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bosque",
+      "countyName": "Bosque",
+      "fips": "48035",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "bowie",
+      "countyName": "Bowie",
+      "fips": "48037",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "brazoria",
+      "countyName": "Brazoria",
+      "fips": "48039",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "brazos",
+      "countyName": "Brazos",
+      "fips": "48041",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "brewster",
+      "countyName": "Brewster",
+      "fips": "48043",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "briscoe",
+      "countyName": "Briscoe",
+      "fips": "48045",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "brooks",
+      "countyName": "Brooks",
+      "fips": "48047",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "brown",
+      "countyName": "Brown",
+      "fips": "48049",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "burleson",
+      "countyName": "Burleson",
+      "fips": "48051",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "burnet",
+      "countyName": "Burnet",
+      "fips": "48053",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "caldwell",
+      "countyName": "Caldwell",
+      "fips": "48055",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "calhoun",
+      "countyName": "Calhoun",
+      "fips": "48057",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "callahan",
+      "countyName": "Callahan",
+      "fips": "48059",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "cameron",
+      "countyName": "Cameron",
+      "fips": "48061",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "camp",
+      "countyName": "Camp",
+      "fips": "48063",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "carson",
+      "countyName": "Carson",
+      "fips": "48065",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "cass",
+      "countyName": "Cass",
+      "fips": "48067",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "castro",
+      "countyName": "Castro",
+      "fips": "48069",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "chambers",
+      "countyName": "Chambers",
+      "fips": "48071",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "cherokee",
+      "countyName": "Cherokee",
+      "fips": "48073",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "childress",
+      "countyName": "Childress",
+      "fips": "48075",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "clay",
+      "countyName": "Clay",
+      "fips": "48077",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "cochran",
+      "countyName": "Cochran",
+      "fips": "48079",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "coke",
+      "countyName": "Coke",
+      "fips": "48081",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "coleman",
+      "countyName": "Coleman",
+      "fips": "48083",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "collin",
+      "countyName": "Collin",
+      "fips": "48085",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "collingsworth",
+      "countyName": "Collingsworth",
+      "fips": "48087",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "colorado",
+      "countyName": "Colorado",
+      "fips": "48089",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "comal",
+      "countyName": "Comal",
+      "fips": "48091",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "comanche",
+      "countyName": "Comanche",
+      "fips": "48093",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "concho",
+      "countyName": "Concho",
+      "fips": "48095",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "cooke",
+      "countyName": "Cooke",
+      "fips": "48097",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "coryell",
+      "countyName": "Coryell",
+      "fips": "48099",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "cottle",
+      "countyName": "Cottle",
+      "fips": "48101",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "crane",
+      "countyName": "Crane",
+      "fips": "48103",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "crockett",
+      "countyName": "Crockett",
+      "fips": "48105",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "crosby",
+      "countyName": "Crosby",
+      "fips": "48107",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "culberson",
+      "countyName": "Culberson",
+      "fips": "48109",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dallam",
+      "countyName": "Dallam",
+      "fips": "48111",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dallas",
+      "countyName": "Dallas",
+      "fips": "48113",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dawson",
+      "countyName": "Dawson",
+      "fips": "48115",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "deaf-smith",
+      "countyName": "Deaf Smith",
+      "fips": "48117",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "delta",
+      "countyName": "Delta",
+      "fips": "48119",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "denton",
+      "countyName": "Denton",
+      "fips": "48121",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dewitt",
+      "countyName": "DeWitt",
+      "fips": "48123",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dickens",
+      "countyName": "Dickens",
+      "fips": "48125",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "dimmit",
+      "countyName": "Dimmit",
+      "fips": "48127",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "donley",
+      "countyName": "Donley",
+      "fips": "48129",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "duval",
+      "countyName": "Duval",
+      "fips": "48131",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "eastland",
+      "countyName": "Eastland",
+      "fips": "48133",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "ector",
+      "countyName": "Ector",
+      "fips": "48135",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "edwards",
+      "countyName": "Edwards",
+      "fips": "48137",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "ellis",
+      "countyName": "Ellis",
+      "fips": "48139",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "el-paso",
+      "countyName": "El Paso",
+      "fips": "48141",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "erath",
+      "countyName": "Erath",
+      "fips": "48143",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "falls",
+      "countyName": "Falls",
+      "fips": "48145",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "fannin",
+      "countyName": "Fannin",
+      "fips": "48147",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "fayette",
+      "countyName": "Fayette",
+      "fips": "48149",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "fisher",
+      "countyName": "Fisher",
+      "fips": "48151",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "floyd",
+      "countyName": "Floyd",
+      "fips": "48153",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "foard",
+      "countyName": "Foard",
+      "fips": "48155",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "fort-bend",
+      "countyName": "Fort Bend",
+      "fips": "48157",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "franklin",
+      "countyName": "Franklin",
+      "fips": "48159",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "freestone",
+      "countyName": "Freestone",
+      "fips": "48161",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "frio",
+      "countyName": "Frio",
+      "fips": "48163",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "gaines",
+      "countyName": "Gaines",
+      "fips": "48165",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "galveston",
+      "countyName": "Galveston",
+      "fips": "48167",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "garza",
+      "countyName": "Garza",
+      "fips": "48169",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "gillespie",
+      "countyName": "Gillespie",
+      "fips": "48171",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "glasscock",
+      "countyName": "Glasscock",
+      "fips": "48173",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "goliad",
+      "countyName": "Goliad",
+      "fips": "48175",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "gonzales",
+      "countyName": "Gonzales",
+      "fips": "48177",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "gray",
+      "countyName": "Gray",
+      "fips": "48179",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "grayson",
+      "countyName": "Grayson",
+      "fips": "48181",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "gregg",
+      "countyName": "Gregg",
+      "fips": "48183",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "grimes",
+      "countyName": "Grimes",
+      "fips": "48185",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "guadalupe",
+      "countyName": "Guadalupe",
+      "fips": "48187",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hale",
+      "countyName": "Hale",
+      "fips": "48189",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hall",
+      "countyName": "Hall",
+      "fips": "48191",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hamilton",
+      "countyName": "Hamilton",
+      "fips": "48193",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hansford",
+      "countyName": "Hansford",
+      "fips": "48195",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hardeman",
+      "countyName": "Hardeman",
+      "fips": "48197",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hardin",
+      "countyName": "Hardin",
+      "fips": "48199",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "harris",
+      "countyName": "Harris",
+      "fips": "48201",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "harrison",
+      "countyName": "Harrison",
+      "fips": "48203",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hartley",
+      "countyName": "Hartley",
+      "fips": "48205",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "haskell",
+      "countyName": "Haskell",
+      "fips": "48207",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hays",
+      "countyName": "Hays",
+      "fips": "48209",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hemphill",
+      "countyName": "Hemphill",
+      "fips": "48211",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "henderson",
+      "countyName": "Henderson",
+      "fips": "48213",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hidalgo",
+      "countyName": "Hidalgo",
+      "fips": "48215",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hill",
+      "countyName": "Hill",
+      "fips": "48217",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hockley",
+      "countyName": "Hockley",
+      "fips": "48219",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hood",
+      "countyName": "Hood",
+      "fips": "48221",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hopkins",
+      "countyName": "Hopkins",
+      "fips": "48223",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "houston",
+      "countyName": "Houston",
+      "fips": "48225",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "howard",
+      "countyName": "Howard",
+      "fips": "48227",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hudspeth",
+      "countyName": "Hudspeth",
+      "fips": "48229",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hunt",
+      "countyName": "Hunt",
+      "fips": "48231",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "hutchinson",
+      "countyName": "Hutchinson",
+      "fips": "48233",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "irion",
+      "countyName": "Irion",
+      "fips": "48235",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "jack",
+      "countyName": "Jack",
+      "fips": "48237",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "jackson",
+      "countyName": "Jackson",
+      "fips": "48239",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "jasper",
+      "countyName": "Jasper",
+      "fips": "48241",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "jeff-davis",
+      "countyName": "Jeff Davis",
+      "fips": "48243",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "jefferson",
+      "countyName": "Jefferson",
+      "fips": "48245",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "jim-hogg",
+      "countyName": "Jim Hogg",
+      "fips": "48247",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "jim-wells",
+      "countyName": "Jim Wells",
+      "fips": "48249",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "johnson",
+      "countyName": "Johnson",
+      "fips": "48251",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "jones",
+      "countyName": "Jones",
+      "fips": "48253",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "karnes",
+      "countyName": "Karnes",
+      "fips": "48255",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kaufman",
+      "countyName": "Kaufman",
+      "fips": "48257",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kendall",
+      "countyName": "Kendall",
+      "fips": "48259",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kenedy",
+      "countyName": "Kenedy",
+      "fips": "48261",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kent",
+      "countyName": "Kent",
+      "fips": "48263",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kerr",
+      "countyName": "Kerr",
+      "fips": "48265",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kimble",
+      "countyName": "Kimble",
+      "fips": "48267",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "king",
+      "countyName": "King",
+      "fips": "48269",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kinney",
+      "countyName": "Kinney",
+      "fips": "48271",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "kleberg",
+      "countyName": "Kleberg",
+      "fips": "48273",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "knox",
+      "countyName": "Knox",
+      "fips": "48275",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lamar",
+      "countyName": "Lamar",
+      "fips": "48277",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lamb",
+      "countyName": "Lamb",
+      "fips": "48279",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lampasas",
+      "countyName": "Lampasas",
+      "fips": "48281",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "la-salle",
+      "countyName": "La Salle",
+      "fips": "48283",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lavaca",
+      "countyName": "Lavaca",
+      "fips": "48285",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "lee",
+      "countyName": "Lee",
+      "fips": "48287",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "leon",
+      "countyName": "Leon",
+      "fips": "48289",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "liberty",
+      "countyName": "Liberty",
+      "fips": "48291",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "limestone",
+      "countyName": "Limestone",
+      "fips": "48293",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lipscomb",
+      "countyName": "Lipscomb",
+      "fips": "48295",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "live-oak",
+      "countyName": "Live Oak",
+      "fips": "48297",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "llano",
+      "countyName": "Llano",
+      "fips": "48299",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "loving",
+      "countyName": "Loving",
+      "fips": "48301",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lubbock",
+      "countyName": "Lubbock",
+      "fips": "48303",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "lynn",
+      "countyName": "Lynn",
+      "fips": "48305",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mcculloch",
+      "countyName": "McCulloch",
+      "fips": "48307",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mclennan",
+      "countyName": "McLennan",
+      "fips": "48309",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mcmullen",
+      "countyName": "McMullen",
+      "fips": "48311",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "madison",
+      "countyName": "Madison",
+      "fips": "48313",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "marion",
+      "countyName": "Marion",
+      "fips": "48315",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "martin",
+      "countyName": "Martin",
+      "fips": "48317",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mason",
+      "countyName": "Mason",
+      "fips": "48319",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "matagorda",
+      "countyName": "Matagorda",
+      "fips": "48321",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "maverick",
+      "countyName": "Maverick",
+      "fips": "48323",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "medina",
+      "countyName": "Medina",
+      "fips": "48325",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "menard",
+      "countyName": "Menard",
+      "fips": "48327",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "midland",
+      "countyName": "Midland",
+      "fips": "48329",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "milam",
+      "countyName": "Milam",
+      "fips": "48331",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mills",
+      "countyName": "Mills",
+      "fips": "48333",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "mitchell",
+      "countyName": "Mitchell",
+      "fips": "48335",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "montague",
+      "countyName": "Montague",
+      "fips": "48337",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "montgomery",
+      "countyName": "Montgomery",
+      "fips": "48339",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "moore",
+      "countyName": "Moore",
+      "fips": "48341",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "morris",
+      "countyName": "Morris",
+      "fips": "48343",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "motley",
+      "countyName": "Motley",
+      "fips": "48345",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "nacogdoches",
+      "countyName": "Nacogdoches",
+      "fips": "48347",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "navarro",
+      "countyName": "Navarro",
+      "fips": "48349",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "newton",
+      "countyName": "Newton",
+      "fips": "48351",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "nolan",
+      "countyName": "Nolan",
+      "fips": "48353",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "nueces",
+      "countyName": "Nueces",
+      "fips": "48355",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "ochiltree",
+      "countyName": "Ochiltree",
+      "fips": "48357",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "oldham",
+      "countyName": "Oldham",
+      "fips": "48359",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "orange",
+      "countyName": "Orange",
+      "fips": "48361",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "palo-pinto",
+      "countyName": "Palo Pinto",
+      "fips": "48363",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "panola",
+      "countyName": "Panola",
+      "fips": "48365",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "parker",
+      "countyName": "Parker",
+      "fips": "48367",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "parmer",
+      "countyName": "Parmer",
+      "fips": "48369",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "pecos",
+      "countyName": "Pecos",
+      "fips": "48371",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "polk",
+      "countyName": "Polk",
+      "fips": "48373",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "potter",
+      "countyName": "Potter",
+      "fips": "48375",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "presidio",
+      "countyName": "Presidio",
+      "fips": "48377",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "rains",
+      "countyName": "Rains",
+      "fips": "48379",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "randall",
+      "countyName": "Randall",
+      "fips": "48381",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "reagan",
+      "countyName": "Reagan",
+      "fips": "48383",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "real",
+      "countyName": "Real",
+      "fips": "48385",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "red-river",
+      "countyName": "Red River",
+      "fips": "48387",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "reeves",
+      "countyName": "Reeves",
+      "fips": "48389",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "refugio",
+      "countyName": "Refugio",
+      "fips": "48391",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "roberts",
+      "countyName": "Roberts",
+      "fips": "48393",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "robertson",
+      "countyName": "Robertson",
+      "fips": "48395",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "rockwall",
+      "countyName": "Rockwall",
+      "fips": "48397",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "runnels",
+      "countyName": "Runnels",
+      "fips": "48399",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "rusk",
+      "countyName": "Rusk",
+      "fips": "48401",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "sabine",
+      "countyName": "Sabine",
+      "fips": "48403",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "san-augustine",
+      "countyName": "San Augustine",
+      "fips": "48405",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "san-jacinto",
+      "countyName": "San Jacinto",
+      "fips": "48407",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "san-patricio",
+      "countyName": "San Patricio",
+      "fips": "48409",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "san-saba",
+      "countyName": "San Saba",
+      "fips": "48411",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "schleicher",
+      "countyName": "Schleicher",
+      "fips": "48413",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "scurry",
+      "countyName": "Scurry",
+      "fips": "48415",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "shackelford",
+      "countyName": "Shackelford",
+      "fips": "48417",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "shelby",
+      "countyName": "Shelby",
+      "fips": "48419",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "sherman",
+      "countyName": "Sherman",
+      "fips": "48421",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "smith",
+      "countyName": "Smith",
+      "fips": "48423",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "somervell",
+      "countyName": "Somervell",
+      "fips": "48425",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "starr",
+      "countyName": "Starr",
+      "fips": "48427",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "stephens",
+      "countyName": "Stephens",
+      "fips": "48429",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "sterling",
+      "countyName": "Sterling",
+      "fips": "48431",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "stonewall",
+      "countyName": "Stonewall",
+      "fips": "48433",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "sutton",
+      "countyName": "Sutton",
+      "fips": "48435",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "swisher",
+      "countyName": "Swisher",
+      "fips": "48437",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "tarrant",
+      "countyName": "Tarrant",
+      "fips": "48439",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "taylor",
+      "countyName": "Taylor",
+      "fips": "48441",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "terrell",
+      "countyName": "Terrell",
+      "fips": "48443",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "terry",
+      "countyName": "Terry",
+      "fips": "48445",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "throckmorton",
+      "countyName": "Throckmorton",
+      "fips": "48447",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "titus",
+      "countyName": "Titus",
+      "fips": "48449",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "tom-green",
+      "countyName": "Tom Green",
+      "fips": "48451",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "travis",
+      "countyName": "Travis",
+      "fips": "48453",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "trinity",
+      "countyName": "Trinity",
+      "fips": "48455",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "tyler",
+      "countyName": "Tyler",
+      "fips": "48457",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "upshur",
+      "countyName": "Upshur",
+      "fips": "48459",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "upton",
+      "countyName": "Upton",
+      "fips": "48461",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "uvalde",
+      "countyName": "Uvalde",
+      "fips": "48463",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "val-verde",
+      "countyName": "Val Verde",
+      "fips": "48465",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "van-zandt",
+      "countyName": "Van Zandt",
+      "fips": "48467",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "victoria",
+      "countyName": "Victoria",
+      "fips": "48469",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "walker",
+      "countyName": "Walker",
+      "fips": "48471",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "waller",
+      "countyName": "Waller",
+      "fips": "48473",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "ward",
+      "countyName": "Ward",
+      "fips": "48475",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "washington",
+      "countyName": "Washington",
+      "fips": "48477",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "webb",
+      "countyName": "Webb",
+      "fips": "48479",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wharton",
+      "countyName": "Wharton",
+      "fips": "48481",
+      "certificationCohort": "initial28"
+    },
+    {
+      "countyId": "wheeler",
+      "countyName": "Wheeler",
+      "fips": "48483",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wichita",
+      "countyName": "Wichita",
+      "fips": "48485",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wilbarger",
+      "countyName": "Wilbarger",
+      "fips": "48487",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "willacy",
+      "countyName": "Willacy",
+      "fips": "48489",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "williamson",
+      "countyName": "Williamson",
+      "fips": "48491",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wilson",
+      "countyName": "Wilson",
+      "fips": "48493",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "winkler",
+      "countyName": "Winkler",
+      "fips": "48495",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wise",
+      "countyName": "Wise",
+      "fips": "48497",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "wood",
+      "countyName": "Wood",
+      "fips": "48499",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "yoakum",
+      "countyName": "Yoakum",
+      "fips": "48501",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "young",
+      "countyName": "Young",
+      "fips": "48503",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "zapata",
+      "countyName": "Zapata",
+      "fips": "48505",
+      "certificationCohort": "statewide-rollout"
+    },
+    {
+      "countyId": "zavala",
+      "countyName": "Zavala",
+      "fips": "48507",
+      "certificationCohort": "statewide-rollout"
+    }
+  ]
+}
