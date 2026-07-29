@@ -28,7 +28,7 @@ function textValid(value: unknown, max = 200) { return typeof value === "string"
 function validate(body: any): string | null {
   if (!fieldsAllowed(body, allowedTop)) return "unknown_field";
   if (!["address", "business_place"].includes(body.intent)) return "intent";
-  if (body.requestMode !== undefined && !["explicit_search", "lp102_certification"].includes(body.requestMode)) return "request_mode";
+  if (body.requestMode !== undefined && !["explicit_search", "lp102_certification", "lp103_certification"].includes(body.requestMode)) return "request_mode";
   if (!textValid(body.query) || body.query.trim().length < 3) return "query";
   if (!Number.isInteger(body.limit) || body.limit < 1 || body.limit > 15) return "limit";
   if (body.requestId !== undefined && (!textValid(body.requestId, 80) || !/^[A-Za-z0-9._:-]+$/.test(body.requestId))) return "request_id";
@@ -48,7 +48,8 @@ function normalize(body: any) {
 function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: row.type || "", resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
 
 function ruralFallbackEligible(body: any) {
-  if (!CONFIG.ruralFallbackEnabled || body.intent !== "address" || !["explicit_search", "lp102_certification"].includes(body.requestMode)) return false;
+  if (!CONFIG.ruralFallbackEnabled || body.intent !== "address"
+    || !(["explicit_search", "lp102_certification"].includes(body.requestMode) || body.requestMode === "lp103_certification")) return false;
   const street = String(body.structuredAddress?.street || body.query || "").trim();
   const hasHouse = /^\s*\d{1,6}[A-Za-z]?\b/.test(street);
   const hasRoad = /\b(?:county\s+(?:road|rd)|co\.?\s*rd|cr\s*\d|fm\s*\d|farm(?:-to-|\s+to\s+)market|state\s+highway|sh\s*\d|tx\s*[- ]?\d|us\s+(?:highway\s+)?\d|road|rd\.?|highway|hwy\.?)\b/i.test(street);
@@ -73,15 +74,22 @@ function normalizeRoadIdentity(value: unknown) {
     .replace(/\b(?:us highway|us)\s*(\d+[a-z]?)\b/g, "us $1");
   return normalized.replace(/^\d{1,9}[a-z]?\s+/, "").trim();
 }
+function normalizedRegistryLookup(body: any) {
+  const requested = requestedAddressEvidence(body);
+  return [normalizeHouseNumber(requested.houseNumber), normalizeRoadIdentity(requested.road),
+    normalizeGeography(requested.state), String(requested.postalCode || "").slice(0, 5)].join("|");
+}
 function requestedAddressEvidence(body: any) {
   const street = String(body.structuredAddress?.street || body.query || "").trim();
   const query = String(body.query || "");
+  const queryLocality = String(query.split(",")[1] || "").trim();
   return {
     houseNumber: street.match(/^\s*(\d{1,9}[A-Za-z]?)\b/)?.[1] || "",
     road: street.replace(/^\s*\d{1,9}[A-Za-z]?\s+/, "").split(",")[0].trim(),
-    state: String(body.structuredAddress?.state || query.match(/,\s*([A-Za-z]{2})\s+\d{5}(?:-\d{4})?\s*$/)?.[1] || "").trim(),
+    city: String(body.structuredAddress?.city || (/\bcounty\b/i.test(queryLocality) ? "" : queryLocality)).trim(),
+    state: String(body.structuredAddress?.state || query.match(/,\s*(Texas|TX)\s+\d{5}(?:-\d{4})?\s*$/i)?.[1] || "").trim(),
     postalCode: String(body.structuredAddress?.postalCode || query.match(/\b(\d{5})(?:-\d{4})?\s*$/)?.[1] || "").trim(),
-    county: String(body.structuredAddress?.county || "").trim()
+    county: String(body.structuredAddress?.county || (/\bcounty\b/i.test(queryLocality) ? queryLocality : "")).trim()
   };
 }
 function normalizeGeography(value: unknown) {
@@ -100,12 +108,13 @@ function evaluateRuralCandidate(body: any, candidate: any) {
   if (normalizedRequestedHouseNumber && !normalizedReturnedHouseNumber) conflicts.push("missing_house_number_for_numbered_address");
   else if (normalizedRequestedHouseNumber && !houseNumberAgreement) conflicts.push("house_number_mismatch");
   if (!roadIdentityAgreement) conflicts.push("roadway_identity_conflict");
+  if (requested.city && returned.city && normalizeGeography(requested.city) !== normalizeGeography(returned.city)) conflicts.push("locality_conflict");
   if (requested.postalCode && returned.postalCode && requested.postalCode.slice(0, 5) !== String(returned.postalCode).slice(0, 5)) conflicts.push("zip_conflict");
   if (requested.county && returned.county && normalizeGeography(requested.county) !== normalizeGeography(returned.county)) conflicts.push("county_conflict");
   if (requested.state && returned.state && normalizeGeography(requested.state) !== normalizeGeography(returned.state)) conflicts.push("state_conflict");
   if (!Number.isFinite(candidate.latitude) || !Number.isFinite(candidate.longitude) || Math.abs(candidate.latitude) > 90 || Math.abs(candidate.longitude) > 180) conflicts.push("malformed_or_missing_coordinates");
   if (normalizedRequestedHouseNumber && (candidate.resultType !== "address" || candidate.type !== "house")) conflicts.push("road_only_result_promoted_as_house");
-  if (candidate.precision !== "interpolated_address") conflicts.push("unsupported_precision_claim");
+  if (!["interpolated_address", "verified_address_point", "verified_entrance"].includes(candidate.precision)) conflicts.push("unsupported_precision_claim");
   const rejectionRule = conflicts[0] || "none"; const accepted = conflicts.length === 0;
   return { requestedHouseNumber: requested.houseNumber, returnedHouseNumber: returned.houseNumber || "", normalizedRequestedHouseNumber,
     normalizedReturnedHouseNumber, houseNumberAgreement, requestedRoadIdentity, returnedRoadIdentity, roadIdentityAgreement,
@@ -113,6 +122,32 @@ function evaluateRuralCandidate(body: any, candidate: any) {
     rejectionPhase: accepted ? "none" : "pre_relevance", comparedValues: { requested, returned: { houseNumber: returned.houseNumber || "", road: returned.road || "", state: returned.state || "", postalCode: returned.postalCode || "", county: returned.county || "" } },
     exactnessReasons: conflicts, fallbackCandidateDisposition: accepted ? "accepted_interpolated_address" : `rejected_${rejectionRule}`,
     finalRenderInput: accepted, finalVisibleOutcome: accepted ? "eligible_for_relevance_gate" : "confirmed_no_result" };
+}
+
+async function resolveGovernedRuralRegistry(body: any, db: any) {
+  if (body.intent !== "address" || !["explicit_search", "lp102_certification", "lp103_certification"].includes(body.requestMode)) {
+    return { outcome: "ineligible", results: [] };
+  }
+  const lookupHash = await hash(normalizedRegistryLookup(body));
+  const { data, error } = await db.from("gridly_verified_rural_addresses")
+    .select("id,house_number,canonical_road_identity,locality,county_id,state,postal_code,latitude,longitude,coordinate_source,verification_method,verification_status,source_authority,aliases,precision")
+    .eq("lookup_hash", lookupHash).eq("consumer_eligible", true).eq("verification_status", "verified").maybeSingle();
+  if (error) return { outcome: "temporary_failure", results: [] };
+  if (!data) return { outcome: "confirmed_no_result", results: [] };
+  const candidate = { providerResultId: String(data.id), name: `${data.house_number} ${data.canonical_road_identity}`,
+    displayName: `${data.house_number} ${data.canonical_road_identity}, ${data.locality}, ${data.state} ${data.postal_code}`,
+    formattedAddress: `${data.house_number} ${data.canonical_road_identity}, ${data.locality}, ${data.state} ${data.postal_code}`,
+    latitude: Number(data.latitude), longitude: Number(data.longitude), category: "", type: "house", resultType: "address",
+    precision: data.precision, confidenceBasis: data.verification_method, sourceClassification: "governed_rural_registry",
+    routePreviewEligible: false, address: { houseNumber: data.house_number, road: data.canonical_road_identity,
+      community: "", city: data.locality, mailingCity: data.locality, county: data.county_id, state: data.state,
+      postalCode: data.postal_code, country: "United States" },
+    providerIdentity: { registryRecordId: String(data.id), sourceAuthority: data.source_authority,
+      coordinateSource: data.coordinate_source, verificationStatus: data.verification_status } };
+  const diagnostic = evaluateRuralCandidate(body, candidate);
+  return diagnostic.accepted
+    ? { outcome: "relevant_result", results: [{ ...candidate, routePreviewEligible: true }] }
+    : { outcome: "rejected", results: [] };
 }
 function privacySafeRejectionDiagnostic(body: any, candidate: any, diagnostic: any) {
   const requested = requestedAddressEvidence(body); const returned = candidate.address || {};
@@ -178,13 +213,20 @@ async function execute(body: any, key: string, requestId: string, origin: string
   if (!upstream.ok) return failure("provider_unavailable", requestId, null, 503, origin);
   const rows = await upstream.json(); let results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
   const primaryOutcome = results.length ? "relevant_result" : "confirmed_no_result";
+  let registryOutcome = results.length ? "not_invoked" : "confirmed_no_result";
+  if (!results.length && body.intent === "address") {
+    const registry = await resolveGovernedRuralRegistry(body, db);
+    registryOutcome = registry.outcome;
+    results = registry.results.slice(0, body.limit);
+  }
   const fallbackEligible = !results.length && ruralFallbackEligible(body);
   let fallbackOutcome = fallbackEligible ? "not_invoked" : "ineligible";
   let fallbackCandidateDiagnostics: any[] = [];
   if (fallbackEligible) { const fallback = await resolveRuralFallback(body); fallbackOutcome = fallback.outcome; results = fallback.results.slice(0, body.limit); fallbackCandidateDiagnostics = "candidateDiagnostics" in fallback ? fallback.candidateDiagnostics : []; }
-  const diagnosticRequest = body.requestMode === "lp102_certification";
+  const diagnosticRequest = ["lp102_certification", "lp103_certification"].includes(body.requestMode);
   const diagnostics = { primaryProviderOutcome: primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome,
-    ...(diagnosticRequest ? { fallbackCandidateDiagnostics } : {}), sourceClassification: results.length ? results[0].sourceClassification : "none" };
+    registryOutcome, ...(diagnosticRequest ? { fallbackCandidateDiagnostics } : {}),
+    sourceClassification: results.length ? results[0].sourceClassification : "none" };
   const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, diagnostics, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, diagnostics, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
   // A valid canonical no-result is an application outcome, not a missing HTTP resource.

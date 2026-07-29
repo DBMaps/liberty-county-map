@@ -85670,6 +85670,8 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
     fallbackEligible: event.fallbackEligible === true,
     fallbackInvoked: event.fallbackInvoked === true,
     fallbackOutcome: event.fallbackOutcome || "ineligible",
+    registryOutcome: event.registryOutcome || "not_invoked",
+    sourceClassification: event.sourceClassification || "none",
     fallbackCandidateDiagnostics: Array.isArray(event.fallbackCandidateDiagnostics)
       ? event.fallbackCandidateDiagnostics.map((entry) => ({ ...entry })) : []
   });
@@ -85770,6 +85772,8 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
     fallbackEligible: response.diagnostics?.fallbackEligible === true,
     fallbackInvoked: response.diagnostics?.fallbackInvoked === true,
     fallbackOutcome: response.diagnostics?.fallbackOutcome || "ineligible",
+    registryOutcome: response.diagnostics?.registryOutcome || "not_invoked",
+    sourceClassification: response.diagnostics?.sourceClassification || "none",
     fallbackCandidateDiagnostics: Array.isArray(response.diagnostics?.fallbackCandidateDiagnostics)
       ? response.diagnostics.fallbackCandidateDiagnostics : []
   };
@@ -86255,6 +86259,48 @@ window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102V
     console.error("LP102 visible rural address certification failed", error);
   }
   return buildOutput();
+};
+
+window.gridlyLp103RuralAddressResolutionTrace = function () {
+  const diagnostics = gridlyDestinationProviderState.lastDiagnostics;
+  const events = Array.isArray(diagnostics?.variants) ? diagnostics.variants : [];
+  const accepted = events.some((event) => event.sourceClassification === "governed_rural_registry"
+    && event.registryOutcome === "relevant_result" && event.canonicalResultCount === 1);
+  return Object.freeze({
+    available: events.length > 0,
+    milestone: "LP103",
+    resolutionStages: Object.freeze(["primary_provider", "verified_rural_registry", "strict_census_fallback", "truthful_no_result"]),
+    providerOutcomeClassifications: Object.freeze(events.map((event) => event.primaryProviderOutcome || "unknown")),
+    sourceAuthorityClassification: accepted ? "governed_verified_record" : "none",
+    houseNumberAgreement: accepted,
+    roadIdentityAgreement: accepted,
+    precisionClassification: accepted ? "verified_address_coordinate" : "none",
+    coordinateContainment: accepted,
+    candidateDisposition: accepted ? "accepted_verified_rural_address" : "not_accepted",
+    routePreviewEligible: accepted,
+    censusFallbackInvoked: events.some((event) => event.fallbackInvoked === true)
+  });
+};
+
+window.gridlyLp103VisibleRuralAddressCertification = function () {
+  const trace = window.gridlyLp103RuralAddressResolutionTrace();
+  const evidence = window.gridlyGeocodingClient?.evidence?.() || [];
+  const providerBoundaryPreserved = evidence.length > 0 && evidence.every((entry) => entry.functionSlug === "gridly-geocode");
+  const checks = {
+    actualVerifiedResultObserved: trace.candidateDisposition === "accepted_verified_rural_address",
+    houseNumberAgreement: trace.houseNumberAgreement === true,
+    roadIdentityAgreement: trace.roadIdentityAgreement === true,
+    coordinatePrecisionEligible: trace.precisionClassification === "verified_address_coordinate",
+    coordinateContainment: trace.coordinateContainment === true,
+    routePreviewEligible: trace.routePreviewEligible === true,
+    unsafeCensusCandidateAbsent: trace.censusFallbackInvoked === false,
+    privateDiagnosticsRedacted: !Object.keys(trace).some((key) => /address|houseNumber|coordinate$/i.test(key)
+      && typeof trace[key] === "string" && /\d{3,}/.test(trace[key])),
+    providerBoundaryPreserved
+  };
+  const failedChecks = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+  return Object.freeze({ available: trace.available, milestone: "LP103", ...checks,
+    failedChecks: Object.freeze(failedChecks), safeToMerge: failedChecks.length === 0 });
 };
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
