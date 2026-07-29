@@ -76,6 +76,17 @@ async function runCertification(investigation) {
 }
 
 (async () => {
+  const edgeDiagnostics = { primaryProviderOutcome: 'confirmed_no_result', fallbackEligible: true, fallbackInvoked: true,
+    fallbackOutcome: 'confirmed_no_result', fallbackCandidateDiagnostics: [{ candidateDisposition: 'rejected_house_number_mismatch' }] };
+  const clientWindow = { crypto: { randomUUID: () => 'lp102-test' }, fetch: async () => ({ ok: true, status: 200,
+    json: async () => ({ ok: false, status: 'no_results', providerBoundary: 'gridly', results: [], diagnostics: edgeDiagnostics }) }) };
+  vm.runInNewContext(client, { window: clientWindow, fetch: clientWindow.fetch, Object, Array, Set, String, Number, Boolean, Date });
+  const diagnosticResponse = await clientWindow.gridlyGeocodingClient.search({ intent: 'address', requestMode: 'lp102_certification', query: 'fixture', limit: 1 });
+  assert.equal(diagnosticResponse.diagnostics.fallbackCandidateDiagnostics.length, 1, 'client preserves diagnostic metadata internally');
+  assert.equal(Object.keys(diagnosticResponse).includes('diagnostics'), false, 'internal diagnostics do not leak through consumer enumeration');
+  const consumerResponse = await clientWindow.gridlyGeocodingClient.search({ intent: 'address', requestMode: 'explicit_search', query: 'fixture', limit: 1 });
+  assert.equal(consumerResponse.diagnostics.fallbackCandidateDiagnostics, undefined, 'consumer normalization strips rejection evidence defensively');
+
   const incomplete = await runCertification(async () => ({ available: false }));
   requiredCertificationFields.forEach((field) => assert.notEqual(incomplete[field], undefined, `${field} must be defined for an incomplete run`));
   assert.equal(incomplete.houseNumberSafetyPass, false);
@@ -173,6 +184,12 @@ assert.match(edge, /diagnosticRequest \? \{ fallbackCandidateDiagnostics \} : \{
 assert.match(edge, /requestMode: body\.requestMode \|\| ""/,
   'diagnostic mode must be isolated in the cache key so stale consumer no-results cannot erase evidence');
 assert.match(app, /gridlyLp102DiagnosticRequestActive === true \? "lp102_certification" : "explicit_search"/);
+assert.match(edge, /diagnosticContractVersion: body\.requestMode === "lp102_certification" \? "lp102-rejection-v2" : "consumer"/);
+assert.match(edge, /const diagnostics = \{ primaryProviderOutcome/);
+assert.match(client, /Object\.defineProperty\(normalized, "diagnostics"/);
+assert.match(app, /fallbackCandidateDiagnostics: Array\.isArray\(event\.fallbackCandidateDiagnostics\)/,
+  'recordGridlyDestinationProviderEvent must preserve diagnostics instead of dropping the unlisted property');
+assert.match(app, /window\.gridlyLp102DiagnosticPathTrace/);
 assert.match(edge, /body\.intent !== "address"/);
 assert.match(edge, /hasHouse && hasRoad && hasGeography/);
 assert.match(edge, /primaryOutcome = results\.length/);
