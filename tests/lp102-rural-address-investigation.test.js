@@ -49,6 +49,62 @@ for (const field of ['requestedHouseNumber', 'returnedHouseNumber', 'normalizedR
 for (const field of ['houseNumberSafetyPass', 'roadwayNormalizationPass', 'mismatchedCandidateRejected', 'truthfulNoResultObserved']) {
   assert.match(app, new RegExp(field));
 }
+
+const certificationStart = app.indexOf('window.gridlyLp102VisibleRuralAddressCertification = async function');
+const certificationEnd = app.indexOf('\n\nconst GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES', certificationStart);
+const certificationSource = app.slice(certificationStart, certificationEnd);
+const requiredCertificationFields = [
+  'available', 'milestone', 'productionBehaviorObserved', 'houseNumberSafetyPass', 'mismatchedCandidateRejected',
+  'truthfulNoResultObserved', 'misleadingFallbackAbsent', 'roadwayNormalizationPass', 'candidatePipelineAgreement',
+  'renderDomAgreement', 'canonicalNoResultHandlingPass', 'businessControlPass', 'governedControlPass',
+  'routePreviewVerified', 'providerBoundaryPreserved', 'browserDirectProviderAccessAbsent',
+  'protectedSystemsUnchanged', 'rateLimitBehaviorPass', 'internalCertificationError',
+  'internalCertificationErrorMessage', 'failedChecks', 'safeToMerge'
+];
+for (const field of requiredCertificationFields.filter((field) => !['available', 'milestone', 'failedChecks', 'safeToMerge'].includes(field))) {
+  assert.match(certificationSource, new RegExp(`let ${field} = `), `${field} must have a deterministic declaration`);
+}
+assert.ok(certificationSource.indexOf('let houseNumberSafetyPass = false') < certificationSource.indexOf('const checks ='),
+  'houseNumberSafetyPass must be declared before failedChecks and safeToMerge assembly');
+
+async function runCertification(investigation) {
+  const context = { window: { gridlyLp102RuralAddressInvestigation: investigation }, console: { error() {} }, Object, Array, Number };
+  vm.runInNewContext(certificationSource, context);
+  return context.window.gridlyLp102VisibleRuralAddressCertification();
+}
+
+(async () => {
+  const incomplete = await runCertification(async () => ({ available: false }));
+  requiredCertificationFields.forEach((field) => assert.notEqual(incomplete[field], undefined, `${field} must be defined for an incomplete run`));
+  assert.equal(incomplete.houseNumberSafetyPass, false);
+  assert.equal(incomplete.safeToMerge, false);
+  assert.ok(incomplete.failedChecks.includes('houseNumberSafetyPass'));
+
+  const rateLimitedCase = { caseName: 'county_road_full', transport: [{ httpStatus: 429, failureCode: 'rate_limited' }],
+    resolutionEvents: [], pipelineDomAgreement: false, misleadingFallbackDetected: false };
+  let call = 0;
+  const rateLimited = await runCertification(async () => (++call === 1
+    ? { available: true, cases: [rateLimitedCase], unknownCaseNames: [], executedCaseNames: [] }
+    : { available: true, productionBehaviorObserved: true, cases: [rateLimitedCase] }));
+  requiredCertificationFields.forEach((field) => assert.notEqual(rateLimited[field], undefined, `${field} must be defined after a 429`));
+  assert.equal(rateLimited.internalCertificationError, false);
+  assert.equal(rateLimited.rateLimitBehaviorPass, false);
+  assert.ok(rateLimited.failedChecks.includes('rateLimitBehaviorPass'));
+  assert.equal(rateLimited.safeToMerge, false);
+
+  const internalFailure = await runCertification(async () => { throw new Error('secret upstream token detail'); });
+  requiredCertificationFields.forEach((field) => assert.notEqual(internalFailure[field], undefined, `${field} must be defined after an internal error`));
+  assert.equal(internalFailure.internalCertificationError, true);
+  assert.equal(internalFailure.internalCertificationErrorMessage, 'Unexpected LP102 certification error.');
+  assert.doesNotMatch(internalFailure.internalCertificationErrorMessage, /secret|token/i);
+  assert.ok(internalFailure.failedChecks.includes('internalCertificationError'));
+  assert.equal(internalFailure.safeToMerge, false);
+
+  console.log('LP102 certification runtime failure contracts passed.');
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 assert.match(app, /aggregateGridlyAddressVariantOutcomes\(diagnostics\.variants/);
 assert.doesNotMatch(app.slice(app.indexOf('// LP102'), app.indexOf('const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES')), /nominatim\.openstreetmap\.org|fetch\s*\(/);
 assert.doesNotMatch(client, /fetch\([^)]*nominatim\.openstreetmap\.org/);
