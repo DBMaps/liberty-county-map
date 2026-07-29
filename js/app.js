@@ -85767,7 +85767,9 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
     primaryOutcome: response.resolution?.primaryOutcome || "unknown",
     fallbackEligible: response.resolution?.fallbackEligible === true,
     fallbackInvoked: response.resolution?.fallbackInvoked === true,
-    fallbackOutcome: response.resolution?.fallbackOutcome || "ineligible"
+    fallbackOutcome: response.resolution?.fallbackOutcome || "ineligible",
+    fallbackCandidateDiagnostics: Array.isArray(response.resolution?.fallbackCandidateDiagnostics)
+      ? response.resolution.fallbackCandidateDiagnostics : []
   };
   if (!response.ok) {
     if (response.status === "no_results") {
@@ -86048,7 +86050,19 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
       routePreviewPreserved = routePreviewAvailable;
       clearGridlyDestinationRoutePreview({ silent: true });
     }
-    const resolutionEvents = (diagnostics.variants || []).map((event) => Object.freeze({ primaryProviderOutcome: event.primaryOutcome, fallbackEligible: event.fallbackEligible, fallbackInvoked: event.fallbackInvoked, fallbackOutcome: event.fallbackOutcome }));
+    const resolutionEvents = (diagnostics.variants || []).map((event) => Object.freeze({ primaryProviderOutcome: event.primaryOutcome, fallbackEligible: event.fallbackEligible, fallbackInvoked: event.fallbackInvoked, fallbackOutcome: event.fallbackOutcome,
+      fallbackCandidateDiagnostics: Object.freeze([...(event.fallbackCandidateDiagnostics || [])]) }));
+    const fallbackRejectionTrace = resolutionEvents.flatMap((event) => event.fallbackCandidateDiagnostics || []).map((candidate) => Object.freeze({
+      candidateReceived: true, canonicalIdentity: "census_candidate_redacted", lastObservedStage: candidate.accepted ? "fallbackAcceptanceGate" : "fallbackCandidate",
+      rejectionStage: candidate.rejectionStage, rejectionPhase: candidate.rejectionPhase, rejectionRule: candidate.rejectionRule,
+      comparedValues: candidate.comparedValues, requestedHouseNumber: candidate.requestedHouseNumber, returnedHouseNumber: candidate.returnedHouseNumber,
+      normalizedRequestedHouseNumber: candidate.normalizedRequestedHouseNumber, normalizedReturnedHouseNumber: candidate.normalizedReturnedHouseNumber,
+      houseNumberAgreement: candidate.houseNumberAgreement, requestedRoadIdentity: candidate.requestedRoadIdentity,
+      returnedRoadIdentity: candidate.returnedRoadIdentity, roadIdentityAgreement: candidate.roadIdentityAgreement,
+      hardBlockingConflicts: candidate.hardBlockingConflicts, exactnessReasons: candidate.exactnessReasons,
+      fallbackCandidateDisposition: candidate.fallbackCandidateDisposition, finalRenderInput: candidate.finalRenderInput,
+      finalVisibleOutcome: candidate.finalVisibleOutcome, accepted: candidate.accepted
+    }));
     cases.push(Object.freeze({ caseName, originalQuery: query, normalizationTrace: Object.freeze({ ...trace, providerBoundQueries: Object.freeze([...actualProviderQueries]) }), browserRequestPayload: Object.freeze({ intent: classifyGridlyDestinationSearchIntent(query).type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? "address" : "business_place", requestMode: "explicit_search", queries: Object.freeze([...actualProviderQueries]) }),
       edgeRequestPayload: Object.freeze({ observable: false, reason: "browser_observes_gridly_boundary_request_not_edge_upstream_query" }),
       canonicalGridlyResponseStatus: aggregate.finalConsumerClassification, canonicalResultCount: Number(diagnostics.providerResultCount) || 0,
@@ -86063,7 +86077,7 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
         return Object.freeze({ candidateReceived: true, canonicalIdentity: candidate.canonicalIdentity, lastObservedStage: lastStage,
           rejectionStage, rejectionRule: accepted ? "none" : candidate.rejectionReason, comparedValues: candidate.comparedValues,
           exactnessReasons: candidate.exactnessReasons, patchDecision: candidate.exactnessReasons?.includes("mailing_city_difference") ? "retained_as_non_exact_rural_candidate" : "unchanged", accepted });
-      })),
+      }).concat(fallbackRejectionTrace)),
       roadOnlyFallbackDetected, misleadingFallbackDetected, finalVisibleOutcome: dom.visibleCardCount ? "results" : (dom.status[0] || "empty"),
       visibleResultCount: dom.visibleCardCount, pipelineDomAgreement: dom.visibleCardCount === (pipeline.finalRenderInput || []).length,
       routePreviewAvailable, transport: Object.freeze(transport), diagnosticNotes: Object.freeze([]) }));
@@ -86076,6 +86090,17 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
   const browserDirectProviderAccessAbsent = Number(client.directProviderRequestCount?.() || 0) === 0 && !evidence.some((event) => event.directProviderRequestDetected);
   const canonicalOutcomeClassificationPass = cases.every((entry) => entry.providerOutcomeClassification !== "temporarily_unavailable" || entry.transport.some((event) => event.canonicalFailure || event.failureCode));
   const misleadingFallbackAbsent = cases.every((entry) => !entry.misleadingFallbackDetected);
+  const fallbackDiagnostics = cases.flatMap((entry) => (entry.resolutionEvents || []).flatMap((event) => event.fallbackCandidateDiagnostics || []));
+  const mismatchDiagnostics = fallbackDiagnostics.filter((entry) => entry.hardBlockingConflicts?.includes("house_number_mismatch"));
+  const mismatchedCandidateRejected = mismatchDiagnostics.length > 0 && mismatchDiagnostics.every((entry) => entry.accepted === false
+    && entry.rejectionRule === "house_number_mismatch" && entry.fallbackCandidateDisposition === "rejected_house_number_mismatch"
+    && entry.finalRenderInput === false);
+  const target = cases.find((entry) => entry.caseName === "county_road_full");
+  const truthfulNoResultObserved = Boolean(target && target.providerOutcomeClassification === "confirmed_no_result" && target.visibleResultCount === 0);
+  const houseNumberSafetyPass = mismatchedCandidateRejected && truthfulNoResultObserved
+    && !/698\s+(?:co\s+rd|county\s+road|cr)\s+677/i.test(String(target?.finalVisibleOutcome || ""));
+  const roadwayNormalizationPass = ["County Road 677", "County Rd 677", "CR 677", "Co Rd 677", "CO RD 677"]
+    .every((value) => window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayIdentity?.(value) === "cr 677");
   const observed = cases.some((entry) => entry.transport.some((event) => Number.isInteger(event.httpStatus)));
   const exactTargetCases = cases.filter((entry) => /^(county_road_full|county_rd|cr|co_rd|web_address|webb_address)$/.test(entry.caseName));
   const providerCoverageLimitationObserved = exactTargetCases.length > 0 && exactTargetCases.every((entry) => entry.canonicalResultCount === 0 && entry.providerOutcomeClassification === "confirmed_no_result");
@@ -86126,13 +86151,14 @@ window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102V
   const rateLimitBehaviorPass = cases.every((entry) => !(entry.transport || []).some((event) => event.failureCode === "rate_limited"))
     || cases.some((entry) => (entry.transport || []).some((event) => Number(event.httpStatus) === 429));
   const checks = { productionBehaviorObserved: investigation.productionBehaviorObserved, primaryProviderOutcomeObserved, fallbackResolverAvailable,
-    fallbackInvokedOnlyWhenEligible, ruralAddressCandidateObserved: ruralCandidateObserved, ruralAddressCandidateRendered: ruralCandidateRendered,
+    fallbackInvokedOnlyWhenEligible, houseNumberSafetyPass, roadwayNormalizationPass, mismatchedCandidateRejected, truthfulNoResultObserved,
     ruralPrecisionTruthful, candidatePipelineAgreement, renderDomAgreement, misleadingFallbackAbsent,
     canonicalNoResultHandlingPass, invalidAddressControlPass: canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified, targetedCaseFilteringPass, rateLimitBehaviorPass,
     providerBoundaryPreserved: investigation.providerBoundaryPreserved, browserDirectProviderAccessAbsent: investigation.browserDirectProviderAccessAbsent,
     protectedSystemsUnchanged: investigation.protectedSystemsUnchanged };
   const failedChecks = Object.entries(checks).filter(([, pass]) => pass !== true).map(([name]) => name);
-  return Object.freeze({ available: true, milestone: "LP102", ...checks, cases: Object.freeze(cases), failedChecks: Object.freeze(failedChecks), safeToMerge: failedChecks.length === 0 });
+  return Object.freeze({ available: true, milestone: "LP102", ...checks, cases: Object.freeze(cases), failedChecks: Object.freeze(failedChecks),
+    safeToMerge: failedChecks.length === 0 && houseNumberSafetyPass && misleadingFallbackAbsent });
 };
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [

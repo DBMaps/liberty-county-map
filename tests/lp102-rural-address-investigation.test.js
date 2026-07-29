@@ -43,6 +43,12 @@ assert.match(app, /exactnessReviewAvailable: true/);
 assert.match(app, /aliasInventoryAvailable: true/);
 assert.match(app, /pipelineDomAgreement/);
 assert.match(app, /routePreviewPreserved/);
+for (const field of ['requestedHouseNumber', 'returnedHouseNumber', 'normalizedRequestedHouseNumber', 'normalizedReturnedHouseNumber',
+  'houseNumberAgreement', 'requestedRoadIdentity', 'returnedRoadIdentity', 'roadIdentityAgreement', 'hardBlockingConflicts',
+  'fallbackCandidateDisposition', 'finalVisibleOutcome']) assert.match(edge, new RegExp(field));
+for (const field of ['houseNumberSafetyPass', 'roadwayNormalizationPass', 'mismatchedCandidateRejected', 'truthfulNoResultObserved']) {
+  assert.match(app, new RegExp(field));
+}
 assert.match(app, /aggregateGridlyAddressVariantOutcomes\(diagnostics\.variants/);
 assert.doesNotMatch(app.slice(app.indexOf('// LP102'), app.indexOf('const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES')), /nominatim\.openstreetmap\.org|fetch\s*\(/);
 assert.doesNotMatch(client, /fetch\([^)]*nominatim\.openstreetmap\.org/);
@@ -79,4 +85,25 @@ assert.match(edge, /ruralFallbackTimeoutMs/);
 assert.match(edge, /origins\.has\(origin\)/);
 assert.doesNotMatch(client, /geocoding\.geo\.census\.gov/);
 assert.match(app, /canonicalPrecision !== "interpolated_address"/);
+assert.match(edge, /house_number_mismatch/);
+assert.match(edge, /missing_house_number_for_numbered_address/);
+assert.match(edge, /roadway_identity_conflict/);
+assert.match(edge, /zip_conflict/);
+assert.match(edge, /county_conflict/);
+assert.match(edge, /state_conflict/);
+assert.match(edge, /malformed_or_missing_coordinates/);
+assert.match(edge, /road_only_result_promoted_as_house/);
+assert.match(edge, /unsupported_precision_claim/);
+assert.match(edge, /rejectionStage: accepted \? "none" : "fallback_acceptance_gate"/);
+assert.match(edge, /rejectionPhase: accepted \? "none" : "pre_relevance"/);
+assert.match(edge, /finalRenderInput: accepted/);
+assert.match(edge, /accepted\.length \? "relevant_result" : "confirmed_no_result"/);
+assert.match(edge, /routePreviewEligible: true/);
+assert.doesNotMatch(edge, /houseNumber\s*[:=][^\n]*(?:body\.query|requested\.houseNumber)/, 'provider house number must not be copied from the request');
+
+const identities = ['County Road 677', 'County Rd 677', 'CR 677', 'Co Rd 677', 'CO RD 677'].map((value) => qualityContext.window.GRIDLY_LP101_SEARCH_QUALITY.roadwayIdentity(value));
+assert.deepEqual(identities, ['cr 677', 'cr 677', 'cr 677', 'cr 677', 'cr 677']);
+assert.equal(qualityContext.window.GRIDLY_LP101_SEARCH_QUALITY.roadwayIdentity('County Road 676'), 'cr 676');
+assert.notEqual(qualityContext.window.GRIDLY_LP101_SEARCH_QUALITY.roadwayIdentity('County Road 676'), identities[0], 'genuine roads remain distinct');
+assert.doesNotMatch(quality, /webb?/i, 'LP102 must not create a Web/Webb alias in search normalization');
 console.log('LP102 rural address investigation contracts passed.');

@@ -1,10 +1,27 @@
-# LP102 Rural Address Coverage Resolution
+# LP102 Rural Address Coverage and House-number Safety Repair
+
+## Production defect and root cause
+
+Production subsequently supplied the missing decisive evidence: for `274 County Road 677, Dayton, TX 77535`, the primary provider returned `confirmed_no_result`, then the governed Census fallback returned TIGER line identity `635407484` as **`698 CO RD 677`**. Gridly correctly recorded `house_number_mismatch`, but the edge adapter filtered only for coordinates and the presence of *a* house number and road. It never required the returned canonical house number to equal the requested house number. The browser relevance gate could then retain the result on road agreement, allowing it into `finalRenderInput`, the visible DOM, and Route Preview. That was misleading: an address-range interpolation for 698 is not a result for house 274.
+
+The repair adds a server-side fallback acceptance gate before a candidate can become a canonical result. For explicit numbered-address intent, both canonical house numbers are normalized (leading numeric zeroes are harmless; suffix letters remain significant) and must agree. A mismatch is hard-blocked with `rejectionRule: "house_number_mismatch"`, `rejectionStage: "fallback_acceptance_gate"`, `rejectionPhase: "pre_relevance"`, and disposition `rejected_house_number_mismatch`. A missing returned number, real roadway or geography conflict, invalid coordinates, road-only promotion, and unsupported precision claim are likewise hard blocks. Rejected candidates remain diagnostic evidence only and never enter `results`, relevance, rendering, or Route Preview.
+
+The road comparison separately normalizes `County Road 677`, `County Rd 677`, `CR 677`, `Co Rd 677`, and `CO RD 677` to `cr 677`. Thus the production candidate is rejected for the actual house-number conflict, not for a false abbreviation conflict. No Web/Webb historical alias was introduced.
+
+### Before and after
+
+| Stage | Before repair | After repair |
+|---|---|---|
+| Primary | `confirmed_no_result` | `confirmed_no_result` |
+| Census candidate | `698 CO RD 677`, accepted despite requested 274 | same upstream candidate faithfully mapped, rejected before relevance |
+| Canonical outcome | `relevant_result` | `confirmed_no_result` when no other accepted candidate exists |
+| Visible UI | misleading 698 result and Route Preview | truthful exact-address no-result; no candidate or Route Preview |
+
+The adapter continues to map the upstream `fromAddress`, Census street components, city, state, ZIP, `coordinates.x/y`, `matchedAddress`, and TIGER line identity. It does not copy the query's house number into provider output. Census does not provide a dependable county field in this response shape or an address point/rooftop; absent values remain absent rather than invented. Address-range matches remain `interpolated_address`, never rooftop, parcel, driveway, resident, 911, or exact precision.
 
 ## Corrected authoritative conclusion
 
-The retained production evidence for the owner-approved LP102 target reported `providerCandidates: []`, canonical status `confirmed_no_result`, zero canonical results, empty relevance/render stages, pipeline/DOM agreement, and no misleading fallback. The browser crossed `gridly-geocode`; the primary source simply had no candidate. The earlier `canonical_candidate_lost_inside_gridly_pipeline` conclusion was therefore a diagnostic false positive. No candidate reached LP097 exactness, ranking, or rendering.
-
-LP102 removes the unsupported mailing-city exception and rural retention/ranking changes. LP097 again treats a real city mismatch as a conflict. Passive improvements remain: case-name filtering, canonical outcome and boundary evidence, stage/candidate tracing, the investigation helper, certification framework, and automated diagnostic contracts.
+The newer production capture supersedes the earlier no-candidate observation. It proves the fallback was enabled and returned a mismatched numbered candidate that reached rendering. The safety gate in this repair addresses that demonstrated acceptance defect while retaining LP097 conflict handling, governed precedence, the Census fallback, and provider-boundary controls.
 
 ## Provider audit
 
