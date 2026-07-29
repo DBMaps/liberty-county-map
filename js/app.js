@@ -85666,10 +85666,12 @@ function recordGridlyDestinationProviderEvent(diagnostics, event = {}) {
     skippedReason: event.skippedReason || "",
     count: Number(event.count) || 0,
     error: event.error || "",
-    primaryOutcome: event.primaryOutcome || "unknown",
+    primaryProviderOutcome: event.primaryProviderOutcome || "unknown",
     fallbackEligible: event.fallbackEligible === true,
     fallbackInvoked: event.fallbackInvoked === true,
-    fallbackOutcome: event.fallbackOutcome || "ineligible"
+    fallbackOutcome: event.fallbackOutcome || "ineligible",
+    fallbackCandidateDiagnostics: Array.isArray(event.fallbackCandidateDiagnostics)
+      ? event.fallbackCandidateDiagnostics.map((entry) => ({ ...entry })) : []
   });
   if (event.attempted) diagnostics.providerAttempted = true;
   if (event.attempted) gridlyLp097RuntimeEvidence.requestAttempted = true;
@@ -85764,12 +85766,12 @@ async function fetchGridlyNominatimSearch(query, { limit, countryCodes, searchCo
     timeoutObserved: response.status === "provider_timeout",
     malformedResponseObserved: transport.failureCode === "malformed_response",
     networkFailureObserved: transport.failureCode === "network_failure",
-    primaryOutcome: response.resolution?.primaryOutcome || "unknown",
-    fallbackEligible: response.resolution?.fallbackEligible === true,
-    fallbackInvoked: response.resolution?.fallbackInvoked === true,
-    fallbackOutcome: response.resolution?.fallbackOutcome || "ineligible",
-    fallbackCandidateDiagnostics: Array.isArray(response.resolution?.fallbackCandidateDiagnostics)
-      ? response.resolution.fallbackCandidateDiagnostics : []
+    primaryProviderOutcome: response.diagnostics?.primaryProviderOutcome || "unknown",
+    fallbackEligible: response.diagnostics?.fallbackEligible === true,
+    fallbackInvoked: response.diagnostics?.fallbackInvoked === true,
+    fallbackOutcome: response.diagnostics?.fallbackOutcome || "ineligible",
+    fallbackCandidateDiagnostics: Array.isArray(response.diagnostics?.fallbackCandidateDiagnostics)
+      ? response.diagnostics.fallbackCandidateDiagnostics : []
   };
   if (!response.ok) {
     if (response.status === "no_results") {
@@ -85996,6 +85998,8 @@ function gridlyLp102DomSnapshot(container) {
   return { cards, status, visibleCardCount: cards.length, visibleText: String(container?.textContent || "").trim() };
 }
 
+let gridlyLp102LastInvestigation = null;
+
 window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAddressInvestigation(options = {}) {
   const input = gridlySearchUiRefs.input || document.getElementById("gridlyAddressSearchInput");
   const container = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
@@ -86053,7 +86057,7 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
       routePreviewPreserved = routePreviewAvailable;
       clearGridlyDestinationRoutePreview({ silent: true });
     }
-    const resolutionEvents = (diagnostics.variants || []).map((event) => Object.freeze({ primaryProviderOutcome: event.primaryOutcome, fallbackEligible: event.fallbackEligible, fallbackInvoked: event.fallbackInvoked, fallbackOutcome: event.fallbackOutcome,
+    const resolutionEvents = (diagnostics.variants || []).map((event) => Object.freeze({ primaryProviderOutcome: event.primaryProviderOutcome, fallbackEligible: event.fallbackEligible, fallbackInvoked: event.fallbackInvoked, fallbackOutcome: event.fallbackOutcome,
       fallbackCandidateDiagnostics: Object.freeze((event.fallbackCandidateDiagnostics || []).map((candidate) => Object.freeze({ ...candidate }))) }));
     const fallbackRejectionTrace = resolutionEvents.flatMap((event) => event.fallbackCandidateDiagnostics || []).map((candidate) => Object.freeze({
       candidateReceived: true, canonicalIdentity: "census_candidate_redacted", lastObservedStage: "fallbackCandidate",
@@ -86120,7 +86124,7 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
   if (!routePreviewPreserved) findings.push("route_preview_not_observed_for_an_accepted_result");
   const safeToProceed = observed && providerBoundaryPreserved && browserDirectProviderAccessAbsent && canonicalOutcomeClassificationPass
     && misleadingFallbackAbsent && routePreviewPreserved && cases.every((entry) => entry.pipelineDomAgreement);
-  return Object.freeze({ available: true, milestone: "LP102", passive: true, productionBehaviorObserved: observed,
+  const investigationResult = Object.freeze({ available: true, milestone: "LP102", passive: true, productionBehaviorObserved: observed,
     providerBoundaryPreserved, browserDirectProviderAccessAbsent, cases: Object.freeze(cases), requestedCaseNames: selectedNames ? Object.freeze([...selectedNames]) : null,
     executedCaseNames: Object.freeze(cases.map((entry) => entry.caseName)), unknownCaseNames: Object.freeze(unknownCaseNames), normalizationTraceAvailable: true,
     exactnessReviewAvailable: true, aliasInventoryAvailable: true, aliasInventory: Object.freeze({ countyRoad: ["County Road", "County Rd", "CR", "Co Rd"], farmToMarket: ["Farm to Market", "Farm-to-Market", "FM"], stateHighway: ["State Highway", "SH", "TX"], usHighway: ["US Highway", "US"], historicalRoadAliases: [] }),
@@ -86128,6 +86132,27 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
     findings: Object.freeze(findings), likelyRootCause: gridlyControlledDefectObserved ? "gridly_candidate_filtering_or_rendering" : providerCoverageLimitationObserved ? "provider_address_coverage_or_alias_coverage" : "runtime_evidence_inconclusive",
     gridlyControlledDefectObserved, providerCoverageLimitationObserved, patchRecommended: gridlyControlledDefectObserved,
     safeToProceed, failedChecks: Object.freeze([...(providerBoundaryPreserved ? [] : ["providerBoundaryPreserved"]), ...(browserDirectProviderAccessAbsent ? [] : ["browserDirectProviderAccessAbsent"]), ...(canonicalOutcomeClassificationPass ? [] : ["canonicalOutcomeClassificationPass"]), ...(misleadingFallbackAbsent ? [] : ["misleadingFallbackAbsent"]), ...(routePreviewPreserved ? [] : ["routePreviewPreserved"]), ...(cases.every((entry) => entry.pipelineDomAgreement) ? [] : ["pipelineDomAgreement"])]) });
+  gridlyLp102LastInvestigation = investigationResult;
+  return investigationResult;
+};
+
+window.gridlyLp102DiagnosticPathTrace = function gridlyLp102DiagnosticPathTrace() {
+  const clientTrace = window.gridlyGeocodingClient?.diagnosticTrace?.() || null;
+  const cases = gridlyLp102LastInvestigation?.cases || [];
+  const events = cases.flatMap((entry) => entry.resolutionEvents || []);
+  const fallbackObserved = events.some((event) => event.fallbackCandidateDiagnostics?.length > 0);
+  const appObserved = (gridlyDestinationProviderState.lastDiagnostics?.variants || [])
+    .some((event) => event.fallbackCandidateDiagnostics?.length > 0);
+  const lossStage = fallbackObserved ? null : !clientTrace?.diagnosticsObserved ? "edge_response_or_client_normalization"
+    : !appObserved ? "recordGridlyDestinationProviderEvent" : events.length === 0 ? "investigation_case_construction" : "fallback_candidate_diagnostics";
+  return Object.freeze({ available: Boolean(clientTrace || gridlyLp102LastInvestigation), requestMode: clientTrace?.requestMode || null,
+    edgeDiagnosticsObserved: clientTrace?.diagnosticsObserved === true, edgeDiagnosticPropertyName: clientTrace?.diagnosticsObserved ? "diagnostics" : null,
+    clientDiagnosticsObserved: clientTrace?.diagnosticsObserved === true, clientDiagnosticPropertyName: clientTrace?.diagnosticPropertyName || null,
+    appDiagnosticsObserved: appObserved, investigationResolutionEventsObserved: events.length > 0,
+    fallbackCandidateDiagnosticsObserved: fallbackObserved, lossStage,
+    propertyPath: "response.diagnostics -> client.diagnostics -> providerDiagnostics.variants[] -> cases[].resolutionEvents[]",
+    safeConsumerBehaviorPreserved: cases.every((entry) => entry.canonicalResultCount === 0
+      ? entry.visibleResultCount === 0 && entry.routePreviewAvailable === false : true) });
 };
 
 window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102VisibleRuralAddressCertification() {

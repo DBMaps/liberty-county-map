@@ -5,6 +5,7 @@
   const publicKey = "sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO";
   const runtimeEvidence = [];
   let directProviderRequestCount = 0;
+  let lastDiagnosticTrace = null;
   const endpointOrigin = "https://nhwhkbkludzkuyxmkkcj.supabase.co";
   const functionSlug = "gridly-geocode";
   const canonicalStatuses = new Set(["success", "no_results", "rate_limited", "provider_unavailable", "provider_timeout", "invalid_request", "configuration_error"]);
@@ -67,6 +68,22 @@
       && (!payload.ok ? payload.results.length === 0 : true));
   }
 
+  function internalDiagnostics(payload, diagnosticRequest) {
+    const value = payload?.diagnostics;
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    const diagnostics = {
+      primaryProviderOutcome: String(value.primaryProviderOutcome || "unknown"),
+      fallbackEligible: value.fallbackEligible === true,
+      fallbackInvoked: value.fallbackInvoked === true,
+      fallbackOutcome: String(value.fallbackOutcome || "ineligible"),
+      sourceClassification: String(value.sourceClassification || "none")
+    };
+    if (diagnosticRequest && Array.isArray(value.fallbackCandidateDiagnostics)) {
+      diagnostics.fallbackCandidateDiagnostics = value.fallbackCandidateDiagnostics.map((entry) => ({ ...entry }));
+    }
+    return diagnostics;
+  }
+
   async function search(request) {
     const requestId = request.requestId || (global.crypto?.randomUUID?.() || `gridly-${Date.now()}`);
     let response;
@@ -89,12 +106,19 @@
       : response.status >= 500 ? "edge_server_error" : !canonical ? "malformed_response" : (canonicalFailure ? payload.status : "");
     addEvidence({ intentType: request.intent, httpStatus: response.status, requestSucceeded: response.ok, canonicalSuccess, canonicalFailure, failureCode, providerBoundaryUsed: canonical });
     if (!canonical) return { ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [] };
-    return payload;
+    const normalized = { ...payload };
+    const diagnostics = internalDiagnostics(payload, request.requestMode === "lp102_certification");
+    if (diagnostics) Object.defineProperty(normalized, "diagnostics", { value: diagnostics, enumerable: false });
+    lastDiagnosticTrace = Object.freeze({ requestMode: request.requestMode || "explicit_search",
+      diagnosticsObserved: Boolean(diagnostics), diagnosticPropertyName: diagnostics ? "diagnostics" : null,
+      fallbackCandidateDiagnosticsObserved: Boolean(diagnostics?.fallbackCandidateDiagnostics?.length) });
+    return normalized;
   }
 
   global.gridlyGeocodingClient = Object.freeze({
     endpoint, functionSlug, search, canonicalToLegacy, failureMessages,
     evidence: () => runtimeEvidence.map((item) => ({ ...item })),
-    directProviderRequestCount: () => directProviderRequestCount
+    directProviderRequestCount: () => directProviderRequestCount,
+    diagnosticTrace: () => lastDiagnosticTrace ? { ...lastDiagnosticTrace } : null
   });
 })(window);

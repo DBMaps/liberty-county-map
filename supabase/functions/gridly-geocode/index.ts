@@ -41,7 +41,9 @@ function validate(body: any): string | null {
 async function hash(value: unknown) { const bytes = new TextEncoder().encode(JSON.stringify(value)); return [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((b) => b.toString(16).padStart(2, "0")).join(""); }
 function normalize(body: any) {
   const clean = (v: unknown) => String(v || "").trim().toLowerCase().replace(/\s+/g, " ");
-  return { namespace: CONFIG.namespace, ruralFallbackEnabled: CONFIG.ruralFallbackEnabled, requestMode: body.requestMode || "", intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
+  return { namespace: CONFIG.namespace, ruralFallbackEnabled: CONFIG.ruralFallbackEnabled,
+    diagnosticContractVersion: body.requestMode === "lp102_certification" ? "lp102-rejection-v2" : "consumer",
+    requestMode: body.requestMode || "", intent: body.intent, query: clean(body.query), structuredAddress: Object.fromEntries(Object.entries(body.structuredAddress || {}).map(([k, v]) => [k, clean(v)])), context: body.context || {}, limit: body.limit };
 }
 function canonicalize(row: any) { const a = row.address || {}; return { providerResultId: String(row.place_id || ""), name: row.name || String(row.display_name || "").split(",")[0], displayName: row.display_name || "", formattedAddress: row.display_name || "", latitude: Number(row.lat), longitude: Number(row.lon), category: row.category || "", type: row.type || "", resultType: a.house_number ? "address" : "road", precision: a.house_number ? "address_point" : "road", confidenceBasis: a.house_number ? "provider_address_point" : "provider_road_geometry", sourceClassification: "primary_geocoder", routePreviewEligible: Boolean(a.house_number), address: { houseNumber: a.house_number || "", road: a.road || "", community: a.village || a.hamlet || "", city: a.city || a.town || "", mailingCity: "", county: a.county || "", state: a.state || "", postalCode: a.postcode || "", country: a.country || "" }, providerIdentity: { osmType: row.osm_type || "", osmId: String(row.osm_id || "") } }; }
 
@@ -181,9 +183,9 @@ async function execute(body: any, key: string, requestId: string, origin: string
   let fallbackCandidateDiagnostics: any[] = [];
   if (fallbackEligible) { const fallback = await resolveRuralFallback(body); fallbackOutcome = fallback.outcome; results = fallback.results.slice(0, body.limit); fallbackCandidateDiagnostics = "candidateDiagnostics" in fallback ? fallback.candidateDiagnostics : []; }
   const diagnosticRequest = body.requestMode === "lp102_certification";
-  const resolution = { primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome,
+  const diagnostics = { primaryProviderOutcome: primaryOutcome, fallbackEligible, fallbackInvoked: fallbackEligible, fallbackOutcome,
     ...(diagnosticRequest ? { fallbackCandidateDiagnostics } : {}), sourceClassification: results.length ? results[0].sourceClassification : "none" };
-  const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, resolution, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, resolution, results: [] };
+  const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, diagnostics, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, diagnostics, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
   // A valid canonical no-result is an application outcome, not a missing HTTP resource.
   return new Response(JSON.stringify(payload), { status: 200, headers: cors(origin) });
