@@ -61,6 +61,8 @@
     "test:lp102": "node tests/lp102-rural-address-investigation.test.js",
     "test:lp103": "node tests/lp103-authoritative-rural-address-resolution.test.js",
     "test:lp1031": "node tests/lp1031-secure-rural-address-enrollment.test.mjs",
-    "test:lp104": "node tests/lp104-regional-rural-address-resolution.test.js"
+    "test:lp104": "node tests/lp104-regional-rural-address-resolution.test.js",
+    "build:lp104:inventory": "node tools/lp104/build-texas-address-foundation.js --inventory-only",
+    "test:lp1041": "node tests/lp1041-texas-address-foundation.test.js"
   }
 }

@@ -1,98 +1,95 @@
-# LP104 — Regional rural address geocoding resolution
+# LP104.1 — Texas statewide open address foundation
 
-## Decision status
+## Status and honest completion boundary
 
-**Architecture and fail-closed implementation are ready; paid-provider activation and product certification are not approved.** No key, billing account, private address, or private coordinate is committed. Consequently LP104 must not be described as meeting the final production gate until the owner completes the live steps below and the browser certification returns `failedChecks: []` and `safeToMerge: true`.
+The statewide **architecture and deterministic 254-county inventory are implemented**. Statewide data acquisition, license approval, builds, the protected 28-county real-address suite, and county activation are not complete. The checked-in coverage report therefore records zero source-covered, eligible, built, certified, or active counties and fails closed. Architecture is not coverage. Google is disabled and is not a completion dependency.
 
-## 1. Exact current-stack root cause
+## Source and licensing findings (review snapshot: 2026-07-29)
 
-The server-side `gridly-geocode` Edge Function is the sole browser boundary. Its current default primary is the public OpenStreetMap Nominatim search endpoint (`jsonv2`, structured fields for addresses, `q` otherwise, US filter, optional viewbox). Nominatim results are canonicalized as address points only when the payload contains `address.house_number`. The existing rural fallback is the Census Geocoder one-line geographies endpoint using `Public_AR_Current` / `Current_Current`. Between them LP103 placed a service-role-only verified registry.
+`data/lp104/source-license-manifest.json` is the machine-readable decision record. Exact current finding: no address source has yet passed Gridly's license gate, so no residential records were downloaded or committed.
 
-The failure is a source coverage failure: many rural residences do not have an OSM address node, while Census geocodes street ranges and can interpolate a different number on the correct road. LP102 correctly blocks that mismatch. Normalization cannot manufacture an absent address point, and the LP103 registry requires individual enrollment, so neither is a regional consumer solution. The public Nominatim service also has a one-request-per-second policy and forbids systematic use, making it an unsuitable sole production SLA even where its data is adequate.
+| Priority | Source | Finding | Production decision |
+|---|---|---|---|
+| 1 | Texas Geographic Information Office / TNRIS | Gridly has not acquired a current statewide address-point artifact with an explicit license, county counts, release date, redistribution, derivative, storage, automation, attribution, and residential-coordinate terms. A public viewer is not permission. | Review required; do not ingest. |
+| 2 | U.S. National Address Database | A bulk federal aggregator is a candidate. Texas participation, county coverage, record count, release version/date, source-level rights, and residential restrictions must be measured from a pinned release. | Review required; do not ingest. |
+| 3 | Texas COG and county 911/E911 | Potentially the strongest local authority, but coverage, endpoints, refreshes, and grants are dataset-specific and 911 restrictions may apply. | Written permission and source manifest required; never scrape viewers. |
+| 4 | County appraisal situs | Situs may be text-only or a parcel centroid rather than an entrance. Public-record access does not by itself establish bulk redistribution or product rights. | Per-county legal/precision review required. |
+| 5 | OpenAddresses | Bulk tooling is available, but each contributing source retains its own license and attribution. Texas coverage is release-dependent. | Approve and preserve provenance source by source. |
+| 6 | Overture Maps addresses | Bulk releases can provide a supplemental corpus. Release license, source provenance, attribution, Texas counts, and address-point precision must be pinned and reviewed. | Release review and measured county audit required. |
 
-Before LP104 the order was Nominatim → protected registry → Census range → no result. LP104 adds an independently enabled commercial rooftop tier and makes rural candidates from both primary and commercial sources pass the same house, canonical road, geography, precision, and containment gate.
+Primary review locations: [TxGIO/TNRIS](https://tnris.org/), [National Address Database](https://www.transportation.gov/gis/national-address-database), [Texas 9-1-1 entities](https://www.csec.texas.gov/9-1-1-entities/), [OpenAddresses results](https://results.openaddresses.io/), and [Overture downloads](https://docs.overturemaps.org/getting-data/). Internet search and direct fetch were attempted in this environment but returned HTTP 401/403; accordingly, this work makes no fresh legal or coverage assertion from inaccessible pages. Counsel/data-owner confirmation is a release gate.
 
-Current caches are server-side Supabase rows: successful addresses live six hours, business results 24 hours, and no-results 60 seconds. The normalized request, provider namespace, and request mode form the SHA-256 cache key. Provider payloads and secrets do not cross the Gridly boundary. A provider contract must explicitly permit this six-hour operational cache before activation; otherwise TTL must be reduced to its permitted value.
+## 254-county coverage and eligibility report
 
-## 2. Provider and dataset comparison (procurement snapshot, 2026-07-29)
+`data/lp104/texas-counties.json` contains all 254 Census county identities and FIPS codes; the 28 product cohort is metadata, not pipeline logic. `data/lp104/texas-county-coverage.json` contains every required field for every county and separately reports source availability, eligibility, build, certification, and activation. Null completeness means “not measured,” not zero quality. The initial report deliberately says `source_unavailable` until a qualified manifest and measured build update it.
 
-The integrated web search service returned HTTP 401 and direct official-site requests returned proxy HTTP 403 during this work. Therefore the table records public product positioning and previously published list prices, but **no price or legal term is represented as freshly contract-verified**. The owner must obtain a current quote/order form and counsel review. Official review links are included so procurement can verify the exact terms on the approval date.
+Rollout states are: `source_unavailable`, `source_review`, `source_approved`, `build_pending`, `built`, `certification_pending`, `certified`, `activation_pending`, `active`, and `blocked`. Activation requires approved licensing, deterministic build, accepted/rejected reconciliation, containment pass, protected representative certification, privacy review, runtime health, and an explicit owner promotion. A build never activates a county.
 
-| Option | 28-county / rural fitness | Precision | Published price snapshot | caching, proxy, ingestion, attribution and production conclusion |
-|---|---|---|---|---|
-| Google Geocoding API | Statewide commercial coverage; strongest practical first pilot for heterogeneous County Road/FM/SH addressing. Coverage is not a contractual guarantee. | `ROOFTOP`, range-interpolated, geometric center, approximate; LP104 admits only rooftop; geometric-center, approximate, and range-interpolated results are rejected. | Essentials SKU historically included 10,000 free monthly requests, then $5/1,000 through 100k and tiered discounts; verify the current calculator. Illustrative 25k = $75/month and 100k = $450/month under that schedule. | Server-side key restriction is supported. Google content retention, display, attribution, and use with non-Google routing/maps require contract review. No batch ingestion. Operational response caching must match policy. **Recommended technical pilot, conditional on written approval.** [Pricing](https://developers.google.com/maps/billing-and-pricing/pricing), [policies](https://developers.google.com/maps/documentation/geocoding/policies), [API limits](https://developers.google.com/maps/documentation/geocoding/usage-and-billing). |
-| HERE Geocoding & Search | Broad statewide commercial street/address coverage; pilot against the same suite. | House-number/address results and result scoring; verify rooftop semantics for Texas rural records. | Account/plan-based; obtain a current quote and transaction allowance. | Server-side proxy generally available; storage, derived-data, attribution and route use are contract-specific. No assumed bulk rights. [Documentation](https://www.here.com/docs/bundle/geocoding-and-search-api-v7-api-reference/page/index.html), [pricing](https://www.here.com/get-started/pricing). |
-| TomTom Search/Geocoding | Broad US coverage; rural address-point success must be empirically measured. | Address/house number with match type; rooftop guarantee not assumed. | Freemium/usage tiers change; current account quote required. | Proxy supported with a protected key; caching, attribution and batch rights require terms review. [Geocoding](https://developer.tomtom.com/geocoding-api/documentation/geocode), [pricing](https://developer.tomtom.com/store/maps-api). |
-| Mapbox Search Box / Geocoding v6 | Broad US coverage and secondary address data; test rural points explicitly. | Address features and routable points where supplied. | Temporary/permanent pricing and free tiers differ; obtain current SKU price. | Temporary results historically cannot be retained; permanent mode is separately billed/licensed. Attribution and map-display rules apply. No unlicensed ingestion. [API](https://docs.mapbox.com/api/search/geocoding/), [pricing](https://www.mapbox.com/pricing/). |
-| Esri World Geocoding Service | Statewide composite locator, viable pilot and common in government GIS. | Point/address/range with `Addr_type` and match scores; point accuracy varies by source. | Historically 40 ArcGIS credits/1,000 geocodes; credit cost depends on subscription. | Stored/batch geocoding consumes credits and requires the appropriate ArcGIS entitlement; attribution and non-Esri display terms need review. Server proxy is possible with app credentials. [Service](https://developers.arcgis.com/rest/geocode/), [credits](https://doc.arcgis.com/en/arcgis-online/administer/credits.htm). |
-| Smarty US Street + US Rooftop Geocoding | USPS-oriented validation plus rooftop product is attractive for deliverable rural residences; run head-to-head with Google. | Delivery point plus rooftop/parcel/ZIP precision metadata depending on product. | Free and paid subscriptions are volume/product-specific; obtain a written quote for Rooftop plus Street. | Server authentication supported; storage, batch, redisplay, attribution and routing rights must be in the order form. [US Street](https://www.smarty.com/docs/cloud/us-street-api), [Rooftop](https://www.smarty.com/products/us-rooftop-geocoding), [pricing](https://www.smarty.com/pricing). |
-| Precisely APIs / Spectrum | Enterprise parcel, address and geocoding portfolios may offer excellent rural reference data. | Rooftop, parcel and street depending on licensed dataset. | Quote-only for the required coverage/rights. | Strong enterprise option if an SLA and all-county coverage schedule are supplied; bulk/cache/derived-data rights are contract-specific. [Geocoding](https://www.precisely.com/product/precisely-apis/geocode-api). |
-| Melissa Global Address / Geocoder | US address verification/geocoding candidate; validate County Road aliases and entrance accuracy. | Address validation plus geocode precision codes. | Credit/subscription pricing varies; obtain quote. | Server-side use expected; retention, batch and redisplay require written terms. [Global Address](https://www.melissa.com/data-verification/address-check), [pricing](https://www.melissa.com/pricing). |
-| Geocodio | US-focused, inexpensive and simple server API; useful benchmark, but rooftop rural coverage must win the suite before selection. | Rooftop/range accuracy types and optional Census/parcel fields. | Published pay-as-you-go has historically been $0.50/1,000 after 2,500 free/day; verify current price and feature charges. Illustrative 100k/month above a fully usable free allowance is about $12.50, but traffic distribution changes this. | Batch API exists. Terms must confirm cache, routing and parcel-field retention; server proxy supported. [Pricing](https://www.geocod.io/pricing/), [docs](https://www.geocod.io/docs/). |
-| Texas statewide / TxGIS / emergency addressing | No single publicly verified, current, licensed statewide residential address-point package was found in the repository or accessible during this run. Next Generation 911 data access commonly has public-safety/privacy restrictions. | Potentially authoritative E911 entrance/address points if released. | Agency agreement/data engineering rather than per-call price. | Best authority if TDEM/TxGIS supplies all 28 counties with written consumer-production, redisplay, retention and routing rights. Do not infer a license from a viewer. [TxGIS](https://tnris.org/), [Texas 9-1-1 entities](https://www.csec.texas.gov/9-1-1-entities/). |
-| County E911/CAD/parcel points | Potentially highest local authority, but fragmented schemas, refreshes and rights across 28 counties. Parcel situs/centroid is not automatically an entrance. | E911 point, parcel centroid, or situs depending on county. | Usually agreement/records costs plus ingestion operations. | Only viable regionally under one common contract: stable ID, full normalized address, aliases, county, ZIP, point, precision/source, effective date, license and tombstone. All 28 packages must certify before activation; no one-off Liberty path. |
-| Regional councils (H-GAC and peers) / ArcGIS FeatureServers | May aggregate roads/address points, but public viewers do not imply bulk-production rights. Multiple councils cover this footprint. | Dataset-specific. | Usually agreement/hosting cost. | Discover service metadata and license with each council; batch ingestion only with explicit grant. Reject anonymous scraper architecture. [H-GAC GIS](https://www.h-gac.com/gis-applications-and-data). |
-| OpenAddresses | Open batch ingestion architecture, but Texas coverage/completeness and source licenses vary by contributing source; cannot promise all 28 rural residences. | Address point where source supplies one. | Data is free; ingestion/refresh cost remains. | Each source license/attribution must survive into provenance. Good supplemental source, not the sole regional authority. [Sources](https://results.openaddresses.io/), [license](https://github.com/openaddresses/openaddresses/blob/master/LICENSE). |
-| Overture Maps addresses/buildings | Useful open supplemental corpus and building context. Building centroids cannot be promoted to a residential address without address evidence. | Address points/building geometry with confidence/provenance varying by record. | Free data; cloud/ETL cost. | Batch ingestion allowed under release licensing, subject to source attribution/quality. Benchmark coverage per county; do not claim rooftop from a building centroid. [Schema](https://docs.overturemaps.org/schema/reference/addresses/address/), [downloads](https://docs.overturemaps.org/getting-data/). |
+## Address contract, hierarchy, and strict acceptance
 
-## 3–5. Recommendation, cost/licensing, and architecture decision
+The normalized record contract includes deterministic `id` and `lookupHash`, house number, canonical road, locality and evidence-backed aliases, county ID/FIPS, state/ZIP, coordinate and precision, complete source/license provenance, consumer eligibility, and build version. County Road, FM, SH/TX, US, Interstate, and named-road normalization is county-neutral. Named-road aliases are not invented.
 
-Recommend a **time-boxed Google Geocoding API production-quality pilot** behind the existing Edge Function, compared head-to-head with Smarty Rooftop before the owner signs a longer commitment. Google is selected for the implemented adapter because it provides one statewide interface and explicit `ROOFTOP` metadata rather than requiring 28 bespoke sources. This is a technical recommendation, not authorization to enable billing.
+Deterministic precedence is:
 
-At 25,000 total monthly geocodes, if 40% reach the rural tier, 10,000 Google calls fit the historical free cap; at 50% the illustrative bill is $12.50. At 100,000 total and 40% rural, the illustrative bill is $150. These estimates exclude retries, certification, taxes and price changes. Add a spend alert, provider quota, per-origin abuse controls, and monitor rural-tier invocation rate before launch.
+1. authoritative county/911 point;
+2. authoritative regional/statewide point;
+3. National Address Database point;
+4. other license-approved open address point;
+5. protected Gridly verified exception;
+6. strict Census interpolation (never accepted when number/road/geography mismatches and never promoted as an address point);
+7. truthful no-result.
 
-Final order:
+Within a tier, precision, recency, stable source ID, and record ID break ties. Conflicting duplicates are retained as build diagnostics; only the winning eligible record is packaged. Runtime final acceptance still requires exact house and canonical road, Texas, no ZIP/county conflict, county containment, approved license/precision, and an address/approved parcel or entrance point. Road geometry, centroids, rejected candidates, and Census mismatches cannot reach Route Preview.
 
-```text
-Nominatim/general provider (rural candidates pass LP104 gate)
-  → Google authoritative rural tier (disabled until owner approval)
-  → protected verified registry (exceptions only)
-  → strict Census range fallback
-  → truthful no-result
+## Storage and runtime decision
+
+Use protected Supabase Postgres/PostGIS as the serving index, list-partitioned by county FIPS, with an exact `(county_fips, lookup_hash)` partial index. The migration enables RLS, removes anonymous/authenticated access, and exposes a security-definer RPC only to `service_role`. The Edge Function computes the lookup key and is the only browser boundary. It queries the Gridly index before the optional legacy disabled commercial adapter, protected exception registry, and Census fallback.
+
+For multi-million-row acquisition, stage encrypted, county-partitioned NDJSON/Parquet packages in private object storage. Keep immutable source/build manifests and hashes there, load only changed county partitions into Postgres, and retain rejects/conflicts in protected build storage—not browser assets. This hybrid keeps resumable ETL cheap while Postgres supplies governed low-latency exact lookup. Cache only accepted response envelopes with controlled TTLs; never provide bulk enumeration.
+
+## Acquisition and build commands
+
+Do not run acquisition until the corresponding license manifest has `productionEligible: true` and the legal fields are filled. Provider-specific download commands belong in an approved source manifest/runbook; never scrape a GIS viewer. After placing an approved bulk extract in protected local storage, transform it to NDJSON and run:
+
+```bash
+npm run build:lp104:inventory
+node tools/lp104/build-texas-address-foundation.js --input=/protected/source.ndjson --source-manifest=/protected/approved-source.json --out=/protected/build/2026-07-29 --build-version=2026-07-29.1
+node tools/lp104/build-texas-address-foundation.js --input=/protected/source.ndjson --source-manifest=/protected/approved-source.json --out=/protected/build/2026-07-29/48001 --build-version=2026-07-29.1 --county-fips=48001
+supabase db push
+supabase functions deploy gridly-geocode
 ```
 
-Every rural candidate must independently return the requested number and canonical road; non-conflicting state/ZIP/county; a supported county; Texas-contained coordinates; and an approved precision. Google `RANGE_INTERPOLATED` and `APPROXIMATE` are rejected. A candidate is never populated from request values. Route Preview becomes eligible only after acceptance. Consumer diagnostics contain only classifications; LP104 certification diagnostics contain agreement booleans and precision labels, never raw upstream payloads or coordinates.
+The county option provides resumable isolated rebuilds. Stable sorting and hashes make manifests deterministic. Production loading should use a service-role `COPY` job from private storage inside a controlled worker; do not ship packages to the web root or Git.
 
-Normalization treats County Road/County Rd/CR/Co Rd, FM/Farm to Market, State Highway/SH/TX, and US Highway/US as semantic equivalents only when followed by the same route number. Named roads are punctuation/case normalized but not aliased. No Web/Webb or county-specific invention exists.
+## Certification and rollout
 
-## 6–8. Implementation and deployment requirements
+### Initial 28 counties
 
-1. Obtain owner approval and accept the selected provider agreement after counsel confirms server proxy, six-hour cache, routing to returned points on Gridly's map, attribution, privacy/deletion, and no prohibited derived database.
-2. Create a server-restricted provider key. Restrict API, project, quota and budget; never use browser referrer credentials.
-3. Set the secrets from `.env.lp104.example` in Supabase. Keep provider disabled until approval; rotate `GRIDLY_GEOCODE_CACHE_NAMESPACE` at activation.
-4. Deploy `supabase/functions/gridly-geocode/index.ts`, then the cache-busted web assets. Confirm Edge logs redact request bodies and query strings where operationally supported.
-5. Add required Google attribution/logo presentation before production if the final terms require it. This implementation does not assert that existing OSM attribution satisfies Google.
-6. Run the protected multi-county plan. If Google loses to Smarty on exact rural resolution or its terms prohibit Gridly's routing/cache behavior, implement Smarty behind the same canonical provider contract rather than weakening the gate.
-7. Configure quota alarms and a kill switch by setting `GRIDLY_AUTHORITATIVE_RURAL_PROVIDER=disabled`.
+Maintain an encrypted local/production-only manifest with at least two valid rural addresses per county, plus an urban control where applicable. Across the suite cover County Road, FM, SH, US, named roads, unincorporated communities, ZIP/locality differences, and both sides of county lines. Add a nearby wrong-number/road negative for every positive. The owner's Liberty address is a required protected positive and the known Census mismatch is a required negative. Confirm point-in-county against authoritative geometry, exact result/Route Preview coordinate equality, cold/warm behavior, failover, and aggregate latency. Commit no address, coordinate, upstream payload, or screenshot containing private data.
 
-## 9. Owner approval required
+### Remaining 226 counties
 
-Approval is explicitly required for: provider selection; billing account; maximum monthly spend; contract/privacy terms; cache TTL; attribution UX; protected transmission of the owner's address; and deployment of the server secret. This commit deliberately stops before all of those actions.
+Roll out in source/release batches, but build and certify independently by county: license approval → county metrics → isolated build/reconciliation → at least two rural and one applicable urban protected controls → road-class and boundary risks → privacy/runtime review → explicit activation. Prioritize source authority and operational readiness, not geography alone. Rebuild only counties whose source/version or normalization dependency changed. A statewide source release does not waive county certification.
 
-## 10. Exact multi-county test plan
+## Browser certification
 
-Keep the test manifest in an encrypted/local owner-controlled file and pass it to the browser audit; never commit residence strings. Minimum live suite:
+Load the protected cases locally, never in source control, then run:
 
-* at least two independently verified rural residential points in each of the 28 counties (56 total), with one expected resolution and one nearby wrong-number negative per road;
-* every road class: County Road (all four forms), FM/Farm to Market, State Highway/SH/TX, US Highway/US, and named roads;
-* at least six ZIP-only mailing-locality cases, six unincorporated-community cases, and paired points on both sides of at least four county lines;
-* two real low-density cases each in Newton, Tyler, Calhoun, Matagorda, Jackson and Lavaca; two outer-rural Harris cases;
-* owner residence in Liberty through protected local testing, plus the known wrong Census interpolation as a negative;
-* record expected house, canonical road, county, state, ZIP, precision evidence and independently verified coordinate tolerance. Do not record those values in shared screenshots/logs.
+```js
+await window.gridlyLp104TexasCountyCoverageAudit?.()
+await window.gridlyLp104TexasAddressFoundationAudit?.({ cases: protectedCases, googleProviderEnabled: false })
+await window.gridlyLp104VisibleRegionalRuralAddressCertification?.({ cases: protectedCases, googleProviderEnabled: false })
+```
 
-For every positive, run exact spelling and supported semantic forms. Require the same accepted provider ID/coordinate, matching house/road, supported precision, county agreement/containment and Route Preview destination. For every negative, require zero accepted cards and no route preview. Repeat with the authoritative tier disabled to prove registry/Census ordering and mismatch rejection. Repeat after cache rotation and after six hours to cover cold/warm requests. Capture quota, latency p50/p95, provider failures and fallback outcomes as aggregates only.
+The result contains the required statewide counts and booleans, redacted per-case classifications/agreements, `failedChecks`, and `safeToMerge`. It must expose no input query, address, coordinate, secret, raw row, or source payload. Network inspection must show browser requests only to Gridly's geocoding boundary.
 
-Synthetic CI covers the contract and redaction but does not count as a live coverage result. Completion requires successful real positives in multiple counties, the protected Liberty validation, and eventually certification of every county if county packages replace the statewide provider.
+## Remaining blockers
 
-## 11. Exact browser certification
+1. Restore official-site access and complete dated legal review for each candidate source.
+2. Acquire at least one qualified Texas release and compute actual county/record/update/completeness metrics.
+3. Load and version authoritative county polygons into the protected PostGIS boundary table; lookup containment is already enforced but fails closed while polygons are absent.
+4. Load all eligible county packages through a private service-role job and reconcile counts/hashes.
+5. Run the protected 28-county suite, including the owner Liberty case; then explicitly activate each passing county.
+6. Progressively source, build, certify, and activate the remaining 226 counties.
 
-1. Deploy the approved secret and code; hard-refresh production. Open DevTools Network and clear entries.
-2. Load the protected case array locally (objects with `caseId`, `query`, and `expected: {houseNumber, road, county, postalCode}`); do not paste it into tickets or shared consoles.
-3. Run `await window.gridlyLp104RegionalRuralAddressAudit?.({ cases: protectedCases, protectedLibertyValidation: true })`.
-4. Confirm the returned object contains only case IDs, county labels, source classifications and agreement/containment/precision booleans—no query, address, key, coordinate, provider payload or private registry row.
-5. Confirm Network shows only POSTs to Gridly `gridly-geocode`; there must be no browser call to Google, Nominatim, Census or any data portal.
-6. Run `await window.gridlyLp104VisibleRegionalRuralAddressCertification?.({ cases: protectedCases, protectedLibertyValidation: true })`.
-7. Require all named checks true, `failedChecks: []`, and `safeToMerge: true`. Inspect Route Preview for every positive and confirm it targets only the accepted point.
-8. Preserve only the redacted certification JSON and aggregate county/pass counts. Delete local test material according to owner policy.
-
-Until this procedure passes against an approved live provider, the honest certification result is fail-closed and LP104 is not production-complete.
+Until those gates pass, `initial28CoveragePass`, `initial28CertificationPass`, and `safeToMerge` truthfully remain false. Full Texas activation is not claimed.
