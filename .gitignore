@@ -2,6 +2,7 @@ js/gridly.local.js
 *.local.js
 .env
 .env.local
+.env.lp103.local
 
 # Capacitor generated web output; CI recreates this from source web files.
 /www/
