@@ -86124,41 +86124,99 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
 
 window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102VisibleRuralAddressCertification() {
   const targetedNames = ["county_road_full", "web_address", "webb_address", "business_control", "governed_control"];
-  const targeted = await window.gridlyLp102RuralAddressInvestigation({ caseNames: targetedNames });
-  const investigation = await window.gridlyLp102RuralAddressInvestigation();
-  if (!investigation.available) return Object.freeze({ ...investigation, safeToMerge: false });
-  const cases = investigation.cases || [];
-  const ruralCases = cases.filter((entry) => /^(county_road_full|county_rd|cr|co_rd)$/.test(entry.caseName));
-  const retainedCases = ruralCases.filter((entry) => entry.canonicalResultCount > 0 && entry.visibleResultCount > 0);
-  const ruralCandidateObserved = ruralCases.some((entry) => entry.canonicalResultCount > 0);
-  const ruralCandidateRetained = retainedCases.length > 0;
-  const ruralCandidateRendered = retainedCases.some((entry) => entry.finalVisibleOutcome === "results");
-  const ruralPrecisionTruthful = retainedCases.every((entry) => entry.candidates.every((candidate) => candidate.exactAddressConfidence !== "confirmed" || candidate.relevanceClassification === "relevant_exact_result"));
-  const candidatePipelineAgreement = cases.every((entry) => entry.pipelineDomAgreement);
-  const renderDomAgreement = candidatePipelineAgreement;
-  const misleadingFallbackAbsent = cases.every((entry) => !entry.misleadingFallbackDetected);
-  const invalid = cases.find((entry) => entry.caseName === "invalid_rural_control");
-  const canonicalNoResultHandlingPass = Boolean(invalid && invalid.providerOutcomeClassification === "confirmed_no_result" && invalid.visibleResultCount === 0);
-  const businessControlPass = Boolean(cases.find((entry) => entry.caseName === "business_control")?.visibleResultCount);
-  const governedControlPass = Boolean(cases.find((entry) => entry.caseName === "governed_control")?.visibleResultCount);
-  const routePreviewVerified = retainedCases.some((entry) => entry.routePreviewAvailable) || investigation.routePreviewPreserved;
-  const targetedCaseFilteringPass = targeted.unknownCaseNames?.length === 0 && targeted.executedCaseNames?.length === targetedNames.length
-    && targetedNames.every((name, index) => targeted.executedCaseNames[index] === name);
-  const resolutionEvents = cases.flatMap((entry) => entry.resolutionEvents || []);
-  const primaryProviderOutcomeObserved = resolutionEvents.some((entry) => entry.primaryProviderOutcome !== "unknown");
-  const fallbackResolverAvailable = resolutionEvents.some((entry) => entry.fallbackEligible || entry.fallbackOutcome !== "ineligible");
-  const fallbackInvokedOnlyWhenEligible = resolutionEvents.every((entry) => !entry.fallbackInvoked || entry.fallbackEligible);
-  const rateLimitBehaviorPass = cases.every((entry) => !(entry.transport || []).some((event) => event.failureCode === "rate_limited"))
-    || cases.some((entry) => (entry.transport || []).some((event) => Number(event.httpStatus) === 429));
-  const checks = { productionBehaviorObserved: investigation.productionBehaviorObserved, primaryProviderOutcomeObserved, fallbackResolverAvailable,
-    fallbackInvokedOnlyWhenEligible, houseNumberSafetyPass, roadwayNormalizationPass, mismatchedCandidateRejected, truthfulNoResultObserved,
-    ruralPrecisionTruthful, candidatePipelineAgreement, renderDomAgreement, misleadingFallbackAbsent,
-    canonicalNoResultHandlingPass, invalidAddressControlPass: canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified, targetedCaseFilteringPass, rateLimitBehaviorPass,
-    providerBoundaryPreserved: investigation.providerBoundaryPreserved, browserDirectProviderAccessAbsent: investigation.browserDirectProviderAccessAbsent,
-    protectedSystemsUnchanged: investigation.protectedSystemsUnchanged };
-  const failedChecks = Object.entries(checks).filter(([, pass]) => pass !== true).map(([name]) => name);
-  return Object.freeze({ available: true, milestone: "LP102", ...checks, cases: Object.freeze(cases), failedChecks: Object.freeze(failedChecks),
-    safeToMerge: failedChecks.length === 0 && houseNumberSafetyPass && misleadingFallbackAbsent });
+  let available = false;
+  let productionBehaviorObserved = false;
+  let houseNumberSafetyPass = false;
+  let mismatchedCandidateRejected = false;
+  let truthfulNoResultObserved = false;
+  let misleadingFallbackAbsent = false;
+  let roadwayNormalizationPass = false;
+  let candidatePipelineAgreement = false;
+  let renderDomAgreement = false;
+  let canonicalNoResultHandlingPass = false;
+  let businessControlPass = false;
+  let governedControlPass = false;
+  let routePreviewVerified = false;
+  let providerBoundaryPreserved = false;
+  let browserDirectProviderAccessAbsent = false;
+  let protectedSystemsUnchanged = false;
+  let rateLimitBehaviorPass = false;
+  let primaryProviderOutcomeObserved = false;
+  let fallbackResolverAvailable = false;
+  let fallbackInvokedOnlyWhenEligible = false;
+  let ruralPrecisionTruthful = false;
+  let targetedCaseFilteringPass = false;
+  let internalCertificationError = false;
+  let internalCertificationErrorMessage = null;
+  let cases = [];
+
+  const buildOutput = () => {
+    const checks = { productionBehaviorObserved, houseNumberSafetyPass, mismatchedCandidateRejected, truthfulNoResultObserved,
+      misleadingFallbackAbsent, roadwayNormalizationPass, candidatePipelineAgreement, renderDomAgreement,
+      canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified,
+      providerBoundaryPreserved, browserDirectProviderAccessAbsent, protectedSystemsUnchanged, rateLimitBehaviorPass,
+      primaryProviderOutcomeObserved, fallbackResolverAvailable, fallbackInvokedOnlyWhenEligible,
+      ruralPrecisionTruthful, targetedCaseFilteringPass };
+    const failedChecks = Object.entries(checks).filter(([, pass]) => pass !== true).map(([name]) => name);
+    if (internalCertificationError) failedChecks.push("internalCertificationError");
+    const executionComplete = available && productionBehaviorObserved && targetedCaseFilteringPass;
+    const safeToMerge = executionComplete && !internalCertificationError && rateLimitBehaviorPass
+      && failedChecks.length === 0 && Object.values(checks).every((pass) => pass === true);
+    return Object.freeze({ available, milestone: "LP102", ...checks, internalCertificationError,
+      internalCertificationErrorMessage, cases: Object.freeze(cases), failedChecks: Object.freeze(failedChecks), safeToMerge });
+  };
+
+  try {
+    const targeted = await window.gridlyLp102RuralAddressInvestigation({ caseNames: targetedNames });
+    const investigation = await window.gridlyLp102RuralAddressInvestigation();
+    available = investigation?.available === true;
+    cases = Array.isArray(investigation?.cases) ? investigation.cases : [];
+    productionBehaviorObserved = investigation?.productionBehaviorObserved === true;
+    providerBoundaryPreserved = investigation?.providerBoundaryPreserved === true;
+    browserDirectProviderAccessAbsent = investigation?.browserDirectProviderAccessAbsent === true;
+    protectedSystemsUnchanged = investigation?.protectedSystemsUnchanged === true;
+
+    const ruralCases = cases.filter((entry) => /^(county_road_full|county_rd|cr|co_rd)$/.test(entry.caseName));
+    const retainedCases = ruralCases.filter((entry) => entry.canonicalResultCount > 0 && entry.visibleResultCount > 0);
+    ruralPrecisionTruthful = retainedCases.length > 0 && retainedCases.every((entry) => (entry.candidates || [])
+      .every((candidate) => candidate.exactAddressConfidence !== "confirmed" || candidate.relevanceClassification === "relevant_exact_result"));
+    candidatePipelineAgreement = cases.length > 0 && cases.every((entry) => entry.pipelineDomAgreement === true);
+    renderDomAgreement = candidatePipelineAgreement;
+    misleadingFallbackAbsent = cases.length > 0 && cases.every((entry) => entry.misleadingFallbackDetected === false);
+    const invalid = cases.find((entry) => entry.caseName === "invalid_rural_control");
+    canonicalNoResultHandlingPass = Boolean(invalid && invalid.providerOutcomeClassification === "confirmed_no_result" && invalid.visibleResultCount === 0);
+    businessControlPass = Number(cases.find((entry) => entry.caseName === "business_control")?.visibleResultCount || 0) > 0;
+    governedControlPass = Number(cases.find((entry) => entry.caseName === "governed_control")?.visibleResultCount || 0) > 0;
+    routePreviewVerified = retainedCases.some((entry) => entry.routePreviewAvailable === true) || investigation?.routePreviewPreserved === true;
+    targetedCaseFilteringPass = targeted?.available === true && targeted.unknownCaseNames?.length === 0
+      && targeted.executedCaseNames?.length === targetedNames.length
+      && targetedNames.every((name, index) => targeted.executedCaseNames[index] === name);
+    const resolutionEvents = cases.flatMap((entry) => entry.resolutionEvents || []);
+    primaryProviderOutcomeObserved = resolutionEvents.some((entry) => entry.primaryProviderOutcome !== "unknown");
+    fallbackResolverAvailable = resolutionEvents.some((entry) => entry.fallbackEligible || entry.fallbackOutcome !== "ineligible");
+    fallbackInvokedOnlyWhenEligible = resolutionEvents.length > 0 && resolutionEvents.every((entry) => !entry.fallbackInvoked || entry.fallbackEligible);
+    const allExecutedCases = [...(Array.isArray(targeted?.cases) ? targeted.cases : []), ...cases];
+    const rateLimited = allExecutedCases.some((entry) => (entry.transport || [])
+      .some((event) => event.failureCode === "rate_limited" || Number(event.httpStatus) === 429));
+    rateLimitBehaviorPass = allExecutedCases.length > 0 && !rateLimited;
+
+    const fallbackDiagnostics = resolutionEvents.flatMap((entry) => entry.fallbackCandidateDiagnostics || []);
+    const mismatchDiagnostics = fallbackDiagnostics.filter((entry) => entry.hardBlockingConflicts?.includes("house_number_mismatch"));
+    mismatchedCandidateRejected = mismatchDiagnostics.length > 0 && mismatchDiagnostics.every((entry) => entry.accepted === false
+      && entry.rejectionRule === "house_number_mismatch" && entry.fallbackCandidateDisposition === "rejected_house_number_mismatch"
+      && entry.finalRenderInput === false);
+    const target = cases.find((entry) => entry.caseName === "county_road_full");
+    truthfulNoResultObserved = Boolean(target && target.providerOutcomeClassification === "confirmed_no_result" && target.visibleResultCount === 0);
+    houseNumberSafetyPass = mismatchedCandidateRejected && truthfulNoResultObserved
+      && !/698\s+(?:co\s+rd|county\s+road|cr)\s+677/i.test(String(target?.finalVisibleOutcome || ""));
+    roadwayNormalizationPass = ["County Road 677", "County Rd 677", "CR 677", "Co Rd 677", "CO RD 677"]
+      .every((value) => window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayIdentity?.(value) === "cr 677");
+  } catch (error) {
+    internalCertificationError = true;
+    internalCertificationErrorMessage = "Unexpected LP102 certification error.";
+    console.error("LP102 visible rural address certification failed", error);
+  }
+  return buildOutput();
 };
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
