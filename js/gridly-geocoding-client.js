@@ -76,11 +76,15 @@
       fallbackEligible: value.fallbackEligible === true,
       fallbackInvoked: value.fallbackInvoked === true,
       fallbackOutcome: String(value.fallbackOutcome || "ineligible"),
+      authoritativeRuralOutcome: String(value.authoritativeRuralOutcome || "not_invoked"),
       registryOutcome: String(value.registryOutcome || "not_invoked"),
       sourceClassification: String(value.sourceClassification || "none")
     };
     if (diagnosticRequest && Array.isArray(value.fallbackCandidateDiagnostics)) {
       diagnostics.fallbackCandidateDiagnostics = value.fallbackCandidateDiagnostics.map((entry) => ({ ...entry }));
+    }
+    if (diagnosticRequest && Array.isArray(value.authoritativeCandidateDiagnostics)) {
+      diagnostics.authoritativeCandidateDiagnostics = value.authoritativeCandidateDiagnostics.map((entry) => ({ ...entry }));
     }
     return diagnostics;
   }
@@ -108,7 +112,7 @@
     addEvidence({ intentType: request.intent, httpStatus: response.status, requestSucceeded: response.ok, canonicalSuccess, canonicalFailure, failureCode, providerBoundaryUsed: canonical });
     if (!canonical) return { ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId, results: [] };
     const normalized = { ...payload };
-    const diagnostics = internalDiagnostics(payload, ["lp102_certification", "lp103_certification"].includes(request.requestMode));
+    const diagnostics = internalDiagnostics(payload, ["lp102_certification", "lp103_certification", "lp104_certification"].includes(request.requestMode));
     if (diagnostics) Object.defineProperty(normalized, "diagnostics", { value: diagnostics, enumerable: false });
     lastDiagnosticTrace = Object.freeze({ requestMode: request.requestMode || "explicit_search",
       diagnosticsObserved: Boolean(diagnostics), diagnosticPropertyName: diagnostics ? "diagnostics" : null,

@@ -60,6 +60,7 @@
     "test:lp1016": "node tests/lp1016-address-provider-availability-resolution.test.js",
     "test:lp102": "node tests/lp102-rural-address-investigation.test.js",
     "test:lp103": "node tests/lp103-authoritative-rural-address-resolution.test.js",
-    "test:lp1031": "node tests/lp1031-secure-rural-address-enrollment.test.mjs"
+    "test:lp1031": "node tests/lp1031-secure-rural-address-enrollment.test.mjs",
+    "test:lp104": "node tests/lp104-regional-rural-address-resolution.test.js"
   }
 }
