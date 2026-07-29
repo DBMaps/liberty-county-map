@@ -36807,8 +36807,12 @@ function filterGridlyExplicitIntentRelevance(results = [], options = {}) {
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     return results.filter((result) => {
       const classification = classifyGridlyLp097Result(result, addressModel);
-      return classification.exactAddress || classification.roadAgreement
-        || window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
+      const blockingConflict = classification.conflictReasons.some((reason) => ["house_number_mismatch", "street_mismatch", "state_mismatch", "city_conflict", "county_conflict", "postal_code_conflict", "enriched_locality_conflict", "outside_expected_geography"].includes(reason));
+      const supportedRuralAddress = addressModel?.hasHouseNumber && classification.houseAgreement && classification.roadAgreement && !blockingConflict;
+      const canonicalRoadMatch = window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
+      return classification.exactAddress || classification.roadAgreement && (supportedRuralAddress || !addressModel?.hasHouseNumber)
+        || (!addressModel?.hasHouseNumber && canonicalRoadMatch)
+        || (addressModel?.hasHouseNumber && classification.houseAgreement && canonicalRoadMatch && !blockingConflict);
     });
   }
   if (intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE) {
@@ -36842,7 +36846,10 @@ function summarizeGridlyLp101Candidate(result, query = "", rankPosition = null) 
   const relevancePass = filterGridlyExplicitIntentRelevance([normalized], { query, intent }).length === 1;
   const address = normalized?.raw?.address || (typeof normalized.address === "object" ? normalized.address : {});
   const understood = quality?.understand?.(query);
+  const addressModel = intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(query) : null;
+  const resolution = addressModel ? classifyGridlyLp097Result(normalized, addressModel) : null;
   return {
+    canonicalIdentity: normalized.id || normalized.raw?.place_id || "",
     sourceFamily: normalized.provider === "saved_place" || normalized.raw?.savedPlace ? "saved_place"
       : normalized.raw?.seedSource === "lp097_governed_curated" ? "governed_destination"
         : normalized.provider === "local_poi_seed" || normalized.localPoiSeed ? "local_seed" : "canonical_provider",
@@ -36851,6 +36858,15 @@ function summarizeGridlyLp101Candidate(result, query = "", rankPosition = null) 
     normalizedRoadwayIdentity: quality?.roadwayIdentity?.(address.road || display.title) || "",
     normalizedBusinessTarget: understood?.businessTerm || "",
     communityLabel: address.city || address.town || address.county || "",
+    comparedValues: addressModel ? Object.freeze({
+      houseNumber: Object.freeze({ entered: addressModel.houseNumber || "", candidate: address.house_number || "" }),
+      road: Object.freeze({ entered: String(addressModel.street || "").replace(/^\s*\d{1,6}[a-z]?\s*/i, ""), candidate: address.road || "" }),
+      locality: Object.freeze({ entered: addressModel.explicitGeography.city || addressModel.expectedGeography.city || "", candidate: address.city || address.town || address.village || address.hamlet || "" }),
+      county: Object.freeze({ entered: addressModel.explicitGeography.county || addressModel.expectedGeography.county || "", candidate: address.county || "" }),
+      postalCode: Object.freeze({ entered: addressModel.postalCode || "", candidate: address.postcode || "" })
+    }) : null,
+    precision: resolution?.precision || "place",
+    exactnessReasons: Object.freeze([...(resolution?.conflictReasons || [])]),
     relevancePass,
     rejectionReason: relevancePass ? "none" : (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? "roadway_or_address_mismatch" : "business_target_mismatch"),
     rankPosition: Number.isInteger(rankPosition) ? rankPosition : null
@@ -85973,8 +85989,11 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
   const container = gridlySearchUiRefs.results || document.getElementById("gridlySearchResults");
   const client = window.gridlyGeocodingClient;
   if (!input || !container || typeof client?.search !== "function") return Object.freeze({ available: false, milestone: "LP102", passive: true, safeToProceed: false, findings: Object.freeze(["production_search_surface_unavailable"]) });
-  const selectedNames = Array.isArray(options.caseNames) ? new Set(options.caseNames) : null;
-  const definitions = (Array.isArray(window.GRIDLY_LP102_RURAL_CASES) ? window.GRIDLY_LP102_RURAL_CASES : [])
+  const allDefinitions = Array.isArray(window.GRIDLY_LP102_RURAL_CASES) ? window.GRIDLY_LP102_RURAL_CASES : [];
+  const selectedNames = Array.isArray(options.caseNames) ? new Set(options.caseNames.map((name) => String(name))) : null;
+  const validNames = new Set(allDefinitions.map(([name]) => name));
+  const unknownCaseNames = selectedNames ? [...selectedNames].filter((name) => !validNames.has(name)) : [];
+  const definitions = allDefinitions
     .filter(([name]) => !selectedNames || selectedNames.has(name));
   const cases = [];
   let routePreviewPreserved = false;
@@ -86002,7 +86021,7 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
         displayName: buildGridlySearchDisplayLines(normalized).title, address: address.house_number || "", road: address.road || "",
         locality: address.city || address.town || address.village || address.hamlet || "", county: address.county || "", postalCode: address.postcode || "",
         coordinates: Number.isFinite(normalized?.lat) && Number.isFinite(normalized?.lng) ? Object.freeze({ latitude: normalized.lat, longitude: normalized.lng }) : null,
-        relevanceClassification: resolution.exactAddress ? "relevant_exact_result" : resolution.roadAgreement ? (trace.model.hasHouseNumber ? "road_only_result" : "relevant_road_result") : resolution.approximate ? "relevant_approximate_rural_result" : "rejected",
+        relevanceClassification: resolution.exactAddress ? "relevant_exact_result" : resolution.houseAgreement && resolution.roadAgreement && trace.model.hasHouseNumber ? "relevant_approximate_rural_result" : resolution.roadAgreement ? (trace.model.hasHouseNumber ? "road_only_result" : "relevant_road_result") : resolution.approximate ? "relevant_approximate_rural_result" : "rejected",
         exactAddressConfidence: resolution.exactAddress ? "confirmed" : resolution.houseAgreement || resolution.roadAgreement ? "partial" : "none",
         accepted: filterGridlyExplicitIntentRelevance([normalized], { query, intent: classifyGridlyDestinationSearchIntent(query), addressModel: trace.model }).length === 1,
         rejectionReasons: Object.freeze(resolution.conflictReasons.length ? [...resolution.conflictReasons] : (resolution.roadAgreement ? [] : ["roadway_or_address_mismatch"])) });
@@ -86021,6 +86040,16 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
       canonicalGridlyResponseStatus: aggregate.finalConsumerClassification, canonicalResultCount: Number(diagnostics.providerResultCount) || 0,
       providerOutcomeClassification: aggregate.finalConsumerClassification, providerIndependentResultIdentity: candidates.map((candidate) => candidate.identity),
       candidates: Object.freeze(candidates), candidatePipeline: Object.freeze({ ...pipeline }),
+      rejectionTrace: Object.freeze((pipeline.providerCandidates || []).map((candidate) => {
+        const stages = ["combinedCandidates", "relevanceGateInput", "rankedCandidates", "relevanceGateOutput", "finalRenderInput"];
+        const lastStage = stages.filter((stage) => (pipeline[stage] || []).some((item) => item.canonicalIdentity === candidate.canonicalIdentity)).at(-1) || "providerCandidates";
+        const accepted = (pipeline.finalRenderInput || []).some((item) => item.canonicalIdentity === candidate.canonicalIdentity);
+        const rejectionStage = accepted ? "none" : lastStage === "rankedCandidates" ? "before_ranking_output"
+          : lastStage === "relevanceGateInput" ? "before_ranking" : lastStage === "relevanceGateOutput" ? "after_ranking" : "candidate_normalization_or_deduplication";
+        return Object.freeze({ candidateReceived: true, canonicalIdentity: candidate.canonicalIdentity, lastObservedStage: lastStage,
+          rejectionStage, rejectionRule: accepted ? "none" : candidate.rejectionReason, comparedValues: candidate.comparedValues,
+          exactnessReasons: candidate.exactnessReasons, patchDecision: candidate.exactnessReasons?.includes("mailing_city_difference") ? "retained_as_non_exact_rural_candidate" : "unchanged", accepted });
+      })),
       roadOnlyFallbackDetected, misleadingFallbackDetected, finalVisibleOutcome: dom.visibleCardCount ? "results" : (dom.status[0] || "empty"),
       visibleResultCount: dom.visibleCardCount, pipelineDomAgreement: dom.visibleCardCount === (pipeline.finalRenderInput || []).length,
       routePreviewAvailable, transport: Object.freeze(transport), diagnosticNotes: Object.freeze([]) }));
@@ -86044,12 +86073,44 @@ window.gridlyLp102RuralAddressInvestigation = async function gridlyLp102RuralAdd
   const safeToProceed = observed && providerBoundaryPreserved && browserDirectProviderAccessAbsent && canonicalOutcomeClassificationPass
     && misleadingFallbackAbsent && routePreviewPreserved && cases.every((entry) => entry.pipelineDomAgreement);
   return Object.freeze({ available: true, milestone: "LP102", passive: true, productionBehaviorObserved: observed,
-    providerBoundaryPreserved, browserDirectProviderAccessAbsent, cases: Object.freeze(cases), normalizationTraceAvailable: true,
+    providerBoundaryPreserved, browserDirectProviderAccessAbsent, cases: Object.freeze(cases), requestedCaseNames: selectedNames ? Object.freeze([...selectedNames]) : null,
+    executedCaseNames: Object.freeze(cases.map((entry) => entry.caseName)), unknownCaseNames: Object.freeze(unknownCaseNames), normalizationTraceAvailable: true,
     exactnessReviewAvailable: true, aliasInventoryAvailable: true, aliasInventory: Object.freeze({ countyRoad: ["County Road", "County Rd", "CR", "Co Rd"], farmToMarket: ["Farm to Market", "Farm-to-Market", "FM"], stateHighway: ["State Highway", "SH", "TX"], usHighway: ["US Highway", "US"], historicalRoadAliases: [] }),
     canonicalOutcomeClassificationPass, misleadingFallbackAbsent, routePreviewPreserved, protectedSystemsUnchanged: true,
     findings: Object.freeze(findings), likelyRootCause: gridlyControlledDefectObserved ? "gridly_candidate_filtering_or_rendering" : providerCoverageLimitationObserved ? "provider_address_coverage_or_alias_coverage" : "runtime_evidence_inconclusive",
     gridlyControlledDefectObserved, providerCoverageLimitationObserved, patchRecommended: gridlyControlledDefectObserved,
     safeToProceed, failedChecks: Object.freeze([...(providerBoundaryPreserved ? [] : ["providerBoundaryPreserved"]), ...(browserDirectProviderAccessAbsent ? [] : ["browserDirectProviderAccessAbsent"]), ...(canonicalOutcomeClassificationPass ? [] : ["canonicalOutcomeClassificationPass"]), ...(misleadingFallbackAbsent ? [] : ["misleadingFallbackAbsent"]), ...(routePreviewPreserved ? [] : ["routePreviewPreserved"]), ...(cases.every((entry) => entry.pipelineDomAgreement) ? [] : ["pipelineDomAgreement"])]) });
+};
+
+window.gridlyLp102VisibleRuralAddressCertification = async function gridlyLp102VisibleRuralAddressCertification() {
+  const targetedNames = ["county_road_full", "web_address", "webb_address", "business_control", "governed_control"];
+  const targeted = await window.gridlyLp102RuralAddressInvestigation({ caseNames: targetedNames });
+  const investigation = await window.gridlyLp102RuralAddressInvestigation();
+  if (!investigation.available) return Object.freeze({ ...investigation, safeToMerge: false });
+  const cases = investigation.cases || [];
+  const ruralCases = cases.filter((entry) => /^(county_road_full|county_rd|cr|co_rd)$/.test(entry.caseName));
+  const retainedCases = ruralCases.filter((entry) => entry.canonicalResultCount > 0 && entry.visibleResultCount > 0);
+  const ruralCandidateObserved = ruralCases.some((entry) => entry.canonicalResultCount > 0);
+  const ruralCandidateRetained = retainedCases.length > 0;
+  const ruralCandidateRendered = retainedCases.some((entry) => entry.finalVisibleOutcome === "results");
+  const ruralPrecisionTruthful = retainedCases.every((entry) => entry.candidates.every((candidate) => candidate.exactAddressConfidence !== "confirmed" || candidate.relevanceClassification === "relevant_exact_result"));
+  const candidatePipelineAgreement = cases.every((entry) => entry.pipelineDomAgreement);
+  const renderDomAgreement = candidatePipelineAgreement;
+  const misleadingFallbackAbsent = cases.every((entry) => !entry.misleadingFallbackDetected);
+  const invalid = cases.find((entry) => entry.caseName === "invalid_rural_control");
+  const canonicalNoResultHandlingPass = Boolean(invalid && invalid.providerOutcomeClassification === "confirmed_no_result" && invalid.visibleResultCount === 0);
+  const businessControlPass = Boolean(cases.find((entry) => entry.caseName === "business_control")?.visibleResultCount);
+  const governedControlPass = Boolean(cases.find((entry) => entry.caseName === "governed_control")?.visibleResultCount);
+  const routePreviewVerified = retainedCases.some((entry) => entry.routePreviewAvailable) || investigation.routePreviewPreserved;
+  const targetedCaseFilteringPass = targeted.unknownCaseNames?.length === 0 && targeted.executedCaseNames?.length === targetedNames.length
+    && targetedNames.every((name, index) => targeted.executedCaseNames[index] === name);
+  const checks = { productionBehaviorObserved: investigation.productionBehaviorObserved, ruralCandidateObserved, ruralCandidateRetained,
+    ruralCandidateRendered, ruralPrecisionTruthful, candidatePipelineAgreement, renderDomAgreement, misleadingFallbackAbsent,
+    canonicalNoResultHandlingPass, businessControlPass, governedControlPass, routePreviewVerified, targetedCaseFilteringPass,
+    providerBoundaryPreserved: investigation.providerBoundaryPreserved, browserDirectProviderAccessAbsent: investigation.browserDirectProviderAccessAbsent,
+    protectedSystemsUnchanged: investigation.protectedSystemsUnchanged };
+  const failedChecks = Object.entries(checks).filter(([, pass]) => pass !== true).map(([name]) => name);
+  return Object.freeze({ available: true, milestone: "LP102", ...checks, cases: Object.freeze(cases), failedChecks: Object.freeze(failedChecks), safeToMerge: failedChecks.length === 0 });
 };
 
 const GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES = [
