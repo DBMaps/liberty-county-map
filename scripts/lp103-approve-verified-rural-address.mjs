@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { adminRequest, collectLookupInput, lookupFingerprint, redactedVerification, TABLE, validateCredentials, validateLookupIdentity } from './lp103-rural-address-admin-lib.mjs';
+import { adminRequest, collectLookupInput, lookupFingerprint, TABLE, validateCredentials, validateLookupIdentity } from './lp103-rural-address-admin-lib.mjs';
 
 async function locate(credentials, fingerprint) {
   const fields = 'verification_status,consumer_eligible,latitude,longitude,source_authority';
@@ -13,10 +13,6 @@ async function main() {
   const credentials = validateCredentials(process.env);
   const input = validateLookupIdentity(await collectLookupInput());
   const fingerprint = lookupFingerprint(input);
-  if (process.argv.includes('--verify')) {
-    console.log(JSON.stringify(redactedVerification(await locate(credentials, fingerprint)), null, 2));
-    return;
-  }
   const confirmation = process.env.LP103_APPROVAL_CONFIRMATION ?? '';
   if (confirmation !== 'APPROVE VERIFIED RURAL ADDRESS') throw new Error('Explicit approval confirmation was not provided.');
   const current = await locate(credentials, fingerprint);

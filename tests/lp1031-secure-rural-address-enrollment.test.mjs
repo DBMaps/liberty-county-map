@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import {
   buildPendingRecord, lookupFingerprint, normalizeGeography, normalizeHouseNumber, normalizeRoadIdentity,
   redactedVerification, validateCredentials
@@ -31,6 +31,15 @@ assert.throws(() => buildPendingRecord({ ...synthetic, latitude: '24' }), /Inval
 assert.throws(() => buildPendingRecord({ ...synthetic, longitude: '-200' }), /Invalid longitude/);
 assert.throws(() => validateCredentials({}), /missing service URL/);
 
+for (const utility of ['lp103-enroll-verified-rural-address.mjs', 'lp103-approve-verified-rural-address.mjs',
+  'lp103-verify-verified-rural-address.mjs']) {
+  const run = spawnSync(process.execPath, [`scripts/${utility}`], {
+    encoding: 'utf8', env: { LP103_HOUSE_NUMBER: privateSentinel, LP103_LATITUDE: '32.95' }
+  });
+  assert.notEqual(run.status, 0, `${utility} rejects missing service-role credentials`);
+  assert.doesNotMatch(`${run.stdout}${run.stderr}`, new RegExp(privateSentinel), `${utility} redacts raw input`);
+}
+
 const redacted = redactedVerification({ verification_status: 'verified', consumer_eligible: true, latitude: 32, longitude: -96, source_authority: privateSentinel });
 assert.deepEqual(redacted, { recordFound: true, verificationStatus: 'verified', consumerEligible: true,
   coordinatePresent: true, sourceAuthorityPresent: true, privateValuesRedacted: true });
@@ -38,17 +47,20 @@ assert.doesNotMatch(JSON.stringify(redacted), new RegExp(privateSentinel));
 
 const enrollment = fs.readFileSync('scripts/lp103-enroll-verified-rural-address.mjs', 'utf8');
 const approval = fs.readFileSync('scripts/lp103-approve-verified-rural-address.mjs', 'utf8');
+const verification = fs.readFileSync('scripts/lp103-verify-verified-rural-address.mjs', 'utf8');
 assert.match(enrollment, /verificationStatus: 'pending'/);
 assert.doesNotMatch(enrollment, /consumerEligible: true/);
 assert.match(approval, /APPROVE VERIFIED RURAL ADDRESS/);
 assert.match(approval, /verification_status: 'verified', consumer_eligible: true/);
-assert.match(approval, /--verify/);
+assert.doesNotMatch(approval, /--verify|redactedVerification/, 'approval has no verification mode');
+assert.match(verification, /redactedVerification/);
 
 const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8' }).trim().split('\n');
 assert(!tracked.includes('.env.lp103.local'), 'populated environment file is not tracked');
 assert(fs.readFileSync('.gitignore', 'utf8').split(/\r?\n/).includes('.env.lp103.local'));
 for (const file of ['.env.lp103.local.example', 'scripts/lp103-rural-address-admin-lib.mjs',
-  'scripts/lp103-enroll-verified-rural-address.mjs', 'scripts/lp103-approve-verified-rural-address.mjs']) {
+  'scripts/lp103-enroll-verified-rural-address.mjs', 'scripts/lp103-approve-verified-rural-address.mjs',
+  'scripts/lp103-verify-verified-rural-address.mjs']) {
   assert.doesNotMatch(fs.readFileSync(file, 'utf8'), new RegExp(privateSentinel));
 }
 

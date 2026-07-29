@@ -24,7 +24,8 @@ The lookup input is canonical `house|road|state|ZIP5`. The script uses the Edge 
 geography, and County Road/FM/SH/US alias rules, then calculates SHA-256 over the JSON-encoded lookup
 string exactly as production does. Enrollment upserts a `pending`, ineligible row. Approval is a
 separate command that PATCHes only status, eligibility, and `updated_at`, preserving verification
-metadata. Both utilities request minimal responses and print redacted state only.
+metadata. All three utilities request only what they need and print redacted state only. Verification
+is a third, read-only action; it is deliberately not a mode of either enrollment or approval.
 
 ## Migration and deployment
 
@@ -100,11 +101,29 @@ try {
 }
 ```
 
-For redacted administrator verification, repeat the approval block without setting
-`LP103_APPROVAL_CONFIRMATION` and replace its `node` line with:
+## Independent PowerShell 5.1 redacted verification block
+
+Run this separately after approval. It independently reconstructs the lookup fingerprint locally,
+selects only the five fields needed to form the allowed redacted result, and clears its process
+environment even when verification fails.
 
 ```powershell
-node scripts/lp103-approve-verified-rural-address.mjs --verify
+function Read-Lp103Secret([string]$Prompt) {
+  $secure = Read-Host $Prompt -AsSecureString
+  $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+  try { [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr) }
+  finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) }
+}
+$names = @('LP103_SUPABASE_URL','LP103_SUPABASE_SERVICE_ROLE_KEY','LP103_HOUSE_NUMBER','LP103_ROAD',
+  'LP103_STATE','LP103_POSTAL_CODE')
+try {
+  foreach ($name in $names) { [Environment]::SetEnvironmentVariable($name, (Read-Lp103Secret $name), 'Process') }
+  node scripts/lp103-verify-verified-rural-address.mjs
+  if ($LASTEXITCODE -ne 0) { throw 'LP103 redacted verification failed.' }
+} finally {
+  foreach ($name in $names) { [Environment]::SetEnvironmentVariable($name, $null, 'Process') }
+  Remove-Item Function:\Read-Lp103Secret -ErrorAction SilentlyContinue
+}
 ```
 
 Successful verification prints only `recordFound`, `verificationStatus`, `consumerEligible`,
@@ -114,7 +133,9 @@ Successful verification prints only `recordFound`, `verificationStatus`, `consum
 
 1. Before deployment, run `npm run test:lp103`, `npm run test:lp1031`, and
    `rg -n "gridly-geocoding-client|app.js" index.html`; confirm the browser loads both governed
-   geocoding assets. Deploy the normal web bundle using the project's existing release process.
+   geocoding assets. Deploy the normal web bundle using the project's existing release process,
+   then confirm production serves both assets with `curl -fsSI https://gridly.app/js/app.js` and
+   `curl -fsSI https://gridly.app/js/gridly-geocoding-client.js` (both must report HTTP 200).
 2. Hard-refresh production and use the Network panel only to confirm the loaded `app.js` and
    `gridly-geocoding-client.js` responses are the newly deployed assets. Do not inspect, copy, or
    preserve a private request payload.
@@ -123,7 +144,8 @@ Successful verification prints only `recordFound`, `verificationStatus`, `consum
    entrance point. Do not capture the private card or map in screenshots or recordings.
 4. Confirm the browser contacts only Gridly's `gridly-geocode` endpoint, not Nominatim, Census, a
    county viewer, or a commercial geocoder.
-5. The LP103 diagnostics are designed to be redacted. Run the existing visible certification only
+5. The LP103 diagnostics are designed to be redacted. Run
+   `window.gridlyLp103VisibleRuralAddressCertification?.()` only
    if doing so cannot expose console history under the applicable operational policy; require an
    empty `failedChecks` list and `safeToMerge: true`. Do not paste its output into public content.
 
