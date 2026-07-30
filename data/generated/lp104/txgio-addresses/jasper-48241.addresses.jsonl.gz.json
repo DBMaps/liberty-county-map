@@ -1,0 +1,13 @@
+{
+  "countyId": "jasper",
+  "county": "Jasper",
+  "fips": "48241",
+  "sourceRecordsRead": 24405,
+  "acceptedRecords": 24404,
+  "rejectedRecords": 0,
+  "duplicates": 1,
+  "outputBytes": 789761,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\jasper-48241.addresses.jsonl.gz",
+  "packageHash": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3",
+  "outputCrs": "EPSG:4326"
+}

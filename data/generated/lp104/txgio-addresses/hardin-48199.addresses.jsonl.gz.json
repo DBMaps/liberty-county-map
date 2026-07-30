@@ -1,0 +1,13 @@
+{
+  "countyId": "hardin",
+  "county": "Hardin",
+  "fips": "48199",
+  "sourceRecordsRead": 32375,
+  "acceptedRecords": 32375,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 1011612,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\hardin-48199.addresses.jsonl.gz",
+  "packageHash": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df",
+  "outputCrs": "EPSG:4326"
+}

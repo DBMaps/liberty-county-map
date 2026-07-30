@@ -1,0 +1,13 @@
+{
+  "countyId": "brazoria",
+  "county": "Brazoria",
+  "fips": "48039",
+  "sourceRecordsRead": 161368,
+  "acceptedRecords": 161194,
+  "rejectedRecords": 0,
+  "duplicates": 174,
+  "outputBytes": 5695185,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brazoria-48039.addresses.jsonl.gz",
+  "packageHash": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7",
+  "outputCrs": "EPSG:4326"
+}

@@ -1,0 +1,13 @@
+{
+  "countyId": "orange",
+  "county": "Orange",
+  "fips": "48361",
+  "sourceRecordsRead": 42256,
+  "acceptedRecords": 42256,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 1268809,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\orange-48361.addresses.jsonl.gz",
+  "packageHash": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a",
+  "outputCrs": "EPSG:4326"
+}

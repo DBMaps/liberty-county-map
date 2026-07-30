@@ -1,0 +1,13 @@
+{
+  "countyId": "fort-bend",
+  "county": "Fort Bend",
+  "fips": "48157",
+  "sourceRecordsRead": 334977,
+  "acceptedRecords": 334812,
+  "rejectedRecords": 0,
+  "duplicates": 165,
+  "outputBytes": 12845351,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\fort-bend-48157.addresses.jsonl.gz",
+  "packageHash": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52",
+  "outputCrs": "EPSG:4326"
+}

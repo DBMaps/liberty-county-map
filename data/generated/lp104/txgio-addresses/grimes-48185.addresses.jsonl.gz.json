@@ -1,0 +1,13 @@
+{
+  "countyId": "grimes",
+  "county": "Grimes",
+  "fips": "48185",
+  "sourceRecordsRead": 22115,
+  "acceptedRecords": 22115,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 734091,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\grimes-48185.addresses.jsonl.gz",
+  "packageHash": "db2fee740aa83848b369f2bb1b228457a64547c3949948555b36aba56a4944ff",
+  "outputCrs": "EPSG:4326"
+}

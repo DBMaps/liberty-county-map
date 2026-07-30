@@ -1,0 +1,13 @@
+{
+  "countyId": "polk",
+  "county": "Polk",
+  "fips": "48373",
+  "sourceRecordsRead": 34299,
+  "acceptedRecords": 34253,
+  "rejectedRecords": 0,
+  "duplicates": 46,
+  "outputBytes": 1231358,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\polk-48373.addresses.jsonl.gz",
+  "packageHash": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865",
+  "outputCrs": "EPSG:4326"
+}

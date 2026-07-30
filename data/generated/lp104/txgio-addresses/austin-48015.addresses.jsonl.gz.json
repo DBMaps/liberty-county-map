@@ -1,0 +1,13 @@
+{
+  "countyId": "austin",
+  "county": "Austin",
+  "fips": "48015",
+  "sourceRecordsRead": 16833,
+  "acceptedRecords": 16833,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 552056,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\austin-48015.addresses.jsonl.gz",
+  "packageHash": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17",
+  "outputCrs": "EPSG:4326"
+}

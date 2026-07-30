@@ -1,0 +1,13 @@
+{
+  "countyId": "liberty",
+  "county": "Liberty",
+  "fips": "48291",
+  "sourceRecordsRead": 82444,
+  "acceptedRecords": 82443,
+  "rejectedRecords": 0,
+  "duplicates": 1,
+  "outputBytes": 2555016,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\liberty-48291.addresses.jsonl.gz",
+  "packageHash": "792f4f3f76524ef6652fbabf7c1c17d76eb1dfd9d83a71c460c1e038c2841b93",
+  "outputCrs": "EPSG:4326"
+}

@@ -1,0 +1,13 @@
+{
+  "countyId": "san-jacinto",
+  "county": "San Jacinto",
+  "fips": "48407",
+  "sourceRecordsRead": 22537,
+  "acceptedRecords": 22431,
+  "rejectedRecords": 0,
+  "duplicates": 106,
+  "outputBytes": 803304,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\san-jacinto-48407.addresses.jsonl.gz",
+  "packageHash": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955",
+  "outputCrs": "EPSG:4326"
+}

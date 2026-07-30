@@ -1,0 +1,13 @@
+{
+  "countyId": "walker",
+  "county": "Walker",
+  "fips": "48471",
+  "sourceRecordsRead": 30983,
+  "acceptedRecords": 30983,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 984566,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\walker-48471.addresses.jsonl.gz",
+  "packageHash": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1",
+  "outputCrs": "EPSG:4326"
+}

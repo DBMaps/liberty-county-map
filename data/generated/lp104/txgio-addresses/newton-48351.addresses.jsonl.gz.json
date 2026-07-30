@@ -1,0 +1,13 @@
+{
+  "countyId": "newton",
+  "county": "Newton",
+  "fips": "48351",
+  "sourceRecordsRead": 10508,
+  "acceptedRecords": 10488,
+  "rejectedRecords": 0,
+  "duplicates": 20,
+  "outputBytes": 349580,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\newton-48351.addresses.jsonl.gz",
+  "packageHash": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f",
+  "outputCrs": "EPSG:4326"
+}

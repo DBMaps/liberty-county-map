@@ -1,0 +1,13 @@
+{
+  "countyId": "brazos",
+  "county": "Brazos",
+  "fips": "48041",
+  "sourceRecordsRead": 112827,
+  "acceptedRecords": 112799,
+  "rejectedRecords": 0,
+  "duplicates": 28,
+  "outputBytes": 3078907,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brazos-48041.addresses.jsonl.gz",
+  "packageHash": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2",
+  "outputCrs": "EPSG:4326"
+}

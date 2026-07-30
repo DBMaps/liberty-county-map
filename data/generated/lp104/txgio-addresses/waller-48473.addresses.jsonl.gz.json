@@ -1,0 +1,13 @@
+{
+  "countyId": "waller",
+  "county": "Waller",
+  "fips": "48473",
+  "sourceRecordsRead": 46702,
+  "acceptedRecords": 46702,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 1595248,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\waller-48473.addresses.jsonl.gz",
+  "packageHash": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906",
+  "outputCrs": "EPSG:4326"
+}

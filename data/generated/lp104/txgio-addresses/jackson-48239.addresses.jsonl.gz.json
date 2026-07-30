@@ -1,0 +1,13 @@
+{
+  "countyId": "jackson",
+  "county": "Jackson",
+  "fips": "48239",
+  "sourceRecordsRead": 10036,
+  "acceptedRecords": 10036,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 321123,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\jackson-48239.addresses.jsonl.gz",
+  "packageHash": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c",
+  "outputCrs": "EPSG:4326"
+}

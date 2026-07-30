@@ -1,0 +1,13 @@
+{
+  "countyId": "chambers",
+  "county": "Chambers",
+  "fips": "48071",
+  "sourceRecordsRead": 25585,
+  "acceptedRecords": 25547,
+  "rejectedRecords": 0,
+  "duplicates": 38,
+  "outputBytes": 885892,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\chambers-48071.addresses.jsonl.gz",
+  "packageHash": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819",
+  "outputCrs": "EPSG:4326"
+}

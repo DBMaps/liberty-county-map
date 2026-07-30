@@ -1,0 +1,13 @@
+{
+  "countyId": "harris",
+  "county": "Harris",
+  "fips": "48201",
+  "sourceRecordsRead": 1453510,
+  "acceptedRecords": 1452427,
+  "rejectedRecords": 0,
+  "duplicates": 1083,
+  "outputBytes": 57731771,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\harris-48201.addresses.jsonl.gz",
+  "packageHash": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b",
+  "outputCrs": "EPSG:4326"
+}

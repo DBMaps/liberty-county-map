@@ -1,0 +1,13 @@
+{
+  "countyId": "calhoun",
+  "county": "Calhoun",
+  "fips": "48057",
+  "sourceRecordsRead": 13802,
+  "acceptedRecords": 13790,
+  "rejectedRecords": 12,
+  "duplicates": 0,
+  "outputBytes": 443130,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\calhoun-48057.addresses.jsonl.gz",
+  "packageHash": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229",
+  "outputCrs": "EPSG:4326"
+}

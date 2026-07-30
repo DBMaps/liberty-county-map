@@ -1,0 +1,13 @@
+{
+  "countyId": "washington",
+  "county": "Washington",
+  "fips": "48477",
+  "sourceRecordsRead": 25953,
+  "acceptedRecords": 25953,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 790797,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\washington-48477.addresses.jsonl.gz",
+  "packageHash": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d",
+  "outputCrs": "EPSG:4326"
+}

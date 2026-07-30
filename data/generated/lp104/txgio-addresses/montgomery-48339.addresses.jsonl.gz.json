@@ -1,0 +1,13 @@
+{
+  "countyId": "montgomery",
+  "county": "Montgomery",
+  "fips": "48339",
+  "sourceRecordsRead": 329687,
+  "acceptedRecords": 329090,
+  "rejectedRecords": 0,
+  "duplicates": 597,
+  "outputBytes": 10057950,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\montgomery-48339.addresses.jsonl.gz",
+  "packageHash": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168",
+  "outputCrs": "EPSG:4326"
+}

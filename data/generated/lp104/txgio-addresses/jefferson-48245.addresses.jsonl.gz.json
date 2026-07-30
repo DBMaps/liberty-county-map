@@ -1,0 +1,13 @@
+{
+  "countyId": "jefferson",
+  "county": "Jefferson",
+  "fips": "48245",
+  "sourceRecordsRead": 96807,
+  "acceptedRecords": 96800,
+  "rejectedRecords": 0,
+  "duplicates": 7,
+  "outputBytes": 2847538,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\jefferson-48245.addresses.jsonl.gz",
+  "packageHash": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e",
+  "outputCrs": "EPSG:4326"
+}

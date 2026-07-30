@@ -1,0 +1,13 @@
+{
+  "countyId": "tyler",
+  "county": "Tyler",
+  "fips": "48457",
+  "sourceRecordsRead": 15069,
+  "acceptedRecords": 15065,
+  "rejectedRecords": 0,
+  "duplicates": 4,
+  "outputBytes": 492755,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\tyler-48457.addresses.jsonl.gz",
+  "packageHash": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b",
+  "outputCrs": "EPSG:4326"
+}

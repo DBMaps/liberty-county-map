@@ -1,0 +1,13 @@
+{
+  "countyId": "lavaca",
+  "county": "Lavaca",
+  "fips": "48285",
+  "sourceRecordsRead": 14020,
+  "acceptedRecords": 14020,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 436394,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\lavaca-48285.addresses.jsonl.gz",
+  "packageHash": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b",
+  "outputCrs": "EPSG:4326"
+}

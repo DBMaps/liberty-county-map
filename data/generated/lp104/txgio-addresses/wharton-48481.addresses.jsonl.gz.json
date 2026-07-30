@@ -1,0 +1,13 @@
+{
+  "countyId": "wharton",
+  "county": "Wharton",
+  "fips": "48481",
+  "sourceRecordsRead": 24018,
+  "acceptedRecords": 24018,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 790321,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\wharton-48481.addresses.jsonl.gz",
+  "packageHash": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357",
+  "outputCrs": "EPSG:4326"
+}

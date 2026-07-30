@@ -1,0 +1,13 @@
+{
+  "countyId": "galveston",
+  "county": "Galveston",
+  "fips": "48167",
+  "sourceRecordsRead": 146561,
+  "acceptedRecords": 146413,
+  "rejectedRecords": 0,
+  "duplicates": 148,
+  "outputBytes": 4226191,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\galveston-48167.addresses.jsonl.gz",
+  "packageHash": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6",
+  "outputCrs": "EPSG:4326"
+}

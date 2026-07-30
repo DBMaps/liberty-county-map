@@ -1,0 +1,13 @@
+{
+  "countyId": "colorado",
+  "county": "Colorado",
+  "fips": "48089",
+  "sourceRecordsRead": 13151,
+  "acceptedRecords": 13151,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 465779,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\colorado-48089.addresses.jsonl.gz",
+  "packageHash": "8f7ebc0e01e44b78137ddb7cc14e96e9d54a6666d3d40f4bc541b981bed9fdd2",
+  "outputCrs": "EPSG:4326"
+}

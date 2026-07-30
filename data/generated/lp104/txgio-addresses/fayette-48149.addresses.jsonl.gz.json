@@ -1,0 +1,13 @@
+{
+  "countyId": "fayette",
+  "county": "Fayette",
+  "fips": "48149",
+  "sourceRecordsRead": 21677,
+  "acceptedRecords": 21677,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 815379,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\fayette-48149.addresses.jsonl.gz",
+  "packageHash": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f",
+  "outputCrs": "EPSG:4326"
+}
