@@ -9,6 +9,7 @@ NAD_r23.zip
 **/NAD_r23.gdb/
 reports/lp104.2-nad-r23-*.json
 reports/lp104.3-nad-r23-*
+reports/nad-explorer-*
 
 # Capacitor generated web output; CI recreates this from source web files.
 /www/
