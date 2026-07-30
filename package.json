@@ -72,6 +72,8 @@
     "test:lp1044": "node --test tests/lp1044-nad-data-explorer.test.mjs",
     "build:lp1044:txgio:liberty": "node tools/lp104/build-txgio-address-packages.mjs --liberty",
     "build:lp1044:txgio:gridly": "node tools/lp104/build-txgio-address-packages.mjs --gridly-counties",
-    "test:lp1044:txgio": "node --test tests/lp1044-txgio-address-builder.test.mjs"
+    "test:lp1044:txgio": "node --test tests/lp1044-txgio-address-builder.test.mjs",
+    "query:lp1044:txgio:liberty": "node tools/lp104/query-txgio-address-package.mjs",
+    "test:lp1044:txgio:query": "node --test tests/lp1044-txgio-address-query.test.mjs"
   }
 }
