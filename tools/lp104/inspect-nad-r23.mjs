@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 import { constants as fsConstants, createReadStream } from 'node:fs';
-import { access, mkdir, open, rename, stat, unlink, writeFile } from 'node:fs/promises';
+import { access, mkdir, open, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
 import { delimiter, dirname, extname, isAbsolute, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -82,6 +82,7 @@ export async function centralDirectoryLocation(handle, archiveSize) {
   if (index < 0) throw new Error('Not a ZIP archive: end-of-central-directory record not found');
   const disk = tail.readUInt16LE(index + 4);
   const centralDisk = tail.readUInt16LE(index + 6);
+  const entriesOnLegacyDisk = tail.readUInt16LE(index + 8);
   const entries = tail.readUInt16LE(index + 10);
   const centralSize = tail.readUInt32LE(index + 12);
   const centralOffset = tail.readUInt32LE(index + 16);
@@ -98,6 +99,9 @@ export async function centralDirectoryLocation(handle, archiveSize) {
     zip64EocdStartDisk: null, totalDisks: null, failureStage: null,
   };
   const fail = (stage, message) => { diagnostic.failureStage = stage; throw new Zip64StructureError(message, diagnostic); };
+  if ((disk !== 0 && disk !== 0xffff) || (centralDisk !== 0 && centralDisk !== 0xffff)) {
+    fail('legacy-disk-fields', 'Multi-disk ZIP archives are not supported');
+  }
   if (eocdPosition < 20n) fail('locator-bounds', 'ZIP64 locator is missing or truncated');
   const locator = await readAt(handle, 20, eocdPosition - 20n, archiveSize).catch(() => fail('locator-read', 'ZIP64 locator is missing or truncated'));
   diagnostic.locatorSignatureObserved = `0x${locator.readUInt32LE(0).toString(16).padStart(8, '0')}`;
@@ -105,13 +109,16 @@ export async function centralDirectoryLocation(handle, archiveSize) {
   diagnostic.zip64EocdOffset = locator.readBigUInt64LE(8).toString();
   diagnostic.totalDisks = locator.readUInt32LE(16);
   if (locator.readUInt32LE(0) !== ZIP64_LOCATOR_SIGNATURE) fail('locator-signature', 'Invalid ZIP64 locator signature');
-  if (diagnostic.zip64EocdStartDisk !== 0 || diagnostic.totalDisks !== 1) fail('locator-disk-fields', 'Multi-disk ZIP archives are not supported');
+  // NAD R23's ZIP producer writes zero here for an otherwise internally
+  // consistent single-file archive. Accept zero as "unspecified/single disk",
+  // but only alongside the complete single-disk and structural checks below.
+  if (diagnostic.zip64EocdStartDisk !== 0 || diagnostic.totalDisks > 1) fail('locator-disk-fields', 'Multi-disk ZIP archives are not supported');
   const recordOffset = locator.readBigUInt64LE(8);
   if (recordOffset > archiveSize - 56n) fail('zip64-eocd-bounds', 'ZIP64 end-of-central-directory record is outside the archive');
   const record = await readAt(handle, 56, recordOffset, archiveSize);
   if (record.readUInt32LE(0) !== ZIP64_EOCD_SIGNATURE) fail('zip64-eocd-signature', 'Invalid ZIP64 end-of-central-directory signature');
   const recordLength = record.readBigUInt64LE(4) + 12n;
-  if (recordLength < 56n || recordOffset + recordLength > eocdPosition - 20n) fail('zip64-eocd-size', 'Invalid ZIP64 end-of-central-directory size');
+  if (recordLength < 56n || recordOffset + recordLength !== eocdPosition - 20n) fail('zip64-eocd-size', 'ZIP64 end-of-central-directory record does not align with its locator');
   const recordDisk = record.readUInt32LE(16);
   const recordCentralDisk = record.readUInt32LE(20);
   diagnostic.diskNumber = recordDisk;
@@ -119,10 +126,19 @@ export async function centralDirectoryLocation(handle, archiveSize) {
   const entriesOnDisk = record.readBigUInt64LE(24);
   const totalEntries = record.readBigUInt64LE(32);
   if (entriesOnDisk !== totalEntries) fail('zip64-eocd-entry-counts', 'Multi-disk ZIP archives are not supported');
+  if ((entriesOnLegacyDisk !== 0xffff && BigInt(entriesOnLegacyDisk) !== entriesOnDisk)
+      || (entries !== 0xffff && BigInt(entries) !== totalEntries)) {
+    fail('legacy-entry-counts', 'Legacy and ZIP64 entry counts are inconsistent');
+  }
+  const centralSize64 = record.readBigUInt64LE(40);
+  const centralOffset64 = record.readBigUInt64LE(48);
+  if (centralOffset64 > recordOffset || centralSize64 !== recordOffset - centralOffset64) {
+    fail('central-directory-bounds', 'ZIP64 central directory does not end at the ZIP64 record');
+  }
   return {
     entries: safeNumber(totalEntries, 'ZIP member count'),
-    size: record.readBigUInt64LE(40),
-    offset: record.readBigUInt64LE(48),
+    size: centralSize64,
+    offset: centralOffset64,
   };
 }
 
@@ -145,6 +161,7 @@ async function readMembers(handle, archiveSize) {
     let extracted = BigInt(data.readUInt32LE(cursor + 24));
     const localOffset = data.readUInt32LE(cursor + 42);
     const disk = data.readUInt16LE(cursor + 34);
+    if (disk !== 0 && disk !== 0xffff) throw new Error('Multi-disk ZIP archives are not supported');
     const needs = { extracted: extracted === 0xffffffffn, compressed: compressed === 0xffffffffn, offset: localOffset === 0xffffffff, disk: disk === 0xffff };
     if (Object.values(needs).some(Boolean)) {
       const values = zip64Values(data.subarray(cursor + 46 + nameLength, cursor + 46 + nameLength + extraLength), needs);
@@ -173,6 +190,15 @@ async function sha256(path) {
 
 export async function archiveInventory(archive) {
   const archivePath = resolve(archive);
+  const archiveName = archivePath.slice(dirname(archivePath).length + 1);
+  if (/\.(?:z\d{2,}|zip\.\d+)$/i.test(archiveName)) throw new Error('Split ZIP archive naming is not supported');
+  if (/\.zip$/i.test(archiveName)) {
+    const stem = archiveName.slice(0, -4).toLowerCase();
+    const siblings = await readdir(dirname(archivePath));
+    if (siblings.some(name => new RegExp(`^${stem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(?:z\\d{2,}|zip\\.\\d+)$`, 'i').test(name))) {
+      throw new Error('Additional split ZIP disk files are not supported');
+    }
+  }
   const before = await stat(archivePath, { bigint: true });
   if (!before.isFile()) throw new Error(`Archive not found: ${archive}`);
   const handle = await open(archivePath, 'r');
