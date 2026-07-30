@@ -16,7 +16,10 @@ function crc32(buffer) {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-function fixtureZip(files, { comment = Buffer.alloc(0), zip64 = false, locatorStartDisk = 0, totalDisks = 1 } = {}) {
+function fixtureZip(files, {
+  comment = Buffer.alloc(0), zip64 = false, legacyDisk = 0, legacyCentralDisk = 0,
+  locatorStartDisk = 0, totalDisks = 1, recordDisk = 0, recordCentralDisk = 0,
+} = {}) {
   const local = [];
   const central = [];
   let offset = 0;
@@ -36,7 +39,7 @@ function fixtureZip(files, { comment = Buffer.alloc(0), zip64 = false, locatorSt
   }
   const centralData = Buffer.concat(central);
   const end = Buffer.alloc(22);
-  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(comment.length, 20);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(legacyDisk, 4); end.writeUInt16LE(legacyCentralDisk, 6); end.writeUInt16LE(comment.length, 20);
   if (!zip64) {
     end.writeUInt16LE(files.length, 8); end.writeUInt16LE(files.length, 10);
     end.writeUInt32LE(centralData.length, 12); end.writeUInt32LE(offset, 16);
@@ -47,6 +50,7 @@ function fixtureZip(files, { comment = Buffer.alloc(0), zip64 = false, locatorSt
   const recordOffset = offset + centralData.length;
   const record = Buffer.alloc(56);
   record.writeUInt32LE(0x06064b50, 0); record.writeBigUInt64LE(44n, 4); record.writeUInt16LE(45, 12); record.writeUInt16LE(45, 14);
+  record.writeUInt32LE(recordDisk, 16); record.writeUInt32LE(recordCentralDisk, 20);
   record.writeBigUInt64LE(BigInt(files.length), 24); record.writeBigUInt64LE(BigInt(files.length), 32);
   record.writeBigUInt64LE(BigInt(centralData.length), 40); record.writeBigUInt64LE(BigInt(offset), 48);
   const locator = Buffer.alloc(20);
@@ -94,13 +98,18 @@ test('standard ZIP inventory is complete and leaves the master archive unchanged
   });
 });
 
-test('single-disk ZIP64 uses locator fields at 4, 8, and 16 and inventories normally', async () => {
-  const original = fixtureZip(sampleFiles, { zip64: true });
-  const { archive } = await temporaryArchive('lp1042-zip64-', original);
-  const report = await archiveInventory(archive);
-  assert.equal(report.memberCount, 2);
-  assert.equal(report.compressedBytesOnDisk, original.length);
-});
+for (const totalDisks of [0, 1]) {
+  test(`single-disk ZIP64 locator totalDisks ${totalDisks} inventories normally without changing the archive`, async () => {
+    const original = fixtureZip(sampleFiles, { zip64: true, totalDisks });
+    const { archive } = await temporaryArchive('lp1042-zip64-', original);
+    const before = await stat(archive);
+    const report = await archiveInventory(archive);
+    assert.equal(report.memberCount, 2);
+    assert.equal(report.compressedBytesOnDisk, original.length);
+    assert.deepEqual(await readFile(archive), original);
+    assert.equal((await stat(archive)).mtimeMs, before.mtimeMs);
+  });
+}
 
 test('archive comments and false EOCD signatures before the real EOCD are handled', async () => {
   const falseRecord = Buffer.alloc(22);
@@ -134,9 +143,48 @@ test('ZIP64 offsets remain BigInt and support a sparse archive beyond 4 GiB', as
   } finally { await handle.close(); }
 });
 
+test('official-sized NAD ZIP64 structure is accepted without allocating the archive size', async () => {
+  const { archive } = await temporaryArchive('lp1042-official-size-', Buffer.alloc(0));
+  const archiveSize = 9_733_944_292n;
+  const recordOffset = archiveSize - 98n;
+  const centralSize = 4096n;
+  const record = Buffer.alloc(56);
+  record.writeUInt32LE(0x06064b50, 0); record.writeBigUInt64LE(44n, 4);
+  record.writeBigUInt64LE(centralSize, 40); record.writeBigUInt64LE(recordOffset - centralSize, 48);
+  const locator = Buffer.alloc(20);
+  locator.writeUInt32LE(0x07064b50, 0); locator.writeBigUInt64LE(recordOffset, 8); locator.writeUInt32LE(0, 16);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(0xffff, 8); end.writeUInt16LE(0xffff, 10);
+  end.writeUInt32LE(0xffffffff, 12); end.writeUInt32LE(0xffffffff, 16);
+  const handle = await open(archive, 'w+');
+  try {
+    await handle.write(record, 0, record.length, Number(recordOffset));
+    await handle.write(locator, 0, locator.length, Number(recordOffset + 56n));
+    await handle.write(end, 0, end.length, Number(recordOffset + 76n));
+    assert.deepEqual(await centralDirectoryLocation(handle, archiveSize), {
+      entries: 0, size: centralSize, offset: recordOffset - centralSize,
+    });
+  } finally { await handle.close(); }
+});
+
+for (const [name, options, stage] of [
+  ['locator start disk', { locatorStartDisk: 1, totalDisks: 0 }, 'locator-disk-fields'],
+  ['ZIP64 current disk', { recordDisk: 1, totalDisks: 0 }, 'zip64-eocd-disk-fields'],
+  ['ZIP64 central-directory disk', { recordCentralDisk: 1, totalDisks: 0 }, 'zip64-eocd-disk-fields'],
+  ['contradictory legacy current disk', { legacyDisk: 1, totalDisks: 0 }, 'legacy-disk-fields'],
+  ['contradictory legacy central-directory disk', { legacyCentralDisk: 1, totalDisks: 0 }, 'legacy-disk-fields'],
+]) {
+  test(`totalDisks zero with ${name} is rejected`, async () => {
+    const { archive } = await temporaryArchive('lp1042-disk-conflict-', fixtureZip(sampleFiles, { zip64: true, ...options }));
+    await assert.rejects(archiveInventory(archive), error => error.diagnostic?.failureStage === stage);
+  });
+}
+
 for (const [name, mutate, stage] of [
   ['true multi-disk locator', buffer => buffer.writeUInt32LE(2, buffer.length - 22 - 4), 'locator-disk-fields'],
   ['invalid ZIP64 EOCD signature', buffer => buffer.writeUInt32LE(0, buffer.length - 22 - 20 - 56), 'zip64-eocd-signature'],
+  ['unequal ZIP64 entry counts', buffer => buffer.writeBigUInt64LE(1n, buffer.length - 98 + 24), 'zip64-eocd-entry-counts'],
+  ['central directory not ending at ZIP64 EOCD', buffer => buffer.writeBigUInt64LE(1n, buffer.length - 98 + 40), 'central-directory-bounds'],
 ]) {
   test(`${name} is rejected with a redacted structural diagnostic`, async () => {
     const original = fixtureZip(sampleFiles, { zip64: true }); mutate(original);
@@ -144,6 +192,14 @@ for (const [name, mutate, stage] of [
     await assert.rejects(archiveInventory(archive), error => error.diagnostic?.failureStage === stage && !JSON.stringify(error.diagnostic).includes('NAD_R23'));
   });
 }
+
+test('a companion split-disk file is rejected as additional disk evidence', async () => {
+  const original = fixtureZip(sampleFiles, { zip64: true, totalDisks: 0 });
+  const { directory, archive } = await temporaryArchive('lp1042-split-evidence-', original);
+  await writeFile(path.join(directory, 'nad-r23.z01'), Buffer.from('split disk evidence'));
+  await assert.rejects(archiveInventory(archive), /Additional split ZIP disk files/);
+  assert.deepEqual(await readFile(archive), original);
+});
 
 test('a truncated/missing locator is rejected with a diagnostic', () => {
   const original = fixtureZip(sampleFiles, { zip64: true });
