@@ -66,7 +66,7 @@ export function normalizeFeature(feature, county) {
 
 export function ogrArguments(gdb, layer, fips) {
   const selected = [...REQUIRED, ...STREET_PARTS].join(',');
-  return ['-f', 'GeoJSONSeq', '/vsistdout/', gdb, layer, '-ro', '-where', `FIPS = ${Number(fips)}`, '-select', selected, '-t_srs', 'EPSG:4326', '-lco', 'RS=YES'];
+  return ['-f', 'GeoJSONSeq', '/vsistdout/', gdb, layer, '-where', `FIPS = ${Number(fips)}`, '-select', selected, '-t_srs', 'EPSG:4326', '-lco', 'RS=YES'];
 }
 
 async function executable(path) {
