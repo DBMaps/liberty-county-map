@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { EventEmitter } from 'node:events';
-import { mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { PassThrough } from 'node:stream';
-import { discoverOgrinfo, parseArguments, runOgrinfo } from '../tools/lp104/measure-nad-r23.mjs';
+import { discoverOgrinfo, filteredCountArguments, measure, parseArguments, parseFeatureCount, runOgrinfo } from '../tools/lp104/measure-nad-r23.mjs';
 
 const repository = path.resolve(import.meta.dirname, '..');
 const tool = 'tools/lp104/measure-nad-r23.mjs';
@@ -48,6 +48,41 @@ test('ogrinfo execution preserves argument boundaries and safe process options',
   assert.equal(invocation.options.detached, false);
   assert.equal(invocation.options.env, process.env);
   assert.deepEqual(invocation.options.stdio, ['ignore', 'pipe', 'pipe']);
+});
+
+test('native where/summary feature count is parsed without JSON or a forced driver', () => {
+  assert.equal(parseFeatureCount('Layer name: NAD\nFeature Count: 12,345\n'), 12345);
+  assert.throws(() => parseFeatureCount('Layer name: NAD'), /no parseable Feature Count/);
+  const args = filteredCountArguments('/vsizip/C:/NAD.zip/NAD_r23.gdb', 'NAD', `State = 'TX'`);
+  assert.deepEqual(args, ['/vsizip/C:/NAD.zip/NAD_r23.gdb', '-ro', '-so', '-where', `State = 'TX'`, 'NAD']);
+  assert.ok(!args.includes('-if')); assert.ok(!args.includes('-json')); assert.ok(!args.includes('-sql'));
+});
+
+test('optional measurement failure preserves core report and diagnostic attempts', async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'lp1043-partial-'));
+  const archive = path.join(directory, 'NAD_r23.zip'); const reports = path.join(directory, 'reports');
+  await writeFile(archive, 'fixture');
+  const schema = `INFO: Open of x using driver \`OpenFileGDB' successful.\nLayer name: NAD\nGeometry: 3D Point\nState: String (2.0)\nCounty: String (50.0)\nAdd_Number: String (20.0)\nStNam_Full: String (100.0)\nPost_City: String (50.0)\nZip_Code: String (5.0)\n`;
+  const result = await measure({ archive, reports, geodatabase: 'NAD_r23.gdb', layer: 'NAD', state: 'TX', county: 'Liberty', generatedAt: '2026-07-30T00:00:00Z' }, {
+    discoverOgrinfo: async () => 'ogrinfo',
+    runOgrinfo: async (_exe, args, label) => {
+      if (label === 'minimal-schema-discovery') return schema;
+      if (label === 'native-texas-filtered-feature-count') return 'Feature Count: 1000\n';
+      if (label === 'native-liberty-filtered-feature-count') return 'Feature Count: 100\n';
+      if (label === 'native-bounded-target-address-count') return 'Feature Count: 1\n';
+      if (label === 'native-county-count:Anderson') throw new Error('optional probe failed');
+      assert.deepEqual(args.slice(1, 4), ['-ro', '-so', '-where']);
+      return 'Feature Count: 0\n';
+    },
+  });
+  assert.equal(result.report.status, 'partial');
+  assert.equal(result.report.calculatedMeasurements.texas.featureCount, 1000);
+  assert.equal(result.report.calculatedMeasurements.libertyCounty.featureCount, 100);
+  assert.equal(result.report.calculatedMeasurements.targetAddress.candidateCount, 1);
+  assert.equal(result.report.calculatedMeasurements.counties.find(row => row.county === 'Anderson').status, 'unavailable');
+  assert.ok(result.report.diagnostics.attempts.some(item => item.status === 'failed'));
+  const persisted = JSON.parse(await readFile(path.join(reports, 'lp104.3-nad-r23-texas-measurement.json'), 'utf8'));
+  assert.equal(persisted.calculatedMeasurements.libertyCounty.featureCount, 100);
 });
 
 test('debug mode prints executable and exact argument array', async () => {
@@ -105,10 +140,10 @@ test('GDAL discovery rejects a configured nonexistent executable', async () => {
 test('implementation contains no extraction or write-mode GDAL switches', async () => {
   const { readFile } = await import('node:fs/promises');
   const source = await readFile(path.join(repository, tool), 'utf8');
-  assert.match(source, /'OpenFileGDB'/);
   assert.match(source, /'-ro'/);
   assert.doesNotMatch(source, /\b(?:unzip|Expand-Archive|ogr2ogr)\b/);
   assert.doesNotMatch(source, /['"]-(?:update|append|overwrite)['"]/);
-  assert.match(source, /const schemaArgs = \[datasource, '-ro', '-so', options\.layer\]/);
-  assert.doesNotMatch(source, /schemaArgs[^\n]*(?:-sql|-dialect|-if)/);
+  assert.match(source, /filteredCountArguments/);
+  assert.doesNotMatch(source, /['"](?:-sql|-dialect|-if|-json|LIST_ALL_TABLES=NO)['"]/);
+  assert.doesNotMatch(source, /GROUP BY[\s\S]*SELECT COUNT/);
 });
