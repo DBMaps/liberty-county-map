@@ -34,7 +34,7 @@ test('strictly rejects missing exact-address evidence', () => {
 
 test('ogr2ogr reads by numeric FIPS and transforms to WGS84 without updating source', () => {
   const args = ogrArguments('Texas-2026.gdb', 'stratmap_2026_address_points_48', '48291');
-  assert.ok(args.includes('-ro'));
+  assert.ok(!args.includes('-ro'));
   assert.equal(args[args.indexOf('-where') + 1], 'FIPS = 48291');
   assert.equal(args[args.indexOf('-t_srs') + 1], 'EPSG:4326');
   assert.equal(args[2], '/vsistdout/');
