@@ -65,6 +65,8 @@
     "build:lp104:inventory": "node tools/lp104/build-texas-address-foundation.js --inventory-only",
     "test:lp1041": "node tests/lp1041-texas-address-foundation.test.js",
     "inspect:lp1042:nad-r23": "node tools/lp104/inspect-nad-r23.mjs",
-    "test:lp1042": "node --test tests/lp1042-nad-r23-inspection.test.mjs"
+    "test:lp1042": "node --test tests/lp1042-nad-r23-inspection.test.mjs",
+    "measure:lp1043:nad-r23": "node tools/lp104/measure-nad-r23.mjs",
+    "test:lp1043": "node --test tests/lp1043-nad-r23-measurement.test.mjs"
   }
 }
