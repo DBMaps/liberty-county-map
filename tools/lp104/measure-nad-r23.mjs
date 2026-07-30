@@ -13,6 +13,7 @@ const DEFAULT_GDB = 'NAD_r23.gdb';
 const DEFAULT_LAYER = 'NAD';
 const DISTRIBUTIONS = ['Placement', 'AddAuth', 'NAD_Source', 'DataSet_ID', 'AddrClass', 'Lifecycle', 'Addr_Type', 'DeliverTyp', 'Provenance'];
 const COMPLETENESS = ['Address', 'Add_Number', 'AddNo_Full', 'Street', 'St_Name', 'StNam_Full', 'Post_City', 'Uninc_Comm', 'Zip_Code', 'Latitude', 'Longitude'];
+const MAX_GDAL_OUTPUT_BYTES = 64 * 1024 * 1024;
 
 function usage() {
   return `Usage: node tools/lp104/measure-nad-r23.mjs --archive <NAD_r23.zip> --reports <directory> [options]
@@ -29,6 +30,7 @@ Options:
   --county <value>       Proof county selector (default: Liberty)
   --top <number>         Distribution values retained (default: 25)
   --generated-at <ISO>  Reproducible report timestamp (otherwise current UTC time)
+  --debug                Print each ogrinfo executable and argument array
   --help                 Show this help
 
 GDAL may also be set with GRIDLY_GDAL_OGRINFO or OGRINFO. The command uses only
@@ -41,6 +43,7 @@ export function parseArguments(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--help' || arg === '-h') options.help = true;
+    else if (arg === '--debug') options.debug = true;
     else if (valued.has(arg)) {
       const value = argv[++i];
       if (!value) throw new Error(`${arg} requires a value`);
@@ -84,16 +87,52 @@ function literal(value) { return `'${String(value).replaceAll("'", "''")}'`; }
 function present(field) { const q = quoteIdentifier(field); return `${q} IS NOT NULL AND TRIM(CAST(${q} AS TEXT)) <> ''`; }
 function normalized(field) { return `UPPER(TRIM(CAST(${quoteIdentifier(field)} AS TEXT)))`; }
 
-function run(executable, args, label) {
+function commandDiagnostic(executable, args) {
+  return `executable: ${JSON.stringify(executable)}\narguments: ${JSON.stringify(args)}`;
+}
+
+export function runOgrinfo(executable, args, label, { debug = false, spawnImpl = spawn, maxOutputBytes = MAX_GDAL_OUTPUT_BYTES } = {}) {
   return new Promise((resolveRun, reject) => {
-    const child = spawn(executable, args, { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const diagnostic = commandDiagnostic(executable, args);
+    if (debug) process.stderr.write(`[LP104.3] ${label} command\n${diagnostic}\n`);
+    let child;
+    try {
+      child = spawnImpl(executable, args, { shell: false, windowsHide: true, detached: false, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
+    } catch (error) {
+      reject(new Error(`${label} spawn error: ${error.message}\n${diagnostic}`));
+      return;
+    }
     let stdout = ''; let stderr = '';
+    let outputBytes = 0; let settled = false;
+    const fail = error => { if (!settled) { settled = true; reject(error); } };
+    const collect = (stream, destination) => stream.on('data', chunk => {
+      outputBytes += Buffer.byteLength(chunk, 'utf8');
+      if (outputBytes > maxOutputBytes) {
+        child.kill();
+        fail(new Error(`${label} exceeded the ${maxOutputBytes}-byte output limit\n${diagnostic}`));
+      } else destination(chunk);
+    });
     child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8');
-    child.stdout.on('data', chunk => { stdout += chunk; });
-    child.stderr.on('data', chunk => { stderr += chunk; });
-    child.on('error', reject);
-    child.on('close', code => code === 0 ? resolveRun(stdout) : reject(new Error(`${label} failed (exit ${code}): ${stderr.trim() || 'no GDAL diagnostic'}`)));
+    collect(child.stdout, chunk => { stdout += chunk; });
+    collect(child.stderr, chunk => { stderr += chunk; });
+    child.on('error', error => fail(new Error(`${label} spawn error: ${error.message}\n${diagnostic}`)));
+    child.on('close', (code, signal) => {
+      if (settled) return;
+      settled = true;
+      if (code === 0) resolveRun(stdout);
+      else reject(new Error(`${label} process failure\nexit code: ${code === null ? 'null' : code}\nsignal: ${signal || 'none'}\nstdout:\n${stdout || '(empty)'}\nstderr:\n${stderr || '(empty)'}\n${diagnostic}`));
+    });
   });
+}
+
+function layerFromSchemaText(text, expectedLayer) {
+  if (!/using driver [`']OpenFileGDB['`] successful/i.test(text)) throw new Error('Schema inspection did not confirm the OpenFileGDB driver');
+  const layerMatch = text.match(/^Layer name:\s*(.+)$/mi);
+  if (!layerMatch || layerMatch[1].trim().toLowerCase() !== expectedLayer.toLowerCase()) throw new Error(`Schema inspection returned no ${expectedLayer} layer`);
+  const fields = [];
+  for (const match of text.matchAll(/^([^\r\n:]+):\s+(?:Integer|Integer64|Real|String|Date|Time|DateTime|Binary)(?:\s|\(|$).*$/gmi)) fields.push({ name: match[1].trim() });
+  const geometry = text.match(/^Geometry:\s*(.+)$/mi)?.[1].trim();
+  return { fields, geometryType: geometry || null };
 }
 
 function layerFromJson(text, label) {
@@ -136,14 +175,15 @@ export async function measure(options) {
   const baseArgs = ['-ro', '-if', 'OpenFileGDB', '-json', '-oo', 'LIST_ALL_TABLES=NO', datasource];
   const log = message => process.stderr.write(`[LP104.3] ${message}\n`);
   log('Inspecting the NAD schema through /vsizip/ (read-only)');
-  const schemaLayer = layerFromJson(await run(ogrinfo, ['-ro', '-if', 'OpenFileGDB', '-so', '-json', datasource, options.layer], 'Schema inspection'), 'Schema inspection');
+  const schemaArgs = [datasource, '-ro', '-so', options.layer];
+  const schemaLayer = layerFromSchemaText(await runOgrinfo(ogrinfo, schemaArgs, 'Schema inspection', { debug: options.debug }), options.layer);
   const fieldNames = (schemaLayer.fields || []).map(field => typeof field === 'string' ? field : field.name);
   const state = findField(fieldNames, 'State', true);
   const county = findField(fieldNames, 'County', true);
   const available = name => findField(fieldNames, name);
   const sqlRows = async (sql, label) => {
     log(label);
-    const layer = layerFromJson(await run(ogrinfo, [...baseArgs, '-dialect', 'SQLite', '-sql', sql], label), label);
+    const layer = layerFromJson(await runOgrinfo(ogrinfo, [...baseArgs, '-dialect', 'SQLite', '-sql', sql], label, { debug: options.debug }), label);
     return rowsFromLayer(layer);
   };
 
