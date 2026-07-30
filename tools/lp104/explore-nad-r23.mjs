@@ -3,9 +3,9 @@
 /** Small, read-only NAD File Geodatabase record explorer. */
 
 import { spawn } from 'node:child_process';
-import { access } from 'node:fs/promises';
-import { mkdir, rename, unlink, writeFile } from 'node:fs/promises';
-import { delimiter, dirname, isAbsolute, join, resolve } from 'node:path';
+import { constants as fsConstants } from 'node:fs';
+import { access, mkdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
+import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const DEFAULT_FIELDS = ['Add_Number', 'StNam_Full', 'County', 'Post_City', 'Zip_Code', 'Uninc_Comm', 'Placement', 'AddAuth', 'NAD_Source'];
@@ -33,10 +33,10 @@ Filters (may be combined):
 Result and output options:
   --limit N                  1..1000 records (default: 20)
   --fields A,B,C             Output fields (default: common address fields)
-  --layer NAME               Feature layer (default: AddPoints)
+  --layer NAME               Feature layer (default: NAD)
   --reports DIRECTORY        Export directory (default: beside extracted/)
   --name NAME                Safe export basename (default: nad-explorer-<time>)
-  --gdal DIRECTORY           Directory containing ogrinfo[.exe]
+  --gdal PATH                ogrinfo executable or GDAL bin directory
   --help                     Show this help
 
 Every successful query prints a console table and atomically writes CSV and JSON.
@@ -50,7 +50,7 @@ function take(argv, index, option) {
 }
 
 export function parseArguments(argv) {
-  const options = { limit: 20, layer: 'AddPoints', fields: [...DEFAULT_FIELDS], filters: {} };
+  const options = { limit: 20, layer: 'NAD', fields: [...DEFAULT_FIELDS], filters: {} };
   let positional;
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -114,14 +114,27 @@ export function queryArguments(gdb, layer, query, limit) {
   return [gdb, '-ro', '-q', '-json', '-geom=NO', '-fields=YES', '-limit', String(limit), '-dialect', 'OGRSQL', '-sql', sql];
 }
 
-async function discoverOgrinfo(gdal) {
-  const names = process.platform === 'win32' ? ['ogrinfo.exe', 'ogrinfo'] : ['ogrinfo'];
-  const folders = gdal ? [resolve(gdal)] : (process.env.PATH || '').split(delimiter);
-  for (const folder of folders) for (const name of names) {
-    const candidate = resolve(folder || '.', name);
-    try { await access(candidate); return candidate; } catch { /* continue */ }
+async function onPath(name) {
+  const suffixes = process.platform === 'win32' ? (process.env.PATHEXT || '.EXE;.CMD;.BAT;.COM').split(';') : [''];
+  for (const folder of (process.env.PATH || '').split(delimiter)) for (const suffix of suffixes) {
+    const candidate = resolve(folder || '.', `${name}${suffix}`);
+    try { await access(candidate, fsConstants.X_OK); return candidate; } catch { /* continue */ }
   }
-  throw new Error('GDAL ogrinfo was not found. Install GDAL or pass --gdal DIRECTORY');
+  return null;
+}
+
+export async function discoverOgrinfo(explicit) {
+  const configured = explicit || process.env.GRIDLY_GDAL_OGRINFO || process.env.OGRINFO;
+  if (configured) {
+    let candidate = resolve(configured);
+    try {
+      if ((await stat(candidate)).isDirectory()) candidate = join(candidate, process.platform === 'win32' ? 'ogrinfo.exe' : 'ogrinfo');
+      await access(candidate, fsConstants.X_OK); return candidate;
+    } catch { throw new Error(`GDAL ogrinfo is unavailable at: ${candidate}`); }
+  }
+  const found = await onPath('ogrinfo');
+  if (!found) throw new Error('GDAL ogrinfo was not found. Use --gdal, GRIDLY_GDAL_OGRINFO, OGRINFO, or PATH.');
+  return found;
 }
 
 function run(command, args) {
