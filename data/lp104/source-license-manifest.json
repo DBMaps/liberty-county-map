@@ -1,24 +1,24 @@
 {
   "schemaVersion": "lp104.1-source-manifest-v1",
-  "reviewedOn": "2026-07-29",
+  "reviewedOn": "2026-07-30",
   "policy": "fail_closed",
   "sources": [
     {
       "sourceId": "txgio-statewide-address-points",
       "priority": 1,
       "authority": "statewide",
-      "coverage": "Texas; exact county/record coverage not verified",
-      "licenseStatus": "review_required",
+      "coverage": "Texas; 12,142,647 records in the official TxGIO 2026 statewide Address Points File Geodatabase",
+      "licenseStatus": "free_official_download_redistribution_review_required",
       "productionEligible": false,
-      "bulkDownload": null,
+      "bulkDownload": true,
       "automatedDownload": false,
       "redistribution": null,
       "derivatives": null,
-      "storage": null,
-      "attribution": "Undetermined",
+      "storage": true,
+      "attribution": "TxGIO / Texas Geographic Information Office; final runtime wording pending review",
       "residentialRestrictions": "Undetermined",
       "sourceUrl": "https://tnris.org/",
-      "finding": "No license-qualified statewide address-point artifact was acquired. Viewer visibility is not permission."
+      "finding": "Official free 2026 statewide artifact acquired for immutable offline processing. Runtime redistribution remains fail-closed until the applicable TxGIO terms and attribution are recorded."
     },
     {
       "sourceId": "usdot-national-address-database",

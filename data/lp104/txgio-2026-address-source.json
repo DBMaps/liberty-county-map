@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "gridly-txgio-address-source-v1",
+  "sourceName": "TxGIO 2026 Statewide Address Points",
+  "statewideRecordCount": 12142647,
+  "sourceCrs": "EPSG:3857",
+  "outputCrs": "EPSG:4326",
+  "layer": "stratmap_2026_address_points_48",
+  "defaultWindowsGdb": "C:\\GitHub\\Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026.gdb",
+  "defaultWindowsGdalBin": "C:\\Program Files\\QGIS 3.44.11\\bin",
+  "countyManifest": "data/lp104/texas-counties.json",
+  "licenseManifest": "data/lp104/source-license-manifest.json"
+}

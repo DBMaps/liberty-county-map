@@ -11,6 +11,9 @@ reports/lp104.2-nad-r23-*.json
 reports/lp104.3-nad-r23-*
 reports/nad-explorer-*
 
+# LP104.4 locally generated TxGIO county address packages and certificates.
+data/generated/lp104/txgio-addresses/
+
 # Capacitor generated web output; CI recreates this from source web files.
 /www/
 

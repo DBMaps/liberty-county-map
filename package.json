@@ -69,6 +69,9 @@
     "measure:lp1043:nad-r23": "node tools/lp104/measure-nad-r23.mjs",
     "test:lp1043": "node --test tests/lp1043-nad-r23-measurement.test.mjs",
     "explore:lp1044:nad-r23": "node tools/lp104/explore-nad-r23.mjs",
-    "test:lp1044": "node --test tests/lp1044-nad-data-explorer.test.mjs"
+    "test:lp1044": "node --test tests/lp1044-nad-data-explorer.test.mjs",
+    "build:lp1044:txgio:liberty": "node tools/lp104/build-txgio-address-packages.mjs --liberty",
+    "build:lp1044:txgio:gridly": "node tools/lp104/build-txgio-address-packages.mjs --gridly-counties",
+    "test:lp1044:txgio": "node --test tests/lp1044-txgio-address-builder.test.mjs"
   }
 }
