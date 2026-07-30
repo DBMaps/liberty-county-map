@@ -74,11 +74,11 @@ export async function findExactMatches(packagePath, query) {
     const record = JSON.parse(line);
     if (String(record.h).toUpperCase() === normalized.houseNumber && canonicalRoad(record.r) === normalized.road) matches.push(record);
   }
-  return { normalized, matches };
+  return { normalized, matches, outcome: matches.length ? 'exact_match' : 'truthful_no_result' };
 }
 
-export function formatResult({ normalized, matches }) {
-  const rows = [`Exact matches: ${matches.length}`, `Normalized query: ${normalized.normalizedAddress}`];
+export function formatResult({ normalized, matches, outcome = matches.length ? 'exact_match' : 'truthful_no_result' }) {
+  const rows = [`Outcome: ${outcome}`, `Exact matches: ${matches.length}`, `Normalized query: ${normalized.normalizedAddress}`];
   for (const record of matches) rows.push(
     `Matched full address: ${record.a}`,
     `Postal community: ${record.p}`,
