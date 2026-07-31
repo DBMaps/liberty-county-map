@@ -7,6 +7,7 @@
       county: "Liberty County",
       fips: "48291",
       url: "data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz",
+      manifestUrl: "data/generated/lp104/txgio-addresses/runtime-manifest.json",
       localityPattern: /\b(?:liberty(?: county)?|dayton|cleveland|kenefick|ames|hardin|daisetta|hull|devers),?\s*(?:texas|tx)?\b/i,
       zipPattern: /\b(?:77327|77328|77371|77535|77538|77564|77575|77582)\b/
     })
@@ -32,16 +33,30 @@
   }
 
   function countyForSearch(query, countyId) {
-    const explicit = PACKAGES[String(countyId || "").toLowerCase()];
-    if (explicit) return explicit;
     const input = String(query || "");
-    return Object.values(PACKAGES).find((item) => item.localityPattern.test(input) || item.zipPattern.test(input)) || null;
+    const packages = Object.values(PACKAGES);
+    const inferred = packages.find((item) => item.localityPattern.test(input) || item.zipPattern.test(input));
+    if (inferred) return inferred;
+    // An explicit non-Liberty ZIP must not be overridden merely because the map
+    // is currently centered on Liberty. Unqualified street-only searches may use
+    // the active county supplied by the existing containment context.
+    if (/\b\d{5}(?:-\d{4})?\b/.test(input)) return null;
+    return PACKAGES[String(countyId || "").toLowerCase()] || null;
   }
 
-  async function readGzipJsonLines(response) {
+  async function sha256Hex(bytes) {
+    if (!global.crypto?.subtle) throw new Error("package_digest_unavailable");
+    const digest = await global.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function readGzipJsonLines(response, certificate) {
     if (!response.ok) throw new Error(`package_http_${response.status}`);
     if (typeof global.DecompressionStream !== "function") throw new Error("gzip_stream_unavailable");
-    const stream = response.body.pipeThrough(new global.DecompressionStream("gzip"));
+    const compressed = await response.arrayBuffer();
+    if (compressed.byteLength !== certificate.sizeBytes) throw new Error("package_size_mismatch");
+    if (await sha256Hex(compressed) !== certificate.sha256) throw new Error("package_digest_mismatch");
+    const stream = new Response(compressed).body.pipeThrough(new global.DecompressionStream("gzip"));
     const reader = stream.getReader();
     const decoder = new TextDecoder();
     const records = new Map();
@@ -72,8 +87,16 @@
   function loadPackage(county) {
     if (!packagePromises.has(county.fips)) {
       const startedAt = Date.now();
-      const promise = global.fetch(county.url, { cache: "force-cache", credentials: "same-origin" })
-        .then(readGzipJsonLines)
+      const promise = global.fetch(county.manifestUrl, { cache: "force-cache", credentials: "same-origin" })
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`manifest_http_${response.status}`);
+          const manifest = await response.json();
+          const certificate = manifest?.packages?.find((item) => item.fips === county.fips);
+          if (!certificate || certificate.path !== county.url || !/^[a-f0-9]{64}$/.test(certificate.sha256)
+            || !Number.isInteger(certificate.sizeBytes) || certificate.sizeBytes < 1) throw new Error("manifest_invalid");
+          const packageResponse = await global.fetch(county.url, { cache: "force-cache", credentials: "same-origin" });
+          return readGzipJsonLines(packageResponse, certificate);
+        })
         .then((index) => {
           evidence.push(Object.freeze({ event: "package_loaded", fips: county.fips, keyCount: index.size, durationMs: Date.now() - startedAt }));
           return index;
