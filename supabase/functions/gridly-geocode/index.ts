@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { lookupLibertyCertifiedAddress } from "../_shared/liberty-certified-address.mjs";
+import { applyGovernedRoadOnlyAcceptance } from "../_shared/governed-road-only-acceptance.mjs";
 
 const CONFIG = Object.freeze({
   provider: Deno.env.get("GRIDLY_GEOCODE_PROVIDER") || "nominatim",
@@ -270,6 +271,7 @@ async function execute(body: any, key: string, requestId: string, origin: string
     storage: db.storage,
     bucket: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BUCKET") || "certified-addresses"
   });
+  let roadOnlyResidentialRejected = false;
   const runtimeAddressDiagnostics = (responseSource: string, fallbackExecuted = false) => {
     const provider = certified.runtimeDiagnostic || {};
     const completedStages = [...(provider.completedStages || [])];
@@ -287,7 +289,10 @@ async function execute(body: any, key: string, requestId: string, origin: string
       packageObjectPath: provider.packageObjectPath || null,
       storageStatusCategory: provider.storageStatusCategory || "not_requested",
       certificateFetchCompleted: provider.certificateFetchCompleted === true,
-      certificateFetchReason: provider.certificateFetchReason || "not_requested" };
+      certificateFetchReason: provider.certificateFetchReason || "not_requested",
+      roadOnlyRequest: !certified.attempted && applyGovernedRoadOnlyAcceptance(body, []).roadOnly,
+      roadOnlyResidentialRejected,
+      fallbackAcceptanceOutcome: roadOnlyResidentialRejected ? "residential_promotion_rejected" : "not_applicable" };
   };
   if (certified.results.length) {
     const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted).slice(0, body.limit);
@@ -304,8 +309,16 @@ async function execute(body: any, key: string, requestId: string, origin: string
       runtimeAddressDiagnostics: runtimeAddressDiagnostics("certified_provider_unavailable") }, results: [] }),
     { status: 503, headers: cors(origin) });
   const { data: cached } = await db.from("gridly_geocode_cache").select("response,status,expires_at").eq("cache_key", key).gt("expires_at", new Date().toISOString()).maybeSingle();
-  if (cached) return new Response(JSON.stringify({ ...cached.response, cached: true, requestId,
-    diagnostics: { ...(cached.response?.diagnostics || {}), runtimeAddressDiagnostics: runtimeAddressDiagnostics("fallback_cache", true) } }), { headers: cors(origin) });
+  if (cached) {
+    const governed = applyGovernedRoadOnlyAcceptance(body, Array.isArray(cached.response?.results) ? cached.response.results : []);
+    roadOnlyResidentialRejected = governed.residentialRejected;
+    const response = governed.roadOnly && !governed.results.length
+      ? { ...cached.response, ok: false, status: "no_results", retryAfterSeconds: null, results: [] }
+      : { ...cached.response, results: governed.results };
+    return new Response(JSON.stringify({ ...response, cached: true, requestId,
+      diagnostics: { ...(cached.response?.diagnostics || {}), sourceClassification: governed.results[0]?.sourceClassification || "none",
+        runtimeAddressDiagnostics: runtimeAddressDiagnostics(governed.results.length ? "fallback_cache" : "fallback_cache_no_result", true) } }), { headers: cors(origin) });
+  }
   const { data: slot, error: leaseError } = await db.rpc("gridly_reserve_geocode_provider_slot", { p_namespace: CONFIG.namespace, p_interval_ms: CONFIG.intervalMs });
   if (leaseError) return failure("configuration_error", requestId, null, 503, origin);
   const wait = Math.max(0, new Date(slot).getTime() - Date.now()); if (wait) await new Promise((r) => setTimeout(r, wait));
@@ -323,6 +336,9 @@ async function execute(body: any, key: string, requestId: string, origin: string
   if (upstream.status === 429) { const retry = Math.min(3600, Math.max(1, Number(upstream.headers.get("Retry-After")) || 60)); await db.rpc("gridly_cooldown_geocode_provider", { p_namespace: CONFIG.namespace, p_seconds: retry }); return failure("rate_limited", requestId, retry, 429, origin); }
   if (!upstream.ok) return failure("provider_unavailable", requestId, null, 503, origin);
   const rows = await upstream.json(); let results = (Array.isArray(rows) ? rows : []).slice(0, body.limit).map(canonicalize).filter((x) => Number.isFinite(x.latitude) && Number.isFinite(x.longitude));
+  const governedPrimary = applyGovernedRoadOnlyAcceptance(body, results);
+  results = governedPrimary.results;
+  roadOnlyResidentialRejected = governedPrimary.residentialRejected;
   if (ruralAddressEligible(body)) results = results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted);
   const primaryOutcome = results.length ? "relevant_result" : "confirmed_no_result";
   let texasAddressFoundationOutcome = results.length ? "not_invoked" : "ineligible";

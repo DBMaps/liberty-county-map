@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { lookupLibertyCertifiedAddress } from '../supabase/functions/_shared/liberty-certified-address.mjs';
+import { applyGovernedRoadOnlyAcceptance, governedRoadOnlyRequest } from '../supabase/functions/_shared/governed-road-only-acceptance.mjs';
 
 const root = new URL('../', import.meta.url);
 let packageAccesses = 0;
@@ -15,6 +16,33 @@ const fixtureStorage = {
 };
 const request = (query, overrides = {}) => ({ intent: 'address', query, limit: 5, requestMode: 'explicit_search', ...overrides });
 const lookup = (query, overrides) => lookupLibertyCertifiedAddress(request(query, overrides), { storage: fixtureStorage });
+const candidate = (overrides = {}) => ({ name: 'County Road 677', resultType: 'road', type: 'road', precision: 'road',
+  sourceClassification: 'primary_geocoder', address: { houseNumber: '', road: 'County Road 677' }, ...overrides });
+
+test('road-only acceptance rejects residential promotion from fresh and cached fallback while retaining roads and truthful misses', () => {
+  const roadOnly = request('County Road 677, Dayton, TX');
+  assert.equal(governedRoadOnlyRequest(roadOnly), true);
+  const promoted = candidate({ name: '677 County Road 6681', resultType: 'address', type: 'house', precision: 'address_point',
+    address: { houseNumber: '677', road: 'County Road 6681' } });
+  for (const source of ['fresh provider', 'fallback cache']) {
+    const governed = applyGovernedRoadOnlyAcceptance(roadOnly, [promoted]);
+    assert.deepEqual(governed.results, [], `${source} residential response must not escape acceptance`);
+    assert.equal(governed.residentialRejected, true);
+  }
+  assert.deepEqual(applyGovernedRoadOnlyAcceptance(roadOnly, [candidate()]).results, [candidate()],
+    'a matching road feature remains acceptable');
+  assert.deepEqual(applyGovernedRoadOnlyAcceptance(roadOnly, []).results, [], 'truthful no-result remains acceptable');
+  assert.deepEqual(applyGovernedRoadOnlyAcceptance(roadOnly, [candidate({ address: { houseNumber: '', road: 'County Road 6681' } })]).results, [],
+    'an unrelated numbered road is not promoted as the requested corridor');
+});
+
+test('road-only governance is narrow and preserves numbered-road, exact-address, and business intent', () => {
+  assert.equal(governedRoadOnlyRequest(request('US 90, Dayton, TX')), true);
+  const highway = candidate({ name: 'US 90', address: { houseNumber: '', road: 'US Highway 90' } });
+  assert.deepEqual(applyGovernedRoadOnlyAcceptance(request('US 90, Dayton, TX'), [highway]).results, [highway]);
+  assert.equal(governedRoadOnlyRequest(request('276 County Road 677, Dayton, TX 77535')), false);
+  assert.equal(governedRoadOnlyRequest(request('Dayton Walmart', { intent: 'business_place' })), false);
+});
 
 test('certified Liberty lookup is exact across governed road aliases', async () => {
   for (const alias of ['County Road 677', 'County Rd 677', 'CR 677', 'Co Rd 677']) {
@@ -139,7 +167,12 @@ test('eligible certified requests bypass stale fallback cache and never continue
   assert.ok(cacheLookup < primaryProvider, 'ineligible traffic retains the existing cache and provider path');
   assert.match(execute, /certifiedProviderRejectionReason/);
   assert.match(execute, /runtimeAddressDiagnostics\("certified_provider_unavailable"\)/);
-  assert.match(execute, /runtimeAddressDiagnostics\("fallback_cache", true\)/);
+  assert.match(execute, /runtimeAddressDiagnostics\(governed\.results\.length \? "fallback_cache" : "fallback_cache_no_result", true\)/);
+  assert.ok(execute.indexOf('applyGovernedRoadOnlyAcceptance(body, Array.isArray(cached.response?.results)') > cacheLookup,
+    'cached fallback results pass through the same road-only acceptance boundary');
+  assert.ok(execute.indexOf('applyGovernedRoadOnlyAcceptance(body, results)') > primaryProvider,
+    'fresh primary results pass through the road-only acceptance boundary');
+  assert.match(execute, /residential_promotion_rejected/);
 });
 
 test('browser exposes an async, console-only LP105.2 runtime certification helper', async () => {
@@ -155,6 +188,7 @@ test('browser exposes an async, console-only LP105.2 runtime certification helpe
     'certificateValidated', 'packageOpened', 'exactLookupExecuted', 'fallbackExecuted', 'certificateUrl',
     'certificateHttpStatus', 'certificateFetchCompleted', 'certificateFetchReason', 'storageBucket',
     'certificateObjectPath', 'packageObjectPath', 'storageStatusCategory']) assert.match(helper[0], new RegExp(field));
+  for (const field of ['roadOnlyRequest', 'roadOnlyResidentialRejected', 'fallbackAcceptanceOutcome']) assert.match(helper[0], new RegExp(field));
   assert.doesNotMatch(helper[0], /fetch\s*\(/, 'helper must retain the Gridly client boundary');
   assert.doesNotMatch(helper[0], /data\/generated\/lp104|\.jsonl\.gz|lp1045-txgio-address-runtime/i,
     'browser must not load LP104 packages directly');
@@ -166,6 +200,7 @@ test('browser client exposes only the bounded LP105.5 runtime diagnostic contrac
   assert.match(client, /completedStages\.slice\(0, 16\)/);
   assert.match(client, /storageBucket:[\s\S]*slice\(0, 63\)/);
   assert.match(client, /certificateObjectPath:[\s\S]*slice\(0, 512\)/);
+  assert.match(client, /roadOnlyResidentialRejected: runtime\.roadOnlyResidentialRejected === true/);
   assert.doesNotMatch(client, /runtime\.query|runtime\.baseUrl|runtime\.packageUrl/);
   const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
   assert.match(app, /window\.gridlyLp1055RuntimeAddressCertification = window\.gridlyLp1052RuntimeAddressCertification/);
