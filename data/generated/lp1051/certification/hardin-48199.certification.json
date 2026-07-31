@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hardin County",
+  "countyFips": "48199",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1011612,
+  "sha256": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df",
+  "indexedAddressCount": 32375,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0039000000006126356
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3992,
+    "variantsPassed": 3992
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 119.98199999999997,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "San Jacinto County",
+  "countyFips": "48407",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 803304,
+  "sha256": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955",
+  "indexedAddressCount": 22431,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0033000000003085006
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3502,
+    "variantsPassed": 3502
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 97.07790000000023,
+  "certificationStatus": "PASS",
+  "failures": []
+}

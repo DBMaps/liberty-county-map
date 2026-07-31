@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Polk County",
+  "countyFips": "48373",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1231358,
+  "sha256": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865",
+  "indexedAddressCount": 34253,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003400000001420267
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3456,
+    "variantsPassed": 3456
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 130.32560000000012,
+  "certificationStatus": "PASS",
+  "failures": []
+}

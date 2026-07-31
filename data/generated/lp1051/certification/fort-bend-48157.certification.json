@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Fort Bend County",
+  "countyFips": "48157",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 12845351,
+  "sha256": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52",
+  "indexedAddressCount": 334812,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0036000000000058208
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3108,
+    "variantsPassed": 3108
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 1532.6091999999999,
+  "certificationStatus": "PASS",
+  "failures": []
+}

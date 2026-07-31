@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Montgomery County",
+  "countyFips": "48339",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 10057950,
+  "sha256": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168",
+  "indexedAddressCount": 329090,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999999988940544
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3136,
+    "variantsPassed": 3136
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 1644.0692999999992,
+  "certificationStatus": "PASS",
+  "failures": []
+}

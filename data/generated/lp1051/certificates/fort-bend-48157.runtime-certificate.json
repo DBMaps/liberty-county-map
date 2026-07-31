@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "fort-bend-tx",
+  "county": "Fort Bend County",
+  "fips": "48157",
+  "artifact": "fort-bend-48157.addresses.jsonl.gz",
+  "sizeBytes": 12845351,
+  "sha256": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

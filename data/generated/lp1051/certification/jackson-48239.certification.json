@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jackson County",
+  "countyFips": "48239",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 321123,
+  "sha256": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c",
+  "indexedAddressCount": 10036,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004000000000814907
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 8344,
+    "variantsPassed": 8344
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 40.30709999999817,
+  "certificationStatus": "PASS",
+  "failures": []
+}

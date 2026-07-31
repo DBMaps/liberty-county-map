@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lavaca County",
+  "countyFips": "48285",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 436394,
+  "sha256": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b",
+  "indexedAddressCount": 14020,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004199999999400461
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 7704,
+    "variantsPassed": 7704
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 51.67459999999846,
+  "certificationStatus": "PASS",
+  "failures": []
+}

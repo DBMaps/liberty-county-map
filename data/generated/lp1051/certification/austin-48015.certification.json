@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Austin County",
+  "countyFips": "48015",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 552056,
+  "sha256": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17",
+  "indexedAddressCount": 16833,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004699999999957072
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3572,
+    "variantsPassed": 3572
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 99.66050000000018,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Galveston County",
+  "countyFips": "48167",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 4226191,
+  "sha256": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6",
+  "indexedAddressCount": 146413,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0027000000000043656
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3000,
+    "variantsPassed": 3000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 581.9497000000001,
+  "certificationStatus": "PASS",
+  "failures": []
+}

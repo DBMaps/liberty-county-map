@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Tyler County",
+  "countyFips": "48457",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 492755,
+  "sha256": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b",
+  "indexedAddressCount": 15065,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005700000001525041
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 6876,
+    "variantsPassed": 6876
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 61.09059999999954,
+  "certificationStatus": "PASS",
+  "failures": []
+}

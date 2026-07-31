@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "san-jacinto-tx",
+  "county": "San Jacinto County",
+  "fips": "48407",
+  "artifact": "san-jacinto-48407.addresses.jsonl.gz",
+  "sizeBytes": 803304,
+  "sha256": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

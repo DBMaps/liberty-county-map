@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Walker County",
+  "countyFips": "48471",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 984566,
+  "sha256": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1",
+  "indexedAddressCount": 30983,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 2467,
+    "failed": 533,
+    "p95LookupMs": 0.005699999997887062
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3560,
+    "variantsPassed": 2867
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 278.34059999999954,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "exact address sample failed",
+    "canonical road alias failed"
+  ]
+}

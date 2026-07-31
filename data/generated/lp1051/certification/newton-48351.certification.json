@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Newton County",
+  "countyFips": "48351",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 349580,
+  "sha256": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f",
+  "indexedAddressCount": 10488,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003399999997782288
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 8068,
+    "variantsPassed": 8068
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 42.268299999999726,
+  "certificationStatus": "PASS",
+  "failures": []
+}

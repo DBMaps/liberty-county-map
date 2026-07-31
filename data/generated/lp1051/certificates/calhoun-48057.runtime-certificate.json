@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "calhoun-tx",
+  "county": "Calhoun County",
+  "fips": "48057",
+  "artifact": "calhoun-48057.addresses.jsonl.gz",
+  "sizeBytes": 443130,
+  "sha256": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

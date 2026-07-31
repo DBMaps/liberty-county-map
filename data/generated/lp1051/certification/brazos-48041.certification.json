@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Brazos County",
+  "countyFips": "48041",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 3078907,
+  "sha256": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2",
+  "indexedAddressCount": 112799,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000000002080924
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3496,
+    "variantsPassed": 3496
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 518.9661000000001,
+  "certificationStatus": "PASS",
+  "failures": []
+}

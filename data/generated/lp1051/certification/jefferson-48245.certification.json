@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jefferson County",
+  "countyFips": "48245",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2847538,
+  "sha256": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e",
+  "indexedAddressCount": 96800,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004699999997683335
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3230,
+    "variantsPassed": 3230
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 409.7820000000029,
+  "certificationStatus": "PASS",
+  "failures": []
+}

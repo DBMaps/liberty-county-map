@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Harris County",
+  "countyFips": "48201",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 57731771,
+  "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b",
+  "indexedAddressCount": 1452427,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0039000000033411197
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3096,
+    "variantsPassed": 3096
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 8583.3569,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "runtime load exceeded 5000ms"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Brazoria County",
+  "countyFips": "48039",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 5695185,
+  "sha256": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7",
+  "indexedAddressCount": 161194,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 2999,
+    "failed": 1,
+    "p95LookupMs": 0.0028999999999541615
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 7242,
+    "variantsPassed": 7239
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 837.5184999999999,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "exact address sample failed",
+    "canonical road alias failed"
+  ]
+}
