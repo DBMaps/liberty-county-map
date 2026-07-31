@@ -50,11 +50,28 @@ test('missing or invalid certificate fails closed and browser retains provider b
   assert.equal(unavailable.outcome, 'package_unavailable');
   assert.equal(unavailable.packageAccessed, false);
   const invalidFetch = async (url) => String(url).endsWith('.json') ? Response.json({ countyId: 'liberty-tx' }) : localFetch(url);
-  assert.equal((await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { baseUrl: 'https://gridly.test', fetch: invalidFetch })).outcome, 'package_unavailable');
+  const invalid = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { baseUrl: 'https://gridly.test', fetch: invalidFetch });
+  assert.equal(invalid.outcome, 'package_unavailable');
+  assert.equal(invalid.packageAccessed, false, 'certificate rejection occurs before the gzip package is opened');
   const client = await readFile(new URL('../js/gridly-geocoding-client.js', import.meta.url), 'utf8');
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(client, /functions\/v1\/gridly-geocode/);
   assert.doesNotMatch(html, /lp1045-txgio-address-runtime\.js/);
+});
+
+test('eligible certified requests bypass stale fallback cache and never continue after provider failure', async () => {
+  const edge = await readFile(new URL('../supabase/functions/gridly-geocode/index.ts', import.meta.url), 'utf8');
+  const execute = edge.slice(edge.indexOf('async function execute('), edge.indexOf('\nDeno.serve('));
+  const certifiedLookup = execute.indexOf('lookupLibertyCertifiedAddress(');
+  const cacheLookup = execute.indexOf('gridly_geocode_cache');
+  const unavailableGuard = execute.indexOf('if (certified.attempted)');
+  const primaryProvider = execute.indexOf('gridly_reserve_geocode_provider_slot');
+  assert.ok(certifiedLookup >= 0 && certifiedLookup < cacheLookup,
+    'the certified provider executes before a response produced by an older fallback can be returned');
+  assert.ok(unavailableGuard > certifiedLookup && unavailableGuard < cacheLookup,
+    'an eligible certified request fails closed before cache or fallback when its package is unavailable');
+  assert.ok(cacheLookup < primaryProvider, 'ineligible traffic retains the existing cache and provider path');
+  assert.match(execute, /certifiedProviderRejectionReason/);
 });
 
 test('browser exposes an async, console-only LP105.2 runtime certification helper', async () => {

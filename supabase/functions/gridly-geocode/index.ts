@@ -266,8 +266,6 @@ async function resolveRuralFallback(body: any) {
 }
 
 async function execute(body: any, key: string, requestId: string, origin: string, db: any): Promise<Response> {
-  const { data: cached } = await db.from("gridly_geocode_cache").select("response,status,expires_at").eq("cache_key", key).gt("expires_at", new Date().toISOString()).maybeSingle();
-  if (cached) return new Response(JSON.stringify({ ...cached.response, cached: true, requestId }), { headers: cors(origin) });
   const certified = await lookupLibertyCertifiedAddress(body, { baseUrl: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BASE_URL") || "https://gridly.app" });
   if (certified.results.length) {
     const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted).slice(0, body.limit);
@@ -276,6 +274,12 @@ async function execute(body: any, key: string, requestId: string, origin: string
   }
   if (certified.outcome === "truthful_no_result") return new Response(JSON.stringify({ ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId,
     diagnostics: { certifiedProviderOutcome: "truthful_no_result", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true, sourceClassification: "none" }, results: [] }), { headers: cors(origin) });
+  if (certified.attempted) return new Response(JSON.stringify({ ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId,
+    diagnostics: { certifiedProviderOutcome: certified.outcome, certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs,
+      packageAccessed: certified.packageAccessed, certifiedProviderRejectionReason: certified.rejectionReason || "package_unavailable", sourceClassification: "none" }, results: [] }),
+    { status: 503, headers: cors(origin) });
+  const { data: cached } = await db.from("gridly_geocode_cache").select("response,status,expires_at").eq("cache_key", key).gt("expires_at", new Date().toISOString()).maybeSingle();
+  if (cached) return new Response(JSON.stringify({ ...cached.response, cached: true, requestId }), { headers: cors(origin) });
   const { data: slot, error: leaseError } = await db.rpc("gridly_reserve_geocode_provider_slot", { p_namespace: CONFIG.namespace, p_interval_ms: CONFIG.intervalMs });
   if (leaseError) return failure("configuration_error", requestId, null, 503, origin);
   const wait = Math.max(0, new Date(slot).getTime() - Date.now()); if (wait) await new Promise((r) => setTimeout(r, wait));
