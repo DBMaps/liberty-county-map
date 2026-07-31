@@ -27,8 +27,11 @@ test('certified Liberty lookup is exact across governed road aliases', async () 
   }
 });
 
-test('nearby, road-only, and conflicting requests fail truthfully without substitution', async () => {
-  const missing = await lookup('274 County Road 677, Dayton, TX 77535');
+test('source-conflict, proven-absent, road-only, and conflicting requests fail truthfully without substitution', async () => {
+  const sourceConflict = await lookup('274 County Road 677, Dayton, TX 77535');
+  assert.equal(sourceConflict.outcome, 'truthful_no_result');
+  assert.deepEqual(sourceConflict.results, []);
+  const missing = await lookup('275 County Road 677, Dayton, TX 77535');
   assert.equal(missing.outcome, 'truthful_no_result');
   assert.deepEqual(missing.results, []);
   assert.equal((await lookup('County Road 677, Dayton, TX')).attempted, false);

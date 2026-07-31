@@ -53,13 +53,13 @@ test('reports zero exact matches without accepting a same-road different house',
 
 test('certifies Liberty County Road 677 as strict exact-address lookup', async () => {
   const [absent, positive] = certification.cases;
-  assert.equal(certification.matchingRoadRecordCount, 51);
+  assert.equal(certification.matchingRoadRecordCount, 23);
   assert.deepEqual(certification.observedNearbyHouseNumbers, ['238', '240', '276', '288']);
 
-  // Model all 51 same-road package records while keeping the supplied nearby-number evidence explicit.
+  // Model all 23 same-road package records while keeping the supplied nearby-number evidence explicit.
   const houseNumbers = [...certification.observedNearbyHouseNumbers];
   for (let number = 300; houseNumbers.length < certification.matchingRoadRecordCount; number += 2) houseNumbers.push(String(number));
-  assert.ok(!houseNumbers.includes('274'), 'the absent certification number is not manufactured or interpolated');
+  assert.ok(!houseNumbers.includes('275'), 'the absent certification number is not manufactured or interpolated');
   const packageRecords = houseNumbers.map((houseNumber, index) => ({
     i: `liberty-cr677-${String(index).padStart(3, '0')}`,
     h: houseNumber,
@@ -73,7 +73,7 @@ test('certifies Liberty County Road 677 as strict exact-address lookup', async (
   const noResult = await findExactMatches(path, absent.query);
   assert.equal(noResult.outcome, absent.expected);
   assert.deepEqual(noResult.matches, [], 'canonical road agreement alone is insufficient');
-  assert.ok(!noResult.matches.some(record => absent.mustNotReturnHouseNumbers.includes(record.h)), '276 is not returned for 274');
+  assert.ok(!noResult.matches.some(record => absent.mustNotReturnHouseNumbers.includes(record.h)), '276 is not returned for 275');
   assert.equal(absent.allowNearbyNumberFallback, false);
   assert.equal(absent.allowInterpolation, false);
 

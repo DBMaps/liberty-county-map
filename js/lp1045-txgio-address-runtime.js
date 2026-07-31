@@ -128,7 +128,7 @@
   }
   async function certification(options = {}) {
     const startupPackageLoads = 0;
-    const cases = options.cases || [["276 County Road 677, Dayton, TX 77535", "exact_match"], ["274 County Road 677, Dayton, TX 77535", "truthful_no_result"]];
+    const cases = options.cases || [["276 County Road 677, Dayton, TX 77535", "exact_match"], ["275 County Road 677, Dayton, TX 77535", "truthful_no_result"]];
     const results = [];
     for (const [query, expected, countyId] of cases) { const result = await search({ query, countyId }); results.push({ query, expected, actual: result.outcome, passed: result.outcome === expected }); }
     const loaded = evidence.filter((item) => item.event === "package_loaded").map((item) => item.countyId);
