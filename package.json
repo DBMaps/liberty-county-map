@@ -75,6 +75,8 @@
     "test:lp1044:txgio": "node --test tests/lp1044-txgio-address-builder.test.mjs",
     "query:lp1044:txgio:liberty": "node tools/lp104/query-txgio-address-package.mjs",
     "test:lp1044:txgio:query": "node --test tests/lp1044-txgio-address-query.test.mjs",
-    "test:lp1045": "node --test tests/lp1045-txgio-address-runtime.test.mjs"
+    "test:lp1045": "node --test tests/lp1045-txgio-address-runtime.test.mjs",
+    "certify:lp1046": "node tools/lp104/certify-texas-address-package.mjs",
+    "test:lp1046": "node --test tests/lp1046-texas-address-certification.test.mjs"
   }
 }
