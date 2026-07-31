@@ -56,7 +56,7 @@ let atomicSequence = 0;
 export async function atomicJson(path, value) { const temp = `${path}.${process.pid}.${atomicSequence += 1}.tmp`; await writeFile(temp, `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' }); await rename(temp, path); }
 
 export function aggregateSql(layer, fips) {
-  return `SELECT COUNT(*) AS raw_count, SUM(CASE WHEN geometry IS NOT NULL THEN 1 ELSE 0 END) AS valid_coordinate_count, SUM(CASE WHEN Add_Number IS NOT NULL AND TRIM(CAST(Add_Number AS TEXT)) <> '' THEN 1 ELSE 0 END) AS valid_house_count, SUM(CASE WHEN St_Name IS NOT NULL AND TRIM(St_Name) <> '' THEN 1 ELSE 0 END) AS valid_street_count, SUM(CASE WHEN geometry IS NOT NULL AND Add_Number IS NOT NULL AND TRIM(CAST(Add_Number AS TEXT)) <> '' AND St_Name IS NOT NULL AND TRIM(St_Name) <> '' AND Full_Addr IS NOT NULL AND TRIM(Full_Addr) <> '' THEN 1 ELSE 0 END) AS usable_count FROM "${layer.replaceAll('"', '""')}" WHERE FIPS = ${Number(fips)}`;
+  return `SELECT COUNT(*) AS raw_count, SUM(CASE WHEN "Shape" IS NOT NULL THEN 1 ELSE 0 END) AS valid_coordinate_count, SUM(CASE WHEN Add_Number IS NOT NULL AND TRIM(CAST(Add_Number AS TEXT)) <> '' THEN 1 ELSE 0 END) AS valid_house_count, SUM(CASE WHEN St_Name IS NOT NULL AND TRIM(St_Name) <> '' THEN 1 ELSE 0 END) AS valid_street_count, SUM(CASE WHEN "Shape" IS NOT NULL AND Add_Number IS NOT NULL AND TRIM(CAST(Add_Number AS TEXT)) <> '' AND St_Name IS NOT NULL AND TRIM(St_Name) <> '' AND Full_Addr IS NOT NULL AND TRIM(Full_Addr) <> '' THEN 1 ELSE 0 END) AS usable_count FROM "${layer.replaceAll('"', '""')}" WHERE FIPS = ${Number(fips)}`;
 }
 
 async function executable(gdal) {
