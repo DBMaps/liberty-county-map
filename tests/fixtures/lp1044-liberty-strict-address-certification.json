@@ -1,12 +1,12 @@
 {
   "package": "liberty-48291.addresses.jsonl.gz",
   "road": "County Road 677",
-  "matchingRoadRecordCount": 51,
+  "matchingRoadRecordCount": 23,
   "observedNearbyHouseNumbers": ["238", "240", "276", "288"],
   "cases": [
     {
       "name": "absent house number",
-      "query": "274 County Road 677, Dayton, TX 77535",
+      "query": "275 County Road 677, Dayton, TX 77535",
       "expected": "truthful_no_result",
       "mustNotReturnHouseNumbers": ["276"],
       "allowNearbyNumberFallback": false,

@@ -38,7 +38,7 @@ const exact = await runtime.search({ query: '276 County Rd 677, Dayton, TX 77535
 assert.equal(exact.outcome, 'exact_match');
 assert.equal(exact.results[0].address.house_number, '276');
 assert.equal(exact.results[0].gridlyResolution.precision, 'exact_address_point');
-const absent = await runtime.search({ query: '274 CR 677, Dayton, TX 77535' });
+const absent = await runtime.search({ query: '275 CR 677, Dayton, TX 77535' });
 assert.equal(absent.outcome, 'truthful_no_result');
 assert.equal(absent.results.length, 0, 'nearby or other-road records are never substituted');
 assert.equal(packageFetchCount, 1, 'Liberty package is loaded once and reused');
