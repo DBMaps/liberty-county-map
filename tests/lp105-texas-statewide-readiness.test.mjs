@@ -4,13 +4,20 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
-  atomicJson, buildLedger, buildPilotReport, buildSummary, countyResult, estimateSizes,
+  aggregateSql, atomicJson, buildLedger, buildPilotReport, buildSummary, countyResult, estimateSizes,
   licenseIsApproved, parseArguments, privacySafeSourceIdentity, run, selectCounties
 } from '../tools/lp105/inventory-txgio-statewide.mjs';
 
 const manifest = JSON.parse(await readFile('data/lp104/texas-counties.json'));
 const unresolved = JSON.parse(await readFile('data/lp105/txgio-license-decision.json'));
 const source = JSON.parse(await readFile('data/lp104/txgio-2026-address-source.json'));
+
+test('aggregate inventory uses the TxGIO FileGDB Shape geometry column', () => {
+  const sql = aggregateSql(source.layer, '48291');
+  assert.match(sql, /CASE WHEN "Shape" IS NOT NULL/);
+  assert.doesNotMatch(sql, /\bgeometry\b/i);
+  assert.match(sql, /WHERE FIPS = 48291$/);
+});
 
 test('canonical official inventory is complete and contains 254 unique Texas FIPS codes', () => {
   assert.equal(manifest.count, 254); assert.equal(manifest.counties.length, 254);
