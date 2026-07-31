@@ -85,6 +85,7 @@
     "inventory:lp105:txgio:gridly": "node tools/lp105/inventory-txgio-statewide.mjs --gridly-counties",
     "inventory:lp105:txgio:texas": "node tools/lp105/inventory-txgio-statewide.mjs --all-texas",
     "report:lp105": "node tools/lp105/inventory-txgio-statewide.mjs --all-texas --resume",
-    "test:lp105": "node --test tests/lp105-texas-statewide-readiness.test.mjs"
+    "test:lp105": "node --test tests/lp105-texas-statewide-readiness.test.mjs",
+    "test:lp1052": "node --test tests/lp1052-runtime-address-consumption.test.mjs"
   }
 }

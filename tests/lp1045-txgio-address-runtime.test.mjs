@@ -52,8 +52,8 @@ assert.equal(certification.passed, true);
 assert.equal(Array.from(certification.cases, (item) => item.actual).join(','), 'exact_match,truthful_no_result');
 
 const app = await readFile('js/app.js', 'utf8');
-assert.match(app, /intent\.type === GRIDLY_DESTINATION_INTENTS\.ADDRESS && typeof window\.gridlyTxgioAddressRuntime\?\.search/);
-assert.match(app, /diagnostics\.txgioRuntime\?\.outcome === "exact_match" \? \[\] : queryVariants/);
+assert.doesNotMatch(app, /window\.gridlyTxgioAddressRuntime\?\.search/, 'LP105.2 removes direct browser package consumption');
+assert.match(app, /for \(const \[variantIndex, variant\] of queryVariants\.entries\(\)\)/, 'address requests continue through the governed provider boundary');
 
 const productionManifest = JSON.parse(await readFile('data/generated/lp104/txgio-addresses/runtime-manifest.json', 'utf8'));
 assert.deepEqual(productionManifest.packages[0], {
