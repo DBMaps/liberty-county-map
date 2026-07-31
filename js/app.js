@@ -87417,6 +87417,92 @@ async function geocodeAddressToCoordinates(rawAddress = "") {
   return normalizeCoordinatePair(first?.latitude, first?.longitude);
 }
 
+// Console-only production-path check for the LP105.2 address contract. This deliberately
+// goes through the same browser client and Gridly Edge Function as destination search.
+window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052RuntimeAddressCertification() {
+  const client = window.gridlyGeocodingClient;
+  const definitions = [
+    ["exact", "276 County Road 677, Dayton, TX 77535", "exact_match", "address"],
+    ["missing_nearby_number", "274 County Road 677, Dayton, TX 77535", "truthful_no_result", "address"],
+    ["alias_county_rd", "276 County Rd 677, Dayton, TX 77535", "same_certified_address_point", "address"],
+    ["alias_cr", "276 CR 677, Dayton, TX 77535", "same_certified_address_point", "address"],
+    ["alias_co_rd", "276 Co Rd 677, Dayton, TX 77535", "same_certified_address_point", "address"],
+    ["road_only", "County Road 677, Dayton, TX", "not_exact_residential_result", "address"],
+    ["business_control", "Dayton Walmart", "business_place_result", "business_place"]
+  ];
+  if (typeof client?.search !== "function") return {
+    available: false, milestone: "LP105.2", providerBoundaryPreserved: false,
+    exactHouseNumberRequired: false, canonicalRoadRequired: false,
+    nearbyNumberSubstitutionAbsent: false, roadOnlyPromotionAbsent: false,
+    businessPathPreserved: false, cases: definitions.map(([caseName, query, expectedOutcome]) => ({
+      caseName, query, expectedOutcome, observedOutcome: "client_unavailable", passed: false,
+      rejectionReason: "gridly_geocoding_client_unavailable"
+    })), passed: false, safeToMerge: false
+  };
+
+  const canonicalRoad = (value) => window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayIdentity?.(value)
+    || String(value || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\b(?:county road|county rd|co rd|cr)\s*(\d+[a-z]?)\b/g, "cr $1").replace(/\s+/g, " ").trim();
+  const cases = [];
+  let exactPoint = null;
+  for (const [caseName, query, expectedOutcome, intent] of definitions) {
+    const started = performance.now();
+    const evidenceStart = client.evidence?.().length || 0;
+    let response;
+    try {
+      response = await client.search({ intent, query, limit: 5, requestMode: "explicit_search" });
+    } catch (_error) {
+      response = { ok: false, status: "provider_unavailable", results: [] };
+    }
+    const transport = (client.evidence?.().slice(evidenceStart).at(-1)) || {};
+    const results = Array.isArray(response?.results) ? response.results : [];
+    const first = results[0] || null;
+    const houseNumberAgreement = first ? String(first.address?.houseNumber || "") === (caseName === "missing_nearby_number" ? "274" : "276") : null;
+    const canonicalRoadAgreement = first ? canonicalRoad(first.address?.road) === "cr 677" : null;
+    const residential = results.some((result) => Boolean(result.address?.houseNumber)
+      || result.precision === "address_point" || result.sourceClassification === "government_address_point");
+    const point = first && Number.isFinite(Number(first.latitude)) && Number.isFinite(Number(first.longitude))
+      ? `${Number(first.latitude).toFixed(7)},${Number(first.longitude).toFixed(7)}` : null;
+    if (caseName === "exact" && response.ok && houseNumberAgreement && canonicalRoadAgreement) exactPoint = point;
+    let observedOutcome = response?.status || "provider_unavailable";
+    let passed = false;
+    if (caseName === "exact") { observedOutcome = response.ok && houseNumberAgreement && canonicalRoadAgreement ? "exact_match" : observedOutcome; passed = observedOutcome === expectedOutcome; }
+    else if (caseName === "missing_nearby_number") {
+      const returned276 = results.some((result) => String(result.address?.houseNumber || "") === "276");
+      observedOutcome = response?.status === "no_results" && !returned276 ? "truthful_no_result" : (returned276 ? "nearby_number_substitution" : observedOutcome);
+      passed = observedOutcome === expectedOutcome;
+    } else if (caseName.startsWith("alias_")) {
+      observedOutcome = response.ok && point && point === exactPoint && houseNumberAgreement && canonicalRoadAgreement ? "same_certified_address_point" : observedOutcome;
+      passed = observedOutcome === expectedOutcome;
+    } else if (caseName === "road_only") {
+      observedOutcome = !residential ? "not_exact_residential_result" : "exact_residential_result";
+      passed = !residential;
+    } else {
+      const businessResult = response.ok && results.length > 0 && !results.some((result) => result.sourceClassification === "government_address_point");
+      observedOutcome = businessResult ? "business_place_result" : observedOutcome;
+      passed = businessResult;
+    }
+    const boundaryUsed = transport.providerBoundaryUsed === true;
+    const casePassed = passed && boundaryUsed;
+    cases.push({ caseName, query, expectedOutcome, observedOutcome, passed: casePassed,
+      normalizedQuery: String(query).toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim(),
+      observedProvider: transport.functionSlug || "gridly-geocode", observedSource: first?.sourceClassification || "none",
+      exactHouseNumberAgreement: houseNumberAgreement, canonicalRoadAgreement,
+      returnedAddressLabel: first?.displayName || first?.formattedAddress || "", truthfulNoResult: response?.status === "no_results",
+      elapsedMs: Math.round((performance.now() - started) * 10) / 10, rejectionReason: casePassed ? "" : (!boundaryUsed ? (transport.failureCode || "gridly_edge_function_unreachable") : (response?.status || "unexpected_result")),
+      providerBoundaryPreserved: boundaryUsed });
+  }
+  const providerBoundaryPreserved = cases.every((entry) => entry.providerBoundaryPreserved);
+  const exactHouseNumberRequired = cases.filter((entry) => ["exact", "missing_nearby_number", "alias_county_rd", "alias_cr", "alias_co_rd"].includes(entry.caseName)).every((entry) => entry.passed);
+  const canonicalRoadRequired = cases.filter((entry) => entry.caseName === "exact" || entry.caseName.startsWith("alias_")).every((entry) => entry.canonicalRoadAgreement === true && entry.passed);
+  const nearbyNumberSubstitutionAbsent = cases.find((entry) => entry.caseName === "missing_nearby_number")?.passed === true;
+  const roadOnlyPromotionAbsent = cases.find((entry) => entry.caseName === "road_only")?.passed === true;
+  const businessPathPreserved = cases.find((entry) => entry.caseName === "business_control")?.passed === true;
+  const passed = providerBoundaryPreserved && exactHouseNumberRequired && canonicalRoadRequired && nearbyNumberSubstitutionAbsent && roadOnlyPromotionAbsent && businessPathPreserved && cases.every((entry) => entry.passed);
+  return { available: true, milestone: "LP105.2", providerBoundaryPreserved, exactHouseNumberRequired,
+    canonicalRoadRequired, nearbyNumberSubstitutionAbsent, roadOnlyPromotionAbsent, businessPathPreserved,
+    cases, passed, safeToMerge: passed };
+};
+
 function lookupLocalPlaceCoordinates(...parts) {
   const candidates = parts
     .map((part) => String(part || "").trim().toLowerCase())
