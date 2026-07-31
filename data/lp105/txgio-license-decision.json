@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly-lp105-txgio-license-decision-v1",
+  "sourceName": "TxGIO 2026 Statewide Address Points",
+  "sourceOwner": "Texas Geographic Information Office / applicable contributing data owners",
+  "sourcePublicDownloadAvailable": true,
+  "redistributionApproved": null,
+  "derivativePackagesApproved": null,
+  "publicBrowserDeliveryApproved": null,
+  "residentialAddressDistributionApproved": null,
+  "attributionTextApproved": null,
+  "retentionTermsApproved": null,
+  "approvalEvidenceReference": null,
+  "reviewedBy": null,
+  "reviewedAt": null,
+  "productionEligible": false,
+  "unresolvedQuestions": ["redistribution", "derivative packages", "browser delivery", "residential addresses", "attribution", "retention and removal"],
+  "status": "UNRESOLVED_FAIL_CLOSED"
+}

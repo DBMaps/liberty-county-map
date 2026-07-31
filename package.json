@@ -78,6 +78,11 @@
     "test:lp1045": "node --test tests/lp1045-txgio-address-runtime.test.mjs",
     "certify:lp1046": "node tools/lp104/certify-texas-address-package.mjs",
     "test:lp1046": "node --test tests/lp1046-texas-address-certification.test.mjs",
-    "test:lp1047": "node --test tests/lp1047-multi-county-runtime-activation.test.mjs"
+    "test:lp1047": "node --test tests/lp1047-multi-county-runtime-activation.test.mjs",
+    "inventory:lp105:txgio:county": "node tools/lp105/inventory-txgio-statewide.mjs --fips 48291",
+    "inventory:lp105:txgio:gridly": "node tools/lp105/inventory-txgio-statewide.mjs --gridly-counties",
+    "inventory:lp105:txgio:texas": "node tools/lp105/inventory-txgio-statewide.mjs --all-texas",
+    "report:lp105": "node tools/lp105/inventory-txgio-statewide.mjs --all-texas --resume",
+    "test:lp105": "node --test tests/lp105-texas-statewide-readiness.test.mjs"
   }
 }
