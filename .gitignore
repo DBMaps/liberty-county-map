@@ -17,6 +17,7 @@ data/generated/lp104/txgio-addresses/
 data/generated/lp104/txgio-addresses/*
 !data/generated/lp104/txgio-addresses/runtime-manifest.json
 !data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json
+!data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz
 
 # Capacitor generated web output; CI recreates this from source web files.
 /www/
