@@ -100,7 +100,10 @@
         certificateUrl: null,
         certificateHttpStatus: null,
         certificateFetchCompleted: runtime.certificateFetchCompleted === true,
-        certificateFetchReason: String(runtime.certificateFetchReason || "not_requested")
+        certificateFetchReason: String(runtime.certificateFetchReason || "not_requested"),
+        roadOnlyRequest: runtime.roadOnlyRequest === true,
+        roadOnlyResidentialRejected: runtime.roadOnlyResidentialRejected === true,
+        fallbackAcceptanceOutcome: String(runtime.fallbackAcceptanceOutcome || "not_applicable").slice(0, 48)
       });
     }
     if (diagnosticRequest && Array.isArray(value.fallbackCandidateDiagnostics)) {

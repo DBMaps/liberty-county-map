@@ -87509,6 +87509,9 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
       certificateHttpStatus: runtimeDiagnostic?.certificateHttpStatus ?? null,
       certificateFetchCompleted: runtimeDiagnostic?.certificateFetchCompleted === true,
       certificateFetchReason: runtimeDiagnostic?.certificateFetchReason || "not_requested",
+      roadOnlyRequest: runtimeDiagnostic?.roadOnlyRequest === true,
+      roadOnlyResidentialRejected: runtimeDiagnostic?.roadOnlyResidentialRejected === true,
+      fallbackAcceptanceOutcome: runtimeDiagnostic?.fallbackAcceptanceOutcome || "not_applicable",
       completedStages: runtimeDiagnostic?.completedStages || [] });
   }
   const providerBoundaryPreserved = cases.every((entry) => entry.providerBoundaryPreserved);
