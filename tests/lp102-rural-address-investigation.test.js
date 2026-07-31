@@ -52,8 +52,17 @@ for (const field of ['houseNumberSafetyPass', 'roadwayNormalizationPass', 'misma
 }
 
 const certificationStart = app.indexOf('window.gridlyLp102VisibleRuralAddressCertification = async function');
-const certificationEnd = app.indexOf('\n\nconst GRIDLY_DESTINATION_SEARCH_BATCH_DEFAULT_QUERIES', certificationStart);
-const certificationSource = app.slice(certificationStart, certificationEnd);
+// Evaluate only the LP102 public certification entry point. Using a later production
+// declaration as the boundary made this fixture depend on unrelated source ordering;
+// when that declaration moved, slice() used -1 and pulled in global exports whose
+// implementations are intentionally absent from this isolated VM.
+const certificationEndMarker = '\n};';
+const certificationEnd = app.indexOf(certificationEndMarker, certificationStart);
+assert.notEqual(certificationStart, -1, 'LP102 certification public entry point must exist');
+assert.notEqual(certificationEnd, -1, 'LP102 certification public entry point must have a closing boundary');
+const certificationSource = app.slice(certificationStart, certificationEnd + certificationEndMarker.length);
+assert.doesNotMatch(certificationSource, /window\.gridlySearchAddress\s*=/,
+  'the isolated LP102 fixture must not evaluate unrelated production search exports');
 const requiredCertificationFields = [
   'available', 'milestone', 'productionBehaviorObserved', 'houseNumberSafetyPass', 'mismatchedCandidateRejected',
   'truthfulNoResultObserved', 'misleadingFallbackAbsent', 'roadwayNormalizationPass', 'candidatePipelineAgreement',
