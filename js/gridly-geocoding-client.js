@@ -80,6 +80,21 @@
       registryOutcome: String(value.registryOutcome || "not_invoked"),
       sourceClassification: String(value.sourceClassification || "none")
     };
+    const runtime = value.runtimeAddressDiagnostics;
+    if (runtime && typeof runtime === "object" && !Array.isArray(runtime)) {
+      diagnostics.runtimeAddressDiagnostics = Object.freeze({
+        version: String(runtime.version || ""),
+        completedStages: Array.isArray(runtime.completedStages) ? runtime.completedStages.slice(0, 16).map(String) : [],
+        lastCompletedStage: runtime.lastCompletedStage == null ? null : String(runtime.lastCompletedStage),
+        failureStage: runtime.failureStage == null ? null : String(runtime.failureStage),
+        responseSource: String(runtime.responseSource || "unknown"),
+        certifiedProviderExecuted: runtime.certifiedProviderExecuted === true,
+        certificateValidated: runtime.certificateValidated === true,
+        packageOpened: runtime.packageOpened === true,
+        exactLookupExecuted: runtime.exactLookupExecuted === true,
+        fallbackExecuted: runtime.fallbackExecuted === true
+      });
+    }
     if (diagnosticRequest && Array.isArray(value.fallbackCandidateDiagnostics)) {
       diagnostics.fallbackCandidateDiagnostics = value.fallbackCandidateDiagnostics.map((entry) => ({ ...entry }));
     }

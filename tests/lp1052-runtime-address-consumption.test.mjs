@@ -53,10 +53,31 @@ test('missing or invalid certificate fails closed and browser retains provider b
   const invalid = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { baseUrl: 'https://gridly.test', fetch: invalidFetch });
   assert.equal(invalid.outcome, 'package_unavailable');
   assert.equal(invalid.packageAccessed, false, 'certificate rejection occurs before the gzip package is opened');
+  assert.equal(invalid.runtimeDiagnostic.lastCompletedStage, 'runtime_certificate_retrieved');
+  assert.equal(invalid.runtimeDiagnostic.failureStage, 'certificate_validated');
+  assert.equal(invalid.runtimeDiagnostic.certificateValidated, false);
+  assert.equal(invalid.runtimeDiagnostic.packageOpened, false);
   const client = await readFile(new URL('../js/gridly-geocoding-client.js', import.meta.url), 'utf8');
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(client, /functions\/v1\/gridly-geocode/);
   assert.doesNotMatch(html, /lp1045-txgio-address-runtime\.js/);
+});
+
+test('runtime diagnostics identify every completed certified lookup stage without request data', async () => {
+  const exact = await lookup('276 County Road 677, Dayton, TX 77535');
+  assert.deepEqual(exact.runtimeDiagnostic.completedStages, [
+    'browser_request_received', 'eligible_for_certified_provider', 'artifact_base_url_selected',
+    'runtime_certificate_requested', 'runtime_certificate_retrieved', 'certificate_validated',
+    'liberty_package_requested', 'liberty_package_retrieved', 'gzip_stream_opened',
+    'exact_lookup_executed', 'exact_match_found'
+  ]);
+  assert.equal(exact.runtimeDiagnostic.lastCompletedStage, 'exact_match_found');
+  assert.equal(exact.runtimeDiagnostic.failureStage, null);
+  assert.equal(exact.runtimeDiagnostic.certifiedProviderExecuted, true);
+  assert.equal(exact.runtimeDiagnostic.certificateValidated, true);
+  assert.equal(exact.runtimeDiagnostic.packageOpened, true);
+  assert.equal(exact.runtimeDiagnostic.exactLookupExecuted, true);
+  assert.doesNotMatch(JSON.stringify(exact.runtimeDiagnostic), /276|County Road|Dayton|77535/);
 });
 
 test('eligible certified requests bypass stale fallback cache and never continue after provider failure', async () => {
@@ -72,6 +93,8 @@ test('eligible certified requests bypass stale fallback cache and never continue
     'an eligible certified request fails closed before cache or fallback when its package is unavailable');
   assert.ok(cacheLookup < primaryProvider, 'ineligible traffic retains the existing cache and provider path');
   assert.match(execute, /certifiedProviderRejectionReason/);
+  assert.match(execute, /runtimeAddressDiagnostics\("certified_provider_unavailable"\)/);
+  assert.match(execute, /runtimeAddressDiagnostics\("fallback_cache", true\)/);
 });
 
 test('browser exposes an async, console-only LP105.2 runtime certification helper', async () => {
@@ -83,7 +106,18 @@ test('browser exposes an async, console-only LP105.2 runtime certification helpe
   }
   assert.match(helper[0], /client\.search\(\{ intent, query, limit: 5, requestMode: "explicit_search" \}\)/);
   assert.match(helper[0], /passed, safeToMerge: passed/);
+  for (const field of ['lastCompletedStage', 'failureStage', 'responseSource', 'certifiedProviderExecuted',
+    'certificateValidated', 'packageOpened', 'exactLookupExecuted', 'fallbackExecuted']) assert.match(helper[0], new RegExp(field));
   assert.doesNotMatch(helper[0], /fetch\s*\(/, 'helper must retain the Gridly client boundary');
   assert.doesNotMatch(helper[0], /data\/generated\/lp104|\.jsonl\.gz|lp1045-txgio-address-runtime/i,
     'browser must not load LP104 packages directly');
+});
+
+test('browser client exposes only the bounded LP105.5 runtime diagnostic contract', async () => {
+  const client = await readFile(new URL('../js/gridly-geocoding-client.js', import.meta.url), 'utf8');
+  assert.match(client, /runtimeAddressDiagnostics/);
+  assert.match(client, /completedStages\.slice\(0, 16\)/);
+  assert.doesNotMatch(client, /runtime\.query|runtime\.baseUrl|runtime\.certificateUrl|runtime\.packageUrl/);
+  const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
+  assert.match(app, /window\.gridlyLp1055RuntimeAddressCertification = window\.gridlyLp1052RuntimeAddressCertification/);
 });

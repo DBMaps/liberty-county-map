@@ -267,19 +267,36 @@ async function resolveRuralFallback(body: any) {
 
 async function execute(body: any, key: string, requestId: string, origin: string, db: any): Promise<Response> {
   const certified = await lookupLibertyCertifiedAddress(body, { baseUrl: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BASE_URL") || "https://gridly.app" });
+  const runtimeAddressDiagnostics = (responseSource: string, fallbackExecuted = false) => {
+    const provider = certified.runtimeDiagnostic || {};
+    const completedStages = [...(provider.completedStages || [])];
+    if (certified.attempted) completedStages.push("returned_from_certified_provider");
+    if (fallbackExecuted) completedStages.push("fell_through_to_fallback");
+    completedStages.push("final_response_source");
+    return { version: "LP105.5", completedStages: completedStages.slice(0, 16),
+      lastCompletedStage: provider.lastCompletedStage || completedStages.at(-1) || null,
+      failureStage: provider.failureStage || null, responseSource,
+      certifiedProviderExecuted: provider.certifiedProviderExecuted === true,
+      certificateValidated: provider.certificateValidated === true, packageOpened: provider.packageOpened === true,
+      exactLookupExecuted: provider.exactLookupExecuted === true, fallbackExecuted };
+  };
   if (certified.results.length) {
     const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted).slice(0, body.limit);
     if (results.length) return new Response(JSON.stringify({ ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId,
-      diagnostics: { certifiedProviderOutcome: "exact_match", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true, sourceClassification: "government_address_point" }, results }), { headers: cors(origin) });
+      diagnostics: { certifiedProviderOutcome: "exact_match", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true,
+        sourceClassification: "government_address_point", runtimeAddressDiagnostics: runtimeAddressDiagnostics("certified_address") }, results }), { headers: cors(origin) });
   }
   if (certified.outcome === "truthful_no_result") return new Response(JSON.stringify({ ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId,
-    diagnostics: { certifiedProviderOutcome: "truthful_no_result", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true, sourceClassification: "none" }, results: [] }), { headers: cors(origin) });
+    diagnostics: { certifiedProviderOutcome: "truthful_no_result", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true,
+      sourceClassification: "none", runtimeAddressDiagnostics: runtimeAddressDiagnostics("certified_truthful_no_result") }, results: [] }), { headers: cors(origin) });
   if (certified.attempted) return new Response(JSON.stringify({ ok: false, status: "provider_unavailable", providerBoundary: "gridly", retryAfterSeconds: null, requestId,
     diagnostics: { certifiedProviderOutcome: certified.outcome, certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs,
-      packageAccessed: certified.packageAccessed, certifiedProviderRejectionReason: certified.rejectionReason || "package_unavailable", sourceClassification: "none" }, results: [] }),
+      packageAccessed: certified.packageAccessed, certifiedProviderRejectionReason: certified.rejectionReason || "package_unavailable", sourceClassification: "none",
+      runtimeAddressDiagnostics: runtimeAddressDiagnostics("certified_provider_unavailable") }, results: [] }),
     { status: 503, headers: cors(origin) });
   const { data: cached } = await db.from("gridly_geocode_cache").select("response,status,expires_at").eq("cache_key", key).gt("expires_at", new Date().toISOString()).maybeSingle();
-  if (cached) return new Response(JSON.stringify({ ...cached.response, cached: true, requestId }), { headers: cors(origin) });
+  if (cached) return new Response(JSON.stringify({ ...cached.response, cached: true, requestId,
+    diagnostics: { ...(cached.response?.diagnostics || {}), runtimeAddressDiagnostics: runtimeAddressDiagnostics("fallback_cache", true) } }), { headers: cors(origin) });
   const { data: slot, error: leaseError } = await db.rpc("gridly_reserve_geocode_provider_slot", { p_namespace: CONFIG.namespace, p_interval_ms: CONFIG.intervalMs });
   if (leaseError) return failure("configuration_error", requestId, null, 503, origin);
   const wait = Math.max(0, new Date(slot).getTime() - Date.now()); if (wait) await new Promise((r) => setTimeout(r, wait));
@@ -328,7 +345,8 @@ async function execute(body: any, key: string, requestId: string, origin: string
         houseNumberAgreement: entry.houseNumberAgreement, roadIdentityAgreement: entry.roadIdentityAgreement,
         countyAgreement: entry.countyAgreement, stateAgreement: entry.stateAgreement, postalCodeAgreement: entry.postalCodeAgreement,
         precision: entry.precision, routePreviewEligible: false })) } : {}),
-    sourceClassification: results.length ? results[0].sourceClassification : "none" };
+    sourceClassification: results.length ? results[0].sourceClassification : "none",
+    runtimeAddressDiagnostics: runtimeAddressDiagnostics(results.length ? (results[0].sourceClassification || "fallback_provider") : "fallback_no_result", true) };
   const payload = results.length ? { ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId, diagnostics, results } : { ok: false, status: "no_results", providerBoundary: "gridly", retryAfterSeconds: null, requestId, diagnostics, results: [] };
   await db.from("gridly_geocode_cache").upsert({ cache_key: key, provider_namespace: CONFIG.namespace, response: payload, status: payload.status, expires_at: new Date(Date.now() + (results.length ? (body.intent === "business_place" ? 86400000 : 21600000) : 60000)).toISOString() });
   // A valid canonical no-result is an application outcome, not a missing HTTP resource.
