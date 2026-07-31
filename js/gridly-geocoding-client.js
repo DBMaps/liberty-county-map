@@ -92,7 +92,11 @@
         certificateValidated: runtime.certificateValidated === true,
         packageOpened: runtime.packageOpened === true,
         exactLookupExecuted: runtime.exactLookupExecuted === true,
-        fallbackExecuted: runtime.fallbackExecuted === true
+        fallbackExecuted: runtime.fallbackExecuted === true,
+        certificateUrl: runtime.certificateUrl == null ? null : String(runtime.certificateUrl),
+        certificateHttpStatus: Number.isInteger(runtime.certificateHttpStatus) ? runtime.certificateHttpStatus : null,
+        certificateFetchCompleted: runtime.certificateFetchCompleted === true,
+        certificateFetchReason: String(runtime.certificateFetchReason || "not_requested")
       });
     }
     if (diagnosticRequest && Array.isArray(value.fallbackCandidateDiagnostics)) {

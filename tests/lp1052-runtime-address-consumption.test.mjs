@@ -77,7 +77,36 @@ test('runtime diagnostics identify every completed certified lookup stage withou
   assert.equal(exact.runtimeDiagnostic.certificateValidated, true);
   assert.equal(exact.runtimeDiagnostic.packageOpened, true);
   assert.equal(exact.runtimeDiagnostic.exactLookupExecuted, true);
+  assert.equal(exact.runtimeDiagnostic.certificateUrl, 'https://gridly.test/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json');
+  assert.equal(exact.runtimeDiagnostic.certificateHttpStatus, 200);
+  assert.equal(exact.runtimeDiagnostic.certificateFetchCompleted, true);
+  assert.equal(exact.runtimeDiagnostic.certificateFetchReason, 'successful_retrieval');
   assert.doesNotMatch(JSON.stringify(exact.runtimeDiagnostic), /276|County Road|Dayton|77535/);
+});
+
+test('certificate diagnostics distinguish HTTP, network, timeout, and invalid-certificate failures without leaking URL credentials', async () => {
+  const eligible = request('276 County Road 677, Dayton, TX 77535');
+  for (const status of [404, 403, 500]) {
+    const result = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', fetch: async () => new Response('', { status }) });
+    assert.equal(result.runtimeDiagnostic.certificateHttpStatus, status);
+    assert.equal(result.runtimeDiagnostic.certificateFetchCompleted, true);
+    assert.equal(result.runtimeDiagnostic.certificateFetchReason, 'http_error');
+  }
+  const network = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://user:secret@gridly.test',
+    fetch: async () => { throw new TypeError('connection refused'); } });
+  assert.equal(network.runtimeDiagnostic.certificateFetchCompleted, false);
+  assert.equal(network.runtimeDiagnostic.certificateHttpStatus, null);
+  assert.equal(network.runtimeDiagnostic.certificateFetchReason, 'network_failure');
+  assert.equal(network.runtimeDiagnostic.certificateUrl, 'https://gridly.test/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json');
+  assert.doesNotMatch(JSON.stringify(network.runtimeDiagnostic), /user|secret|token/);
+  const timeout = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', certificateTimeoutMs: 1,
+    fetch: async (_url, { signal }) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))) });
+  assert.equal(timeout.runtimeDiagnostic.certificateFetchCompleted, false);
+  assert.equal(timeout.runtimeDiagnostic.certificateFetchReason, 'timeout');
+  const invalid = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', fetch: async () => Response.json({ countyId: 'liberty-tx' }) });
+  assert.equal(invalid.runtimeDiagnostic.certificateHttpStatus, 200);
+  assert.equal(invalid.runtimeDiagnostic.certificateFetchCompleted, true);
+  assert.equal(invalid.runtimeDiagnostic.certificateFetchReason, 'invalid_certificate');
 });
 
 test('eligible certified requests bypass stale fallback cache and never continue after provider failure', async () => {
@@ -107,7 +136,8 @@ test('browser exposes an async, console-only LP105.2 runtime certification helpe
   assert.match(helper[0], /client\.search\(\{ intent, query, limit: 5, requestMode: "explicit_search" \}\)/);
   assert.match(helper[0], /passed, safeToMerge: passed/);
   for (const field of ['lastCompletedStage', 'failureStage', 'responseSource', 'certifiedProviderExecuted',
-    'certificateValidated', 'packageOpened', 'exactLookupExecuted', 'fallbackExecuted']) assert.match(helper[0], new RegExp(field));
+    'certificateValidated', 'packageOpened', 'exactLookupExecuted', 'fallbackExecuted', 'certificateUrl',
+    'certificateHttpStatus', 'certificateFetchCompleted', 'certificateFetchReason']) assert.match(helper[0], new RegExp(field));
   assert.doesNotMatch(helper[0], /fetch\s*\(/, 'helper must retain the Gridly client boundary');
   assert.doesNotMatch(helper[0], /data\/generated\/lp104|\.jsonl\.gz|lp1045-txgio-address-runtime/i,
     'browser must not load LP104 packages directly');
@@ -117,7 +147,7 @@ test('browser client exposes only the bounded LP105.5 runtime diagnostic contrac
   const client = await readFile(new URL('../js/gridly-geocoding-client.js', import.meta.url), 'utf8');
   assert.match(client, /runtimeAddressDiagnostics/);
   assert.match(client, /completedStages\.slice\(0, 16\)/);
-  assert.doesNotMatch(client, /runtime\.query|runtime\.baseUrl|runtime\.certificateUrl|runtime\.packageUrl/);
+  assert.doesNotMatch(client, /runtime\.query|runtime\.baseUrl|runtime\.packageUrl/);
   const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
   assert.match(app, /window\.gridlyLp1055RuntimeAddressCertification = window\.gridlyLp1052RuntimeAddressCertification/);
 });

@@ -27,6 +27,12 @@ export function libertyRequest(body) {
 }
 
 const hex = (buffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+const safeOperationalUrl = (value) => {
+  try {
+    const url = new URL(value);
+    return `${url.protocol}//${url.host}${url.pathname}`;
+  } catch { return "invalid_url"; }
+};
 export async function lookupLibertyCertifiedAddress(body, options = {}) {
   const started = performance.now();
   const completedStages = ["browser_request_received"];
@@ -38,6 +44,10 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     certificateValidated: false,
     packageOpened: false,
     exactLookupExecuted: false,
+    certificateUrl: null,
+    certificateHttpStatus: null,
+    certificateFetchCompleted: false,
+    certificateFetchReason: "not_requested",
     ...extra
   });
   const requested = libertyRequest(body);
@@ -49,20 +59,41 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     runtimeDiagnostic: diagnostic({ failureStage: "artifact_base_url_selected", certifiedProviderExecuted: true }), totalMs: performance.now() - started };
   completedStages.push("artifact_base_url_selected");
   const fetcher = options.fetch || fetch;
+  const certificateUrl = `${baseUrl}/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json`;
+  const safeCertificateUrl = safeOperationalUrl(certificateUrl);
   const lookupStarted = performance.now();
   let packageAccessed = false;
   let failureStage = "runtime_certificate_requested";
+  let certificateHttpStatus = null;
+  let certificateFetchCompleted = false;
+  let certificateFetchReason = "not_requested";
   try {
     completedStages.push("runtime_certificate_requested");
-    const certificateResponse = await fetcher(`${baseUrl}/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json`);
-    if (!certificateResponse.ok) throw new Error("certificate_unreadable");
+    const certificateTimeoutMs = Number(options.certificateTimeoutMs) > 0 ? Number(options.certificateTimeoutMs) : 10000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), certificateTimeoutMs);
+    let certificateResponse;
+    try {
+      certificateResponse = await fetcher(certificateUrl, { signal: controller.signal });
+      certificateFetchCompleted = true;
+      certificateHttpStatus = Number.isInteger(certificateResponse?.status) ? certificateResponse.status : null;
+    } catch (error) {
+      certificateFetchReason = error?.name === "AbortError" ? "timeout" : "network_failure";
+      throw error;
+    } finally { clearTimeout(timer); }
+    if (!certificateResponse.ok) { certificateFetchReason = "http_error"; throw new Error("certificate_unreadable"); }
     completedStages.push("runtime_certificate_retrieved");
     failureStage = "certificate_validated";
-    const certificate = await certificateResponse.json();
+    let certificate;
+    try { certificate = await certificateResponse.json(); }
+    catch (error) { certificateFetchReason = "invalid_certificate"; throw error; }
     if (certificate.countyId !== IDENTITY.countyId || certificate.fips !== IDENTITY.fips || certificate.artifact !== IDENTITY.artifact
       || certificate.sizeBytes !== IDENTITY.sizeBytes || certificate.sha256 !== IDENTITY.sha256
       || certificate.acceptance?.houseNumber !== "exact" || certificate.acceptance?.road !== "canonical_exact"
-      || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) throw new Error("certificate_mismatch");
+      || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) {
+      certificateFetchReason = "invalid_certificate"; throw new Error("certificate_mismatch");
+    }
+    certificateFetchReason = "successful_retrieval";
     completedStages.push("certificate_validated");
     failureStage = "liberty_package_requested";
     completedStages.push("liberty_package_requested");
@@ -89,13 +120,15 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     const results = matches.map((row) => ({ providerResultId: `txgio:${row.i}`, name: row.a, displayName: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), formattedAddress: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), latitude: Number(row.y), longitude: Number(row.x), category: "place", type: "house", resultType: "address", precision: "address_point", confidenceBasis: "certified_txgio_address_point", sourceClassification: "government_address_point", routePreviewEligible: true, address: { houseNumber: row.h, road: row.r, community: "", city: row.p, mailingCity: row.p, county: row.c, state: "TX", postalCode: row.z, country: "United States" }, providerIdentity: { sourceId: row.i, provider: "txgio_certified_package" } }));
     completedStages.push(results.length ? "exact_match_found" : "truthful_miss");
     return { attempted: true, outcome: results.length ? "exact_match" : "truthful_no_result", results, packageAccessed: true,
-      runtimeDiagnostic: diagnostic({ certifiedProviderExecuted: true, certificateValidated: true, packageOpened: true, exactLookupExecuted: true }),
+      runtimeDiagnostic: diagnostic({ certifiedProviderExecuted: true, certificateValidated: true, packageOpened: true, exactLookupExecuted: true,
+        certificateUrl: safeCertificateUrl, certificateHttpStatus, certificateFetchCompleted, certificateFetchReason }),
       lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   } catch (error) {
     return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed, rejectionReason: String(error?.message || error),
       runtimeDiagnostic: diagnostic({ failureStage, certifiedProviderExecuted: true,
         certificateValidated: completedStages.includes("certificate_validated"), packageOpened: completedStages.includes("gzip_stream_opened"),
-        exactLookupExecuted: completedStages.includes("exact_lookup_executed") }),
+        exactLookupExecuted: completedStages.includes("exact_lookup_executed"), certificateUrl: safeCertificateUrl,
+        certificateHttpStatus, certificateFetchCompleted, certificateFetchReason }),
       lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   }
 }
