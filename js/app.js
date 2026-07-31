@@ -85811,7 +85811,22 @@ async function gridlySearchAddress(query, options = {}) {
   setGridlyLp101PipelineStage(lp101CaseName, "localCandidates", seedResults, rawQuery);
   let remoteProviderResultCount = 0;
 
-  for (const [variantIndex, variant] of queryVariants.entries()) {
+  // LP104.5: the certified county package is an owned, address-only candidate
+  // source. It is lazy and precedes (but does not replace) the protected Gridly
+  // provider boundary; business/place queries never enter this branch.
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && typeof window.gridlyTxgioAddressRuntime?.search === "function") {
+    const countyPackage = await window.gridlyTxgioAddressRuntime.search({
+      query: rawQuery,
+      countyId: searchContext.activeCounty || ""
+    });
+    diagnostics.txgioRuntime = { attempted: countyPackage.attempted, fips: countyPackage.fips || "", outcome: countyPackage.outcome };
+    if (countyPackage.outcome === "exact_match") {
+      providerResults.push(...countyPackage.results);
+      remoteProviderResultCount += countyPackage.results.length;
+    }
+  }
+
+  for (const [variantIndex, variant] of (diagnostics.txgioRuntime?.outcome === "exact_match" ? [] : queryVariants).entries()) {
     const variantResults = await fetchGridlyNominatimSearch(variant, {
       limit: GRIDLY_LP097_EVALUATED_CANDIDATE_LIMIT,
       countryCodes,
@@ -85854,6 +85869,14 @@ async function gridlySearchAddress(query, options = {}) {
   }
 
   diagnostics.aggregate = aggregateGridlyAddressVariantOutcomes(diagnostics.variants);
+  if (diagnostics.txgioRuntime?.outcome === "exact_match") {
+    diagnostics.aggregate = Object.freeze({
+      ...diagnostics.aggregate,
+      anyCanonicalSuccess: true,
+      anyRelevantResult: true,
+      finalConsumerClassification: "relevant_result"
+    });
+  }
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     diagnostics.providerStatus = diagnostics.aggregate.finalConsumerClassification === "confirmed_no_result"
       ? "no_results" : diagnostics.aggregate.finalConsumerClassification === "temporarily_paused" ? "rate_limited"
