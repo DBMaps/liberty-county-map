@@ -278,7 +278,11 @@ async function execute(body: any, key: string, requestId: string, origin: string
       failureStage: provider.failureStage || null, responseSource,
       certifiedProviderExecuted: provider.certifiedProviderExecuted === true,
       certificateValidated: provider.certificateValidated === true, packageOpened: provider.packageOpened === true,
-      exactLookupExecuted: provider.exactLookupExecuted === true, fallbackExecuted };
+      exactLookupExecuted: provider.exactLookupExecuted === true, fallbackExecuted,
+      certificateUrl: provider.certificateUrl || null,
+      certificateHttpStatus: Number.isInteger(provider.certificateHttpStatus) ? provider.certificateHttpStatus : null,
+      certificateFetchCompleted: provider.certificateFetchCompleted === true,
+      certificateFetchReason: provider.certificateFetchReason || "not_requested" };
   };
   if (certified.results.length) {
     const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted).slice(0, body.limit);

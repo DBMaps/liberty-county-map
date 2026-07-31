@@ -87501,6 +87501,10 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
       packageOpened: runtimeDiagnostic?.packageOpened === true,
       exactLookupExecuted: runtimeDiagnostic?.exactLookupExecuted === true,
       fallbackExecuted: runtimeDiagnostic?.fallbackExecuted === true,
+      certificateUrl: runtimeDiagnostic?.certificateUrl || null,
+      certificateHttpStatus: runtimeDiagnostic?.certificateHttpStatus ?? null,
+      certificateFetchCompleted: runtimeDiagnostic?.certificateFetchCompleted === true,
+      certificateFetchReason: runtimeDiagnostic?.certificateFetchReason || "not_requested",
       completedStages: runtimeDiagnostic?.completedStages || [] });
   }
   const providerBoundaryPreserved = cases.every((entry) => entry.providerBoundaryPreserved);
@@ -87516,6 +87520,10 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
     certifiedProviderExecuted: exactDiagnostic.certifiedProviderExecuted === true,
     certificateValidated: exactDiagnostic.certificateValidated === true, packageOpened: exactDiagnostic.packageOpened === true,
     exactLookupExecuted: exactDiagnostic.exactLookupExecuted === true, fallbackExecuted: exactDiagnostic.fallbackExecuted === true,
+    certificateUrl: exactDiagnostic.certificateUrl || null,
+    certificateHttpStatus: exactDiagnostic.certificateHttpStatus ?? null,
+    certificateFetchCompleted: exactDiagnostic.certificateFetchCompleted === true,
+    certificateFetchReason: exactDiagnostic.certificateFetchReason || "not_requested",
     providerBoundaryPreserved, exactHouseNumberRequired,
     canonicalRoadRequired, nearbyNumberSubstitutionAbsent, roadOnlyPromotionAbsent, businessPathPreserved,
     cases, passed, safeToMerge: passed };
