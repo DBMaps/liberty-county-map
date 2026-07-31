@@ -77,6 +77,7 @@
     "test:lp1044:txgio:query": "node --test tests/lp1044-txgio-address-query.test.mjs",
     "test:lp1045": "node --test tests/lp1045-txgio-address-runtime.test.mjs",
     "certify:lp1046": "node tools/lp104/certify-texas-address-package.mjs",
-    "test:lp1046": "node --test tests/lp1046-texas-address-certification.test.mjs"
+    "test:lp1046": "node --test tests/lp1046-texas-address-certification.test.mjs",
+    "test:lp1047": "node --test tests/lp1047-multi-county-runtime-activation.test.mjs"
   }
 }
