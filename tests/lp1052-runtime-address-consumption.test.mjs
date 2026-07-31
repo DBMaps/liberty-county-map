@@ -56,3 +56,17 @@ test('missing or invalid certificate fails closed and browser retains provider b
   assert.match(client, /functions\/v1\/gridly-geocode/);
   assert.doesNotMatch(html, /lp1045-txgio-address-runtime\.js/);
 });
+
+test('browser exposes an async, console-only LP105.2 runtime certification helper', async () => {
+  const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
+  const helper = app.match(/window\.gridlyLp1052RuntimeAddressCertification\s*=\s*async function[\s\S]*?\n};/);
+  assert.ok(helper, 'async certification helper is exposed on window');
+  for (const caseName of ['exact', 'missing_nearby_number', 'alias_county_rd', 'alias_cr', 'alias_co_rd', 'road_only', 'business_control']) {
+    assert.match(helper[0], new RegExp(`\\["${caseName}"`));
+  }
+  assert.match(helper[0], /client\.search\(\{ intent, query, limit: 5, requestMode: "explicit_search" \}\)/);
+  assert.match(helper[0], /passed, safeToMerge: passed/);
+  assert.doesNotMatch(helper[0], /fetch\s*\(/, 'helper must retain the Gridly client boundary');
+  assert.doesNotMatch(helper[0], /data\/generated\/lp104|\.jsonl\.gz|lp1045-txgio-address-runtime/i,
+    'browser must not load LP104 packages directly');
+});
