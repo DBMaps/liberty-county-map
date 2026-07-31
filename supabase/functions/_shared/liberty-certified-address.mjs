@@ -35,6 +35,7 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
   if (!baseUrl) return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed: false, totalMs: performance.now() - started };
   const fetcher = options.fetch || fetch;
   const lookupStarted = performance.now();
+  let packageAccessed = false;
   try {
     const certificateResponse = await fetcher(`${baseUrl}/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json`);
     if (!certificateResponse.ok) throw new Error("certificate_unreadable");
@@ -44,6 +45,7 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
       || certificate.acceptance?.houseNumber !== "exact" || certificate.acceptance?.road !== "canonical_exact"
       || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) throw new Error("certificate_mismatch");
     const packageResponse = await fetcher(`${baseUrl}/data/generated/lp104/txgio-addresses/${IDENTITY.artifact}`);
+    packageAccessed = true;
     if (!packageResponse.ok) throw new Error("package_unreadable");
     const compressed = await packageResponse.arrayBuffer();
     if (compressed.byteLength !== IDENTITY.sizeBytes || hex(await crypto.subtle.digest("SHA-256", compressed)) !== IDENTITY.sha256) throw new Error("package_mismatch");
@@ -60,6 +62,6 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     const results = matches.map((row) => ({ providerResultId: `txgio:${row.i}`, name: row.a, displayName: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), formattedAddress: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), latitude: Number(row.y), longitude: Number(row.x), category: "place", type: "house", resultType: "address", precision: "address_point", confidenceBasis: "certified_txgio_address_point", sourceClassification: "government_address_point", routePreviewEligible: true, address: { houseNumber: row.h, road: row.r, community: "", city: row.p, mailingCity: row.p, county: row.c, state: "TX", postalCode: row.z, country: "United States" }, providerIdentity: { sourceId: row.i, provider: "txgio_certified_package" } }));
     return { attempted: true, outcome: results.length ? "exact_match" : "truthful_no_result", results, packageAccessed: true, lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   } catch (error) {
-    return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed: true, rejectionReason: String(error?.message || error), lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
+    return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed, rejectionReason: String(error?.message || error), lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   }
 }
