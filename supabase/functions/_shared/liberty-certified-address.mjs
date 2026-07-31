@@ -29,27 +29,53 @@ export function libertyRequest(body) {
 const hex = (buffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 export async function lookupLibertyCertifiedAddress(body, options = {}) {
   const started = performance.now();
+  const completedStages = ["browser_request_received"];
+  const diagnostic = (extra = {}) => ({
+    completedStages: [...completedStages],
+    lastCompletedStage: completedStages.at(-1) || null,
+    failureStage: null,
+    certifiedProviderExecuted: false,
+    certificateValidated: false,
+    packageOpened: false,
+    exactLookupExecuted: false,
+    ...extra
+  });
   const requested = libertyRequest(body);
-  if (!requested) return { attempted: false, outcome: "ineligible", results: [], packageAccessed: false, totalMs: performance.now() - started };
+  if (!requested) return { attempted: false, outcome: "ineligible", results: [], packageAccessed: false,
+    runtimeDiagnostic: diagnostic(), totalMs: performance.now() - started };
+  completedStages.push("eligible_for_certified_provider");
   const baseUrl = String(options.baseUrl || "").replace(/\/$/, "");
-  if (!baseUrl) return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed: false, totalMs: performance.now() - started };
+  if (!baseUrl) return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed: false,
+    runtimeDiagnostic: diagnostic({ failureStage: "artifact_base_url_selected", certifiedProviderExecuted: true }), totalMs: performance.now() - started };
+  completedStages.push("artifact_base_url_selected");
   const fetcher = options.fetch || fetch;
   const lookupStarted = performance.now();
   let packageAccessed = false;
+  let failureStage = "runtime_certificate_requested";
   try {
+    completedStages.push("runtime_certificate_requested");
     const certificateResponse = await fetcher(`${baseUrl}/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json`);
     if (!certificateResponse.ok) throw new Error("certificate_unreadable");
+    completedStages.push("runtime_certificate_retrieved");
+    failureStage = "certificate_validated";
     const certificate = await certificateResponse.json();
     if (certificate.countyId !== IDENTITY.countyId || certificate.fips !== IDENTITY.fips || certificate.artifact !== IDENTITY.artifact
       || certificate.sizeBytes !== IDENTITY.sizeBytes || certificate.sha256 !== IDENTITY.sha256
       || certificate.acceptance?.houseNumber !== "exact" || certificate.acceptance?.road !== "canonical_exact"
       || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) throw new Error("certificate_mismatch");
+    completedStages.push("certificate_validated");
+    failureStage = "liberty_package_requested";
+    completedStages.push("liberty_package_requested");
     const packageResponse = await fetcher(`${baseUrl}/data/generated/lp104/txgio-addresses/${IDENTITY.artifact}`);
     packageAccessed = true;
     if (!packageResponse.ok) throw new Error("package_unreadable");
+    completedStages.push("liberty_package_retrieved");
+    failureStage = "gzip_stream_opened";
     const compressed = await packageResponse.arrayBuffer();
     if (compressed.byteLength !== IDENTITY.sizeBytes || hex(await crypto.subtle.digest("SHA-256", compressed)) !== IDENTITY.sha256) throw new Error("package_mismatch");
     const reader = new Response(compressed).body.pipeThrough(new DecompressionStream("gzip")).getReader();
+    completedStages.push("gzip_stream_opened");
+    failureStage = "exact_lookup_executed";
     const decoder = new TextDecoder(); let pending = ""; const matches = [];
     const inspect = (line) => {
       if (!line.trim()) return;
@@ -59,9 +85,17 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     };
     while (true) { const { done, value } = await reader.read(); if (done) break; pending += decoder.decode(value, { stream: true }); const lines = pending.split("\n"); pending = lines.pop() || ""; lines.forEach(inspect); }
     pending += decoder.decode(); if (pending.trim()) inspect(pending);
+    completedStages.push("exact_lookup_executed");
     const results = matches.map((row) => ({ providerResultId: `txgio:${row.i}`, name: row.a, displayName: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), formattedAddress: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), latitude: Number(row.y), longitude: Number(row.x), category: "place", type: "house", resultType: "address", precision: "address_point", confidenceBasis: "certified_txgio_address_point", sourceClassification: "government_address_point", routePreviewEligible: true, address: { houseNumber: row.h, road: row.r, community: "", city: row.p, mailingCity: row.p, county: row.c, state: "TX", postalCode: row.z, country: "United States" }, providerIdentity: { sourceId: row.i, provider: "txgio_certified_package" } }));
-    return { attempted: true, outcome: results.length ? "exact_match" : "truthful_no_result", results, packageAccessed: true, lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
+    completedStages.push(results.length ? "exact_match_found" : "truthful_miss");
+    return { attempted: true, outcome: results.length ? "exact_match" : "truthful_no_result", results, packageAccessed: true,
+      runtimeDiagnostic: diagnostic({ certifiedProviderExecuted: true, certificateValidated: true, packageOpened: true, exactLookupExecuted: true }),
+      lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   } catch (error) {
-    return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed, rejectionReason: String(error?.message || error), lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
+    return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed, rejectionReason: String(error?.message || error),
+      runtimeDiagnostic: diagnostic({ failureStage, certifiedProviderExecuted: true,
+        certificateValidated: completedStages.includes("certificate_validated"), packageOpened: completedStages.includes("gzip_stream_opened"),
+        exactLookupExecuted: completedStages.includes("exact_lookup_executed") }),
+      lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   }
 }

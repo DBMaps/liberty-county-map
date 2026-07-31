@@ -87431,7 +87431,9 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
     ["business_control", "Dayton Walmart", "business_place_result", "business_place"]
   ];
   if (typeof client?.search !== "function") return {
-    available: false, milestone: "LP105.2", providerBoundaryPreserved: false,
+    available: false, milestone: "LP105.5", lastCompletedStage: null, failureStage: "browser_request_received",
+    responseSource: "browser_client_unavailable", certifiedProviderExecuted: false, certificateValidated: false,
+    packageOpened: false, exactLookupExecuted: false, fallbackExecuted: false, providerBoundaryPreserved: false,
     exactHouseNumberRequired: false, canonicalRoadRequired: false,
     nearbyNumberSubstitutionAbsent: false, roadOnlyPromotionAbsent: false,
     businessPathPreserved: false, cases: definitions.map(([caseName, query, expectedOutcome]) => ({
@@ -87454,6 +87456,7 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
       response = { ok: false, status: "provider_unavailable", results: [] };
     }
     const transport = (client.evidence?.().slice(evidenceStart).at(-1)) || {};
+    const runtimeDiagnostic = response?.diagnostics?.runtimeAddressDiagnostics || null;
     const results = Array.isArray(response?.results) ? response.results : [];
     const first = results[0] || null;
     const houseNumberAgreement = first ? String(first.address?.houseNumber || "") === (caseName === "missing_nearby_number" ? "274" : "276") : null;
@@ -87489,7 +87492,16 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
       exactHouseNumberAgreement: houseNumberAgreement, canonicalRoadAgreement,
       returnedAddressLabel: first?.displayName || first?.formattedAddress || "", truthfulNoResult: response?.status === "no_results",
       elapsedMs: Math.round((performance.now() - started) * 10) / 10, rejectionReason: casePassed ? "" : (!boundaryUsed ? (transport.failureCode || "gridly_edge_function_unreachable") : (response?.status || "unexpected_result")),
-      providerBoundaryPreserved: boundaryUsed });
+      providerBoundaryPreserved: boundaryUsed,
+      lastCompletedStage: runtimeDiagnostic?.lastCompletedStage || null,
+      failureStage: runtimeDiagnostic?.failureStage || (!boundaryUsed ? "browser_request_received" : null),
+      responseSource: runtimeDiagnostic?.responseSource || (!boundaryUsed ? "browser_transport_failure" : "unknown"),
+      certifiedProviderExecuted: runtimeDiagnostic?.certifiedProviderExecuted === true,
+      certificateValidated: runtimeDiagnostic?.certificateValidated === true,
+      packageOpened: runtimeDiagnostic?.packageOpened === true,
+      exactLookupExecuted: runtimeDiagnostic?.exactLookupExecuted === true,
+      fallbackExecuted: runtimeDiagnostic?.fallbackExecuted === true,
+      completedStages: runtimeDiagnostic?.completedStages || [] });
   }
   const providerBoundaryPreserved = cases.every((entry) => entry.providerBoundaryPreserved);
   const exactHouseNumberRequired = cases.filter((entry) => ["exact", "missing_nearby_number", "alias_county_rd", "alias_cr", "alias_co_rd"].includes(entry.caseName)).every((entry) => entry.passed);
@@ -87498,10 +87510,17 @@ window.gridlyLp1052RuntimeAddressCertification = async function gridlyLp1052Runt
   const roadOnlyPromotionAbsent = cases.find((entry) => entry.caseName === "road_only")?.passed === true;
   const businessPathPreserved = cases.find((entry) => entry.caseName === "business_control")?.passed === true;
   const passed = providerBoundaryPreserved && exactHouseNumberRequired && canonicalRoadRequired && nearbyNumberSubstitutionAbsent && roadOnlyPromotionAbsent && businessPathPreserved && cases.every((entry) => entry.passed);
-  return { available: true, milestone: "LP105.2", providerBoundaryPreserved, exactHouseNumberRequired,
+  const exactDiagnostic = cases.find((entry) => entry.caseName === "exact") || {};
+  return { available: true, milestone: "LP105.5", lastCompletedStage: exactDiagnostic.lastCompletedStage || null,
+    failureStage: exactDiagnostic.failureStage || null, responseSource: exactDiagnostic.responseSource || "unknown",
+    certifiedProviderExecuted: exactDiagnostic.certifiedProviderExecuted === true,
+    certificateValidated: exactDiagnostic.certificateValidated === true, packageOpened: exactDiagnostic.packageOpened === true,
+    exactLookupExecuted: exactDiagnostic.exactLookupExecuted === true, fallbackExecuted: exactDiagnostic.fallbackExecuted === true,
+    providerBoundaryPreserved, exactHouseNumberRequired,
     canonicalRoadRequired, nearbyNumberSubstitutionAbsent, roadOnlyPromotionAbsent, businessPathPreserved,
     cases, passed, safeToMerge: passed };
 };
+window.gridlyLp1055RuntimeAddressCertification = window.gridlyLp1052RuntimeAddressCertification;
 
 function lookupLocalPlaceCoordinates(...parts) {
   const candidates = parts
