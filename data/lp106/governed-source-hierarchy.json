@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "gridly-lp106-governed-authoritative-source-hierarchy-v1",
+  "assessmentDate": "2026-07-31",
+  "policy": "fail_closed_read_only_audit",
+  "targetScope": "274 County Road 677, Dayton, Liberty County, Texas 77535",
+  "sources": [
+    {
+      "rank": 1,
+      "sourceId": "liberty-county-or-regional-911-address-authority",
+      "authorityClass": "originating_local_address_authority",
+      "coverageRole": "Preferred adjudication source for locally assigned rural addresses",
+      "currentEvidence": "No immutable, licensed dataset is available in this repository",
+      "governanceGate": "Written access, reuse, retention, redistribution, and attribution approval",
+      "productionEligible": false
+    },
+    {
+      "rank": 2,
+      "sourceId": "txgio-2026-statewide-address-points",
+      "authorityClass": "official_state_aggregator",
+      "coverageRole": "Governed statewide snapshot and existing package-manufacturing input",
+      "currentEvidence": "Descriptor and derived certified Liberty package are present; immutable GDB is external",
+      "governanceGate": "LP105 redistribution and residential browser-delivery decision remains unresolved",
+      "productionEligible": false
+    },
+    {
+      "rank": 3,
+      "sourceId": "usdot-nad-r23",
+      "authorityClass": "official_federal_aggregator",
+      "coverageRole": "Independent pinned-release coverage corroboration",
+      "currentEvidence": "Read-only tooling is present; immutable R23 archive and calculated report are external",
+      "governanceGate": "Release provenance, contributor authority, and operative reuse rights must be recorded",
+      "productionEligible": false
+    },
+    {
+      "rank": 4,
+      "sourceId": "liberty-county-appraisal-situs",
+      "authorityClass": "official_local_situs_source",
+      "coverageRole": "Corroboration only; situs is not automatically an entrance/address point",
+      "currentEvidence": "No governed bulk snapshot is available",
+      "governanceGate": "Written bulk reuse rights and precision limitations",
+      "productionEligible": false
+    },
+    {
+      "rank": 5,
+      "sourceId": "licensed-open-address-aggregator",
+      "authorityClass": "supplemental_aggregator",
+      "coverageRole": "Gap discovery only, never unilateral authoritative insertion",
+      "currentEvidence": "No pinned, provenance-complete candidate release is approved",
+      "governanceGate": "Per-source license, attribution, provenance, county coverage, and precision review",
+      "productionEligible": false
+    },
+    {
+      "rank": 6,
+      "sourceId": "resident-submitted-address",
+      "authorityClass": "claim_not_authoritative_dataset",
+      "coverageRole": "Initiates verification; never manufactures a certified point",
+      "currentEvidence": "The resident confirms the address is real",
+      "governanceGate": "Must be corroborated by an approved originating or official source",
+      "productionEligible": false
+    }
+  ],
+  "decisionRules": [
+    "Source unavailability is not source absence.",
+    "A zero exact-candidate count applies only to the identified immutable snapshot queried.",
+    "Conflicting sources require provenance review; rank does not authorize automatic overwrite.",
+    "No audit result authorizes package, certificate, runtime, or source mutation.",
+    "Interpolation, nearby-number substitution, and resident-coordinate insertion remain prohibited."
+  ]
+}
