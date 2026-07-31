@@ -93,8 +93,12 @@
         packageOpened: runtime.packageOpened === true,
         exactLookupExecuted: runtime.exactLookupExecuted === true,
         fallbackExecuted: runtime.fallbackExecuted === true,
-        certificateUrl: runtime.certificateUrl == null ? null : String(runtime.certificateUrl),
-        certificateHttpStatus: Number.isInteger(runtime.certificateHttpStatus) ? runtime.certificateHttpStatus : null,
+        storageBucket: runtime.storageBucket == null ? null : String(runtime.storageBucket).slice(0, 63),
+        certificateObjectPath: runtime.certificateObjectPath == null ? null : String(runtime.certificateObjectPath).slice(0, 512),
+        packageObjectPath: runtime.packageObjectPath == null ? null : String(runtime.packageObjectPath).slice(0, 512),
+        storageStatusCategory: String(runtime.storageStatusCategory || "not_requested").slice(0, 32),
+        certificateUrl: null,
+        certificateHttpStatus: null,
         certificateFetchCompleted: runtime.certificateFetchCompleted === true,
         certificateFetchReason: String(runtime.certificateFetchReason || "not_requested")
       });

@@ -5,14 +5,16 @@ import { lookupLibertyCertifiedAddress } from '../supabase/functions/_shared/lib
 
 const root = new URL('../', import.meta.url);
 let packageAccesses = 0;
-const localFetch = async (url) => {
-  const relative = String(url).replace('https://gridly.test/', '');
-  if (relative.endsWith('.gz')) packageAccesses += 1;
-  try { return new Response(await readFile(new URL(relative, root)), { status: 200 }); }
-  catch { return new Response('', { status: 404 }); }
+const fixtureStorage = {
+  from(bucket) { return { download: async (objectPath) => {
+    if (bucket !== 'certified-addresses') return { data: null, error: { statusCode: 404 } };
+    if (objectPath.endsWith('.gz')) packageAccesses += 1;
+    try { return { data: new Blob([await readFile(new URL(`data/generated/${objectPath}`, root))]), error: null }; }
+    catch { return { data: null, error: { statusCode: 404 } }; }
+  } }; }
 };
 const request = (query, overrides = {}) => ({ intent: 'address', query, limit: 5, requestMode: 'explicit_search', ...overrides });
-const lookup = (query, overrides) => lookupLibertyCertifiedAddress(request(query, overrides), { baseUrl: 'https://gridly.test', fetch: localFetch });
+const lookup = (query, overrides) => lookupLibertyCertifiedAddress(request(query, overrides), { storage: fixtureStorage });
 
 test('certified Liberty lookup is exact across governed road aliases', async () => {
   for (const alias of ['County Road 677', 'County Rd 677', 'CR 677', 'Co Rd 677']) {
@@ -38,7 +40,7 @@ test('nearby, road-only, and conflicting requests fail truthfully without substi
 
 test('business, curated, and non-Liberty traffic never accesses the package', async () => {
   const before = packageAccesses;
-  assert.equal((await lookupLibertyCertifiedAddress({ intent: 'business_place', query: 'Dayton Walmart' }, { baseUrl: 'https://gridly.test', fetch: localFetch })).attempted, false);
+  assert.equal((await lookupLibertyCertifiedAddress({ intent: 'business_place', query: 'Dayton Walmart' }, { storage: fixtureStorage })).attempted, false);
   assert.equal((await lookup('100 Congress Avenue, Austin, TX 78701')).attempted, false);
   assert.equal(packageAccesses, before);
   const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
@@ -46,11 +48,11 @@ test('business, curated, and non-Liberty traffic never accesses the package', as
 });
 
 test('missing or invalid certificate fails closed and browser retains provider boundary', async () => {
-  const unavailable = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { baseUrl: '' });
+  const unavailable = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { storage: null });
   assert.equal(unavailable.outcome, 'package_unavailable');
   assert.equal(unavailable.packageAccessed, false);
-  const invalidFetch = async (url) => String(url).endsWith('.json') ? Response.json({ countyId: 'liberty-tx' }) : localFetch(url);
-  const invalid = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { baseUrl: 'https://gridly.test', fetch: invalidFetch });
+  const invalidStorage = { from: () => ({ download: async () => ({ data: new Blob([JSON.stringify({ countyId: 'liberty-tx' })]), error: null }) }) };
+  const invalid = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { storage: invalidStorage });
   assert.equal(invalid.outcome, 'package_unavailable');
   assert.equal(invalid.packageAccessed, false, 'certificate rejection occurs before the gzip package is opened');
   assert.equal(invalid.runtimeDiagnostic.lastCompletedStage, 'runtime_certificate_retrieved');
@@ -66,9 +68,9 @@ test('missing or invalid certificate fails closed and browser retains provider b
 test('runtime diagnostics identify every completed certified lookup stage without request data', async () => {
   const exact = await lookup('276 County Road 677, Dayton, TX 77535');
   assert.deepEqual(exact.runtimeDiagnostic.completedStages, [
-    'browser_request_received', 'eligible_for_certified_provider', 'artifact_base_url_selected',
+    'browser_request_received', 'eligible_for_certified_provider', 'storage_bucket_selected',
     'runtime_certificate_requested', 'runtime_certificate_retrieved', 'certificate_validated',
-    'liberty_package_requested', 'liberty_package_retrieved', 'gzip_stream_opened',
+    'liberty_package_requested', 'liberty_package_retrieved', 'package_integrity_validated', 'gzip_stream_opened',
     'exact_lookup_executed', 'exact_match_found'
   ]);
   assert.equal(exact.runtimeDiagnostic.lastCompletedStage, 'exact_match_found');
@@ -77,36 +79,47 @@ test('runtime diagnostics identify every completed certified lookup stage withou
   assert.equal(exact.runtimeDiagnostic.certificateValidated, true);
   assert.equal(exact.runtimeDiagnostic.packageOpened, true);
   assert.equal(exact.runtimeDiagnostic.exactLookupExecuted, true);
-  assert.equal(exact.runtimeDiagnostic.certificateUrl, 'https://gridly.test/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json');
-  assert.equal(exact.runtimeDiagnostic.certificateHttpStatus, 200);
+  assert.equal(exact.runtimeDiagnostic.storageBucket, 'certified-addresses');
+  assert.equal(exact.runtimeDiagnostic.certificateObjectPath, 'lp104/txgio-addresses/liberty-48291.runtime-certificate.json');
+  assert.equal(exact.runtimeDiagnostic.packageObjectPath, 'lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz');
+  assert.equal(exact.runtimeDiagnostic.storageStatusCategory, 'success');
   assert.equal(exact.runtimeDiagnostic.certificateFetchCompleted, true);
   assert.equal(exact.runtimeDiagnostic.certificateFetchReason, 'successful_retrieval');
   assert.doesNotMatch(JSON.stringify(exact.runtimeDiagnostic), /276|County Road|Dayton|77535/);
 });
 
-test('certificate diagnostics distinguish HTTP, network, timeout, and invalid-certificate failures without leaking URL credentials', async () => {
+test('Storage failures are bounded, private, and fail closed', async () => {
   const eligible = request('276 County Road 677, Dayton, TX 77535');
-  for (const status of [404, 403, 500]) {
-    const result = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', fetch: async () => new Response('', { status }) });
-    assert.equal(result.runtimeDiagnostic.certificateHttpStatus, status);
-    assert.equal(result.runtimeDiagnostic.certificateFetchCompleted, true);
-    assert.equal(result.runtimeDiagnostic.certificateFetchReason, 'http_error');
+  for (const [status, category] of [[404, 'not_found'], [403, 'authorization_failure'], [500, 'server_error']]) {
+    const storage = { from: () => ({ download: async () => ({ data: null, error: { statusCode: status } }) }) };
+    const result = await lookupLibertyCertifiedAddress(eligible, { storage });
+    assert.equal(result.outcome, 'package_unavailable');
+    assert.equal(result.runtimeDiagnostic.storageStatusCategory, category);
+    assert.equal(result.runtimeDiagnostic.certificateFetchReason, category);
   }
-  const network = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://user:secret@gridly.test',
-    fetch: async () => { throw new TypeError('connection refused'); } });
+  const network = await lookupLibertyCertifiedAddress(eligible, { storage: { from: () => ({ download: async () => { throw new TypeError('secret connection detail'); } }) } });
   assert.equal(network.runtimeDiagnostic.certificateFetchCompleted, false);
-  assert.equal(network.runtimeDiagnostic.certificateHttpStatus, null);
-  assert.equal(network.runtimeDiagnostic.certificateFetchReason, 'network_failure');
-  assert.equal(network.runtimeDiagnostic.certificateUrl, 'https://gridly.test/data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json');
-  assert.doesNotMatch(JSON.stringify(network.runtimeDiagnostic), /user|secret|token/);
-  const timeout = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', certificateTimeoutMs: 1,
-    fetch: async (_url, { signal }) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))) });
+  assert.equal(network.runtimeDiagnostic.certificateFetchReason, 'storage_network_failure');
+  assert.doesNotMatch(JSON.stringify(network.runtimeDiagnostic), /secret|credential|authorization/i);
+  const timeout = await lookupLibertyCertifiedAddress(eligible, { certificateTimeoutMs: 1,
+    storage: { from: () => ({ download: async () => new Promise(() => {}) }) } });
   assert.equal(timeout.runtimeDiagnostic.certificateFetchCompleted, false);
   assert.equal(timeout.runtimeDiagnostic.certificateFetchReason, 'timeout');
-  const invalid = await lookupLibertyCertifiedAddress(eligible, { baseUrl: 'https://gridly.test', fetch: async () => Response.json({ countyId: 'liberty-tx' }) });
-  assert.equal(invalid.runtimeDiagnostic.certificateHttpStatus, 200);
+  const invalid = await lookupLibertyCertifiedAddress(eligible, { storage: { from: () => ({ download: async () => ({ data: new Blob(['{}']), error: null }) }) } });
   assert.equal(invalid.runtimeDiagnostic.certificateFetchCompleted, true);
   assert.equal(invalid.runtimeDiagnostic.certificateFetchReason, 'invalid_certificate');
+});
+
+test('missing package and package integrity mismatch fail closed after certificate validation', async () => {
+  const certificate = await readFile(new URL('data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json', root));
+  for (const packageResult of [{ data: null, error: { statusCode: 404 } }, { data: new Blob(['wrong bytes']), error: null }]) {
+    const storage = { from: () => ({ download: async (path) => path.endsWith('.json')
+      ? { data: new Blob([certificate]), error: null } : packageResult }) };
+    const result = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { storage });
+    assert.equal(result.outcome, 'package_unavailable');
+    assert.equal(result.runtimeDiagnostic.certificateValidated, true);
+    assert.equal(result.runtimeDiagnostic.packageOpened, false);
+  }
 });
 
 test('eligible certified requests bypass stale fallback cache and never continue after provider failure', async () => {
@@ -137,7 +150,8 @@ test('browser exposes an async, console-only LP105.2 runtime certification helpe
   assert.match(helper[0], /passed, safeToMerge: passed/);
   for (const field of ['lastCompletedStage', 'failureStage', 'responseSource', 'certifiedProviderExecuted',
     'certificateValidated', 'packageOpened', 'exactLookupExecuted', 'fallbackExecuted', 'certificateUrl',
-    'certificateHttpStatus', 'certificateFetchCompleted', 'certificateFetchReason']) assert.match(helper[0], new RegExp(field));
+    'certificateHttpStatus', 'certificateFetchCompleted', 'certificateFetchReason', 'storageBucket',
+    'certificateObjectPath', 'packageObjectPath', 'storageStatusCategory']) assert.match(helper[0], new RegExp(field));
   assert.doesNotMatch(helper[0], /fetch\s*\(/, 'helper must retain the Gridly client boundary');
   assert.doesNotMatch(helper[0], /data\/generated\/lp104|\.jsonl\.gz|lp1045-txgio-address-runtime/i,
     'browser must not load LP104 packages directly');
@@ -147,7 +161,17 @@ test('browser client exposes only the bounded LP105.5 runtime diagnostic contrac
   const client = await readFile(new URL('../js/gridly-geocoding-client.js', import.meta.url), 'utf8');
   assert.match(client, /runtimeAddressDiagnostics/);
   assert.match(client, /completedStages\.slice\(0, 16\)/);
+  assert.match(client, /storageBucket:[\s\S]*slice\(0, 63\)/);
+  assert.match(client, /certificateObjectPath:[\s\S]*slice\(0, 512\)/);
   assert.doesNotMatch(client, /runtime\.query|runtime\.baseUrl|runtime\.packageUrl/);
   const app = await readFile(new URL('../js/app.js', import.meta.url), 'utf8');
   assert.match(app, /window\.gridlyLp1055RuntimeAddressCertification = window\.gridlyLp1052RuntimeAddressCertification/);
+});
+
+test('eligible Liberty runtime has no external artifact host dependency', async () => {
+  const edge = await readFile(new URL('../supabase/functions/gridly-geocode/index.ts', import.meta.url), 'utf8');
+  const adapter = await readFile(new URL('../supabase/functions/_shared/liberty-certified-address.mjs', import.meta.url), 'utf8');
+  assert.doesNotMatch(edge.slice(edge.indexOf('async function execute('), edge.indexOf('\nDeno.serve(')), /GRIDLY_CERTIFIED_ADDRESS_BASE_URL|https:\/\/gridly\.app/);
+  assert.doesNotMatch(adapter, /fetch\s*\(|signedUrl|createSignedUrl|gridly\.app/);
+  assert.match(edge, /GRIDLY_CERTIFIED_ADDRESS_BUCKET/);
 });

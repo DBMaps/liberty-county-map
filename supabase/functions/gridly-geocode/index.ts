@@ -266,7 +266,10 @@ async function resolveRuralFallback(body: any) {
 }
 
 async function execute(body: any, key: string, requestId: string, origin: string, db: any): Promise<Response> {
-  const certified = await lookupLibertyCertifiedAddress(body, { baseUrl: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BASE_URL") || "https://gridly.app" });
+  const certified = await lookupLibertyCertifiedAddress(body, {
+    storage: db.storage,
+    bucket: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BUCKET") || "certified-addresses"
+  });
   const runtimeAddressDiagnostics = (responseSource: string, fallbackExecuted = false) => {
     const provider = certified.runtimeDiagnostic || {};
     const completedStages = [...(provider.completedStages || [])];
@@ -279,8 +282,10 @@ async function execute(body: any, key: string, requestId: string, origin: string
       certifiedProviderExecuted: provider.certifiedProviderExecuted === true,
       certificateValidated: provider.certificateValidated === true, packageOpened: provider.packageOpened === true,
       exactLookupExecuted: provider.exactLookupExecuted === true, fallbackExecuted,
-      certificateUrl: provider.certificateUrl || null,
-      certificateHttpStatus: Number.isInteger(provider.certificateHttpStatus) ? provider.certificateHttpStatus : null,
+      storageBucket: provider.storageBucket || null,
+      certificateObjectPath: provider.certificateObjectPath || null,
+      packageObjectPath: provider.packageObjectPath || null,
+      storageStatusCategory: provider.storageStatusCategory || "not_requested",
       certificateFetchCompleted: provider.certificateFetchCompleted === true,
       certificateFetchReason: provider.certificateFetchReason || "not_requested" };
   };
