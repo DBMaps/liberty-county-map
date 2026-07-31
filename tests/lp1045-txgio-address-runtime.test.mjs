@@ -14,11 +14,14 @@ let fetchCount = 0;
 let packageFetchCount = 0;
 const packagePath = 'data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz';
 const manifestPath = 'data/generated/lp104/txgio-addresses/runtime-manifest.json';
-const fixtureCertificate = { fips: '48291', path: packagePath, sizeBytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') };
+const certificatePath = 'data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json';
+const fixtureCertificate = { countyId: 'liberty-tx', fips: '48291', path: packagePath, certificate: certificatePath, sizeBytes: body.byteLength, sha256: createHash('sha256').update(body).digest('hex') };
+const certificate = { ...fixtureCertificate, artifact: packagePath.split('/').pop(), acceptance: { houseNumber: 'exact', road: 'canonical_exact', interpolation: false, nearbyHouseSubstitution: false } };
 const window = {
   fetch: async (url) => {
     fetchCount += 1;
     if (url === manifestPath) return Response.json({ schemaVersion: 1, packages: [fixtureCertificate] });
+    if (url === certificatePath) return Response.json(certificate);
     assert.equal(url, packagePath);
     packageFetchCount += 1;
     return new Response(body);
@@ -39,10 +42,10 @@ const absent = await runtime.search({ query: '274 CR 677, Dayton, TX 77535' });
 assert.equal(absent.outcome, 'truthful_no_result');
 assert.equal(absent.results.length, 0, 'nearby or other-road records are never substituted');
 assert.equal(packageFetchCount, 1, 'Liberty package is loaded once and reused');
-assert.equal(fetchCount, 2, 'the runtime fetches one manifest and one package');
+assert.equal(fetchCount, 3, 'the runtime fetches one manifest, certificate, and package');
 assert.equal((await runtime.search({ query: '276 County Road 677, Austin, TX 78701' })).attempted, false, 'unregistered counties do not load Liberty data');
 assert.equal((await runtime.search({ query: '276 County Road 677', countyId: 'liberty-tx' })).outcome, 'exact_match', 'active Liberty context qualifies an unambiguous street-only address');
-assert.equal(fetchCount, 2, 'repeated exact searches reuse the verified package index');
+assert.equal(fetchCount, 3, 'repeated exact searches reuse the verified package index');
 
 const certification = await runtime.certification();
 assert.equal(certification.passed, true);
