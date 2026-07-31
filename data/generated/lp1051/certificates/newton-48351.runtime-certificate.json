@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "newton-tx",
+  "county": "Newton County",
+  "fips": "48351",
+  "artifact": "newton-48351.addresses.jsonl.gz",
+  "sizeBytes": 349580,
+  "sha256": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

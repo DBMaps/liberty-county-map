@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Waller County",
+  "countyFips": "48473",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1595248,
+  "sha256": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906",
+  "indexedAddressCount": 46702,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005499999999301508
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3522,
+    "variantsPassed": 3522
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 357.9924000000028,
+  "certificationStatus": "PASS",
+  "failures": []
+}

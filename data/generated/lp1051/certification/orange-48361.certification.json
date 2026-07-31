@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Orange County",
+  "countyFips": "48361",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1268809,
+  "sha256": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a",
+  "indexedAddressCount": 42256,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0031999999991967343
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3428,
+    "variantsPassed": 3428
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 163.23369999999704,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jasper-tx",
+  "county": "Jasper County",
+  "fips": "48241",
+  "artifact": "jasper-48241.addresses.jsonl.gz",
+  "sizeBytes": 789761,
+  "sha256": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

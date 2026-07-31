@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jasper County",
+  "countyFips": "48241",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 789761,
+  "sha256": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3",
+  "indexedAddressCount": 24404,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0031000000017229468
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 6148,
+    "variantsPassed": 6148
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 87.84349999999904,
+  "certificationStatus": "PASS",
+  "failures": []
+}

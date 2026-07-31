@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lavaca-tx",
+  "county": "Lavaca County",
+  "fips": "48285",
+  "artifact": "lavaca-48285.addresses.jsonl.gz",
+  "sizeBytes": 436394,
+  "sha256": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

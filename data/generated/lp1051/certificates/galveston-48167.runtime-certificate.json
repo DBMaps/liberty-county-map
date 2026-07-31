@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "galveston-tx",
+  "county": "Galveston County",
+  "fips": "48167",
+  "artifact": "galveston-48167.addresses.jsonl.gz",
+  "sizeBytes": 4226191,
+  "sha256": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

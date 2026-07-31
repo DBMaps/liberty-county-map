@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Chambers County",
+  "countyFips": "48071",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 885892,
+  "sha256": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819",
+  "indexedAddressCount": 25547,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003200000000106229
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 4060,
+    "variantsPassed": 4060
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 97.25860000000011,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Matagorda County",
+  "countyFips": "48321",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 899427,
+  "sha256": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6",
+  "indexedAddressCount": 27847,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004000000000814907
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 5932,
+    "variantsPassed": 5932
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 143.0622000000003,
+  "certificationStatus": "PASS",
+  "failures": []
+}

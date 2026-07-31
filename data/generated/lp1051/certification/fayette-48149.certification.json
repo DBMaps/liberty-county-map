@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Fayette County",
+  "countyFips": "48149",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 815379,
+  "sha256": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f",
+  "indexedAddressCount": 21677,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999999753345
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3882,
+    "variantsPassed": 3882
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 88.5368999999996,
+  "certificationStatus": "PASS",
+  "failures": []
+}

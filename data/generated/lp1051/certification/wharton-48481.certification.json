@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Wharton County",
+  "countyFips": "48481",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 790321,
+  "sha256": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357",
+  "indexedAddressCount": 24018,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0059000000001105946
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 5722,
+    "variantsPassed": 5722
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 156.89530000000013,
+  "certificationStatus": "PASS",
+  "failures": []
+}

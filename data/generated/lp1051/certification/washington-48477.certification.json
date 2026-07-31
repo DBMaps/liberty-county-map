@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Washington County",
+  "countyFips": "48477",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 790797,
+  "sha256": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d",
+  "indexedAddressCount": 25953,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 2999,
+    "failed": 1,
+    "p95LookupMs": 0.005699999997887062
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3192,
+    "variantsPassed": 3191
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 209.00380000000223,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "exact address sample failed",
+    "canonical road alias failed"
+  ]
+}

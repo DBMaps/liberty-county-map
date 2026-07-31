@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Calhoun County",
+  "countyFips": "48057",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 443130,
+  "sha256": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229",
+  "indexedAddressCount": 13790,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000000002080924
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "variantsTested": 3206,
+    "variantsPassed": 3206
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 44.08039999999983,
+  "certificationStatus": "PASS",
+  "failures": []
+}
