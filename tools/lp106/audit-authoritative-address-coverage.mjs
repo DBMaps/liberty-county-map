@@ -30,21 +30,62 @@ export function parseArguments(argv) {
 const quote = value => `'${String(value).replaceAll("'", "''")}'`;
 const id = value => `"${String(value).replaceAll('"', '""')}"`;
 const variants = (values, build, prefix = []) => values.reduce((all, value) => all.concat(build(value, prefix)), []);
-export function txgioWheres(target = TARGET) {
+export const REQUIRED_FIELDS = Object.freeze({
+  txgio: Object.freeze(['FIPS', 'Add_Number', 'Full_Addr', 'Post_Comm', 'Post_Code']),
+  nad: Object.freeze(['State', 'County', 'Add_Number', 'StNam_Full', 'Post_City', 'Zip_Code']),
+});
+export function schemaArguments(datasource, layer) { return ['-ro', '-so', datasource, layer]; }
+export function normalizeFieldType(type) {
+  const value = String(type).trim().toLowerCase();
+  if (/^(string|text|character)/.test(value)) return 'string';
+  if (/^integer64\b/.test(value)) return 'integer64';
+  if (/^integer\b/.test(value)) return 'integer';
+  if (/^(real|numeric|decimal|float|double)\b/.test(value)) return 'real';
+  return 'unsupported';
+}
+export function parseSchema(output, requiredFields) {
+  const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0 } : output;
+  if (result?.exitCode !== 0) throw new Error(`schema inspection failed: ${redactDiagnostic(`${result?.stdout || ''}\n${result?.stderr || ''}`)}`);
+  const text = `${result?.stdout || ''}\n${result?.stderr || ''}`;
+  if (!/^Layer name:/mi.test(text)) throw new Error(`schema inspection returned no layer schema: ${redactDiagnostic(text) || '(no diagnostic output)'}`);
+  const declared = new Map();
+  for (const line of text.split(/\r?\n/)) {
+    const match = line.match(/^\s*([^:]+):\s*([A-Za-z][A-Za-z0-9 ]*?)(?:\s*\([^)]*\))?\s*$/);
+    if (match && !/^(Layer name|Geometry|Feature Count|Extent|Layer SRS WKT|FID Column)$/i.test(match[1].trim())) declared.set(match[1].trim().toLowerCase(), { fieldName: match[1].trim(), sourceDeclaredType: match[2].trim() });
+  }
+  return requiredFields.map(required => {
+    const found = declared.get(required.toLowerCase()); const normalizedType = found ? normalizeFieldType(found.sourceDeclaredType) : null;
+    const supported = found ? normalizedType !== 'unsupported' : false;
+    return { requiredField: required, fieldName: found?.fieldName || null, sourceDeclaredType: found?.sourceDeclaredType || null, normalizedType, found: Boolean(found), supported, typedPredicateConstructable: Boolean(found) && supported };
+  });
+}
+export function typedLiteral(value, field) {
+  if (!field?.typedPredicateConstructable) throw new Error(`No typed predicate can be constructed for ${field?.requiredField || 'field'}`);
+  if (field.normalizedType === 'string') return quote(value);
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(String(value))) throw new Error(`Numeric field ${field.requiredField} requires a numeric literal`);
+  return String(value);
+}
+const fieldMap = fields => Object.fromEntries(fields.map(field => [field.requiredField, field]));
+const equal = (fields, name, value) => `${id(fields[name].fieldName)} = ${typedLiteral(value, fields[name])}`;
+export function txgioWheres(target = TARGET, schemaFields) {
+  if (!schemaFields) throw new Error('TxGIO schema fields are required for typed predicates');
+  const fields = fieldMap(schemaFields);
   // Every predicate is an OpenFileGDB native equality. Full_Addr supplies the
   // exact road spelling while component fields independently bind the number,
-  // county, postal community, ZIP, and FIPS.
-  return variants(ROAD_VARIANTS, road => variants(['Dayton', 'DAYTON'], city => variants(['Liberty', 'LIBERTY'], county => [[road, city, county]])))
-    .map(([road, city, county]) => [`${id('FIPS')} = ${Number(target.fips)}`, `${id('County')} = ${quote(county)}`, `(${id('Add_Number')} = ${quote(target.houseNumber)} OR ${id('Add_Number')} = ${Number(target.houseNumber)})`, `${id('Full_Addr')} = ${quote(`${target.houseNumber} ${road}`)}`, `${id('Post_Comm')} = ${quote(city)}`, `(${id('Post_Code')} = ${quote(target.zip)} OR ${id('Post_Code')} = ${Number(target.zip)})`].join(' AND '));
+  // postal community, ZIP, and county FIPS.
+  return variants(ROAD_VARIANTS, road => variants(['Dayton', 'DAYTON'], city => [[road, city]]))
+    .map(([road, city]) => [equal(fields, 'FIPS', target.fips), equal(fields, 'Add_Number', target.houseNumber), equal(fields, 'Full_Addr', `${target.houseNumber} ${road}`), equal(fields, 'Post_Comm', city), equal(fields, 'Post_Code', target.zip)].join(' AND '));
 }
-export function nadWheres(target = TARGET) {
+export function nadWheres(target = TARGET, schemaFields) {
+  if (!schemaFields) throw new Error('NAD schema fields are required for typed predicates');
+  const fields = fieldMap(schemaFields);
   // NAD has a direct street component, so it never depends on a formatted
   // full-address field. The bounded case variants are deliberately separate.
   return variants(ROAD_VARIANTS, road => variants(['Dayton', 'DAYTON'], city => variants(['Liberty', 'LIBERTY'], county => variants(['TX', 'Tx'], state => [[road, city, county, state]]))))
-    .map(([road, city, county, state]) => [`${id('State')} = ${quote(state)}`, `${id('County')} = ${quote(county)}`, `(${id('Add_Number')} = ${quote(target.houseNumber)} OR ${id('Add_Number')} = ${Number(target.houseNumber)})`, `${id('StNam_Full')} = ${quote(road)}`, `${id('Post_City')} = ${quote(city)}`, `(${id('Zip_Code')} = ${quote(target.zip)} OR ${id('Zip_Code')} = ${Number(target.zip)})`].join(' AND '));
+    .map(([road, city, county, state]) => [equal(fields, 'State', state), equal(fields, 'County', county), equal(fields, 'Add_Number', target.houseNumber), equal(fields, 'StNam_Full', road), equal(fields, 'Post_City', city), equal(fields, 'Zip_Code', target.zip)].join(' AND '));
 }
-export const txgioWhere = (target = TARGET) => txgioWheres(target)[0];
-export const nadWhere = (target = TARGET) => nadWheres(target)[0];
+export const txgioWhere = (target = TARGET, schemaFields) => txgioWheres(target, schemaFields)[0];
+export const nadWhere = (target = TARGET, schemaFields) => nadWheres(target, schemaFields)[0];
 export function queryArguments(datasource, layer, where) { return ['-ro', '-so', '-where', where, datasource, layer]; }
 
 const countFrom = output => String(output || '').match(/^Feature Count:\s*([0-9][0-9,]*)\s*$/mi);
@@ -99,12 +140,12 @@ async function identity(path) {
 }
 async function atomicJson(path, value) { const temporary = `${path}.${process.pid}.tmp`; await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`); await rename(temporary, path); }
 
-export function unavailable(sourceId) { return { sourceId, status: SOURCE_UNAVAILABLE, liveQueryExecuted: false, queryCompleted: false, candidateQueryHits: null, uniqueExactCandidateCount: null, exactCandidateCount: null, exactFound: null, queries: [], queryFailure: null }; }
+export function unavailable(sourceId) { return { sourceId, status: SOURCE_UNAVAILABLE, schemaQueryAttempted: false, schemaQueryCompleted: false, schemaFields: [], requiredFieldsFound: false, unsupportedFields: [], schemaFailure: null, typedPredicateStrategy: null, boundedQueryCount: 0, liveQueryExecuted: false, queryCompleted: false, candidateQueryHits: null, uniqueExactCandidateCount: null, exactCandidateCount: null, exactFound: null, queries: [], queryFailure: null }; }
 export function assessment(results) {
   const queried = results.filter(item => item.queryCompleted);
   return {
     status: queried.length === results.length ? 'LIVE_QUERY_COMPLETE' : SOURCE_UNAVAILABLE,
-    decision: queried.some(item => item.exactFound) ? 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW' : queried.length === results.length ? 'NO_EXACT_CANDIDATE_IN_QUERIED_SNAPSHOTS' : 'NO SOURCE-PRESENCE CONCLUSION PERMITTED',
+    decision: queried.length !== results.length ? 'NO SOURCE-PRESENCE CONCLUSION PERMITTED' : queried.some(item => item.exactFound) ? 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW' : 'NO_EXACT_CANDIDATE_IN_QUERIED_SNAPSHOTS',
     sourceAbsenceClaimed: false,
     productionMutationAuthorized: false,
   };
@@ -115,14 +156,26 @@ export async function audit(options, dependencies = {}) {
   const execute = dependencies.runOgrinfo || runOgrinfo; const identify = dependencies.identity || identity;
   const sources = [];
   const specs = [
-    { sourceId: 'txgio-2026-statewide-address-points', path: options.txgioGdb || process.env.GRIDLY_TXGIO_GDB, layer: options.layer, datasource: path => path, wheres: txgioWheres() },
-    { sourceId: 'usdot-nad-r23', path: options.nadArchive || process.env.GRIDLY_NAD_R23_ARCHIVE, layer: options.nadLayer, datasource: path => `/vsizip/${path.replaceAll('\\', '/')}/${options.nadGeodatabase}`, wheres: nadWheres() },
+    { sourceId: 'txgio-2026-statewide-address-points', kind: 'txgio', path: options.txgioGdb || process.env.GRIDLY_TXGIO_GDB, layer: options.layer, datasource: path => path, buildWheres: txgioWheres },
+    { sourceId: 'usdot-nad-r23', kind: 'nad', path: options.nadArchive || process.env.GRIDLY_NAD_R23_ARCHIVE, layer: options.nadLayer, datasource: path => `/vsizip/${path.replaceAll('\\', '/')}/${options.nadGeodatabase}`, buildWheres: nadWheres },
   ];
   for (const spec of specs) {
     if (!spec.path || !(await stat(resolve(spec.path)).catch(() => null))) { sources.push(unavailable(spec.sourceId)); continue; }
     const path = resolve(spec.path); const sourceIdentity = await identify(path);
+    let schemaFields; let schemaFailure = null;
+    try { schemaFields = parseSchema(await execute(ogrinfo, schemaArguments(spec.datasource(path), spec.layer)), REQUIRED_FIELDS[spec.kind]); }
+    catch (error) { schemaFailure = redactDiagnostic(String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]')); }
+    const requiredFieldsFound = Boolean(schemaFields) && schemaFields.every(field => field.found);
+    const unsupportedFields = (schemaFields || []).filter(field => field.found && !field.supported).map(field => ({ fieldName: field.fieldName, sourceDeclaredType: field.sourceDeclaredType }));
+    const constructable = Boolean(schemaFields) && schemaFields.every(field => field.typedPredicateConstructable);
+    if (!constructable) {
+      const missing = (schemaFields || []).filter(field => !field.found).map(field => field.requiredField);
+      sources.push({ ...unavailable(spec.sourceId), status: 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: Boolean(schemaFields), schemaFields: schemaFields || [], requiredFieldsFound, unsupportedFields, schemaFailure: schemaFailure || (missing.length ? `Required fields missing: ${missing.join(', ')}` : `Unsupported fields: ${unsupportedFields.map(field => field.fieldName).join(', ')}`), sourceIdentity });
+      continue;
+    }
+    const wheres = spec.buildWheres(TARGET, schemaFields);
     const queries = []; let candidateQueryHits = 0;
-    for (const where of spec.wheres) {
+    for (const where of wheres) {
       const args = queryArguments(spec.datasource(path), spec.layer, where);
       try {
         const count = parseFeatureCount(await execute(ogrinfo, args)); candidateQueryHits += count;
@@ -136,7 +189,7 @@ export async function audit(options, dependencies = {}) {
     // The predicates are mutually exclusive because each differs by an exact
     // value for Full_Addr (TxGIO) or the road/city/county/state tuple (NAD).
     const uniqueExactCandidateCount = queryCompleted ? candidateQueryHits : null;
-    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
+    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: true, schemaFields, requiredFieldsFound, unsupportedFields, schemaFailure: null, typedPredicateStrategy: 'source-declared schema types; quoted strings and unquoted numeric literals', boundedQueryCount: wheres.length, liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
   }
   const report = { schemaVersion: 'gridly-lp106-authoritative-address-coverage-audit-v1', generatedAt: new Date(options.generatedAt || Date.now()).toISOString(), target: TARGET, methodology: { deterministic: true, readOnly: true, aggregateOnly: true, sourceFilesModified: false }, sources, assessment: assessment(sources) };
   await mkdir(resolve(options.reports), { recursive: true }); await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);
