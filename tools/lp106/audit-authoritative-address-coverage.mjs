@@ -37,10 +37,29 @@ export function txgioWhere(target = TARGET) {
 export function nadWhere(target = TARGET) {
   return [`UPPER(TRIM(${id('State')})) = 'TX'`, `UPPER(TRIM(${id('County')})) = ${quote(target.county)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, roadPredicate('StNam_Full'), `UPPER(TRIM(${id('Post_City')})) = ${quote(target.city)}`, `CAST(${id('Zip_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
 }
-export function queryArguments(datasource, layer, where) { return [datasource, '-ro', '-so', '-where', where, layer]; }
+export function queryArguments(datasource, layer, where) { return ['-ro', '-so', '-where', where, datasource, layer]; }
+
+const countFrom = output => String(output || '').match(/^Feature Count:\s*([0-9][0-9,]*)\s*$/mi);
+export function redactDiagnostic(value, limit = 400) {
+  const redacted = String(value || '')
+    .replaceAll(/\b[A-Za-z]:[\\/][^\r\n"'`]+/g, '[WINDOWS SOURCE PATH REDACTED]')
+    .replaceAll(/\/vsizip\/[^\s"'`]+/g, '[ARCHIVE SOURCE PATH REDACTED]')
+    .replaceAll(/[\r\n\t]+/g, ' ').replaceAll(/\s{2,}/g, ' ').trim();
+  return redacted.length > limit ? `${redacted.slice(0, limit)}…` : redacted;
+}
 export function parseFeatureCount(output) {
-  const match = String(output).match(/^Feature Count:\s*([0-9][0-9,]*)\s*$/mi);
-  if (!match) throw new Error('GDAL returned no parseable Feature Count');
+  const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0, signal: null, completed: true } : output;
+  const stdoutMatch = countFrom(result?.stdout);
+  // Some GDAL distributions route informational output to stderr. Only an
+  // anchored Feature Count line is accepted; warnings and feature rows cannot
+  // become a count.
+  const match = result?.exitCode === 0 ? stdoutMatch || countFrom(result?.stderr) : null;
+  if (!match) {
+    const stdout = String(result?.stdout || ''); const stderr = String(result?.stderr || '');
+    const combined = `${stdout}\n${stderr}`;
+    const excerpt = redactDiagnostic(combined) || '(no diagnostic output)';
+    throw new Error(`GDAL returned no parseable Feature Count (executable completed: ${result?.completed === true ? 'yes' : 'no'}; exit code: ${result?.exitCode ?? 'unknown'}; stdout length: ${stdout.length}; stderr length: ${stderr.length}; layer appears opened: ${/^Layer name:/mi.test(combined) || /using driver .+ successful/i.test(combined) ? 'yes' : 'no'}; diagnostic excerpt: ${excerpt})`);
+  }
   return Number(match[1].replaceAll(',', ''));
 }
 
@@ -49,9 +68,8 @@ export async function runOgrinfo(executable, args, { spawnImpl = spawn } = {}) {
   let stdout = ''; let stderr = '';
   child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8');
   child.stdout.on('data', value => { stdout += value; }); child.stderr.on('data', value => { stderr += value; });
-  const code = await new Promise((ok, fail) => { child.once('error', fail); child.once('close', ok); });
-  if (code !== 0) throw new Error(`ogrinfo exited ${code}: ${stderr.trim() || 'no diagnostic output'}`);
-  return stdout;
+  const { code, signal } = await new Promise((ok, fail) => { child.once('error', () => fail(new Error('ogrinfo could not be started'))); child.once('close', (code, signal) => ok({ code, signal })); });
+  return { stdout, stderr, exitCode: code, signal: signal || null, completed: true };
 }
 
 async function sha256(path) { const hash = createHash('sha256'); await pipeline(createReadStream(path), hash); return hash.digest('hex'); }
@@ -97,7 +115,7 @@ export async function audit(options, dependencies = {}) {
     const path = resolve(spec.path); const sourceIdentity = await identify(path);
     const args = queryArguments(spec.datasource(path), spec.layer, spec.where);
     const exactCandidateCount = parseFeatureCount(await execute(ogrinfo, args));
-    sources.push({ sourceId: spec.sourceId, status: 'LIVE QUERY EXECUTED', liveQueryExecuted: true, exactCandidateCount, exactFound: exactCandidateCount > 0, sourceIdentity, query: { method: 'ogrinfo filtered Feature Count', readOnly: true, featureRowsEmitted: false, arguments: args.map((value, index) => index === 0 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) } });
+    sources.push({ sourceId: spec.sourceId, status: 'LIVE QUERY EXECUTED', liveQueryExecuted: true, exactCandidateCount, exactFound: exactCandidateCount > 0, sourceIdentity, query: { method: 'ogrinfo filtered Feature Count', readOnly: true, featureRowsEmitted: false, arguments: args.map((value, index) => index === 4 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) } });
   }
   const report = { schemaVersion: 'gridly-lp106-authoritative-address-coverage-audit-v1', generatedAt: new Date(options.generatedAt || Date.now()).toISOString(), target: TARGET, methodology: { deterministic: true, readOnly: true, aggregateOnly: true, sourceFilesModified: false }, sources, assessment: assessment(sources) };
   await mkdir(resolve(options.reports), { recursive: true }); await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);

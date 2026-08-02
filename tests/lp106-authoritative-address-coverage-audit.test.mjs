@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
-import { SOURCE_UNAVAILABLE, assessment, audit, nadWhere, parseArguments, parseFeatureCount, queryArguments, runOgrinfo, txgioWhere } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
+import { SOURCE_UNAVAILABLE, assessment, audit, nadWhere, parseArguments, parseFeatureCount, queryArguments, redactDiagnostic, runOgrinfo, txgioWhere } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
 
 test('arguments are deterministic and reject unknown options', () => {
   const parsed = parseArguments(['--txgio-gdb', 'Texas.gdb', '--nad-archive', 'NAD.zip', '--generated-at', '2026-07-31T00:00:00Z']);
@@ -18,14 +18,27 @@ test('source predicates are bounded to the governed target and queries are read-
   const txgio = txgioWhere(); const nad = nadWhere();
   for (const where of [txgio, nad]) { assert.match(where, /274/); assert.match(where, /677/); assert.match(where, /77535/); }
   assert.match(txgio, /48291/); assert.match(nad, /LIBERTY/);
-  const args = queryArguments('source', 'layer', txgio);
-  assert.deepEqual(args.slice(1, 4), ['-ro', '-so', '-where']);
+  const datasource = 'C:\\immutable source files\\Texas 2026.gdb';
+  const args = queryArguments(datasource, 'layer', txgio);
+  assert.deepEqual(args, ['-ro', '-so', '-where', txgio, datasource, 'layer']);
   assert.ok(!args.includes('-sql')); assert.ok(!args.includes('-json')); assert.ok(!args.includes('-update'));
 });
 
 test('feature counts are parsed without feature rows', () => {
   assert.equal(parseFeatureCount('Layer name: x\nFeature Count: 1,234\n'), 1234);
+  assert.equal(parseFeatureCount('Feature Count: 0\n'), 0);
+  assert.equal(parseFeatureCount({ stdout: '', stderr: 'Warning 42\nLayer name: x\nFeature Count: 7\n', exitCode: 0, completed: true }), 7);
+  assert.throws(() => parseFeatureCount({ stdout: '', stderr: 'Warning: processed 99 features', exitCode: 0, completed: true }), /no parseable/);
   assert.throws(() => parseFeatureCount('no count'), /no parseable/);
+});
+
+test('governed query failures provide bounded path-redacted diagnostics', () => {
+  const source = 'C:\\Owner Name\\Immutable Sources\\Texas 2026.gdb';
+  assert.equal(redactDiagnostic(`ERROR opening ${source}`), 'ERROR opening [WINDOWS SOURCE PATH REDACTED]');
+  assert.throws(
+    () => parseFeatureCount({ stdout: 'Layer name: addresses\n', stderr: `ERROR opening ${source}`, exitCode: 1, completed: true }),
+    error => /executable completed: yes/.test(error.message) && /exit code: 1/.test(error.message) && /stdout length: 22/.test(error.message) && /stderr length:/.test(error.message) && /layer appears opened: yes/.test(error.message) && !error.message.includes(source),
+  );
 });
 
 test('missing immutable datasets are unavailable, not absent', async () => {
@@ -50,7 +63,7 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   assert.equal(report.assessment.status, 'LIVE_QUERY_COMPLETE'); assert.equal(report.assessment.decision, 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW');
   assert.deepEqual(report.sources.map(source => source.exactCandidateCount), [0, 1]);
   assert.ok(report.sources.every(source => source.query.readOnly && !JSON.stringify(source).includes(directory)));
-  assert.ok(calls[1][0].startsWith('/vsizip/'));
+  assert.ok(calls[1][4].startsWith('/vsizip/'));
 });
 
 test('complete zero counts mean no candidate in snapshots, never generalized source absence', () => {
@@ -61,6 +74,14 @@ test('complete zero counts mean no candidate in snapshots, never generalized sou
 test('process execution preserves argument boundaries and forbids a shell', async () => {
   const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); let invocation;
   queueMicrotask(() => { child.stdout.end('Feature Count: 0\n'); child.stderr.end(); setImmediate(() => child.emit('close', 0)); });
-  const output = await runOgrinfo('ogrinfo', ['source path', '-ro'], { spawnImpl(command, args, options) { invocation = { command, args, options }; return child; } });
-  assert.match(output, /Feature Count/); assert.deepEqual(invocation.args, ['source path', '-ro']); assert.equal(invocation.options.shell, false);
+  const output = await runOgrinfo('ogrinfo', ['-ro', '-so', 'source path', 'layer'], { spawnImpl(command, args, options) { invocation = { command, args, options }; return child; } });
+  assert.match(output.stdout, /Feature Count/); assert.equal(output.exitCode, 0); assert.deepEqual(invocation.args, ['-ro', '-so', 'source path', 'layer']); assert.equal(invocation.options.shell, false);
+  assert.ok(!invocation.args.includes('-al'));
+});
+
+test('process execution retains stderr informational output for governed parsing', async () => {
+  const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough();
+  queueMicrotask(() => { child.stdout.end(); child.stderr.end('Layer name: x\nFeature Count: 0\n'); setImmediate(() => child.emit('close', 0)); });
+  const output = await runOgrinfo('ogrinfo', ['-ro', '-so', 'source', 'layer'], { spawnImpl: () => child });
+  assert.equal(output.exitCode, 0); assert.equal(parseFeatureCount(output), 0); assert.match(output.stderr, /Feature Count: 0/);
 });
