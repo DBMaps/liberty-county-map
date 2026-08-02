@@ -16,8 +16,17 @@ test('arguments are deterministic and reject unknown options', () => {
 
 test('source predicates are bounded to the governed target and queries are read-only summaries', () => {
   const txgio = txgioWhere(); const nad = nadWhere();
-  for (const where of [txgio, nad]) { assert.match(where, /274/); assert.match(where, /677/); assert.match(where, /77535/); }
+  for (const where of [txgio, nad]) {
+    assert.doesNotMatch(where, /TRIM\s*\(/i);
+    assert.match(where, /CAST\("Add_Number" AS TEXT\) = '274'/);
+    assert.match(where, /77535/);
+    for (const alias of ['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677']) assert.match(where, new RegExp(alias));
+  }
   assert.match(txgio, /48291/); assert.match(nad, /LIBERTY/);
+  assert.match(txgio, /UPPER\("Post_Comm"\) = 'DAYTON'/);
+  assert.match(nad, /UPPER\("State"\) = 'TX'/);
+  assert.match(nad, /UPPER\("County"\) = 'LIBERTY'/);
+  assert.match(nad, /UPPER\("Post_City"\) = 'DAYTON'/);
   const datasource = 'C:\\immutable source files\\Texas 2026.gdb';
   const args = queryArguments(datasource, 'layer', txgio);
   assert.deepEqual(args, ['-ro', '-so', '-where', txgio, datasource, 'layer']);
@@ -38,6 +47,10 @@ test('governed query failures provide bounded path-redacted diagnostics', () => 
   assert.throws(
     () => parseFeatureCount({ stdout: 'Layer name: addresses\n', stderr: `ERROR opening ${source}`, exitCode: 1, completed: true }),
     error => /executable completed: yes/.test(error.message) && /exit code: 1/.test(error.message) && /stdout length: 22/.test(error.message) && /stderr length:/.test(error.message) && /layer appears opened: yes/.test(error.message) && !error.message.includes(source),
+  );
+  assert.throws(
+    () => parseFeatureCount({ stdout: 'Layer name: addresses\n', stderr: `ERROR 1: Undefined function 'TRIM' used in ${source}`, exitCode: 0, completed: true }),
+    error => /no parseable Feature Count/.test(error.message) && /Undefined function 'TRIM'/.test(error.message) && !error.message.includes(source),
   );
 });
 
@@ -63,6 +76,8 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   assert.equal(report.assessment.status, 'LIVE_QUERY_COMPLETE'); assert.equal(report.assessment.decision, 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW');
   assert.deepEqual(report.sources.map(source => source.exactCandidateCount), [0, 1]);
   assert.ok(report.sources.every(source => source.query.readOnly && !JSON.stringify(source).includes(directory)));
+  assert.ok(report.sources.every(source => source.query.featureRowsEmitted === false));
+  assert.ok(report.sources.every(source => source.query.arguments[4] === '[IMMUTABLE SOURCE PATH REDACTED]'));
   assert.ok(calls[1][4].startsWith('/vsizip/'));
 });
 
