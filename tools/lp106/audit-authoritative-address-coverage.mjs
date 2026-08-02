@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const SOURCE_UNAVAILABLE = 'SOURCE UNAVAILABLE / LIVE QUERY NOT EXECUTED';
 export const TARGET = Object.freeze({ houseNumber: '274', road: 'COUNTY ROAD 677', city: 'DAYTON', zip: '77535', county: 'LIBERTY', fips: '48291' });
+export const ROAD_VARIANTS = Object.freeze(['County Road 677', 'COUNTY ROAD 677', 'County Rd 677', 'COUNTY RD 677', 'CR 677', 'Co Rd 677', 'CO RD 677']);
 
 export function parseArguments(argv) {
   const options = { layer: 'stratmap_2026_address_points_48', nadGeodatabase: 'NAD_r23.gdb', nadLayer: 'NAD', reports: join(ROOT, 'reports/lp106') };
@@ -28,19 +29,22 @@ export function parseArguments(argv) {
 
 const quote = value => `'${String(value).replaceAll("'", "''")}'`;
 const id = value => `"${String(value).replaceAll('"', '""')}"`;
-const roadPredicate = field => `UPPER(${id(field)}) IN (${['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677'].map(quote).join(', ')})`;
-export function txgioWhere(target = TARGET) {
-  // TxGIO's normalized text fields can be compared directly. OpenFileGDB's
-  // native attribute-filter evaluator does not provide the SQL TRIM function.
-  const full = `UPPER(${id('Full_Addr')})`;
-  const exactRoad = ['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677'].map(road => `${full} LIKE ${quote(`${target.houseNumber} ${road}%`)}`).join(' OR ');
-  return [`CAST(${id('FIPS')} AS INTEGER) = ${Number(target.fips)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, `(${exactRoad})`, `UPPER(${id('Post_Comm')}) = ${quote(target.city)}`, `CAST(${id('Post_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
+const variants = (values, build, prefix = []) => values.reduce((all, value) => all.concat(build(value, prefix)), []);
+export function txgioWheres(target = TARGET) {
+  // Every predicate is an OpenFileGDB native equality. Full_Addr supplies the
+  // exact road spelling while component fields independently bind the number,
+  // county, postal community, ZIP, and FIPS.
+  return variants(ROAD_VARIANTS, road => variants(['Dayton', 'DAYTON'], city => variants(['Liberty', 'LIBERTY'], county => [[road, city, county]])))
+    .map(([road, city, county]) => [`${id('FIPS')} = ${Number(target.fips)}`, `${id('County')} = ${quote(county)}`, `(${id('Add_Number')} = ${quote(target.houseNumber)} OR ${id('Add_Number')} = ${Number(target.houseNumber)})`, `${id('Full_Addr')} = ${quote(`${target.houseNumber} ${road}`)}`, `${id('Post_Comm')} = ${quote(city)}`, `(${id('Post_Code')} = ${quote(target.zip)} OR ${id('Post_Code')} = ${Number(target.zip)})`].join(' AND '));
 }
-export function nadWhere(target = TARGET) {
-  // NAD is queried through its native driver independently of TxGIO; retain
-  // only the UPPER comparisons supported by that driver's bounded filter.
-  return [`UPPER(${id('State')}) = 'TX'`, `UPPER(${id('County')}) = ${quote(target.county)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, roadPredicate('StNam_Full'), `UPPER(${id('Post_City')}) = ${quote(target.city)}`, `CAST(${id('Zip_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
+export function nadWheres(target = TARGET) {
+  // NAD has a direct street component, so it never depends on a formatted
+  // full-address field. The bounded case variants are deliberately separate.
+  return variants(ROAD_VARIANTS, road => variants(['Dayton', 'DAYTON'], city => variants(['Liberty', 'LIBERTY'], county => variants(['TX', 'Tx'], state => [[road, city, county, state]]))))
+    .map(([road, city, county, state]) => [`${id('State')} = ${quote(state)}`, `${id('County')} = ${quote(county)}`, `(${id('Add_Number')} = ${quote(target.houseNumber)} OR ${id('Add_Number')} = ${Number(target.houseNumber)})`, `${id('StNam_Full')} = ${quote(road)}`, `${id('Post_City')} = ${quote(city)}`, `(${id('Zip_Code')} = ${quote(target.zip)} OR ${id('Zip_Code')} = ${Number(target.zip)})`].join(' AND '));
 }
+export const txgioWhere = (target = TARGET) => txgioWheres(target)[0];
+export const nadWhere = (target = TARGET) => nadWheres(target)[0];
 export function queryArguments(datasource, layer, where) { return ['-ro', '-so', '-where', where, datasource, layer]; }
 
 const countFrom = output => String(output || '').match(/^Feature Count:\s*([0-9][0-9,]*)\s*$/mi);
@@ -95,9 +99,9 @@ async function identity(path) {
 }
 async function atomicJson(path, value) { const temporary = `${path}.${process.pid}.tmp`; await writeFile(temporary, `${JSON.stringify(value, null, 2)}\n`); await rename(temporary, path); }
 
-export function unavailable(sourceId) { return { sourceId, status: SOURCE_UNAVAILABLE, liveQueryExecuted: false, exactCandidateCount: null, exactFound: null }; }
+export function unavailable(sourceId) { return { sourceId, status: SOURCE_UNAVAILABLE, liveQueryExecuted: false, queryCompleted: false, candidateQueryHits: null, uniqueExactCandidateCount: null, exactCandidateCount: null, exactFound: null, queries: [], queryFailure: null }; }
 export function assessment(results) {
-  const queried = results.filter(item => item.liveQueryExecuted);
+  const queried = results.filter(item => item.queryCompleted);
   return {
     status: queried.length === results.length ? 'LIVE_QUERY_COMPLETE' : SOURCE_UNAVAILABLE,
     decision: queried.some(item => item.exactFound) ? 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW' : queried.length === results.length ? 'NO_EXACT_CANDIDATE_IN_QUERIED_SNAPSHOTS' : 'NO SOURCE-PRESENCE CONCLUSION PERMITTED',
@@ -111,15 +115,28 @@ export async function audit(options, dependencies = {}) {
   const execute = dependencies.runOgrinfo || runOgrinfo; const identify = dependencies.identity || identity;
   const sources = [];
   const specs = [
-    { sourceId: 'txgio-2026-statewide-address-points', path: options.txgioGdb || process.env.GRIDLY_TXGIO_GDB, layer: options.layer, datasource: path => path, where: txgioWhere() },
-    { sourceId: 'usdot-nad-r23', path: options.nadArchive || process.env.GRIDLY_NAD_R23_ARCHIVE, layer: options.nadLayer, datasource: path => `/vsizip/${path.replaceAll('\\', '/')}/${options.nadGeodatabase}`, where: nadWhere() },
+    { sourceId: 'txgio-2026-statewide-address-points', path: options.txgioGdb || process.env.GRIDLY_TXGIO_GDB, layer: options.layer, datasource: path => path, wheres: txgioWheres() },
+    { sourceId: 'usdot-nad-r23', path: options.nadArchive || process.env.GRIDLY_NAD_R23_ARCHIVE, layer: options.nadLayer, datasource: path => `/vsizip/${path.replaceAll('\\', '/')}/${options.nadGeodatabase}`, wheres: nadWheres() },
   ];
   for (const spec of specs) {
     if (!spec.path || !(await stat(resolve(spec.path)).catch(() => null))) { sources.push(unavailable(spec.sourceId)); continue; }
     const path = resolve(spec.path); const sourceIdentity = await identify(path);
-    const args = queryArguments(spec.datasource(path), spec.layer, spec.where);
-    const exactCandidateCount = parseFeatureCount(await execute(ogrinfo, args));
-    sources.push({ sourceId: spec.sourceId, status: 'LIVE QUERY EXECUTED', liveQueryExecuted: true, exactCandidateCount, exactFound: exactCandidateCount > 0, sourceIdentity, query: { method: 'ogrinfo filtered Feature Count', readOnly: true, featureRowsEmitted: false, arguments: args.map((value, index) => index === 4 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) } });
+    const queries = []; let candidateQueryHits = 0;
+    for (const where of spec.wheres) {
+      const args = queryArguments(spec.datasource(path), spec.layer, where);
+      try {
+        const count = parseFeatureCount(await execute(ogrinfo, args)); candidateQueryHits += count;
+        queries.push({ where, count, completed: true, arguments: args.map((value, index) => index === 4 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) });
+      } catch (error) {
+        const safeFailure = String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]');
+        queries.push({ where, count: null, completed: false, failure: redactDiagnostic(safeFailure), arguments: args.map((value, index) => index === 4 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) });
+      }
+    }
+    const failures = queries.filter(query => !query.completed); const queryCompleted = failures.length === 0;
+    // The predicates are mutually exclusive because each differs by an exact
+    // value for Full_Addr (TxGIO) or the road/city/county/state tuple (NAD).
+    const uniqueExactCandidateCount = queryCompleted ? candidateQueryHits : null;
+    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
   }
   const report = { schemaVersion: 'gridly-lp106-authoritative-address-coverage-audit-v1', generatedAt: new Date(options.generatedAt || Date.now()).toISOString(), target: TARGET, methodology: { deterministic: true, readOnly: true, aggregateOnly: true, sourceFilesModified: false }, sources, assessment: assessment(sources) };
   await mkdir(resolve(options.reports), { recursive: true }); await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);

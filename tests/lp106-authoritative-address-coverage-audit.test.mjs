@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
-import { SOURCE_UNAVAILABLE, assessment, audit, nadWhere, parseArguments, parseFeatureCount, queryArguments, redactDiagnostic, runOgrinfo, txgioWhere } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
+import { SOURCE_UNAVAILABLE, assessment, audit, nadWhere, parseArguments, parseFeatureCount, queryArguments, redactDiagnostic, runOgrinfo, txgioWhere, txgioWheres, nadWheres, ROAD_VARIANTS } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
 
 test('arguments are deterministic and reject unknown options', () => {
   const parsed = parseArguments(['--txgio-gdb', 'Texas.gdb', '--nad-archive', 'NAD.zip', '--generated-at', '2026-07-31T00:00:00Z']);
@@ -14,22 +14,24 @@ test('arguments are deterministic and reject unknown options', () => {
   assert.throws(() => parseArguments(['--generated-at', 'yesterday']), /ISO/);
 });
 
-test('source predicates are bounded to the governed target and queries are read-only summaries', () => {
-  const txgio = txgioWhere(); const nad = nadWhere();
-  for (const where of [txgio, nad]) {
-    assert.doesNotMatch(where, /TRIM\s*\(/i);
-    assert.match(where, /CAST\("Add_Number" AS TEXT\) = '274'/);
+test('source predicates use deterministic bounded native equalities', () => {
+  const txgio = txgioWheres(); const nad = nadWheres();
+  assert.equal(txgio.length, 28); assert.equal(nad.length, 56);
+  assert.deepEqual(txgio, txgioWheres()); assert.deepEqual(nad, nadWheres());
+  for (const where of [...txgio, ...nad]) {
+    assert.doesNotMatch(where, /(?:TRIM|UPPER|CAST)\s*\(/i);
+    assert.match(where, /\("Add_Number" = '274' OR "Add_Number" = 274\)/);
     assert.match(where, /77535/);
-    for (const alias of ['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677']) assert.match(where, new RegExp(alias));
   }
-  assert.match(txgio, /48291/); assert.match(nad, /LIBERTY/);
-  assert.match(txgio, /UPPER\("Post_Comm"\) = 'DAYTON'/);
-  assert.match(nad, /UPPER\("State"\) = 'TX'/);
-  assert.match(nad, /UPPER\("County"\) = 'LIBERTY'/);
-  assert.match(nad, /UPPER\("Post_City"\) = 'DAYTON'/);
+  for (const alias of ROAD_VARIANTS) {
+    assert.ok(txgio.some(where => where.includes(`"Full_Addr" = '274 ${alias}'`)));
+    assert.ok(nad.some(where => where.includes(`"StNam_Full" = '${alias}'`)));
+  }
+  assert.ok(txgio.every(where => /48291/.test(where) && /"County" = '(?:Liberty|LIBERTY)'/.test(where) && /"Post_Comm" = '(?:Dayton|DAYTON)'/.test(where)));
+  assert.ok(nad.every(where => /"State" = '(?:TX|Tx)'/.test(where) && /"County" = '(?:Liberty|LIBERTY)'/.test(where) && /"Post_City" = '(?:Dayton|DAYTON)'/.test(where)));
   const datasource = 'C:\\immutable source files\\Texas 2026.gdb';
-  const args = queryArguments(datasource, 'layer', txgio);
-  assert.deepEqual(args, ['-ro', '-so', '-where', txgio, datasource, 'layer']);
+  const args = queryArguments(datasource, 'layer', txgioWhere());
+  assert.deepEqual(args, ['-ro', '-so', '-where', txgioWhere(), datasource, 'layer']);
   assert.ok(!args.includes('-sql')); assert.ok(!args.includes('-json')); assert.ok(!args.includes('-update'));
 });
 
@@ -71,18 +73,35 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   const calls = [];
   const report = await audit({ ...parseArguments(['--txgio-gdb', txgio, '--nad-archive', nad, '--reports', reports, '--generated-at', '2026-07-31T00:00:00Z']) }, {
     identity: async path => ({ fileName: path.endsWith('.zip') ? 'NAD_r23.zip' : 'Texas.gdb', sizeBytes: 1, sha256: 'a'.repeat(64), sourcePathExcludedFromReport: true }),
-    runOgrinfo: async (_command, args) => { calls.push(args); return calls.length === 1 ? 'Feature Count: 0\n' : 'Feature Count: 1\n'; },
+    runOgrinfo: async (_command, args) => { calls.push(args); return calls.length === txgioWheres().length + 1 ? 'Feature Count: 1\n' : 'Feature Count: 0\n'; },
   });
   assert.equal(report.assessment.status, 'LIVE_QUERY_COMPLETE'); assert.equal(report.assessment.decision, 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW');
   assert.deepEqual(report.sources.map(source => source.exactCandidateCount), [0, 1]);
+  assert.deepEqual(report.sources.map(source => source.candidateQueryHits), [0, 1]);
+  assert.ok(report.sources.every(source => source.queryCompleted && source.queryFailure === null));
+  assert.deepEqual(report.sources.map(source => source.queries.length), [28, 56]);
   assert.ok(report.sources.every(source => source.query.readOnly && !JSON.stringify(source).includes(directory)));
   assert.ok(report.sources.every(source => source.query.featureRowsEmitted === false));
-  assert.ok(report.sources.every(source => source.query.arguments[4] === '[IMMUTABLE SOURCE PATH REDACTED]'));
-  assert.ok(calls[1][4].startsWith('/vsizip/'));
+  assert.ok(report.sources.every(source => source.queries.every(query => query.arguments[4] === '[IMMUTABLE SOURCE PATH REDACTED]')));
+  assert.ok(calls[28][4].startsWith('/vsizip/'));
+});
+
+test('partial bounded-query failure is incomplete evidence with no unique count or absence conclusion', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'lp106-partial-')); const txgio = join(directory, 'Texas.gdb'); const reports = join(directory, 'reports');
+  await writeFile(txgio, 'synthetic'); let call = 0;
+  const report = await audit({ ...parseArguments(['--txgio-gdb', txgio, '--reports', reports]), generatedAt: '2026-07-31T00:00:00Z' }, {
+    identity: async () => ({ fileName: 'Texas.gdb', sizeBytes: 1, sha256: 'a'.repeat(64), sourcePathExcludedFromReport: true }),
+    runOgrinfo: async () => ++call === 2 ? { stdout: 'Layer name: addresses\n', stderr: "ERROR 1: Undefined function 'UPPER' used.", exitCode: 0, completed: true } : 'Feature Count: 1\n',
+  });
+  const source = report.sources[0];
+  assert.equal(source.queryCompleted, false); assert.equal(source.exactCandidateCount, null); assert.equal(source.uniqueExactCandidateCount, null);
+  assert.equal(source.candidateQueryHits, 27); assert.equal(source.queryFailure.count, 1);
+  assert.equal(report.assessment.decision, 'NO SOURCE-PRESENCE CONCLUSION PERMITTED'); assert.equal(report.assessment.sourceAbsenceClaimed, false);
+  assert.ok(!JSON.stringify(report).includes(directory));
 });
 
 test('complete zero counts mean no candidate in snapshots, never generalized source absence', () => {
-  const result = assessment([{ liveQueryExecuted: true, exactFound: false }, { liveQueryExecuted: true, exactFound: false }]);
+  const result = assessment([{ queryCompleted: true, exactFound: false }, { queryCompleted: true, exactFound: false }]);
   assert.equal(result.decision, 'NO_EXACT_CANDIDATE_IN_QUERIED_SNAPSHOTS'); assert.equal(result.sourceAbsenceClaimed, false);
 });
 
