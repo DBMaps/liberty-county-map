@@ -28,14 +28,18 @@ export function parseArguments(argv) {
 
 const quote = value => `'${String(value).replaceAll("'", "''")}'`;
 const id = value => `"${String(value).replaceAll('"', '""')}"`;
-const roadPredicate = field => `UPPER(TRIM(${id(field)})) IN (${['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677'].map(quote).join(', ')})`;
+const roadPredicate = field => `UPPER(${id(field)}) IN (${['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677'].map(quote).join(', ')})`;
 export function txgioWhere(target = TARGET) {
-  const full = `UPPER(TRIM(${id('Full_Addr')}))`;
+  // TxGIO's normalized text fields can be compared directly. OpenFileGDB's
+  // native attribute-filter evaluator does not provide the SQL TRIM function.
+  const full = `UPPER(${id('Full_Addr')})`;
   const exactRoad = ['COUNTY ROAD 677', 'COUNTY RD 677', 'CR 677', 'CO RD 677'].map(road => `${full} LIKE ${quote(`${target.houseNumber} ${road}%`)}`).join(' OR ');
-  return [`CAST(${id('FIPS')} AS INTEGER) = ${Number(target.fips)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, `(${exactRoad})`, `UPPER(TRIM(${id('Post_Comm')})) = ${quote(target.city)}`, `CAST(${id('Post_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
+  return [`CAST(${id('FIPS')} AS INTEGER) = ${Number(target.fips)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, `(${exactRoad})`, `UPPER(${id('Post_Comm')}) = ${quote(target.city)}`, `CAST(${id('Post_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
 }
 export function nadWhere(target = TARGET) {
-  return [`UPPER(TRIM(${id('State')})) = 'TX'`, `UPPER(TRIM(${id('County')})) = ${quote(target.county)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, roadPredicate('StNam_Full'), `UPPER(TRIM(${id('Post_City')})) = ${quote(target.city)}`, `CAST(${id('Zip_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
+  // NAD is queried through its native driver independently of TxGIO; retain
+  // only the UPPER comparisons supported by that driver's bounded filter.
+  return [`UPPER(${id('State')}) = 'TX'`, `UPPER(${id('County')}) = ${quote(target.county)}`, `CAST(${id('Add_Number')} AS TEXT) = ${quote(target.houseNumber)}`, roadPredicate('StNam_Full'), `UPPER(${id('Post_City')}) = ${quote(target.city)}`, `CAST(${id('Zip_Code')} AS TEXT) = ${quote(target.zip)}`].join(' AND ');
 }
 export function queryArguments(datasource, layer, where) { return ['-ro', '-so', '-where', where, datasource, layer]; }
 
