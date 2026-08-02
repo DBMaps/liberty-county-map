@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
-import { SOURCE_UNAVAILABLE, REQUIRED_FIELDS, assessment, audit, nadWhere, parseArguments, parseFeatureCount, parseSchema, queryArguments, redactDiagnostic, runOgrinfo, schemaArguments, txgioWhere, txgioWheres, nadWheres, ROAD_VARIANTS } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
+import { SOURCE_UNAVAILABLE, REQUIRED_FIELDS, assessment, audit, nadWhere, parseArguments, parseFeatureCount, parseSchema, parseSchemaInventory, resolveFieldMapping, queryArguments, redactDiagnostic, runOgrinfo, schemaArguments, txgioWhere, txgioWheres, nadWheres, ROAD_VARIANTS } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
 
 const txgioSchema = `INFO: Open of x using driver OpenFileGDB successful.\nLayer name: stratmap_2026_address_points_48\nGeometry: Point\nFIPS: Integer (5.0)\nAdd_Number: String (20.0)\nFull_Addr: String (100.0)\nPost_Comm: String (40.0)\nPost_Code: Integer64 (0.0)\n`;
 const nadSchema = `INFO: Open of x using driver OpenFileGDB successful.\nLayer name: NAD\nGeometry: Point\nState: String (2.0)\nCounty: String (40.0)\nAdd_Number: Real (0.0)\nStNam_Full: String (100.0)\nPost_City: String (40.0)\nZip_Code: String (10.0)\n`;
@@ -45,6 +45,30 @@ test('schema parser classifies GDAL field types and reports missing or unsupport
   assert.deepEqual(fields.map(field => field.normalizedType), ['string', 'integer', 'integer64', 'real', 'unsupported', null]);
   assert.equal(fields[4].supported, false); assert.equal(fields[5].found, false);
   assert.deepEqual(schemaArguments('source', 'layer'), ['-ro', '-so', 'source', 'layer']);
+});
+
+test('NAD schema inventory preserves order, source types, normalized types, and nullability', () => {
+  const inventory = parseSchemaInventory('Layer name: NAD\nOBJECTID: Integer64 (0.0) NOT NULL\nSTATE_ABBR: String (2.0)\nADD_NUMBER: Real (10.2) NULLABLE\n');
+  assert.deepEqual(inventory, [
+    { originalName: 'OBJECTID', originalType: 'Integer64', normalizedType: 'integer64', index: 0, nullable: false },
+    { originalName: 'STATE_ABBR', originalType: 'String', normalizedType: 'string', index: 1, nullable: null },
+    { originalName: 'ADD_NUMBER', originalType: 'Real', normalizedType: 'real', index: 2, nullable: true },
+  ]);
+});
+
+test('NAD aliases map discovered fields and select deterministically by declared priority', () => {
+  const inventory = parseSchemaInventory('Layer name: NAD\nSTATE_ABBR: String\nCOUNTYNAME: String\nADD_NUMBER: String\nStreet: String\nCity: String\nPost_Code: String\nZipCode: String\n');
+  const mapping = resolveFieldMapping(inventory);
+  assert.deepEqual(mapping.map(field => [field.requiredField, field.fieldName]), [['State', 'STATE_ABBR'], ['County', 'COUNTYNAME'], ['Add_Number', 'ADD_NUMBER'], ['StNam_Full', 'Street'], ['Post_City', 'City'], ['Zip_Code', 'ZipCode']]);
+  assert.match(nadWhere(undefined, mapping), /"STATE_ABBR" = 'TX'.*"COUNTYNAME" = 'Liberty'.*"ADD_NUMBER" = '274'.*"Street" = 'County Road 677'.*"City" = 'Dayton'.*"ZipCode" = '77535'/);
+});
+
+test('NAD mapping rejects missing, duplicate, and unsupported mandatory fields', () => {
+  assert.throws(() => resolveFieldMapping([]), /Required field missing: State/);
+  const duplicate = [{ originalName: 'State', originalType: 'String', normalizedType: 'string', index: 0 }, { originalName: 'STATE', originalType: 'String', normalizedType: 'string', index: 1 }];
+  assert.throws(() => resolveFieldMapping(duplicate), /Duplicate candidate field/);
+  const unsupported = parseSchemaInventory('Layer name: NAD\nState: Binary\nCounty: String\nAdd_Number: String\nStNam_Full: String\nPost_City: String\nZip_Code: String\n');
+  assert.throws(() => resolveFieldMapping(unsupported), /Unsupported schema field: State/);
 });
 
 test('feature counts are parsed without feature rows', () => {
@@ -96,6 +120,9 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   assert.ok(report.sources.every(source => source.query.featureRowsEmitted === false));
   assert.ok(report.sources.every(source => source.queries.every(query => query.arguments[4] === '[IMMUTABLE SOURCE PATH REDACTED]')));
   assert.ok(calls.some(args => args[2]?.startsWith('/vsizip/')));
+  const inventory = JSON.parse(await readFile(join(reports, 'nad-schema.json')));
+  assert.deepEqual(inventory.mapping.map(field => field.actualField), ['State', 'County', 'Add_Number', 'StNam_Full', 'Post_City', 'Zip_Code']);
+  assert.ok(inventory.fields.every((field, index) => field.index === index));
 });
 
 test('partial bounded-query failure is incomplete evidence with no unique count or absence conclusion', async () => {

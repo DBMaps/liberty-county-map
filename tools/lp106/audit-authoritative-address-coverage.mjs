@@ -34,6 +34,16 @@ export const REQUIRED_FIELDS = Object.freeze({
   txgio: Object.freeze(['FIPS', 'Add_Number', 'Full_Addr', 'Post_Comm', 'Post_Code']),
   nad: Object.freeze(['State', 'County', 'Add_Number', 'StNam_Full', 'Post_City', 'Zip_Code']),
 });
+// Ordered aliases are part of the audit contract.  A name is used only when it
+// is present in the inspected layer; the table never supplies a field name.
+export const NAD_FIELD_ALIASES = Object.freeze({
+  State: Object.freeze(['State', 'STATE_ABBR', 'State_Abbr']),
+  County: Object.freeze(['County', 'COUNTYNAME', 'COUNTY_NAME']),
+  Add_Number: Object.freeze(['Add_Number', 'ADD_NUMBER', 'AddNo_Full']),
+  StNam_Full: Object.freeze(['StNam_Full', 'FULL_STREET', 'Street']),
+  Post_City: Object.freeze(['Post_City', 'POST_CITY', 'City']),
+  Zip_Code: Object.freeze(['Zip_Code', 'ZIP_CODE', 'ZipCode', 'Post_Code']),
+});
 export function schemaArguments(datasource, layer) { return ['-ro', '-so', datasource, layer]; }
 export function normalizeFieldType(type) {
   const value = String(type).trim().toLowerCase();
@@ -42,6 +52,36 @@ export function normalizeFieldType(type) {
   if (/^integer\b/.test(value)) return 'integer';
   if (/^(real|numeric|decimal|float|double)\b/.test(value)) return 'real';
   return 'unsupported';
+}
+export function parseSchemaInventory(output) {
+  const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0 } : output;
+  if (result?.exitCode !== 0) throw new Error(`schema inspection failed: ${redactDiagnostic(`${result?.stdout || ''}\n${result?.stderr || ''}`)}`);
+  const text = `${result?.stdout || ''}\n${result?.stderr || ''}`;
+  if (!/^Layer name:/mi.test(text)) throw new Error(`schema inspection returned no layer schema: ${redactDiagnostic(text) || '(no diagnostic output)'}`);
+  const fields = [];
+  for (const line of text.split(/\r?\n/)) {
+    const match = line.match(/^\s*([^:]+):\s*([A-Za-z][A-Za-z0-9 ]*?)(?:\s*\([^)]*\))?(?:\s+(NOT NULL|NULLABLE))?\s*$/i);
+    if (!match || /^(Layer name|Geometry|Feature Count|Extent|Layer SRS WKT|FID Column)$/i.test(match[1].trim())) continue;
+    const originalType = match[2].trim();
+    fields.push({ originalName: match[1].trim(), originalType, normalizedType: normalizeFieldType(originalType), index: fields.length, nullable: match[3] ? !/^NOT NULL$/i.test(match[3]) : null });
+  }
+  return fields;
+}
+export function resolveFieldMapping(inventory, aliases = NAD_FIELD_ALIASES) {
+  if (!Array.isArray(inventory)) throw new Error('NAD schema inventory must be an array');
+  const byName = new Map();
+  for (const field of inventory) {
+    const key = String(field.originalName).toLowerCase();
+    if (byName.has(key)) throw new Error(`Duplicate candidate field: ${field.originalName}`);
+    byName.set(key, field);
+  }
+  return Object.entries(aliases).map(([requiredField, accepted]) => {
+    const candidates = accepted.map((name, priority) => ({ field: byName.get(name.toLowerCase()), priority })).filter(item => item.field);
+    const selected = candidates.sort((a, b) => a.priority - b.priority || a.field.index - b.field.index)[0];
+    if (!selected) throw new Error(`Required field missing: ${requiredField}`);
+    if (selected.field.normalizedType === 'unsupported') throw new Error(`Unsupported schema field: ${selected.field.originalName}`);
+    return { requiredField, fieldName: selected.field.originalName, sourceDeclaredType: selected.field.originalType, normalizedType: selected.field.normalizedType, found: true, supported: true, typedPredicateConstructable: true, inventoryIndex: selected.field.index, aliasPriority: selected.priority };
+  });
 }
 export function parseSchema(output, requiredFields) {
   const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0 } : output;
@@ -162,15 +202,21 @@ export async function audit(options, dependencies = {}) {
   for (const spec of specs) {
     if (!spec.path || !(await stat(resolve(spec.path)).catch(() => null))) { sources.push(unavailable(spec.sourceId)); continue; }
     const path = resolve(spec.path); const sourceIdentity = await identify(path);
-    let schemaFields; let schemaFailure = null;
-    try { schemaFields = parseSchema(await execute(ogrinfo, schemaArguments(spec.datasource(path), spec.layer)), REQUIRED_FIELDS[spec.kind]); }
+    let schemaFields; let schemaInventory = null; let schemaFailure = null;
+    try {
+      const schemaOutput = await execute(ogrinfo, schemaArguments(spec.datasource(path), spec.layer));
+      if (spec.kind === 'nad') {
+        schemaInventory = parseSchemaInventory(schemaOutput);
+        schemaFields = resolveFieldMapping(schemaInventory);
+      } else schemaFields = parseSchema(schemaOutput, REQUIRED_FIELDS[spec.kind]);
+    }
     catch (error) { schemaFailure = redactDiagnostic(String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]')); }
     const requiredFieldsFound = Boolean(schemaFields) && schemaFields.every(field => field.found);
     const unsupportedFields = (schemaFields || []).filter(field => field.found && !field.supported).map(field => ({ fieldName: field.fieldName, sourceDeclaredType: field.sourceDeclaredType }));
     const constructable = Boolean(schemaFields) && schemaFields.every(field => field.typedPredicateConstructable);
     if (!constructable) {
       const missing = (schemaFields || []).filter(field => !field.found).map(field => field.requiredField);
-      sources.push({ ...unavailable(spec.sourceId), status: 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: Boolean(schemaFields), schemaFields: schemaFields || [], requiredFieldsFound, unsupportedFields, schemaFailure: schemaFailure || (missing.length ? `Required fields missing: ${missing.join(', ')}` : `Unsupported fields: ${unsupportedFields.map(field => field.fieldName).join(', ')}`), sourceIdentity });
+      sources.push({ ...unavailable(spec.sourceId), status: 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: Boolean(schemaInventory || schemaFields), schemaInventory, schemaFields: schemaFields || [], requiredFieldsFound, unsupportedFields, schemaFailure: schemaFailure || (missing.length ? `Required fields missing: ${missing.join(', ')}` : `Unsupported fields: ${unsupportedFields.map(field => field.fieldName).join(', ')}`), sourceIdentity });
       continue;
     }
     const wheres = spec.buildWheres(TARGET, schemaFields);
@@ -189,10 +235,13 @@ export async function audit(options, dependencies = {}) {
     // The predicates are mutually exclusive because each differs by an exact
     // value for Full_Addr (TxGIO) or the road/city/county/state tuple (NAD).
     const uniqueExactCandidateCount = queryCompleted ? candidateQueryHits : null;
-    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: true, schemaFields, requiredFieldsFound, unsupportedFields, schemaFailure: null, typedPredicateStrategy: 'source-declared schema types; quoted strings and unquoted numeric literals', boundedQueryCount: wheres.length, liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
+    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: true, schemaInventory, schemaFields, requiredFieldsFound, unsupportedFields, schemaFailure: null, typedPredicateStrategy: 'source-declared schema types; quoted strings and unquoted numeric literals', boundedQueryCount: wheres.length, liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
   }
   const report = { schemaVersion: 'gridly-lp106-authoritative-address-coverage-audit-v1', generatedAt: new Date(options.generatedAt || Date.now()).toISOString(), target: TARGET, methodology: { deterministic: true, readOnly: true, aggregateOnly: true, sourceFilesModified: false }, sources, assessment: assessment(sources) };
-  await mkdir(resolve(options.reports), { recursive: true }); await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);
+  await mkdir(resolve(options.reports), { recursive: true });
+  const nad = sources.find(source => source.sourceId === 'usdot-nad-r23');
+  if (nad?.schemaInventory) await atomicJson(join(resolve(options.reports), 'nad-schema.json'), { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: nad.sourceId, fields: nad.schemaInventory, mapping: nad.schemaFields.map(field => ({ expectedField: field.requiredField, actualField: field.fieldName, index: field.inventoryIndex })) });
+  await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);
   return report;
 }
 
