@@ -15,12 +15,12 @@ export const TARGET = Object.freeze({ houseNumber: '274', road: 'COUNTY ROAD 677
 export const ROAD_VARIANTS = Object.freeze(['County Road 677', 'COUNTY ROAD 677', 'County Rd 677', 'COUNTY RD 677', 'CR 677', 'Co Rd 677', 'CO RD 677']);
 
 export function parseArguments(argv) {
-  const options = { layer: 'stratmap_2026_address_points_48', nadGeodatabase: 'NAD_r23.gdb', nadLayer: 'NAD', reports: join(ROOT, 'reports/lp106') };
+  const options = { layer: 'stratmap_2026_address_points_48', nadGeodatabase: 'NAD_r23.gdb', nadLayer: null, nadLayerExplicit: false, reports: join(ROOT, 'reports/lp106') };
   const valued = new Set(['--txgio-gdb', '--nad-archive', '--gdal', '--reports', '--generated-at', '--layer', '--nad-geodatabase', '--nad-layer']);
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === '--help' || arg === '-h') options.help = true;
-    else if (valued.has(arg)) { if (!argv[i + 1]) throw new Error(`${arg} requires a value`); options[arg.slice(2).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = argv[++i]; }
+    else if (valued.has(arg)) { if (!argv[i + 1]) throw new Error(`${arg} requires a value`); options[arg.slice(2).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = argv[++i]; if (arg === '--nad-layer') options.nadLayerExplicit = true; }
     else throw new Error(`Unknown option: ${arg}`);
   }
   if (options.generatedAt && Number.isNaN(Date.parse(options.generatedAt))) throw new Error('--generated-at must be an ISO date/time');
@@ -45,6 +45,7 @@ export const NAD_FIELD_ALIASES = Object.freeze({
   Zip_Code: Object.freeze(['Zip_Code', 'ZIP_CODE', 'ZipCode', 'Post_Code']),
 });
 export function schemaArguments(datasource, layer) { return ['-ro', '-so', datasource, layer]; }
+export function layerEnumerationArguments(datasource) { return ['-ro', '-so', datasource]; }
 export function normalizeFieldType(type) {
   const value = String(type).trim().toLowerCase();
   if (/^(string|text|character)/.test(value)) return 'string';
@@ -60,12 +61,54 @@ export function parseSchemaInventory(output) {
   if (!/^Layer name:/mi.test(text)) throw new Error(`schema inspection returned no layer schema: ${redactDiagnostic(text) || '(no diagnostic output)'}`);
   const fields = [];
   for (const line of text.split(/\r?\n/)) {
-    const match = line.match(/^\s*([^:]+):\s*([A-Za-z][A-Za-z0-9 ]*?)(?:\s*\([^)]*\))?(?:\s+(NOT NULL|NULLABLE))?\s*$/i);
-    if (!match || /^(Layer name|Geometry|Feature Count|Extent|Layer SRS WKT|FID Column)$/i.test(match[1].trim())) continue;
+    // OpenFileGDB may interleave blank lines, metadata/domain/subtype blocks,
+    // and geometry declarations. Scan to EOF and accept only GDAL field types.
+    const match = line.match(/^\s*([^:]+):\s*(Integer64|Integer|Real|String|DateTime|Date|Time|Binary|Integer64List|IntegerList|RealList|StringList)(?:\s*\([^)]*\))?(?:\s+(NOT NULL|NULLABLE))?\s*$/i);
+    if (!match) continue;
     const originalType = match[2].trim();
     fields.push({ originalName: match[1].trim(), originalType, normalizedType: normalizeFieldType(originalType), index: fields.length, nullable: match[3] ? !/^NOT NULL$/i.test(match[3]) : null });
   }
   return fields;
+}
+
+export function schemaCompleteness(output, inventory, mapping = null, failure = null) {
+  const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0, completed: true } : output || {};
+  const raw = `${result.stdout || ''}\n${result.stderr || ''}`;
+  const missing = mapping ? [] : Object.keys(NAD_FIELD_ALIASES).filter(concept => !inventory.some(field => NAD_FIELD_ALIASES[concept].some(alias => alias.toLowerCase() === field.originalName.toLowerCase())));
+  return {
+    rawSchemaOutputLength: raw.length,
+    parsedFieldCount: inventory.length,
+    schemaOutputCompleted: result.completed !== false && result.exitCode === 0 && /^Layer name:/mi.test(raw),
+    parserTerminationReason: result.completed !== false && result.exitCode === 0 ? 'end-of-output' : failure || 'process-incomplete',
+    firstFieldName: inventory[0]?.originalName || null,
+    lastFieldName: inventory.at(-1)?.originalName || null,
+    requiredConceptsFound: mapping ? mapping.map(field => field.requiredField) : Object.keys(NAD_FIELD_ALIASES).filter(name => !missing.includes(name)),
+    requiredConceptsMissing: missing,
+  };
+}
+
+export function parseLayerEnumeration(output) {
+  const result = typeof output === 'string' ? { stdout: output, stderr: '', exitCode: 0, completed: true } : output;
+  if (result?.exitCode !== 0 || result?.completed === false) throw new Error(`NAD layer discovery failed: ${redactDiagnostic(`${result?.stdout || ''}\n${result?.stderr || ''}`)}`);
+  const layers = [];
+  for (const line of `${result?.stdout || ''}\n${result?.stderr || ''}`.split(/\r?\n/)) {
+    const match = line.match(/^\s*(\d+)\s*:\s*(.*?)(?:\s+\(([^()]*(?:Point|Line String|Polygon|Geometry|Table)[^()]*)\))?\s*$/i);
+    if (match) layers.push({ layerIndex: Number(match[1]), layerName: match[2].trim(), geometryType: match[3]?.trim() || null });
+  }
+  if (!layers.length) throw new Error('NAD layer discovery returned no layers');
+  return layers;
+}
+
+export function selectNadLayer(layers, requestedLayer = null) {
+  const eligible = layers.filter(layer => layer.schemaInspectionCompleted && layer.schemaOutputCompleted && layer.requiredConceptsMissing.length === 0);
+  if (requestedLayer !== null) {
+    const selected = layers.find(layer => layer.layerName === requestedLayer);
+    if (!selected) return { selectedLayer: null, selectionMode: 'explicit', selectionReason: 'requested layer does not exist', eligible, failure: `Requested NAD layer does not exist: ${requestedLayer}` };
+    if (!eligible.includes(selected)) return { selectedLayer: null, selectionMode: 'explicit', selectionReason: 'requested layer lacks a complete mandatory address schema', eligible, failure: `Requested NAD layer is ineligible: ${requestedLayer}` };
+    return { selectedLayer: selected, selectionMode: 'explicit', selectionReason: 'explicit layer exists and has a complete mandatory address schema', eligible, failure: null };
+  }
+  if (eligible.length === 1) return { selectedLayer: eligible[0], selectionMode: 'automatic', selectionReason: 'exactly one layer has a complete mandatory address schema', eligible, failure: null };
+  return { selectedLayer: null, selectionMode: 'automatic', selectionReason: eligible.length ? 'multiple eligible layers are ambiguous' : 'no layer has a complete mandatory address schema', eligible, failure: eligible.length ? 'Ambiguous NAD address layers' : 'No eligible NAD address layer' };
 }
 export function resolveFieldMapping(inventory, aliases = NAD_FIELD_ALIASES) {
   if (!Array.isArray(inventory)) throw new Error('NAD schema inventory must be an array');
@@ -199,18 +242,53 @@ export async function audit(options, dependencies = {}) {
     { sourceId: 'txgio-2026-statewide-address-points', kind: 'txgio', path: options.txgioGdb || process.env.GRIDLY_TXGIO_GDB, layer: options.layer, datasource: path => path, buildWheres: txgioWheres },
     { sourceId: 'usdot-nad-r23', kind: 'nad', path: options.nadArchive || process.env.GRIDLY_NAD_R23_ARCHIVE, layer: options.nadLayer, datasource: path => `/vsizip/${path.replaceAll('\\', '/')}/${options.nadGeodatabase}`, buildWheres: nadWheres },
   ];
+  let nadLayerInventory = null;
   for (const spec of specs) {
     if (!spec.path || !(await stat(resolve(spec.path)).catch(() => null))) { sources.push(unavailable(spec.sourceId)); continue; }
     const path = resolve(spec.path); const sourceIdentity = await identify(path);
-    let schemaFields; let schemaInventory = null; let schemaFailure = null;
+    let schemaFields; let schemaInventory = null; let schemaFailure = null; let selectedLayer = spec.layer;
     try {
-      const schemaOutput = await execute(ogrinfo, schemaArguments(spec.datasource(path), spec.layer));
       if (spec.kind === 'nad') {
-        schemaInventory = parseSchemaInventory(schemaOutput);
-        schemaFields = resolveFieldMapping(schemaInventory);
-      } else schemaFields = parseSchema(schemaOutput, REQUIRED_FIELDS[spec.kind]);
+        const discovered = parseLayerEnumeration(await execute(ogrinfo, layerEnumerationArguments(spec.datasource(path))));
+        const layers = [];
+        for (const layer of discovered) {
+          let output; let inventory = []; let mapping = null; let failure = null;
+          try {
+            output = await execute(ogrinfo, schemaArguments(spec.datasource(path), layer.layerName));
+            inventory = parseSchemaInventory(output);
+            mapping = resolveFieldMapping(inventory);
+          } catch (error) { failure = redactDiagnostic(String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]')); }
+          const completeness = schemaCompleteness(output, inventory, mapping, failure);
+          const countMatch = countFrom(`${output?.stdout || output || ''}\n${output?.stderr || ''}`);
+          layers.push({ ...layer, featureCount: countMatch ? Number(countMatch[1].replaceAll(',', '')) : null, featureCountAvailable: Boolean(countMatch), schemaInspectionCompleted: completeness.schemaOutputCompleted, completeFieldCount: inventory.length, orderedFieldNames: inventory.map(field => field.originalName), orderedFieldTypes: inventory.map(field => field.originalType), ...completeness, requiredConceptsCanBeMapped: completeness.schemaOutputCompleted && completeness.requiredConceptsMissing.length === 0, rejectionReasons: completeness.schemaOutputCompleted && completeness.requiredConceptsMissing.length === 0 ? [] : [failure || (!completeness.schemaOutputCompleted ? 'schema inspection incomplete' : `missing required concepts: ${completeness.requiredConceptsMissing.join(', ')}`)], _inventory: inventory, _mapping: mapping });
+        }
+        const selection = selectNadLayer(layers, options.nadLayerExplicit || options.nadLayer ? options.nadLayer : null);
+        nadLayerInventory = {
+          schemaVersion: 'gridly-lp106-nad-layer-inventory-v1', sourceId: spec.sourceId,
+          source: { archive: sourceIdentity.fileName, geodatabase: options.nadGeodatabase, sourcePathExcludedFromReport: true },
+          discoveredLayerCount: layers.length, eligibleLayerCount: selection.eligible.length,
+          layers: layers.map(({ _inventory, _mapping, ...layer }) => layer), selectedLayer: selection.selectedLayer?.layerName || null,
+          selectionMode: selection.selectionMode, selectionReason: selection.selectionReason,
+          ambiguousLayers: selection.eligible.length > 1 ? selection.eligible.map(layer => layer.layerName) : [],
+          rejectedLayers: layers.filter(layer => !selection.eligible.includes(layer)).map(layer => ({ layerName: layer.layerName, reasons: layer.rejectionReasons })),
+        };
+        if (selection.failure) throw new Error(selection.failure);
+        selectedLayer = selection.selectedLayer.layerName; schemaInventory = selection.selectedLayer._inventory; schemaFields = selection.selectedLayer._mapping;
+      } else {
+        const schemaOutput = await execute(ogrinfo, schemaArguments(spec.datasource(path), spec.layer));
+        schemaFields = parseSchema(schemaOutput, REQUIRED_FIELDS[spec.kind]);
+      }
     }
-    catch (error) { schemaFailure = redactDiagnostic(String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]')); }
+    catch (error) {
+      schemaFailure = redactDiagnostic(String(error.message).replaceAll(spec.datasource(path), '[IMMUTABLE SOURCE PATH REDACTED]').replaceAll(path, '[IMMUTABLE SOURCE PATH REDACTED]'));
+      if (spec.kind === 'nad' && !nadLayerInventory) nadLayerInventory = {
+        schemaVersion: 'gridly-lp106-nad-layer-inventory-v1', sourceId: spec.sourceId,
+        source: { archive: sourceIdentity.fileName, geodatabase: options.nadGeodatabase, sourcePathExcludedFromReport: true },
+        discoveredLayerCount: 0, eligibleLayerCount: 0, layers: [], selectedLayer: null,
+        selectionMode: options.nadLayerExplicit || options.nadLayer ? 'explicit' : 'automatic',
+        selectionReason: 'layer discovery did not complete', ambiguousLayers: [], rejectedLayers: [], discoveryFailure: schemaFailure,
+      };
+    }
     const requiredFieldsFound = Boolean(schemaFields) && schemaFields.every(field => field.found);
     const unsupportedFields = (schemaFields || []).filter(field => field.found && !field.supported).map(field => ({ fieldName: field.fieldName, sourceDeclaredType: field.sourceDeclaredType }));
     const constructable = Boolean(schemaFields) && schemaFields.every(field => field.typedPredicateConstructable);
@@ -222,7 +300,7 @@ export async function audit(options, dependencies = {}) {
     const wheres = spec.buildWheres(TARGET, schemaFields);
     const queries = []; let candidateQueryHits = 0;
     for (const where of wheres) {
-      const args = queryArguments(spec.datasource(path), spec.layer, where);
+      const args = queryArguments(spec.datasource(path), selectedLayer, where);
       try {
         const count = parseFeatureCount(await execute(ogrinfo, args)); candidateQueryHits += count;
         queries.push({ where, count, completed: true, arguments: args.map((value, index) => index === 4 ? '[IMMUTABLE SOURCE PATH REDACTED]' : value) });
@@ -235,16 +313,17 @@ export async function audit(options, dependencies = {}) {
     // The predicates are mutually exclusive because each differs by an exact
     // value for Full_Addr (TxGIO) or the road/city/county/state tuple (NAD).
     const uniqueExactCandidateCount = queryCompleted ? candidateQueryHits : null;
-    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', schemaQueryAttempted: true, schemaQueryCompleted: true, schemaInventory, schemaFields, requiredFieldsFound, unsupportedFields, schemaFailure: null, typedPredicateStrategy: 'source-declared schema types; quoted strings and unquoted numeric literals', boundedQueryCount: wheres.length, liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
+    sources.push({ sourceId: spec.sourceId, status: queryCompleted ? 'LIVE QUERY EXECUTED' : 'LIVE QUERY INCOMPLETE', selectedLayer, selectionMode: spec.kind === 'nad' ? nadLayerInventory.selectionMode : null, schemaQueryAttempted: true, schemaQueryCompleted: true, schemaInventory, schemaFields, requiredFieldsFound, unsupportedFields, schemaFailure: null, typedPredicateStrategy: 'source-declared schema types; quoted strings and unquoted numeric literals', boundedQueryCount: wheres.length, liveQueryExecuted: queries.some(query => query.completed), queryCompleted, candidateQueryHits, uniqueExactCandidateCount, exactCandidateCount: uniqueExactCandidateCount, exactFound: queryCompleted ? uniqueExactCandidateCount > 0 : null, sourceIdentity, queries, queryFailure: failures.length ? { count: failures.length, details: failures.map(query => query.failure) } : null, query: { method: 'ogrinfo bounded exact filtered Feature Counts', readOnly: true, featureRowsEmitted: false, mutuallyExclusivePredicates: true } });
   }
   const report = { schemaVersion: 'gridly-lp106-authoritative-address-coverage-audit-v1', generatedAt: new Date(options.generatedAt || Date.now()).toISOString(), target: TARGET, methodology: { deterministic: true, readOnly: true, aggregateOnly: true, sourceFilesModified: false }, sources, assessment: assessment(sources) };
   await mkdir(resolve(options.reports), { recursive: true });
   const nad = sources.find(source => source.sourceId === 'usdot-nad-r23');
-  if (nad?.schemaInventory) await atomicJson(join(resolve(options.reports), 'nad-schema.json'), { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: nad.sourceId, fields: nad.schemaInventory, mapping: nad.schemaFields.map(field => ({ expectedField: field.requiredField, actualField: field.fieldName, index: field.inventoryIndex })) });
+  if (nadLayerInventory) await atomicJson(join(resolve(options.reports), 'nad-layer-inventory.json'), nadLayerInventory);
+  if (nad?.schemaInventory) await atomicJson(join(resolve(options.reports), 'nad-schema.json'), { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: nad.sourceId, selectedLayer: nad.selectedLayer, selectionMode: nad.selectionMode, fields: nad.schemaInventory, mapping: nad.schemaFields.map(field => ({ expectedField: field.requiredField, actualField: field.fieldName, index: field.inventoryIndex })) });
   await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);
   return report;
 }
 
-export function usage() { return `Usage: node tools/lp106/audit-authoritative-address-coverage.mjs [options]\n\n--txgio-gdb PATH   Immutable Texas-2026.gdb\n--nad-archive PATH Immutable NAD_r23.zip\n--gdal PATH        ogrinfo executable\n--reports PATH     Report directory\n--generated-at ISO Stable report timestamp\n\nMissing sources are reported as \"${SOURCE_UNAVAILABLE}\"; no source-absence conclusion is made.`; }
+export function usage() { return `Usage: node tools/lp106/audit-authoritative-address-coverage.mjs [options]\n\n--txgio-gdb PATH   Immutable Texas-2026.gdb\n--nad-archive PATH Immutable NAD_r23.zip\n--nad-layer NAME   Explicit validated NAD layer (default: automatic discovery)\n--gdal PATH        ogrinfo executable\n--reports PATH     Report directory\n--generated-at ISO Stable report timestamp\n\nMissing sources are reported as \"${SOURCE_UNAVAILABLE}\"; no source-absence conclusion is made.`; }
 export async function main(argv = process.argv.slice(2)) { const options = parseArguments(argv); if (options.help) return process.stdout.write(`${usage()}\n`); const report = await audit(options); process.stdout.write(`${report.assessment.status}\n`); }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch(error => { process.stderr.write(`LP106 audit failed: ${error.message}\n`); process.exitCode = 1; });

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { PassThrough } from 'node:stream';
-import { SOURCE_UNAVAILABLE, REQUIRED_FIELDS, assessment, audit, nadWhere, parseArguments, parseFeatureCount, parseSchema, parseSchemaInventory, resolveFieldMapping, queryArguments, redactDiagnostic, runOgrinfo, schemaArguments, txgioWhere, txgioWheres, nadWheres, ROAD_VARIANTS } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
+import { SOURCE_UNAVAILABLE, REQUIRED_FIELDS, assessment, audit, nadWhere, parseArguments, parseFeatureCount, parseLayerEnumeration, parseSchema, parseSchemaInventory, resolveFieldMapping, schemaCompleteness, selectNadLayer, queryArguments, redactDiagnostic, runOgrinfo, schemaArguments, txgioWhere, txgioWheres, nadWheres, ROAD_VARIANTS } from '../tools/lp106/audit-authoritative-address-coverage.mjs';
 
 const txgioSchema = `INFO: Open of x using driver OpenFileGDB successful.\nLayer name: stratmap_2026_address_points_48\nGeometry: Point\nFIPS: Integer (5.0)\nAdd_Number: String (20.0)\nFull_Addr: String (100.0)\nPost_Comm: String (40.0)\nPost_Code: Integer64 (0.0)\n`;
 const nadSchema = `INFO: Open of x using driver OpenFileGDB successful.\nLayer name: NAD\nGeometry: Point\nState: String (2.0)\nCounty: String (40.0)\nAdd_Number: Real (0.0)\nStNam_Full: String (100.0)\nPost_City: String (40.0)\nZip_Code: String (10.0)\n`;
@@ -54,6 +54,32 @@ test('NAD schema inventory preserves order, source types, normalized types, and 
     { originalName: 'STATE_ABBR', originalType: 'String', normalizedType: 'string', index: 1, nullable: null },
     { originalName: 'ADD_NUMBER', originalType: 'Real', normalizedType: 'real', index: 2, nullable: true },
   ]);
+});
+
+test('NAD layer enumeration preserves exact names and geometry annotations', () => {
+  assert.deepEqual(parseLayerEnumeration("INFO: Open of x using driver `OpenFileGDB' successful.\n1: Metadata table\n2: NAD (3D Point)\n3: Address History (Point)\n"), [
+    { layerIndex: 1, layerName: 'Metadata table', geometryType: null },
+    { layerIndex: 2, layerName: 'NAD', geometryType: '3D Point' },
+    { layerIndex: 3, layerName: 'Address History', geometryType: 'Point' },
+  ]);
+});
+
+test('schema parsing continues beyond blank lines and GDAL metadata sections', () => {
+  const output = `Layer name: NAD\nGeometry: 3D Point\nBuilding: String (100.0)\nFloor: String (20.0)\nUnit: String (20.0)\nRoom: String (20.0)\nSeat: String (20.0)\n\nMetadata:\n  DESCRIPTION=National Address Database\nField domains:\nState: String (2.0)\nCounty: String (50.0)\nAdd_Number: String (20.0)\nStNam_Full: String (100.0)\nPost_City: String (50.0)\nZip_Code: String (5.0)\n`;
+  const inventory = parseSchemaInventory(output); const mapping = resolveFieldMapping(inventory); const completeness = schemaCompleteness(output, inventory, mapping);
+  assert.equal(inventory.length, 11); assert.equal(completeness.firstFieldName, 'Building'); assert.equal(completeness.lastFieldName, 'Zip_Code');
+  assert.equal(completeness.parserTerminationReason, 'end-of-output'); assert.deepEqual(completeness.requiredConceptsMissing, []);
+});
+
+test('NAD selection fails closed for zero or multiple eligible layers and accepts one or valid explicit layer', () => {
+  const eligible = name => ({ layerName: name, schemaInspectionCompleted: true, schemaOutputCompleted: true, requiredConceptsMissing: [] });
+  const rejected = { layerName: 'Buildings', schemaInspectionCompleted: true, schemaOutputCompleted: true, requiredConceptsMissing: ['State'] };
+  assert.match(selectNadLayer([rejected]).failure, /No eligible/);
+  assert.equal(selectNadLayer([rejected, eligible('NAD')]).selectedLayer.layerName, 'NAD');
+  assert.match(selectNadLayer([eligible('NAD'), eligible('History')]).failure, /Ambiguous/);
+  assert.equal(selectNadLayer([rejected, eligible('NAD')], 'NAD').selectionMode, 'explicit');
+  assert.match(selectNadLayer([eligible('NAD')], 'Missing').failure, /does not exist/);
+  assert.match(selectNadLayer([rejected], 'Buildings').failure, /ineligible/);
 });
 
 test('NAD aliases map discovered fields and select deterministically by declared priority', () => {
@@ -109,7 +135,7 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   const calls = [];
   const report = await audit({ ...parseArguments(['--txgio-gdb', txgio, '--nad-archive', nad, '--reports', reports, '--generated-at', '2026-07-31T00:00:00Z']) }, {
     identity: async path => ({ fileName: path.endsWith('.zip') ? 'NAD_r23.zip' : 'Texas.gdb', sizeBytes: 1, sha256: 'a'.repeat(64), sourcePathExcludedFromReport: true }),
-    runOgrinfo: async (_command, args) => { calls.push(args); if (!args.includes('-where')) return args.at(-1) === 'NAD' ? nadSchema : txgioSchema; const where = args[3]; return args.at(-1) === 'NAD' && where.includes(`"State" = 'TX'`) && where.includes(`"County" = 'Liberty'`) && where.includes(`"StNam_Full" = 'County Road 677'`) && where.includes(`"Post_City" = 'Dayton'`) ? 'Feature Count: 1\n' : 'Feature Count: 0\n'; },
+    runOgrinfo: async (_command, args) => { calls.push(args); if (!args.includes('-where')) { if (args.length === 3 && args.at(-1).startsWith('/vsizip/')) return '1: Metadata\n2: NAD (3D Point)\n'; if (args.at(-1) === 'Metadata') return 'Layer name: Metadata\nBuilding: String\nFloor: String\nUnit: String\nRoom: String\nSeat: String\n'; return args.at(-1) === 'NAD' ? nadSchema : txgioSchema; } const where = args[3]; return args.at(-1) === 'NAD' && where.includes(`"State" = 'TX'`) && where.includes(`"County" = 'Liberty'`) && where.includes(`"StNam_Full" = 'County Road 677'`) && where.includes(`"Post_City" = 'Dayton'`) ? 'Feature Count: 1\n' : 'Feature Count: 0\n'; },
   });
   assert.equal(report.assessment.status, 'LIVE_QUERY_COMPLETE'); assert.equal(report.assessment.decision, 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW');
   assert.deepEqual(report.sources.map(source => source.exactCandidateCount), [0, 1]);
@@ -123,6 +149,10 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   const inventory = JSON.parse(await readFile(join(reports, 'nad-schema.json')));
   assert.deepEqual(inventory.mapping.map(field => field.actualField), ['State', 'County', 'Add_Number', 'StNam_Full', 'Post_City', 'Zip_Code']);
   assert.ok(inventory.fields.every((field, index) => field.index === index));
+  const layers = JSON.parse(await readFile(join(reports, 'nad-layer-inventory.json')));
+  assert.equal(layers.discoveredLayerCount, 2); assert.equal(layers.eligibleLayerCount, 1); assert.equal(layers.selectedLayer, 'NAD');
+  assert.equal(layers.layers[0].completeFieldCount, 5); assert.equal(layers.layers[1].lastFieldName, 'Zip_Code');
+  assert.doesNotMatch(JSON.stringify(layers), new RegExp(directory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 });
 
 test('partial bounded-query failure is incomplete evidence with no unique count or absence conclusion', async () => {
