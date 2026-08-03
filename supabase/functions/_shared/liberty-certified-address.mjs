@@ -1,6 +1,7 @@
 import { downloadCountyArtifact, readBoundedArtifact } from "./county-artifact-storage.mjs";
 import { IncrementalSha256 } from "./incremental-sha256.mjs";
 import { CERTIFIED_COUNTIES } from "./certified-address-identities.mjs";
+import { lookupHarrisSidecar } from "./harris-certified-lookup.mjs";
 
 const IDENTITY = CERTIFIED_COUNTIES.find((county) => county.fips === "48291");
 const byFips = new Map(CERTIFIED_COUNTIES.map((county) => [county.fips, county]));
@@ -67,6 +68,14 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
       certificateFetchReason = "invalid_certificate"; throw new Error("certificate_mismatch");
     }
     completedStages.push("certificate_validated"); failureStage = "liberty_package_requested"; completedStages.push("liberty_package_requested");
+    if (identity.fips === "48201") {
+      const sidecar = await lookupHarrisSidecar(requested, identity, { ...options, bucket, ...access });
+      Object.assign(artifact, sidecar.diagnostic);
+      if (sidecar.outcome === "package_unavailable") throw new Error(sidecar.rejectionReason);
+      const results = sidecar.results.map((row) => ({ providerResultId: `txgio:${row.i}`, name: row.a, displayName: [row.a,row.p,"TX",row.z].filter(Boolean).join(", "), formattedAddress: [row.a,row.p,"TX",row.z].filter(Boolean).join(", "), latitude: row.y, longitude: row.x, category:"place", type:"house", resultType:"address", precision:"address_point", confidenceBasis:"certified_txgio_address_point", sourceClassification:"government_address_point", routePreviewEligible:true, address:{houseNumber:row.h,road:row.r,community:"",city:row.p,mailingCity:row.p,county:row.c,state:"TX",postalCode:row.z,country:"United States"},providerIdentity:{sourceId:row.i,provider:"txgio_certified_package"} }));
+      completedStages.push("sidecar_opened", "exact_lookup_executed", results.length ? "exact_match_found" : "truthful_miss");
+      return { attempted:true,outcome:results.length?"exact_match":"truthful_no_result",results,packageAccessed:false,runtimeDiagnostic:diagnostic({certifiedProviderExecuted:true,certificateValidated:true,packageOpened:true,exactLookupExecuted:true,certificateFetchCompleted,certificateFetchReason}),lookupMs:performance.now()-lookupStarted,totalMs:performance.now()-started };
+    }
     packageAccessed = true;
     const artifactStarted = performance.now(); const downloadStarted = performance.now();
     const packageDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.packageObjectPath }, { timeoutMs: options.packageTimeoutMs, ...access });
