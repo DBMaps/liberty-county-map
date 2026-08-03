@@ -12,6 +12,7 @@ import { certificateFor, validateRuntimeCertificate } from '../lp107/generate-ru
 import { manufacture as manufactureCrossings } from '../lp115/manufacture-candidate-crossings.mjs';
 import { manufacture as manufactureRoadways } from '../lp116/manufacture-candidate-roadways.mjs';
 import { manufacture as manufactureLp117Assets } from '../lp117/manufacture-county-assets.mjs';
+import { extract as extractTigerRoadways } from '../lp118/extract-tiger-roadways.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const COUNTY_INVENTORY = join(ROOT, 'data/lp104/texas-counties.json');
@@ -33,13 +34,14 @@ export function parseArguments(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (['--resume', '--force', '--dry-run', '--addresses-only', '--skip-addresses'].includes(arg)) out[arg.slice(2).replaceAll('-', '_')] = true;
-    else if (['--fips', '--reports', '--gdb', '--gdal', '--address-dir', '--crossing-source', '--crossing-reports', '--roadway-source', '--roadway-boundaries', '--roadway-reports'].includes(arg)) { out[arg.slice(2).replaceAll('-', '_')] = argValue(argv, i); i += 1; }
+    else if (['--fips', '--reports', '--gdb', '--gdal', '--address-dir', '--crossing-source', '--crossing-reports', '--roadway-source', '--roadway-boundaries', '--roadway-reports', '--tiger-road-root', '--tiger-gdal', '--tiger-reports'].includes(arg)) { out[arg.slice(2).replaceAll('-', '_')] = argValue(argv, i); i += 1; }
     else if (arg === '--help' || arg === '-h') out.help = true;
     else throw new Error(`Unknown option: ${arg}`);
   }
   if (!out.help && !out.fips) throw new Error('--fips is required');
   if (out.resume && out.force) throw new Error('--resume and --force are mutually exclusive');
   if (out.addresses_only && out.skip_addresses) throw new Error('--addresses-only and --skip-addresses are mutually exclusive');
+  if (out.roadway_source && out.tiger_road_root) throw new Error('--roadway-source and --tiger-road-root are mutually exclusive');
   return out;
 }
 
@@ -143,18 +145,30 @@ export async function manufacture(options, hooks = {}) {
   let roadwayByFips = new Map();
   let foundationByFips = new Map();
   if (!options.addresses_only) {
-    const foundation = await (hooks.manufactureLp117Assets || manufactureLp117Assets)({ fips: counties.map(x => x.fips).join(','), boundaries: options.roadway_boundaries, roadway_source: options.roadway_source, reports, resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+    const foundation = await (hooks.manufactureLp117Assets || manufactureLp117Assets)({ fips: counties.map(x => x.fips).join(','), boundaries: options.roadway_boundaries, roadway_source: options.tiger_road_root ? null : options.roadway_source, reports, resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
     foundationByFips = new Map(foundation.counties.map(row => [row.fips, row]));
     const crossingReport = await (hooks.manufactureCrossings || manufactureCrossings)({ fips: counties.map(x => x.fips).join(','), source: options.crossing_source, reports: options.crossing_reports || join(reports, 'crossings'), resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
     crossingByFips = new Map(crossingReport.counties.map(row => [row.fips, row]));
-    const roadwayReport = await (hooks.manufactureRoadways || manufactureRoadways)({ fips: counties.map(x => x.fips).join(','), source: options.roadway_source, boundaries: options.roadway_boundaries, reports: options.roadway_reports || join(reports, 'roadways'), resume: options.resume, force: options.force, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+    let extractedByFips = new Map();
+    if (options.tiger_road_root) {
+      const extraction = await (hooks.extractTigerRoadways || extractTigerRoadways)({ fips: counties.map(x => x.fips).join(','), tiger_root: options.tiger_road_root, boundaries: options.roadway_boundaries, gdal: options.tiger_gdal, reports: options.tiger_reports || join(reports, 'tiger-roadways'), resume: options.resume, force: options.force, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+      extractedByFips = new Map(extraction.counties.map(row => [row.fips, row]));
+    }
+    const roadwayRows = [];
+    for (const county of counties) {
+      const extracted = extractedByFips.get(county.fips); const source = extracted?.output ? join(resolve(options.tiger_reports || join(reports, 'tiger-roadways')), county.fips, `${county.countyId}-${county.fips}.tiger-roadways.candidate.geojson`) : options.roadway_source || null;
+      const roadwayReport = await (hooks.manufactureRoadways || manufactureRoadways)({ fips: county.fips, source, boundaries: options.roadway_boundaries, reports: options.roadway_reports || join(reports, 'roadways'), resume: options.resume, force: options.force, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+      const row = roadwayReport.counties[0]; if (extracted && !extracted.output) { row.status = extracted.status; row.blockingReasons = extracted.failures || ['TIGER roadway extraction unavailable']; } roadwayRows.push(row);
+    }
+    const roadwayReport = { counties: roadwayRows };
     roadwayByFips = new Map(roadwayReport.counties.map(row => [row.fips, row]));
   }
   const results = [];
   for (const county of counties) {
     const countyDir = join(reports, county.fips); await mkdir(countyDir, { recursive: true });
     const foundation = foundationByFips.get(county.fips);
-    const generalized = foundation ? { countyBoundary: foundation.boundary, roadwaySource: foundation.roadwaySource, communityLocality: foundation.communities, zipCoverage: foundation.zipCoverage, curatedDestinations: foundation.curatedDestinations, searchCoverage: foundation.searchCoverage } : unsupportedAssets(options.addresses_only);
+    const extraction = !options.addresses_only && options.tiger_road_root ? roadwayByFips.get(county.fips) : null;
+    const generalized = foundation ? { countyBoundary: foundation.boundary, roadwaySource: extraction?.source ? { status: extraction.status, source: extraction.source, sourceRecordsSelected: extraction.sourceRecordsSelected, containment: true } : foundation.roadwaySource, communityLocality: foundation.communities, zipCoverage: foundation.zipCoverage, curatedDestinations: foundation.curatedDestinations, searchCoverage: foundation.searchCoverage } : unsupportedAssets(options.addresses_only);
     const assets = { countyIdentity: { status: 'VERIFIED_EXISTING', inventory: portable(options.inventoryPath || COUNTY_INVENTORY) }, ...generalized,
       candidateRuntimeIdentity: { status: 'GENERATED', activated: false, productionAuthorization: false }, storageUploadPlan: { status: 'NOT_AUTHORIZED', uploadEnabled: false } };
     if (options.addresses_only) Object.assign(assets, { railroadCrossingSource: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' }, productionCrossings: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' }, crossingCertification: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' } });
@@ -184,6 +198,6 @@ export async function manufacture(options, hooks = {}) {
   return report;
 }
 
-export function usage() { return 'Usage: node tools/lp114/manufacture-county-bundle.mjs --fips 48051,48455,48469 [--resume|--force] [--reports PATH] [--address-dir PATH] [--gdb PATH] [--gdal PATH] [--crossing-source FRA.geojson] [--roadway-source TIGER-roads.geojson] [--roadway-boundaries counties.geojson] [--dry-run] [--addresses-only|--skip-addresses]'; }
+export function usage() { return 'Usage: node tools/lp114/manufacture-county-bundle.mjs --fips 48051,48455,48469 [--resume|--force] [--reports PATH] [--address-dir PATH] [--gdb PATH] [--gdal PATH] [--crossing-source FRA.geojson] [--tiger-road-root PATH|--roadway-source TIGER-roads.geojson] [--tiger-gdal PATH] [--roadway-boundaries counties.geojson] [--dry-run] [--addresses-only|--skip-addresses]'; }
 export async function main(argv = process.argv.slice(2)) { const options = parseArguments(argv); if (options.help) return process.stdout.write(`${usage()}\n`); const report = await manufacture(options); process.stdout.write(`LP114 wrote ${report.counties.length} inactive candidate county bundle(s).\n`); if (report.failures.length) process.exitCode = 1; }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch(error => { process.stderr.write(`LP114 failed: ${error.message}\n`); process.exitCode = 1; });
