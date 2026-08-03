@@ -102,6 +102,8 @@
     "test:lp113": "node --test tests/lp113-statewide-certification-generalization.test.mjs",
     "test:lp114": "node --test tests/lp114-complete-county-asset-manufacturing-pipeline.test.mjs",
     "manufacture:lp115:crossings": "node tools/lp115/manufacture-candidate-crossings.mjs",
-    "test:lp115": "node --test tests/lp115-arbitrary-county-railroad-crossing-manufacturing.test.mjs"
+    "test:lp115": "node --test tests/lp115-arbitrary-county-railroad-crossing-manufacturing.test.mjs",
+    "manufacture:lp116:roadways": "node tools/lp116/manufacture-candidate-roadways.mjs",
+    "test:lp116": "node --test tests/lp116-arbitrary-county-roadway-geometry-manufacturing.test.mjs"
   }
 }
