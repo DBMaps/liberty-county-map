@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "matagorda-tx",
+  "county": "Matagorda County",
+  "fips": "48321",
+  "artifact": "matagorda-48321.addresses.jsonl.gz",
+  "sizeBytes": 899427,
+  "sha256": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

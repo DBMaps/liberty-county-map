@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "harris-tx",
+  "county": "Harris County",
+  "fips": "48201",
+  "artifact": "harris-48201.addresses.jsonl.gz",
+  "sizeBytes": 57731771,
+  "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

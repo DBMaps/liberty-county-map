@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "polk-tx",
+  "county": "Polk County",
+  "fips": "48373",
+  "artifact": "polk-48373.addresses.jsonl.gz",
+  "sizeBytes": 1231358,
+  "sha256": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

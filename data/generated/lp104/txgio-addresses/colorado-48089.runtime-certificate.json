@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "colorado-tx",
+  "county": "Colorado County",
+  "fips": "48089",
+  "artifact": "colorado-48089.addresses.jsonl.gz",
+  "sizeBytes": 465779,
+  "sha256": "8f7ebc0e01e44b78137ddb7cc14e96e9d54a6666d3d40f4bc541b981bed9fdd2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

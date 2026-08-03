@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "brazos-tx",
+  "county": "Brazos County",
+  "fips": "48041",
+  "artifact": "brazos-48041.addresses.jsonl.gz",
+  "sizeBytes": 3078907,
+  "sha256": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

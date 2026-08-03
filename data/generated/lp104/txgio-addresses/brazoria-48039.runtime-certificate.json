@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "brazoria-tx",
+  "county": "Brazoria County",
+  "fips": "48039",
+  "artifact": "brazoria-48039.addresses.jsonl.gz",
+  "sizeBytes": 5695185,
+  "sha256": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

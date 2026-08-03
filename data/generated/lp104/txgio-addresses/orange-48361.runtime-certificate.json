@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "orange-tx",
+  "county": "Orange County",
+  "fips": "48361",
+  "artifact": "orange-48361.addresses.jsonl.gz",
+  "sizeBytes": 1268809,
+  "sha256": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

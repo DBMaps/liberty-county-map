@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "walker-tx",
+  "county": "Walker County",
+  "fips": "48471",
+  "artifact": "walker-48471.addresses.jsonl.gz",
+  "sizeBytes": 984566,
+  "sha256": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

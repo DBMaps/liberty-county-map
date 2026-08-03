@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "hardin-tx",
+  "county": "Hardin County",
+  "fips": "48199",
+  "artifact": "hardin-48199.addresses.jsonl.gz",
+  "sizeBytes": 1011612,
+  "sha256": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

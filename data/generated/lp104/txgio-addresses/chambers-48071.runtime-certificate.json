@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "chambers-tx",
+  "county": "Chambers County",
+  "fips": "48071",
+  "artifact": "chambers-48071.addresses.jsonl.gz",
+  "sizeBytes": 885892,
+  "sha256": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}
