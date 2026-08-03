@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { BUCKET, credentialHeaders, redact } from './lp108-core.mjs';
-import { SIDECAR_OBJECT, SIDECAR_CERTIFICATE_OBJECT } from './harris-sidecar-core.mjs';
+import { MANIFEST_OBJECT } from './harris-sidecar-core.mjs';
 
 export const RESPONSE_BODY_LIMIT = 2_000;
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -58,44 +58,30 @@ export async function uploadFailureDetails({ response, objectPath, localByteSize
   };
 }
 
-export async function syncItems({ command, replace = false, base, key, items, fetchImpl = fetch, log = console.log }) {
-  for (const item of items) {
-    const bytes = await readFile(item.file);
-    item.size ??= bytes.length;
-    item.sha ??= digest(bytes);
-    let response = await fetchImpl(objectUrl(base, true, item.path), { headers: credentialHeaders(key) });
-    let remote = response.ok ? Buffer.from(await response.arrayBuffer()) : null;
-    if (command === 'upload' && (!remote || remote.length !== item.size || digest(remote) !== item.sha)) {
-      if (remote && !replace) throw new Error(`${item.path} mismatched; pass --replace-mismatched`);
-      const uploadUrl = objectUrl(base, false, item.path);
-      response = await fetchImpl(uploadUrl, {
-        method: remote ? 'PUT' : 'POST',
-        headers: { ...credentialHeaders(key), 'content-type': item.type, 'x-upsert': String(Boolean(remote)) },
-        body: bytes
-      });
-      if (!response.ok) {
-        const details = await uploadFailureDetails({ response, objectPath: item.path, localByteSize: bytes.length, key, uploadUrl, contentType: item.type, remoteExists: Boolean(remote), replace: Boolean(remote) });
-        throw new Error(`${item.path} upload failed (${response.status})\n${JSON.stringify(details, null, 2)}`);
-      }
-      response = await fetchImpl(objectUrl(base, true, item.path), { headers: credentialHeaders(key) });
-      remote = response.ok ? Buffer.from(await response.arrayBuffer()) : null;
-    }
-    if (!remote || remote.length !== item.size || digest(remote) !== item.sha) throw new Error(`${item.path} remote byte verification failed`);
-    log(`${item.path}: ${item.size} bytes ${item.sha} matching`);
-  }
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function fetchRetry(fetchImpl,url,init={},attempts=4){let response,error;for(let attempt=0;attempt<attempts;attempt++){try{response=await fetchImpl(url,init);if(response.status!==429&&response.status<500)return response}catch(e){error=e}if(attempt+1<attempts)await sleep(100*2**attempt)}if(response)return response;throw error}
+async function syncItem({command,replace,base,key,item,fetchImpl,log}){
+ const bytes=await readFile(item.file);item.size??=bytes.length;item.sha??=digest(bytes);
+ let response=await fetchRetry(fetchImpl,objectUrl(base,true,item.path),{headers:credentialHeaders(key)}),remote=response.ok?Buffer.from(await response.arrayBuffer()):null;
+ if(command==='upload'&&(!remote||remote.length!==item.size||digest(remote)!==item.sha)){
+  if(remote&&!replace)throw new Error(`${item.path} mismatched; pass --replace-mismatched`);
+  const uploadUrl=objectUrl(base,false,item.path);response=await fetchRetry(fetchImpl,uploadUrl,{method:remote?'PUT':'POST',headers:{...credentialHeaders(key),'content-type':item.type,'x-upsert':String(Boolean(remote))},body:bytes});
+  if(!response.ok){const details=await uploadFailureDetails({response,objectPath:item.path,localByteSize:bytes.length,key,uploadUrl,contentType:item.type,remoteExists:Boolean(remote),replace:Boolean(remote)});throw new Error(`${item.path} upload failed (${response.status})\n${JSON.stringify(details,null,2)}`)}
+  response=await fetchRetry(fetchImpl,objectUrl(base,true,item.path),{headers:credentialHeaders(key)});remote=response.ok?Buffer.from(await response.arrayBuffer()):null;
+ }
+ if(!remote||remote.length!==item.size||digest(remote)!==item.sha)throw new Error(`${item.path} remote byte verification failed`);log(`${item.path}: ${item.size} bytes ${item.sha} matching`);return item;
 }
-
+export async function syncItems({command,replace=false,base,key,items,fetchImpl=fetch,log=console.log,concurrency=6}){
+ let cursor=0,complete=0;const workers=Array.from({length:Math.max(1,Math.min(12,concurrency))},async()=>{while(cursor<items.length){const item=items[cursor++];await syncItem({command,replace,base,key,item,fetchImpl,log});complete++;if(complete%16===0||complete===items.length)log(`progress: ${complete}/${items.length}`)}});await Promise.all(workers);log(`complete: ${complete} verified, ${items.length-complete} failed`);return{verified:complete,total:items.length};
+}
 export async function run(argv = process.argv.slice(2), env = process.env, options = {}) {
   const command = argv[0], replace = argv.includes('--replace-mismatched');
   const base = String(env.SUPABASE_URL || env.GRIDLY_SUPABASE_URL || '').replace(/\/$/, ''), key = env.SUPABASE_SERVICE_ROLE_KEY;
   if (!['upload', 'verify-remote'].includes(command)) throw new Error('usage: upload|verify-remote [--replace-mismatched]');
   if (!base || !key) throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required');
-  const dir = join(process.cwd(), '.artifacts/lp108'), certPath = join(dir, 'harris-48201.certified-lookup-certificate.json');
-  const cert = JSON.parse(await readFile(certPath, 'utf8'));
-  const items = [
-    { path: SIDECAR_OBJECT, file: join(dir, 'harris-48201.certified-lookup.bin'), size: cert.sizeBytes, sha: cert.sha256, type: 'application/octet-stream' },
-    { path: SIDECAR_CERTIFICATE_OBJECT, file: certPath, type: 'application/json' }
-  ];
+  const dir = join(process.cwd(), '.artifacts/lp108'), manifestPath = join(dir, 'harris-48201.certified-lookup-manifest.json');
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  const items = [{ path: MANIFEST_OBJECT, file: manifestPath, type: 'application/json' }, ...manifest.buckets.map(bucket => ({ path: bucket.objectPath, file: join(dir, 'harris-48201/buckets', `${bucket.bucketId}.jsonl.gz`), size: bucket.compressedSizeBytes, sha: bucket.compressedSha256, type: 'application/gzip' }))];
   return syncItems({ command, replace, base, key, items, ...options });
 }
 

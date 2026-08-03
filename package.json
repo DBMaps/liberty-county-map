@@ -12,8 +12,12 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
-    "build:lp10811:harris-sidecar": "node tools/lp108/harris-certified-lookup.mjs build",
-    "verify:lp10811:harris-sidecar": "node tools/lp108/harris-certified-lookup.mjs verify-local",
+    "build:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs build",
+    "verify:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs verify-local",
+    "upload:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs upload",
+    "verify-remote:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs verify-remote",
+    "build:lp10811:harris-sidecar": "npm run build:lp10812:harris-buckets",
+    "verify:lp10811:harris-sidecar": "npm run verify:lp10812:harris-buckets",
     "test:lp10811": "node --test tests/lp10811-harris-sidecar.test.mjs",
     "build:county-geometry": "node tools/build-gridly-authoritative-county-geometry.js",
     "verify:county-geometry-deterministic": "node tools/build-gridly-authoritative-county-geometry.js --verify-deterministic",
