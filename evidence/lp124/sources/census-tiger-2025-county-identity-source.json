@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly-lp124-local-authoritative-source-v1",
+  "format": "CENSUS_TIGER_COUNTY_GEOJSON",
+  "sourcePublisher": "United States Department of Commerce, United States Census Bureau, Geography Division",
+  "sourceIdentity": "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip",
+  "observationDate": "2026-07-27",
+  "evidenceDate": "2025-01-01",
+  "sourcePriority": "SECONDARY",
+  "authority": "FEDERAL_GOVERNMENT",
+  "acquisitionMethod": "OWNER_SUPPLIED_IMMUTABLE_SNAPSHOT",
+  "artifact": {
+    "path": "../../../assets/boundaries/texas-counties-boundaries.geojson",
+    "sha256": "a9f5a0cf44f40d4f9fae81c16756e9ad32d36b7e9d08e34e96f1f02f94f8a50d"
+  }
+}

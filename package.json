@@ -112,6 +112,7 @@
     "test:lp122": "node --test tests/lp122-wave-1-authoritative-evidence-acquisition.test.mjs",
     "test:lp123": "node --test tests/lp123-texas-authoritative-evidence-acquisition-framework.test.mjs",
     "build:lp124:government": "node tools/lp124/build-government-evidence-batch.mjs",
+    "build:lp124:government:live": "node tools/lp124/build-government-evidence-batch.mjs --live",
     "test:lp124": "node --test tests/lp124-texas-statewide-government-evidence-batch.test.mjs"
   }
 }
