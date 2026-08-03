@@ -97,6 +97,7 @@
     "audit:lp106": "node tools/lp106/audit-authoritative-address-coverage.mjs",
     "test:lp106": "node --test tests/lp106-authoritative-address-coverage-audit.test.mjs",
     "test:lp107": "node --test tests/lp107-runtime-certificate-readiness.test.mjs",
-    "test:lp108": "node --test tests/lp108-storage-and-runtime-certification.test.mjs"
+    "test:lp108": "node --test tests/lp108-storage-and-runtime-certification.test.mjs",
+    "test:lp112": "node --test tests/lp112-governed-cohort-expansion-pilot.test.mjs"
   }
 }
