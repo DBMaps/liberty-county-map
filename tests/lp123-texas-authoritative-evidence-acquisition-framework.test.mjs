@@ -30,7 +30,7 @@ test('workflow keeps review, candidate approval, and production authorization di
 test('statewide batches are class-scoped, county-complete, resumable, and runtime-isolated', () => {
   assert.equal(definition.batchStrategy.unit, 'ONE_EVIDENCE_CLASS_ACROSS_ALL_TEXAS_COUNTIES');
   assert.equal(definition.batchStrategy.expectedCountyWorkUnits, 254);
-  assert.deepEqual(definition.batchStrategy.workUnitTerminalStatuses, ['COMPLETE', 'NO_EVIDENCE_FOUND', 'REVIEW_REQUIRED', 'BLOCKED']);
+  assert.deepEqual(definition.batchStrategy.workUnitTerminalStatuses, ['EVIDENCE_ACQUIRED', 'NO_EVIDENCE_FOUND', 'SOURCE_UNAVAILABLE', 'BLOCKED', 'REVIEW_REQUIRED', 'FAIL']);
   assert.equal(definition.batchStrategy.runtimeIsolationRequired, true);
   assert.equal(definition.batchStrategy.resumable, true);
   assert.equal(definition.batchStrategy.idempotent, true);

@@ -102,7 +102,7 @@ Corrections create a new revision linked to the prior record. Review outcomes ar
 Future milestones process **one evidence class across all 254 Texas counties** as a versioned, resumable, runtime-isolated batch:
 
 1. Freeze the batch charter: one class, schema version, approved source catalog version, Texas county/FIPS control list, acquisition methods, reviewer roster, and stop conditions.
-2. Create 254 independent county work units keyed by FIPS. A work unit may finish as `COMPLETE`, `NO_EVIDENCE_FOUND`, `REVIEW_REQUIRED`, or `BLOCKED`; an empty result must be explicit.
+2. Create 254 independent county work units keyed by FIPS. A work unit must finish as `EVIDENCE_ACQUIRED`, `NO_EVIDENCE_FOUND`, `SOURCE_UNAVAILABLE`, `BLOCKED`, `REVIEW_REQUIRED`, or `FAIL`; an empty result and an inaccessible source must be explicit. This terminal vocabulary is the minimal LP124 generalization needed to distinguish completed acquisition from access failure without misreporting either as no evidence.
 3. Run discovery and acquisition in bounded waves with deterministic IDs, checkpoints, rate limits, and per-source audit logs. Never bypass publisher access rules.
 4. Validate schema, exact county-set coverage, duplicates, containment, provenance, and class scope in a staging evidence store that runtime cannot read.
 5. Route all records and explicit no-evidence results through human review. Sample-based review may supplement but never replace record-level approval when approval is claimed.
