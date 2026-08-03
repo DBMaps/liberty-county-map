@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "montgomery-tx",
+  "county": "Montgomery County",
+  "fips": "48339",
+  "artifact": "montgomery-48339.addresses.jsonl.gz",
+  "sizeBytes": 10057950,
+  "sha256": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

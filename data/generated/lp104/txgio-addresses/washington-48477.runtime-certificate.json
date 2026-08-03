@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "washington-tx",
+  "county": "Washington County",
+  "fips": "48477",
+  "artifact": "washington-48477.addresses.jsonl.gz",
+  "sizeBytes": 790797,
+  "sha256": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

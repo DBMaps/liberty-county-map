@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "fayette-tx",
+  "county": "Fayette County",
+  "fips": "48149",
+  "artifact": "fayette-48149.addresses.jsonl.gz",
+  "sizeBytes": 815379,
+  "sha256": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "tyler-tx",
+  "county": "Tyler County",
+  "fips": "48457",
+  "artifact": "tyler-48457.addresses.jsonl.gz",
+  "sizeBytes": 492755,
+  "sha256": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

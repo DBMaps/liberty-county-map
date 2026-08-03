@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "austin-tx",
+  "county": "Austin County",
+  "fips": "48015",
+  "artifact": "austin-48015.addresses.jsonl.gz",
+  "sizeBytes": 552056,
+  "sha256": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

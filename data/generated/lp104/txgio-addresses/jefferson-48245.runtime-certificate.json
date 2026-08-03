@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "jefferson-tx",
+  "county": "Jefferson County",
+  "fips": "48245",
+  "artifact": "jefferson-48245.addresses.jsonl.gz",
+  "sizeBytes": 2847538,
+  "sha256": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

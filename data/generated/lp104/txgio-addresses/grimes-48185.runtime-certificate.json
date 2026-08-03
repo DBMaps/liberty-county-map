@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "grimes-tx",
+  "county": "Grimes County",
+  "fips": "48185",
+  "artifact": "grimes-48185.addresses.jsonl.gz",
+  "sizeBytes": 734091,
+  "sha256": "db2fee740aa83848b369f2bb1b228457a64547c3949948555b36aba56a4944ff",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

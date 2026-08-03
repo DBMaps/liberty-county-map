@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "waller-tx",
+  "county": "Waller County",
+  "fips": "48473",
+  "artifact": "waller-48473.addresses.jsonl.gz",
+  "sizeBytes": 1595248,
+  "sha256": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

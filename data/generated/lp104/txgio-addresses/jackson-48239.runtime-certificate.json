@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP104.5",
+  "countyId": "jackson-tx",
+  "county": "Jackson County",
+  "fips": "48239",
+  "artifact": "jackson-48239.addresses.jsonl.gz",
+  "sizeBytes": 321123,
+  "sha256": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}
