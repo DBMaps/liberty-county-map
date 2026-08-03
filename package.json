@@ -99,6 +99,9 @@
     "test:lp107": "node --test tests/lp107-runtime-certificate-readiness.test.mjs",
     "test:lp108": "node --test tests/lp108-storage-and-runtime-certification.test.mjs",
     "test:lp112": "node --test tests/lp112-governed-cohort-expansion-pilot.test.mjs",
-    "test:lp113": "node --test tests/lp113-statewide-certification-generalization.test.mjs"
+    "test:lp113": "node --test tests/lp113-statewide-certification-generalization.test.mjs",
+    "test:lp114": "node --test tests/lp114-complete-county-asset-manufacturing-pipeline.test.mjs",
+    "manufacture:lp115:crossings": "node tools/lp115/manufacture-candidate-crossings.mjs",
+    "test:lp115": "node --test tests/lp115-arbitrary-county-railroad-crossing-manufacturing.test.mjs"
   }
 }

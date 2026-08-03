@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { certifyCountyPackage } from '../lp104/certify-texas-address-package.mjs';
 import { certificateFor, validateRuntimeCertificate } from '../lp107/generate-runtime-certificates.mjs';
+import { manufacture as manufactureCrossings } from '../lp115/manufacture-candidate-crossings.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const COUNTY_INVENTORY = join(ROOT, 'data/lp104/texas-counties.json');
@@ -30,7 +31,7 @@ export function parseArguments(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (['--resume', '--force', '--dry-run', '--addresses-only', '--skip-addresses'].includes(arg)) out[arg.slice(2).replaceAll('-', '_')] = true;
-    else if (['--fips', '--reports', '--gdb', '--gdal', '--address-dir'].includes(arg)) { out[arg.slice(2).replaceAll('-', '_')] = argValue(argv, i); i += 1; }
+    else if (['--fips', '--reports', '--gdb', '--gdal', '--address-dir', '--crossing-source', '--crossing-reports'].includes(arg)) { out[arg.slice(2).replaceAll('-', '_')] = argValue(argv, i); i += 1; }
     else if (arg === '--help' || arg === '-h') out.help = true;
     else throw new Error(`Unknown option: ${arg}`);
   }
@@ -96,7 +97,6 @@ async function inspectAddress(county, options, countyDir) {
 function unsupportedAssets(addressesOnly) {
   const noPipeline = key => ({ status: 'NO_EXISTING_PIPELINE', reason: `No authoritative arbitrary-county ${key} manufacturing pipeline exists in repository tooling` });
   const result = {
-    railroadCrossingSource: noPipeline('railroad crossing source'), productionCrossings: noPipeline('production crossing'), crossingCertification: noPipeline('crossing certification'),
     roadwayGeometry: noPipeline('roadway geometry'), roadwayManifest: noPipeline('roadway certification/manifest'), communities: noPipeline('community/locality'),
     zipCoverage: noPipeline('ZIP coverage'), curatedDestinations: noPipeline('curated destination'), searchCoverage: noPipeline('search coverage')
   };
@@ -104,17 +104,40 @@ function unsupportedAssets(addressesOnly) {
   return result;
 }
 
+function crossingAssets(result) {
+  const common = { productionAuthorized: false, activated: false };
+  if (result.status === 'REQUIRES_OWNER_SOURCE' || result.status === 'FAILED') return {
+    railroadCrossingSource: { status: result.status, ...common, reason: result.blockingReasons?.join('; ') },
+    productionCrossings: { status: result.status, ...common, reason: result.blockingReasons?.join('; ') },
+    crossingCertification: { status: result.status, ...common, reason: result.blockingReasons?.join('; ') }
+  };
+  const status = result.status;
+  return {
+    railroadCrossingSource: { status, ...common, source: result.source, sourceRecordsSelected: result.sourceRecordsSelected, sourceQueryCompleted: result.sourceQueryCompleted },
+    productionCrossings: { status, ...common, package: result.package, productionCrossingCount: result.productionCrossingCount, classificationCounts: result.classificationCounts },
+    crossingCertification: { status, ...common, certificationStatus: result.certificationStatus, duplicateCount: result.duplicateCount, rejectedCount: result.rejectedCount, candidateManifestStatus: result.candidateManifestStatus }
+  };
+}
+
 export async function manufacture(options, hooks = {}) {
   const startedAt = (hooks.now?.() || new Date()).toISOString();
   const inventory = JSON.parse(await readFile(options.inventoryPath || COUNTY_INVENTORY, 'utf8'));
   const counties = selectCounties(inventory, options.fips);
   const reports = resolve(options.reports || DEFAULT_REPORTS); await mkdir(reports, { recursive: true });
+  let crossingByFips = new Map();
+  if (!options.addresses_only) {
+    const crossingReport = await (hooks.manufactureCrossings || manufactureCrossings)({ fips: counties.map(x => x.fips).join(','), source: options.crossing_source, reports: options.crossing_reports || join(reports, 'crossings'), resume: options.resume, inventoryPath: options.inventoryPath || COUNTY_INVENTORY });
+    crossingByFips = new Map(crossingReport.counties.map(row => [row.fips, row]));
+  }
   const results = [];
   for (const county of counties) {
     const countyDir = join(reports, county.fips); await mkdir(countyDir, { recursive: true });
     const assets = { countyIdentity: { status: 'VERIFIED_EXISTING', inventory: portable(options.inventoryPath || COUNTY_INVENTORY) }, ...unsupportedAssets(options.addresses_only),
       candidateRuntimeIdentity: { status: 'GENERATED', activated: false, productionAuthorization: false }, storageUploadPlan: { status: 'NOT_AUTHORIZED', uploadEnabled: false } };
+    if (options.addresses_only) Object.assign(assets, { railroadCrossingSource: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' }, productionCrossings: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' }, crossingCertification: { status: 'NOT_AUTHORIZED', reason: '--addresses-only selected' } });
+    else Object.assign(assets, crossingAssets(crossingByFips.get(county.fips)));
     const failures = [];
+    if (assets.crossingCertification.status === 'FAILED') failures.push({ asset: 'crossings', message: assets.crossingCertification.reason });
     if (!options.skip_addresses || await exists(join(resolve(options.address_dir || DEFAULT_ADDRESS_DIR), `${county.countyId}-${county.fips}.addresses.jsonl.gz`))) {
       try { Object.assign(assets, (await (hooks.inspectAddress || inspectAddress)(county, options, countyDir)).assets); }
       catch (error) { failures.push({ asset: 'addresses', message: error.message }); for (const key of ['addresses', 'addressSidecar', 'addressCertification', 'addressRuntimeCertificate']) assets[key] = { status: 'FAILED', error: error.message }; }
@@ -135,6 +158,6 @@ export async function manufacture(options, hooks = {}) {
   return report;
 }
 
-export function usage() { return 'Usage: node tools/lp114/manufacture-county-bundle.mjs --fips 48051,48455,48469 [--resume|--force] [--reports PATH] [--address-dir PATH] [--gdb PATH] [--gdal PATH] [--dry-run] [--addresses-only|--skip-addresses]'; }
+export function usage() { return 'Usage: node tools/lp114/manufacture-county-bundle.mjs --fips 48051,48455,48469 [--resume|--force] [--reports PATH] [--address-dir PATH] [--gdb PATH] [--gdal PATH] [--crossing-source FRA.geojson] [--crossing-reports PATH] [--dry-run] [--addresses-only|--skip-addresses]'; }
 export async function main(argv = process.argv.slice(2)) { const options = parseArguments(argv); if (options.help) return process.stdout.write(`${usage()}\n`); const report = await manufacture(options); process.stdout.write(`LP114 wrote ${report.counties.length} inactive candidate county bundle(s).\n`); if (report.failures.length) process.exitCode = 1; }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch(error => { process.stderr.write(`LP114 failed: ${error.message}\n`); process.exitCode = 1; });
