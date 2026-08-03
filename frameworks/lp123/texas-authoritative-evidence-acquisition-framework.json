@@ -1,0 +1,42 @@
+{
+  "frameworkId": "LP123",
+  "title": "Texas Authoritative Evidence Acquisition Framework",
+  "version": "1.0.0",
+  "jurisdiction": { "state": "Texas", "countyCount": 254 },
+  "principles": ["KNOW_BEFORE_YOU_GO", "AWARENESS_FIRST", "ROUTE_INTELLIGENCE_SECOND", "AUDIT_FIRST", "PATCH_SECOND"],
+  "frameworkOnly": true,
+  "statewideAcquisitionPerformed": false,
+  "runtimeModified": false,
+  "countiesActivated": false,
+  "productionAuthorization": false,
+  "sourceClasses": [
+    { "id": "GOVERNMENT", "publishers": ["COUNTY_GOVERNMENT", "COUNTY_CLERK", "SHERIFF", "EMERGENCY_MANAGEMENT"] },
+    { "id": "HEALTHCARE", "publishers": ["PUBLIC_HOSPITAL", "HOSPITAL_DISTRICT", "PUBLIC_EMERGENCY_FACILITY"] },
+    { "id": "EDUCATION", "publishers": ["SCHOOL_DISTRICT", "PUBLIC_COLLEGE", "PUBLIC_UNIVERSITY"] },
+    { "id": "TRANSPORTATION", "publishers": ["PUBLIC_AIRPORT", "TRANSIT_AGENCY", "TRANSPORTATION_AGENCY"] },
+    { "id": "PARKS", "publishers": ["STATE_PARK_AUTHORITY", "COUNTY_PARK_AUTHORITY", "MUNICIPAL_PARK_AUTHORITY"] },
+    { "id": "PUBLIC_SERVICES", "publishers": ["COURTHOUSE", "PUBLIC_LIBRARY", "GOVERNMENT_OFFICE"] }
+  ],
+  "sourcePriorities": ["PRIMARY", "SECONDARY", "FALLBACK", "UNSUPPORTED"],
+  "evidenceClasses": ["COMMUNITY", "DESTINATION", "PUBLIC_SAFETY", "HEALTHCARE", "EDUCATION", "TRANSPORTATION", "PARK", "GOVERNMENT"],
+  "confidenceValues": ["HIGH", "MEDIUM", "LOW", "REVIEW_REQUIRED"],
+  "requiredProvenanceFields": ["county", "countyFips", "source", "sourceUrl", "observationDate", "evidenceDate", "confidence", "reviewStatus", "reviewer", "countyContainment", "acquisitionMethod"],
+  "nullableProvenanceFields": ["evidenceDate", "reviewer"],
+  "countyContainmentStatuses": ["CONFIRMED", "CONFLICT", "UNRESOLVED"],
+  "reviewStatuses": ["PENDING_REVIEW", "APPROVED", "REJECTED", "CHANGES_REQUIRED"],
+  "workflow": ["SOURCE_DISCOVERY", "EVIDENCE_ACQUISITION", "NORMALIZATION", "COUNTY_CONTAINMENT", "PROVENANCE_ATTACHMENT", "HUMAN_REVIEW", "CANDIDATE_APPROVAL", "PRODUCTION_AUTHORIZATION"],
+  "batchStrategy": {
+    "unit": "ONE_EVIDENCE_CLASS_ACROSS_ALL_TEXAS_COUNTIES",
+    "expectedCountyWorkUnits": 254,
+    "countyKey": "countyFips",
+    "workUnitTerminalStatuses": ["COMPLETE", "NO_EVIDENCE_FOUND", "REVIEW_REQUIRED", "BLOCKED"],
+    "runtimeIsolationRequired": true,
+    "resumable": true,
+    "idempotent": true,
+    "humanReviewRequired": true,
+    "candidateApprovalSeparate": true,
+    "productionAuthorizationSeparate": true
+  },
+  "protectedSystems": ["SHARED_REPORTS", "ROUTE_WATCH", "AWARENESS_FILTERING", "HAZARD_LIFECYCLE", "ALERT_GENERATION", "SUPABASE_SYNC"],
+  "prohibitedOutputs": ["COUNTY_ACTIVATION", "CANDIDATE_ASSET_UPLOAD", "RUNTIME_DATA", "DESTINATION_INVENTORY", "COMMUNITY_INVENTORY", "ALIASES", "SEARCH_RECORDS"]
+}

@@ -109,6 +109,7 @@
     "test:lp118": "node --test tests/lp118-arbitrary-county-tiger-roadway-source-extraction.test.mjs",
     "test:lp120": "node --test tests/lp120-adjacent-county-manufacturing-wave-1.test.mjs",
     "test:lp121": "node --test tests/lp121-wave-1-community-destination-search-review.test.mjs",
-    "test:lp122": "node --test tests/lp122-wave-1-authoritative-evidence-acquisition.test.mjs"
+    "test:lp122": "node --test tests/lp122-wave-1-authoritative-evidence-acquisition.test.mjs",
+    "test:lp123": "node --test tests/lp123-texas-authoritative-evidence-acquisition-framework.test.mjs"
   }
 }
