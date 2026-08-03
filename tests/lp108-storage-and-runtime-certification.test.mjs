@@ -1,6 +1,6 @@
 import test from 'node:test'; import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'; import { join } from 'node:path'; import { tmpdir } from 'node:os';
-import { selectGovernedCounties } from '../tools/lp107/generate-runtime-certificates.mjs'; import { atomicJson, objectPaths, readiness, redact } from '../tools/lp108/lp108-core.mjs'; import { parseArguments, run as storageRun } from '../tools/lp108/sync-certified-address-storage.mjs';
+import { selectGovernedCounties } from '../tools/lp107/generate-runtime-certificates.mjs'; import { atomicJson, objectPaths, readiness, redact } from '../tools/lp108/lp108-core.mjs'; import { credentialHeaders, parseArguments, run as storageRun } from '../tools/lp108/sync-certified-address-storage.mjs';
 import { CERTIFIED_COUNTIES } from '../supabase/functions/_shared/certified-address-identities.mjs'; import { libertyRequest } from '../supabase/functions/_shared/liberty-certified-address.mjs';
 const manifest=JSON.parse(await readFile(new URL('../data/lp104/texas-counties.json',import.meta.url),'utf8'));const counties=selectGovernedCounties(manifest);const paths=counties.flatMap(c=>Object.values(objectPaths(c)));
 const request=(county,extra={})=>({intent:'address',query:'100 Main Street',structuredAddress:{street:'100 Main Street',county:`${county.name} County`,state:'TX'},context:{countyId:`${county.slug}-tx`,countyFips:county.fips},...extra});
@@ -13,10 +13,12 @@ test('local mutation detector is part of the digest contract',async()=>assert.ma
 test('certificate mismatch is validated before remote access',async()=>assert.match(await readFile(new URL('../tools/lp108/sync-certified-address-storage.mjs',import.meta.url),'utf8'),/validateRuntimeCertificate/));
 test('Storage target ambiguity fails closed',async()=>assert.match(await readFile(new URL('../tools/lp108/sync-certified-address-storage.mjs',import.meta.url),'utf8'),/target ambiguous or inaccessible/));
 test('missing credentials have truthful blocked language',async()=>assert.match(await readFile(new URL('../tools/lp108/sync-certified-address-storage.mjs',import.meta.url),'utf8'),/REMOTE EXECUTION NOT COMPLETED/));
+test('modern Supabase secret uses only the apikey header',()=>{const key='sb_secret_modern-test-value';assert.deepEqual(credentialHeaders(key),{apikey:key})});
+test('legacy Supabase JWT uses apikey and Bearer authorization headers',()=>{const key='eyJlegacy.test-value';assert.deepEqual(credentialHeaders(key),{apikey:key,Authorization:`Bearer ${key}`})});
 test('plan mode excludes remote modes',()=>assert.throws(()=>parseArguments(['--plan','--upload']),/cannot perform remote/));
 test('upload defaults to no replacement',()=>assert.equal(parseArguments(['--upload']).replaceMismatched,undefined));
 test('replacement requires an explicit upload guard',()=>assert.throws(()=>parseArguments(['--replace-mismatched']),/requires --upload/));
-test('private URL and credentials are redacted',()=>{assert.doesNotMatch(redact('authorization: eyJsecret /workspace/private/file'),/eyJsecret|workspace/)});
+test('private URL and credentials are redacted from diagnostics and errors',()=>{const modern='sb_secret_modern-test-value',legacy='eyJlegacy.test-value';const diagnostic=redact(`apikey: ${modern} authorization: Bearer ${legacy} /workspace/private/file`);const error=redact(new Error(`request failed for ${modern} and ${legacy}`).message);assert.doesNotMatch(`${diagnostic} ${error}`,new RegExp(`${modern}|${legacy}|workspace`))});
 test('reports are atomic and leave no temporary file',async()=>{const d=await mkdtemp(join(tmpdir(),'lp108-'));try{await atomicJson(join(d,'r.json'),{ok:true});assert.deepEqual(await readdir(d),['r.json'])}finally{await rm(d,{recursive:true,force:true})}});
 test('every governed request selects exactly its own county',()=>{for(const c of counties)assert.equal(libertyRequest(request(c)).identity.fips,c.fips)});
 test('county and FIPS conflict fails closed',()=>assert.equal(libertyRequest(request(counties[0],{context:{countyId:'austin-tx',countyFips:'48291'}})),null));
