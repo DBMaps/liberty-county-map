@@ -104,10 +104,11 @@
     "manufacture:lp115:crossings": "node tools/lp115/manufacture-candidate-crossings.mjs",
     "test:lp115": "node --test tests/lp115-arbitrary-county-railroad-crossing-manufacturing.test.mjs",
     "manufacture:lp116:roadways": "node tools/lp116/manufacture-candidate-roadways.mjs",
-    "test:lp116": "node --test tests/lp116-arbitrary-county-roadway-geometry-manufacturing.test.mjs"
-    ,"test:lp117": "node --test tests/lp117-county-manufacturing-generalization.test.mjs"
-    ,"test:lp118": "node --test tests/lp118-arbitrary-county-tiger-roadway-source-extraction.test.mjs"
-    ,"test:lp120": "node --test tests/lp120-adjacent-county-manufacturing-wave-1.test.mjs"
-    ,"test:lp121": "node --test tests/lp121-wave-1-community-destination-search-review.test.mjs"
+    "test:lp116": "node --test tests/lp116-arbitrary-county-roadway-geometry-manufacturing.test.mjs",
+    "test:lp117": "node --test tests/lp117-county-manufacturing-generalization.test.mjs",
+    "test:lp118": "node --test tests/lp118-arbitrary-county-tiger-roadway-source-extraction.test.mjs",
+    "test:lp120": "node --test tests/lp120-adjacent-county-manufacturing-wave-1.test.mjs",
+    "test:lp121": "node --test tests/lp121-wave-1-community-destination-search-review.test.mjs",
+    "test:lp122": "node --test tests/lp122-wave-1-authoritative-evidence-acquisition.test.mjs"
   }
 }

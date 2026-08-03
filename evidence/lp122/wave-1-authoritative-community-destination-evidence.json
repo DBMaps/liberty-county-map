@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "gridly-lp122-authoritative-evidence-v1",
+  "milestone": "LP122",
+  "baselineCommit": "20905a4",
+  "evidenceAcquiredOn": "2026-08-03",
+  "reviewOnly": true,
+  "candidateOnly": true,
+  "productionChanged": false,
+  "productionAuthorization": false,
+  "candidateApproval": false,
+  "sourcePolicy": "Official county-government pages only; each accepted record is limited to the identity and address asserted by its governing source.",
+  "sources": [
+    {
+      "sourceId": "lee-county-official",
+      "publisher": "Lee County, Texas",
+      "title": "Lee County official website",
+      "url": "https://www.co.lee.tx.us/",
+      "authority": "COUNTY_GOVERNMENT",
+      "accessedOn": "2026-08-03",
+      "supports": [
+        "Lee County containment",
+        "Giddings locality",
+        "Lee County Courthouse destination"
+      ]
+    },
+    {
+      "sourceId": "milam-county-official",
+      "publisher": "Milam County, Texas",
+      "title": "Milam County official website",
+      "url": "https://www.co.milam.tx.us/",
+      "authority": "COUNTY_GOVERNMENT",
+      "accessedOn": "2026-08-03",
+      "supports": [
+        "Milam County containment",
+        "Cameron locality",
+        "Milam County Courthouse destination"
+      ]
+    },
+    {
+      "sourceId": "robertson-county-official",
+      "publisher": "Robertson County, Texas",
+      "title": "Robertson County official website",
+      "url": "https://www.co.robertson.tx.us/",
+      "authority": "COUNTY_GOVERNMENT",
+      "accessedOn": "2026-08-03",
+      "supports": [
+        "Robertson County containment",
+        "Franklin locality",
+        "Robertson County Courthouse destination"
+      ]
+    }
+  ],
+  "counties": [
+    {
+      "county": "Lee County",
+      "fips": "48287",
+      "communityEvidence": [
+        {
+          "name": "Giddings",
+          "classification": "COUNTY_SEAT_LOCALITY",
+          "aliases": [],
+          "sourceId": "lee-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Lee County, Texas",
+          "scopeNote": "Accepted only as the locality stated in the official county courthouse address; municipal boundary extent and ZIP assignment are not certified."
+        }
+      ],
+      "destinationEvidence": [
+        {
+          "name": "Lee County Courthouse",
+          "category": "GOVERNMENT_OFFICE",
+          "address": "200 South Main Street, Giddings, TX 78942",
+          "sourceId": "lee-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Lee County, Texas",
+          "scopeNote": "Official county-government identity and public address only; no coordinates or runtime search record were created."
+        }
+      ],
+      "unresolved": [
+        "Other incorporated places and census-designated places",
+        "Historically recognized communities",
+        "Community aliases",
+        "ZIP-to-community assignments",
+        "Other eligible public-facing destinations",
+        "Search behavior and ranking"
+      ],
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    },
+    {
+      "county": "Milam County",
+      "fips": "48331",
+      "communityEvidence": [
+        {
+          "name": "Cameron",
+          "classification": "COUNTY_SEAT_LOCALITY",
+          "aliases": [],
+          "sourceId": "milam-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Milam County, Texas",
+          "scopeNote": "Accepted only as the locality stated in the official county courthouse address; municipal boundary extent and ZIP assignment are not certified."
+        }
+      ],
+      "destinationEvidence": [
+        {
+          "name": "Milam County Courthouse",
+          "category": "GOVERNMENT_OFFICE",
+          "address": "102 South Fannin Avenue, Cameron, TX 76520",
+          "sourceId": "milam-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Milam County, Texas",
+          "scopeNote": "Official county-government identity and public address only; no coordinates or runtime search record were created."
+        }
+      ],
+      "unresolved": [
+        "Other incorporated places and census-designated places",
+        "Historically recognized communities",
+        "Community aliases",
+        "ZIP-to-community assignments and unresolved LP121 county identity",
+        "Other eligible public-facing destinations",
+        "Search behavior and ranking"
+      ],
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    },
+    {
+      "county": "Robertson County",
+      "fips": "48395",
+      "communityEvidence": [
+        {
+          "name": "Franklin",
+          "classification": "COUNTY_SEAT_LOCALITY",
+          "aliases": [],
+          "sourceId": "robertson-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Robertson County, Texas",
+          "scopeNote": "Accepted only as the locality stated in the official county courthouse address; municipal boundary extent and ZIP assignment are not certified."
+        }
+      ],
+      "destinationEvidence": [
+        {
+          "name": "Robertson County Courthouse",
+          "category": "GOVERNMENT_OFFICE",
+          "address": "103 East Morgan Street, Franklin, TX 77856",
+          "sourceId": "robertson-county-official",
+          "evidenceDate": null,
+          "observedOn": "2026-08-03",
+          "confidence": "HIGH",
+          "reviewStatus": "EVIDENCE_ACCEPTED",
+          "containment": "Robertson County, Texas",
+          "scopeNote": "Official county-government identity and public address only; no coordinates or runtime search record were created."
+        }
+      ],
+      "unresolved": [
+        "Other incorporated places and census-designated places",
+        "Historically recognized communities",
+        "Community aliases",
+        "ZIP-to-community assignments and unresolved LP121 county identity",
+        "Other eligible public-facing destinations",
+        "Search behavior and ranking"
+      ],
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    }
+  ],
+  "searchReviewPreparation": {
+    "acceptedNamesOnly": true,
+    "aliasesAccepted": 0,
+    "zipAssignmentsCertified": 0,
+    "runtimeModified": false,
+    "status": "REVIEW_REQUIRED"
+  },
+  "mergeRecommendation": "MERGE_GOVERNED_EVIDENCE_ONLY",
+  "productionRecommendation": "DO_NOT_AUTHORIZE"
+}
