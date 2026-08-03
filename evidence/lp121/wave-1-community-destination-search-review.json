@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "gridly-lp121-wave-1-review-v1",
+  "milestone": "LP121",
+  "baselineCommit": "c8b233e",
+  "reviewOnly": true,
+  "candidateOnly": true,
+  "productionChanged": false,
+  "productionAuthorization": false,
+  "candidateApproval": false,
+  "sources": {
+    "lp120Readiness": "evidence/lp120/adjacent-county-manufacturing-wave-1-readiness.json",
+    "zipCountyRelationships": "data/generated/gridly-zip-county-source-v1.json",
+    "zipAwarenessCandidates": "data/generated/gridly-zip-awareness-candidates-v1.json"
+  },
+  "counties": [
+    {
+      "county": "Lee County",
+      "fips": "48287",
+      "communityReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no community/locality candidates; project ZIP awareness candidates provide county evidence but no community labels."
+      },
+      "zipReview": {
+        "status": "PASS",
+        "relationshipCount": 11,
+        "ambiguousRelationshipCount": 9,
+        "countyIdentityComplete": true,
+        "finding": "All 11 LP120 relationships are present in the HUD-USPS-derived project source; nine are shared with another county and remain ambiguous."
+      },
+      "destinationReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no curated destination candidates to authenticate."
+      },
+      "searchReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "No governed community or destination search records exist for review; ZIP evidence alone cannot certify search coverage."
+      },
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    },
+    {
+      "county": "Milam County",
+      "fips": "48331",
+      "communityReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no community/locality candidates; project ZIP awareness candidates provide county evidence but no community labels."
+      },
+      "zipReview": {
+        "status": "REVIEW_REQUIRED",
+        "relationshipCount": 3,
+        "ambiguousRelationshipCount": 3,
+        "countyIdentityComplete": false,
+        "finding": "All three LP120 relationships are present in the HUD-USPS-derived project source and are shared; Milam countyName and countyId are unresolved in that source."
+      },
+      "destinationReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no curated destination candidates to authenticate."
+      },
+      "searchReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "No governed community or destination search records exist for review; unresolved ZIP county identity prevents certification."
+      },
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    },
+    {
+      "county": "Robertson County",
+      "fips": "48395",
+      "communityReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no community/locality candidates; project ZIP awareness candidates provide county evidence but no community labels."
+      },
+      "zipReview": {
+        "status": "REVIEW_REQUIRED",
+        "relationshipCount": 4,
+        "ambiguousRelationshipCount": 4,
+        "countyIdentityComplete": false,
+        "finding": "All four LP120 relationships are present in the HUD-USPS-derived project source and are shared; Robertson countyName and countyId are unresolved in that source."
+      },
+      "destinationReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "LP120 contains no curated destination candidates to authenticate."
+      },
+      "searchReview": {
+        "status": "REVIEW_REQUIRED",
+        "candidateRecordCount": 0,
+        "finding": "No governed community or destination search records exist for review; unresolved ZIP county identity prevents certification."
+      },
+      "readiness": {
+        "status": "REVIEW_REQUIRED",
+        "approved": false,
+        "productionReady": false
+      }
+    }
+  ],
+  "mergeRecommendation": "MERGE_REVIEW_EVIDENCE_ONLY",
+  "productionRecommendation": "DO_NOT_AUTHORIZE"
+}
