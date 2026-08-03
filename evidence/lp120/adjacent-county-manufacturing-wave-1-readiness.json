@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "gridly-lp120-wave-readiness-v1",
+  "milestone": "LP120",
+  "wave": "Adjacent County Manufacturing Wave 1",
+  "baselineCommit": "bd68e4d1",
+  "generatedAt": "2026-08-03T21:15:55.411Z",
+  "candidateOnly": true,
+  "productionChanged": false,
+  "productionAuthorization": false,
+  "manufacturingCommand": "node tools/lp114/manufacture-county-bundle.mjs --fips 48287,48331,48395 --reports reports/lp120-wave-1 --crossing-source Crossing-Packages/Texas/fra-crossings-tx.geojson --roadway-boundaries assets/boundaries/texas-counties-boundaries.geojson --dry-run",
+  "counties": [
+    {
+      "county": "Lee County",
+      "fips": "48287",
+      "identity": {
+        "status": "PASS",
+        "inventory": "data/lp104/texas-counties.json",
+        "adjacentTo": [
+          "Burleson County",
+          "Washington County",
+          "Fayette County"
+        ]
+      },
+      "sourcePreflight": {
+        "txgioAddresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "reason": "No owner-local TxGIO 2026 geodatabase or prebuilt county package was available; no download or substitute source was used."
+        },
+        "fraCrossings": {
+          "status": "PASS",
+          "source": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+        },
+        "tiger2025Roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48287_roads.zip",
+          "reason": "Authoritative Census host request returned HTTP 403 from the environment proxy, and no owner-local archive was available."
+        },
+        "countyBoundary": {
+          "status": "PASS",
+          "source": "assets/boundaries/texas-counties-boundaries.geojson",
+          "sha256": "a9f5a0cf44f40d4f9fae81c16756e9ad32d36b7e9d08e34e96f1f02f94f8a50d"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "source": "data/generated/gridly-zip-county-source-v1.json",
+          "sha256": "8be3f36d3f6f956f8d056f241e77f4dfdc0cf4aa95aa8ff298d9f6512d8e00e9"
+        }
+      },
+      "assets": {
+        "countyBoundary": {
+          "status": "PASS",
+          "featureCount": 1,
+          "sha256": "da4756020f69d0f4c97e0634b19306da43a51c967b88deb5005dda85e816f1fc"
+        },
+        "addresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "crossings": {
+          "status": "PASS",
+          "sourceRecordCount": 47,
+          "candidateRecordCount": 47,
+          "certification": "PASS",
+          "packageSha256": "c03ce0fe553bbd5221e6af002c969c8efa6db42e67341c6c9955c823aa61df0b"
+        },
+        "roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "recordCount": 11,
+          "ambiguousZipCount": 9,
+          "sha256": "65cb2102cd0934f78989c0f8eff57ba5a5fa085b7869e4d799f5d09d285c58fa"
+        },
+        "communities": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "curatedDestinations": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "searchCoverage": {
+          "status": "REVIEW_REQUIRED"
+        },
+        "candidateRuntimeIdentity": {
+          "status": "PASS",
+          "activated": false,
+          "productionAuthorization": false
+        },
+        "promotion": {
+          "status": "REVIEW_REQUIRED",
+          "productionAuthorization": "BLOCKED"
+        }
+      },
+      "readiness": {
+        "status": "BLOCKED",
+        "reason": "Address and TIGER 2025 owner sources are unavailable; human-governed community, destination, search, and promotion reviews remain open."
+      }
+    },
+    {
+      "county": "Milam County",
+      "fips": "48331",
+      "identity": {
+        "status": "PASS",
+        "inventory": "data/lp104/texas-counties.json",
+        "adjacentTo": [
+          "Burleson County",
+          "Brazos County"
+        ]
+      },
+      "sourcePreflight": {
+        "txgioAddresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "reason": "No owner-local TxGIO 2026 geodatabase or prebuilt county package was available; no download or substitute source was used."
+        },
+        "fraCrossings": {
+          "status": "PASS",
+          "source": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+        },
+        "tiger2025Roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48331_roads.zip",
+          "reason": "Authoritative Census host request returned HTTP 403 from the environment proxy, and no owner-local archive was available."
+        },
+        "countyBoundary": {
+          "status": "PASS",
+          "source": "assets/boundaries/texas-counties-boundaries.geojson",
+          "sha256": "a9f5a0cf44f40d4f9fae81c16756e9ad32d36b7e9d08e34e96f1f02f94f8a50d"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "source": "data/generated/gridly-zip-county-source-v1.json",
+          "sha256": "8be3f36d3f6f956f8d056f241e77f4dfdc0cf4aa95aa8ff298d9f6512d8e00e9"
+        }
+      },
+      "assets": {
+        "countyBoundary": {
+          "status": "PASS",
+          "featureCount": 1,
+          "sha256": "c685f7f0f9fbff906e736ba681ffbf845cfae9642a8d00f77cc644cb49912e24"
+        },
+        "addresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "crossings": {
+          "status": "PASS",
+          "sourceRecordCount": 110,
+          "candidateRecordCount": 110,
+          "certification": "PASS",
+          "packageSha256": "a5e27a1ad7915f6c9d9faad484520852da2510b1da9b9be25af378f8cda60828"
+        },
+        "roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "recordCount": 3,
+          "ambiguousZipCount": 3,
+          "sha256": "738d08d8bf8cf7f560a0218bfeeeb22661655a8205858cc8c12d212737194893"
+        },
+        "communities": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "curatedDestinations": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "searchCoverage": {
+          "status": "REVIEW_REQUIRED"
+        },
+        "candidateRuntimeIdentity": {
+          "status": "PASS",
+          "activated": false,
+          "productionAuthorization": false
+        },
+        "promotion": {
+          "status": "REVIEW_REQUIRED",
+          "productionAuthorization": "BLOCKED"
+        }
+      },
+      "readiness": {
+        "status": "BLOCKED",
+        "reason": "Address and TIGER 2025 owner sources are unavailable; human-governed community, destination, search, and promotion reviews remain open."
+      }
+    },
+    {
+      "county": "Robertson County",
+      "fips": "48395",
+      "identity": {
+        "status": "PASS",
+        "inventory": "data/lp104/texas-counties.json",
+        "adjacentTo": [
+          "Brazos County"
+        ]
+      },
+      "sourcePreflight": {
+        "txgioAddresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "reason": "No owner-local TxGIO 2026 geodatabase or prebuilt county package was available; no download or substitute source was used."
+        },
+        "fraCrossings": {
+          "status": "PASS",
+          "source": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+          "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+        },
+        "tiger2025Roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/ROADS/tl_2025_48395_roads.zip",
+          "reason": "Authoritative Census host request returned HTTP 403 from the environment proxy, and no owner-local archive was available."
+        },
+        "countyBoundary": {
+          "status": "PASS",
+          "source": "assets/boundaries/texas-counties-boundaries.geojson",
+          "sha256": "a9f5a0cf44f40d4f9fae81c16756e9ad32d36b7e9d08e34e96f1f02f94f8a50d"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "source": "data/generated/gridly-zip-county-source-v1.json",
+          "sha256": "8be3f36d3f6f956f8d056f241e77f4dfdc0cf4aa95aa8ff298d9f6512d8e00e9"
+        }
+      },
+      "assets": {
+        "countyBoundary": {
+          "status": "PASS",
+          "featureCount": 1,
+          "sha256": "5efcf85dcb064f33533c1512cc35f0c67821f94e1e67e27d917add143b705665"
+        },
+        "addresses": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "crossings": {
+          "status": "PASS",
+          "sourceRecordCount": 169,
+          "candidateRecordCount": 169,
+          "certification": "PASS",
+          "packageSha256": "8aa218cc69bb99b20d09c72747f0f641c9c2b7c68db3e670e0f6b37847002dca"
+        },
+        "roadways": {
+          "status": "SOURCE_UNAVAILABLE",
+          "recordCount": null,
+          "certification": "NOT_RUN"
+        },
+        "zipCoverage": {
+          "status": "PASS",
+          "recordCount": 4,
+          "ambiguousZipCount": 4,
+          "sha256": "e067aebd99e073afb0c42cd0ca77e367e1cbd4690f5aa67a388705cbd7f5cdce"
+        },
+        "communities": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "curatedDestinations": {
+          "status": "REVIEW_REQUIRED",
+          "recordCount": 0
+        },
+        "searchCoverage": {
+          "status": "REVIEW_REQUIRED"
+        },
+        "candidateRuntimeIdentity": {
+          "status": "PASS",
+          "activated": false,
+          "productionAuthorization": false
+        },
+        "promotion": {
+          "status": "REVIEW_REQUIRED",
+          "productionAuthorization": "BLOCKED"
+        }
+      },
+      "readiness": {
+        "status": "BLOCKED",
+        "reason": "Address and TIGER 2025 owner sources are unavailable; human-governed community, destination, search, and promotion reviews remain open."
+      }
+    }
+  ]
+}

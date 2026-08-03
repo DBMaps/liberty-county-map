@@ -107,5 +107,6 @@
     "test:lp116": "node --test tests/lp116-arbitrary-county-roadway-geometry-manufacturing.test.mjs"
     ,"test:lp117": "node --test tests/lp117-county-manufacturing-generalization.test.mjs"
     ,"test:lp118": "node --test tests/lp118-arbitrary-county-tiger-roadway-source-extraction.test.mjs"
+    ,"test:lp120": "node --test tests/lp120-adjacent-county-manufacturing-wave-1.test.mjs"
   }
 }
