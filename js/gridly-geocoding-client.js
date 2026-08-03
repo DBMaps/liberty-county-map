@@ -94,6 +94,8 @@
         exactLookupExecuted: runtime.exactLookupExecuted === true,
         fallbackExecuted: runtime.fallbackExecuted === true,
         storageBucket: runtime.storageBucket == null ? null : String(runtime.storageBucket).slice(0, 63),
+        selectedCountySlug: runtime.selectedCountySlug == null ? null : String(runtime.selectedCountySlug).slice(0, 63),
+        selectedFips: runtime.selectedFips == null ? null : String(runtime.selectedFips).slice(0, 5),
         certificateObjectPath: runtime.certificateObjectPath == null ? null : String(runtime.certificateObjectPath).slice(0, 512),
         packageObjectPath: runtime.packageObjectPath == null ? null : String(runtime.packageObjectPath).slice(0, 512),
         storageStatusCategory: String(runtime.storageStatusCategory || "not_requested").slice(0, 32),
