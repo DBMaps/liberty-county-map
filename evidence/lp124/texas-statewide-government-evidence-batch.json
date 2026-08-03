@@ -1,0 +1,5421 @@
+{
+  "schemaVersion": "gridly-lp124-government-evidence-v1",
+  "milestone": "LP124",
+  "baselineCommit": "334b7cc8",
+  "evidenceClass": "GOVERNMENT",
+  "observationDate": "2026-08-03",
+  "immutable": true,
+  "candidateOnly": true,
+  "runtimeModified": false,
+  "countiesActivated": false,
+  "candidateApproval": false,
+  "productionAuthorization": false,
+  "acquisitionPolicy": {
+    "deterministic": true,
+    "idempotent": true,
+    "resumable": true,
+    "checkpointed": true,
+    "rateLimit": {
+      "maxConcurrentRequests": 1,
+      "requestsPerBatch": 1
+    },
+    "runtimeIsolated": true
+  },
+  "authoritativeCountyInventory": {
+    "path": "data/lp104/texas-counties.json",
+    "count": 254,
+    "publisher": "United States Census Bureau",
+    "role": "PACKAGED_CONTROL_LIST"
+  },
+  "sources": [
+    {
+      "sourceId": "us-census-2020-pl-texas-counties",
+      "publisher": "United States Census Bureau",
+      "exactUrl": "https://api.census.gov/data/2020/dec/pl?get=NAME&for=county:*&in=state:48",
+      "authority": "FEDERAL_GOVERNMENT",
+      "priority": "SECONDARY",
+      "acquisitionMethod": "OFFICIAL_API",
+      "observedOn": "2026-08-03",
+      "accessStatus": "SOURCE_UNAVAILABLE",
+      "supports": [
+        "COUNTY_GOVERNMENT_IDENTITY",
+        "COUNTY_FIPS_CONTAINMENT"
+      ],
+      "ownerPrerequisite": "Run the LP124 builder where HTTPS access to api.census.gov is permitted."
+    }
+  ],
+  "workUnits": [
+    {
+      "workUnitId": "lp124-county-48001",
+      "county": "Anderson County",
+      "countyFips": "48001",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48003",
+      "county": "Andrews County",
+      "countyFips": "48003",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48005",
+      "county": "Angelina County",
+      "countyFips": "48005",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48007",
+      "county": "Aransas County",
+      "countyFips": "48007",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48009",
+      "county": "Archer County",
+      "countyFips": "48009",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48011",
+      "county": "Armstrong County",
+      "countyFips": "48011",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48013",
+      "county": "Atascosa County",
+      "countyFips": "48013",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48015",
+      "county": "Austin County",
+      "countyFips": "48015",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48017",
+      "county": "Bailey County",
+      "countyFips": "48017",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48019",
+      "county": "Bandera County",
+      "countyFips": "48019",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48021",
+      "county": "Bastrop County",
+      "countyFips": "48021",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48023",
+      "county": "Baylor County",
+      "countyFips": "48023",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48025",
+      "county": "Bee County",
+      "countyFips": "48025",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48027",
+      "county": "Bell County",
+      "countyFips": "48027",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48029",
+      "county": "Bexar County",
+      "countyFips": "48029",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48031",
+      "county": "Blanco County",
+      "countyFips": "48031",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48033",
+      "county": "Borden County",
+      "countyFips": "48033",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48035",
+      "county": "Bosque County",
+      "countyFips": "48035",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48037",
+      "county": "Bowie County",
+      "countyFips": "48037",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48039",
+      "county": "Brazoria County",
+      "countyFips": "48039",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48041",
+      "county": "Brazos County",
+      "countyFips": "48041",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48043",
+      "county": "Brewster County",
+      "countyFips": "48043",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48045",
+      "county": "Briscoe County",
+      "countyFips": "48045",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48047",
+      "county": "Brooks County",
+      "countyFips": "48047",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48049",
+      "county": "Brown County",
+      "countyFips": "48049",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48051",
+      "county": "Burleson County",
+      "countyFips": "48051",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48053",
+      "county": "Burnet County",
+      "countyFips": "48053",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48055",
+      "county": "Caldwell County",
+      "countyFips": "48055",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48057",
+      "county": "Calhoun County",
+      "countyFips": "48057",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48059",
+      "county": "Callahan County",
+      "countyFips": "48059",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48061",
+      "county": "Cameron County",
+      "countyFips": "48061",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48063",
+      "county": "Camp County",
+      "countyFips": "48063",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48065",
+      "county": "Carson County",
+      "countyFips": "48065",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48067",
+      "county": "Cass County",
+      "countyFips": "48067",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48069",
+      "county": "Castro County",
+      "countyFips": "48069",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48071",
+      "county": "Chambers County",
+      "countyFips": "48071",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48073",
+      "county": "Cherokee County",
+      "countyFips": "48073",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48075",
+      "county": "Childress County",
+      "countyFips": "48075",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48077",
+      "county": "Clay County",
+      "countyFips": "48077",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48079",
+      "county": "Cochran County",
+      "countyFips": "48079",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48081",
+      "county": "Coke County",
+      "countyFips": "48081",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48083",
+      "county": "Coleman County",
+      "countyFips": "48083",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48085",
+      "county": "Collin County",
+      "countyFips": "48085",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48087",
+      "county": "Collingsworth County",
+      "countyFips": "48087",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48089",
+      "county": "Colorado County",
+      "countyFips": "48089",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48091",
+      "county": "Comal County",
+      "countyFips": "48091",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48093",
+      "county": "Comanche County",
+      "countyFips": "48093",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48095",
+      "county": "Concho County",
+      "countyFips": "48095",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48097",
+      "county": "Cooke County",
+      "countyFips": "48097",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48099",
+      "county": "Coryell County",
+      "countyFips": "48099",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48101",
+      "county": "Cottle County",
+      "countyFips": "48101",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48103",
+      "county": "Crane County",
+      "countyFips": "48103",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48105",
+      "county": "Crockett County",
+      "countyFips": "48105",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48107",
+      "county": "Crosby County",
+      "countyFips": "48107",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48109",
+      "county": "Culberson County",
+      "countyFips": "48109",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48111",
+      "county": "Dallam County",
+      "countyFips": "48111",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48113",
+      "county": "Dallas County",
+      "countyFips": "48113",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48115",
+      "county": "Dawson County",
+      "countyFips": "48115",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48117",
+      "county": "Deaf Smith County",
+      "countyFips": "48117",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48119",
+      "county": "Delta County",
+      "countyFips": "48119",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48121",
+      "county": "Denton County",
+      "countyFips": "48121",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48123",
+      "county": "DeWitt County",
+      "countyFips": "48123",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48125",
+      "county": "Dickens County",
+      "countyFips": "48125",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48127",
+      "county": "Dimmit County",
+      "countyFips": "48127",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48129",
+      "county": "Donley County",
+      "countyFips": "48129",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48131",
+      "county": "Duval County",
+      "countyFips": "48131",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48133",
+      "county": "Eastland County",
+      "countyFips": "48133",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48135",
+      "county": "Ector County",
+      "countyFips": "48135",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48137",
+      "county": "Edwards County",
+      "countyFips": "48137",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48139",
+      "county": "Ellis County",
+      "countyFips": "48139",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48141",
+      "county": "El Paso County",
+      "countyFips": "48141",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48143",
+      "county": "Erath County",
+      "countyFips": "48143",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48145",
+      "county": "Falls County",
+      "countyFips": "48145",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48147",
+      "county": "Fannin County",
+      "countyFips": "48147",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48149",
+      "county": "Fayette County",
+      "countyFips": "48149",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48151",
+      "county": "Fisher County",
+      "countyFips": "48151",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48153",
+      "county": "Floyd County",
+      "countyFips": "48153",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48155",
+      "county": "Foard County",
+      "countyFips": "48155",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48157",
+      "county": "Fort Bend County",
+      "countyFips": "48157",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48159",
+      "county": "Franklin County",
+      "countyFips": "48159",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48161",
+      "county": "Freestone County",
+      "countyFips": "48161",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48163",
+      "county": "Frio County",
+      "countyFips": "48163",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48165",
+      "county": "Gaines County",
+      "countyFips": "48165",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48167",
+      "county": "Galveston County",
+      "countyFips": "48167",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48169",
+      "county": "Garza County",
+      "countyFips": "48169",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48171",
+      "county": "Gillespie County",
+      "countyFips": "48171",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48173",
+      "county": "Glasscock County",
+      "countyFips": "48173",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48175",
+      "county": "Goliad County",
+      "countyFips": "48175",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48177",
+      "county": "Gonzales County",
+      "countyFips": "48177",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48179",
+      "county": "Gray County",
+      "countyFips": "48179",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48181",
+      "county": "Grayson County",
+      "countyFips": "48181",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48183",
+      "county": "Gregg County",
+      "countyFips": "48183",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48185",
+      "county": "Grimes County",
+      "countyFips": "48185",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48187",
+      "county": "Guadalupe County",
+      "countyFips": "48187",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48189",
+      "county": "Hale County",
+      "countyFips": "48189",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48191",
+      "county": "Hall County",
+      "countyFips": "48191",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48193",
+      "county": "Hamilton County",
+      "countyFips": "48193",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48195",
+      "county": "Hansford County",
+      "countyFips": "48195",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48197",
+      "county": "Hardeman County",
+      "countyFips": "48197",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48199",
+      "county": "Hardin County",
+      "countyFips": "48199",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48201",
+      "county": "Harris County",
+      "countyFips": "48201",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48203",
+      "county": "Harrison County",
+      "countyFips": "48203",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48205",
+      "county": "Hartley County",
+      "countyFips": "48205",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48207",
+      "county": "Haskell County",
+      "countyFips": "48207",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48209",
+      "county": "Hays County",
+      "countyFips": "48209",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48211",
+      "county": "Hemphill County",
+      "countyFips": "48211",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48213",
+      "county": "Henderson County",
+      "countyFips": "48213",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48215",
+      "county": "Hidalgo County",
+      "countyFips": "48215",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48217",
+      "county": "Hill County",
+      "countyFips": "48217",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48219",
+      "county": "Hockley County",
+      "countyFips": "48219",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48221",
+      "county": "Hood County",
+      "countyFips": "48221",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48223",
+      "county": "Hopkins County",
+      "countyFips": "48223",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48225",
+      "county": "Houston County",
+      "countyFips": "48225",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48227",
+      "county": "Howard County",
+      "countyFips": "48227",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48229",
+      "county": "Hudspeth County",
+      "countyFips": "48229",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48231",
+      "county": "Hunt County",
+      "countyFips": "48231",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48233",
+      "county": "Hutchinson County",
+      "countyFips": "48233",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48235",
+      "county": "Irion County",
+      "countyFips": "48235",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48237",
+      "county": "Jack County",
+      "countyFips": "48237",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48239",
+      "county": "Jackson County",
+      "countyFips": "48239",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48241",
+      "county": "Jasper County",
+      "countyFips": "48241",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48243",
+      "county": "Jeff Davis County",
+      "countyFips": "48243",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48245",
+      "county": "Jefferson County",
+      "countyFips": "48245",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48247",
+      "county": "Jim Hogg County",
+      "countyFips": "48247",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48249",
+      "county": "Jim Wells County",
+      "countyFips": "48249",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48251",
+      "county": "Johnson County",
+      "countyFips": "48251",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48253",
+      "county": "Jones County",
+      "countyFips": "48253",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48255",
+      "county": "Karnes County",
+      "countyFips": "48255",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48257",
+      "county": "Kaufman County",
+      "countyFips": "48257",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48259",
+      "county": "Kendall County",
+      "countyFips": "48259",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48261",
+      "county": "Kenedy County",
+      "countyFips": "48261",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48263",
+      "county": "Kent County",
+      "countyFips": "48263",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48265",
+      "county": "Kerr County",
+      "countyFips": "48265",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48267",
+      "county": "Kimble County",
+      "countyFips": "48267",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48269",
+      "county": "King County",
+      "countyFips": "48269",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48271",
+      "county": "Kinney County",
+      "countyFips": "48271",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48273",
+      "county": "Kleberg County",
+      "countyFips": "48273",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48275",
+      "county": "Knox County",
+      "countyFips": "48275",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48277",
+      "county": "Lamar County",
+      "countyFips": "48277",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48279",
+      "county": "Lamb County",
+      "countyFips": "48279",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48281",
+      "county": "Lampasas County",
+      "countyFips": "48281",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48283",
+      "county": "La Salle County",
+      "countyFips": "48283",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48285",
+      "county": "Lavaca County",
+      "countyFips": "48285",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48287",
+      "county": "Lee County",
+      "countyFips": "48287",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48289",
+      "county": "Leon County",
+      "countyFips": "48289",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48291",
+      "county": "Liberty County",
+      "countyFips": "48291",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48293",
+      "county": "Limestone County",
+      "countyFips": "48293",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48295",
+      "county": "Lipscomb County",
+      "countyFips": "48295",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48297",
+      "county": "Live Oak County",
+      "countyFips": "48297",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48299",
+      "county": "Llano County",
+      "countyFips": "48299",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48301",
+      "county": "Loving County",
+      "countyFips": "48301",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48303",
+      "county": "Lubbock County",
+      "countyFips": "48303",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48305",
+      "county": "Lynn County",
+      "countyFips": "48305",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48307",
+      "county": "McCulloch County",
+      "countyFips": "48307",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48309",
+      "county": "McLennan County",
+      "countyFips": "48309",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48311",
+      "county": "McMullen County",
+      "countyFips": "48311",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48313",
+      "county": "Madison County",
+      "countyFips": "48313",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48315",
+      "county": "Marion County",
+      "countyFips": "48315",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48317",
+      "county": "Martin County",
+      "countyFips": "48317",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48319",
+      "county": "Mason County",
+      "countyFips": "48319",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48321",
+      "county": "Matagorda County",
+      "countyFips": "48321",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48323",
+      "county": "Maverick County",
+      "countyFips": "48323",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48325",
+      "county": "Medina County",
+      "countyFips": "48325",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48327",
+      "county": "Menard County",
+      "countyFips": "48327",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48329",
+      "county": "Midland County",
+      "countyFips": "48329",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48331",
+      "county": "Milam County",
+      "countyFips": "48331",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48333",
+      "county": "Mills County",
+      "countyFips": "48333",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48335",
+      "county": "Mitchell County",
+      "countyFips": "48335",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48337",
+      "county": "Montague County",
+      "countyFips": "48337",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48339",
+      "county": "Montgomery County",
+      "countyFips": "48339",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48341",
+      "county": "Moore County",
+      "countyFips": "48341",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48343",
+      "county": "Morris County",
+      "countyFips": "48343",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48345",
+      "county": "Motley County",
+      "countyFips": "48345",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48347",
+      "county": "Nacogdoches County",
+      "countyFips": "48347",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48349",
+      "county": "Navarro County",
+      "countyFips": "48349",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48351",
+      "county": "Newton County",
+      "countyFips": "48351",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48353",
+      "county": "Nolan County",
+      "countyFips": "48353",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48355",
+      "county": "Nueces County",
+      "countyFips": "48355",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48357",
+      "county": "Ochiltree County",
+      "countyFips": "48357",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48359",
+      "county": "Oldham County",
+      "countyFips": "48359",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48361",
+      "county": "Orange County",
+      "countyFips": "48361",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48363",
+      "county": "Palo Pinto County",
+      "countyFips": "48363",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48365",
+      "county": "Panola County",
+      "countyFips": "48365",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48367",
+      "county": "Parker County",
+      "countyFips": "48367",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48369",
+      "county": "Parmer County",
+      "countyFips": "48369",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48371",
+      "county": "Pecos County",
+      "countyFips": "48371",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48373",
+      "county": "Polk County",
+      "countyFips": "48373",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48375",
+      "county": "Potter County",
+      "countyFips": "48375",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48377",
+      "county": "Presidio County",
+      "countyFips": "48377",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48379",
+      "county": "Rains County",
+      "countyFips": "48379",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48381",
+      "county": "Randall County",
+      "countyFips": "48381",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48383",
+      "county": "Reagan County",
+      "countyFips": "48383",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48385",
+      "county": "Real County",
+      "countyFips": "48385",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48387",
+      "county": "Red River County",
+      "countyFips": "48387",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48389",
+      "county": "Reeves County",
+      "countyFips": "48389",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48391",
+      "county": "Refugio County",
+      "countyFips": "48391",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48393",
+      "county": "Roberts County",
+      "countyFips": "48393",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48395",
+      "county": "Robertson County",
+      "countyFips": "48395",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48397",
+      "county": "Rockwall County",
+      "countyFips": "48397",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48399",
+      "county": "Runnels County",
+      "countyFips": "48399",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48401",
+      "county": "Rusk County",
+      "countyFips": "48401",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48403",
+      "county": "Sabine County",
+      "countyFips": "48403",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48405",
+      "county": "San Augustine County",
+      "countyFips": "48405",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48407",
+      "county": "San Jacinto County",
+      "countyFips": "48407",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48409",
+      "county": "San Patricio County",
+      "countyFips": "48409",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48411",
+      "county": "San Saba County",
+      "countyFips": "48411",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48413",
+      "county": "Schleicher County",
+      "countyFips": "48413",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48415",
+      "county": "Scurry County",
+      "countyFips": "48415",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48417",
+      "county": "Shackelford County",
+      "countyFips": "48417",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48419",
+      "county": "Shelby County",
+      "countyFips": "48419",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48421",
+      "county": "Sherman County",
+      "countyFips": "48421",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48423",
+      "county": "Smith County",
+      "countyFips": "48423",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48425",
+      "county": "Somervell County",
+      "countyFips": "48425",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48427",
+      "county": "Starr County",
+      "countyFips": "48427",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48429",
+      "county": "Stephens County",
+      "countyFips": "48429",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48431",
+      "county": "Sterling County",
+      "countyFips": "48431",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48433",
+      "county": "Stonewall County",
+      "countyFips": "48433",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48435",
+      "county": "Sutton County",
+      "countyFips": "48435",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48437",
+      "county": "Swisher County",
+      "countyFips": "48437",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48439",
+      "county": "Tarrant County",
+      "countyFips": "48439",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48441",
+      "county": "Taylor County",
+      "countyFips": "48441",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48443",
+      "county": "Terrell County",
+      "countyFips": "48443",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48445",
+      "county": "Terry County",
+      "countyFips": "48445",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48447",
+      "county": "Throckmorton County",
+      "countyFips": "48447",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48449",
+      "county": "Titus County",
+      "countyFips": "48449",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48451",
+      "county": "Tom Green County",
+      "countyFips": "48451",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48453",
+      "county": "Travis County",
+      "countyFips": "48453",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48455",
+      "county": "Trinity County",
+      "countyFips": "48455",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48457",
+      "county": "Tyler County",
+      "countyFips": "48457",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48459",
+      "county": "Upshur County",
+      "countyFips": "48459",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48461",
+      "county": "Upton County",
+      "countyFips": "48461",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48463",
+      "county": "Uvalde County",
+      "countyFips": "48463",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48465",
+      "county": "Val Verde County",
+      "countyFips": "48465",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48467",
+      "county": "Van Zandt County",
+      "countyFips": "48467",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48469",
+      "county": "Victoria County",
+      "countyFips": "48469",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48471",
+      "county": "Walker County",
+      "countyFips": "48471",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48473",
+      "county": "Waller County",
+      "countyFips": "48473",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48475",
+      "county": "Ward County",
+      "countyFips": "48475",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48477",
+      "county": "Washington County",
+      "countyFips": "48477",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48479",
+      "county": "Webb County",
+      "countyFips": "48479",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48481",
+      "county": "Wharton County",
+      "countyFips": "48481",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48483",
+      "county": "Wheeler County",
+      "countyFips": "48483",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48485",
+      "county": "Wichita County",
+      "countyFips": "48485",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48487",
+      "county": "Wilbarger County",
+      "countyFips": "48487",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48489",
+      "county": "Willacy County",
+      "countyFips": "48489",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48491",
+      "county": "Williamson County",
+      "countyFips": "48491",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48493",
+      "county": "Wilson County",
+      "countyFips": "48493",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48495",
+      "county": "Winkler County",
+      "countyFips": "48495",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48497",
+      "county": "Wise County",
+      "countyFips": "48497",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48499",
+      "county": "Wood County",
+      "countyFips": "48499",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48501",
+      "county": "Yoakum County",
+      "countyFips": "48501",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48503",
+      "county": "Young County",
+      "countyFips": "48503",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48505",
+      "county": "Zapata County",
+      "countyFips": "48505",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    },
+    {
+      "workUnitId": "lp124-county-48507",
+      "county": "Zavala County",
+      "countyFips": "48507",
+      "evidenceClass": "GOVERNMENT",
+      "terminalOutcome": "SOURCE_UNAVAILABLE",
+      "checkpoint": {
+        "stage": "TERMINAL",
+        "resumable": true,
+        "attemptCount": 1,
+        "observedOn": "2026-08-03"
+      },
+      "evidenceRecordIds": [],
+      "unresolved": [
+        {
+          "field": "officialName",
+          "value": null,
+          "reason": "SOURCE_UNAVAILABLE"
+        }
+      ]
+    }
+  ],
+  "records": [],
+  "summary": {
+    "countyWorkUnitCount": 254,
+    "terminalOutcomes": {
+      "EVIDENCE_ACQUIRED": 0,
+      "NO_EVIDENCE_FOUND": 0,
+      "SOURCE_UNAVAILABLE": 254,
+      "BLOCKED": 0,
+      "REVIEW_REQUIRED": 0,
+      "FAIL": 0
+    },
+    "acceptedEvidenceCount": 0,
+    "assertionTypes": {
+      "COUNTY_GOVERNMENT_IDENTITY": 0
+    },
+    "confidence": {
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "REVIEW_REQUIRED": 0
+    },
+    "reviewStatus": {
+      "PENDING_REVIEW": 0,
+      "APPROVED": 0,
+      "REJECTED": 0,
+      "CHANGES_REQUIRED": 0
+    },
+    "sourcePriority": {
+      "PRIMARY": 0,
+      "SECONDARY": 0,
+      "FALLBACK": 0,
+      "UNSUPPORTED": 0
+    }
+  },
+  "seal": {
+    "algorithm": "SHA-256",
+    "canonicalPayloadHash": "d63a7d2698fe4fda9b83df8dac9e1310c7c5376257bf32465f7a1694b3ee3ccd"
+  }
+}

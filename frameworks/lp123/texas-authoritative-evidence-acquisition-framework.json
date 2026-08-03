@@ -29,7 +29,7 @@
     "unit": "ONE_EVIDENCE_CLASS_ACROSS_ALL_TEXAS_COUNTIES",
     "expectedCountyWorkUnits": 254,
     "countyKey": "countyFips",
-    "workUnitTerminalStatuses": ["COMPLETE", "NO_EVIDENCE_FOUND", "REVIEW_REQUIRED", "BLOCKED"],
+    "workUnitTerminalStatuses": ["EVIDENCE_ACQUIRED", "NO_EVIDENCE_FOUND", "SOURCE_UNAVAILABLE", "BLOCKED", "REVIEW_REQUIRED", "FAIL"],
     "runtimeIsolationRequired": true,
     "resumable": true,
     "idempotent": true,
