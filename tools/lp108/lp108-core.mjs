@@ -5,6 +5,10 @@ import { dirname } from 'node:path';
 
 export const BUCKET = 'certified-addresses';
 export const PREFIX = 'lp104/txgio-addresses';
+export const credentialHeaders = key => ({
+  apikey: key,
+  ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {})
+});
 export const objectPaths = county => ({
   package: `${PREFIX}/${county.slug}-${county.fips}.addresses.jsonl.gz`,
   certificate: `${PREFIX}/${county.slug}-${county.fips}.runtime-certificate.json`
