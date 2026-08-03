@@ -9,31 +9,52 @@ export function boundedArtifactLocation(bucket, objectPath) {
   return { bucket: selectedBucket, objectPath: selectedPath };
 }
 
-/** Download a governed county artifact without creating a public or signed URL. */
+const encodedPath = (value) => value.split("/").map(encodeURIComponent).join("/");
+const category = (status) => status === 401 || status === 403 ? "authorization_failure"
+  : status === 404 ? "not_found" : status >= 500 ? "server_error" : "storage_error";
+
+/** Download a private governed artifact as a Web Stream, without a public/signed URL. */
 export async function downloadCountyArtifact(storage, location, options = {}) {
   const { bucket, objectPath } = boundedArtifactLocation(location?.bucket, location?.objectPath);
-  if (!storage?.from) return { ok: false, reason: "storage_configuration_failure", statusCategory: "configuration" };
-  const timeoutMs = Math.min(15000, Math.max(250, Number(options.timeoutMs) || 10000));
-  let timer;
+  const timeoutMs = Math.min(120000, Math.max(250, Number(options.timeoutMs) || 10000));
+  const controller = new AbortController(); let timeoutReject;
+  const timeout = new Promise((_, reject) => { timeoutReject = reject; });
+  const timer = setTimeout(() => { controller.abort(); timeoutReject(Object.assign(new Error("timeout"), { name: "AbortError" })); }, timeoutMs);
   try {
-    const timeout = new Promise((resolve) => {
-      timer = setTimeout(() => resolve({ timeout: true }), timeoutMs);
-    });
-    const operation = Promise.resolve(storage.from(bucket).download(objectPath))
-      .then((result) => ({ result }), () => ({ networkFailure: true }));
-    const settled = await Promise.race([operation, timeout]);
-    if (settled.timeout) return { ok: false, reason: "timeout", statusCategory: "timeout" };
-    if (settled.networkFailure) return { ok: false, reason: "storage_network_failure", statusCategory: "network_failure" };
-    const { data, error } = settled.result || {};
+    let response;
+    if (options.supabaseUrl && options.serviceRoleKey) {
+      const base = String(options.supabaseUrl).replace(/\/+$/, "");
+      const key = String(options.serviceRoleKey);
+      const headers = { apikey: key };
+      if (key.startsWith("eyJ")) headers.Authorization = `Bearer ${key}`;
+      response = await Promise.race([(options.fetchImpl || fetch)(`${base}/storage/v1/object/authenticated/${encodeURIComponent(bucket)}/${encodedPath(objectPath)}`, {
+        method: "GET", headers, signal: controller.signal
+      }), timeout]);
+      if (!response.ok || !response.body) return { ok: false, reason: category(response.status), statusCategory: category(response.status) };
+      return { ok: true, stream: response.body, statusCategory: "success", accessMode: "authenticated_storage_http_stream" };
+    }
+    if (!storage?.from) return { ok: false, reason: "storage_configuration_failure", statusCategory: "configuration" };
+    const { data, error } = await Promise.race([storage.from(bucket).download(objectPath), timeout]);
     if (error || !data) {
-      const status = Number(error?.statusCode || error?.status || 0);
-      const statusCategory = status === 401 || status === 403 ? "authorization_failure"
-        : status === 404 ? "not_found" : status >= 500 ? "server_error" : "storage_error";
+      const statusCategory = category(Number(error?.statusCode || error?.status || 0));
       return { ok: false, reason: statusCategory, statusCategory };
     }
-    const bytes = await data.arrayBuffer();
-    return { ok: true, bytes, statusCategory: "success" };
-  } catch (_error) {
-    return { ok: false, reason: "storage_network_failure", statusCategory: "network_failure" };
+    if (typeof data.stream !== "function") return { ok: false, reason: "storage_stream_unavailable", statusCategory: "storage_error" };
+    return { ok: true, stream: data.stream(), statusCategory: "success", accessMode: "storage_blob_stream" };
+  } catch (error) {
+    const timedOut = error?.name === "AbortError";
+    return { ok: false, reason: timedOut ? "timeout" : "storage_network_failure", statusCategory: timedOut ? "timeout" : "network_failure" };
   } finally { clearTimeout(timer); }
+}
+
+export async function readBoundedArtifact(stream, maximumBytes = 65536) {
+  const reader = stream.getReader(); const chunks = []; let size = 0;
+  while (true) {
+    const { done, value } = await reader.read(); if (done) break;
+    size += value.byteLength; if (size > maximumBytes) { await reader.cancel(); throw new Error("artifact_too_large"); }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size); let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return bytes;
 }

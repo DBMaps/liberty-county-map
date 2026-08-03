@@ -101,7 +101,7 @@ test('runtime diagnostics identify every completed certified lookup stage withou
   assert.deepEqual(exact.runtimeDiagnostic.completedStages, [
     'browser_request_received', 'eligible_for_certified_provider', 'storage_bucket_selected',
     'runtime_certificate_requested', 'runtime_certificate_retrieved', 'certificate_validated',
-    'liberty_package_requested', 'liberty_package_retrieved', 'package_integrity_validated', 'gzip_stream_opened',
+    'liberty_package_requested', 'liberty_package_retrieved', 'gzip_stream_opened', 'package_integrity_validated',
     'exact_lookup_executed', 'exact_match_found'
   ]);
   assert.equal(exact.runtimeDiagnostic.lastCompletedStage, 'exact_match_found');
@@ -141,15 +141,15 @@ test('Storage failures are bounded, private, and fail closed', async () => {
   assert.equal(invalid.runtimeDiagnostic.certificateFetchReason, 'invalid_certificate');
 });
 
-test('missing package and package integrity mismatch fail closed after certificate validation', async () => {
+test('missing package and streamed package integrity mismatch fail closed after certificate validation', async () => {
   const certificate = await readFile(new URL('data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json', root));
-  for (const packageResult of [{ data: null, error: { statusCode: 404 } }, { data: new Blob(['wrong bytes']), error: null }]) {
+  for (const [packageResult, packageOpened] of [[{ data: null, error: { statusCode: 404 } }, false], [{ data: new Blob(['wrong bytes']), error: null }, true]]) {
     const storage = { from: () => ({ download: async (path) => path.endsWith('.json')
       ? { data: new Blob([certificate]), error: null } : packageResult }) };
     const result = await lookupLibertyCertifiedAddress(request('276 County Road 677, Dayton, TX 77535'), { storage });
     assert.equal(result.outcome, 'package_unavailable');
     assert.equal(result.runtimeDiagnostic.certificateValidated, true);
-    assert.equal(result.runtimeDiagnostic.packageOpened, false);
+    assert.equal(result.runtimeDiagnostic.packageOpened, packageOpened);
   }
 });
 

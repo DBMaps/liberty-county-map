@@ -1,4 +1,5 @@
-import { downloadCountyArtifact } from "./county-artifact-storage.mjs";
+import { downloadCountyArtifact, readBoundedArtifact } from "./county-artifact-storage.mjs";
+import { IncrementalSha256 } from "./incremental-sha256.mjs";
 import { CERTIFIED_COUNTIES } from "./certified-address-identities.mjs";
 
 const IDENTITY = CERTIFIED_COUNTIES.find((county) => county.fips === "48291");
@@ -26,17 +27,24 @@ export function libertyRequest(body) {
   return { identity, houseNumber: match[1].toLowerCase(), road: canonicalLibertyRoad(match[2]), city, zip };
 }
 
-const hex = (buffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 export async function lookupLibertyCertifiedAddress(body, options = {}) {
   const started = performance.now(); const completedStages = ["browser_request_received"];
   const bucket = String(options.bucket || "certified-addresses");
   const requested = libertyRequest(body);
   let storageStatusCategory = "not_requested"; let packageAccessed = false;
+  const artifact = { artifactAccessMode: "not_requested", streamingDownloadUsed: false, compressedBytesRead: 0,
+    expectedCompressedBytes: requested?.identity?.sizeBytes || null, compressedByteSizeValidated: false,
+    incrementalHashUsed: false, calculatedSha256: null, sha256Validated: false, decompressionStarted: false,
+    decompressionCompleted: false, recordsScanned: 0, exactMatchEncountered: false,
+    exactMatchPromotedAfterIntegrityValidation: false, maximumBufferedChunkBytes: 0,
+    packageDownloadElapsedMilliseconds: 0, packageHashElapsedMilliseconds: 0,
+    decompressionAndScanElapsedMilliseconds: 0, totalArtifactElapsedMilliseconds: 0,
+    errorName: null, errorMessage: null };
   const diagnostic = (extra = {}) => ({ completedStages: [...completedStages], lastCompletedStage: completedStages.at(-1) || null,
     failureStage: null, certifiedProviderExecuted: false, certificateValidated: false, packageOpened: false,
     exactLookupExecuted: false, storageBucket: bucket, selectedCountySlug: requested?.identity?.slug || null, selectedFips: requested?.identity?.fips || null, certificateObjectPath: requested?.identity?.certificateObjectPath || null,
     packageObjectPath: requested?.identity?.packageObjectPath || null, storageStatusCategory, certificateFetchCompleted: false,
-    certificateFetchReason: "not_requested", ...extra });
+    certificateFetchReason: "not_requested", ...artifact, ...extra });
   if (!requested) return { attempted: false, outcome: "ineligible", results: [], packageAccessed: false, runtimeDiagnostic: diagnostic(), totalMs: performance.now() - started };
   const identity = requested.identity;
   completedStages.push("eligible_for_certified_provider", "storage_bucket_selected");
@@ -44,12 +52,13 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
   const lookupStarted = performance.now();
   try {
     completedStages.push("runtime_certificate_requested");
-    const certificateDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.certificateObjectPath }, { timeoutMs: options.certificateTimeoutMs });
+    const access = { supabaseUrl: options.supabaseUrl, serviceRoleKey: options.serviceRoleKey, fetchImpl: options.fetchImpl };
+    const certificateDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.certificateObjectPath }, { timeoutMs: options.certificateTimeoutMs, ...access });
     storageStatusCategory = certificateDownload.statusCategory;
     if (!certificateDownload.ok) { certificateFetchReason = certificateDownload.reason; throw new Error("certificate_unavailable"); }
     certificateFetchCompleted = true; certificateFetchReason = "successful_retrieval"; completedStages.push("runtime_certificate_retrieved");
     failureStage = "certificate_validated";
-    let certificate; try { certificate = JSON.parse(new TextDecoder().decode(certificateDownload.bytes)); }
+    let certificate; try { certificate = JSON.parse(new TextDecoder().decode(await readBoundedArtifact(certificateDownload.stream))); }
     catch (_error) { certificateFetchReason = "invalid_certificate"; throw new Error("invalid_certificate"); }
     if (certificate.countyId !== identity.countyId || certificate.fips !== identity.fips || certificate.artifact !== identity.artifact
       || certificate.sizeBytes !== identity.sizeBytes || certificate.sha256 !== identity.sha256
@@ -59,25 +68,43 @@ export async function lookupLibertyCertifiedAddress(body, options = {}) {
     }
     completedStages.push("certificate_validated"); failureStage = "liberty_package_requested"; completedStages.push("liberty_package_requested");
     packageAccessed = true;
-    const packageDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.packageObjectPath }, { timeoutMs: options.packageTimeoutMs });
+    const artifactStarted = performance.now(); const downloadStarted = performance.now();
+    const packageDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.packageObjectPath }, { timeoutMs: options.packageTimeoutMs, ...access });
     storageStatusCategory = packageDownload.statusCategory;
     if (!packageDownload.ok) throw new Error(packageDownload.reason);
-    completedStages.push("liberty_package_retrieved"); failureStage = "package_integrity_validated";
-    const compressed = packageDownload.bytes;
-    if (compressed.byteLength !== identity.sizeBytes || hex(await crypto.subtle.digest("SHA-256", compressed)) !== identity.sha256) throw new Error("package_integrity_mismatch");
-    completedStages.push("package_integrity_validated"); failureStage = "gzip_stream_opened";
-    const reader = new Response(compressed).body.pipeThrough(new DecompressionStream("gzip")).getReader(); completedStages.push("gzip_stream_opened");
+    artifact.artifactAccessMode = packageDownload.accessMode; artifact.streamingDownloadUsed = true;
+    artifact.incrementalHashUsed = true; completedStages.push("liberty_package_retrieved"); failureStage = "gzip_stream_opened";
+    const hash = new IncrementalSha256(); let hashMs = 0;
+    const verifiedCompressedStream = packageDownload.stream.pipeThrough(new TransformStream({ transform(chunk, controller) {
+      artifact.maximumBufferedChunkBytes = Math.max(artifact.maximumBufferedChunkBytes, chunk.byteLength);
+      artifact.compressedBytesRead += chunk.byteLength; const hashStarted = performance.now(); hash.update(chunk);
+      hashMs += performance.now() - hashStarted; controller.enqueue(chunk);
+    } }));
+    artifact.decompressionStarted = true; const scanStarted = performance.now();
+    const reader = verifiedCompressedStream.pipeThrough(new DecompressionStream("gzip")).getReader(); completedStages.push("gzip_stream_opened");
     failureStage = "exact_lookup_executed"; const decoder = new TextDecoder(); let pending = ""; const matches = [];
     const inspect = (line) => { if (!line.trim()) return; const row = JSON.parse(line);
+      artifact.recordsScanned += 1;
       if (String(row.f).padStart(5, "0") === identity.fips && clean(row.h) === requested.houseNumber && canonicalLibertyRoad(row.r) === requested.road
-        && (!requested.city || clean(row.p) === requested.city) && (!requested.zip || String(row.z) === requested.zip)) matches.push(row); };
+        && (!requested.city || clean(row.p) === requested.city) && (!requested.zip || String(row.z) === requested.zip)) { matches.push(row); artifact.exactMatchEncountered = true; } };
     while (true) { const { done, value } = await reader.read(); if (done) break; pending += decoder.decode(value, { stream: true }); const lines = pending.split("\n"); pending = lines.pop() || ""; lines.forEach(inspect); }
-    pending += decoder.decode(); if (pending.trim()) inspect(pending); completedStages.push("exact_lookup_executed");
+    pending += decoder.decode(); if (pending.trim()) inspect(pending);
+    artifact.decompressionCompleted = true; artifact.decompressionAndScanElapsedMilliseconds = performance.now() - scanStarted;
+    artifact.packageDownloadElapsedMilliseconds = performance.now() - downloadStarted;
+    artifact.packageHashElapsedMilliseconds = hashMs; artifact.calculatedSha256 = hash.digestHex();
+    artifact.compressedByteSizeValidated = artifact.compressedBytesRead === identity.sizeBytes;
+    artifact.sha256Validated = artifact.calculatedSha256 === identity.sha256;
+    artifact.totalArtifactElapsedMilliseconds = performance.now() - artifactStarted;
+    failureStage = "package_integrity_validated";
+    if (!artifact.compressedByteSizeValidated || !artifact.sha256Validated) throw new Error("package_integrity_mismatch");
+    completedStages.push("package_integrity_validated", "exact_lookup_executed"); artifact.exactMatchPromotedAfterIntegrityValidation = matches.length > 0;
     const results = matches.map((row) => ({ providerResultId: `txgio:${row.i}`, name: row.a, displayName: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), formattedAddress: [row.a, row.p, "TX", row.z].filter(Boolean).join(", "), latitude: Number(row.y), longitude: Number(row.x), category: "place", type: "house", resultType: "address", precision: "address_point", confidenceBasis: "certified_txgio_address_point", sourceClassification: "government_address_point", routePreviewEligible: true, address: { houseNumber: row.h, road: row.r, community: "", city: row.p, mailingCity: row.p, county: row.c, state: "TX", postalCode: row.z, country: "United States" }, providerIdentity: { sourceId: row.i, provider: "txgio_certified_package" } }));
     completedStages.push(results.length ? "exact_match_found" : "truthful_miss");
     return { attempted: true, outcome: results.length ? "exact_match" : "truthful_no_result", results, packageAccessed: true,
       runtimeDiagnostic: diagnostic({ certifiedProviderExecuted: true, certificateValidated: true, packageOpened: true, exactLookupExecuted: true, certificateFetchCompleted, certificateFetchReason }), lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   } catch (error) {
+    artifact.errorName = String(error?.name || "Error").slice(0, 64);
+    artifact.errorMessage = String(error?.message || "artifact_unavailable").slice(0, 128);
     return { attempted: true, outcome: "package_unavailable", results: [], packageAccessed, rejectionReason: String(error?.message || "artifact_unavailable").slice(0, 64),
       runtimeDiagnostic: diagnostic({ failureStage, certifiedProviderExecuted: true, certificateValidated: completedStages.includes("certificate_validated"), packageOpened: completedStages.includes("gzip_stream_opened"), exactLookupExecuted: completedStages.includes("exact_lookup_executed"), certificateFetchCompleted, certificateFetchReason }), lookupMs: performance.now() - lookupStarted, totalMs: performance.now() - started };
   }

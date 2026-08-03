@@ -269,6 +269,8 @@ async function resolveRuralFallback(body: any) {
 async function execute(body: any, key: string, requestId: string, origin: string, db: any): Promise<Response> {
   const certified = await lookupLibertyCertifiedAddress(body, {
     storage: db.storage,
+    supabaseUrl: Deno.env.get("SUPABASE_URL"),
+    serviceRoleKey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
     bucket: Deno.env.get("GRIDLY_CERTIFIED_ADDRESS_BUCKET") || "certified-addresses"
   });
   let roadOnlyResidentialRejected = false;
@@ -292,6 +294,22 @@ async function execute(body: any, key: string, requestId: string, origin: string
       storageStatusCategory: provider.storageStatusCategory || "not_requested",
       certificateFetchCompleted: provider.certificateFetchCompleted === true,
       certificateFetchReason: provider.certificateFetchReason || "not_requested",
+      artifactAccessMode: provider.artifactAccessMode || "not_requested",
+      streamingDownloadUsed: provider.streamingDownloadUsed === true,
+      compressedBytesRead: Number(provider.compressedBytesRead) || 0,
+      expectedCompressedBytes: Number(provider.expectedCompressedBytes) || 0,
+      compressedByteSizeValidated: provider.compressedByteSizeValidated === true,
+      incrementalHashUsed: provider.incrementalHashUsed === true,
+      calculatedSha256: provider.calculatedSha256 || null, sha256Validated: provider.sha256Validated === true,
+      decompressionStarted: provider.decompressionStarted === true, decompressionCompleted: provider.decompressionCompleted === true,
+      recordsScanned: Number(provider.recordsScanned) || 0, exactMatchEncountered: provider.exactMatchEncountered === true,
+      exactMatchPromotedAfterIntegrityValidation: provider.exactMatchPromotedAfterIntegrityValidation === true,
+      maximumBufferedChunkBytes: Number(provider.maximumBufferedChunkBytes) || 0,
+      packageDownloadElapsedMilliseconds: Number(provider.packageDownloadElapsedMilliseconds) || 0,
+      packageHashElapsedMilliseconds: Number(provider.packageHashElapsedMilliseconds) || 0,
+      decompressionAndScanElapsedMilliseconds: Number(provider.decompressionAndScanElapsedMilliseconds) || 0,
+      totalArtifactElapsedMilliseconds: Number(provider.totalArtifactElapsedMilliseconds) || 0,
+      errorName: provider.errorName || null, errorMessage: provider.errorMessage || null,
       roadOnlyRequest: !certified.attempted && applyGovernedRoadOnlyAcceptance(body, []).roadOnly,
       roadOnlyResidentialRejected,
       fallbackAcceptanceOutcome: roadOnlyResidentialRejected ? "residential_promotion_rejected" : "not_applicable" };
