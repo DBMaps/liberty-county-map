@@ -89,6 +89,7 @@
     "test:lp1052": "node --test tests/lp1052-runtime-address-consumption.test.mjs",
     "audit:lp106": "node tools/lp106/audit-authoritative-address-coverage.mjs",
     "test:lp106": "node --test tests/lp106-authoritative-address-coverage-audit.test.mjs",
-    "test:lp107": "node --test tests/lp107-runtime-certificate-readiness.test.mjs"
+    "test:lp107": "node --test tests/lp107-runtime-certificate-readiness.test.mjs",
+    "test:lp108": "node --test tests/lp108-storage-and-runtime-certification.test.mjs"
   }
 }

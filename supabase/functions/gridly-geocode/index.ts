@@ -285,6 +285,8 @@ async function execute(body: any, key: string, requestId: string, origin: string
       certificateValidated: provider.certificateValidated === true, packageOpened: provider.packageOpened === true,
       exactLookupExecuted: provider.exactLookupExecuted === true, fallbackExecuted,
       storageBucket: provider.storageBucket || null,
+      selectedCountySlug: provider.selectedCountySlug || null,
+      selectedFips: provider.selectedFips || null,
       certificateObjectPath: provider.certificateObjectPath || null,
       packageObjectPath: provider.packageObjectPath || null,
       storageStatusCategory: provider.storageStatusCategory || "not_requested",

@@ -1,11 +1,10 @@
 import { downloadCountyArtifact } from "./county-artifact-storage.mjs";
+import { CERTIFIED_COUNTIES } from "./certified-address-identities.mjs";
 
-const IDENTITY = Object.freeze({
-  countyId: "liberty-tx", fips: "48291", artifact: "liberty-48291.addresses.jsonl.gz",
-  certificateObjectPath: "lp104/txgio-addresses/liberty-48291.runtime-certificate.json",
-  packageObjectPath: "lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz",
-  sizeBytes: 2555016, sha256: "792f4f3f76524ef6652fbabf7c1c17d76eb1dfd9d83a71c460c1e038c2841b93"
-});
+const IDENTITY = CERTIFIED_COUNTIES.find((county) => county.fips === "48291");
+const byFips = new Map(CERTIFIED_COUNTIES.map((county) => [county.fips, county]));
+const byCountyId = new Map(CERTIFIED_COUNTIES.map((county) => [county.countyId, county]));
+const bySlug = new Map(CERTIFIED_COUNTIES.map((county) => [county.slug.replaceAll("-", " "), county]));
 
 const clean = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
 export function canonicalLibertyRoad(value) { return clean(value).replace(/\b(?:county road|county rd|co rd|cr)\s*(\d+[a-z]?)\b/g, "cr $1"); }
@@ -13,60 +12,64 @@ export function libertyRequest(body) {
   if (body?.intent !== "address") return null;
   const query = String(body.query || ""); const street = String(body.structuredAddress?.street || query.split(",")[0] || "").trim();
   const match = street.match(/^\s*(\d{1,9}[a-z]?)\s+(.+)$/i); if (!match) return null;
-  const county = clean(body.structuredAddress?.county || "").replace(/ county$/, "");
+  const countyEvidence = clean(body.structuredAddress?.county || "").replace(/ county$/, "");
+  const fips = String(body.context?.countyFips || ""); const countyId = String(body.context?.countyId || "").toLowerCase();
   const city = clean(body.structuredAddress?.city || query.split(",")[1] || "");
   const zip = String(body.structuredAddress?.postalCode || query.match(/\b(\d{5})(?:-\d{4})?\b/)?.[1] || "");
-  const fips = String(body.context?.countyFips || ""); const countyId = String(body.context?.countyId || "").toLowerCase();
-  const explicitLiberty = fips === IDENTITY.fips || countyId === IDENTITY.countyId || county === "liberty";
-  if (!explicitLiberty && !(city === "dayton" && zip === "77535")) return null;
-  if ((fips && fips !== IDENTITY.fips) || (countyId && countyId !== IDENTITY.countyId) || (county && county !== "liberty")
-    || (zip && zip !== "77535") || (city && city !== "dayton")) return null;
-  return { houseNumber: match[1].toLowerCase(), road: canonicalLibertyRoad(match[2]), city, zip };
+  const evidence = [fips && byFips.get(fips), countyId && byCountyId.get(countyId), countyEvidence && bySlug.get(countyEvidence)].filter(Boolean);
+  if (!evidence.length && city === "dayton" && zip === "77535") evidence.push(IDENTITY);
+  if (!evidence.length || new Set(evidence.map((x) => x.fips)).size !== 1) return null;
+  const identity = evidence[0];
+  if ((fips && fips !== identity.fips) || (countyId && countyId !== identity.countyId) || (countyEvidence && countyEvidence !== identity.slug.replaceAll("-", " "))) return null;
+  if (city === "dayton" && zip === "77535" && identity !== IDENTITY) return null;
+  if (identity === IDENTITY && ((city && city !== "dayton") || (zip && zip !== "77535"))) return null;
+  return { identity, houseNumber: match[1].toLowerCase(), road: canonicalLibertyRoad(match[2]), city, zip };
 }
 
 const hex = (buffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 export async function lookupLibertyCertifiedAddress(body, options = {}) {
   const started = performance.now(); const completedStages = ["browser_request_received"];
   const bucket = String(options.bucket || "certified-addresses");
+  const requested = libertyRequest(body);
   let storageStatusCategory = "not_requested"; let packageAccessed = false;
   const diagnostic = (extra = {}) => ({ completedStages: [...completedStages], lastCompletedStage: completedStages.at(-1) || null,
     failureStage: null, certifiedProviderExecuted: false, certificateValidated: false, packageOpened: false,
-    exactLookupExecuted: false, storageBucket: bucket, certificateObjectPath: IDENTITY.certificateObjectPath,
-    packageObjectPath: IDENTITY.packageObjectPath, storageStatusCategory, certificateFetchCompleted: false,
+    exactLookupExecuted: false, storageBucket: bucket, selectedCountySlug: requested?.identity?.slug || null, selectedFips: requested?.identity?.fips || null, certificateObjectPath: requested?.identity?.certificateObjectPath || null,
+    packageObjectPath: requested?.identity?.packageObjectPath || null, storageStatusCategory, certificateFetchCompleted: false,
     certificateFetchReason: "not_requested", ...extra });
-  const requested = libertyRequest(body);
   if (!requested) return { attempted: false, outcome: "ineligible", results: [], packageAccessed: false, runtimeDiagnostic: diagnostic(), totalMs: performance.now() - started };
+  const identity = requested.identity;
   completedStages.push("eligible_for_certified_provider", "storage_bucket_selected");
   let failureStage = "runtime_certificate_requested"; let certificateFetchCompleted = false; let certificateFetchReason = "not_requested";
   const lookupStarted = performance.now();
   try {
     completedStages.push("runtime_certificate_requested");
-    const certificateDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: IDENTITY.certificateObjectPath }, { timeoutMs: options.certificateTimeoutMs });
+    const certificateDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.certificateObjectPath }, { timeoutMs: options.certificateTimeoutMs });
     storageStatusCategory = certificateDownload.statusCategory;
     if (!certificateDownload.ok) { certificateFetchReason = certificateDownload.reason; throw new Error("certificate_unavailable"); }
     certificateFetchCompleted = true; certificateFetchReason = "successful_retrieval"; completedStages.push("runtime_certificate_retrieved");
     failureStage = "certificate_validated";
     let certificate; try { certificate = JSON.parse(new TextDecoder().decode(certificateDownload.bytes)); }
     catch (_error) { certificateFetchReason = "invalid_certificate"; throw new Error("invalid_certificate"); }
-    if (certificate.countyId !== IDENTITY.countyId || certificate.fips !== IDENTITY.fips || certificate.artifact !== IDENTITY.artifact
-      || certificate.sizeBytes !== IDENTITY.sizeBytes || certificate.sha256 !== IDENTITY.sha256
+    if (certificate.countyId !== identity.countyId || certificate.fips !== identity.fips || certificate.artifact !== identity.artifact
+      || certificate.sizeBytes !== identity.sizeBytes || certificate.sha256 !== identity.sha256
       || certificate.acceptance?.houseNumber !== "exact" || certificate.acceptance?.road !== "canonical_exact"
       || certificate.acceptance?.interpolation !== false || certificate.acceptance?.nearbyHouseSubstitution !== false) {
       certificateFetchReason = "invalid_certificate"; throw new Error("certificate_mismatch");
     }
     completedStages.push("certificate_validated"); failureStage = "liberty_package_requested"; completedStages.push("liberty_package_requested");
     packageAccessed = true;
-    const packageDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: IDENTITY.packageObjectPath }, { timeoutMs: options.packageTimeoutMs });
+    const packageDownload = await downloadCountyArtifact(options.storage, { bucket, objectPath: identity.packageObjectPath }, { timeoutMs: options.packageTimeoutMs });
     storageStatusCategory = packageDownload.statusCategory;
     if (!packageDownload.ok) throw new Error(packageDownload.reason);
     completedStages.push("liberty_package_retrieved"); failureStage = "package_integrity_validated";
     const compressed = packageDownload.bytes;
-    if (compressed.byteLength !== IDENTITY.sizeBytes || hex(await crypto.subtle.digest("SHA-256", compressed)) !== IDENTITY.sha256) throw new Error("package_integrity_mismatch");
+    if (compressed.byteLength !== identity.sizeBytes || hex(await crypto.subtle.digest("SHA-256", compressed)) !== identity.sha256) throw new Error("package_integrity_mismatch");
     completedStages.push("package_integrity_validated"); failureStage = "gzip_stream_opened";
     const reader = new Response(compressed).body.pipeThrough(new DecompressionStream("gzip")).getReader(); completedStages.push("gzip_stream_opened");
     failureStage = "exact_lookup_executed"; const decoder = new TextDecoder(); let pending = ""; const matches = [];
     const inspect = (line) => { if (!line.trim()) return; const row = JSON.parse(line);
-      if (String(row.f).padStart(5, "0") === IDENTITY.fips && clean(row.h) === requested.houseNumber && canonicalLibertyRoad(row.r) === requested.road
+      if (String(row.f).padStart(5, "0") === identity.fips && clean(row.h) === requested.houseNumber && canonicalLibertyRoad(row.r) === requested.road
         && (!requested.city || clean(row.p) === requested.city) && (!requested.zip || String(row.z) === requested.zip)) matches.push(row); };
     while (true) { const { done, value } = await reader.read(); if (done) break; pending += decoder.decode(value, { stream: true }); const lines = pending.split("\n"); pending = lines.pop() || ""; lines.forEach(inspect); }
     pending += decoder.decode(); if (pending.trim()) inspect(pending); completedStages.push("exact_lookup_executed");
