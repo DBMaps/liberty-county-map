@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PACKAGE_DIRECTORY, certificateFor, selectGovernedCounties, validateRuntimeCertificate } from '../lp107/generate-runtime-certificates.mjs';
-import { atomicJson, BUCKET, objectPaths, redact, stableDigest } from './lp108-core.mjs';
+import { atomicJson, BUCKET, credentialHeaders, objectPaths, redact, stableDigest } from './lp108-core.mjs';
+export { credentialHeaders } from './lp108-core.mjs';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const REPORT = join(ROOT, 'reports/lp108');
 const DEFAULT_REQUEST_TIMEOUT_MS = 15000;
@@ -14,7 +15,6 @@ export function parseArguments(argv) { const o = {};
   for (let i=0;i<argv.length;i++) { const a=argv[i]; if (a==='--plan') o.plan=true; else if(a==='--verify-remote') o.verifyRemote=true; else if(a==='--upload') o.upload=true; else if(a==='--replace-mismatched') o.replaceMismatched=true; else if(a==='--county-fips') o.countyFips=argv[++i]; else throw new Error(`unknown option: ${a}`); }
   if(o.replaceMismatched&&!o.upload) throw new Error('--replace-mismatched requires --upload'); if (!o.plan && !o.verifyRemote && !o.upload) throw new Error('select --plan, --verify-remote, or --upload'); if(o.plan&&(o.upload||o.verifyRemote)) throw new Error('--plan cannot perform remote actions'); return o; }
 const credentials = env => { const url=env.SUPABASE_URL || env.GRIDLY_SUPABASE_URL; const key=env.SUPABASE_SERVICE_ROLE_KEY; if(!url||!key) throw new Error('REMOTE EXECUTION NOT COMPLETED: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required'); return {url:url.replace(/\/$/,''),key}; };
-export const credentialHeaders = key => ({apikey:key,...(key.startsWith('eyJ')?{Authorization:`Bearer ${key}`}:{})});
 export const storageObjectPath = (bucket, objectPath) =>
   `object/authenticated/${encodeURIComponent(bucket)}/${objectPath.split('/').map(encodeURIComponent).join('/')}`;
 
