@@ -2,42 +2,32 @@
 
 ## Scope and safety result
 
-LP120 ran the existing LP114 top-level orchestrator for Lee (48287), Milam (48331), and Robertson (48395) Counties as one geographically coherent, inactive-candidate wave. The run reused LP115 crossing manufacture, LP116 roadway source handling, LP117 generalized asset manufacture, and the LP118 TIGER source contract. No manufacturing limitation was found, so no pipeline, runtime, protected-system, certificate-schema, or county-specific behavior was changed.
+The owner completed the LP120 rerun for Lee (48287), Milam (48331), and Robertson (48395) Counties with the authentic TxGIO 2026 statewide geodatabase and official TIGER 2025 county roadway ZIP files. This reconciliation audits the owner-generated outputs retained locally under `reports/lp120-wave-1-owner-rerun/`; it does not rerun manufacturing.
 
-The run was candidate-only. It performed no upload, Supabase mutation, deployment, activation, promotion, selector expansion, production manifest/package replacement, or production authorization. Generated working reports remain local under `reports/lp120-wave-1/`; only the standardized governed readiness record is retained in `evidence/lp120/`.
+The results remain candidate-only. The rerun performed no upload, Supabase mutation, deployment, activation, promotion, selector expansion, production manifest/package replacement, or production authorization. Governed outcomes are committed in `evidence/lp120/adjacent-county-manufacturing-wave-1-readiness.json`; bulky working reports and source archives remain local and uncommitted.
 
-## Reproducible execution
-
-The baseline was `bd68e4d1`. The operator ran:
-
-```text
-node tools/lp114/manufacture-county-bundle.mjs --fips 48287,48331,48395 --reports reports/lp120-wave-1 --crossing-source Crossing-Packages/Texas/fra-crossings-tx.geojson --roadway-boundaries assets/boundaries/texas-counties-boundaries.geojson --dry-run
-```
-
-`--dry-run` prevents the orchestrator from attempting address manufacture without the owner-controlled TxGIO geodatabase; it does not suppress available LP115 or LP117 candidate manufacture. The exact source hashes, candidate counts, certification outcomes, blockers, and review states are recorded in `evidence/lp120/adjacent-county-manufacturing-wave-1-readiness.json`.
-
-## Authoritative-source preflight
+## Authentic owner-rerun source result
 
 | Source family | Result | Evidence and classification |
 | --- | --- | --- |
-| TxGIO addresses | `SOURCE_UNAVAILABLE` | No owner-local TxGIO 2026 geodatabase or prebuilt package existed for any wave county. Address manufacture and certification are `NOT_RUN`; this is not a pipeline failure. |
-| FRA crossings | `PASS` | The governed statewide FRA source at `Crossing-Packages/Texas/fra-crossings-tx.geojson` was readable and selected/certified independently by LP115. |
-| TIGER 2025 county roads | `SOURCE_UNAVAILABLE` | Requests for each canonical Census `tl_2025_<FIPS>_roads.zip` URL returned HTTP 403 from the environment proxy, and no owner-local archive existed. LP118/LP116 roadway extraction, packaging, and certification are `NOT_RUN`; this is not a manufacturing limitation. |
-| County boundary | `PASS` | Each FIPS matched exactly one feature in `assets/boundaries/texas-counties-boundaries.geojson`; LP117 produced one inactive boundary candidate per county. |
-| ZIP coverage | `PASS` | LP117 selected county relationships from `data/generated/gridly-zip-county-source-v1.json`, preserving split-county ambiguity. |
-
-Temporary download attempts were made only under `/tmp/lp120-tiger` and produced no archive. They are not repository artifacts.
+| TxGIO addresses | `GENERATED` | The authentic TxGIO 2026 statewide geodatabase generated each county address package and sidecar; each address certification passed and each candidate runtime certificate was generated. |
+| FRA crossings | `PASS` | The existing authentic results are preserved: Lee 47, Milam 110, and Robertson 169; every county certification passed. |
+| TIGER 2025 county roads | `GENERATED` | The official county roadway ZIP generated each TIGER roadway source, candidate package, manifest, and candidate roadway runtime identity; every roadway certification passed. |
+| County boundary | `PASS` | Each FIPS matched exactly one county boundary and retained its inactive candidate. |
+| ZIP coverage | `PASS` | Existing county ZIP relationships and split-county ambiguity were preserved. |
 
 ## Independent county results
 
-| County | Boundary | Crossings | ZIP relationships | Addresses | Roadways | Human gates | Readiness |
-| --- | ---: | ---: | ---: | --- | --- | --- | --- |
-| Lee (48287) | 1 (`PASS`) | 47 (`PASS`) | 11 (`PASS`) | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `REVIEW_REQUIRED` | `BLOCKED` |
-| Milam (48331) | 1 (`PASS`) | 110 (`PASS`) | 3 (`PASS`) | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `REVIEW_REQUIRED` | `BLOCKED` |
-| Robertson (48395) | 1 (`PASS`) | 169 (`PASS`) | 4 (`PASS`) | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `SOURCE_UNAVAILABLE` / `NOT_RUN` | `REVIEW_REQUIRED` | `BLOCKED` |
+| County | Addresses | Crossings | Roadways | Human gates | Overall readiness |
+| --- | --- | ---: | --- | --- | --- |
+| Lee (48287) | package `GENERATED`; sidecar `GENERATED`; certification `PASS`; runtime certificate `GENERATED` | 47 (`PASS`) | source/package/manifest/runtime identity `GENERATED`; certification `PASS` | `REVIEW_REQUIRED` | `REVIEW_REQUIRED`; not approved; not production-ready |
+| Milam (48331) | package `GENERATED`; sidecar `GENERATED`; certification `PASS`; runtime certificate `GENERATED` | 110 (`PASS`) | source/package/manifest/runtime identity `GENERATED`; certification `PASS` | `REVIEW_REQUIRED` | `REVIEW_REQUIRED`; not approved; not production-ready |
+| Robertson (48395) | package `GENERATED`; sidecar `GENERATED`; certification `PASS`; runtime certificate `GENERATED` | 169 (`PASS`) | source/package/manifest/runtime identity `GENERATED`; certification `PASS` | `REVIEW_REQUIRED` | `REVIEW_REQUIRED`; not approved; not production-ready |
 
-All three crossing certifications passed. No address or roadway certification was claimed because its authoritative input was unavailable. Community/locality candidates contain zero invented records; curated destinations contain zero inferred records. Community/locality, curated-destination, search, candidate-promotion, and production-authorization decisions remain human governed. Candidate promotion is `REVIEW_REQUIRED`, while production authorization is `BLOCKED`.
+For every address and roadway candidate, production authorization is `false` and activation is `false`. The technical-source blockers are closed; no county remains blocked by a missing source.
 
-## Readiness decision and next gate
+## Remaining governance and merge decision
 
-Each county is independently `BLOCKED`, not failed: the owner must supply the authentic TxGIO source and TIGER 2025 archives, rerun LP114, and retain the new technical certificates. Named reviewers must then complete community, curated-destination, and search review. Promotion and activation require a separate authorized milestone after those gates; LP120 makes no merge-to-production recommendation.
+Community/locality, curated destinations, and search coverage remain `REVIEW_REQUIRED`. Candidate approval has not been granted, and production authorization has not been granted. These human gates are the sole reason every county remains not approved and not production-ready.
+
+This reconciliation may merge as governed candidate evidence. It is not a merge-to-production recommendation: promotion and activation require a later, separately authorized milestone after all named human reviewers close their gates. Production remains unchanged.

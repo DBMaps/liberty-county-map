@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly-txgio-address-package-manifest-v1",
-  "generatedAt": "2026-07-30T23:04:13.796Z",
+  "generatedAt": "2026-08-03T21:15:55.411Z",
   "source": "TxGIO 2026 Statewide Address Points",
   "sourceRecordCount": 12142647,
   "sourceCrs": "EPSG:3857",
@@ -369,6 +369,24 @@
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\wharton-48481.addresses.jsonl.gz",
       "packageHash": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357",
       "outputCrs": "EPSG:4326"
+    },
+    {
+      "countyId": "lee",
+      "county": "Lee",
+      "fips": "48287",
+      "status": "GENERATED"
+    },
+    {
+      "countyId": "milam",
+      "county": "Milam",
+      "fips": "48331",
+      "status": "GENERATED"
+    },
+    {
+      "countyId": "robertson",
+      "county": "Robertson",
+      "fips": "48395",
+      "status": "GENERATED"
     }
   ]
 }
