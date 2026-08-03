@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -61,6 +61,20 @@ test('NAD layer enumeration preserves exact names and geometry annotations', () 
     { layerIndex: 1, layerName: 'Metadata table', geometryType: null },
     { layerIndex: 2, layerName: 'NAD', geometryType: '3D Point' },
     { layerIndex: 3, layerName: 'Address History', geometryType: 'Point' },
+  ]);
+});
+
+test('NAD layer enumeration supports the live OpenFileGDB labelled format', () => {
+  const live = "INFO: Open of `/vsizip/.../NAD_r23.gdb'\n      using driver `OpenFileGDB' successful.\nLayer: NAD (3D Point)\n";
+  assert.deepEqual(parseLayerEnumeration(live), [
+    { layerIndex: 0, layerName: 'NAD', geometryType: '3D Point' },
+  ]);
+  assert.deepEqual(parseLayerEnumeration('Layer: NAME\nLayer: NAME (Point)\nLayer: NAME (3D Point)\nLayer: NAME (Multi Point)\nLayer: Address History 2026\n'), [
+    { layerIndex: 0, layerName: 'NAME', geometryType: null },
+    { layerIndex: 1, layerName: 'NAME', geometryType: 'Point' },
+    { layerIndex: 2, layerName: 'NAME', geometryType: '3D Point' },
+    { layerIndex: 3, layerName: 'NAME', geometryType: 'Multi Point' },
+    { layerIndex: 4, layerName: 'Address History 2026', geometryType: null },
   ]);
 });
 
@@ -135,7 +149,7 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   const calls = [];
   const report = await audit({ ...parseArguments(['--txgio-gdb', txgio, '--nad-archive', nad, '--reports', reports, '--generated-at', '2026-07-31T00:00:00Z']) }, {
     identity: async path => ({ fileName: path.endsWith('.zip') ? 'NAD_r23.zip' : 'Texas.gdb', sizeBytes: 1, sha256: 'a'.repeat(64), sourcePathExcludedFromReport: true }),
-    runOgrinfo: async (_command, args) => { calls.push(args); if (!args.includes('-where')) { if (args.length === 3 && args.at(-1).startsWith('/vsizip/')) return '1: Metadata\n2: NAD (3D Point)\n'; if (args.at(-1) === 'Metadata') return 'Layer name: Metadata\nBuilding: String\nFloor: String\nUnit: String\nRoom: String\nSeat: String\n'; return args.at(-1) === 'NAD' ? nadSchema : txgioSchema; } const where = args[3]; return args.at(-1) === 'NAD' && where.includes(`"State" = 'TX'`) && where.includes(`"County" = 'Liberty'`) && where.includes(`"StNam_Full" = 'County Road 677'`) && where.includes(`"Post_City" = 'Dayton'`) ? 'Feature Count: 1\n' : 'Feature Count: 0\n'; },
+    runOgrinfo: async (_command, args) => { calls.push(args); if (!args.includes('-where')) { if (args.length === 3 && args.at(-1).startsWith('/vsizip/')) return "INFO: Open of `/vsizip/.../NAD_r23.gdb'\n      using driver `OpenFileGDB' successful.\nLayer: NAD (3D Point)\n"; return args.at(-1) === 'NAD' ? nadSchema : txgioSchema; } const where = args[3]; return args.at(-1) === 'NAD' && where.includes(`"State" = 'TX'`) && where.includes(`"County" = 'Liberty'`) && where.includes(`"StNam_Full" = 'County Road 677'`) && where.includes(`"Post_City" = 'Dayton'`) ? 'Feature Count: 1\n' : 'Feature Count: 0\n'; },
   });
   assert.equal(report.assessment.status, 'LIVE_QUERY_COMPLETE'); assert.equal(report.assessment.decision, 'AUTHORITATIVE_CANDIDATE_REQUIRES_SOURCE_REVIEW');
   assert.deepEqual(report.sources.map(source => source.exactCandidateCount), [0, 1]);
@@ -150,9 +164,25 @@ test('synthetic sources exercise both live queries without requiring TxGIO or NA
   assert.deepEqual(inventory.mapping.map(field => field.actualField), ['State', 'County', 'Add_Number', 'StNam_Full', 'Post_City', 'Zip_Code']);
   assert.ok(inventory.fields.every((field, index) => field.index === index));
   const layers = JSON.parse(await readFile(join(reports, 'nad-layer-inventory.json')));
-  assert.equal(layers.discoveredLayerCount, 2); assert.equal(layers.eligibleLayerCount, 1); assert.equal(layers.selectedLayer, 'NAD');
-  assert.equal(layers.layers[0].completeFieldCount, 5); assert.equal(layers.layers[1].lastFieldName, 'Zip_Code');
+  assert.equal(layers.discoveredLayerCount, 1); assert.equal(layers.eligibleLayerCount, 1); assert.equal(layers.selectedLayer, 'NAD');
+  assert.equal(layers.layerListCompleted, true); assert.equal(inventory.selectionSucceeded, true);
+  assert.equal(layers.layers[0].layerIndex, 0); assert.equal(layers.layers[0].geometryType, '3D Point'); assert.equal(layers.layers[0].lastFieldName, 'Zip_Code');
   assert.doesNotMatch(JSON.stringify(layers), new RegExp(directory.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+});
+
+test('failed NAD selection atomically replaces a stale successful schema report', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'lp106-stale-schema-')); const nad = join(directory, 'NAD_r23.zip'); const reports = join(directory, 'reports');
+  await writeFile(nad, 'synthetic NAD identity');
+  await mkdir(reports, { recursive: true });
+  await writeFile(join(reports, 'nad-schema.json'), JSON.stringify({ selectionSucceeded: true, selectedLayer: 'STALE', fields: [{ originalName: 'stale' }] }));
+  const report = await audit({ ...parseArguments(['--nad-archive', nad, '--reports', reports]), generatedAt: '2026-07-31T00:00:00Z' }, {
+    identity: async () => ({ fileName: 'NAD_r23.zip', sizeBytes: 1, sha256: 'a'.repeat(64), sourcePathExcludedFromReport: true }),
+    runOgrinfo: async (_command, args) => args.length === 3 ? 'Layer: NAD (3D Point)\n' : 'Layer name: NAD\nUnrelated: String\n',
+  });
+  const schema = JSON.parse(await readFile(join(reports, 'nad-schema.json'))); const layers = JSON.parse(await readFile(join(reports, 'nad-layer-inventory.json')));
+  assert.equal(schema.selectionSucceeded, false); assert.equal(schema.selectedLayer, null); assert.deepEqual(schema.fields, []);
+  assert.equal(layers.layerListCompleted, true); assert.equal(layers.discoveredLayerCount, 1); assert.equal(layers.layers[0].layerName, 'NAD');
+  assert.equal(report.assessment.decision, 'NO SOURCE-PRESENCE CONCLUSION PERMITTED'); assert.equal(report.assessment.sourceAbsenceClaimed, false);
 });
 
 test('partial bounded-query failure is incomplete evidence with no unique count or absence conclusion', async () => {

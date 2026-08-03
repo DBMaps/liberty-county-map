@@ -92,8 +92,18 @@ export function parseLayerEnumeration(output) {
   if (result?.exitCode !== 0 || result?.completed === false) throw new Error(`NAD layer discovery failed: ${redactDiagnostic(`${result?.stdout || ''}\n${result?.stderr || ''}`)}`);
   const layers = [];
   for (const line of `${result?.stdout || ''}\n${result?.stderr || ''}`.split(/\r?\n/)) {
-    const match = line.match(/^\s*(\d+)\s*:\s*(.*?)(?:\s+\(([^()]*(?:Point|Line String|Polygon|Geometry|Table)[^()]*)\))?\s*$/i);
-    if (match) layers.push({ layerIndex: Number(match[1]), layerName: match[2].trim(), geometryType: match[3]?.trim() || null });
+    const indexed = line.match(/^\s*(\d+)\s*:\s*(.*?)\s*$/);
+    const labelled = line.match(/^\s*Layer:\s*(.*?)\s*$/i);
+    if (!indexed && !labelled) continue;
+    const value = (indexed?.[2] || labelled[1]).trim();
+    // Geometry is recognized only as a terminal GDAL annotation. Everything
+    // else, including spaces and punctuation, remains part of the exact name.
+    const annotated = value.match(/^(.*)\s+\((?=(?:\d+D\s+)?(?:Multi\s+)?(?:Point|Line\s+String|Polygon|Geometry|Table)\s*\)$)([^()]*)\)$/i);
+    layers.push({
+      layerIndex: indexed ? Number(indexed[1]) : layers.length,
+      layerName: (annotated?.[1] || value).trim(),
+      geometryType: annotated?.[2].trim() || null,
+    });
   }
   if (!layers.length) throw new Error('NAD layer discovery returned no layers');
   return layers;
@@ -269,6 +279,7 @@ export async function audit(options, dependencies = {}) {
           discoveredLayerCount: layers.length, eligibleLayerCount: selection.eligible.length,
           layers: layers.map(({ _inventory, _mapping, ...layer }) => layer), selectedLayer: selection.selectedLayer?.layerName || null,
           selectionMode: selection.selectionMode, selectionReason: selection.selectionReason,
+          layerListCompleted: true,
           ambiguousLayers: selection.eligible.length > 1 ? selection.eligible.map(layer => layer.layerName) : [],
           rejectedLayers: layers.filter(layer => !selection.eligible.includes(layer)).map(layer => ({ layerName: layer.layerName, reasons: layer.rejectionReasons })),
         };
@@ -286,7 +297,7 @@ export async function audit(options, dependencies = {}) {
         source: { archive: sourceIdentity.fileName, geodatabase: options.nadGeodatabase, sourcePathExcludedFromReport: true },
         discoveredLayerCount: 0, eligibleLayerCount: 0, layers: [], selectedLayer: null,
         selectionMode: options.nadLayerExplicit || options.nadLayer ? 'explicit' : 'automatic',
-        selectionReason: 'layer discovery did not complete', ambiguousLayers: [], rejectedLayers: [], discoveryFailure: schemaFailure,
+        selectionReason: 'layer discovery did not complete', layerListCompleted: false, ambiguousLayers: [], rejectedLayers: [], discoveryFailure: schemaFailure,
       };
     }
     const requiredFieldsFound = Boolean(schemaFields) && schemaFields.every(field => field.found);
@@ -319,7 +330,12 @@ export async function audit(options, dependencies = {}) {
   await mkdir(resolve(options.reports), { recursive: true });
   const nad = sources.find(source => source.sourceId === 'usdot-nad-r23');
   if (nadLayerInventory) await atomicJson(join(resolve(options.reports), 'nad-layer-inventory.json'), nadLayerInventory);
-  if (nad?.schemaInventory) await atomicJson(join(resolve(options.reports), 'nad-schema.json'), { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: nad.sourceId, selectedLayer: nad.selectedLayer, selectionMode: nad.selectionMode, fields: nad.schemaInventory, mapping: nad.schemaFields.map(field => ({ expectedField: field.requiredField, actualField: field.fieldName, index: field.inventoryIndex })) });
+  if (nadLayerInventory) {
+    const schemaReport = nad?.schemaInventory
+      ? { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: nad.sourceId, selectionSucceeded: true, selectedLayer: nad.selectedLayer, selectionMode: nad.selectionMode, fields: nad.schemaInventory, mapping: nad.schemaFields.map(field => ({ expectedField: field.requiredField, actualField: field.fieldName, index: field.inventoryIndex })) }
+      : { schemaVersion: 'gridly-lp106-nad-schema-inventory-v1', sourceId: 'usdot-nad-r23', selectionSucceeded: false, selectedLayer: null, selectionMode: nadLayerInventory.selectionMode, fields: [], mapping: [], failure: nad?.schemaFailure || nadLayerInventory.discoveryFailure || nadLayerInventory.selectionReason };
+    await atomicJson(join(resolve(options.reports), 'nad-schema.json'), schemaReport);
+  }
   await atomicJson(join(resolve(options.reports), 'lp106-authoritative-address-coverage-audit.json'), report);
   return report;
 }
