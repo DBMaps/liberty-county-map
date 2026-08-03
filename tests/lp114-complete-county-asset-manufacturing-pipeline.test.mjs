@@ -46,7 +46,7 @@ test('missing owner address source is explicit while authoritative crossings are
   const files = await fixture(); t.after(() => rm(files.root, { recursive: true, force: true }));
   const report = await manufacture({ fips: '48051', dry_run: true, reports: files.reports, address_dir: files.addressDir, inventoryPath: files.inventoryPath });
   assert.equal(report.counties[0].assets.addresses.status, 'REQUIRES_OWNER_SOURCE');
-  assert.equal(report.counties[0].assets.communities.status, 'NO_EXISTING_PIPELINE');
+  assert.equal(report.counties[0].assets.communityLocality.status, 'REVIEW_REQUIRED');
   assert.equal(report.counties[0].assets.railroadCrossingSource.status, 'GENERATED');
   assert.notEqual(report.counties[0].assets.railroadCrossingSource.status, 'NOT_APPLICABLE');
 });
