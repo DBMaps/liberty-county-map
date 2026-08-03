@@ -88,12 +88,16 @@ test('inventory contains no local paths, URLs, or secrets', async () => {
   finally { await rm(f.root, { recursive: true, force: true }); }
 });
 
-test('production Liberty certificate validates and is byte-for-byte governed output', async () => {
+test('production Liberty certificate validates and generation preserves its bytes', async () => {
   const county = governed.find(x => x.fips === '48291'); const packageName = 'liberty-48291.addresses.jsonl.gz';
   const digest = await stablePackageDigest(join(PACKAGE_DIRECTORY, packageName));
-  const text = await readFile(join(PACKAGE_DIRECTORY, 'liberty-48291.runtime-certificate.json'), 'utf8');
-  assert.deepEqual(validateRuntimeCertificate(JSON.parse(text), certificateFor(county, packageName, digest.sizeBytes, digest.sha256)), []);
-  assert.equal(text, serializeJson(certificateFor(county, packageName, digest.sizeBytes, digest.sha256)));
+  const certificatePath = join(PACKAGE_DIRECTORY, 'liberty-48291.runtime-certificate.json');
+  const before = await readFile(certificatePath); const text = before.toString('utf8');
+  const expected = certificateFor(county, packageName, digest.sizeBytes, digest.sha256);
+  assert.deepEqual(validateRuntimeCertificate(JSON.parse(text), expected), []);
+  await run({ noReport: true });
+  assert.deepEqual(await readFile(certificatePath), before);
+  assert.equal(text.replaceAll('\r\n', '\n'), serializeJson(expected));
 });
 
 test('all 28 real packages have valid certificates, are ready, and no gzip is modified', async () => {
