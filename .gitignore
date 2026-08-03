@@ -41,3 +41,6 @@ assets/county-implementation/*/generated/boundary-staging/
 assets/location-resolution/gridly-authoritative-county-geometry-v1.json
 android/app/src/main/assets/public/assets/location-resolution/gridly-authoritative-county-geometry-v1.json
 android/app/src/main/assets/public/assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json
+
+# LP118 local candidate extraction evidence
+/reports/lp118/
