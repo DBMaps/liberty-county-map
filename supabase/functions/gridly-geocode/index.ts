@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { lookupLibertyCertifiedAddress } from "../_shared/liberty-certified-address.mjs";
 import { applyGovernedRoadOnlyAcceptance } from "../_shared/governed-road-only-acceptance.mjs";
+import { governedCountyAcceptance } from "../_shared/governed-county-acceptance.mjs";
 
 const CONFIG = Object.freeze({
   provider: Deno.env.get("GRIDLY_GEOCODE_PROVIDER") || "nominatim",
@@ -24,7 +25,6 @@ const allowedTop = new Set(["intent", "query", "structuredAddress", "context", "
 const allowedAddress = new Set(["street", "city", "county", "state", "postalCode", "country"]);
 const allowedContext = new Set(["communityId", "countyId", "countyFips", "postalCode", "viewbox"]);
 const control = /[\u0000-\u001f\u007f]/;
-const supportedTexasCounties = new Set(["liberty", "montgomery", "san jacinto", "chambers", "jefferson", "hardin", "polk", "walker", "orange", "jasper", "newton", "tyler", "galveston", "brazoria", "fort bend", "waller", "austin", "washington", "brazos", "grimes", "wharton", "colorado", "fayette", "lavaca", "jackson", "matagorda", "calhoun", "harris"]);
 // LP102's original eligibility subset remains included in the expanded regional modes.
 const lp102ModeCompatible = (body: any) => ["explicit_search", "lp102_certification"].includes(body.requestMode);
 const lp103ApprovedPrecision = ["interpolated_address", "verified_address_point", "verified_entrance"];
@@ -115,7 +115,7 @@ function coordinateInSupportedTexasRegion(latitude: unknown, longitude: unknown)
   const lat = Number(latitude); const lon = Number(longitude);
   return Number.isFinite(lat) && Number.isFinite(lon) && lat >= 25.7 && lat <= 33.1 && lon >= -106.7 && lon <= -93.4;
 }
-function evaluateRuralCandidate(body: any, candidate: any) {
+function evaluateRuralCandidate(body: any, candidate: any, governedIdentity: any = null) {
   const requested = requestedAddressEvidence(body); const returned = candidate.address || {};
   const normalizedRequestedHouseNumber = normalizeHouseNumber(requested.houseNumber);
   const normalizedReturnedHouseNumber = normalizeHouseNumber(returned.houseNumber);
@@ -133,8 +133,8 @@ function evaluateRuralCandidate(body: any, candidate: any) {
   if (requested.state && returned.state && normalizeGeography(requested.state) !== normalizeGeography(returned.state)) conflicts.push("state_conflict");
   if (!Number.isFinite(candidate.latitude) || !Number.isFinite(candidate.longitude) || Math.abs(candidate.latitude) > 90 || Math.abs(candidate.longitude) > 180) conflicts.push("malformed_or_missing_coordinates");
   else if (!coordinateInSupportedTexasRegion(candidate.latitude, candidate.longitude)) conflicts.push("outside_supported_region");
-  const returnedCounty = normalizeGeography(returned.county);
-  if (!returnedCounty || !supportedTexasCounties.has(returnedCounty)) conflicts.push("unsupported_or_missing_county");
+  const countyAcceptance = governedCountyAcceptance(returned.county, governedIdentity);
+  if (!countyAcceptance.accepted) conflicts.push(countyAcceptance.reason);
   if (normalizedRequestedHouseNumber && (candidate.resultType !== "address" || candidate.type !== "house")) conflicts.push("road_only_result_promoted_as_house");
   if (!approvedRuralPrecision.has(candidate.precision)) conflicts.push("unsupported_precision_claim");
   const rejectionRule = conflicts[0] || "none"; const accepted = conflicts.length === 0;
@@ -297,7 +297,7 @@ async function execute(body: any, key: string, requestId: string, origin: string
       fallbackAcceptanceOutcome: roadOnlyResidentialRejected ? "residential_promotion_rejected" : "not_applicable" };
   };
   if (certified.results.length) {
-    const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate).accepted).slice(0, body.limit);
+    const results = certified.results.filter((candidate: any) => evaluateRuralCandidate(body, candidate, certified.runtimeDiagnostic).accepted).slice(0, body.limit);
     if (results.length) return new Response(JSON.stringify({ ok: true, status: "success", providerBoundary: "gridly", cached: false, requestId,
       diagnostics: { certifiedProviderOutcome: "exact_match", certifiedProviderInvokedMs: certified.totalMs, packageLookupMs: certified.lookupMs, packageAccessed: true,
         sourceClassification: "government_address_point", runtimeAddressDiagnostics: runtimeAddressDiagnostics("certified_address") }, results }), { headers: cors(origin) });
