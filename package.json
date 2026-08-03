@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp10811:harris-sidecar": "node tools/lp108/harris-certified-lookup.mjs build",
+    "verify:lp10811:harris-sidecar": "node tools/lp108/harris-certified-lookup.mjs verify-local",
+    "test:lp10811": "node --test tests/lp10811-harris-sidecar.test.mjs",
     "build:county-geometry": "node tools/build-gridly-authoritative-county-geometry.js",
     "verify:county-geometry-deterministic": "node tools/build-gridly-authoritative-county-geometry.js --verify-deterministic",
     "copy:county-geometry:android": "node tools/copy-gridly-runtime-county-geometry-to-android.js",
