@@ -50,6 +50,17 @@ export async function verifyRemoteObject(auth, objectPath, expected, hooks={}) {
   const status=actualSizeBytes===expected.sizeBytes&&actualSha256===expected.sha256?'matching':'mismatched';
   return {status,actualSizeBytes,actualSha256};
 }
+export async function syncRemoteObject(auth, objectPath, expected, bytes, contentType, options={}, hooks={}) {
+  const current=await verifyRemoteObject(auth,objectPath,expected,hooks);
+  const eligible=current.status==='missing'||(current.status==='mismatched'&&options.replaceMismatched);
+  if(!eligible)return {...current,uploaded:false};
+  let response;
+  try { response=await request(auth,`object/${hooks.bucket||BUCKET}/${objectPath}`,{method:current.status==='missing'?'POST':'PUT',headers:{'content-type':contentType,'x-upsert':current.status==='missing'?'false':'true','x-metadata':JSON.stringify({sha256:expected.sha256})},body:bytes},hooks); }
+  catch(error){return {status:'upload_failed',uploaded:false,diagnostic:redact(`Storage upload network failure: ${error?.message||'unknown error'}`).slice(0,320)};}
+  if(!response||typeof response.ok!=='boolean'||!response.ok){let body='';try{body=await response?.text?.()||'';}catch{}return {status:'upload_failed',uploaded:false,diagnostic:safeDiagnostic(response?.status??'unknown',body)};}
+  const verified=await verifyRemoteObject(auth,objectPath,expected,hooks);
+  return {...verified,uploaded:true};
+}
 export async function run(options, hooks={}) {
   const packageDirectory=options.packageDirectory || PACKAGE_DIRECTORY;
   const manifest=JSON.parse(await readFile(join(ROOT,'data/lp104/texas-counties.json'),'utf8')); let counties=selectGovernedCounties(manifest); if(options.countyFips){counties=counties.filter(x=>x.fips===options.countyFips);if(counties.length!==1)throw new Error('county FIPS is not governed');}
@@ -57,15 +68,12 @@ export async function run(options, hooks={}) {
   const report={schemaVersion:'gridly-lp108-storage-v1',evidence:options.plan?'local-only':'remote Storage verification attempted',bucket:BUCKET,totals:{counties:local.length,localPackagesValid:local.length,localCertificatesValid:local.length,expectedObjects:local.length*2,present:0,matching:0,missing:0,mismatched:0,inaccessible:0,unverifiable:0,uploaded:0},objects:[]};
   if(options.plan){report.objects=local.flatMap(x=>[{countyFips:x.countyFips,path:x.package,status:'planned'},{countyFips:x.countyFips,path:x.certificate,status:'planned'}]); await atomicJson(join(REPORT,'storage-plan.json'),report); return report;}
   const auth=credentials(hooks.env||process.env); const requestHooks={fetchImpl:hooks.fetchImpl,timeoutMs:hooks.timeoutMs,attempts:hooks.attempts}; const bucket=await request(auth,'bucket/'+BUCKET,{},requestHooks); if(!bucket.ok)throw new Error(`Storage target ambiguous or inaccessible (${bucket.status})`);
-  for(const item of local) for(const kind of ['package','certificate']) { const path=item[kind], localPath=item.paths[kind==='package'?'pkg':'cert']; const expectedSize=kind==='package'?item.packageSizeBytes:(await readFile(localPath)).byteLength; let response,status,metadata={};
+  for(const item of local) for(const kind of ['package','certificate']) { const path=item[kind], localPath=item.paths[kind==='package'?'pkg':'cert']; const expectedSize=kind==='package'?item.packageSizeBytes:(await readFile(localPath)).byteLength; let status,metadata={};
     if(!options.upload){const result=await verifyRemoteObject(auth,path,{sizeBytes:expectedSize,sha256:kind==='package'?item.packageSha256:item.certificateSha256},requestHooks);status=result.status;metadata=result;}
-    else {response=await request(auth,`object/info/${BUCKET}/${path}`,{},requestHooks);status=response.status===404?'missing':response.ok?'present':'inaccessible';metadata=response.ok?await response.json():{};if(status==='present'&&Number(metadata.metadata?.size||metadata.size)!==expectedSize)status='size_mismatched';
-      if(status==='missing'||(status.endsWith('mismatched')&&options.replaceMismatched)){const bytes=await readFile(localPath);response=await request(auth,`object/${BUCKET}/${path}`,{method:status==='missing'?'POST':'PUT',headers:{'content-type':kind==='package'?'application/gzip':'application/json','x-upsert':status==='missing'?'false':'true','x-metadata':JSON.stringify({sha256:kind==='package'?item.packageSha256:item.certificateSha256})},body:bytes},requestHooks);status=response.ok?'verified':'upload_failed';if(response.ok)report.totals.uploaded++;}
-      else if(status==='present'){const hash=metadata.metadata?.sha256;status=hash?(hash===(kind==='package'?item.packageSha256:item.certificateSha256)?'verified':'hash_mismatched'):'unverifiable';}
-    }
-    report.objects.push({countyFips:item.countyFips,path,kind,status,...(metadata.actualSizeBytes===undefined?{}:{actualSizeBytes:metadata.actualSizeBytes,actualSha256:metadata.actualSha256}),...(metadata.diagnostic?{diagnostic:metadata.diagnostic}:{})}); if(['matching','verified'].includes(status)){report.totals.present++;report.totals.matching++;} else if(status==='missing')report.totals.missing++; else if(status.includes('mismatched'))report.totals.mismatched++; else if(status==='unverifiable')report.totals.unverifiable++; else report.totals.inaccessible++;
+    else {const bytes=await readFile(localPath);metadata=await syncRemoteObject(auth,path,{sizeBytes:expectedSize,sha256:kind==='package'?item.packageSha256:item.certificateSha256},bytes,kind==='package'?'application/gzip':'application/json',options,requestHooks);status=metadata.status;if(metadata.uploaded)report.totals.uploaded++;}
+    report.objects.push({countyFips:item.countyFips,path,kind,status,...(metadata.actualSizeBytes===undefined?{}:{actualSizeBytes:metadata.actualSizeBytes,actualSha256:metadata.actualSha256}),...(metadata.diagnostic?{diagnostic:metadata.diagnostic}:{})}); if(status==='matching'){report.totals.present++;report.totals.matching++;} else if(status==='missing')report.totals.missing++; else if(status==='mismatched')report.totals.mismatched++; else if(status==='unverifiable')report.totals.unverifiable++; else report.totals.inaccessible++;
   }
-  await atomicJson(join(REPORT,'storage-verification.json'),report); if(report.objects.some(x=>!['matching','verified'].includes(x.status)))throw Object.assign(new Error('remote objects are missing, mismatched, inaccessible, or unverifiable'),{report}); return report;
+  await atomicJson(join(REPORT,'storage-verification.json'),report); if(report.objects.some(x=>x.status!=='matching'))throw Object.assign(new Error('remote objects are missing, mismatched, inaccessible, or unverifiable'),{report}); return report;
 }
 export async function main(argv=process.argv.slice(2)){try{const r=await run(parseArguments(argv));console.log(`LP108 Storage: ${r.totals.matching}/${r.totals.expectedObjects} matching; ${r.totals.missing} missing.`)}catch(e){console.error(redact(e.message));process.exitCode=1;}}
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))main();
