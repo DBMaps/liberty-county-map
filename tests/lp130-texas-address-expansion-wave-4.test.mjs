@@ -32,11 +32,12 @@ test('FIPS ordering and default batches are deterministic', () => {
   assert.equal(planCsv(plan).trim().split('\n').length, 221);
 });
 
-test('batch size override is deterministic and existing candidates are excluded', () => {
+test('completed live manifest leaves no counties to renumber or rebuild', () => {
   const override = createPlan(registry, manifest, 40);
-  assert.deepEqual(override.batches.map(batch => batch.counties.length), [40, 40, 40, 40, 40, 20]);
-  const remaining = new Set(override.batches.flatMap(batch => batch.counties.map(county => county.fips)));
-  assert.ok(override.existingFips.every(fips => !remaining.has(fips)));
+  assert.deepEqual(override.batches, []);
+  assert.equal(override.remainingCountyCount, 0);
+  assert.equal(override.startingCandidateCount, 254);
+  assert.equal(new Set(override.existingFips).size, 254);
 });
 
 test('CLI enforces modes and supports required options', () => {
@@ -76,7 +77,7 @@ test('saved governed plan is stable while the live manifest may grow', () => {
   assert.deepEqual(plan.batches[0].counties.map(item => item.fips), ['48001','48003','48005','48007','48009','48011','48013','48017','48019','48021','48023','48025','48027','48029','48031','48033','48035','48037','48043','48045','48047','48049','48053','48055','48059']);
   const grown = structuredClone(manifest);
   grown.packages.push(...plan.batches[0].counties.map(({ countyId, fips }) => ({ fips, outputPath: `${countyId}-${fips}.addresses.jsonl.gz` })));
-  assert.equal(new Set(grown.packages.map(item => item.fips)).size, 59);
+  assert.equal(new Set(grown.packages.map(item => item.fips)).size, 254);
   assert.deepEqual([plan.remainingCountyCount, plan.batchCount], [220, 9]);
 });
 

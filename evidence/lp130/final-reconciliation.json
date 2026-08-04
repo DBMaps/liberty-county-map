@@ -1,0 +1,2279 @@
+{
+  "schemaVersion": "gridly-lp130-final-reconciliation-v2",
+  "title": "LP130 Final Reconciliation — Repository State Correction",
+  "authoritativeManufacturingCommit": "de3ce54ade60583e4c61e0378b8175d7a91e44c6",
+  "repositoryState": "authoritative complete repository",
+  "supersedes": {
+    "conclusion": "FAILED",
+    "packageFilesPresent": 59,
+    "missingPackages": 195,
+    "disposition": "REPLACED",
+    "cause": "The prior reconciliation audited an incomplete checkout that contained the 34-package baseline plus batch 01 (25 packages), rather than the complete authoritative manufacturing repository."
+  },
+  "packageIntegrity": {
+    "classification": "PASS",
+    "manifestEntries": 254,
+    "packageFilesPresent": 254,
+    "sidecarsPresent": 254,
+    "uniqueManifestFips": 254,
+    "uniquePackageNames": 254,
+    "missingPackages": [],
+    "missingSidecars": [],
+    "unlistedPackages": [],
+    "packageIntegrityFailures": []
+  },
+  "batchEvidence": {
+    "classification": "PASS",
+    "governedBatchCount": 9,
+    "manufacturedPlanCountyCount": 220,
+    "completeBatchCount": 9,
+    "batches": [
+      {
+        "batch": "batch-01",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 22,
+        "certificationBlockedCount": 3,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-02",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 22,
+        "certificationBlockedCount": 3,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-03",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 23,
+        "certificationBlockedCount": 2,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-04",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 25,
+        "certificationBlockedCount": 0,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-05",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 24,
+        "certificationBlockedCount": 1,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-06",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 24,
+        "certificationBlockedCount": 1,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-07",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 23,
+        "certificationBlockedCount": 2,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-08",
+        "expectedCountyCount": 25,
+        "manufacturedCountyCount": 25,
+        "packageHashEntries": 25,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 23,
+        "certificationBlockedCount": 2,
+        "status": "MANUFACTURING_COMPLETE"
+      },
+      {
+        "batch": "batch-09",
+        "expectedCountyCount": 20,
+        "manufacturedCountyCount": 20,
+        "packageHashEntries": 20,
+        "packageIntegrityFailureCount": 0,
+        "certificationPassCount": 20,
+        "certificationBlockedCount": 0,
+        "status": "MANUFACTURING_COMPLETE"
+      }
+    ]
+  },
+  "certificationBlockedInventory": {
+    "classification": "UNCHANGED",
+    "count": 14,
+    "counties": [
+      {
+        "batch": "batch-01",
+        "fips": "48019",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-01",
+        "fips": "48027",
+        "failureReasons": [
+          "exact address sample failed"
+        ]
+      },
+      {
+        "batch": "batch-01",
+        "fips": "48043",
+        "failureReasons": [
+          "exact address sample failed"
+        ]
+      },
+      {
+        "batch": "batch-02",
+        "fips": "48061",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-02",
+        "fips": "48073",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-02",
+        "fips": "48113",
+        "failureReasons": [
+          "runtime load exceeded 5000ms",
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-03",
+        "fips": "48121",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-03",
+        "fips": "48135",
+        "failureReasons": [
+          "exact address sample failed"
+        ]
+      },
+      {
+        "batch": "batch-05",
+        "fips": "48229",
+        "failureReasons": [
+          "exact address sample failed",
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-06",
+        "fips": "48329",
+        "failureReasons": [
+          "exact address sample failed"
+        ]
+      },
+      {
+        "batch": "batch-07",
+        "fips": "48377",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-07",
+        "fips": "48401",
+        "failureReasons": [
+          "canonical road alias failed"
+        ]
+      },
+      {
+        "batch": "batch-08",
+        "fips": "48425",
+        "failureReasons": [
+          "exact address sample failed"
+        ]
+      },
+      {
+        "batch": "batch-08",
+        "fips": "48441",
+        "failureReasons": [
+          "exact address sample failed",
+          "canonical road alias failed"
+        ]
+      }
+    ]
+  },
+  "runtimeProtection": {
+    "classification": "PASS",
+    "productionRuntimeManifestSha256Before": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a",
+    "productionRuntimeManifestSha256After": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a",
+    "runtimeChanged": false,
+    "storageChanged": false,
+    "supabaseChanged": false
+  },
+  "candidateOnlyBoundary": {
+    "classification": "PASS",
+    "candidateOnly": true,
+    "activated": false,
+    "runtimeActivationAuthorized": false
+  },
+  "packageInventory": [
+    {
+      "fips": "48001",
+      "countyId": "anderson",
+      "packageName": "anderson-48001.addresses.jsonl.gz",
+      "sidecarName": "anderson-48001.addresses.jsonl.gz.json",
+      "sizeBytes": 937861,
+      "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c"
+    },
+    {
+      "fips": "48003",
+      "countyId": "andrews",
+      "packageName": "andrews-48003.addresses.jsonl.gz",
+      "sidecarName": "andrews-48003.addresses.jsonl.gz.json",
+      "sizeBytes": 248776,
+      "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1"
+    },
+    {
+      "fips": "48005",
+      "countyId": "angelina",
+      "packageName": "angelina-48005.addresses.jsonl.gz",
+      "sidecarName": "angelina-48005.addresses.jsonl.gz.json",
+      "sizeBytes": 1335591,
+      "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d"
+    },
+    {
+      "fips": "48007",
+      "countyId": "aransas",
+      "packageName": "aransas-48007.addresses.jsonl.gz",
+      "sidecarName": "aransas-48007.addresses.jsonl.gz.json",
+      "sizeBytes": 448181,
+      "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46"
+    },
+    {
+      "fips": "48009",
+      "countyId": "archer",
+      "packageName": "archer-48009.addresses.jsonl.gz",
+      "sidecarName": "archer-48009.addresses.jsonl.gz.json",
+      "sizeBytes": 176349,
+      "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d"
+    },
+    {
+      "fips": "48011",
+      "countyId": "armstrong",
+      "packageName": "armstrong-48011.addresses.jsonl.gz",
+      "sidecarName": "armstrong-48011.addresses.jsonl.gz.json",
+      "sizeBytes": 41191,
+      "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509"
+    },
+    {
+      "fips": "48013",
+      "countyId": "atascosa",
+      "packageName": "atascosa-48013.addresses.jsonl.gz",
+      "sidecarName": "atascosa-48013.addresses.jsonl.gz.json",
+      "sizeBytes": 839784,
+      "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5"
+    },
+    {
+      "fips": "48015",
+      "countyId": "austin",
+      "packageName": "austin-48015.addresses.jsonl.gz",
+      "sidecarName": "austin-48015.addresses.jsonl.gz.json",
+      "sizeBytes": 552056,
+      "sha256": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17"
+    },
+    {
+      "fips": "48017",
+      "countyId": "bailey",
+      "packageName": "bailey-48017.addresses.jsonl.gz",
+      "sidecarName": "bailey-48017.addresses.jsonl.gz.json",
+      "sizeBytes": 105773,
+      "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55"
+    },
+    {
+      "fips": "48019",
+      "countyId": "bandera",
+      "packageName": "bandera-48019.addresses.jsonl.gz",
+      "sidecarName": "bandera-48019.addresses.jsonl.gz.json",
+      "sizeBytes": 539409,
+      "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f"
+    },
+    {
+      "fips": "48021",
+      "countyId": "bastrop",
+      "packageName": "bastrop-48021.addresses.jsonl.gz",
+      "sidecarName": "bastrop-48021.addresses.jsonl.gz.json",
+      "sizeBytes": 1906657,
+      "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8"
+    },
+    {
+      "fips": "48023",
+      "countyId": "baylor",
+      "packageName": "baylor-48023.addresses.jsonl.gz",
+      "sidecarName": "baylor-48023.addresses.jsonl.gz.json",
+      "sizeBytes": 84590,
+      "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf"
+    },
+    {
+      "fips": "48025",
+      "countyId": "bee",
+      "packageName": "bee-48025.addresses.jsonl.gz",
+      "sidecarName": "bee-48025.addresses.jsonl.gz.json",
+      "sizeBytes": 225545,
+      "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6"
+    },
+    {
+      "fips": "48027",
+      "countyId": "bell",
+      "packageName": "bell-48027.addresses.jsonl.gz",
+      "sidecarName": "bell-48027.addresses.jsonl.gz.json",
+      "sizeBytes": 5367668,
+      "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050"
+    },
+    {
+      "fips": "48029",
+      "countyId": "bexar",
+      "packageName": "bexar-48029.addresses.jsonl.gz",
+      "sidecarName": "bexar-48029.addresses.jsonl.gz.json",
+      "sizeBytes": 21101375,
+      "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9"
+    },
+    {
+      "fips": "48031",
+      "countyId": "blanco",
+      "packageName": "blanco-48031.addresses.jsonl.gz",
+      "sidecarName": "blanco-48031.addresses.jsonl.gz.json",
+      "sizeBytes": 307471,
+      "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115"
+    },
+    {
+      "fips": "48033",
+      "countyId": "borden",
+      "packageName": "borden-48033.addresses.jsonl.gz",
+      "sidecarName": "borden-48033.addresses.jsonl.gz.json",
+      "sizeBytes": 23819,
+      "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d"
+    },
+    {
+      "fips": "48035",
+      "countyId": "bosque",
+      "packageName": "bosque-48035.addresses.jsonl.gz",
+      "sidecarName": "bosque-48035.addresses.jsonl.gz.json",
+      "sizeBytes": 337704,
+      "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0"
+    },
+    {
+      "fips": "48037",
+      "countyId": "bowie",
+      "packageName": "bowie-48037.addresses.jsonl.gz",
+      "sidecarName": "bowie-48037.addresses.jsonl.gz.json",
+      "sizeBytes": 1499449,
+      "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9"
+    },
+    {
+      "fips": "48039",
+      "countyId": "brazoria",
+      "packageName": "brazoria-48039.addresses.jsonl.gz",
+      "sidecarName": "brazoria-48039.addresses.jsonl.gz.json",
+      "sizeBytes": 5695185,
+      "sha256": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7"
+    },
+    {
+      "fips": "48041",
+      "countyId": "brazos",
+      "packageName": "brazos-48041.addresses.jsonl.gz",
+      "sidecarName": "brazos-48041.addresses.jsonl.gz.json",
+      "sizeBytes": 3078907,
+      "sha256": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2"
+    },
+    {
+      "fips": "48043",
+      "countyId": "brewster",
+      "packageName": "brewster-48043.addresses.jsonl.gz",
+      "sidecarName": "brewster-48043.addresses.jsonl.gz.json",
+      "sizeBytes": 334550,
+      "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2"
+    },
+    {
+      "fips": "48045",
+      "countyId": "briscoe",
+      "packageName": "briscoe-48045.addresses.jsonl.gz",
+      "sidecarName": "briscoe-48045.addresses.jsonl.gz.json",
+      "sizeBytes": 38147,
+      "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621"
+    },
+    {
+      "fips": "48047",
+      "countyId": "brooks",
+      "packageName": "brooks-48047.addresses.jsonl.gz",
+      "sidecarName": "brooks-48047.addresses.jsonl.gz.json",
+      "sizeBytes": 101543,
+      "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88"
+    },
+    {
+      "fips": "48049",
+      "countyId": "brown",
+      "packageName": "brown-48049.addresses.jsonl.gz",
+      "sidecarName": "brown-48049.addresses.jsonl.gz.json",
+      "sizeBytes": 831260,
+      "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3"
+    },
+    {
+      "fips": "48051",
+      "countyId": "burleson",
+      "packageName": "burleson-48051.addresses.jsonl.gz",
+      "sidecarName": "burleson-48051.addresses.jsonl.gz.json",
+      "sizeBytes": 596519,
+      "sha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb"
+    },
+    {
+      "fips": "48053",
+      "countyId": "burnet",
+      "packageName": "burnet-48053.addresses.jsonl.gz",
+      "sidecarName": "burnet-48053.addresses.jsonl.gz.json",
+      "sizeBytes": 1257248,
+      "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491"
+    },
+    {
+      "fips": "48055",
+      "countyId": "caldwell",
+      "packageName": "caldwell-48055.addresses.jsonl.gz",
+      "sidecarName": "caldwell-48055.addresses.jsonl.gz.json",
+      "sizeBytes": 850854,
+      "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126"
+    },
+    {
+      "fips": "48057",
+      "countyId": "calhoun",
+      "packageName": "calhoun-48057.addresses.jsonl.gz",
+      "sidecarName": "calhoun-48057.addresses.jsonl.gz.json",
+      "sizeBytes": 443130,
+      "sha256": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229"
+    },
+    {
+      "fips": "48059",
+      "countyId": "callahan",
+      "packageName": "callahan-48059.addresses.jsonl.gz",
+      "sidecarName": "callahan-48059.addresses.jsonl.gz.json",
+      "sizeBytes": 310500,
+      "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110"
+    },
+    {
+      "fips": "48061",
+      "countyId": "cameron",
+      "packageName": "cameron-48061.addresses.jsonl.gz",
+      "sidecarName": "cameron-48061.addresses.jsonl.gz.json",
+      "sizeBytes": 5373433,
+      "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b"
+    },
+    {
+      "fips": "48063",
+      "countyId": "camp",
+      "packageName": "camp-48063.addresses.jsonl.gz",
+      "sidecarName": "camp-48063.addresses.jsonl.gz.json",
+      "sizeBytes": 271291,
+      "sha256": "c3f3bd18cabc9d04110406f8a5a84bae6a5427e42b62d84641300c2b17114e9b"
+    },
+    {
+      "fips": "48065",
+      "countyId": "carson",
+      "packageName": "carson-48065.addresses.jsonl.gz",
+      "sidecarName": "carson-48065.addresses.jsonl.gz.json",
+      "sizeBytes": 118586,
+      "sha256": "984013aca1f622f3d35b729f92abbc9bc1cbed4faecdceddf919422b2c5eb9fb"
+    },
+    {
+      "fips": "48067",
+      "countyId": "cass",
+      "packageName": "cass-48067.addresses.jsonl.gz",
+      "sidecarName": "cass-48067.addresses.jsonl.gz.json",
+      "sizeBytes": 581032,
+      "sha256": "e61469e71ac6dc74dcf47e60418f4cc3991ee680e79d6394c4247bbbef526392"
+    },
+    {
+      "fips": "48069",
+      "countyId": "castro",
+      "packageName": "castro-48069.addresses.jsonl.gz",
+      "sidecarName": "castro-48069.addresses.jsonl.gz.json",
+      "sizeBytes": 119147,
+      "sha256": "a43b9e008b31bd9547a6b9bbbe7679184f3ca54a49ccbd5a663fbe7954fbe499"
+    },
+    {
+      "fips": "48071",
+      "countyId": "chambers",
+      "packageName": "chambers-48071.addresses.jsonl.gz",
+      "sidecarName": "chambers-48071.addresses.jsonl.gz.json",
+      "sizeBytes": 885892,
+      "sha256": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819"
+    },
+    {
+      "fips": "48073",
+      "countyId": "cherokee",
+      "packageName": "cherokee-48073.addresses.jsonl.gz",
+      "sidecarName": "cherokee-48073.addresses.jsonl.gz.json",
+      "sizeBytes": 1066374,
+      "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d"
+    },
+    {
+      "fips": "48075",
+      "countyId": "childress",
+      "packageName": "childress-48075.addresses.jsonl.gz",
+      "sidecarName": "childress-48075.addresses.jsonl.gz.json",
+      "sizeBytes": 99342,
+      "sha256": "2772834a3bcfac66769cdb523574573254dbaa09e85dfa5426d95f894e0fe80d"
+    },
+    {
+      "fips": "48077",
+      "countyId": "clay",
+      "packageName": "clay-48077.addresses.jsonl.gz",
+      "sidecarName": "clay-48077.addresses.jsonl.gz.json",
+      "sizeBytes": 214600,
+      "sha256": "22aa7426e8b9a9e53f622074f084d19b77ea41eb5f84fcd402573b561de5224b"
+    },
+    {
+      "fips": "48079",
+      "countyId": "cochran",
+      "packageName": "cochran-48079.addresses.jsonl.gz",
+      "sidecarName": "cochran-48079.addresses.jsonl.gz.json",
+      "sizeBytes": 48182,
+      "sha256": "ea0a0ccead83d3c19741765704c2fd6f0e2566b53bf4cc43593f653d3f608add"
+    },
+    {
+      "fips": "48081",
+      "countyId": "coke",
+      "packageName": "coke-48081.addresses.jsonl.gz",
+      "sidecarName": "coke-48081.addresses.jsonl.gz.json",
+      "sizeBytes": 103197,
+      "sha256": "9003dd61418ef336a53c9e2d24182b0a6ad322335648b0655498ed7cbb02d645"
+    },
+    {
+      "fips": "48083",
+      "countyId": "coleman",
+      "packageName": "coleman-48083.addresses.jsonl.gz",
+      "sidecarName": "coleman-48083.addresses.jsonl.gz.json",
+      "sizeBytes": 231311,
+      "sha256": "053afabb0188ff65ada991072aaf1383e10d5230947693b93165f3d7f9729d1d"
+    },
+    {
+      "fips": "48085",
+      "countyId": "collin",
+      "packageName": "collin-48085.addresses.jsonl.gz",
+      "sidecarName": "collin-48085.addresses.jsonl.gz.json",
+      "sizeBytes": 9981010,
+      "sha256": "1b9b9ea4116e505358abfb1274bb10d3702e753ebcc9dd3626b98a2d3aebb87d"
+    },
+    {
+      "fips": "48087",
+      "countyId": "collingsworth",
+      "packageName": "collingsworth-48087.addresses.jsonl.gz",
+      "sidecarName": "collingsworth-48087.addresses.jsonl.gz.json",
+      "sizeBytes": 59143,
+      "sha256": "4b2c8c3e41fb4dc9a61b38026d774bebd671a8fa491ac794f4784fb7b5769265"
+    },
+    {
+      "fips": "48089",
+      "countyId": "colorado",
+      "packageName": "colorado-48089.addresses.jsonl.gz",
+      "sidecarName": "colorado-48089.addresses.jsonl.gz.json",
+      "sizeBytes": 465779,
+      "sha256": "8f7ebc0e01e44b78137ddb7cc14e96e9d54a6666d3d40f4bc541b981bed9fdd2"
+    },
+    {
+      "fips": "48091",
+      "countyId": "comal",
+      "packageName": "comal-48091.addresses.jsonl.gz",
+      "sidecarName": "comal-48091.addresses.jsonl.gz.json",
+      "sizeBytes": 3360569,
+      "sha256": "f5cd65b8c56cb74e7137f861ab35ba5e140923d2e51e64e9a5b8f8d14b67e0cd"
+    },
+    {
+      "fips": "48093",
+      "countyId": "comanche",
+      "packageName": "comanche-48093.addresses.jsonl.gz",
+      "sidecarName": "comanche-48093.addresses.jsonl.gz.json",
+      "sizeBytes": 323511,
+      "sha256": "6093c84a7f48163df60827191c86ee258fedb9136dd5d104c6233600c2e99ede"
+    },
+    {
+      "fips": "48095",
+      "countyId": "concho",
+      "packageName": "concho-48095.addresses.jsonl.gz",
+      "sidecarName": "concho-48095.addresses.jsonl.gz.json",
+      "sizeBytes": 104851,
+      "sha256": "77d291f9e853f88d6753c5738b0801515b1e69a3a2f83303d12d20b167c327e2"
+    },
+    {
+      "fips": "48097",
+      "countyId": "cooke",
+      "packageName": "cooke-48097.addresses.jsonl.gz",
+      "sidecarName": "cooke-48097.addresses.jsonl.gz.json",
+      "sizeBytes": 745531,
+      "sha256": "dce3ee97d5f7be2a50e20c5b969bd25ec4c036ffab60b30713416ac75a4b6923"
+    },
+    {
+      "fips": "48099",
+      "countyId": "coryell",
+      "packageName": "coryell-48099.addresses.jsonl.gz",
+      "sidecarName": "coryell-48099.addresses.jsonl.gz.json",
+      "sizeBytes": 916235,
+      "sha256": "d41c610089480eecd4c92b4619e0b2cca831c5a10b531315854c8f5c0f3163b7"
+    },
+    {
+      "fips": "48101",
+      "countyId": "cottle",
+      "packageName": "cottle-48101.addresses.jsonl.gz",
+      "sidecarName": "cottle-48101.addresses.jsonl.gz.json",
+      "sizeBytes": 38539,
+      "sha256": "8d5b49f5de43af20ba67efa6b6bdbad31dc973e44458ec544e5ff2e31fd22f00"
+    },
+    {
+      "fips": "48103",
+      "countyId": "crane",
+      "packageName": "crane-48103.addresses.jsonl.gz",
+      "sidecarName": "crane-48103.addresses.jsonl.gz.json",
+      "sizeBytes": 48793,
+      "sha256": "e7cb5f03ff9367798e137ae858a34a2210d8cd7137b1e7469bb0b40c6fb68c13"
+    },
+    {
+      "fips": "48105",
+      "countyId": "crockett",
+      "packageName": "crockett-48105.addresses.jsonl.gz",
+      "sidecarName": "crockett-48105.addresses.jsonl.gz.json",
+      "sizeBytes": 100165,
+      "sha256": "e960b94bd070c90a5bc1a2cf38a522e7f25b89392bf5e1fa6d8e5e3d0205fc84"
+    },
+    {
+      "fips": "48107",
+      "countyId": "crosby",
+      "packageName": "crosby-48107.addresses.jsonl.gz",
+      "sidecarName": "crosby-48107.addresses.jsonl.gz.json",
+      "sizeBytes": 105139,
+      "sha256": "04779b8783f2f82a9587331d820275cff1e48d1397f1a76ab6ac622a4778f089"
+    },
+    {
+      "fips": "48109",
+      "countyId": "culberson",
+      "packageName": "culberson-48109.addresses.jsonl.gz",
+      "sidecarName": "culberson-48109.addresses.jsonl.gz.json",
+      "sizeBytes": 87166,
+      "sha256": "77ec6ea6b8fcc2c0008b516f9258a059768a14f013dd22fb27476defd83a66dc"
+    },
+    {
+      "fips": "48111",
+      "countyId": "dallam",
+      "packageName": "dallam-48111.addresses.jsonl.gz",
+      "sidecarName": "dallam-48111.addresses.jsonl.gz.json",
+      "sizeBytes": 128707,
+      "sha256": "3be8b587f2d76a952b58cf3fac6b1ea9b5eca2af4960edfbbf6bd037279f31b7"
+    },
+    {
+      "fips": "48113",
+      "countyId": "dallas",
+      "packageName": "dallas-48113.addresses.jsonl.gz",
+      "sidecarName": "dallas-48113.addresses.jsonl.gz.json",
+      "sizeBytes": 32972921,
+      "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953"
+    },
+    {
+      "fips": "48115",
+      "countyId": "dawson",
+      "packageName": "dawson-48115.addresses.jsonl.gz",
+      "sidecarName": "dawson-48115.addresses.jsonl.gz.json",
+      "sizeBytes": 155032,
+      "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03"
+    },
+    {
+      "fips": "48117",
+      "countyId": "deaf-smith",
+      "packageName": "deaf-smith-48117.addresses.jsonl.gz",
+      "sidecarName": "deaf-smith-48117.addresses.jsonl.gz.json",
+      "sizeBytes": 246957,
+      "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23"
+    },
+    {
+      "fips": "48119",
+      "countyId": "delta",
+      "packageName": "delta-48119.addresses.jsonl.gz",
+      "sidecarName": "delta-48119.addresses.jsonl.gz.json",
+      "sizeBytes": 122734,
+      "sha256": "6f0371b453eef74e4e84255692c5b4e1c71d639949f6be4af0504f9869f1322f"
+    },
+    {
+      "fips": "48121",
+      "countyId": "denton",
+      "packageName": "denton-48121.addresses.jsonl.gz",
+      "sidecarName": "denton-48121.addresses.jsonl.gz.json",
+      "sizeBytes": 11819588,
+      "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17"
+    },
+    {
+      "fips": "48123",
+      "countyId": "dewitt",
+      "packageName": "dewitt-48123.addresses.jsonl.gz",
+      "sidecarName": "dewitt-48123.addresses.jsonl.gz.json",
+      "sizeBytes": 406896,
+      "sha256": "d1e17e1ad29fbc24cc684c4dea3371bd9c77cdd834e7dfcaaaa7c73bed55a331"
+    },
+    {
+      "fips": "48125",
+      "countyId": "dickens",
+      "packageName": "dickens-48125.addresses.jsonl.gz",
+      "sidecarName": "dickens-48125.addresses.jsonl.gz.json",
+      "sizeBytes": 61403,
+      "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1"
+    },
+    {
+      "fips": "48127",
+      "countyId": "dimmit",
+      "packageName": "dimmit-48127.addresses.jsonl.gz",
+      "sidecarName": "dimmit-48127.addresses.jsonl.gz.json",
+      "sizeBytes": 208993,
+      "sha256": "2bf0d28205bd585b7f7f78b44b6a7f8a9c642f8424a04ab40833ab54681e90ec"
+    },
+    {
+      "fips": "48129",
+      "countyId": "donley",
+      "packageName": "donley-48129.addresses.jsonl.gz",
+      "sidecarName": "donley-48129.addresses.jsonl.gz.json",
+      "sizeBytes": 189573,
+      "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9"
+    },
+    {
+      "fips": "48131",
+      "countyId": "duval",
+      "packageName": "duval-48131.addresses.jsonl.gz",
+      "sidecarName": "duval-48131.addresses.jsonl.gz.json",
+      "sizeBytes": 99456,
+      "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2"
+    },
+    {
+      "fips": "48133",
+      "countyId": "eastland",
+      "packageName": "eastland-48133.addresses.jsonl.gz",
+      "sidecarName": "eastland-48133.addresses.jsonl.gz.json",
+      "sizeBytes": 401665,
+      "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2"
+    },
+    {
+      "fips": "48135",
+      "countyId": "ector",
+      "packageName": "ector-48135.addresses.jsonl.gz",
+      "sidecarName": "ector-48135.addresses.jsonl.gz.json",
+      "sizeBytes": 2044691,
+      "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9"
+    },
+    {
+      "fips": "48137",
+      "countyId": "edwards",
+      "packageName": "edwards-48137.addresses.jsonl.gz",
+      "sidecarName": "edwards-48137.addresses.jsonl.gz.json",
+      "sizeBytes": 136002,
+      "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba"
+    },
+    {
+      "fips": "48139",
+      "countyId": "ellis",
+      "packageName": "ellis-48139.addresses.jsonl.gz",
+      "sidecarName": "ellis-48139.addresses.jsonl.gz.json",
+      "sizeBytes": 2800026,
+      "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596"
+    },
+    {
+      "fips": "48141",
+      "countyId": "el-paso",
+      "packageName": "el-paso-48141.addresses.jsonl.gz",
+      "sidecarName": "el-paso-48141.addresses.jsonl.gz.json",
+      "sizeBytes": 7154400,
+      "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f"
+    },
+    {
+      "fips": "48143",
+      "countyId": "erath",
+      "packageName": "erath-48143.addresses.jsonl.gz",
+      "sidecarName": "erath-48143.addresses.jsonl.gz.json",
+      "sizeBytes": 664582,
+      "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c"
+    },
+    {
+      "fips": "48145",
+      "countyId": "falls",
+      "packageName": "falls-48145.addresses.jsonl.gz",
+      "sidecarName": "falls-48145.addresses.jsonl.gz.json",
+      "sizeBytes": 270714,
+      "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15"
+    },
+    {
+      "fips": "48147",
+      "countyId": "fannin",
+      "packageName": "fannin-48147.addresses.jsonl.gz",
+      "sidecarName": "fannin-48147.addresses.jsonl.gz.json",
+      "sizeBytes": 675117,
+      "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb"
+    },
+    {
+      "fips": "48149",
+      "countyId": "fayette",
+      "packageName": "fayette-48149.addresses.jsonl.gz",
+      "sidecarName": "fayette-48149.addresses.jsonl.gz.json",
+      "sizeBytes": 815379,
+      "sha256": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f"
+    },
+    {
+      "fips": "48151",
+      "countyId": "fisher",
+      "packageName": "fisher-48151.addresses.jsonl.gz",
+      "sidecarName": "fisher-48151.addresses.jsonl.gz.json",
+      "sizeBytes": 92189,
+      "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0"
+    },
+    {
+      "fips": "48153",
+      "countyId": "floyd",
+      "packageName": "floyd-48153.addresses.jsonl.gz",
+      "sidecarName": "floyd-48153.addresses.jsonl.gz.json",
+      "sizeBytes": 107816,
+      "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4"
+    },
+    {
+      "fips": "48155",
+      "countyId": "foard",
+      "packageName": "foard-48155.addresses.jsonl.gz",
+      "sidecarName": "foard-48155.addresses.jsonl.gz.json",
+      "sizeBytes": 33122,
+      "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef"
+    },
+    {
+      "fips": "48157",
+      "countyId": "fort-bend",
+      "packageName": "fort-bend-48157.addresses.jsonl.gz",
+      "sidecarName": "fort-bend-48157.addresses.jsonl.gz.json",
+      "sizeBytes": 12845351,
+      "sha256": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52"
+    },
+    {
+      "fips": "48159",
+      "countyId": "franklin",
+      "packageName": "franklin-48159.addresses.jsonl.gz",
+      "sidecarName": "franklin-48159.addresses.jsonl.gz.json",
+      "sizeBytes": 270786,
+      "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f"
+    },
+    {
+      "fips": "48161",
+      "countyId": "freestone",
+      "packageName": "freestone-48161.addresses.jsonl.gz",
+      "sidecarName": "freestone-48161.addresses.jsonl.gz.json",
+      "sizeBytes": 337120,
+      "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4"
+    },
+    {
+      "fips": "48163",
+      "countyId": "frio",
+      "packageName": "frio-48163.addresses.jsonl.gz",
+      "sidecarName": "frio-48163.addresses.jsonl.gz.json",
+      "sizeBytes": 201804,
+      "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c"
+    },
+    {
+      "fips": "48165",
+      "countyId": "gaines",
+      "packageName": "gaines-48165.addresses.jsonl.gz",
+      "sidecarName": "gaines-48165.addresses.jsonl.gz.json",
+      "sizeBytes": 284626,
+      "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592"
+    },
+    {
+      "fips": "48167",
+      "countyId": "galveston",
+      "packageName": "galveston-48167.addresses.jsonl.gz",
+      "sidecarName": "galveston-48167.addresses.jsonl.gz.json",
+      "sizeBytes": 4226191,
+      "sha256": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6"
+    },
+    {
+      "fips": "48169",
+      "countyId": "garza",
+      "packageName": "garza-48169.addresses.jsonl.gz",
+      "sidecarName": "garza-48169.addresses.jsonl.gz.json",
+      "sizeBytes": 101925,
+      "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb"
+    },
+    {
+      "fips": "48171",
+      "countyId": "gillespie",
+      "packageName": "gillespie-48171.addresses.jsonl.gz",
+      "sidecarName": "gillespie-48171.addresses.jsonl.gz.json",
+      "sizeBytes": 563671,
+      "sha256": "9bef39e940399dce1fa5b33840a1d9dcf87ce9965610e7dcfb23929a40598f8c"
+    },
+    {
+      "fips": "48173",
+      "countyId": "glasscock",
+      "packageName": "glasscock-48173.addresses.jsonl.gz",
+      "sidecarName": "glasscock-48173.addresses.jsonl.gz.json",
+      "sizeBytes": 39983,
+      "sha256": "1479892acb0931fa37658b0c309c81c3a51359971dae021777e30c194801eab6"
+    },
+    {
+      "fips": "48175",
+      "countyId": "goliad",
+      "packageName": "goliad-48175.addresses.jsonl.gz",
+      "sidecarName": "goliad-48175.addresses.jsonl.gz.json",
+      "sizeBytes": 176244,
+      "sha256": "cf45d4f6ecb936a975f4e795825bf0f9b14c0f690d283d2dc05c50aec3813a4b"
+    },
+    {
+      "fips": "48177",
+      "countyId": "gonzales",
+      "packageName": "gonzales-48177.addresses.jsonl.gz",
+      "sidecarName": "gonzales-48177.addresses.jsonl.gz.json",
+      "sizeBytes": 411398,
+      "sha256": "b8338310eb064e7b3d991dfb5f649513c95eb10c636810391c12771c34e5d216"
+    },
+    {
+      "fips": "48179",
+      "countyId": "gray",
+      "packageName": "gray-48179.addresses.jsonl.gz",
+      "sidecarName": "gray-48179.addresses.jsonl.gz.json",
+      "sizeBytes": 363629,
+      "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33"
+    },
+    {
+      "fips": "48181",
+      "countyId": "grayson",
+      "packageName": "grayson-48181.addresses.jsonl.gz",
+      "sidecarName": "grayson-48181.addresses.jsonl.gz.json",
+      "sizeBytes": 2560440,
+      "sha256": "c775d5868b5b420fa34d53595cfd893efaf1bfa0f042de39532789ac755ffe5b"
+    },
+    {
+      "fips": "48183",
+      "countyId": "gregg",
+      "packageName": "gregg-48183.addresses.jsonl.gz",
+      "sidecarName": "gregg-48183.addresses.jsonl.gz.json",
+      "sizeBytes": 760830,
+      "sha256": "c859177b90e8839ba995878f4a95a20bf53e54ddc3d74f6de911da0747ecc3ff"
+    },
+    {
+      "fips": "48185",
+      "countyId": "grimes",
+      "packageName": "grimes-48185.addresses.jsonl.gz",
+      "sidecarName": "grimes-48185.addresses.jsonl.gz.json",
+      "sizeBytes": 734091,
+      "sha256": "db2fee740aa83848b369f2bb1b228457a64547c3949948555b36aba56a4944ff"
+    },
+    {
+      "fips": "48187",
+      "countyId": "guadalupe",
+      "packageName": "guadalupe-48187.addresses.jsonl.gz",
+      "sidecarName": "guadalupe-48187.addresses.jsonl.gz.json",
+      "sizeBytes": 3015561,
+      "sha256": "c71ab72303688c36d0add6673734818a658ea18b538673b05e02e9e9c8d2786e"
+    },
+    {
+      "fips": "48189",
+      "countyId": "hale",
+      "packageName": "hale-48189.addresses.jsonl.gz",
+      "sidecarName": "hale-48189.addresses.jsonl.gz.json",
+      "sizeBytes": 419289,
+      "sha256": "5e7e1c7af1e3dc3eb2ac6e69a9782733e818b6a322a06f19d89d35a0a669be3f"
+    },
+    {
+      "fips": "48191",
+      "countyId": "hall",
+      "packageName": "hall-48191.addresses.jsonl.gz",
+      "sidecarName": "hall-48191.addresses.jsonl.gz.json",
+      "sizeBytes": 65154,
+      "sha256": "f98eff64e7f38c07c568778ddc6a2ff3846d66281ecb47162ef44168b09b2381"
+    },
+    {
+      "fips": "48193",
+      "countyId": "hamilton",
+      "packageName": "hamilton-48193.addresses.jsonl.gz",
+      "sidecarName": "hamilton-48193.addresses.jsonl.gz.json",
+      "sizeBytes": 141949,
+      "sha256": "7e1b7c1b0eecf52e94a2ad550e587889177f00379d136312a0f7734a7ba0312b"
+    },
+    {
+      "fips": "48195",
+      "countyId": "hansford",
+      "packageName": "hansford-48195.addresses.jsonl.gz",
+      "sidecarName": "hansford-48195.addresses.jsonl.gz.json",
+      "sizeBytes": 92637,
+      "sha256": "84e8e3e9119089263a089b61ed7a91085a39070a5dd2459163d073029fb777af"
+    },
+    {
+      "fips": "48197",
+      "countyId": "hardeman",
+      "packageName": "hardeman-48197.addresses.jsonl.gz",
+      "sidecarName": "hardeman-48197.addresses.jsonl.gz.json",
+      "sizeBytes": 78259,
+      "sha256": "aef9178830532bb77db5ccc2e01dca879a1fc9101c42e63bfbcc6e72f70f1dbf"
+    },
+    {
+      "fips": "48199",
+      "countyId": "hardin",
+      "packageName": "hardin-48199.addresses.jsonl.gz",
+      "sidecarName": "hardin-48199.addresses.jsonl.gz.json",
+      "sizeBytes": 1011612,
+      "sha256": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df"
+    },
+    {
+      "fips": "48201",
+      "countyId": "harris",
+      "packageName": "harris-48201.addresses.jsonl.gz",
+      "sidecarName": "harris-48201.addresses.jsonl.gz.json",
+      "sizeBytes": 57731771,
+      "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b"
+    },
+    {
+      "fips": "48203",
+      "countyId": "harrison",
+      "packageName": "harrison-48203.addresses.jsonl.gz",
+      "sidecarName": "harrison-48203.addresses.jsonl.gz.json",
+      "sizeBytes": 1069866,
+      "sha256": "e8d9c2aa5baa19993fd7181cad89bf1851915fbd0729313e13e3c1ecf650203e"
+    },
+    {
+      "fips": "48205",
+      "countyId": "hartley",
+      "packageName": "hartley-48205.addresses.jsonl.gz",
+      "sidecarName": "hartley-48205.addresses.jsonl.gz.json",
+      "sizeBytes": 90352,
+      "sha256": "367e9fb77b4bc4f70aed2a5f0bdb90df3cd27889b5c0a01385e72e2cfb543592"
+    },
+    {
+      "fips": "48207",
+      "countyId": "haskell",
+      "packageName": "haskell-48207.addresses.jsonl.gz",
+      "sidecarName": "haskell-48207.addresses.jsonl.gz.json",
+      "sizeBytes": 138065,
+      "sha256": "47e988eb2063bb543532c1b152a971eb5dfc13067b60b94f0e98d2ed1d9b214e"
+    },
+    {
+      "fips": "48209",
+      "countyId": "hays",
+      "packageName": "hays-48209.addresses.jsonl.gz",
+      "sidecarName": "hays-48209.addresses.jsonl.gz.json",
+      "sizeBytes": 3574767,
+      "sha256": "df23069af137c08aa2e1db06cd892d6ee70b1712e17530bd24501ec1698d2c57"
+    },
+    {
+      "fips": "48211",
+      "countyId": "hemphill",
+      "packageName": "hemphill-48211.addresses.jsonl.gz",
+      "sidecarName": "hemphill-48211.addresses.jsonl.gz.json",
+      "sizeBytes": 65577,
+      "sha256": "bf673e84ea159d3710553cb464a9c979718ec0e66cc27e178f88b22f96103e9a"
+    },
+    {
+      "fips": "48213",
+      "countyId": "henderson",
+      "packageName": "henderson-48213.addresses.jsonl.gz",
+      "sidecarName": "henderson-48213.addresses.jsonl.gz.json",
+      "sizeBytes": 1722286,
+      "sha256": "e9bf619978f5512dc5f5c4e8ee5e050801f99aab241f8ebdfe99a9c4b11b765b"
+    },
+    {
+      "fips": "48215",
+      "countyId": "hidalgo",
+      "packageName": "hidalgo-48215.addresses.jsonl.gz",
+      "sidecarName": "hidalgo-48215.addresses.jsonl.gz.json",
+      "sizeBytes": 10760923,
+      "sha256": "22216223b920693eda56b0a53098aedf2cf5ce365458b9afb20b7adef009b7ed"
+    },
+    {
+      "fips": "48217",
+      "countyId": "hill",
+      "packageName": "hill-48217.addresses.jsonl.gz",
+      "sidecarName": "hill-48217.addresses.jsonl.gz.json",
+      "sizeBytes": 615230,
+      "sha256": "af888bfceb269fe6bd2fd281b5d8bca4f38724f700c80ad97f3b538e2d0ffa1d"
+    },
+    {
+      "fips": "48219",
+      "countyId": "hockley",
+      "packageName": "hockley-48219.addresses.jsonl.gz",
+      "sidecarName": "hockley-48219.addresses.jsonl.gz.json",
+      "sizeBytes": 362312,
+      "sha256": "a0d260678ad5abbd2732eb6e4036f4aa06f15c44d17ff8140bc3f84b7bea8171"
+    },
+    {
+      "fips": "48221",
+      "countyId": "hood",
+      "packageName": "hood-48221.addresses.jsonl.gz",
+      "sidecarName": "hood-48221.addresses.jsonl.gz.json",
+      "sizeBytes": 1205211,
+      "sha256": "696af3bde0fa863fec8057aa3213c994c4396172b1f4c6f51252bf19f6d46afa"
+    },
+    {
+      "fips": "48223",
+      "countyId": "hopkins",
+      "packageName": "hopkins-48223.addresses.jsonl.gz",
+      "sidecarName": "hopkins-48223.addresses.jsonl.gz.json",
+      "sizeBytes": 641263,
+      "sha256": "4cc146b1e839ff1cbe51ddb27f276bb3577d493b3680a5dec96b99414bf26196"
+    },
+    {
+      "fips": "48225",
+      "countyId": "houston",
+      "packageName": "houston-48225.addresses.jsonl.gz",
+      "sidecarName": "houston-48225.addresses.jsonl.gz.json",
+      "sizeBytes": 530218,
+      "sha256": "4481a984fc38a5490eed2c5dcf8658ab3d96532b3504b3b69a9bcb4daf52ce35"
+    },
+    {
+      "fips": "48227",
+      "countyId": "howard",
+      "packageName": "howard-48227.addresses.jsonl.gz",
+      "sidecarName": "howard-48227.addresses.jsonl.gz.json",
+      "sizeBytes": 454004,
+      "sha256": "268e0baeda497c8f2c48f0a09f3d9b75a83df98c3cee5e0cd230afe2711932a2"
+    },
+    {
+      "fips": "48229",
+      "countyId": "hudspeth",
+      "packageName": "hudspeth-48229.addresses.jsonl.gz",
+      "sidecarName": "hudspeth-48229.addresses.jsonl.gz.json",
+      "sizeBytes": 166512,
+      "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe"
+    },
+    {
+      "fips": "48231",
+      "countyId": "hunt",
+      "packageName": "hunt-48231.addresses.jsonl.gz",
+      "sidecarName": "hunt-48231.addresses.jsonl.gz.json",
+      "sizeBytes": 1959694,
+      "sha256": "802f388c65cdbfd384065fd265a50d0fa71a78b9741fd41a5bbf4c7598aa9f50"
+    },
+    {
+      "fips": "48233",
+      "countyId": "hutchinson",
+      "packageName": "hutchinson-48233.addresses.jsonl.gz",
+      "sidecarName": "hutchinson-48233.addresses.jsonl.gz.json",
+      "sizeBytes": 426276,
+      "sha256": "d59051429512e5ed2fec96b2465a059745a51f4ccc12133ce38fa711c049489f"
+    },
+    {
+      "fips": "48235",
+      "countyId": "irion",
+      "packageName": "irion-48235.addresses.jsonl.gz",
+      "sidecarName": "irion-48235.addresses.jsonl.gz.json",
+      "sizeBytes": 53316,
+      "sha256": "a07bd8ab5145455b8deda60fddf00f4f094e35cb48ae48f22e95a8300769c50d"
+    },
+    {
+      "fips": "48237",
+      "countyId": "jack",
+      "packageName": "jack-48237.addresses.jsonl.gz",
+      "sidecarName": "jack-48237.addresses.jsonl.gz.json",
+      "sizeBytes": 193457,
+      "sha256": "1c19eb1792b97d79faa9f5fe13a5391dc78529f983a894a38bd1de2f62b0372a"
+    },
+    {
+      "fips": "48239",
+      "countyId": "jackson",
+      "packageName": "jackson-48239.addresses.jsonl.gz",
+      "sidecarName": "jackson-48239.addresses.jsonl.gz.json",
+      "sizeBytes": 321123,
+      "sha256": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c"
+    },
+    {
+      "fips": "48241",
+      "countyId": "jasper",
+      "packageName": "jasper-48241.addresses.jsonl.gz",
+      "sidecarName": "jasper-48241.addresses.jsonl.gz.json",
+      "sizeBytes": 789761,
+      "sha256": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3"
+    },
+    {
+      "fips": "48243",
+      "countyId": "jeff-davis",
+      "packageName": "jeff-davis-48243.addresses.jsonl.gz",
+      "sidecarName": "jeff-davis-48243.addresses.jsonl.gz.json",
+      "sizeBytes": 84171,
+      "sha256": "72b99b7b4da2b891eb986e59f0d25c435f871a285be15b04a2c6cada1822da90"
+    },
+    {
+      "fips": "48245",
+      "countyId": "jefferson",
+      "packageName": "jefferson-48245.addresses.jsonl.gz",
+      "sidecarName": "jefferson-48245.addresses.jsonl.gz.json",
+      "sizeBytes": 2847538,
+      "sha256": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e"
+    },
+    {
+      "fips": "48247",
+      "countyId": "jim-hogg",
+      "packageName": "jim-hogg-48247.addresses.jsonl.gz",
+      "sidecarName": "jim-hogg-48247.addresses.jsonl.gz.json",
+      "sizeBytes": 93148,
+      "sha256": "447d06f7811824c2d3140aea92c1f551b67ac1714167c942074cff90f634a584"
+    },
+    {
+      "fips": "48249",
+      "countyId": "jim-wells",
+      "packageName": "jim-wells-48249.addresses.jsonl.gz",
+      "sidecarName": "jim-wells-48249.addresses.jsonl.gz.json",
+      "sizeBytes": 540185,
+      "sha256": "150250b599bc6d621f3a7505b6ae63cc3ac5ca49e75c5ccfe6b1cf6d1275fa9a"
+    },
+    {
+      "fips": "48251",
+      "countyId": "johnson",
+      "packageName": "johnson-48251.addresses.jsonl.gz",
+      "sidecarName": "johnson-48251.addresses.jsonl.gz.json",
+      "sizeBytes": 2481089,
+      "sha256": "f2d1a68f39b991f5bdd6748a43d3a4f51ad0dfce59a3078a568fdc87d266c20f"
+    },
+    {
+      "fips": "48253",
+      "countyId": "jones",
+      "packageName": "jones-48253.addresses.jsonl.gz",
+      "sidecarName": "jones-48253.addresses.jsonl.gz.json",
+      "sizeBytes": 308268,
+      "sha256": "96557820286aad411c2d8dc4829d1a84cc96d30cfb43205764b5f2c814f21c7b"
+    },
+    {
+      "fips": "48255",
+      "countyId": "karnes",
+      "packageName": "karnes-48255.addresses.jsonl.gz",
+      "sidecarName": "karnes-48255.addresses.jsonl.gz.json",
+      "sizeBytes": 273885,
+      "sha256": "83f60626c3a4317c8235441d105c6caea0e747a49dc84a55e4c595aa44c6e131"
+    },
+    {
+      "fips": "48257",
+      "countyId": "kaufman",
+      "packageName": "kaufman-48257.addresses.jsonl.gz",
+      "sidecarName": "kaufman-48257.addresses.jsonl.gz.json",
+      "sizeBytes": 2751662,
+      "sha256": "c737f45232b1d9bde1e859a61b3c13c6f67168eda274b63201f737bc27d46aa6"
+    },
+    {
+      "fips": "48259",
+      "countyId": "kendall",
+      "packageName": "kendall-48259.addresses.jsonl.gz",
+      "sidecarName": "kendall-48259.addresses.jsonl.gz.json",
+      "sizeBytes": 663438,
+      "sha256": "d8dce017a48d4b9af29116780e070485243e944fc7d5718128e9541b9209cf48"
+    },
+    {
+      "fips": "48261",
+      "countyId": "kenedy",
+      "packageName": "kenedy-48261.addresses.jsonl.gz",
+      "sidecarName": "kenedy-48261.addresses.jsonl.gz.json",
+      "sizeBytes": 18302,
+      "sha256": "8804b6537405c0a2f8841a723fcbb6f72951971261970f099b7bef04ae877824"
+    },
+    {
+      "fips": "48263",
+      "countyId": "kent",
+      "packageName": "kent-48263.addresses.jsonl.gz",
+      "sidecarName": "kent-48263.addresses.jsonl.gz.json",
+      "sizeBytes": 28638,
+      "sha256": "8bf80745c1fd525c3557a1900dc647fe9ff02fccdd944ca9b0d1f177888ad168"
+    },
+    {
+      "fips": "48265",
+      "countyId": "kerr",
+      "packageName": "kerr-48265.addresses.jsonl.gz",
+      "sidecarName": "kerr-48265.addresses.jsonl.gz.json",
+      "sizeBytes": 1368466,
+      "sha256": "3ec6e7cc2897084fb9a98d3b6b77261050c3157fef2752b340b13ebf7979746c"
+    },
+    {
+      "fips": "48267",
+      "countyId": "kimble",
+      "packageName": "kimble-48267.addresses.jsonl.gz",
+      "sidecarName": "kimble-48267.addresses.jsonl.gz.json",
+      "sizeBytes": 145998,
+      "sha256": "6537e8453c31d105c5a332cca109209eacc2dbc82535350a47f8860c260f7892"
+    },
+    {
+      "fips": "48269",
+      "countyId": "king",
+      "packageName": "king-48269.addresses.jsonl.gz",
+      "sidecarName": "king-48269.addresses.jsonl.gz.json",
+      "sizeBytes": 10467,
+      "sha256": "422c1a959a3c2fd81c791ebb1eeb56ab4346881395ec2ee5336c513755b69a85"
+    },
+    {
+      "fips": "48271",
+      "countyId": "kinney",
+      "packageName": "kinney-48271.addresses.jsonl.gz",
+      "sidecarName": "kinney-48271.addresses.jsonl.gz.json",
+      "sizeBytes": 92138,
+      "sha256": "c69c1d51596ba42155bb40efbcb36a64a52be2aecf1ff4fcab027214c4d3e7b8"
+    },
+    {
+      "fips": "48273",
+      "countyId": "kleberg",
+      "packageName": "kleberg-48273.addresses.jsonl.gz",
+      "sidecarName": "kleberg-48273.addresses.jsonl.gz.json",
+      "sizeBytes": 327913,
+      "sha256": "292ca5eaa617d654920d2afd50e38b011bf4bb6122ebeea106ba8e7b2dbe7107"
+    },
+    {
+      "fips": "48275",
+      "countyId": "knox",
+      "packageName": "knox-48275.addresses.jsonl.gz",
+      "sidecarName": "knox-48275.addresses.jsonl.gz.json",
+      "sizeBytes": 84184,
+      "sha256": "025593cd42a3fdc3b5a89246b5cad44013f85b4c7e460c40de67fbdbf7fda839"
+    },
+    {
+      "fips": "48277",
+      "countyId": "lamar",
+      "packageName": "lamar-48277.addresses.jsonl.gz",
+      "sidecarName": "lamar-48277.addresses.jsonl.gz.json",
+      "sizeBytes": 975524,
+      "sha256": "9cf98fae55e83590986cc83cd3ec8b99f4c22dc08d8e3ee952eff2e22dfee5b2"
+    },
+    {
+      "fips": "48279",
+      "countyId": "lamb",
+      "packageName": "lamb-48279.addresses.jsonl.gz",
+      "sidecarName": "lamb-48279.addresses.jsonl.gz.json",
+      "sizeBytes": 200784,
+      "sha256": "03cbe849a1711eab5c1550861b85e44e5e8a997334831e9992689d7aa3609e22"
+    },
+    {
+      "fips": "48281",
+      "countyId": "lampasas",
+      "packageName": "lampasas-48281.addresses.jsonl.gz",
+      "sidecarName": "lampasas-48281.addresses.jsonl.gz.json",
+      "sizeBytes": 347475,
+      "sha256": "ea2062b469b9b8271e7abdcfa3046b8fa218cb46ce7c68e692c78735c44edb29"
+    },
+    {
+      "fips": "48283",
+      "countyId": "la-salle",
+      "packageName": "la-salle-48283.addresses.jsonl.gz",
+      "sidecarName": "la-salle-48283.addresses.jsonl.gz.json",
+      "sizeBytes": 138933,
+      "sha256": "6443183bb0b4c1794a91e8cb4f10e0a65c2f1fe94497742e07c9e4f23978f258"
+    },
+    {
+      "fips": "48285",
+      "countyId": "lavaca",
+      "packageName": "lavaca-48285.addresses.jsonl.gz",
+      "sidecarName": "lavaca-48285.addresses.jsonl.gz.json",
+      "sizeBytes": 436394,
+      "sha256": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b"
+    },
+    {
+      "fips": "48287",
+      "countyId": "lee",
+      "packageName": "lee-48287.addresses.jsonl.gz",
+      "sidecarName": "lee-48287.addresses.jsonl.gz.json",
+      "sizeBytes": 370322,
+      "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53"
+    },
+    {
+      "fips": "48289",
+      "countyId": "leon",
+      "packageName": "leon-48289.addresses.jsonl.gz",
+      "sidecarName": "leon-48289.addresses.jsonl.gz.json",
+      "sizeBytes": 613908,
+      "sha256": "ed2515773d14818354a28f51b38063cb653a8c089516e0e9e262c22a8dcd047a"
+    },
+    {
+      "fips": "48291",
+      "countyId": "liberty",
+      "packageName": "liberty-48291.addresses.jsonl.gz",
+      "sidecarName": "liberty-48291.addresses.jsonl.gz.json",
+      "sizeBytes": 2555016,
+      "sha256": "792f4f3f76524ef6652fbabf7c1c17d76eb1dfd9d83a71c460c1e038c2841b93"
+    },
+    {
+      "fips": "48293",
+      "countyId": "limestone",
+      "packageName": "limestone-48293.addresses.jsonl.gz",
+      "sidecarName": "limestone-48293.addresses.jsonl.gz.json",
+      "sizeBytes": 302446,
+      "sha256": "0c5718f4c1d6c425c1f1bde919316f03132f2d6de3a999596db9be0d5ceb191a"
+    },
+    {
+      "fips": "48295",
+      "countyId": "lipscomb",
+      "packageName": "lipscomb-48295.addresses.jsonl.gz",
+      "sidecarName": "lipscomb-48295.addresses.jsonl.gz.json",
+      "sizeBytes": 45911,
+      "sha256": "d347a9651dde12f35ee37f64f0918a85d731f2382af783250f44c29e8f092ae3"
+    },
+    {
+      "fips": "48297",
+      "countyId": "live-oak",
+      "packageName": "live-oak-48297.addresses.jsonl.gz",
+      "sidecarName": "live-oak-48297.addresses.jsonl.gz.json",
+      "sizeBytes": 132323,
+      "sha256": "2f1eae8281d7b2328c168cc9d9a8b88b62fe8ff04c4f268173bd33a2d0a9bc3e"
+    },
+    {
+      "fips": "48299",
+      "countyId": "llano",
+      "packageName": "llano-48299.addresses.jsonl.gz",
+      "sidecarName": "llano-48299.addresses.jsonl.gz.json",
+      "sizeBytes": 741243,
+      "sha256": "b865d368ec8832e3f9514388eb3fa83b91a35a5cd3983a8f61dae2149afd2f8e"
+    },
+    {
+      "fips": "48301",
+      "countyId": "loving",
+      "packageName": "loving-48301.addresses.jsonl.gz",
+      "sidecarName": "loving-48301.addresses.jsonl.gz.json",
+      "sizeBytes": 16861,
+      "sha256": "125ca269e57b8a855c9656b5d3cc5ed990a87ad46e105180808d1e259bb316de"
+    },
+    {
+      "fips": "48303",
+      "countyId": "lubbock",
+      "packageName": "lubbock-48303.addresses.jsonl.gz",
+      "sidecarName": "lubbock-48303.addresses.jsonl.gz.json",
+      "sizeBytes": 4986893,
+      "sha256": "60c43c58661f474849ea7ff0dd47326ecfdc9491cc2995e572235dfdef872efc"
+    },
+    {
+      "fips": "48305",
+      "countyId": "lynn",
+      "packageName": "lynn-48305.addresses.jsonl.gz",
+      "sidecarName": "lynn-48305.addresses.jsonl.gz.json",
+      "sizeBytes": 122163,
+      "sha256": "4372755098b3e3a2bd591ef0711436c318e32d73a3565fa0eff6d85362fdb34c"
+    },
+    {
+      "fips": "48307",
+      "countyId": "mcculloch",
+      "packageName": "mcculloch-48307.addresses.jsonl.gz",
+      "sidecarName": "mcculloch-48307.addresses.jsonl.gz.json",
+      "sizeBytes": 190964,
+      "sha256": "29df3edb5dda0b6e6dc6b309b93d0446f345d21f088768b23391c47f900ae48e"
+    },
+    {
+      "fips": "48309",
+      "countyId": "mclennan",
+      "packageName": "mclennan-48309.addresses.jsonl.gz",
+      "sidecarName": "mclennan-48309.addresses.jsonl.gz.json",
+      "sizeBytes": 3390624,
+      "sha256": "c917299a66fcb52d63829636310ea4a0e33ec56cc7a1f479cf1fa3b5aea1130a"
+    },
+    {
+      "fips": "48311",
+      "countyId": "mcmullen",
+      "packageName": "mcmullen-48311.addresses.jsonl.gz",
+      "sidecarName": "mcmullen-48311.addresses.jsonl.gz.json",
+      "sizeBytes": 57657,
+      "sha256": "42296a9915722291cfe59cd59f01b30e886b273c9f9fa16cd7eca831d19a9efe"
+    },
+    {
+      "fips": "48313",
+      "countyId": "madison",
+      "packageName": "madison-48313.addresses.jsonl.gz",
+      "sidecarName": "madison-48313.addresses.jsonl.gz.json",
+      "sizeBytes": 348761,
+      "sha256": "622f378e0b08ce617c65ef96bbf2641064dba262c8f93db8ad77a5ffe0bc1345"
+    },
+    {
+      "fips": "48315",
+      "countyId": "marion",
+      "packageName": "marion-48315.addresses.jsonl.gz",
+      "sidecarName": "marion-48315.addresses.jsonl.gz.json",
+      "sizeBytes": 288214,
+      "sha256": "9d017294d10801d50627a53c8ca5afde89f4e109c2cdc86ac85ad979d6d27c0a"
+    },
+    {
+      "fips": "48317",
+      "countyId": "martin",
+      "packageName": "martin-48317.addresses.jsonl.gz",
+      "sidecarName": "martin-48317.addresses.jsonl.gz.json",
+      "sizeBytes": 123542,
+      "sha256": "2074e7aded7149a9a1b3cfba034bd05883002d9f3025625da33fcddcb0fb6b42"
+    },
+    {
+      "fips": "48319",
+      "countyId": "mason",
+      "packageName": "mason-48319.addresses.jsonl.gz",
+      "sidecarName": "mason-48319.addresses.jsonl.gz.json",
+      "sizeBytes": 139845,
+      "sha256": "7b0cad4a85fb3cce3c3599533e44463f1713b195c227b070e273ffa62f143f18"
+    },
+    {
+      "fips": "48321",
+      "countyId": "matagorda",
+      "packageName": "matagorda-48321.addresses.jsonl.gz",
+      "sidecarName": "matagorda-48321.addresses.jsonl.gz.json",
+      "sizeBytes": 899427,
+      "sha256": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6"
+    },
+    {
+      "fips": "48323",
+      "countyId": "maverick",
+      "packageName": "maverick-48323.addresses.jsonl.gz",
+      "sidecarName": "maverick-48323.addresses.jsonl.gz.json",
+      "sizeBytes": 774570,
+      "sha256": "b7c77df9eb00753f04bd3da9805b27d681799a7244dcd1a95b25e82acbad4bbe"
+    },
+    {
+      "fips": "48325",
+      "countyId": "medina",
+      "packageName": "medina-48325.addresses.jsonl.gz",
+      "sidecarName": "medina-48325.addresses.jsonl.gz.json",
+      "sizeBytes": 1001796,
+      "sha256": "0a7bf30af420f2996173939962106b2faa273e72d7d9fbcefc46e2f503621d8f"
+    },
+    {
+      "fips": "48327",
+      "countyId": "menard",
+      "packageName": "menard-48327.addresses.jsonl.gz",
+      "sidecarName": "menard-48327.addresses.jsonl.gz.json",
+      "sizeBytes": 72721,
+      "sha256": "a14bce324779a0dac657bc07fa7ca108c83d03467146ee5a81ac85d19566c282"
+    },
+    {
+      "fips": "48329",
+      "countyId": "midland",
+      "packageName": "midland-48329.addresses.jsonl.gz",
+      "sidecarName": "midland-48329.addresses.jsonl.gz.json",
+      "sizeBytes": 2879318,
+      "sha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600"
+    },
+    {
+      "fips": "48331",
+      "countyId": "milam",
+      "packageName": "milam-48331.addresses.jsonl.gz",
+      "sidecarName": "milam-48331.addresses.jsonl.gz.json",
+      "sizeBytes": 375753,
+      "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0"
+    },
+    {
+      "fips": "48333",
+      "countyId": "mills",
+      "packageName": "mills-48333.addresses.jsonl.gz",
+      "sidecarName": "mills-48333.addresses.jsonl.gz.json",
+      "sizeBytes": 93554,
+      "sha256": "4c131cde012df1e5e22586ed45ac58967af364b2d0d3ad9d90da7b004447cb85"
+    },
+    {
+      "fips": "48335",
+      "countyId": "mitchell",
+      "packageName": "mitchell-48335.addresses.jsonl.gz",
+      "sidecarName": "mitchell-48335.addresses.jsonl.gz.json",
+      "sizeBytes": 178259,
+      "sha256": "1af31e1dc277fd8458163cf0529124c58facfa577c2bf65c6e3c0d79cea4377e"
+    },
+    {
+      "fips": "48337",
+      "countyId": "montague",
+      "packageName": "montague-48337.addresses.jsonl.gz",
+      "sidecarName": "montague-48337.addresses.jsonl.gz.json",
+      "sizeBytes": 454875,
+      "sha256": "7f68ae7e8e5423e09f712ca9ee47a2157b740fea5997ce120f872b3acb99503a"
+    },
+    {
+      "fips": "48339",
+      "countyId": "montgomery",
+      "packageName": "montgomery-48339.addresses.jsonl.gz",
+      "sidecarName": "montgomery-48339.addresses.jsonl.gz.json",
+      "sizeBytes": 10057950,
+      "sha256": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168"
+    },
+    {
+      "fips": "48341",
+      "countyId": "moore",
+      "packageName": "moore-48341.addresses.jsonl.gz",
+      "sidecarName": "moore-48341.addresses.jsonl.gz.json",
+      "sizeBytes": 289254,
+      "sha256": "ca9ae74854e12bd381539faca97956428026c06550514b228f850fd9ca49241c"
+    },
+    {
+      "fips": "48343",
+      "countyId": "morris",
+      "packageName": "morris-48343.addresses.jsonl.gz",
+      "sidecarName": "morris-48343.addresses.jsonl.gz.json",
+      "sizeBytes": 242673,
+      "sha256": "912cb4c4de21fbb06b4ad72403410a6f6575e7a642d63230ab9a050be1041d0c"
+    },
+    {
+      "fips": "48345",
+      "countyId": "motley",
+      "packageName": "motley-48345.addresses.jsonl.gz",
+      "sidecarName": "motley-48345.addresses.jsonl.gz.json",
+      "sizeBytes": 38453,
+      "sha256": "7715b0b9f21025760bc2c7ed16c78c3062b88bb123750c4f0c15efcdf3f0d189"
+    },
+    {
+      "fips": "48347",
+      "countyId": "nacogdoches",
+      "packageName": "nacogdoches-48347.addresses.jsonl.gz",
+      "sidecarName": "nacogdoches-48347.addresses.jsonl.gz.json",
+      "sizeBytes": 1248185,
+      "sha256": "ce2564d3e5342f4fdb4cec2a19cda512ac6b1c0ef5305435614aff461322e86b"
+    },
+    {
+      "fips": "48349",
+      "countyId": "navarro",
+      "packageName": "navarro-48349.addresses.jsonl.gz",
+      "sidecarName": "navarro-48349.addresses.jsonl.gz.json",
+      "sizeBytes": 856474,
+      "sha256": "25be1fa1c50f123c2058f6e1c5bcc695b52228e5858b837463933d32409d73ef"
+    },
+    {
+      "fips": "48351",
+      "countyId": "newton",
+      "packageName": "newton-48351.addresses.jsonl.gz",
+      "sidecarName": "newton-48351.addresses.jsonl.gz.json",
+      "sizeBytes": 349580,
+      "sha256": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f"
+    },
+    {
+      "fips": "48353",
+      "countyId": "nolan",
+      "packageName": "nolan-48353.addresses.jsonl.gz",
+      "sidecarName": "nolan-48353.addresses.jsonl.gz.json",
+      "sizeBytes": 277927,
+      "sha256": "8eb3ab8c6b1255de66731d0348e9684347e13c7f74c68e33ef61cd5c581c2e6a"
+    },
+    {
+      "fips": "48355",
+      "countyId": "nueces",
+      "packageName": "nueces-48355.addresses.jsonl.gz",
+      "sidecarName": "nueces-48355.addresses.jsonl.gz.json",
+      "sizeBytes": 260448,
+      "sha256": "4e10f0644f741388c762d0bddbe1f07314d15d91f35e16ce2b45a0e87985857d"
+    },
+    {
+      "fips": "48357",
+      "countyId": "ochiltree",
+      "packageName": "ochiltree-48357.addresses.jsonl.gz",
+      "sidecarName": "ochiltree-48357.addresses.jsonl.gz.json",
+      "sizeBytes": 173093,
+      "sha256": "d68ac8e8b990f28dcd17a05bfad9de79d188557e7d4864b645f6a5c92f44cff7"
+    },
+    {
+      "fips": "48359",
+      "countyId": "oldham",
+      "packageName": "oldham-48359.addresses.jsonl.gz",
+      "sidecarName": "oldham-48359.addresses.jsonl.gz.json",
+      "sizeBytes": 40245,
+      "sha256": "83a31fba54e5c688aba5bc3ccdab17ddfd62cd407fdd09283e02650805e56ff7"
+    },
+    {
+      "fips": "48361",
+      "countyId": "orange",
+      "packageName": "orange-48361.addresses.jsonl.gz",
+      "sidecarName": "orange-48361.addresses.jsonl.gz.json",
+      "sizeBytes": 1268809,
+      "sha256": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a"
+    },
+    {
+      "fips": "48363",
+      "countyId": "palo-pinto",
+      "packageName": "palo-pinto-48363.addresses.jsonl.gz",
+      "sidecarName": "palo-pinto-48363.addresses.jsonl.gz.json",
+      "sizeBytes": 809038,
+      "sha256": "f9bfb4a6329cc73689fe21953fa5435bf736f42b44b5782b6982e55d864a5ea9"
+    },
+    {
+      "fips": "48365",
+      "countyId": "panola",
+      "packageName": "panola-48365.addresses.jsonl.gz",
+      "sidecarName": "panola-48365.addresses.jsonl.gz.json",
+      "sizeBytes": 514964,
+      "sha256": "6365321596b61d8fe1d6b53a8911f4fa505d7e962332e7cd9fbab953ceac6044"
+    },
+    {
+      "fips": "48367",
+      "countyId": "parker",
+      "packageName": "parker-48367.addresses.jsonl.gz",
+      "sidecarName": "parker-48367.addresses.jsonl.gz.json",
+      "sizeBytes": 2597310,
+      "sha256": "545852ca251be618ce4296ff4e10ae9fdce32306c8d081deeec19bcb98610fc0"
+    },
+    {
+      "fips": "48369",
+      "countyId": "parmer",
+      "packageName": "parmer-48369.addresses.jsonl.gz",
+      "sidecarName": "parmer-48369.addresses.jsonl.gz.json",
+      "sizeBytes": 134975,
+      "sha256": "957f7042d4686f8e0e9c98dddffb085175fe73f1ea892aa8e2b0bf4886196563"
+    },
+    {
+      "fips": "48371",
+      "countyId": "pecos",
+      "packageName": "pecos-48371.addresses.jsonl.gz",
+      "sidecarName": "pecos-48371.addresses.jsonl.gz.json",
+      "sizeBytes": 245342,
+      "sha256": "3d41b2fc463abd55eda5571b7df1d8ae930771586ab0c40657a2f7b8f6582ad1"
+    },
+    {
+      "fips": "48373",
+      "countyId": "polk",
+      "packageName": "polk-48373.addresses.jsonl.gz",
+      "sidecarName": "polk-48373.addresses.jsonl.gz.json",
+      "sizeBytes": 1231358,
+      "sha256": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865"
+    },
+    {
+      "fips": "48375",
+      "countyId": "potter",
+      "packageName": "potter-48375.addresses.jsonl.gz",
+      "sidecarName": "potter-48375.addresses.jsonl.gz.json",
+      "sizeBytes": 1693714,
+      "sha256": "7bc611d7c45866ff12da78931391ad233208b69a7f2848bed9a36b2d0446292a"
+    },
+    {
+      "fips": "48377",
+      "countyId": "presidio",
+      "packageName": "presidio-48377.addresses.jsonl.gz",
+      "sidecarName": "presidio-48377.addresses.jsonl.gz.json",
+      "sizeBytes": 183109,
+      "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce"
+    },
+    {
+      "fips": "48379",
+      "countyId": "rains",
+      "packageName": "rains-48379.addresses.jsonl.gz",
+      "sidecarName": "rains-48379.addresses.jsonl.gz.json",
+      "sizeBytes": 295604,
+      "sha256": "332d4e58940a468b62a4e7e982b9b11e9633ca56ff667dc81748f9bc4ddc1ff9"
+    },
+    {
+      "fips": "48381",
+      "countyId": "randall",
+      "packageName": "randall-48381.addresses.jsonl.gz",
+      "sidecarName": "randall-48381.addresses.jsonl.gz.json",
+      "sizeBytes": 2058473,
+      "sha256": "7fd2fa55a801a7b2922886396439f64d623f391fdd2227f888e38800dc7b1978"
+    },
+    {
+      "fips": "48383",
+      "countyId": "reagan",
+      "packageName": "reagan-48383.addresses.jsonl.gz",
+      "sidecarName": "reagan-48383.addresses.jsonl.gz.json",
+      "sizeBytes": 71024,
+      "sha256": "a7b783e9d5b0face9d85dfc7c7debb44013b4edff2e181765579a4c5159d5127"
+    },
+    {
+      "fips": "48385",
+      "countyId": "real",
+      "packageName": "real-48385.addresses.jsonl.gz",
+      "sidecarName": "real-48385.addresses.jsonl.gz.json",
+      "sizeBytes": 153752,
+      "sha256": "46a7cca175e8401a7de48ba4d50caf10ea76966d064369ba536b5067e41fbe04"
+    },
+    {
+      "fips": "48387",
+      "countyId": "red-river",
+      "packageName": "red-river-48387.addresses.jsonl.gz",
+      "sidecarName": "red-river-48387.addresses.jsonl.gz.json",
+      "sizeBytes": 302485,
+      "sha256": "928150e1ab9fc99c45c4768c046e5c74e578b874b3f9843f0fed84e8e6cb5b3f"
+    },
+    {
+      "fips": "48389",
+      "countyId": "reeves",
+      "packageName": "reeves-48389.addresses.jsonl.gz",
+      "sidecarName": "reeves-48389.addresses.jsonl.gz.json",
+      "sizeBytes": 245206,
+      "sha256": "2085a7934312134cd0d68ef513e910e88e6f3febe0d2e309164821e5c83bb4fe"
+    },
+    {
+      "fips": "48391",
+      "countyId": "refugio",
+      "packageName": "refugio-48391.addresses.jsonl.gz",
+      "sidecarName": "refugio-48391.addresses.jsonl.gz.json",
+      "sizeBytes": 168816,
+      "sha256": "a6ef1a3ef90dff56a4f50bdd2b293e144c07120c56da9460f8dcc2785512d482"
+    },
+    {
+      "fips": "48393",
+      "countyId": "roberts",
+      "packageName": "roberts-48393.addresses.jsonl.gz",
+      "sidecarName": "roberts-48393.addresses.jsonl.gz.json",
+      "sizeBytes": 22999,
+      "sha256": "4db42e85eea204429273c9727fc73bf608d66b80be42586bd84b6bd697fda45d"
+    },
+    {
+      "fips": "48395",
+      "countyId": "robertson",
+      "packageName": "robertson-48395.addresses.jsonl.gz",
+      "sidecarName": "robertson-48395.addresses.jsonl.gz.json",
+      "sizeBytes": 401846,
+      "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6"
+    },
+    {
+      "fips": "48397",
+      "countyId": "rockwall",
+      "packageName": "rockwall-48397.addresses.jsonl.gz",
+      "sidecarName": "rockwall-48397.addresses.jsonl.gz.json",
+      "sizeBytes": 1681408,
+      "sha256": "beee33f9fcda1f2a9bd8040543e797b1e9af5953f048d1181467e6415fa7068b"
+    },
+    {
+      "fips": "48399",
+      "countyId": "runnels",
+      "packageName": "runnels-48399.addresses.jsonl.gz",
+      "sidecarName": "runnels-48399.addresses.jsonl.gz.json",
+      "sizeBytes": 210395,
+      "sha256": "0196744b5ff61655e27ce3e1853c7a5308564d41ce4ea9d96a9cf3611f3cdea5"
+    },
+    {
+      "fips": "48401",
+      "countyId": "rusk",
+      "packageName": "rusk-48401.addresses.jsonl.gz",
+      "sidecarName": "rusk-48401.addresses.jsonl.gz.json",
+      "sizeBytes": 782267,
+      "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74"
+    },
+    {
+      "fips": "48403",
+      "countyId": "sabine",
+      "packageName": "sabine-48403.addresses.jsonl.gz",
+      "sidecarName": "sabine-48403.addresses.jsonl.gz.json",
+      "sizeBytes": 471304,
+      "sha256": "966c256761daac545efed2345919416d60ab9904498ae6eb5532ee5d0cd60f45"
+    },
+    {
+      "fips": "48405",
+      "countyId": "san-augustine",
+      "packageName": "san-augustine-48405.addresses.jsonl.gz",
+      "sidecarName": "san-augustine-48405.addresses.jsonl.gz.json",
+      "sizeBytes": 250781,
+      "sha256": "928822ef1362db74bc68e51bb7f1a674e6704750b8dbe98cd8cc3b8eb8441774"
+    },
+    {
+      "fips": "48407",
+      "countyId": "san-jacinto",
+      "packageName": "san-jacinto-48407.addresses.jsonl.gz",
+      "sidecarName": "san-jacinto-48407.addresses.jsonl.gz.json",
+      "sizeBytes": 803304,
+      "sha256": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955"
+    },
+    {
+      "fips": "48409",
+      "countyId": "san-patricio",
+      "packageName": "san-patricio-48409.addresses.jsonl.gz",
+      "sidecarName": "san-patricio-48409.addresses.jsonl.gz.json",
+      "sizeBytes": 501799,
+      "sha256": "524ed0ed14528680bb1f297699136971073b0fd3d76e61a46afc2943d0c4ae2a"
+    },
+    {
+      "fips": "48411",
+      "countyId": "san-saba",
+      "packageName": "san-saba-48411.addresses.jsonl.gz",
+      "sidecarName": "san-saba-48411.addresses.jsonl.gz.json",
+      "sizeBytes": 156432,
+      "sha256": "52d9933dfc4be898f6ad620e6517fb0d081254739e5167dcea4ef7002381a1ac"
+    },
+    {
+      "fips": "48413",
+      "countyId": "schleicher",
+      "packageName": "schleicher-48413.addresses.jsonl.gz",
+      "sidecarName": "schleicher-48413.addresses.jsonl.gz.json",
+      "sizeBytes": 59945,
+      "sha256": "559897c8e0ff8b25724676be33c05a3bb61d7d12093d452ef2a3fa47f6d6a95b"
+    },
+    {
+      "fips": "48415",
+      "countyId": "scurry",
+      "packageName": "scurry-48415.addresses.jsonl.gz",
+      "sidecarName": "scurry-48415.addresses.jsonl.gz.json",
+      "sizeBytes": 280529,
+      "sha256": "1cf63d5dbff6aeeaa210284df3a04296a04529328cba4dc767ed416693d88728"
+    },
+    {
+      "fips": "48417",
+      "countyId": "shackelford",
+      "packageName": "shackelford-48417.addresses.jsonl.gz",
+      "sidecarName": "shackelford-48417.addresses.jsonl.gz.json",
+      "sizeBytes": 80835,
+      "sha256": "dce1f2803fe4362fc06a48114353872a66c28fb2ce880136bfe52f7dd1b2f3ea"
+    },
+    {
+      "fips": "48419",
+      "countyId": "shelby",
+      "packageName": "shelby-48419.addresses.jsonl.gz",
+      "sidecarName": "shelby-48419.addresses.jsonl.gz.json",
+      "sizeBytes": 564899,
+      "sha256": "65ea2173f4608b0add79a549953a515965afc8d12ac01de996f184b2857493a4"
+    },
+    {
+      "fips": "48421",
+      "countyId": "sherman",
+      "packageName": "sherman-48421.addresses.jsonl.gz",
+      "sidecarName": "sherman-48421.addresses.jsonl.gz.json",
+      "sizeBytes": 56729,
+      "sha256": "748423d24e05d41b5675de4775a7655fbe7ee996a475c69d123f47254c2514fd"
+    },
+    {
+      "fips": "48423",
+      "countyId": "smith",
+      "packageName": "smith-48423.addresses.jsonl.gz",
+      "sidecarName": "smith-48423.addresses.jsonl.gz.json",
+      "sizeBytes": 4082413,
+      "sha256": "81ec218b7fe9612bbe3a0d05dddfcaffdff6c9bcd703e27e9237c77390803093"
+    },
+    {
+      "fips": "48425",
+      "countyId": "somervell",
+      "packageName": "somervell-48425.addresses.jsonl.gz",
+      "sidecarName": "somervell-48425.addresses.jsonl.gz.json",
+      "sizeBytes": 164537,
+      "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1"
+    },
+    {
+      "fips": "48427",
+      "countyId": "starr",
+      "packageName": "starr-48427.addresses.jsonl.gz",
+      "sidecarName": "starr-48427.addresses.jsonl.gz.json",
+      "sizeBytes": 756261,
+      "sha256": "577e7b5ddd11b67b78c307a1e34de7c6d797fb104c324d9c5842b71dd7b8d1e5"
+    },
+    {
+      "fips": "48429",
+      "countyId": "stephens",
+      "packageName": "stephens-48429.addresses.jsonl.gz",
+      "sidecarName": "stephens-48429.addresses.jsonl.gz.json",
+      "sizeBytes": 207755,
+      "sha256": "1182861cc5acdc2fbeb2f535a5b4fe3a8201e3db296df4d75c636da552b57ae3"
+    },
+    {
+      "fips": "48431",
+      "countyId": "sterling",
+      "packageName": "sterling-48431.addresses.jsonl.gz",
+      "sidecarName": "sterling-48431.addresses.jsonl.gz.json",
+      "sizeBytes": 36592,
+      "sha256": "55efc6ff2b94ed429a4e47b99d0e526614283486623dc8d73d27548d348b8f6a"
+    },
+    {
+      "fips": "48433",
+      "countyId": "stonewall",
+      "packageName": "stonewall-48433.addresses.jsonl.gz",
+      "sidecarName": "stonewall-48433.addresses.jsonl.gz.json",
+      "sizeBytes": 44573,
+      "sha256": "d3ba0de5719b8906eef8c70d6ed9f55c425d3e90e69e140227b451ac7f4db206"
+    },
+    {
+      "fips": "48435",
+      "countyId": "sutton",
+      "packageName": "sutton-48435.addresses.jsonl.gz",
+      "sidecarName": "sutton-48435.addresses.jsonl.gz.json",
+      "sizeBytes": 92124,
+      "sha256": "c918feefc80359d0a2a89621364821b093c6075afb18c9af71a81c96b8ba186f"
+    },
+    {
+      "fips": "48437",
+      "countyId": "swisher",
+      "packageName": "swisher-48437.addresses.jsonl.gz",
+      "sidecarName": "swisher-48437.addresses.jsonl.gz.json",
+      "sizeBytes": 117953,
+      "sha256": "3a822c705ae23e66c247520c4b6d51c1f894975070df79bd9298f63e4d5b887c"
+    },
+    {
+      "fips": "48439",
+      "countyId": "tarrant",
+      "packageName": "tarrant-48439.addresses.jsonl.gz",
+      "sidecarName": "tarrant-48439.addresses.jsonl.gz.json",
+      "sizeBytes": 23796609,
+      "sha256": "3e8ff5d504357f8ba42e7d4cebb5abb3baa72386f52f1fc484b40ac035828ed3"
+    },
+    {
+      "fips": "48441",
+      "countyId": "taylor",
+      "packageName": "taylor-48441.addresses.jsonl.gz",
+      "sidecarName": "taylor-48441.addresses.jsonl.gz.json",
+      "sizeBytes": 2563385,
+      "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff"
+    },
+    {
+      "fips": "48443",
+      "countyId": "terrell",
+      "packageName": "terrell-48443.addresses.jsonl.gz",
+      "sidecarName": "terrell-48443.addresses.jsonl.gz.json",
+      "sizeBytes": 35870,
+      "sha256": "d17e81cc50c4889104d512ab63ace3c7d5f8c2659f974bfcca5af67977d6f29a"
+    },
+    {
+      "fips": "48445",
+      "countyId": "terry",
+      "packageName": "terry-48445.addresses.jsonl.gz",
+      "sidecarName": "terry-48445.addresses.jsonl.gz.json",
+      "sizeBytes": 190412,
+      "sha256": "d63fb32d707fa04ca7cf713b8503e0ce6c7f7b1b56c44de4cbc60dd0fb2c37c3"
+    },
+    {
+      "fips": "48447",
+      "countyId": "throckmorton",
+      "packageName": "throckmorton-48447.addresses.jsonl.gz",
+      "sidecarName": "throckmorton-48447.addresses.jsonl.gz.json",
+      "sizeBytes": 47074,
+      "sha256": "69de5919ec12a74f1b7c2bf4efbb325affb297d5d336fccf4bd4a55139649130"
+    },
+    {
+      "fips": "48449",
+      "countyId": "titus",
+      "packageName": "titus-48449.addresses.jsonl.gz",
+      "sidecarName": "titus-48449.addresses.jsonl.gz.json",
+      "sizeBytes": 473449,
+      "sha256": "bcb39dea85ebdf6105e36511192cf630334f95e400110248677dacaf4b323f87"
+    },
+    {
+      "fips": "48451",
+      "countyId": "tom-green",
+      "packageName": "tom-green-48451.addresses.jsonl.gz",
+      "sidecarName": "tom-green-48451.addresses.jsonl.gz.json",
+      "sizeBytes": 1818806,
+      "sha256": "b1f8cb3d5edbbaa684c366ab51ebf2ad4c14dfee29dec6ceea56c797f838f0bf"
+    },
+    {
+      "fips": "48453",
+      "countyId": "travis",
+      "packageName": "travis-48453.addresses.jsonl.gz",
+      "sidecarName": "travis-48453.addresses.jsonl.gz.json",
+      "sizeBytes": 14405442,
+      "sha256": "2c3774cfbc04bb7eaf7a16ef013ab02fc6c70978206309ce7a8c348bc0be2c1e"
+    },
+    {
+      "fips": "48455",
+      "countyId": "trinity",
+      "packageName": "trinity-48455.addresses.jsonl.gz",
+      "sidecarName": "trinity-48455.addresses.jsonl.gz.json",
+      "sizeBytes": 499106,
+      "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62"
+    },
+    {
+      "fips": "48457",
+      "countyId": "tyler",
+      "packageName": "tyler-48457.addresses.jsonl.gz",
+      "sidecarName": "tyler-48457.addresses.jsonl.gz.json",
+      "sizeBytes": 492755,
+      "sha256": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b"
+    },
+    {
+      "fips": "48459",
+      "countyId": "upshur",
+      "packageName": "upshur-48459.addresses.jsonl.gz",
+      "sidecarName": "upshur-48459.addresses.jsonl.gz.json",
+      "sizeBytes": 899624,
+      "sha256": "b448bffc8859867179c8ab8264ab3824245ef77875e3927d4b943a1a177faac2"
+    },
+    {
+      "fips": "48461",
+      "countyId": "upton",
+      "packageName": "upton-48461.addresses.jsonl.gz",
+      "sidecarName": "upton-48461.addresses.jsonl.gz.json",
+      "sizeBytes": 94640,
+      "sha256": "66537982fd43a5e78c0025c0213c743040ae9c2d6fe41137953e25117c983559"
+    },
+    {
+      "fips": "48463",
+      "countyId": "uvalde",
+      "packageName": "uvalde-48463.addresses.jsonl.gz",
+      "sidecarName": "uvalde-48463.addresses.jsonl.gz.json",
+      "sizeBytes": 493131,
+      "sha256": "ffaf87c92d875d74f5f41b1ff0084312d9048771f9c61de2224d4cb3cc8c32d9"
+    },
+    {
+      "fips": "48465",
+      "countyId": "val-verde",
+      "packageName": "val-verde-48465.addresses.jsonl.gz",
+      "sidecarName": "val-verde-48465.addresses.jsonl.gz.json",
+      "sizeBytes": 716092,
+      "sha256": "c62dcee91b022c062ada005e518ec81b88b85dd9a2ac368cb2123524cd6783ab"
+    },
+    {
+      "fips": "48467",
+      "countyId": "van-zandt",
+      "packageName": "van-zandt-48467.addresses.jsonl.gz",
+      "sidecarName": "van-zandt-48467.addresses.jsonl.gz.json",
+      "sizeBytes": 1173187,
+      "sha256": "2ed67b23a9a728601e44bcd03355571f0557324d694ac9dd343fb34aa1e00056"
+    },
+    {
+      "fips": "48469",
+      "countyId": "victoria",
+      "packageName": "victoria-48469.addresses.jsonl.gz",
+      "sidecarName": "victoria-48469.addresses.jsonl.gz.json",
+      "sizeBytes": 1326361,
+      "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711"
+    },
+    {
+      "fips": "48471",
+      "countyId": "walker",
+      "packageName": "walker-48471.addresses.jsonl.gz",
+      "sidecarName": "walker-48471.addresses.jsonl.gz.json",
+      "sizeBytes": 984566,
+      "sha256": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1"
+    },
+    {
+      "fips": "48473",
+      "countyId": "waller",
+      "packageName": "waller-48473.addresses.jsonl.gz",
+      "sidecarName": "waller-48473.addresses.jsonl.gz.json",
+      "sizeBytes": 1595248,
+      "sha256": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906"
+    },
+    {
+      "fips": "48475",
+      "countyId": "ward",
+      "packageName": "ward-48475.addresses.jsonl.gz",
+      "sidecarName": "ward-48475.addresses.jsonl.gz.json",
+      "sizeBytes": 169038,
+      "sha256": "b92586e3d6969a3310926e1b6aa757cac4a2c1ac54b5d66d495ad25d509b8e07"
+    },
+    {
+      "fips": "48477",
+      "countyId": "washington",
+      "packageName": "washington-48477.addresses.jsonl.gz",
+      "sidecarName": "washington-48477.addresses.jsonl.gz.json",
+      "sizeBytes": 790797,
+      "sha256": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d"
+    },
+    {
+      "fips": "48479",
+      "countyId": "webb",
+      "packageName": "webb-48479.addresses.jsonl.gz",
+      "sidecarName": "webb-48479.addresses.jsonl.gz.json",
+      "sizeBytes": 3249000,
+      "sha256": "de111d7849ab761639983a4e11a63a92baf6d397725046435899d9c4b8dd49ae"
+    },
+    {
+      "fips": "48481",
+      "countyId": "wharton",
+      "packageName": "wharton-48481.addresses.jsonl.gz",
+      "sidecarName": "wharton-48481.addresses.jsonl.gz.json",
+      "sizeBytes": 790321,
+      "sha256": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357"
+    },
+    {
+      "fips": "48483",
+      "countyId": "wheeler",
+      "packageName": "wheeler-48483.addresses.jsonl.gz",
+      "sidecarName": "wheeler-48483.addresses.jsonl.gz.json",
+      "sizeBytes": 111290,
+      "sha256": "ba9cca0ec43b4aa263f1fd4851cb6545da46193afb623deed5eb62eaf552f1b7"
+    },
+    {
+      "fips": "48485",
+      "countyId": "wichita",
+      "packageName": "wichita-48485.addresses.jsonl.gz",
+      "sidecarName": "wichita-48485.addresses.jsonl.gz.json",
+      "sizeBytes": 1691936,
+      "sha256": "3d7d6895508e31ff7be92b2cf6e91832b76f3d16a583484374fd4d72942db672"
+    },
+    {
+      "fips": "48487",
+      "countyId": "wilbarger",
+      "packageName": "wilbarger-48487.addresses.jsonl.gz",
+      "sidecarName": "wilbarger-48487.addresses.jsonl.gz.json",
+      "sizeBytes": 240373,
+      "sha256": "9f1297239c4fb36724a50f2c459bf364be472af21c565d6726c92caed1512d4f"
+    },
+    {
+      "fips": "48489",
+      "countyId": "willacy",
+      "packageName": "willacy-48489.addresses.jsonl.gz",
+      "sidecarName": "willacy-48489.addresses.jsonl.gz.json",
+      "sizeBytes": 290509,
+      "sha256": "201ff688bae687df0307a9b800cf540fca24839f15cab2e7902376b1d9c7c02b"
+    },
+    {
+      "fips": "48491",
+      "countyId": "williamson",
+      "packageName": "williamson-48491.addresses.jsonl.gz",
+      "sidecarName": "williamson-48491.addresses.jsonl.gz.json",
+      "sizeBytes": 11284618,
+      "sha256": "b5cfeb6afa1e1c5969b9ed1fb732e178abc90f12245cbf62bd6de0d72247d8b2"
+    },
+    {
+      "fips": "48493",
+      "countyId": "wilson",
+      "packageName": "wilson-48493.addresses.jsonl.gz",
+      "sidecarName": "wilson-48493.addresses.jsonl.gz.json",
+      "sizeBytes": 740747,
+      "sha256": "1a2736ae8088896f854cf57fe680fc8aa2217215a39fed5c729f8ccf50db1e32"
+    },
+    {
+      "fips": "48495",
+      "countyId": "winkler",
+      "packageName": "winkler-48495.addresses.jsonl.gz",
+      "sidecarName": "winkler-48495.addresses.jsonl.gz.json",
+      "sizeBytes": 85761,
+      "sha256": "704d01f7af5e00136c6c8c5b24d21b0d5140f872bfbc5a2ebf04945a6d5b9413"
+    },
+    {
+      "fips": "48497",
+      "countyId": "wise",
+      "packageName": "wise-48497.addresses.jsonl.gz",
+      "sidecarName": "wise-48497.addresses.jsonl.gz.json",
+      "sizeBytes": 1366288,
+      "sha256": "e2fdc49e6bd22c60eb7eaaebae35a226a87ede21d52b2eda09cc3f177add05f7"
+    },
+    {
+      "fips": "48499",
+      "countyId": "wood",
+      "packageName": "wood-48499.addresses.jsonl.gz",
+      "sidecarName": "wood-48499.addresses.jsonl.gz.json",
+      "sizeBytes": 1061130,
+      "sha256": "a53ee9bcb3950849d3bc3262639ed71da5d172b3b798f1e4e909324e81a0eb6e"
+    },
+    {
+      "fips": "48501",
+      "countyId": "yoakum",
+      "packageName": "yoakum-48501.addresses.jsonl.gz",
+      "sidecarName": "yoakum-48501.addresses.jsonl.gz.json",
+      "sizeBytes": 120822,
+      "sha256": "843a9225782612b891c637514d4f43e8754b62e781ca7561a5d897a5c8bf17c4"
+    },
+    {
+      "fips": "48503",
+      "countyId": "young",
+      "packageName": "young-48503.addresses.jsonl.gz",
+      "sidecarName": "young-48503.addresses.jsonl.gz.json",
+      "sizeBytes": 345917,
+      "sha256": "8860e222a1d19cf9935bfaaf9b24b209a45f6d7bea228cfb2d37fb09dac57274"
+    },
+    {
+      "fips": "48505",
+      "countyId": "zapata",
+      "packageName": "zapata-48505.addresses.jsonl.gz",
+      "sidecarName": "zapata-48505.addresses.jsonl.gz.json",
+      "sizeBytes": 365220,
+      "sha256": "7a9bbec3f625b785a0dc5cc4e78a82640177054b53e6df22e5f80a5c864ffd3c"
+    },
+    {
+      "fips": "48507",
+      "countyId": "zavala",
+      "packageName": "zavala-48507.addresses.jsonl.gz",
+      "sidecarName": "zavala-48507.addresses.jsonl.gz.json",
+      "sizeBytes": 196465,
+      "sha256": "b545ed4e4e01c8fa3c3b283ae8fc014ae425475e471406f5f562facb641b56cf"
+    }
+  ],
+  "finalRecommendation": "Merge as statewide candidate-only manufacturing evidence."
+}
