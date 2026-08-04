@@ -98,5 +98,15 @@
     }
   ],
   "generatedAt": "1970-01-01T00:00:00.000Z",
+  "protectedArtifactHashes": {
+    "hashingContract": "committed Git blob SHA-256 (canonical repository bytes; not platform-converted working-tree bytes)",
+    "lp138Baseline": "717c25ab4aa80a282d49899cd8d33d0fe6f82305ced68c0d167cf5f3d1168847",
+    "lp140Planner": "0da4df33aa27326bf18349a4bb5e7ef90c6c3884ad232afe4dd2d2180050fc74",
+    "lp148Manifest": "67fa26854a7a00699fd119a2a58773ae81a0f18f62f283e89a8216ec92f53f58",
+    "lp148Package": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "lp149Registry": "0185e7d3aac7965fff83ce7859c829604091284eda96f33669f2d2757c977f22",
+    "lp150CandidateContract": "9235f3a5e4fe17480d02a9769021132ac8fea8ca3b7381b179490c6f59ba6941",
+    "lp150TransitionRegistry": "f23cd930d343ebfebac7aed0eef510a50f35ae0ff082189b8f5dc18abca9e806"
+  },
   "schemaVersion": "gridly.lp151.gateResults.v1"
 }

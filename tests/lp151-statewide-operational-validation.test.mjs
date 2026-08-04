@@ -10,11 +10,15 @@ const report = JSON.parse(readFileSync('reports/lp151/statewide-operational-vali
 const registry = JSON.parse(readFileSync('data/lp151/statewide-operational-validation-registry.json', 'utf8'));
 const summary = JSON.parse(readFileSync('reports/lp151/validation-summary.json', 'utf8'));
 const hashReport = JSON.parse(readFileSync('reports/lp151/protected-artifact-hashes.json', 'utf8'));
+const gateReport = JSON.parse(readFileSync('reports/lp151/gate-results.json', 'utf8'));
+const reconciliationReport = JSON.parse(readFileSync('reports/lp151/cross-layer-reconciliation.json', 'utf8'));
 function shaFile(path) { return createHash('sha256').update(readFileSync(path)).digest('hex'); }
 function shaGitBlob(path) { return createHash('sha256').update(gitBlobBytes(path)).digest('hex'); }
 function snapshot(paths) { return Object.fromEntries(paths.map((path) => [path, shaFile(path)])); }
 const lp151GeneratedPaths = ['data/lp151/statewide-operational-validation-registry.json', 'reports/lp151/statewide-operational-validation-report.json', 'reports/lp151/gate-results.json', 'reports/lp151/cross-layer-reconciliation.json', 'reports/lp151/protected-artifact-hashes.json', 'reports/lp151/validation-summary.json'];
 const protectedUpstreamPaths = ['evidence/lp138/county-geometry-membership-contract.baseline.json', 'tools/lp140/activation-wave-planner.mjs', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json', 'data/lp149/runtime-county-registry.json', 'data/lp150/membership-transition-registry.json', 'data/lp150/candidate-membership-contract.json'];
+const CURRENT_LP150_TRANSITION_HASH = 'f23cd930d343ebfebac7aed0eef510a50f35ae0ff082189b8f5dc18abca9e806';
+const STALE_LP150_TRANSITION_HASH = ['0f1173945727d3f9956e78f7a2722d0a9899464e', 'ff554b2c233d7c2141a5a495'].join('');
 
 test('validates all 254 runtime identities exactly once in deterministic FIPS order', () => {
   assert.equal(registry.countyCount, 254);
@@ -46,13 +50,22 @@ test('candidate contract is empty and no deployment or activation is inferred', 
 
 test('protected artifacts are derived from current authoritative inputs and reports agree', () => {
   const current = protectedHashes();
+  assert.deepEqual(registry.protectedArtifactHashes, current);
   assert.deepEqual(report.protectedArtifactHashes, current);
+  assert.deepEqual(gateReport.protectedArtifactHashes, current);
+  assert.deepEqual(reconciliationReport.protectedArtifactHashes, current);
   assert.deepEqual(hashReport.hashes, current);
+  assert.deepEqual(summary.protectedArtifactHashes, current);
   assert.equal(current.hashingContract, 'committed Git blob SHA-256 (canonical repository bytes; not platform-converted working-tree bytes)');
   assert.equal(current.lp149Registry, shaGitBlob('data/lp149/runtime-county-registry.json'));
   assert.equal(current.lp150TransitionRegistry, shaGitBlob('data/lp150/membership-transition-registry.json'));
+  assert.equal(current.lp150TransitionRegistry, CURRENT_LP150_TRANSITION_HASH);
   assert.equal(current.lp150CandidateContract, shaGitBlob('data/lp150/candidate-membership-contract.json'));
   assert.deepEqual(Object.keys(current).sort(), Object.keys(hashReport.hashes).sort());
+  for (const path of lp151GeneratedPaths) {
+    assert.equal(readFileSync(path, 'utf8').includes(STALE_LP150_TRANSITION_HASH), false, path);
+    assert.equal(readFileSync(path, 'utf8').includes(CURRENT_LP150_TRANSITION_HASH), true, path);
+  }
 
   assert.deepEqual(report.protectedArtifactHashes, protectedHashes());
   assert.equal(report.validationBoundary.modifiesRuntimeSelection, false);
@@ -62,6 +75,9 @@ test('protected artifacts are derived from current authoritative inputs and repo
 test('tracked LP151 artifacts match deterministic rebuild', () => {
   assert.deepEqual(validation.stateRegistry, registry);
   assert.deepEqual(validation.report, report);
+  assert.deepEqual(validation.gates, gateReport.gates);
+  assert.deepEqual(validation.reconciliation, reconciliationReport.reconciliation);
+  assert.deepEqual(validation.hashes, hashReport.hashes);
   assert.deepEqual(validation.summary, summary);
 });
 
