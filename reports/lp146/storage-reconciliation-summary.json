@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly-lp146-storage-reconciliation-summary-v1",
+  "milestone": "LP146",
+  "observationDate": "2026-08-04",
+  "countiesEvaluated": 254,
+  "publishedAndVerified": 1,
+  "publishedNotVerified": 0,
+  "notPublished": 253,
+  "packageTotals": {
+    "expected": 254,
+    "present": 1,
+    "missing": 253,
+    "expectedBytes": 395765903
+  },
+  "certificateTotals": {
+    "expected": 254,
+    "present": 1,
+    "missing": 253
+  },
+  "missingObjects": 506,
+  "verificationFailures": 0,
+  "deterministicFipsOrdering": true,
+  "lp145StorageConclusion": "CONFIRMED",
+  "storageStatus": "BLOCKED",
+  "blockingReason": "253 manufactured county packages and 253 certificates have no observed production Storage publication evidence.",
+  "firstRemainingStatewideOperationalBlocker": "Storage",
+  "activationPerformed": false
+}
