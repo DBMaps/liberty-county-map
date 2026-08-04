@@ -1,0 +1,515 @@
+{
+  "schemaVersion": "gridly-lp127b-duplicates-v1",
+  "milestone": "LP127B",
+  "exactDuplicateGroups": [
+    {
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824",
+      "paths": [
+        "Census/tl_2025_us_county/tl_2025_us_county.cpg",
+        "Texas-Address-Points/Liberty/shp/stratmap-2026-address-points-liberty_48291.cpg"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain; consolidation requires a separate governed milestone."
+    },
+    {
+      "sha256": "e30bdd2502552fa5e578b2feefc5e2f599c0e8206067e4a87c65dadfa760113c",
+      "paths": [
+        "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+        "FRA/Processed/fra-crossings-tx.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain; consolidation requires a separate governed milestone."
+    }
+  ],
+  "sameFilenameDifferentHashGroups": [
+    {
+      "filename": "package-manifest.json",
+      "variants": [
+        {
+          "path": "Community-Packages/austin/package-manifest.json",
+          "sha256": "c78619614832bd06068789742086a1918982951ebb5e57ecaf9e3655bd892200"
+        },
+        {
+          "path": "Community-Packages/brazoria/package-manifest.json",
+          "sha256": "16218cf4287b70fde9d8e6dd2badfee9cca78aa5283eaad33f6a042094e77abb"
+        },
+        {
+          "path": "Community-Packages/brazos/package-manifest.json",
+          "sha256": "0bbe45355ed6e9684bfb76f5f03af464aad28851a68d0d24ac56811511f6a955"
+        },
+        {
+          "path": "Community-Packages/calhoun/package-manifest.json",
+          "sha256": "6c616b10fc55709589f637347bae7a2b6a2f87abcd9a4c7e66f7961b834fc485"
+        },
+        {
+          "path": "Community-Packages/chambers/package-manifest.json",
+          "sha256": "c8e92cefe071c562bb166cdab785d4c4e57362bc0c7731195c71c53342b67205"
+        },
+        {
+          "path": "Community-Packages/colorado/package-manifest.json",
+          "sha256": "c4e7b737dc5631caf13d3e48c4256535c639fd3d148f92b3908822e52a7f24dd"
+        },
+        {
+          "path": "Community-Packages/fayette/package-manifest.json",
+          "sha256": "5b89ccbd74c5b573b60c7c3719583939da698753607ee92df339f4667dad9205"
+        },
+        {
+          "path": "Community-Packages/fort-bend/package-manifest.json",
+          "sha256": "2c4cae7d39f04b5b3b8c259f6c7a04f9881e36579ec6e6e0ac0220ad087dd6e1"
+        },
+        {
+          "path": "Community-Packages/galveston/package-manifest.json",
+          "sha256": "ed0c4c6d87f06758e49cc08d5dcd52156a9b494e0de30de8ae1959736e4bdb31"
+        },
+        {
+          "path": "Community-Packages/grimes/package-manifest.json",
+          "sha256": "76838b31860b35d771e2c0d4fe59f236b600a4baad8addddc70838b84a2e37e7"
+        },
+        {
+          "path": "Community-Packages/hardin/package-manifest.json",
+          "sha256": "e21cb595a7b439526add0211d605ef7dacb182140daf53982340a23722cff23e"
+        },
+        {
+          "path": "Community-Packages/harris/package-manifest.json",
+          "sha256": "d2ce35139f486502b1ceaec84dbb0166f466286f7d38e898aae613a927db4661"
+        },
+        {
+          "path": "Community-Packages/jackson/package-manifest.json",
+          "sha256": "281284e25af88cb610262fccc01f2c8d52e083e508fff09b96fcfb7d260d77ae"
+        },
+        {
+          "path": "Community-Packages/jasper/package-manifest.json",
+          "sha256": "a415a7a5d4a94ff94164f79fbcfbadd13389b62d5e9ec3b053b5a86f3333f99e"
+        },
+        {
+          "path": "Community-Packages/jefferson/package-manifest.json",
+          "sha256": "872fbded9e6225308d2c23fac7d31c46f32a6573a5ea75dc72a49401f0575a09"
+        },
+        {
+          "path": "Community-Packages/lavaca/package-manifest.json",
+          "sha256": "aba6a193309ed730e7ffa6199bcb164aaa48d20e389624c34d39e16111b0d126"
+        },
+        {
+          "path": "Community-Packages/liberty/package-manifest.json",
+          "sha256": "f5c3a4051c31246e7d031eb5fffd71ed358f1596a708e50bc45b762554ccf212"
+        },
+        {
+          "path": "Community-Packages/matagorda/package-manifest.json",
+          "sha256": "1c89a2986a7879aa13201cbe8c12af37cc75c2f3f03326318d488490c0fb7b2b"
+        },
+        {
+          "path": "Community-Packages/montgomery/package-manifest.json",
+          "sha256": "95c97f0a082e311752a713e23a52f3c0ce2a5e32dee4dd1839c33084dec913f5"
+        },
+        {
+          "path": "Community-Packages/newton/package-manifest.json",
+          "sha256": "bfa7057e80d6e7ea01118bfe13d8aa93fda83450c8affc1d67e014576cd5a48a"
+        },
+        {
+          "path": "Community-Packages/orange/package-manifest.json",
+          "sha256": "7515897ecad8b3507cffa9717f4a68dd4bb86f82583069b3726f05e66b671905"
+        },
+        {
+          "path": "Community-Packages/polk/package-manifest.json",
+          "sha256": "314be047a5d6c93fdd1ddc8677f34d069d3ffbfbe4d53882c7a843739d9b78d9"
+        },
+        {
+          "path": "Community-Packages/san-jacinto/package-manifest.json",
+          "sha256": "740760dbf96c6fea82c0e90dc67857367f6280aece571db2c1d11ddc06d6b7e6"
+        },
+        {
+          "path": "Community-Packages/tyler/package-manifest.json",
+          "sha256": "f55877cbb34750bae6b7dc0505a2439851fd54172d00b8a0f74fbb8d6af06aee"
+        },
+        {
+          "path": "Community-Packages/walker/package-manifest.json",
+          "sha256": "8308cf70fca11a92ba904f310ae9f7b3457af9776541793cb9874ac3bcb22182"
+        },
+        {
+          "path": "Community-Packages/waller/package-manifest.json",
+          "sha256": "19df87177825adb679a690088bc6a45df1068b98a327493aa20372b8e619e9d2"
+        },
+        {
+          "path": "Community-Packages/washington/package-manifest.json",
+          "sha256": "706ee3fb6c6628df1290bbe29e5fc23825d54ad82ebdc8078d42a2f683ec4372"
+        },
+        {
+          "path": "Community-Packages/wharton/package-manifest.json",
+          "sha256": "ce867bdde761dd68c2e33febbe83ced08434726422dd6e043c54c4a12b325958"
+        },
+        {
+          "path": "Crossing-Packages/Texas/package-manifest.json",
+          "sha256": "8e95bb81dc049a2901fffe8ea1df10dfce7da7fb737c0c341056a8cd3817099e"
+        },
+        {
+          "path": "Crossing-Packages/austin/package-manifest.json",
+          "sha256": "5e4f6585edb15d90a33d349e86a592fa83b603b0b0138ac41714f235b0fe47cc"
+        },
+        {
+          "path": "Crossing-Packages/brazoria/package-manifest.json",
+          "sha256": "a01018fa6655acc5e9f04c8f9c251b76aeb9904866a42019c90a4a09d8eb83f3"
+        },
+        {
+          "path": "Crossing-Packages/brazos/package-manifest.json",
+          "sha256": "0216ffcef7a2ff54c81e84d317649914ff41bdffc5a2e156efbf46fb9da32e29"
+        },
+        {
+          "path": "Crossing-Packages/calhoun/package-manifest.json",
+          "sha256": "6b65abab606df2be253e34eb2fdee53a8b055dd1dacbf07c62d8eeac2d70669f"
+        },
+        {
+          "path": "Crossing-Packages/chambers/package-manifest.json",
+          "sha256": "20f2e184b8509baebefb9c026364255d705f75b52e2d205cd63e6b955af0abb5"
+        },
+        {
+          "path": "Crossing-Packages/colorado/package-manifest.json",
+          "sha256": "3ccc78d62b25661350ec2d383f6a39e02f55a99e4de86d0d40dec5b49203d80a"
+        },
+        {
+          "path": "Crossing-Packages/fayette/package-manifest.json",
+          "sha256": "7f1760ec0ee33d89eb81929d6f24b41bcf2fa5c98d9bdf96ed7b83aefbb424b0"
+        },
+        {
+          "path": "Crossing-Packages/fort-bend/package-manifest.json",
+          "sha256": "ad86095e3d4462e5e0772e39b728a9e1a6e673060fadd8c1c00a43e718d9c5ce"
+        },
+        {
+          "path": "Crossing-Packages/galveston/package-manifest.json",
+          "sha256": "4cd79b6643882828822d7b721a02a14faefe060968f42bc2258cec19718f243f"
+        },
+        {
+          "path": "Crossing-Packages/grimes/package-manifest.json",
+          "sha256": "f4b994caa4c00fddb4e7d3ffe5866420e83c3f844f767e039680e2796922678b"
+        },
+        {
+          "path": "Crossing-Packages/hardin/package-manifest.json",
+          "sha256": "f1d7f271c0bafab3f1bbeb6fa0e83f6e5d21db9b3be4b4a2d7f63b84721e2c72"
+        },
+        {
+          "path": "Crossing-Packages/harris/package-manifest.json",
+          "sha256": "91ad859907627d51b21e387f5cacba51a28755c69f1fb0c52730dffc29d8accf"
+        },
+        {
+          "path": "Crossing-Packages/jackson/package-manifest.json",
+          "sha256": "08d912464295315cfbbaa64d8c8bd8765d351bb6d764d5884bccaa9c900100c1"
+        },
+        {
+          "path": "Crossing-Packages/jasper/package-manifest.json",
+          "sha256": "83e571c7c1051fb931f3c244eca518d9fb565b929cbbbcf4cc55fbe1bf1af6bb"
+        },
+        {
+          "path": "Crossing-Packages/jefferson/package-manifest.json",
+          "sha256": "706fce93a10cb5d81c3517674d04005fd35e11c4a63b344ebfa5617a125e9ca2"
+        },
+        {
+          "path": "Crossing-Packages/lavaca/package-manifest.json",
+          "sha256": "969f361841af5ab10641bc969306555b8d15a587bb1280dc83a316d5073a40ac"
+        },
+        {
+          "path": "Crossing-Packages/liberty/package-manifest.json",
+          "sha256": "66351aea00c0205a1682d050c128f8e9d1c15c4273138e5d186c2d337bd25cf8"
+        },
+        {
+          "path": "Crossing-Packages/matagorda/package-manifest.json",
+          "sha256": "6ac153553a2f68f6ac6809e7f45e6c8dc2d5d17a40709f29c9558e578a4d3501"
+        },
+        {
+          "path": "Crossing-Packages/montgomery/package-manifest.json",
+          "sha256": "80d72233f2c7f2434086806db41fd7774201b6432b4f11e8cce03d5d7fed2fae"
+        },
+        {
+          "path": "Crossing-Packages/newton/package-manifest.json",
+          "sha256": "16c2fe49850cb2e8d8144122897e61f9bdcb9f78315c92d67cef7d257124f077"
+        },
+        {
+          "path": "Crossing-Packages/orange/package-manifest.json",
+          "sha256": "b4041a308aa3b26715ec22b7ffb71ff28099f826a0cd9a0176981ebf0a99ea5e"
+        },
+        {
+          "path": "Crossing-Packages/polk/package-manifest.json",
+          "sha256": "04c196e2769642f3fe71534d4a6afe1e8b1ff527ee1110e55e9cb6588df862be"
+        },
+        {
+          "path": "Crossing-Packages/san-jacinto/package-manifest.json",
+          "sha256": "40211f4c7e5b08be46ad4688361e285d01808a2b58b0f641cf975e2e4f2362ea"
+        },
+        {
+          "path": "Crossing-Packages/tyler/package-manifest.json",
+          "sha256": "2057a890dc8ee49e263a2a3527cdeda035f5990e10c517ac2358284626a28493"
+        },
+        {
+          "path": "Crossing-Packages/walker/package-manifest.json",
+          "sha256": "c759b105e69ae6eeb972e1f551387322ab73043393312a166dd2989adeb73b01"
+        },
+        {
+          "path": "Crossing-Packages/waller/package-manifest.json",
+          "sha256": "7dbb020da6ae81e2aa34b8063a3eea6f9056c3340c94a6a2655ffcb48adbfeaa"
+        },
+        {
+          "path": "Crossing-Packages/washington/package-manifest.json",
+          "sha256": "ef4af726cd3752b41cb5a976092169891cd154b6254fcb5b7c4cde2beeb556ff"
+        },
+        {
+          "path": "Crossing-Packages/wharton/package-manifest.json",
+          "sha256": "eea55b556a0315d593d4b18dd2db8eef3b439e3f8ddc76e06573ad9a3ae75080"
+        }
+      ],
+      "classification": "SAME_FILENAME_DIFFERENT_HASH"
+    },
+    {
+      "filename": "production-certification.json",
+      "variants": [
+        {
+          "path": "Crossing-Packages/austin/Production/production-certification.json",
+          "sha256": "ecac36fdd2629e3400b0de463bdc2d6a118d1787e96e2aa164e282a809895c54"
+        },
+        {
+          "path": "Crossing-Packages/brazoria/Production/production-certification.json",
+          "sha256": "34543fbfab9254671850b1f2801d29756d837e280eb37cbf8fcec575867f10dd"
+        },
+        {
+          "path": "Crossing-Packages/brazos/Production/production-certification.json",
+          "sha256": "f3fdfc0079ef87d47cc89d113288e1e8a59aecfe7690f2571f1a3ab98a9b655a"
+        },
+        {
+          "path": "Crossing-Packages/calhoun/Production/production-certification.json",
+          "sha256": "9e082d22c4c586e886fa6557425dc5f2978c764c106af8065c60e064296a71a9"
+        },
+        {
+          "path": "Crossing-Packages/chambers/Production/production-certification.json",
+          "sha256": "236c2b807c0f2df2b750fa32ca4b052c3d2e17b3b313823b2abc5dc1891b63f8"
+        },
+        {
+          "path": "Crossing-Packages/colorado/Production/production-certification.json",
+          "sha256": "3c60de6cd2c8428437fcade92e269aeb97ff9924f3a47abaadbdfa448a53929f"
+        },
+        {
+          "path": "Crossing-Packages/fayette/Production/production-certification.json",
+          "sha256": "f84fe6dee2a70aded293b570f24867e72cb102bce7e4adfdbe5e2b7d6ab6b56a"
+        },
+        {
+          "path": "Crossing-Packages/fort-bend/Production/production-certification.json",
+          "sha256": "ab95a774206b66b2dd4dd201a72559ad0bc492044ffd9da4ce4ecf168e2118e2"
+        },
+        {
+          "path": "Crossing-Packages/galveston/Production/production-certification.json",
+          "sha256": "54792b808c6e51d0ff17203b36a2791c7f82964531425fec1c287198b24eaa47"
+        },
+        {
+          "path": "Crossing-Packages/grimes/Production/production-certification.json",
+          "sha256": "f9931ff9f1261a77b26b76489fe3fdcbb2b2841eb15e804efdde097ae42a8788"
+        },
+        {
+          "path": "Crossing-Packages/hardin/Production/production-certification.json",
+          "sha256": "6fd851bc9aba37579e042b330902544e4f440616ee2b3968ac666ee112cf7d5c"
+        },
+        {
+          "path": "Crossing-Packages/harris/Production/production-certification.json",
+          "sha256": "30e2a57db3dd254ec12f58d351388a67023a1c76597675022645a32e2831c158"
+        },
+        {
+          "path": "Crossing-Packages/jackson/Production/production-certification.json",
+          "sha256": "bd4192d19f6cc23fb1ac543eedbfd2d5494d57c8546eb26dafa54ee97c8f2d1f"
+        },
+        {
+          "path": "Crossing-Packages/jasper/Production/production-certification.json",
+          "sha256": "750d4f472e9a0fb2ffe026c4948577767a437e3e5985eb55e1a8072bd1107efd"
+        },
+        {
+          "path": "Crossing-Packages/jefferson/Production/production-certification.json",
+          "sha256": "8a65a237c2a2cb5879a6b835b3d1d7e0ea5bc23454e204e6397236d17d627904"
+        },
+        {
+          "path": "Crossing-Packages/lavaca/Production/production-certification.json",
+          "sha256": "599ac3768eb1440a848223b81e3615b2594b22e373e67bfdc262350ee3272bab"
+        },
+        {
+          "path": "Crossing-Packages/liberty/Production/production-certification.json",
+          "sha256": "c4bc3bce77c0502565b7281549f50497154c3a4a26fbb359f886ec047f240585"
+        },
+        {
+          "path": "Crossing-Packages/matagorda/Production/production-certification.json",
+          "sha256": "eecc1dc3c718a56320a3d580eb02bb8478487198105796ed0743986ce2ba1b55"
+        },
+        {
+          "path": "Crossing-Packages/montgomery/Production/production-certification.json",
+          "sha256": "c5cf5902bc200871c19130479b690fb2f61c46a530647506f1082bce48650063"
+        },
+        {
+          "path": "Crossing-Packages/newton/Production/production-certification.json",
+          "sha256": "10599d5a023a940e298de074074861b88261c1d37425a10e33b31be87b218521"
+        },
+        {
+          "path": "Crossing-Packages/orange/Production/production-certification.json",
+          "sha256": "20225e4db1e6a1778b19f9597470e3d43d3947e7fee6d71e8f1b09aa606fbb0e"
+        },
+        {
+          "path": "Crossing-Packages/polk/Production/production-certification.json",
+          "sha256": "617edf7857c30b01053de3df9d580d423b35d3ea26beeacda25da1604daa1c84"
+        },
+        {
+          "path": "Crossing-Packages/san-jacinto/Production/production-certification.json",
+          "sha256": "34ad27b3eb1273b96a7735cde3ecc70fa7504d185c1bdfe5c73f5d4d678ddd7b"
+        },
+        {
+          "path": "Crossing-Packages/tyler/Production/production-certification.json",
+          "sha256": "697ee0939150b7ddcf32c83052dcd1b020c0483ea41712112a131847fa454215"
+        },
+        {
+          "path": "Crossing-Packages/walker/Production/production-certification.json",
+          "sha256": "8cc93092b3cdc1af142fdf5497462f00107fcf2d3931a017595d5d983e554883"
+        },
+        {
+          "path": "Crossing-Packages/waller/Production/production-certification.json",
+          "sha256": "7f367ac91884e2e514126510a4004f6df8a692a7a15ca44e98be7b4b191c7e84"
+        },
+        {
+          "path": "Crossing-Packages/washington/Production/production-certification.json",
+          "sha256": "ab3ccd13525f43598d2a8638e66aabadc612d7c582c1703f22357c76ff189217"
+        },
+        {
+          "path": "Crossing-Packages/wharton/Production/production-certification.json",
+          "sha256": "2c36f6c01377c933109d274c08f7bdf41adcb7f63a0e89eb1a8eb4497f75c8f9"
+        }
+      ],
+      "classification": "SAME_FILENAME_DIFFERENT_HASH"
+    },
+    {
+      "filename": "production-package-manifest.json",
+      "variants": [
+        {
+          "path": "Crossing-Packages/austin/Production/production-package-manifest.json",
+          "sha256": "5a541c803057cb004656e58e268d2ad00b293efe49793981fff334158eaf6545"
+        },
+        {
+          "path": "Crossing-Packages/brazoria/Production/production-package-manifest.json",
+          "sha256": "98ae3728fa12be7c615f6e33e0eda8223f73bc40ee3eeb09fcf2f1d1e46eb211"
+        },
+        {
+          "path": "Crossing-Packages/brazos/Production/production-package-manifest.json",
+          "sha256": "1a383d2a5537d0909bec9df7ff8d95d0a4b8ffa3c1bd384ae83f65bd3387cb11"
+        },
+        {
+          "path": "Crossing-Packages/calhoun/Production/production-package-manifest.json",
+          "sha256": "c5c4947b57fd3eb833b592305507c78fda0d752c6a828be364a57f49220d5ae6"
+        },
+        {
+          "path": "Crossing-Packages/chambers/Production/production-package-manifest.json",
+          "sha256": "73243f010b2dd642cb0100bf17497a3736e2de7eb6bfc2240fc58b0a80f73377"
+        },
+        {
+          "path": "Crossing-Packages/colorado/Production/production-package-manifest.json",
+          "sha256": "74c841ea242d733a0d4ab38769a01ea14047bcdf7872dca683d1ee2684f14a8b"
+        },
+        {
+          "path": "Crossing-Packages/fayette/Production/production-package-manifest.json",
+          "sha256": "72762e4855c74e7e1a2b03272dc535af266053518d71f17e6224f2ccd8d1fbba"
+        },
+        {
+          "path": "Crossing-Packages/fort-bend/Production/production-package-manifest.json",
+          "sha256": "288ea58797db415564c538000d990d4c6fd1a30fd39428ebe67ab980aa0950a8"
+        },
+        {
+          "path": "Crossing-Packages/galveston/Production/production-package-manifest.json",
+          "sha256": "dd69cbf7885bd19d63307714e2ddc9c118470197f498716c0da8de337b2786a4"
+        },
+        {
+          "path": "Crossing-Packages/grimes/Production/production-package-manifest.json",
+          "sha256": "ca1f78ed522a1c171afc4758f2e6cb69231b9b232b5f7195eebe69a404967ba1"
+        },
+        {
+          "path": "Crossing-Packages/hardin/Production/production-package-manifest.json",
+          "sha256": "79993c57edd3a8be1cb023bf60c7c595665fde4fd61aeae6e8313b1f18c142a0"
+        },
+        {
+          "path": "Crossing-Packages/harris/Production/production-package-manifest.json",
+          "sha256": "fbd84b51d5229f3faad168da81859dfb1430fcbd7aaee24c0e5167a38cdacfd5"
+        },
+        {
+          "path": "Crossing-Packages/jackson/Production/production-package-manifest.json",
+          "sha256": "36579131f5bdff3735cdca5dc24854113745853be087b349af347f104d84f635"
+        },
+        {
+          "path": "Crossing-Packages/jasper/Production/production-package-manifest.json",
+          "sha256": "f5e500c768482cbd95385cfc2170aff841a6ba5b11f0a1a47059e8551c5f78b2"
+        },
+        {
+          "path": "Crossing-Packages/jefferson/Production/production-package-manifest.json",
+          "sha256": "1ccd13a2e3b09f40e300e445f5e74d61743a6ae2ee41fc9b2417b6841264d462"
+        },
+        {
+          "path": "Crossing-Packages/lavaca/Production/production-package-manifest.json",
+          "sha256": "ce2be2bdeb585e0466060f8df72e330212a9832db6338478eb1d801e0ce50bc6"
+        },
+        {
+          "path": "Crossing-Packages/liberty/Production/production-package-manifest.json",
+          "sha256": "754c1aeef661ec6ef5e27cdef6b0d7c0adac0b6b3dcca80a4703bc0a4d454439"
+        },
+        {
+          "path": "Crossing-Packages/matagorda/Production/production-package-manifest.json",
+          "sha256": "b47c876ad2a7fb843b849b5b5898b750e5e548e8dc4caeca307138c4659ad168"
+        },
+        {
+          "path": "Crossing-Packages/montgomery/Production/production-package-manifest.json",
+          "sha256": "28ebbb57f91225dd8f0fe1963956f66e9789e85d115ce0dbf4159a20aa29c17a"
+        },
+        {
+          "path": "Crossing-Packages/newton/Production/production-package-manifest.json",
+          "sha256": "5f3a2188f292e309dd0a84a13e412bb640965ec530f49456a2fdb0599740aec1"
+        },
+        {
+          "path": "Crossing-Packages/orange/Production/production-package-manifest.json",
+          "sha256": "70e9db863b1e2393586a215c24c32342b84dd99a1c303886582e8a57e97e9796"
+        },
+        {
+          "path": "Crossing-Packages/polk/Production/production-package-manifest.json",
+          "sha256": "27b06e7219e1efe06b0f7a5573ad204f4099dada91d0ad7b7fe9f562c940e6d4"
+        },
+        {
+          "path": "Crossing-Packages/san-jacinto/Production/production-package-manifest.json",
+          "sha256": "6c46a12d165dd6f877da5c804853b7cb2bd6bf1ab5ae9a589e26582f0aa2681a"
+        },
+        {
+          "path": "Crossing-Packages/tyler/Production/production-package-manifest.json",
+          "sha256": "a330894ad80f445d46b0789095b5772795fcb9937084f256a6615e69aeabfe57"
+        },
+        {
+          "path": "Crossing-Packages/walker/Production/production-package-manifest.json",
+          "sha256": "087488f11f9d61407e57edb753c9df8967ef449b426f91d3f2041f125049a5ab"
+        },
+        {
+          "path": "Crossing-Packages/waller/Production/production-package-manifest.json",
+          "sha256": "5f9e4c5581084eb6e4357239196d72a21d2fa85f2e192548bf0b993415fbc832"
+        },
+        {
+          "path": "Crossing-Packages/washington/Production/production-package-manifest.json",
+          "sha256": "b15ee58e631e2cc5e0cfa121c9666b94cee031d6b90da1bd9ce2a70154aefad5"
+        },
+        {
+          "path": "Crossing-Packages/wharton/Production/production-package-manifest.json",
+          "sha256": "858409a55eaf9be8c5ccfbc5e2e009546f6aae564cf0dae8b9ac1258be5b6ccb"
+        }
+      ],
+      "classification": "SAME_FILENAME_DIFFERENT_HASH"
+    }
+  ],
+  "relationships": [
+    {
+      "classification": "ARCHIVE_AND_EXTRACTED_EQUIVALENTS",
+      "archive": "National-Address-Database/NAD_r23.zip",
+      "extracted": "National-Address-Database/extracted/NAD_r23.gdb",
+      "note": "Related identity; no whole-directory hash comparison claimed."
+    },
+    {
+      "classification": "ARCHIVE_AND_EXTRACTED_EQUIVALENTS",
+      "archive": "Census/tl_2025_us_county.zip",
+      "extracted": "Census/tl_2025_us_county/tl_2025_us_county.shp",
+      "note": "Related identity; not an exact-byte duplicate."
+    },
+    {
+      "classification": "REVIEW_SUPERSEDED_BY_PRODUCTION_CANDIDATE",
+      "olderPattern": "Crossing-Packages/<county>/<county>-crossings.geojson",
+      "newerPattern": "Crossing-Packages/<county>/Production/<county>-production-crossings.geojson"
+    }
+  ]
+}
