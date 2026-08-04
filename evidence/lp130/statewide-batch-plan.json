@@ -1,0 +1,1204 @@
+{
+  "schemaVersion": "gridly-lp130-statewide-batch-plan-v1",
+  "milestone": "LP130",
+  "officialCountyCount": 254,
+  "startingCandidateCount": 34,
+  "remainingCountyCount": 220,
+  "batchSize": 25,
+  "batchCount": 9,
+  "ordering": "ascending official five-digit FIPS",
+  "candidateOnly": true,
+  "activated": false,
+  "existingFips": [
+    "48015",
+    "48039",
+    "48041",
+    "48051",
+    "48057",
+    "48071",
+    "48089",
+    "48149",
+    "48157",
+    "48167",
+    "48185",
+    "48199",
+    "48201",
+    "48239",
+    "48241",
+    "48245",
+    "48285",
+    "48287",
+    "48291",
+    "48321",
+    "48331",
+    "48339",
+    "48351",
+    "48361",
+    "48373",
+    "48395",
+    "48407",
+    "48455",
+    "48457",
+    "48469",
+    "48471",
+    "48473",
+    "48477",
+    "48481"
+  ],
+  "batches": [
+    {
+      "id": "batch-01",
+      "number": 1,
+      "counties": [
+        {
+          "countyId": "anderson",
+          "county": "Anderson County",
+          "fips": "48001"
+        },
+        {
+          "countyId": "andrews",
+          "county": "Andrews County",
+          "fips": "48003"
+        },
+        {
+          "countyId": "angelina",
+          "county": "Angelina County",
+          "fips": "48005"
+        },
+        {
+          "countyId": "aransas",
+          "county": "Aransas County",
+          "fips": "48007"
+        },
+        {
+          "countyId": "archer",
+          "county": "Archer County",
+          "fips": "48009"
+        },
+        {
+          "countyId": "armstrong",
+          "county": "Armstrong County",
+          "fips": "48011"
+        },
+        {
+          "countyId": "atascosa",
+          "county": "Atascosa County",
+          "fips": "48013"
+        },
+        {
+          "countyId": "bailey",
+          "county": "Bailey County",
+          "fips": "48017"
+        },
+        {
+          "countyId": "bandera",
+          "county": "Bandera County",
+          "fips": "48019"
+        },
+        {
+          "countyId": "bastrop",
+          "county": "Bastrop County",
+          "fips": "48021"
+        },
+        {
+          "countyId": "baylor",
+          "county": "Baylor County",
+          "fips": "48023"
+        },
+        {
+          "countyId": "bee",
+          "county": "Bee County",
+          "fips": "48025"
+        },
+        {
+          "countyId": "bell",
+          "county": "Bell County",
+          "fips": "48027"
+        },
+        {
+          "countyId": "bexar",
+          "county": "Bexar County",
+          "fips": "48029"
+        },
+        {
+          "countyId": "blanco",
+          "county": "Blanco County",
+          "fips": "48031"
+        },
+        {
+          "countyId": "borden",
+          "county": "Borden County",
+          "fips": "48033"
+        },
+        {
+          "countyId": "bosque",
+          "county": "Bosque County",
+          "fips": "48035"
+        },
+        {
+          "countyId": "bowie",
+          "county": "Bowie County",
+          "fips": "48037"
+        },
+        {
+          "countyId": "brewster",
+          "county": "Brewster County",
+          "fips": "48043"
+        },
+        {
+          "countyId": "briscoe",
+          "county": "Briscoe County",
+          "fips": "48045"
+        },
+        {
+          "countyId": "brooks",
+          "county": "Brooks County",
+          "fips": "48047"
+        },
+        {
+          "countyId": "brown",
+          "county": "Brown County",
+          "fips": "48049"
+        },
+        {
+          "countyId": "burnet",
+          "county": "Burnet County",
+          "fips": "48053"
+        },
+        {
+          "countyId": "caldwell",
+          "county": "Caldwell County",
+          "fips": "48055"
+        },
+        {
+          "countyId": "callahan",
+          "county": "Callahan County",
+          "fips": "48059"
+        }
+      ]
+    },
+    {
+      "id": "batch-02",
+      "number": 2,
+      "counties": [
+        {
+          "countyId": "cameron",
+          "county": "Cameron County",
+          "fips": "48061"
+        },
+        {
+          "countyId": "camp",
+          "county": "Camp County",
+          "fips": "48063"
+        },
+        {
+          "countyId": "carson",
+          "county": "Carson County",
+          "fips": "48065"
+        },
+        {
+          "countyId": "cass",
+          "county": "Cass County",
+          "fips": "48067"
+        },
+        {
+          "countyId": "castro",
+          "county": "Castro County",
+          "fips": "48069"
+        },
+        {
+          "countyId": "cherokee",
+          "county": "Cherokee County",
+          "fips": "48073"
+        },
+        {
+          "countyId": "childress",
+          "county": "Childress County",
+          "fips": "48075"
+        },
+        {
+          "countyId": "clay",
+          "county": "Clay County",
+          "fips": "48077"
+        },
+        {
+          "countyId": "cochran",
+          "county": "Cochran County",
+          "fips": "48079"
+        },
+        {
+          "countyId": "coke",
+          "county": "Coke County",
+          "fips": "48081"
+        },
+        {
+          "countyId": "coleman",
+          "county": "Coleman County",
+          "fips": "48083"
+        },
+        {
+          "countyId": "collin",
+          "county": "Collin County",
+          "fips": "48085"
+        },
+        {
+          "countyId": "collingsworth",
+          "county": "Collingsworth County",
+          "fips": "48087"
+        },
+        {
+          "countyId": "comal",
+          "county": "Comal County",
+          "fips": "48091"
+        },
+        {
+          "countyId": "comanche",
+          "county": "Comanche County",
+          "fips": "48093"
+        },
+        {
+          "countyId": "concho",
+          "county": "Concho County",
+          "fips": "48095"
+        },
+        {
+          "countyId": "cooke",
+          "county": "Cooke County",
+          "fips": "48097"
+        },
+        {
+          "countyId": "coryell",
+          "county": "Coryell County",
+          "fips": "48099"
+        },
+        {
+          "countyId": "cottle",
+          "county": "Cottle County",
+          "fips": "48101"
+        },
+        {
+          "countyId": "crane",
+          "county": "Crane County",
+          "fips": "48103"
+        },
+        {
+          "countyId": "crockett",
+          "county": "Crockett County",
+          "fips": "48105"
+        },
+        {
+          "countyId": "crosby",
+          "county": "Crosby County",
+          "fips": "48107"
+        },
+        {
+          "countyId": "culberson",
+          "county": "Culberson County",
+          "fips": "48109"
+        },
+        {
+          "countyId": "dallam",
+          "county": "Dallam County",
+          "fips": "48111"
+        },
+        {
+          "countyId": "dallas",
+          "county": "Dallas County",
+          "fips": "48113"
+        }
+      ]
+    },
+    {
+      "id": "batch-03",
+      "number": 3,
+      "counties": [
+        {
+          "countyId": "dawson",
+          "county": "Dawson County",
+          "fips": "48115"
+        },
+        {
+          "countyId": "deaf-smith",
+          "county": "Deaf Smith County",
+          "fips": "48117"
+        },
+        {
+          "countyId": "delta",
+          "county": "Delta County",
+          "fips": "48119"
+        },
+        {
+          "countyId": "denton",
+          "county": "Denton County",
+          "fips": "48121"
+        },
+        {
+          "countyId": "dewitt",
+          "county": "DeWitt County",
+          "fips": "48123"
+        },
+        {
+          "countyId": "dickens",
+          "county": "Dickens County",
+          "fips": "48125"
+        },
+        {
+          "countyId": "dimmit",
+          "county": "Dimmit County",
+          "fips": "48127"
+        },
+        {
+          "countyId": "donley",
+          "county": "Donley County",
+          "fips": "48129"
+        },
+        {
+          "countyId": "duval",
+          "county": "Duval County",
+          "fips": "48131"
+        },
+        {
+          "countyId": "eastland",
+          "county": "Eastland County",
+          "fips": "48133"
+        },
+        {
+          "countyId": "ector",
+          "county": "Ector County",
+          "fips": "48135"
+        },
+        {
+          "countyId": "edwards",
+          "county": "Edwards County",
+          "fips": "48137"
+        },
+        {
+          "countyId": "ellis",
+          "county": "Ellis County",
+          "fips": "48139"
+        },
+        {
+          "countyId": "el-paso",
+          "county": "El Paso County",
+          "fips": "48141"
+        },
+        {
+          "countyId": "erath",
+          "county": "Erath County",
+          "fips": "48143"
+        },
+        {
+          "countyId": "falls",
+          "county": "Falls County",
+          "fips": "48145"
+        },
+        {
+          "countyId": "fannin",
+          "county": "Fannin County",
+          "fips": "48147"
+        },
+        {
+          "countyId": "fisher",
+          "county": "Fisher County",
+          "fips": "48151"
+        },
+        {
+          "countyId": "floyd",
+          "county": "Floyd County",
+          "fips": "48153"
+        },
+        {
+          "countyId": "foard",
+          "county": "Foard County",
+          "fips": "48155"
+        },
+        {
+          "countyId": "franklin",
+          "county": "Franklin County",
+          "fips": "48159"
+        },
+        {
+          "countyId": "freestone",
+          "county": "Freestone County",
+          "fips": "48161"
+        },
+        {
+          "countyId": "frio",
+          "county": "Frio County",
+          "fips": "48163"
+        },
+        {
+          "countyId": "gaines",
+          "county": "Gaines County",
+          "fips": "48165"
+        },
+        {
+          "countyId": "garza",
+          "county": "Garza County",
+          "fips": "48169"
+        }
+      ]
+    },
+    {
+      "id": "batch-04",
+      "number": 4,
+      "counties": [
+        {
+          "countyId": "gillespie",
+          "county": "Gillespie County",
+          "fips": "48171"
+        },
+        {
+          "countyId": "glasscock",
+          "county": "Glasscock County",
+          "fips": "48173"
+        },
+        {
+          "countyId": "goliad",
+          "county": "Goliad County",
+          "fips": "48175"
+        },
+        {
+          "countyId": "gonzales",
+          "county": "Gonzales County",
+          "fips": "48177"
+        },
+        {
+          "countyId": "gray",
+          "county": "Gray County",
+          "fips": "48179"
+        },
+        {
+          "countyId": "grayson",
+          "county": "Grayson County",
+          "fips": "48181"
+        },
+        {
+          "countyId": "gregg",
+          "county": "Gregg County",
+          "fips": "48183"
+        },
+        {
+          "countyId": "guadalupe",
+          "county": "Guadalupe County",
+          "fips": "48187"
+        },
+        {
+          "countyId": "hale",
+          "county": "Hale County",
+          "fips": "48189"
+        },
+        {
+          "countyId": "hall",
+          "county": "Hall County",
+          "fips": "48191"
+        },
+        {
+          "countyId": "hamilton",
+          "county": "Hamilton County",
+          "fips": "48193"
+        },
+        {
+          "countyId": "hansford",
+          "county": "Hansford County",
+          "fips": "48195"
+        },
+        {
+          "countyId": "hardeman",
+          "county": "Hardeman County",
+          "fips": "48197"
+        },
+        {
+          "countyId": "harrison",
+          "county": "Harrison County",
+          "fips": "48203"
+        },
+        {
+          "countyId": "hartley",
+          "county": "Hartley County",
+          "fips": "48205"
+        },
+        {
+          "countyId": "haskell",
+          "county": "Haskell County",
+          "fips": "48207"
+        },
+        {
+          "countyId": "hays",
+          "county": "Hays County",
+          "fips": "48209"
+        },
+        {
+          "countyId": "hemphill",
+          "county": "Hemphill County",
+          "fips": "48211"
+        },
+        {
+          "countyId": "henderson",
+          "county": "Henderson County",
+          "fips": "48213"
+        },
+        {
+          "countyId": "hidalgo",
+          "county": "Hidalgo County",
+          "fips": "48215"
+        },
+        {
+          "countyId": "hill",
+          "county": "Hill County",
+          "fips": "48217"
+        },
+        {
+          "countyId": "hockley",
+          "county": "Hockley County",
+          "fips": "48219"
+        },
+        {
+          "countyId": "hood",
+          "county": "Hood County",
+          "fips": "48221"
+        },
+        {
+          "countyId": "hopkins",
+          "county": "Hopkins County",
+          "fips": "48223"
+        },
+        {
+          "countyId": "houston",
+          "county": "Houston County",
+          "fips": "48225"
+        }
+      ]
+    },
+    {
+      "id": "batch-05",
+      "number": 5,
+      "counties": [
+        {
+          "countyId": "howard",
+          "county": "Howard County",
+          "fips": "48227"
+        },
+        {
+          "countyId": "hudspeth",
+          "county": "Hudspeth County",
+          "fips": "48229"
+        },
+        {
+          "countyId": "hunt",
+          "county": "Hunt County",
+          "fips": "48231"
+        },
+        {
+          "countyId": "hutchinson",
+          "county": "Hutchinson County",
+          "fips": "48233"
+        },
+        {
+          "countyId": "irion",
+          "county": "Irion County",
+          "fips": "48235"
+        },
+        {
+          "countyId": "jack",
+          "county": "Jack County",
+          "fips": "48237"
+        },
+        {
+          "countyId": "jeff-davis",
+          "county": "Jeff Davis County",
+          "fips": "48243"
+        },
+        {
+          "countyId": "jim-hogg",
+          "county": "Jim Hogg County",
+          "fips": "48247"
+        },
+        {
+          "countyId": "jim-wells",
+          "county": "Jim Wells County",
+          "fips": "48249"
+        },
+        {
+          "countyId": "johnson",
+          "county": "Johnson County",
+          "fips": "48251"
+        },
+        {
+          "countyId": "jones",
+          "county": "Jones County",
+          "fips": "48253"
+        },
+        {
+          "countyId": "karnes",
+          "county": "Karnes County",
+          "fips": "48255"
+        },
+        {
+          "countyId": "kaufman",
+          "county": "Kaufman County",
+          "fips": "48257"
+        },
+        {
+          "countyId": "kendall",
+          "county": "Kendall County",
+          "fips": "48259"
+        },
+        {
+          "countyId": "kenedy",
+          "county": "Kenedy County",
+          "fips": "48261"
+        },
+        {
+          "countyId": "kent",
+          "county": "Kent County",
+          "fips": "48263"
+        },
+        {
+          "countyId": "kerr",
+          "county": "Kerr County",
+          "fips": "48265"
+        },
+        {
+          "countyId": "kimble",
+          "county": "Kimble County",
+          "fips": "48267"
+        },
+        {
+          "countyId": "king",
+          "county": "King County",
+          "fips": "48269"
+        },
+        {
+          "countyId": "kinney",
+          "county": "Kinney County",
+          "fips": "48271"
+        },
+        {
+          "countyId": "kleberg",
+          "county": "Kleberg County",
+          "fips": "48273"
+        },
+        {
+          "countyId": "knox",
+          "county": "Knox County",
+          "fips": "48275"
+        },
+        {
+          "countyId": "lamar",
+          "county": "Lamar County",
+          "fips": "48277"
+        },
+        {
+          "countyId": "lamb",
+          "county": "Lamb County",
+          "fips": "48279"
+        },
+        {
+          "countyId": "lampasas",
+          "county": "Lampasas County",
+          "fips": "48281"
+        }
+      ]
+    },
+    {
+      "id": "batch-06",
+      "number": 6,
+      "counties": [
+        {
+          "countyId": "la-salle",
+          "county": "La Salle County",
+          "fips": "48283"
+        },
+        {
+          "countyId": "leon",
+          "county": "Leon County",
+          "fips": "48289"
+        },
+        {
+          "countyId": "limestone",
+          "county": "Limestone County",
+          "fips": "48293"
+        },
+        {
+          "countyId": "lipscomb",
+          "county": "Lipscomb County",
+          "fips": "48295"
+        },
+        {
+          "countyId": "live-oak",
+          "county": "Live Oak County",
+          "fips": "48297"
+        },
+        {
+          "countyId": "llano",
+          "county": "Llano County",
+          "fips": "48299"
+        },
+        {
+          "countyId": "loving",
+          "county": "Loving County",
+          "fips": "48301"
+        },
+        {
+          "countyId": "lubbock",
+          "county": "Lubbock County",
+          "fips": "48303"
+        },
+        {
+          "countyId": "lynn",
+          "county": "Lynn County",
+          "fips": "48305"
+        },
+        {
+          "countyId": "mcculloch",
+          "county": "McCulloch County",
+          "fips": "48307"
+        },
+        {
+          "countyId": "mclennan",
+          "county": "McLennan County",
+          "fips": "48309"
+        },
+        {
+          "countyId": "mcmullen",
+          "county": "McMullen County",
+          "fips": "48311"
+        },
+        {
+          "countyId": "madison",
+          "county": "Madison County",
+          "fips": "48313"
+        },
+        {
+          "countyId": "marion",
+          "county": "Marion County",
+          "fips": "48315"
+        },
+        {
+          "countyId": "martin",
+          "county": "Martin County",
+          "fips": "48317"
+        },
+        {
+          "countyId": "mason",
+          "county": "Mason County",
+          "fips": "48319"
+        },
+        {
+          "countyId": "maverick",
+          "county": "Maverick County",
+          "fips": "48323"
+        },
+        {
+          "countyId": "medina",
+          "county": "Medina County",
+          "fips": "48325"
+        },
+        {
+          "countyId": "menard",
+          "county": "Menard County",
+          "fips": "48327"
+        },
+        {
+          "countyId": "midland",
+          "county": "Midland County",
+          "fips": "48329"
+        },
+        {
+          "countyId": "mills",
+          "county": "Mills County",
+          "fips": "48333"
+        },
+        {
+          "countyId": "mitchell",
+          "county": "Mitchell County",
+          "fips": "48335"
+        },
+        {
+          "countyId": "montague",
+          "county": "Montague County",
+          "fips": "48337"
+        },
+        {
+          "countyId": "moore",
+          "county": "Moore County",
+          "fips": "48341"
+        },
+        {
+          "countyId": "morris",
+          "county": "Morris County",
+          "fips": "48343"
+        }
+      ]
+    },
+    {
+      "id": "batch-07",
+      "number": 7,
+      "counties": [
+        {
+          "countyId": "motley",
+          "county": "Motley County",
+          "fips": "48345"
+        },
+        {
+          "countyId": "nacogdoches",
+          "county": "Nacogdoches County",
+          "fips": "48347"
+        },
+        {
+          "countyId": "navarro",
+          "county": "Navarro County",
+          "fips": "48349"
+        },
+        {
+          "countyId": "nolan",
+          "county": "Nolan County",
+          "fips": "48353"
+        },
+        {
+          "countyId": "nueces",
+          "county": "Nueces County",
+          "fips": "48355"
+        },
+        {
+          "countyId": "ochiltree",
+          "county": "Ochiltree County",
+          "fips": "48357"
+        },
+        {
+          "countyId": "oldham",
+          "county": "Oldham County",
+          "fips": "48359"
+        },
+        {
+          "countyId": "palo-pinto",
+          "county": "Palo Pinto County",
+          "fips": "48363"
+        },
+        {
+          "countyId": "panola",
+          "county": "Panola County",
+          "fips": "48365"
+        },
+        {
+          "countyId": "parker",
+          "county": "Parker County",
+          "fips": "48367"
+        },
+        {
+          "countyId": "parmer",
+          "county": "Parmer County",
+          "fips": "48369"
+        },
+        {
+          "countyId": "pecos",
+          "county": "Pecos County",
+          "fips": "48371"
+        },
+        {
+          "countyId": "potter",
+          "county": "Potter County",
+          "fips": "48375"
+        },
+        {
+          "countyId": "presidio",
+          "county": "Presidio County",
+          "fips": "48377"
+        },
+        {
+          "countyId": "rains",
+          "county": "Rains County",
+          "fips": "48379"
+        },
+        {
+          "countyId": "randall",
+          "county": "Randall County",
+          "fips": "48381"
+        },
+        {
+          "countyId": "reagan",
+          "county": "Reagan County",
+          "fips": "48383"
+        },
+        {
+          "countyId": "real",
+          "county": "Real County",
+          "fips": "48385"
+        },
+        {
+          "countyId": "red-river",
+          "county": "Red River County",
+          "fips": "48387"
+        },
+        {
+          "countyId": "reeves",
+          "county": "Reeves County",
+          "fips": "48389"
+        },
+        {
+          "countyId": "refugio",
+          "county": "Refugio County",
+          "fips": "48391"
+        },
+        {
+          "countyId": "roberts",
+          "county": "Roberts County",
+          "fips": "48393"
+        },
+        {
+          "countyId": "rockwall",
+          "county": "Rockwall County",
+          "fips": "48397"
+        },
+        {
+          "countyId": "runnels",
+          "county": "Runnels County",
+          "fips": "48399"
+        },
+        {
+          "countyId": "rusk",
+          "county": "Rusk County",
+          "fips": "48401"
+        }
+      ]
+    },
+    {
+      "id": "batch-08",
+      "number": 8,
+      "counties": [
+        {
+          "countyId": "sabine",
+          "county": "Sabine County",
+          "fips": "48403"
+        },
+        {
+          "countyId": "san-augustine",
+          "county": "San Augustine County",
+          "fips": "48405"
+        },
+        {
+          "countyId": "san-patricio",
+          "county": "San Patricio County",
+          "fips": "48409"
+        },
+        {
+          "countyId": "san-saba",
+          "county": "San Saba County",
+          "fips": "48411"
+        },
+        {
+          "countyId": "schleicher",
+          "county": "Schleicher County",
+          "fips": "48413"
+        },
+        {
+          "countyId": "scurry",
+          "county": "Scurry County",
+          "fips": "48415"
+        },
+        {
+          "countyId": "shackelford",
+          "county": "Shackelford County",
+          "fips": "48417"
+        },
+        {
+          "countyId": "shelby",
+          "county": "Shelby County",
+          "fips": "48419"
+        },
+        {
+          "countyId": "sherman",
+          "county": "Sherman County",
+          "fips": "48421"
+        },
+        {
+          "countyId": "smith",
+          "county": "Smith County",
+          "fips": "48423"
+        },
+        {
+          "countyId": "somervell",
+          "county": "Somervell County",
+          "fips": "48425"
+        },
+        {
+          "countyId": "starr",
+          "county": "Starr County",
+          "fips": "48427"
+        },
+        {
+          "countyId": "stephens",
+          "county": "Stephens County",
+          "fips": "48429"
+        },
+        {
+          "countyId": "sterling",
+          "county": "Sterling County",
+          "fips": "48431"
+        },
+        {
+          "countyId": "stonewall",
+          "county": "Stonewall County",
+          "fips": "48433"
+        },
+        {
+          "countyId": "sutton",
+          "county": "Sutton County",
+          "fips": "48435"
+        },
+        {
+          "countyId": "swisher",
+          "county": "Swisher County",
+          "fips": "48437"
+        },
+        {
+          "countyId": "tarrant",
+          "county": "Tarrant County",
+          "fips": "48439"
+        },
+        {
+          "countyId": "taylor",
+          "county": "Taylor County",
+          "fips": "48441"
+        },
+        {
+          "countyId": "terrell",
+          "county": "Terrell County",
+          "fips": "48443"
+        },
+        {
+          "countyId": "terry",
+          "county": "Terry County",
+          "fips": "48445"
+        },
+        {
+          "countyId": "throckmorton",
+          "county": "Throckmorton County",
+          "fips": "48447"
+        },
+        {
+          "countyId": "titus",
+          "county": "Titus County",
+          "fips": "48449"
+        },
+        {
+          "countyId": "tom-green",
+          "county": "Tom Green County",
+          "fips": "48451"
+        },
+        {
+          "countyId": "travis",
+          "county": "Travis County",
+          "fips": "48453"
+        }
+      ]
+    },
+    {
+      "id": "batch-09",
+      "number": 9,
+      "counties": [
+        {
+          "countyId": "upshur",
+          "county": "Upshur County",
+          "fips": "48459"
+        },
+        {
+          "countyId": "upton",
+          "county": "Upton County",
+          "fips": "48461"
+        },
+        {
+          "countyId": "uvalde",
+          "county": "Uvalde County",
+          "fips": "48463"
+        },
+        {
+          "countyId": "val-verde",
+          "county": "Val Verde County",
+          "fips": "48465"
+        },
+        {
+          "countyId": "van-zandt",
+          "county": "Van Zandt County",
+          "fips": "48467"
+        },
+        {
+          "countyId": "ward",
+          "county": "Ward County",
+          "fips": "48475"
+        },
+        {
+          "countyId": "webb",
+          "county": "Webb County",
+          "fips": "48479"
+        },
+        {
+          "countyId": "wheeler",
+          "county": "Wheeler County",
+          "fips": "48483"
+        },
+        {
+          "countyId": "wichita",
+          "county": "Wichita County",
+          "fips": "48485"
+        },
+        {
+          "countyId": "wilbarger",
+          "county": "Wilbarger County",
+          "fips": "48487"
+        },
+        {
+          "countyId": "willacy",
+          "county": "Willacy County",
+          "fips": "48489"
+        },
+        {
+          "countyId": "williamson",
+          "county": "Williamson County",
+          "fips": "48491"
+        },
+        {
+          "countyId": "wilson",
+          "county": "Wilson County",
+          "fips": "48493"
+        },
+        {
+          "countyId": "winkler",
+          "county": "Winkler County",
+          "fips": "48495"
+        },
+        {
+          "countyId": "wise",
+          "county": "Wise County",
+          "fips": "48497"
+        },
+        {
+          "countyId": "wood",
+          "county": "Wood County",
+          "fips": "48499"
+        },
+        {
+          "countyId": "yoakum",
+          "county": "Yoakum County",
+          "fips": "48501"
+        },
+        {
+          "countyId": "young",
+          "county": "Young County",
+          "fips": "48503"
+        },
+        {
+          "countyId": "zapata",
+          "county": "Zapata County",
+          "fips": "48505"
+        },
+        {
+          "countyId": "zavala",
+          "county": "Zavala County",
+          "fips": "48507"
+        }
+      ]
+    }
+  ]
+}

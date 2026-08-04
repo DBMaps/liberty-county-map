@@ -1,60 +1,78 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { access, readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createPlan, parseArguments, planCsv, run } from '../tools/lp130/manufacture-remaining-texas-addresses.mjs';
 
 const root = new URL('../', import.meta.url);
-const readJson = async (path) => JSON.parse(await readFile(new URL(path, root), 'utf8'));
-const evidence = await readJson('evidence/lp130/texas-address-expansion-wave-4-preflight.json');
-const lp129 = await readJson('evidence/lp129/texas-address-expansion-wave-3-preflight.json');
+const readJson = async path => JSON.parse(await readFile(new URL(path, root), 'utf8'));
 const registry = await readJson('data/lp104/texas-counties.json');
 const manifest = await readJson('data/generated/lp104/txgio-addresses/manifest.json');
+const productionBefore = await readFile(new URL('data/generated/lp104/txgio-addresses/runtime-manifest.json', root));
+const plan = createPlan(registry, manifest, 25);
 
-test('LP130 selects exactly five registered, FIPS-ordered, unrepresented counties', () => {
-  assert.deepEqual(evidence.counties.map(({ fips }) => fips), ['48005', '48021', '48025', '48027', '48055']);
-  assert.equal(evidence.counties.length, 5);
-  const represented = new Set(manifest.packages.map(({ fips }) => fips));
-  for (const county of evidence.counties) {
-    const registered = registry.counties.find(({ fips }) => fips === county.fips);
-    assert.deepEqual([registered.countyId, `${registered.countyName} County`], [county.countyId, county.county]);
-    assert.equal(represented.has(county.fips), false);
-    assert.ok(county.adjacentToRepresented.length > 0);
-  }
+test('official, existing, and remaining identities reconcile without duplicates', () => {
+  assert.equal(registry.counties.length, 254);
+  assert.equal(new Set(registry.counties.map(item => item.fips)).size, 254);
+  assert.equal(plan.startingCandidateCount, 34);
+  assert.equal(plan.remainingCountyCount, 220);
+  assert.equal(new Set(manifest.packages.map(item => item.fips)).size, 34);
+  assert.equal(new Set(manifest.packages.map(item => item.outputPath.split(/[\\/]/).at(-1))).size, 34);
+  assert.ok(['48051', '48455', '48469'].every(fips => plan.existingFips.includes(fips)));
 });
 
-test('LP129 committed baseline contains 34 unique packages and the Wave 3 cohort', () => {
-  assert.equal(manifest.packages.length, 34);
-  assert.equal(new Set(manifest.packages.map(({ fips }) => fips)).size, 34);
-  assert.equal(new Set(manifest.packages.map(({ outputPath }) => outputPath.split(/[\\/]/).at(-1))).size, 34);
-  assert.deepEqual(['48051', '48455', '48469'].map(fips => manifest.packages.some(entry => entry.fips === fips)), [true, true, true]);
-  assert.deepEqual(evidence.lp129Baseline.requiredFipsPresent, ['48051', '48455', '48469']);
+test('FIPS ordering and default batches are deterministic', () => {
+  const fips = plan.batches.flatMap(batch => batch.counties.map(county => county.fips));
+  assert.deepEqual(fips, [...fips].sort());
+  assert.deepEqual(plan.batches.map(batch => [batch.id, batch.counties.length]), [
+    ['batch-01', 25], ['batch-02', 25], ['batch-03', 25], ['batch-04', 25], ['batch-05', 25],
+    ['batch-06', 25], ['batch-07', 25], ['batch-08', 25], ['batch-09', 20]
+  ]);
+  assert.equal(planCsv(plan).trim().split('\n').length, 221);
 });
 
-test('LP129 packages, sidecars, certificates, and certification reports remain committed', async () => {
-  for (const county of lp129.counties) {
-    const stem = `${county.countyId}-${county.fips}`;
-    await Promise.all([
-      access(new URL(`data/generated/lp104/txgio-addresses/${stem}.addresses.jsonl.gz`, root)),
-      access(new URL(`data/generated/lp104/txgio-addresses/${stem}.addresses.jsonl.gz.json`, root)),
-      access(new URL(`reports/lp129-wave-3/certificates/${stem}.runtime-certificate.json`, root)),
-      access(new URL(`reports/lp129-wave-3/certification/${stem}.certification.json`, root))
-    ]);
-  }
+test('batch size override is deterministic and existing candidates are excluded', () => {
+  const override = createPlan(registry, manifest, 40);
+  assert.deepEqual(override.batches.map(batch => batch.counties.length), [40, 40, 40, 40, 40, 20]);
+  const remaining = new Set(override.batches.flatMap(batch => batch.counties.map(county => county.fips)));
+  assert.ok(manifest.packages.every(item => !remaining.has(item.fips)));
 });
 
-test('LP129 rerun gap is reported truthfully and blocks owner manufacturing', async () => {
-  await access(new URL('tools/lp129/reconcile-package-rerun.mjs', root));
-  assert.equal(lp129.determinism.ownerRerunEvidencePresent, false);
-  assert.equal(evidence.lp129Baseline.ownerRerunEvidencePresent, false);
-  assert.equal(evidence.status, 'OWNER_MANUFACTURING_BLOCKED');
-  assert.match(evidence.lp129Baseline.blocker, /rerun evidence is pending/);
+test('CLI enforces modes and supports required options', () => {
+  assert.deepEqual(parseArguments(['--gdb', 'Texas-2026.gdb', '--batch-size', '10', '--batch', '2', '--resume', '--reports', 'out']),
+    { batchSize: 10, gdb: 'Texas-2026.gdb', batch: 2, resume: true, reports: 'out' });
+  assert.throws(() => parseArguments(['--all', '--dry-run']), /exactly one/);
+  assert.throws(() => parseArguments(['--all']), /--gdb is required/);
 });
 
-test('LP130 remains candidate-only Phase 1 and command is exact', () => {
-  assert.equal(evidence.phase1.packagesManufactured, false);
-  assert.match(evidence.ownerCommand, /--fips 48005,48021,48025,48027,48055/);
-  assert.match(evidence.ownerCommand, /Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026\.gdb/);
-  assert.deepEqual(evidence.boundaries, {
-    candidateOnly: true, runtimeActivated: false, storageUploadOccurred: false,
-    supabaseChangesOccurred: false, runtimeBehaviorChanged: false, protectedSystemsChanged: false
-  });
+test('dry-run writes plans and creates no package artifacts', async () => {
+  const reports = await mkdtemp(join(tmpdir(), 'lp130-dry-run-'));
+  const before = new Set(await readdir(new URL('data/generated/lp104/txgio-addresses/', root)));
+  const result = await run({ dryRun: true, batchSize: 25, reports, registry, aggregate: manifest });
+  assert.equal(result.manufactured, false);
+  assert.deepEqual((await readdir(reports)).sort(), ['statewide-batch-plan.csv', 'statewide-batch-plan.json']);
+  assert.deepEqual(new Set(await readdir(new URL('data/generated/lp104/txgio-addresses/', root))), before);
+});
+
+test('planning never activates or changes the production runtime manifest', async () => {
+  const productionAfter = await readFile(new URL('data/generated/lp104/txgio-addresses/runtime-manifest.json', root));
+  assert.deepEqual(productionAfter, productionBefore);
+  assert.equal(plan.activated, false);
+  assert.equal(plan.candidateOnly, true);
+});
+
+test('resume and failures remain explicit in runner implementation', async () => {
+  const source = await readFile(new URL('tools/lp130/manufacture-remaining-texas-addresses.mjs', root), 'utf8');
+  assert.match(source, /options\.resume && await isComplete/);
+  assert.match(source, /statewide-resume-list\.txt/);
+  assert.match(source, /status: batchFailures\.length.*'INCOMPLETE'/s);
+  assert.doesNotMatch(source, /--force/);
+});
+
+test('documentation contains exact owner commands and candidate-only boundary', async () => {
+  const docs = await readFile(new URL('docs/LP130-TEXAS-ADDRESS-EXPANSION-WAVE-4.md', root), 'utf8');
+  for (const option of ['--dry-run', '--batch 1', '--all', '--resume', '--batch-size 25', '--reports "reports/lp130-statewide-addresses"']) assert.match(docs, new RegExp(option.replaceAll('-', '\\-')));
+  assert.match(docs, /C:\\GitHub\\Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026\.gdb/);
+  assert.match(docs, /All outputs are inactive candidates/);
 });
