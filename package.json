@@ -162,6 +162,9 @@
     "test:lp148": "node --test tests/lp148-statewide-geometry-builder.test.mjs",
     "build:lp149": "node tools/lp149/build-runtime-identity-registry.mjs --write",
     "verify:lp149": "node tools/lp149/build-runtime-identity-registry.mjs",
-    "test:lp149": "node --test tests/lp149-runtime-identity-registry.test.mjs"
+    "test:lp149": "node --test tests/lp149-runtime-identity-registry.test.mjs",
+    "build:lp150": "node tools/lp150/build-membership-transition.mjs --write",
+    "verify:lp150": "node tools/lp150/build-membership-transition.mjs",
+    "test:lp150": "node --test tests/lp150-membership-transition.test.mjs"
   }
 }
