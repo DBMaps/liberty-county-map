@@ -159,6 +159,9 @@
     "plan:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --plan",
     "build:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --build",
     "verify:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --verify && node tools/lp148/build-statewide-runtime-geometry.mjs --audit-runtime",
-    "test:lp148": "node --test tests/lp148-statewide-geometry-builder.test.mjs"
+    "test:lp148": "node --test tests/lp148-statewide-geometry-builder.test.mjs",
+    "build:lp149": "node tools/lp149/build-runtime-identity-registry.mjs --write",
+    "verify:lp149": "node tools/lp149/build-runtime-identity-registry.mjs",
+    "test:lp149": "node --test tests/lp149-runtime-identity-registry.test.mjs"
   }
 }
