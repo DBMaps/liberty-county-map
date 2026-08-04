@@ -1,0 +1,3383 @@
+{
+  "schemaVersion": "gridly-lp135-statewide-certification-v1",
+  "milestone": "LP135",
+  "observationDate": "2026-08-04",
+  "scope": "CERTIFICATION_EVIDENCE_ONLY",
+  "authoritativeManufacturingBaseline": "LP130",
+  "certificationTooling": "LP134",
+  "outcome": "STATEWIDE_CERTIFICATION_INCOMPLETE",
+  "summary": {
+    "countiesProcessed": 254,
+    "certified": 243,
+    "certificationBlocked": 11,
+    "certificationPercentage": 95.67
+  },
+  "comparisons": {
+    "lp131": {
+      "certified": 240,
+      "certificationBlocked": 14,
+      "changeInCertified": 3
+    },
+    "lp134": {
+      "certified": 243,
+      "certificationBlocked": 11,
+      "changeInCertified": 0
+    }
+  },
+  "regression": {
+    "packageIdentities": "UNCHANGED_FROM_LP130_INVENTORY",
+    "manufacturingArtifactsModified": false,
+    "runtimeArtifactsModified": false,
+    "deploymentModified": false,
+    "protectedSystemsModified": false,
+    "limitation": "Eleven immutable package byte streams are unavailable in this checkout; their package and sidecar hashes cannot be re-observed and their prior blocked status is not inferred to PASS."
+  },
+  "counties": [
+    {
+      "county": "Anderson County",
+      "fips": "48001",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/anderson-48001.certification.json",
+      "packageIdentity": {
+        "name": "anderson-48001.addresses.jsonl.gz",
+        "sizeBytes": 937861,
+        "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c"
+      }
+    },
+    {
+      "county": "Andrews County",
+      "fips": "48003",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/andrews-48003.certification.json",
+      "packageIdentity": {
+        "name": "andrews-48003.addresses.jsonl.gz",
+        "sizeBytes": 248776,
+        "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1"
+      }
+    },
+    {
+      "county": "Angelina County",
+      "fips": "48005",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/angelina-48005.certification.json",
+      "packageIdentity": {
+        "name": "angelina-48005.addresses.jsonl.gz",
+        "sizeBytes": 1335591,
+        "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d"
+      }
+    },
+    {
+      "county": "Aransas County",
+      "fips": "48007",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/aransas-48007.certification.json",
+      "packageIdentity": {
+        "name": "aransas-48007.addresses.jsonl.gz",
+        "sizeBytes": 448181,
+        "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46"
+      }
+    },
+    {
+      "county": "Archer County",
+      "fips": "48009",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/archer-48009.certification.json",
+      "packageIdentity": {
+        "name": "archer-48009.addresses.jsonl.gz",
+        "sizeBytes": 176349,
+        "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d"
+      }
+    },
+    {
+      "county": "Armstrong County",
+      "fips": "48011",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/armstrong-48011.certification.json",
+      "packageIdentity": {
+        "name": "armstrong-48011.addresses.jsonl.gz",
+        "sizeBytes": 41191,
+        "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509"
+      }
+    },
+    {
+      "county": "Atascosa County",
+      "fips": "48013",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/atascosa-48013.certification.json",
+      "packageIdentity": {
+        "name": "atascosa-48013.addresses.jsonl.gz",
+        "sizeBytes": 839784,
+        "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5"
+      }
+    },
+    {
+      "county": "Austin County",
+      "fips": "48015",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/austin-48015.certification.json",
+      "packageIdentity": {
+        "name": "austin-48015.addresses.jsonl.gz",
+        "sizeBytes": 552056,
+        "sha256": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17"
+      }
+    },
+    {
+      "county": "Bailey County",
+      "fips": "48017",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bailey-48017.certification.json",
+      "packageIdentity": {
+        "name": "bailey-48017.addresses.jsonl.gz",
+        "sizeBytes": 105773,
+        "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55"
+      }
+    },
+    {
+      "county": "Bandera County",
+      "fips": "48019",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bandera-48019.certification.json",
+      "packageIdentity": {
+        "name": "bandera-48019.addresses.jsonl.gz",
+        "sizeBytes": 539409,
+        "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f"
+      }
+    },
+    {
+      "county": "Bastrop County",
+      "fips": "48021",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bastrop-48021.certification.json",
+      "packageIdentity": {
+        "name": "bastrop-48021.addresses.jsonl.gz",
+        "sizeBytes": 1906657,
+        "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8"
+      }
+    },
+    {
+      "county": "Baylor County",
+      "fips": "48023",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/baylor-48023.certification.json",
+      "packageIdentity": {
+        "name": "baylor-48023.addresses.jsonl.gz",
+        "sizeBytes": 84590,
+        "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf"
+      }
+    },
+    {
+      "county": "Bee County",
+      "fips": "48025",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bee-48025.certification.json",
+      "packageIdentity": {
+        "name": "bee-48025.addresses.jsonl.gz",
+        "sizeBytes": 225545,
+        "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6"
+      }
+    },
+    {
+      "county": "Bell County",
+      "fips": "48027",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bell-48027.certification.json",
+      "packageIdentity": {
+        "name": "bell-48027.addresses.jsonl.gz",
+        "sizeBytes": 5367668,
+        "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050"
+      }
+    },
+    {
+      "county": "Bexar County",
+      "fips": "48029",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bexar-48029.certification.json",
+      "packageIdentity": {
+        "name": "bexar-48029.addresses.jsonl.gz",
+        "sizeBytes": 21101375,
+        "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9"
+      }
+    },
+    {
+      "county": "Blanco County",
+      "fips": "48031",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/blanco-48031.certification.json",
+      "packageIdentity": {
+        "name": "blanco-48031.addresses.jsonl.gz",
+        "sizeBytes": 307471,
+        "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115"
+      }
+    },
+    {
+      "county": "Borden County",
+      "fips": "48033",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/borden-48033.certification.json",
+      "packageIdentity": {
+        "name": "borden-48033.addresses.jsonl.gz",
+        "sizeBytes": 23819,
+        "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d"
+      }
+    },
+    {
+      "county": "Bosque County",
+      "fips": "48035",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bosque-48035.certification.json",
+      "packageIdentity": {
+        "name": "bosque-48035.addresses.jsonl.gz",
+        "sizeBytes": 337704,
+        "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0"
+      }
+    },
+    {
+      "county": "Bowie County",
+      "fips": "48037",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/bowie-48037.certification.json",
+      "packageIdentity": {
+        "name": "bowie-48037.addresses.jsonl.gz",
+        "sizeBytes": 1499449,
+        "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9"
+      }
+    },
+    {
+      "county": "Brazoria County",
+      "fips": "48039",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/brazoria-48039.certification.json",
+      "packageIdentity": {
+        "name": "brazoria-48039.addresses.jsonl.gz",
+        "sizeBytes": 5695185,
+        "sha256": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7"
+      }
+    },
+    {
+      "county": "Brazos County",
+      "fips": "48041",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/brazos-48041.certification.json",
+      "packageIdentity": {
+        "name": "brazos-48041.addresses.jsonl.gz",
+        "sizeBytes": 3078907,
+        "sha256": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2"
+      }
+    },
+    {
+      "county": "Brewster County",
+      "fips": "48043",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/brewster-48043.certification.json",
+      "packageIdentity": {
+        "name": "brewster-48043.addresses.jsonl.gz",
+        "sizeBytes": 334550,
+        "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2"
+      }
+    },
+    {
+      "county": "Briscoe County",
+      "fips": "48045",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/briscoe-48045.certification.json",
+      "packageIdentity": {
+        "name": "briscoe-48045.addresses.jsonl.gz",
+        "sizeBytes": 38147,
+        "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621"
+      }
+    },
+    {
+      "county": "Brooks County",
+      "fips": "48047",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/brooks-48047.certification.json",
+      "packageIdentity": {
+        "name": "brooks-48047.addresses.jsonl.gz",
+        "sizeBytes": 101543,
+        "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88"
+      }
+    },
+    {
+      "county": "Brown County",
+      "fips": "48049",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/brown-48049.certification.json",
+      "packageIdentity": {
+        "name": "brown-48049.addresses.jsonl.gz",
+        "sizeBytes": 831260,
+        "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3"
+      }
+    },
+    {
+      "county": "Burleson County",
+      "fips": "48051",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp129-wave-3/certification/burleson-48051.certification.json",
+      "packageIdentity": {
+        "name": "burleson-48051.addresses.jsonl.gz",
+        "sizeBytes": 596519,
+        "sha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb"
+      }
+    },
+    {
+      "county": "Burnet County",
+      "fips": "48053",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/burnet-48053.certification.json",
+      "packageIdentity": {
+        "name": "burnet-48053.addresses.jsonl.gz",
+        "sizeBytes": 1257248,
+        "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491"
+      }
+    },
+    {
+      "county": "Caldwell County",
+      "fips": "48055",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/caldwell-48055.certification.json",
+      "packageIdentity": {
+        "name": "caldwell-48055.addresses.jsonl.gz",
+        "sizeBytes": 850854,
+        "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126"
+      }
+    },
+    {
+      "county": "Calhoun County",
+      "fips": "48057",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/calhoun-48057.certification.json",
+      "packageIdentity": {
+        "name": "calhoun-48057.addresses.jsonl.gz",
+        "sizeBytes": 443130,
+        "sha256": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229"
+      }
+    },
+    {
+      "county": "Callahan County",
+      "fips": "48059",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-01/certification/callahan-48059.certification.json",
+      "packageIdentity": {
+        "name": "callahan-48059.addresses.jsonl.gz",
+        "sizeBytes": 310500,
+        "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110"
+      }
+    },
+    {
+      "county": "Cameron County",
+      "fips": "48061",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/0",
+      "packageIdentity": {
+        "name": "cameron-48061.addresses.jsonl.gz",
+        "sizeBytes": 5373433,
+        "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Camp County",
+      "fips": "48063",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/camp-48063.certification.json",
+      "packageIdentity": {
+        "name": "camp-48063.addresses.jsonl.gz",
+        "sizeBytes": 271291,
+        "sha256": "c3f3bd18cabc9d04110406f8a5a84bae6a5427e42b62d84641300c2b17114e9b"
+      }
+    },
+    {
+      "county": "Carson County",
+      "fips": "48065",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/carson-48065.certification.json",
+      "packageIdentity": {
+        "name": "carson-48065.addresses.jsonl.gz",
+        "sizeBytes": 118586,
+        "sha256": "984013aca1f622f3d35b729f92abbc9bc1cbed4faecdceddf919422b2c5eb9fb"
+      }
+    },
+    {
+      "county": "Cass County",
+      "fips": "48067",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/cass-48067.certification.json",
+      "packageIdentity": {
+        "name": "cass-48067.addresses.jsonl.gz",
+        "sizeBytes": 581032,
+        "sha256": "e61469e71ac6dc74dcf47e60418f4cc3991ee680e79d6394c4247bbbef526392"
+      }
+    },
+    {
+      "county": "Castro County",
+      "fips": "48069",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/castro-48069.certification.json",
+      "packageIdentity": {
+        "name": "castro-48069.addresses.jsonl.gz",
+        "sizeBytes": 119147,
+        "sha256": "a43b9e008b31bd9547a6b9bbbe7679184f3ca54a49ccbd5a663fbe7954fbe499"
+      }
+    },
+    {
+      "county": "Chambers County",
+      "fips": "48071",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/chambers-48071.certification.json",
+      "packageIdentity": {
+        "name": "chambers-48071.addresses.jsonl.gz",
+        "sizeBytes": 885892,
+        "sha256": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819"
+      }
+    },
+    {
+      "county": "Cherokee County",
+      "fips": "48073",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/1",
+      "packageIdentity": {
+        "name": "cherokee-48073.addresses.jsonl.gz",
+        "sizeBytes": 1066374,
+        "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Childress County",
+      "fips": "48075",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/childress-48075.certification.json",
+      "packageIdentity": {
+        "name": "childress-48075.addresses.jsonl.gz",
+        "sizeBytes": 99342,
+        "sha256": "2772834a3bcfac66769cdb523574573254dbaa09e85dfa5426d95f894e0fe80d"
+      }
+    },
+    {
+      "county": "Clay County",
+      "fips": "48077",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/clay-48077.certification.json",
+      "packageIdentity": {
+        "name": "clay-48077.addresses.jsonl.gz",
+        "sizeBytes": 214600,
+        "sha256": "22aa7426e8b9a9e53f622074f084d19b77ea41eb5f84fcd402573b561de5224b"
+      }
+    },
+    {
+      "county": "Cochran County",
+      "fips": "48079",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/cochran-48079.certification.json",
+      "packageIdentity": {
+        "name": "cochran-48079.addresses.jsonl.gz",
+        "sizeBytes": 48182,
+        "sha256": "ea0a0ccead83d3c19741765704c2fd6f0e2566b53bf4cc43593f653d3f608add"
+      }
+    },
+    {
+      "county": "Coke County",
+      "fips": "48081",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/coke-48081.certification.json",
+      "packageIdentity": {
+        "name": "coke-48081.addresses.jsonl.gz",
+        "sizeBytes": 103197,
+        "sha256": "9003dd61418ef336a53c9e2d24182b0a6ad322335648b0655498ed7cbb02d645"
+      }
+    },
+    {
+      "county": "Coleman County",
+      "fips": "48083",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/coleman-48083.certification.json",
+      "packageIdentity": {
+        "name": "coleman-48083.addresses.jsonl.gz",
+        "sizeBytes": 231311,
+        "sha256": "053afabb0188ff65ada991072aaf1383e10d5230947693b93165f3d7f9729d1d"
+      }
+    },
+    {
+      "county": "Collin County",
+      "fips": "48085",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/collin-48085.certification.json",
+      "packageIdentity": {
+        "name": "collin-48085.addresses.jsonl.gz",
+        "sizeBytes": 9981010,
+        "sha256": "1b9b9ea4116e505358abfb1274bb10d3702e753ebcc9dd3626b98a2d3aebb87d"
+      }
+    },
+    {
+      "county": "Collingsworth County",
+      "fips": "48087",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/collingsworth-48087.certification.json",
+      "packageIdentity": {
+        "name": "collingsworth-48087.addresses.jsonl.gz",
+        "sizeBytes": 59143,
+        "sha256": "4b2c8c3e41fb4dc9a61b38026d774bebd671a8fa491ac794f4784fb7b5769265"
+      }
+    },
+    {
+      "county": "Colorado County",
+      "fips": "48089",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/colorado-48089.certification.json",
+      "packageIdentity": {
+        "name": "colorado-48089.addresses.jsonl.gz",
+        "sizeBytes": 465779,
+        "sha256": "8f7ebc0e01e44b78137ddb7cc14e96e9d54a6666d3d40f4bc541b981bed9fdd2"
+      }
+    },
+    {
+      "county": "Comal County",
+      "fips": "48091",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/comal-48091.certification.json",
+      "packageIdentity": {
+        "name": "comal-48091.addresses.jsonl.gz",
+        "sizeBytes": 3360569,
+        "sha256": "f5cd65b8c56cb74e7137f861ab35ba5e140923d2e51e64e9a5b8f8d14b67e0cd"
+      }
+    },
+    {
+      "county": "Comanche County",
+      "fips": "48093",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/comanche-48093.certification.json",
+      "packageIdentity": {
+        "name": "comanche-48093.addresses.jsonl.gz",
+        "sizeBytes": 323511,
+        "sha256": "6093c84a7f48163df60827191c86ee258fedb9136dd5d104c6233600c2e99ede"
+      }
+    },
+    {
+      "county": "Concho County",
+      "fips": "48095",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/concho-48095.certification.json",
+      "packageIdentity": {
+        "name": "concho-48095.addresses.jsonl.gz",
+        "sizeBytes": 104851,
+        "sha256": "77d291f9e853f88d6753c5738b0801515b1e69a3a2f83303d12d20b167c327e2"
+      }
+    },
+    {
+      "county": "Cooke County",
+      "fips": "48097",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/cooke-48097.certification.json",
+      "packageIdentity": {
+        "name": "cooke-48097.addresses.jsonl.gz",
+        "sizeBytes": 745531,
+        "sha256": "dce3ee97d5f7be2a50e20c5b969bd25ec4c036ffab60b30713416ac75a4b6923"
+      }
+    },
+    {
+      "county": "Coryell County",
+      "fips": "48099",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/coryell-48099.certification.json",
+      "packageIdentity": {
+        "name": "coryell-48099.addresses.jsonl.gz",
+        "sizeBytes": 916235,
+        "sha256": "d41c610089480eecd4c92b4619e0b2cca831c5a10b531315854c8f5c0f3163b7"
+      }
+    },
+    {
+      "county": "Cottle County",
+      "fips": "48101",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/cottle-48101.certification.json",
+      "packageIdentity": {
+        "name": "cottle-48101.addresses.jsonl.gz",
+        "sizeBytes": 38539,
+        "sha256": "8d5b49f5de43af20ba67efa6b6bdbad31dc973e44458ec544e5ff2e31fd22f00"
+      }
+    },
+    {
+      "county": "Crane County",
+      "fips": "48103",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/crane-48103.certification.json",
+      "packageIdentity": {
+        "name": "crane-48103.addresses.jsonl.gz",
+        "sizeBytes": 48793,
+        "sha256": "e7cb5f03ff9367798e137ae858a34a2210d8cd7137b1e7469bb0b40c6fb68c13"
+      }
+    },
+    {
+      "county": "Crockett County",
+      "fips": "48105",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/crockett-48105.certification.json",
+      "packageIdentity": {
+        "name": "crockett-48105.addresses.jsonl.gz",
+        "sizeBytes": 100165,
+        "sha256": "e960b94bd070c90a5bc1a2cf38a522e7f25b89392bf5e1fa6d8e5e3d0205fc84"
+      }
+    },
+    {
+      "county": "Crosby County",
+      "fips": "48107",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/crosby-48107.certification.json",
+      "packageIdentity": {
+        "name": "crosby-48107.addresses.jsonl.gz",
+        "sizeBytes": 105139,
+        "sha256": "04779b8783f2f82a9587331d820275cff1e48d1397f1a76ab6ac622a4778f089"
+      }
+    },
+    {
+      "county": "Culberson County",
+      "fips": "48109",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/culberson-48109.certification.json",
+      "packageIdentity": {
+        "name": "culberson-48109.addresses.jsonl.gz",
+        "sizeBytes": 87166,
+        "sha256": "77ec6ea6b8fcc2c0008b516f9258a059768a14f013dd22fb27476defd83a66dc"
+      }
+    },
+    {
+      "county": "Dallam County",
+      "fips": "48111",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-02/certification/dallam-48111.certification.json",
+      "packageIdentity": {
+        "name": "dallam-48111.addresses.jsonl.gz",
+        "sizeBytes": 128707,
+        "sha256": "3be8b587f2d76a952b58cf3fac6b1ea9b5eca2af4960edfbbf6bd037279f31b7"
+      }
+    },
+    {
+      "county": "Dallas County",
+      "fips": "48113",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/2",
+      "packageIdentity": {
+        "name": "dallas-48113.addresses.jsonl.gz",
+        "sizeBytes": 32972921,
+        "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Dawson County",
+      "fips": "48115",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/dawson-48115.certification.json",
+      "packageIdentity": {
+        "name": "dawson-48115.addresses.jsonl.gz",
+        "sizeBytes": 155032,
+        "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03"
+      }
+    },
+    {
+      "county": "Deaf Smith County",
+      "fips": "48117",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/deaf-smith-48117.certification.json",
+      "packageIdentity": {
+        "name": "deaf-smith-48117.addresses.jsonl.gz",
+        "sizeBytes": 246957,
+        "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23"
+      }
+    },
+    {
+      "county": "Delta County",
+      "fips": "48119",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/delta-48119.certification.json",
+      "packageIdentity": {
+        "name": "delta-48119.addresses.jsonl.gz",
+        "sizeBytes": 122734,
+        "sha256": "6f0371b453eef74e4e84255692c5b4e1c71d639949f6be4af0504f9869f1322f"
+      }
+    },
+    {
+      "county": "Denton County",
+      "fips": "48121",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/3",
+      "packageIdentity": {
+        "name": "denton-48121.addresses.jsonl.gz",
+        "sizeBytes": 11819588,
+        "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "DeWitt County",
+      "fips": "48123",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/dewitt-48123.certification.json",
+      "packageIdentity": {
+        "name": "dewitt-48123.addresses.jsonl.gz",
+        "sizeBytes": 406896,
+        "sha256": "d1e17e1ad29fbc24cc684c4dea3371bd9c77cdd834e7dfcaaaa7c73bed55a331"
+      }
+    },
+    {
+      "county": "Dickens County",
+      "fips": "48125",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/dickens-48125.certification.json",
+      "packageIdentity": {
+        "name": "dickens-48125.addresses.jsonl.gz",
+        "sizeBytes": 61403,
+        "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1"
+      }
+    },
+    {
+      "county": "Dimmit County",
+      "fips": "48127",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/dimmit-48127.certification.json",
+      "packageIdentity": {
+        "name": "dimmit-48127.addresses.jsonl.gz",
+        "sizeBytes": 208993,
+        "sha256": "2bf0d28205bd585b7f7f78b44b6a7f8a9c642f8424a04ab40833ab54681e90ec"
+      }
+    },
+    {
+      "county": "Donley County",
+      "fips": "48129",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/donley-48129.certification.json",
+      "packageIdentity": {
+        "name": "donley-48129.addresses.jsonl.gz",
+        "sizeBytes": 189573,
+        "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9"
+      }
+    },
+    {
+      "county": "Duval County",
+      "fips": "48131",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/duval-48131.certification.json",
+      "packageIdentity": {
+        "name": "duval-48131.addresses.jsonl.gz",
+        "sizeBytes": 99456,
+        "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2"
+      }
+    },
+    {
+      "county": "Eastland County",
+      "fips": "48133",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/eastland-48133.certification.json",
+      "packageIdentity": {
+        "name": "eastland-48133.addresses.jsonl.gz",
+        "sizeBytes": 401665,
+        "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2"
+      }
+    },
+    {
+      "county": "Ector County",
+      "fips": "48135",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/4",
+      "packageIdentity": {
+        "name": "ector-48135.addresses.jsonl.gz",
+        "sizeBytes": 2044691,
+        "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Edwards County",
+      "fips": "48137",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/edwards-48137.certification.json",
+      "packageIdentity": {
+        "name": "edwards-48137.addresses.jsonl.gz",
+        "sizeBytes": 136002,
+        "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba"
+      }
+    },
+    {
+      "county": "Ellis County",
+      "fips": "48139",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/ellis-48139.certification.json",
+      "packageIdentity": {
+        "name": "ellis-48139.addresses.jsonl.gz",
+        "sizeBytes": 2800026,
+        "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596"
+      }
+    },
+    {
+      "county": "El Paso County",
+      "fips": "48141",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/el-paso-48141.certification.json",
+      "packageIdentity": {
+        "name": "el-paso-48141.addresses.jsonl.gz",
+        "sizeBytes": 7154400,
+        "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f"
+      }
+    },
+    {
+      "county": "Erath County",
+      "fips": "48143",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/erath-48143.certification.json",
+      "packageIdentity": {
+        "name": "erath-48143.addresses.jsonl.gz",
+        "sizeBytes": 664582,
+        "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c"
+      }
+    },
+    {
+      "county": "Falls County",
+      "fips": "48145",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/falls-48145.certification.json",
+      "packageIdentity": {
+        "name": "falls-48145.addresses.jsonl.gz",
+        "sizeBytes": 270714,
+        "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15"
+      }
+    },
+    {
+      "county": "Fannin County",
+      "fips": "48147",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/fannin-48147.certification.json",
+      "packageIdentity": {
+        "name": "fannin-48147.addresses.jsonl.gz",
+        "sizeBytes": 675117,
+        "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb"
+      }
+    },
+    {
+      "county": "Fayette County",
+      "fips": "48149",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/fayette-48149.certification.json",
+      "packageIdentity": {
+        "name": "fayette-48149.addresses.jsonl.gz",
+        "sizeBytes": 815379,
+        "sha256": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f"
+      }
+    },
+    {
+      "county": "Fisher County",
+      "fips": "48151",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/fisher-48151.certification.json",
+      "packageIdentity": {
+        "name": "fisher-48151.addresses.jsonl.gz",
+        "sizeBytes": 92189,
+        "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0"
+      }
+    },
+    {
+      "county": "Floyd County",
+      "fips": "48153",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/floyd-48153.certification.json",
+      "packageIdentity": {
+        "name": "floyd-48153.addresses.jsonl.gz",
+        "sizeBytes": 107816,
+        "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4"
+      }
+    },
+    {
+      "county": "Foard County",
+      "fips": "48155",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/foard-48155.certification.json",
+      "packageIdentity": {
+        "name": "foard-48155.addresses.jsonl.gz",
+        "sizeBytes": 33122,
+        "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef"
+      }
+    },
+    {
+      "county": "Fort Bend County",
+      "fips": "48157",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/fort-bend-48157.certification.json",
+      "packageIdentity": {
+        "name": "fort-bend-48157.addresses.jsonl.gz",
+        "sizeBytes": 12845351,
+        "sha256": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52"
+      }
+    },
+    {
+      "county": "Franklin County",
+      "fips": "48159",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/franklin-48159.certification.json",
+      "packageIdentity": {
+        "name": "franklin-48159.addresses.jsonl.gz",
+        "sizeBytes": 270786,
+        "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f"
+      }
+    },
+    {
+      "county": "Freestone County",
+      "fips": "48161",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/freestone-48161.certification.json",
+      "packageIdentity": {
+        "name": "freestone-48161.addresses.jsonl.gz",
+        "sizeBytes": 337120,
+        "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4"
+      }
+    },
+    {
+      "county": "Frio County",
+      "fips": "48163",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/frio-48163.certification.json",
+      "packageIdentity": {
+        "name": "frio-48163.addresses.jsonl.gz",
+        "sizeBytes": 201804,
+        "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c"
+      }
+    },
+    {
+      "county": "Gaines County",
+      "fips": "48165",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/gaines-48165.certification.json",
+      "packageIdentity": {
+        "name": "gaines-48165.addresses.jsonl.gz",
+        "sizeBytes": 284626,
+        "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592"
+      }
+    },
+    {
+      "county": "Galveston County",
+      "fips": "48167",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/galveston-48167.certification.json",
+      "packageIdentity": {
+        "name": "galveston-48167.addresses.jsonl.gz",
+        "sizeBytes": 4226191,
+        "sha256": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6"
+      }
+    },
+    {
+      "county": "Garza County",
+      "fips": "48169",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-03/certification/garza-48169.certification.json",
+      "packageIdentity": {
+        "name": "garza-48169.addresses.jsonl.gz",
+        "sizeBytes": 101925,
+        "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb"
+      }
+    },
+    {
+      "county": "Gillespie County",
+      "fips": "48171",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/gillespie-48171.certification.json",
+      "packageIdentity": {
+        "name": "gillespie-48171.addresses.jsonl.gz",
+        "sizeBytes": 563671,
+        "sha256": "9bef39e940399dce1fa5b33840a1d9dcf87ce9965610e7dcfb23929a40598f8c"
+      }
+    },
+    {
+      "county": "Glasscock County",
+      "fips": "48173",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/glasscock-48173.certification.json",
+      "packageIdentity": {
+        "name": "glasscock-48173.addresses.jsonl.gz",
+        "sizeBytes": 39983,
+        "sha256": "1479892acb0931fa37658b0c309c81c3a51359971dae021777e30c194801eab6"
+      }
+    },
+    {
+      "county": "Goliad County",
+      "fips": "48175",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/goliad-48175.certification.json",
+      "packageIdentity": {
+        "name": "goliad-48175.addresses.jsonl.gz",
+        "sizeBytes": 176244,
+        "sha256": "cf45d4f6ecb936a975f4e795825bf0f9b14c0f690d283d2dc05c50aec3813a4b"
+      }
+    },
+    {
+      "county": "Gonzales County",
+      "fips": "48177",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/gonzales-48177.certification.json",
+      "packageIdentity": {
+        "name": "gonzales-48177.addresses.jsonl.gz",
+        "sizeBytes": 411398,
+        "sha256": "b8338310eb064e7b3d991dfb5f649513c95eb10c636810391c12771c34e5d216"
+      }
+    },
+    {
+      "county": "Gray County",
+      "fips": "48179",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/gray-48179.certification.json",
+      "packageIdentity": {
+        "name": "gray-48179.addresses.jsonl.gz",
+        "sizeBytes": 363629,
+        "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33"
+      }
+    },
+    {
+      "county": "Grayson County",
+      "fips": "48181",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/grayson-48181.certification.json",
+      "packageIdentity": {
+        "name": "grayson-48181.addresses.jsonl.gz",
+        "sizeBytes": 2560440,
+        "sha256": "c775d5868b5b420fa34d53595cfd893efaf1bfa0f042de39532789ac755ffe5b"
+      }
+    },
+    {
+      "county": "Gregg County",
+      "fips": "48183",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/gregg-48183.certification.json",
+      "packageIdentity": {
+        "name": "gregg-48183.addresses.jsonl.gz",
+        "sizeBytes": 760830,
+        "sha256": "c859177b90e8839ba995878f4a95a20bf53e54ddc3d74f6de911da0747ecc3ff"
+      }
+    },
+    {
+      "county": "Grimes County",
+      "fips": "48185",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/grimes-48185.certification.json",
+      "packageIdentity": {
+        "name": "grimes-48185.addresses.jsonl.gz",
+        "sizeBytes": 734091,
+        "sha256": "db2fee740aa83848b369f2bb1b228457a64547c3949948555b36aba56a4944ff"
+      }
+    },
+    {
+      "county": "Guadalupe County",
+      "fips": "48187",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/guadalupe-48187.certification.json",
+      "packageIdentity": {
+        "name": "guadalupe-48187.addresses.jsonl.gz",
+        "sizeBytes": 3015561,
+        "sha256": "c71ab72303688c36d0add6673734818a658ea18b538673b05e02e9e9c8d2786e"
+      }
+    },
+    {
+      "county": "Hale County",
+      "fips": "48189",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hale-48189.certification.json",
+      "packageIdentity": {
+        "name": "hale-48189.addresses.jsonl.gz",
+        "sizeBytes": 419289,
+        "sha256": "5e7e1c7af1e3dc3eb2ac6e69a9782733e818b6a322a06f19d89d35a0a669be3f"
+      }
+    },
+    {
+      "county": "Hall County",
+      "fips": "48191",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hall-48191.certification.json",
+      "packageIdentity": {
+        "name": "hall-48191.addresses.jsonl.gz",
+        "sizeBytes": 65154,
+        "sha256": "f98eff64e7f38c07c568778ddc6a2ff3846d66281ecb47162ef44168b09b2381"
+      }
+    },
+    {
+      "county": "Hamilton County",
+      "fips": "48193",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hamilton-48193.certification.json",
+      "packageIdentity": {
+        "name": "hamilton-48193.addresses.jsonl.gz",
+        "sizeBytes": 141949,
+        "sha256": "7e1b7c1b0eecf52e94a2ad550e587889177f00379d136312a0f7734a7ba0312b"
+      }
+    },
+    {
+      "county": "Hansford County",
+      "fips": "48195",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hansford-48195.certification.json",
+      "packageIdentity": {
+        "name": "hansford-48195.addresses.jsonl.gz",
+        "sizeBytes": 92637,
+        "sha256": "84e8e3e9119089263a089b61ed7a91085a39070a5dd2459163d073029fb777af"
+      }
+    },
+    {
+      "county": "Hardeman County",
+      "fips": "48197",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hardeman-48197.certification.json",
+      "packageIdentity": {
+        "name": "hardeman-48197.addresses.jsonl.gz",
+        "sizeBytes": 78259,
+        "sha256": "aef9178830532bb77db5ccc2e01dca879a1fc9101c42e63bfbcc6e72f70f1dbf"
+      }
+    },
+    {
+      "county": "Hardin County",
+      "fips": "48199",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/hardin-48199.certification.json",
+      "packageIdentity": {
+        "name": "hardin-48199.addresses.jsonl.gz",
+        "sizeBytes": 1011612,
+        "sha256": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df"
+      }
+    },
+    {
+      "county": "Harris County",
+      "fips": "48201",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/harris-48201.certification.json",
+      "packageIdentity": {
+        "name": "harris-48201.addresses.jsonl.gz",
+        "sizeBytes": 57731771,
+        "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b"
+      }
+    },
+    {
+      "county": "Harrison County",
+      "fips": "48203",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/harrison-48203.certification.json",
+      "packageIdentity": {
+        "name": "harrison-48203.addresses.jsonl.gz",
+        "sizeBytes": 1069866,
+        "sha256": "e8d9c2aa5baa19993fd7181cad89bf1851915fbd0729313e13e3c1ecf650203e"
+      }
+    },
+    {
+      "county": "Hartley County",
+      "fips": "48205",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hartley-48205.certification.json",
+      "packageIdentity": {
+        "name": "hartley-48205.addresses.jsonl.gz",
+        "sizeBytes": 90352,
+        "sha256": "367e9fb77b4bc4f70aed2a5f0bdb90df3cd27889b5c0a01385e72e2cfb543592"
+      }
+    },
+    {
+      "county": "Haskell County",
+      "fips": "48207",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/haskell-48207.certification.json",
+      "packageIdentity": {
+        "name": "haskell-48207.addresses.jsonl.gz",
+        "sizeBytes": 138065,
+        "sha256": "47e988eb2063bb543532c1b152a971eb5dfc13067b60b94f0e98d2ed1d9b214e"
+      }
+    },
+    {
+      "county": "Hays County",
+      "fips": "48209",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hays-48209.certification.json",
+      "packageIdentity": {
+        "name": "hays-48209.addresses.jsonl.gz",
+        "sizeBytes": 3574767,
+        "sha256": "df23069af137c08aa2e1db06cd892d6ee70b1712e17530bd24501ec1698d2c57"
+      }
+    },
+    {
+      "county": "Hemphill County",
+      "fips": "48211",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hemphill-48211.certification.json",
+      "packageIdentity": {
+        "name": "hemphill-48211.addresses.jsonl.gz",
+        "sizeBytes": 65577,
+        "sha256": "bf673e84ea159d3710553cb464a9c979718ec0e66cc27e178f88b22f96103e9a"
+      }
+    },
+    {
+      "county": "Henderson County",
+      "fips": "48213",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/henderson-48213.certification.json",
+      "packageIdentity": {
+        "name": "henderson-48213.addresses.jsonl.gz",
+        "sizeBytes": 1722286,
+        "sha256": "e9bf619978f5512dc5f5c4e8ee5e050801f99aab241f8ebdfe99a9c4b11b765b"
+      }
+    },
+    {
+      "county": "Hidalgo County",
+      "fips": "48215",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hidalgo-48215.certification.json",
+      "packageIdentity": {
+        "name": "hidalgo-48215.addresses.jsonl.gz",
+        "sizeBytes": 10760923,
+        "sha256": "22216223b920693eda56b0a53098aedf2cf5ce365458b9afb20b7adef009b7ed"
+      }
+    },
+    {
+      "county": "Hill County",
+      "fips": "48217",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hill-48217.certification.json",
+      "packageIdentity": {
+        "name": "hill-48217.addresses.jsonl.gz",
+        "sizeBytes": 615230,
+        "sha256": "af888bfceb269fe6bd2fd281b5d8bca4f38724f700c80ad97f3b538e2d0ffa1d"
+      }
+    },
+    {
+      "county": "Hockley County",
+      "fips": "48219",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hockley-48219.certification.json",
+      "packageIdentity": {
+        "name": "hockley-48219.addresses.jsonl.gz",
+        "sizeBytes": 362312,
+        "sha256": "a0d260678ad5abbd2732eb6e4036f4aa06f15c44d17ff8140bc3f84b7bea8171"
+      }
+    },
+    {
+      "county": "Hood County",
+      "fips": "48221",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hood-48221.certification.json",
+      "packageIdentity": {
+        "name": "hood-48221.addresses.jsonl.gz",
+        "sizeBytes": 1205211,
+        "sha256": "696af3bde0fa863fec8057aa3213c994c4396172b1f4c6f51252bf19f6d46afa"
+      }
+    },
+    {
+      "county": "Hopkins County",
+      "fips": "48223",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/hopkins-48223.certification.json",
+      "packageIdentity": {
+        "name": "hopkins-48223.addresses.jsonl.gz",
+        "sizeBytes": 641263,
+        "sha256": "4cc146b1e839ff1cbe51ddb27f276bb3577d493b3680a5dec96b99414bf26196"
+      }
+    },
+    {
+      "county": "Houston County",
+      "fips": "48225",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/houston-48225.certification.json",
+      "packageIdentity": {
+        "name": "houston-48225.addresses.jsonl.gz",
+        "sizeBytes": 530218,
+        "sha256": "4481a984fc38a5490eed2c5dcf8658ab3d96532b3504b3b69a9bcb4daf52ce35"
+      }
+    },
+    {
+      "county": "Howard County",
+      "fips": "48227",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/howard-48227.certification.json",
+      "packageIdentity": {
+        "name": "howard-48227.addresses.jsonl.gz",
+        "sizeBytes": 454004,
+        "sha256": "268e0baeda497c8f2c48f0a09f3d9b75a83df98c3cee5e0cd230afe2711932a2"
+      }
+    },
+    {
+      "county": "Hudspeth County",
+      "fips": "48229",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/5",
+      "packageIdentity": {
+        "name": "hudspeth-48229.addresses.jsonl.gz",
+        "sizeBytes": 166512,
+        "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Hunt County",
+      "fips": "48231",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/hunt-48231.certification.json",
+      "packageIdentity": {
+        "name": "hunt-48231.addresses.jsonl.gz",
+        "sizeBytes": 1959694,
+        "sha256": "802f388c65cdbfd384065fd265a50d0fa71a78b9741fd41a5bbf4c7598aa9f50"
+      }
+    },
+    {
+      "county": "Hutchinson County",
+      "fips": "48233",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/hutchinson-48233.certification.json",
+      "packageIdentity": {
+        "name": "hutchinson-48233.addresses.jsonl.gz",
+        "sizeBytes": 426276,
+        "sha256": "d59051429512e5ed2fec96b2465a059745a51f4ccc12133ce38fa711c049489f"
+      }
+    },
+    {
+      "county": "Irion County",
+      "fips": "48235",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/irion-48235.certification.json",
+      "packageIdentity": {
+        "name": "irion-48235.addresses.jsonl.gz",
+        "sizeBytes": 53316,
+        "sha256": "a07bd8ab5145455b8deda60fddf00f4f094e35cb48ae48f22e95a8300769c50d"
+      }
+    },
+    {
+      "county": "Jack County",
+      "fips": "48237",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/jack-48237.certification.json",
+      "packageIdentity": {
+        "name": "jack-48237.addresses.jsonl.gz",
+        "sizeBytes": 193457,
+        "sha256": "1c19eb1792b97d79faa9f5fe13a5391dc78529f983a894a38bd1de2f62b0372a"
+      }
+    },
+    {
+      "county": "Jackson County",
+      "fips": "48239",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/jackson-48239.certification.json",
+      "packageIdentity": {
+        "name": "jackson-48239.addresses.jsonl.gz",
+        "sizeBytes": 321123,
+        "sha256": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c"
+      }
+    },
+    {
+      "county": "Jasper County",
+      "fips": "48241",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/jasper-48241.certification.json",
+      "packageIdentity": {
+        "name": "jasper-48241.addresses.jsonl.gz",
+        "sizeBytes": 789761,
+        "sha256": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3"
+      }
+    },
+    {
+      "county": "Jeff Davis County",
+      "fips": "48243",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/jeff-davis-48243.certification.json",
+      "packageIdentity": {
+        "name": "jeff-davis-48243.addresses.jsonl.gz",
+        "sizeBytes": 84171,
+        "sha256": "72b99b7b4da2b891eb986e59f0d25c435f871a285be15b04a2c6cada1822da90"
+      }
+    },
+    {
+      "county": "Jefferson County",
+      "fips": "48245",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/jefferson-48245.certification.json",
+      "packageIdentity": {
+        "name": "jefferson-48245.addresses.jsonl.gz",
+        "sizeBytes": 2847538,
+        "sha256": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e"
+      }
+    },
+    {
+      "county": "Jim Hogg County",
+      "fips": "48247",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/jim-hogg-48247.certification.json",
+      "packageIdentity": {
+        "name": "jim-hogg-48247.addresses.jsonl.gz",
+        "sizeBytes": 93148,
+        "sha256": "447d06f7811824c2d3140aea92c1f551b67ac1714167c942074cff90f634a584"
+      }
+    },
+    {
+      "county": "Jim Wells County",
+      "fips": "48249",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/jim-wells-48249.certification.json",
+      "packageIdentity": {
+        "name": "jim-wells-48249.addresses.jsonl.gz",
+        "sizeBytes": 540185,
+        "sha256": "150250b599bc6d621f3a7505b6ae63cc3ac5ca49e75c5ccfe6b1cf6d1275fa9a"
+      }
+    },
+    {
+      "county": "Johnson County",
+      "fips": "48251",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/johnson-48251.certification.json",
+      "packageIdentity": {
+        "name": "johnson-48251.addresses.jsonl.gz",
+        "sizeBytes": 2481089,
+        "sha256": "f2d1a68f39b991f5bdd6748a43d3a4f51ad0dfce59a3078a568fdc87d266c20f"
+      }
+    },
+    {
+      "county": "Jones County",
+      "fips": "48253",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/jones-48253.certification.json",
+      "packageIdentity": {
+        "name": "jones-48253.addresses.jsonl.gz",
+        "sizeBytes": 308268,
+        "sha256": "96557820286aad411c2d8dc4829d1a84cc96d30cfb43205764b5f2c814f21c7b"
+      }
+    },
+    {
+      "county": "Karnes County",
+      "fips": "48255",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/karnes-48255.certification.json",
+      "packageIdentity": {
+        "name": "karnes-48255.addresses.jsonl.gz",
+        "sizeBytes": 273885,
+        "sha256": "83f60626c3a4317c8235441d105c6caea0e747a49dc84a55e4c595aa44c6e131"
+      }
+    },
+    {
+      "county": "Kaufman County",
+      "fips": "48257",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kaufman-48257.certification.json",
+      "packageIdentity": {
+        "name": "kaufman-48257.addresses.jsonl.gz",
+        "sizeBytes": 2751662,
+        "sha256": "c737f45232b1d9bde1e859a61b3c13c6f67168eda274b63201f737bc27d46aa6"
+      }
+    },
+    {
+      "county": "Kendall County",
+      "fips": "48259",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kendall-48259.certification.json",
+      "packageIdentity": {
+        "name": "kendall-48259.addresses.jsonl.gz",
+        "sizeBytes": 663438,
+        "sha256": "d8dce017a48d4b9af29116780e070485243e944fc7d5718128e9541b9209cf48"
+      }
+    },
+    {
+      "county": "Kenedy County",
+      "fips": "48261",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kenedy-48261.certification.json",
+      "packageIdentity": {
+        "name": "kenedy-48261.addresses.jsonl.gz",
+        "sizeBytes": 18302,
+        "sha256": "8804b6537405c0a2f8841a723fcbb6f72951971261970f099b7bef04ae877824"
+      }
+    },
+    {
+      "county": "Kent County",
+      "fips": "48263",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kent-48263.certification.json",
+      "packageIdentity": {
+        "name": "kent-48263.addresses.jsonl.gz",
+        "sizeBytes": 28638,
+        "sha256": "8bf80745c1fd525c3557a1900dc647fe9ff02fccdd944ca9b0d1f177888ad168"
+      }
+    },
+    {
+      "county": "Kerr County",
+      "fips": "48265",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kerr-48265.certification.json",
+      "packageIdentity": {
+        "name": "kerr-48265.addresses.jsonl.gz",
+        "sizeBytes": 1368466,
+        "sha256": "3ec6e7cc2897084fb9a98d3b6b77261050c3157fef2752b340b13ebf7979746c"
+      }
+    },
+    {
+      "county": "Kimble County",
+      "fips": "48267",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kimble-48267.certification.json",
+      "packageIdentity": {
+        "name": "kimble-48267.addresses.jsonl.gz",
+        "sizeBytes": 145998,
+        "sha256": "6537e8453c31d105c5a332cca109209eacc2dbc82535350a47f8860c260f7892"
+      }
+    },
+    {
+      "county": "King County",
+      "fips": "48269",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/king-48269.certification.json",
+      "packageIdentity": {
+        "name": "king-48269.addresses.jsonl.gz",
+        "sizeBytes": 10467,
+        "sha256": "422c1a959a3c2fd81c791ebb1eeb56ab4346881395ec2ee5336c513755b69a85"
+      }
+    },
+    {
+      "county": "Kinney County",
+      "fips": "48271",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kinney-48271.certification.json",
+      "packageIdentity": {
+        "name": "kinney-48271.addresses.jsonl.gz",
+        "sizeBytes": 92138,
+        "sha256": "c69c1d51596ba42155bb40efbcb36a64a52be2aecf1ff4fcab027214c4d3e7b8"
+      }
+    },
+    {
+      "county": "Kleberg County",
+      "fips": "48273",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/kleberg-48273.certification.json",
+      "packageIdentity": {
+        "name": "kleberg-48273.addresses.jsonl.gz",
+        "sizeBytes": 327913,
+        "sha256": "292ca5eaa617d654920d2afd50e38b011bf4bb6122ebeea106ba8e7b2dbe7107"
+      }
+    },
+    {
+      "county": "Knox County",
+      "fips": "48275",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/knox-48275.certification.json",
+      "packageIdentity": {
+        "name": "knox-48275.addresses.jsonl.gz",
+        "sizeBytes": 84184,
+        "sha256": "025593cd42a3fdc3b5a89246b5cad44013f85b4c7e460c40de67fbdbf7fda839"
+      }
+    },
+    {
+      "county": "Lamar County",
+      "fips": "48277",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/lamar-48277.certification.json",
+      "packageIdentity": {
+        "name": "lamar-48277.addresses.jsonl.gz",
+        "sizeBytes": 975524,
+        "sha256": "9cf98fae55e83590986cc83cd3ec8b99f4c22dc08d8e3ee952eff2e22dfee5b2"
+      }
+    },
+    {
+      "county": "Lamb County",
+      "fips": "48279",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/lamb-48279.certification.json",
+      "packageIdentity": {
+        "name": "lamb-48279.addresses.jsonl.gz",
+        "sizeBytes": 200784,
+        "sha256": "03cbe849a1711eab5c1550861b85e44e5e8a997334831e9992689d7aa3609e22"
+      }
+    },
+    {
+      "county": "Lampasas County",
+      "fips": "48281",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-05/certification/lampasas-48281.certification.json",
+      "packageIdentity": {
+        "name": "lampasas-48281.addresses.jsonl.gz",
+        "sizeBytes": 347475,
+        "sha256": "ea2062b469b9b8271e7abdcfa3046b8fa218cb46ce7c68e692c78735c44edb29"
+      }
+    },
+    {
+      "county": "La Salle County",
+      "fips": "48283",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/la-salle-48283.certification.json",
+      "packageIdentity": {
+        "name": "la-salle-48283.addresses.jsonl.gz",
+        "sizeBytes": 138933,
+        "sha256": "6443183bb0b4c1794a91e8cb4f10e0a65c2f1fe94497742e07c9e4f23978f258"
+      }
+    },
+    {
+      "county": "Lavaca County",
+      "fips": "48285",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/lavaca-48285.certification.json",
+      "packageIdentity": {
+        "name": "lavaca-48285.addresses.jsonl.gz",
+        "sizeBytes": 436394,
+        "sha256": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b"
+      }
+    },
+    {
+      "county": "Lee County",
+      "fips": "48287",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp128-wave-2/certification/lee-48287.certification.json",
+      "packageIdentity": {
+        "name": "lee-48287.addresses.jsonl.gz",
+        "sizeBytes": 370322,
+        "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53"
+      }
+    },
+    {
+      "county": "Leon County",
+      "fips": "48289",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/leon-48289.certification.json",
+      "packageIdentity": {
+        "name": "leon-48289.addresses.jsonl.gz",
+        "sizeBytes": 613908,
+        "sha256": "ed2515773d14818354a28f51b38063cb653a8c089516e0e9e262c22a8dcd047a"
+      }
+    },
+    {
+      "county": "Liberty County",
+      "fips": "48291",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/liberty-48291.certification.json",
+      "packageIdentity": {
+        "name": "liberty-48291.addresses.jsonl.gz",
+        "sizeBytes": 2555016,
+        "sha256": "792f4f3f76524ef6652fbabf7c1c17d76eb1dfd9d83a71c460c1e038c2841b93"
+      }
+    },
+    {
+      "county": "Limestone County",
+      "fips": "48293",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/limestone-48293.certification.json",
+      "packageIdentity": {
+        "name": "limestone-48293.addresses.jsonl.gz",
+        "sizeBytes": 302446,
+        "sha256": "0c5718f4c1d6c425c1f1bde919316f03132f2d6de3a999596db9be0d5ceb191a"
+      }
+    },
+    {
+      "county": "Lipscomb County",
+      "fips": "48295",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/lipscomb-48295.certification.json",
+      "packageIdentity": {
+        "name": "lipscomb-48295.addresses.jsonl.gz",
+        "sizeBytes": 45911,
+        "sha256": "d347a9651dde12f35ee37f64f0918a85d731f2382af783250f44c29e8f092ae3"
+      }
+    },
+    {
+      "county": "Live Oak County",
+      "fips": "48297",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/live-oak-48297.certification.json",
+      "packageIdentity": {
+        "name": "live-oak-48297.addresses.jsonl.gz",
+        "sizeBytes": 132323,
+        "sha256": "2f1eae8281d7b2328c168cc9d9a8b88b62fe8ff04c4f268173bd33a2d0a9bc3e"
+      }
+    },
+    {
+      "county": "Llano County",
+      "fips": "48299",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/llano-48299.certification.json",
+      "packageIdentity": {
+        "name": "llano-48299.addresses.jsonl.gz",
+        "sizeBytes": 741243,
+        "sha256": "b865d368ec8832e3f9514388eb3fa83b91a35a5cd3983a8f61dae2149afd2f8e"
+      }
+    },
+    {
+      "county": "Loving County",
+      "fips": "48301",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/loving-48301.certification.json",
+      "packageIdentity": {
+        "name": "loving-48301.addresses.jsonl.gz",
+        "sizeBytes": 16861,
+        "sha256": "125ca269e57b8a855c9656b5d3cc5ed990a87ad46e105180808d1e259bb316de"
+      }
+    },
+    {
+      "county": "Lubbock County",
+      "fips": "48303",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/lubbock-48303.certification.json",
+      "packageIdentity": {
+        "name": "lubbock-48303.addresses.jsonl.gz",
+        "sizeBytes": 4986893,
+        "sha256": "60c43c58661f474849ea7ff0dd47326ecfdc9491cc2995e572235dfdef872efc"
+      }
+    },
+    {
+      "county": "Lynn County",
+      "fips": "48305",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/lynn-48305.certification.json",
+      "packageIdentity": {
+        "name": "lynn-48305.addresses.jsonl.gz",
+        "sizeBytes": 122163,
+        "sha256": "4372755098b3e3a2bd591ef0711436c318e32d73a3565fa0eff6d85362fdb34c"
+      }
+    },
+    {
+      "county": "McCulloch County",
+      "fips": "48307",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mcculloch-48307.certification.json",
+      "packageIdentity": {
+        "name": "mcculloch-48307.addresses.jsonl.gz",
+        "sizeBytes": 190964,
+        "sha256": "29df3edb5dda0b6e6dc6b309b93d0446f345d21f088768b23391c47f900ae48e"
+      }
+    },
+    {
+      "county": "McLennan County",
+      "fips": "48309",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mclennan-48309.certification.json",
+      "packageIdentity": {
+        "name": "mclennan-48309.addresses.jsonl.gz",
+        "sizeBytes": 3390624,
+        "sha256": "c917299a66fcb52d63829636310ea4a0e33ec56cc7a1f479cf1fa3b5aea1130a"
+      }
+    },
+    {
+      "county": "McMullen County",
+      "fips": "48311",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mcmullen-48311.certification.json",
+      "packageIdentity": {
+        "name": "mcmullen-48311.addresses.jsonl.gz",
+        "sizeBytes": 57657,
+        "sha256": "42296a9915722291cfe59cd59f01b30e886b273c9f9fa16cd7eca831d19a9efe"
+      }
+    },
+    {
+      "county": "Madison County",
+      "fips": "48313",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/madison-48313.certification.json",
+      "packageIdentity": {
+        "name": "madison-48313.addresses.jsonl.gz",
+        "sizeBytes": 348761,
+        "sha256": "622f378e0b08ce617c65ef96bbf2641064dba262c8f93db8ad77a5ffe0bc1345"
+      }
+    },
+    {
+      "county": "Marion County",
+      "fips": "48315",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/marion-48315.certification.json",
+      "packageIdentity": {
+        "name": "marion-48315.addresses.jsonl.gz",
+        "sizeBytes": 288214,
+        "sha256": "9d017294d10801d50627a53c8ca5afde89f4e109c2cdc86ac85ad979d6d27c0a"
+      }
+    },
+    {
+      "county": "Martin County",
+      "fips": "48317",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/martin-48317.certification.json",
+      "packageIdentity": {
+        "name": "martin-48317.addresses.jsonl.gz",
+        "sizeBytes": 123542,
+        "sha256": "2074e7aded7149a9a1b3cfba034bd05883002d9f3025625da33fcddcb0fb6b42"
+      }
+    },
+    {
+      "county": "Mason County",
+      "fips": "48319",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mason-48319.certification.json",
+      "packageIdentity": {
+        "name": "mason-48319.addresses.jsonl.gz",
+        "sizeBytes": 139845,
+        "sha256": "7b0cad4a85fb3cce3c3599533e44463f1713b195c227b070e273ffa62f143f18"
+      }
+    },
+    {
+      "county": "Matagorda County",
+      "fips": "48321",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/matagorda-48321.certification.json",
+      "packageIdentity": {
+        "name": "matagorda-48321.addresses.jsonl.gz",
+        "sizeBytes": 899427,
+        "sha256": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6"
+      }
+    },
+    {
+      "county": "Maverick County",
+      "fips": "48323",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/maverick-48323.certification.json",
+      "packageIdentity": {
+        "name": "maverick-48323.addresses.jsonl.gz",
+        "sizeBytes": 774570,
+        "sha256": "b7c77df9eb00753f04bd3da9805b27d681799a7244dcd1a95b25e82acbad4bbe"
+      }
+    },
+    {
+      "county": "Medina County",
+      "fips": "48325",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/medina-48325.certification.json",
+      "packageIdentity": {
+        "name": "medina-48325.addresses.jsonl.gz",
+        "sizeBytes": 1001796,
+        "sha256": "0a7bf30af420f2996173939962106b2faa273e72d7d9fbcefc46e2f503621d8f"
+      }
+    },
+    {
+      "county": "Menard County",
+      "fips": "48327",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/menard-48327.certification.json",
+      "packageIdentity": {
+        "name": "menard-48327.addresses.jsonl.gz",
+        "sizeBytes": 72721,
+        "sha256": "a14bce324779a0dac657bc07fa7ca108c83d03467146ee5a81ac85d19566c282"
+      }
+    },
+    {
+      "county": "Midland County",
+      "fips": "48329",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/6",
+      "packageIdentity": {
+        "name": "midland-48329.addresses.jsonl.gz",
+        "sizeBytes": 2879318,
+        "sha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Milam County",
+      "fips": "48331",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp128-wave-2/certification/milam-48331.certification.json",
+      "packageIdentity": {
+        "name": "milam-48331.addresses.jsonl.gz",
+        "sizeBytes": 375753,
+        "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0"
+      }
+    },
+    {
+      "county": "Mills County",
+      "fips": "48333",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mills-48333.certification.json",
+      "packageIdentity": {
+        "name": "mills-48333.addresses.jsonl.gz",
+        "sizeBytes": 93554,
+        "sha256": "4c131cde012df1e5e22586ed45ac58967af364b2d0d3ad9d90da7b004447cb85"
+      }
+    },
+    {
+      "county": "Mitchell County",
+      "fips": "48335",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/mitchell-48335.certification.json",
+      "packageIdentity": {
+        "name": "mitchell-48335.addresses.jsonl.gz",
+        "sizeBytes": 178259,
+        "sha256": "1af31e1dc277fd8458163cf0529124c58facfa577c2bf65c6e3c0d79cea4377e"
+      }
+    },
+    {
+      "county": "Montague County",
+      "fips": "48337",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/montague-48337.certification.json",
+      "packageIdentity": {
+        "name": "montague-48337.addresses.jsonl.gz",
+        "sizeBytes": 454875,
+        "sha256": "7f68ae7e8e5423e09f712ca9ee47a2157b740fea5997ce120f872b3acb99503a"
+      }
+    },
+    {
+      "county": "Montgomery County",
+      "fips": "48339",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/montgomery-48339.certification.json",
+      "packageIdentity": {
+        "name": "montgomery-48339.addresses.jsonl.gz",
+        "sizeBytes": 10057950,
+        "sha256": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168"
+      }
+    },
+    {
+      "county": "Moore County",
+      "fips": "48341",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/moore-48341.certification.json",
+      "packageIdentity": {
+        "name": "moore-48341.addresses.jsonl.gz",
+        "sizeBytes": 289254,
+        "sha256": "ca9ae74854e12bd381539faca97956428026c06550514b228f850fd9ca49241c"
+      }
+    },
+    {
+      "county": "Morris County",
+      "fips": "48343",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-06/certification/morris-48343.certification.json",
+      "packageIdentity": {
+        "name": "morris-48343.addresses.jsonl.gz",
+        "sizeBytes": 242673,
+        "sha256": "912cb4c4de21fbb06b4ad72403410a6f6575e7a642d63230ab9a050be1041d0c"
+      }
+    },
+    {
+      "county": "Motley County",
+      "fips": "48345",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/motley-48345.certification.json",
+      "packageIdentity": {
+        "name": "motley-48345.addresses.jsonl.gz",
+        "sizeBytes": 38453,
+        "sha256": "7715b0b9f21025760bc2c7ed16c78c3062b88bb123750c4f0c15efcdf3f0d189"
+      }
+    },
+    {
+      "county": "Nacogdoches County",
+      "fips": "48347",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/nacogdoches-48347.certification.json",
+      "packageIdentity": {
+        "name": "nacogdoches-48347.addresses.jsonl.gz",
+        "sizeBytes": 1248185,
+        "sha256": "ce2564d3e5342f4fdb4cec2a19cda512ac6b1c0ef5305435614aff461322e86b"
+      }
+    },
+    {
+      "county": "Navarro County",
+      "fips": "48349",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/navarro-48349.certification.json",
+      "packageIdentity": {
+        "name": "navarro-48349.addresses.jsonl.gz",
+        "sizeBytes": 856474,
+        "sha256": "25be1fa1c50f123c2058f6e1c5bcc695b52228e5858b837463933d32409d73ef"
+      }
+    },
+    {
+      "county": "Newton County",
+      "fips": "48351",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/newton-48351.certification.json",
+      "packageIdentity": {
+        "name": "newton-48351.addresses.jsonl.gz",
+        "sizeBytes": 349580,
+        "sha256": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f"
+      }
+    },
+    {
+      "county": "Nolan County",
+      "fips": "48353",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/nolan-48353.certification.json",
+      "packageIdentity": {
+        "name": "nolan-48353.addresses.jsonl.gz",
+        "sizeBytes": 277927,
+        "sha256": "8eb3ab8c6b1255de66731d0348e9684347e13c7f74c68e33ef61cd5c581c2e6a"
+      }
+    },
+    {
+      "county": "Nueces County",
+      "fips": "48355",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/nueces-48355.certification.json",
+      "packageIdentity": {
+        "name": "nueces-48355.addresses.jsonl.gz",
+        "sizeBytes": 260448,
+        "sha256": "4e10f0644f741388c762d0bddbe1f07314d15d91f35e16ce2b45a0e87985857d"
+      }
+    },
+    {
+      "county": "Ochiltree County",
+      "fips": "48357",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/ochiltree-48357.certification.json",
+      "packageIdentity": {
+        "name": "ochiltree-48357.addresses.jsonl.gz",
+        "sizeBytes": 173093,
+        "sha256": "d68ac8e8b990f28dcd17a05bfad9de79d188557e7d4864b645f6a5c92f44cff7"
+      }
+    },
+    {
+      "county": "Oldham County",
+      "fips": "48359",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/oldham-48359.certification.json",
+      "packageIdentity": {
+        "name": "oldham-48359.addresses.jsonl.gz",
+        "sizeBytes": 40245,
+        "sha256": "83a31fba54e5c688aba5bc3ccdab17ddfd62cd407fdd09283e02650805e56ff7"
+      }
+    },
+    {
+      "county": "Orange County",
+      "fips": "48361",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/orange-48361.certification.json",
+      "packageIdentity": {
+        "name": "orange-48361.addresses.jsonl.gz",
+        "sizeBytes": 1268809,
+        "sha256": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a"
+      }
+    },
+    {
+      "county": "Palo Pinto County",
+      "fips": "48363",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/palo-pinto-48363.certification.json",
+      "packageIdentity": {
+        "name": "palo-pinto-48363.addresses.jsonl.gz",
+        "sizeBytes": 809038,
+        "sha256": "f9bfb4a6329cc73689fe21953fa5435bf736f42b44b5782b6982e55d864a5ea9"
+      }
+    },
+    {
+      "county": "Panola County",
+      "fips": "48365",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/panola-48365.certification.json",
+      "packageIdentity": {
+        "name": "panola-48365.addresses.jsonl.gz",
+        "sizeBytes": 514964,
+        "sha256": "6365321596b61d8fe1d6b53a8911f4fa505d7e962332e7cd9fbab953ceac6044"
+      }
+    },
+    {
+      "county": "Parker County",
+      "fips": "48367",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/parker-48367.certification.json",
+      "packageIdentity": {
+        "name": "parker-48367.addresses.jsonl.gz",
+        "sizeBytes": 2597310,
+        "sha256": "545852ca251be618ce4296ff4e10ae9fdce32306c8d081deeec19bcb98610fc0"
+      }
+    },
+    {
+      "county": "Parmer County",
+      "fips": "48369",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/parmer-48369.certification.json",
+      "packageIdentity": {
+        "name": "parmer-48369.addresses.jsonl.gz",
+        "sizeBytes": 134975,
+        "sha256": "957f7042d4686f8e0e9c98dddffb085175fe73f1ea892aa8e2b0bf4886196563"
+      }
+    },
+    {
+      "county": "Pecos County",
+      "fips": "48371",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/pecos-48371.certification.json",
+      "packageIdentity": {
+        "name": "pecos-48371.addresses.jsonl.gz",
+        "sizeBytes": 245342,
+        "sha256": "3d41b2fc463abd55eda5571b7df1d8ae930771586ab0c40657a2f7b8f6582ad1"
+      }
+    },
+    {
+      "county": "Polk County",
+      "fips": "48373",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/polk-48373.certification.json",
+      "packageIdentity": {
+        "name": "polk-48373.addresses.jsonl.gz",
+        "sizeBytes": 1231358,
+        "sha256": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865"
+      }
+    },
+    {
+      "county": "Potter County",
+      "fips": "48375",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/potter-48375.certification.json",
+      "packageIdentity": {
+        "name": "potter-48375.addresses.jsonl.gz",
+        "sizeBytes": 1693714,
+        "sha256": "7bc611d7c45866ff12da78931391ad233208b69a7f2848bed9a36b2d0446292a"
+      }
+    },
+    {
+      "county": "Presidio County",
+      "fips": "48377",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/7",
+      "packageIdentity": {
+        "name": "presidio-48377.addresses.jsonl.gz",
+        "sizeBytes": 183109,
+        "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Rains County",
+      "fips": "48379",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/rains-48379.certification.json",
+      "packageIdentity": {
+        "name": "rains-48379.addresses.jsonl.gz",
+        "sizeBytes": 295604,
+        "sha256": "332d4e58940a468b62a4e7e982b9b11e9633ca56ff667dc81748f9bc4ddc1ff9"
+      }
+    },
+    {
+      "county": "Randall County",
+      "fips": "48381",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/randall-48381.certification.json",
+      "packageIdentity": {
+        "name": "randall-48381.addresses.jsonl.gz",
+        "sizeBytes": 2058473,
+        "sha256": "7fd2fa55a801a7b2922886396439f64d623f391fdd2227f888e38800dc7b1978"
+      }
+    },
+    {
+      "county": "Reagan County",
+      "fips": "48383",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/reagan-48383.certification.json",
+      "packageIdentity": {
+        "name": "reagan-48383.addresses.jsonl.gz",
+        "sizeBytes": 71024,
+        "sha256": "a7b783e9d5b0face9d85dfc7c7debb44013b4edff2e181765579a4c5159d5127"
+      }
+    },
+    {
+      "county": "Real County",
+      "fips": "48385",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/real-48385.certification.json",
+      "packageIdentity": {
+        "name": "real-48385.addresses.jsonl.gz",
+        "sizeBytes": 153752,
+        "sha256": "46a7cca175e8401a7de48ba4d50caf10ea76966d064369ba536b5067e41fbe04"
+      }
+    },
+    {
+      "county": "Red River County",
+      "fips": "48387",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/red-river-48387.certification.json",
+      "packageIdentity": {
+        "name": "red-river-48387.addresses.jsonl.gz",
+        "sizeBytes": 302485,
+        "sha256": "928150e1ab9fc99c45c4768c046e5c74e578b874b3f9843f0fed84e8e6cb5b3f"
+      }
+    },
+    {
+      "county": "Reeves County",
+      "fips": "48389",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/reeves-48389.certification.json",
+      "packageIdentity": {
+        "name": "reeves-48389.addresses.jsonl.gz",
+        "sizeBytes": 245206,
+        "sha256": "2085a7934312134cd0d68ef513e910e88e6f3febe0d2e309164821e5c83bb4fe"
+      }
+    },
+    {
+      "county": "Refugio County",
+      "fips": "48391",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/refugio-48391.certification.json",
+      "packageIdentity": {
+        "name": "refugio-48391.addresses.jsonl.gz",
+        "sizeBytes": 168816,
+        "sha256": "a6ef1a3ef90dff56a4f50bdd2b293e144c07120c56da9460f8dcc2785512d482"
+      }
+    },
+    {
+      "county": "Roberts County",
+      "fips": "48393",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/roberts-48393.certification.json",
+      "packageIdentity": {
+        "name": "roberts-48393.addresses.jsonl.gz",
+        "sizeBytes": 22999,
+        "sha256": "4db42e85eea204429273c9727fc73bf608d66b80be42586bd84b6bd697fda45d"
+      }
+    },
+    {
+      "county": "Robertson County",
+      "fips": "48395",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp128-wave-2/certification/robertson-48395.certification.json",
+      "packageIdentity": {
+        "name": "robertson-48395.addresses.jsonl.gz",
+        "sizeBytes": 401846,
+        "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6"
+      }
+    },
+    {
+      "county": "Rockwall County",
+      "fips": "48397",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/rockwall-48397.certification.json",
+      "packageIdentity": {
+        "name": "rockwall-48397.addresses.jsonl.gz",
+        "sizeBytes": 1681408,
+        "sha256": "beee33f9fcda1f2a9bd8040543e797b1e9af5953f048d1181467e6415fa7068b"
+      }
+    },
+    {
+      "county": "Runnels County",
+      "fips": "48399",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-07/certification/runnels-48399.certification.json",
+      "packageIdentity": {
+        "name": "runnels-48399.addresses.jsonl.gz",
+        "sizeBytes": 210395,
+        "sha256": "0196744b5ff61655e27ce3e1853c7a5308564d41ce4ea9d96a9cf3611f3cdea5"
+      }
+    },
+    {
+      "county": "Rusk County",
+      "fips": "48401",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/8",
+      "packageIdentity": {
+        "name": "rusk-48401.addresses.jsonl.gz",
+        "sizeBytes": 782267,
+        "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Sabine County",
+      "fips": "48403",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/sabine-48403.certification.json",
+      "packageIdentity": {
+        "name": "sabine-48403.addresses.jsonl.gz",
+        "sizeBytes": 471304,
+        "sha256": "966c256761daac545efed2345919416d60ab9904498ae6eb5532ee5d0cd60f45"
+      }
+    },
+    {
+      "county": "San Augustine County",
+      "fips": "48405",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/san-augustine-48405.certification.json",
+      "packageIdentity": {
+        "name": "san-augustine-48405.addresses.jsonl.gz",
+        "sizeBytes": 250781,
+        "sha256": "928822ef1362db74bc68e51bb7f1a674e6704750b8dbe98cd8cc3b8eb8441774"
+      }
+    },
+    {
+      "county": "San Jacinto County",
+      "fips": "48407",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/san-jacinto-48407.certification.json",
+      "packageIdentity": {
+        "name": "san-jacinto-48407.addresses.jsonl.gz",
+        "sizeBytes": 803304,
+        "sha256": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955"
+      }
+    },
+    {
+      "county": "San Patricio County",
+      "fips": "48409",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/san-patricio-48409.certification.json",
+      "packageIdentity": {
+        "name": "san-patricio-48409.addresses.jsonl.gz",
+        "sizeBytes": 501799,
+        "sha256": "524ed0ed14528680bb1f297699136971073b0fd3d76e61a46afc2943d0c4ae2a"
+      }
+    },
+    {
+      "county": "San Saba County",
+      "fips": "48411",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/san-saba-48411.certification.json",
+      "packageIdentity": {
+        "name": "san-saba-48411.addresses.jsonl.gz",
+        "sizeBytes": 156432,
+        "sha256": "52d9933dfc4be898f6ad620e6517fb0d081254739e5167dcea4ef7002381a1ac"
+      }
+    },
+    {
+      "county": "Schleicher County",
+      "fips": "48413",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/schleicher-48413.certification.json",
+      "packageIdentity": {
+        "name": "schleicher-48413.addresses.jsonl.gz",
+        "sizeBytes": 59945,
+        "sha256": "559897c8e0ff8b25724676be33c05a3bb61d7d12093d452ef2a3fa47f6d6a95b"
+      }
+    },
+    {
+      "county": "Scurry County",
+      "fips": "48415",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/scurry-48415.certification.json",
+      "packageIdentity": {
+        "name": "scurry-48415.addresses.jsonl.gz",
+        "sizeBytes": 280529,
+        "sha256": "1cf63d5dbff6aeeaa210284df3a04296a04529328cba4dc767ed416693d88728"
+      }
+    },
+    {
+      "county": "Shackelford County",
+      "fips": "48417",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/shackelford-48417.certification.json",
+      "packageIdentity": {
+        "name": "shackelford-48417.addresses.jsonl.gz",
+        "sizeBytes": 80835,
+        "sha256": "dce1f2803fe4362fc06a48114353872a66c28fb2ce880136bfe52f7dd1b2f3ea"
+      }
+    },
+    {
+      "county": "Shelby County",
+      "fips": "48419",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/shelby-48419.certification.json",
+      "packageIdentity": {
+        "name": "shelby-48419.addresses.jsonl.gz",
+        "sizeBytes": 564899,
+        "sha256": "65ea2173f4608b0add79a549953a515965afc8d12ac01de996f184b2857493a4"
+      }
+    },
+    {
+      "county": "Sherman County",
+      "fips": "48421",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/sherman-48421.certification.json",
+      "packageIdentity": {
+        "name": "sherman-48421.addresses.jsonl.gz",
+        "sizeBytes": 56729,
+        "sha256": "748423d24e05d41b5675de4775a7655fbe7ee996a475c69d123f47254c2514fd"
+      }
+    },
+    {
+      "county": "Smith County",
+      "fips": "48423",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/smith-48423.certification.json",
+      "packageIdentity": {
+        "name": "smith-48423.addresses.jsonl.gz",
+        "sizeBytes": 4082413,
+        "sha256": "81ec218b7fe9612bbe3a0d05dddfcaffdff6c9bcd703e27e9237c77390803093"
+      }
+    },
+    {
+      "county": "Somervell County",
+      "fips": "48425",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/9",
+      "packageIdentity": {
+        "name": "somervell-48425.addresses.jsonl.gz",
+        "sizeBytes": 164537,
+        "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Starr County",
+      "fips": "48427",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/starr-48427.certification.json",
+      "packageIdentity": {
+        "name": "starr-48427.addresses.jsonl.gz",
+        "sizeBytes": 756261,
+        "sha256": "577e7b5ddd11b67b78c307a1e34de7c6d797fb104c324d9c5842b71dd7b8d1e5"
+      }
+    },
+    {
+      "county": "Stephens County",
+      "fips": "48429",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/stephens-48429.certification.json",
+      "packageIdentity": {
+        "name": "stephens-48429.addresses.jsonl.gz",
+        "sizeBytes": 207755,
+        "sha256": "1182861cc5acdc2fbeb2f535a5b4fe3a8201e3db296df4d75c636da552b57ae3"
+      }
+    },
+    {
+      "county": "Sterling County",
+      "fips": "48431",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/sterling-48431.certification.json",
+      "packageIdentity": {
+        "name": "sterling-48431.addresses.jsonl.gz",
+        "sizeBytes": 36592,
+        "sha256": "55efc6ff2b94ed429a4e47b99d0e526614283486623dc8d73d27548d348b8f6a"
+      }
+    },
+    {
+      "county": "Stonewall County",
+      "fips": "48433",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/stonewall-48433.certification.json",
+      "packageIdentity": {
+        "name": "stonewall-48433.addresses.jsonl.gz",
+        "sizeBytes": 44573,
+        "sha256": "d3ba0de5719b8906eef8c70d6ed9f55c425d3e90e69e140227b451ac7f4db206"
+      }
+    },
+    {
+      "county": "Sutton County",
+      "fips": "48435",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/sutton-48435.certification.json",
+      "packageIdentity": {
+        "name": "sutton-48435.addresses.jsonl.gz",
+        "sizeBytes": 92124,
+        "sha256": "c918feefc80359d0a2a89621364821b093c6075afb18c9af71a81c96b8ba186f"
+      }
+    },
+    {
+      "county": "Swisher County",
+      "fips": "48437",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/swisher-48437.certification.json",
+      "packageIdentity": {
+        "name": "swisher-48437.addresses.jsonl.gz",
+        "sizeBytes": 117953,
+        "sha256": "3a822c705ae23e66c247520c4b6d51c1f894975070df79bd9298f63e4d5b887c"
+      }
+    },
+    {
+      "county": "Tarrant County",
+      "fips": "48439",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/tarrant-48439.certification.json",
+      "packageIdentity": {
+        "name": "tarrant-48439.addresses.jsonl.gz",
+        "sizeBytes": 23796609,
+        "sha256": "3e8ff5d504357f8ba42e7d4cebb5abb3baa72386f52f1fc484b40ac035828ed3"
+      }
+    },
+    {
+      "county": "Taylor County",
+      "fips": "48441",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
+      "failureStage": "PACKAGE_AVAILABILITY",
+      "primaryClassification": "LOCAL_PACKAGE_UNAVAILABLE",
+      "evidenceReference": "evidence/lp134/certification-results.json#/remaining/10",
+      "packageIdentity": {
+        "name": "taylor-48441.addresses.jsonl.gz",
+        "sizeBytes": 2563385,
+        "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff"
+      },
+      "governingEvidence": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run.",
+      "recommendedCorrectiveAction": "Restore or securely mount the byte-identical LP130 package, verify its recorded size and SHA-256, and execute the LP134 certifier twice.",
+      "packageRegenerationRequired": false,
+      "readinessImpact": "LP132 Gate 2 remains closed; this does not change activation or runtime status."
+    },
+    {
+      "county": "Terrell County",
+      "fips": "48443",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/terrell-48443.certification.json",
+      "packageIdentity": {
+        "name": "terrell-48443.addresses.jsonl.gz",
+        "sizeBytes": 35870,
+        "sha256": "d17e81cc50c4889104d512ab63ace3c7d5f8c2659f974bfcca5af67977d6f29a"
+      }
+    },
+    {
+      "county": "Terry County",
+      "fips": "48445",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/terry-48445.certification.json",
+      "packageIdentity": {
+        "name": "terry-48445.addresses.jsonl.gz",
+        "sizeBytes": 190412,
+        "sha256": "d63fb32d707fa04ca7cf713b8503e0ce6c7f7b1b56c44de4cbc60dd0fb2c37c3"
+      }
+    },
+    {
+      "county": "Throckmorton County",
+      "fips": "48447",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/throckmorton-48447.certification.json",
+      "packageIdentity": {
+        "name": "throckmorton-48447.addresses.jsonl.gz",
+        "sizeBytes": 47074,
+        "sha256": "69de5919ec12a74f1b7c2bf4efbb325affb297d5d336fccf4bd4a55139649130"
+      }
+    },
+    {
+      "county": "Titus County",
+      "fips": "48449",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/titus-48449.certification.json",
+      "packageIdentity": {
+        "name": "titus-48449.addresses.jsonl.gz",
+        "sizeBytes": 473449,
+        "sha256": "bcb39dea85ebdf6105e36511192cf630334f95e400110248677dacaf4b323f87"
+      }
+    },
+    {
+      "county": "Tom Green County",
+      "fips": "48451",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/tom-green-48451.certification.json",
+      "packageIdentity": {
+        "name": "tom-green-48451.addresses.jsonl.gz",
+        "sizeBytes": 1818806,
+        "sha256": "b1f8cb3d5edbbaa684c366ab51ebf2ad4c14dfee29dec6ceea56c797f838f0bf"
+      }
+    },
+    {
+      "county": "Travis County",
+      "fips": "48453",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-08/certification/travis-48453.certification.json",
+      "packageIdentity": {
+        "name": "travis-48453.addresses.jsonl.gz",
+        "sizeBytes": 14405442,
+        "sha256": "2c3774cfbc04bb7eaf7a16ef013ab02fc6c70978206309ce7a8c348bc0be2c1e"
+      }
+    },
+    {
+      "county": "Trinity County",
+      "fips": "48455",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp129-wave-3/certification/trinity-48455.certification.json",
+      "packageIdentity": {
+        "name": "trinity-48455.addresses.jsonl.gz",
+        "sizeBytes": 499106,
+        "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62"
+      }
+    },
+    {
+      "county": "Tyler County",
+      "fips": "48457",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/tyler-48457.certification.json",
+      "packageIdentity": {
+        "name": "tyler-48457.addresses.jsonl.gz",
+        "sizeBytes": 492755,
+        "sha256": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b"
+      }
+    },
+    {
+      "county": "Upshur County",
+      "fips": "48459",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/upshur-48459.certification.json",
+      "packageIdentity": {
+        "name": "upshur-48459.addresses.jsonl.gz",
+        "sizeBytes": 899624,
+        "sha256": "b448bffc8859867179c8ab8264ab3824245ef77875e3927d4b943a1a177faac2"
+      }
+    },
+    {
+      "county": "Upton County",
+      "fips": "48461",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/upton-48461.certification.json",
+      "packageIdentity": {
+        "name": "upton-48461.addresses.jsonl.gz",
+        "sizeBytes": 94640,
+        "sha256": "66537982fd43a5e78c0025c0213c743040ae9c2d6fe41137953e25117c983559"
+      }
+    },
+    {
+      "county": "Uvalde County",
+      "fips": "48463",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/uvalde-48463.certification.json",
+      "packageIdentity": {
+        "name": "uvalde-48463.addresses.jsonl.gz",
+        "sizeBytes": 493131,
+        "sha256": "ffaf87c92d875d74f5f41b1ff0084312d9048771f9c61de2224d4cb3cc8c32d9"
+      }
+    },
+    {
+      "county": "Val Verde County",
+      "fips": "48465",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/val-verde-48465.certification.json",
+      "packageIdentity": {
+        "name": "val-verde-48465.addresses.jsonl.gz",
+        "sizeBytes": 716092,
+        "sha256": "c62dcee91b022c062ada005e518ec81b88b85dd9a2ac368cb2123524cd6783ab"
+      }
+    },
+    {
+      "county": "Van Zandt County",
+      "fips": "48467",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/van-zandt-48467.certification.json",
+      "packageIdentity": {
+        "name": "van-zandt-48467.addresses.jsonl.gz",
+        "sizeBytes": 1173187,
+        "sha256": "2ed67b23a9a728601e44bcd03355571f0557324d694ac9dd343fb34aa1e00056"
+      }
+    },
+    {
+      "county": "Victoria County",
+      "fips": "48469",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp129-wave-3/certification/victoria-48469.certification.json",
+      "packageIdentity": {
+        "name": "victoria-48469.addresses.jsonl.gz",
+        "sizeBytes": 1326361,
+        "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711"
+      }
+    },
+    {
+      "county": "Walker County",
+      "fips": "48471",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/walker-48471.certification.json",
+      "packageIdentity": {
+        "name": "walker-48471.addresses.jsonl.gz",
+        "sizeBytes": 984566,
+        "sha256": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1"
+      }
+    },
+    {
+      "county": "Waller County",
+      "fips": "48473",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/waller-48473.certification.json",
+      "packageIdentity": {
+        "name": "waller-48473.addresses.jsonl.gz",
+        "sizeBytes": 1595248,
+        "sha256": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906"
+      }
+    },
+    {
+      "county": "Ward County",
+      "fips": "48475",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/ward-48475.certification.json",
+      "packageIdentity": {
+        "name": "ward-48475.addresses.jsonl.gz",
+        "sizeBytes": 169038,
+        "sha256": "b92586e3d6969a3310926e1b6aa757cac4a2c1ac54b5d66d495ad25d509b8e07"
+      }
+    },
+    {
+      "county": "Washington County",
+      "fips": "48477",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/washington-48477.certification.json",
+      "packageIdentity": {
+        "name": "washington-48477.addresses.jsonl.gz",
+        "sizeBytes": 790797,
+        "sha256": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d"
+      }
+    },
+    {
+      "county": "Webb County",
+      "fips": "48479",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/webb-48479.certification.json",
+      "packageIdentity": {
+        "name": "webb-48479.addresses.jsonl.gz",
+        "sizeBytes": 3249000,
+        "sha256": "de111d7849ab761639983a4e11a63a92baf6d397725046435899d9c4b8dd49ae"
+      }
+    },
+    {
+      "county": "Wharton County",
+      "fips": "48481",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "data/generated/lp1051/certification/wharton-48481.certification.json",
+      "packageIdentity": {
+        "name": "wharton-48481.addresses.jsonl.gz",
+        "sizeBytes": 790321,
+        "sha256": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357"
+      }
+    },
+    {
+      "county": "Wheeler County",
+      "fips": "48483",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wheeler-48483.certification.json",
+      "packageIdentity": {
+        "name": "wheeler-48483.addresses.jsonl.gz",
+        "sizeBytes": 111290,
+        "sha256": "ba9cca0ec43b4aa263f1fd4851cb6545da46193afb623deed5eb62eaf552f1b7"
+      }
+    },
+    {
+      "county": "Wichita County",
+      "fips": "48485",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wichita-48485.certification.json",
+      "packageIdentity": {
+        "name": "wichita-48485.addresses.jsonl.gz",
+        "sizeBytes": 1691936,
+        "sha256": "3d7d6895508e31ff7be92b2cf6e91832b76f3d16a583484374fd4d72942db672"
+      }
+    },
+    {
+      "county": "Wilbarger County",
+      "fips": "48487",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wilbarger-48487.certification.json",
+      "packageIdentity": {
+        "name": "wilbarger-48487.addresses.jsonl.gz",
+        "sizeBytes": 240373,
+        "sha256": "9f1297239c4fb36724a50f2c459bf364be472af21c565d6726c92caed1512d4f"
+      }
+    },
+    {
+      "county": "Willacy County",
+      "fips": "48489",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/willacy-48489.certification.json",
+      "packageIdentity": {
+        "name": "willacy-48489.addresses.jsonl.gz",
+        "sizeBytes": 290509,
+        "sha256": "201ff688bae687df0307a9b800cf540fca24839f15cab2e7902376b1d9c7c02b"
+      }
+    },
+    {
+      "county": "Williamson County",
+      "fips": "48491",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/williamson-48491.certification.json",
+      "packageIdentity": {
+        "name": "williamson-48491.addresses.jsonl.gz",
+        "sizeBytes": 11284618,
+        "sha256": "b5cfeb6afa1e1c5969b9ed1fb732e178abc90f12245cbf62bd6de0d72247d8b2"
+      }
+    },
+    {
+      "county": "Wilson County",
+      "fips": "48493",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wilson-48493.certification.json",
+      "packageIdentity": {
+        "name": "wilson-48493.addresses.jsonl.gz",
+        "sizeBytes": 740747,
+        "sha256": "1a2736ae8088896f854cf57fe680fc8aa2217215a39fed5c729f8ccf50db1e32"
+      }
+    },
+    {
+      "county": "Winkler County",
+      "fips": "48495",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/winkler-48495.certification.json",
+      "packageIdentity": {
+        "name": "winkler-48495.addresses.jsonl.gz",
+        "sizeBytes": 85761,
+        "sha256": "704d01f7af5e00136c6c8c5b24d21b0d5140f872bfbc5a2ebf04945a6d5b9413"
+      }
+    },
+    {
+      "county": "Wise County",
+      "fips": "48497",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wise-48497.certification.json",
+      "packageIdentity": {
+        "name": "wise-48497.addresses.jsonl.gz",
+        "sizeBytes": 1366288,
+        "sha256": "e2fdc49e6bd22c60eb7eaaebae35a226a87ede21d52b2eda09cc3f177add05f7"
+      }
+    },
+    {
+      "county": "Wood County",
+      "fips": "48499",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/wood-48499.certification.json",
+      "packageIdentity": {
+        "name": "wood-48499.addresses.jsonl.gz",
+        "sizeBytes": 1061130,
+        "sha256": "a53ee9bcb3950849d3bc3262639ed71da5d172b3b798f1e4e909324e81a0eb6e"
+      }
+    },
+    {
+      "county": "Yoakum County",
+      "fips": "48501",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/yoakum-48501.certification.json",
+      "packageIdentity": {
+        "name": "yoakum-48501.addresses.jsonl.gz",
+        "sizeBytes": 120822,
+        "sha256": "843a9225782612b891c637514d4f43e8754b62e781ca7561a5d897a5c8bf17c4"
+      }
+    },
+    {
+      "county": "Young County",
+      "fips": "48503",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/young-48503.certification.json",
+      "packageIdentity": {
+        "name": "young-48503.addresses.jsonl.gz",
+        "sizeBytes": 345917,
+        "sha256": "8860e222a1d19cf9935bfaaf9b24b209a45f6d7bea228cfb2d37fb09dac57274"
+      }
+    },
+    {
+      "county": "Zapata County",
+      "fips": "48505",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/zapata-48505.certification.json",
+      "packageIdentity": {
+        "name": "zapata-48505.addresses.jsonl.gz",
+        "sizeBytes": 365220,
+        "sha256": "7a9bbec3f625b785a0dc5cc4e78a82640177054b53e6df22e5f80a5c864ffd3c"
+      }
+    },
+    {
+      "county": "Zavala County",
+      "fips": "48507",
+      "certificationStatus": "CERTIFIED",
+      "failureStage": null,
+      "primaryClassification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-09/certification/zavala-48507.certification.json",
+      "packageIdentity": {
+        "name": "zavala-48507.addresses.jsonl.gz",
+        "sizeBytes": 196465,
+        "sha256": "b545ed4e4e01c8fa3c3b283ae8fc014ae425475e471406f5f562facb641b56cf"
+      }
+    }
+  ]
+}
