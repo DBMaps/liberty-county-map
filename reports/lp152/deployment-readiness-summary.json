@@ -1,0 +1,48 @@
+{
+  "activationCount": 0,
+  "activationOccurred": false,
+  "blockedCount": 254,
+  "blockerInventorySha256": "f364896c3fec7be3ebd2a96db04586f48150d75c68c50bc4da36ba922962c7ce",
+  "deploymentCount": 0,
+  "deploymentOccurred": false,
+  "gateReportSha256": "e98f826c28a576b16e756a1e49cf3714e7f8eaaa3e8e93ffd44e24aabfe3d1c4",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "identityCount": 254,
+  "milestone": "LP152",
+  "operationalCountyCount": 28,
+  "passed": true,
+  "preExistingBaselineFailures": [
+    {
+      "introducedByLp152": false,
+      "message": "[LP148] tracked/generated package does not match deterministic rebuild",
+      "milestone": "LP148",
+      "repairedByLp152": false
+    }
+  ],
+  "readyPendingAuthorizationCount": 0,
+  "registrySha256": "93b38ecc4d463b99c80fe3593b24f34e5d98ad271c4b7d382d0cae6519321709",
+  "remainingDeploymentBlockers": [
+    {
+      "blocker": "ACTIVATION_AUTHORIZATION_ABSENT",
+      "count": 254
+    },
+    {
+      "blocker": "CERTIFICATION_BLOCKED",
+      "count": 28
+    },
+    {
+      "blocker": "DEPLOYMENT_AUTHORIZATION_ABSENT",
+      "count": 254
+    },
+    {
+      "blocker": "MEMBERSHIP_NOT_OPERATIONAL",
+      "count": 226
+    },
+    {
+      "blocker": "STORAGE_EVIDENCE_BLOCKED",
+      "count": 28
+    }
+  ],
+  "runtimeMembershipChanged": false,
+  "schemaVersion": "gridly.lp152.deploymentReadinessSummary.v1"
+}
