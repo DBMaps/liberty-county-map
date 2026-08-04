@@ -155,6 +155,10 @@
     "plan:lp147": "node tools/lp147/publish-statewide-storage.mjs --plan",
     "upload:lp147": "node tools/lp147/publish-statewide-storage.mjs --upload",
     "verify-remote:lp147": "node tools/lp147/publish-statewide-storage.mjs --verify-remote",
-    "test:lp147": "node --test tests/lp147-statewide-storage-publication.test.mjs"
+    "test:lp147": "node --test tests/lp147-statewide-storage-publication.test.mjs",
+    "plan:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --plan",
+    "build:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --build",
+    "verify:lp148": "node tools/lp148/build-statewide-runtime-geometry.mjs --verify && node tools/lp148/build-statewide-runtime-geometry.mjs --audit-runtime",
+    "test:lp148": "node --test tests/lp148-statewide-geometry-builder.test.mjs"
   }
 }
