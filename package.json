@@ -142,6 +142,9 @@
     "build:lp143": "node tools/lp143/manufacture-activation-authorizations.mjs",
     "verify:lp143": "node tools/lp143/manufacture-activation-authorizations.mjs --verify",
     "test:lp143": "node --test tests/lp143-activation-authorization-framework.test.mjs",
+    "build:lp144": "node tools/lp144/manufacture-operational-authorizations.mjs",
+    "verify:lp144": "node tools/lp144/manufacture-operational-authorizations.mjs --verify",
+    "test:lp144": "node --test tests/lp144-operational-authorization-manufacturing.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
