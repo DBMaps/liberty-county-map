@@ -16,7 +16,12 @@
     "certificationTotal": 254
   },
   "immutableEvidence": {
-    "lp130": { "path": "evidence/lp130/final-reconciliation.json", "sha256": "6223a7b592a006f59615353d553e1a3753e1fa61d6f2167debb5e88fa119fd83" },
+    "lp130": {
+      "path": "evidence/lp130/final-reconciliation.json",
+      "gitBlobId": "278a4b48d57168958ee7c222a5114c94453faeb6",
+      "sha256": "6223a7b592a006f59615353d553e1a3753e1fa61d6f2167debb5e88fa119fd83",
+      "replacesStaleWorkingTreeSha256": "89cb1a460adcbe66c58ba3734c8f193a399f907a587a3f29d660fdf65cf863b4"
+    },
     "lp132": { "path": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md", "sha256": "be1f57355db98799d69d7d4b7020fb0c23f4d44eb32b1ad9e1870ed38a996ce0" },
     "lp135": { "path": "evidence/lp135/statewide-certification.json", "sha256": "ef594fd4c6f1ce797c1c8fc9efa5084f9ebcf9a851b053e4e4f12475098d1a26" },
     "operationalCountyRegistry": { "path": "js/app.js", "sha256": "57a11cbedf834ba9a104e5ee0f96bb9976fbf94e89ebdc1d5e29452e981f019f" },
