@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { gzipSync } from 'node:zlib';
-import { canonicalRoad, certifyCountyPackage } from '../tools/lp104/certify-texas-address-package.mjs';
+import { canonicalRoad, certifyCountyPackage, eligibleExact, supportedAliases } from '../tools/lp104/certify-texas-address-package.mjs';
 
 const roads = ['County Road 101', 'FM 1960', 'State Highway 321', 'US Highway 90'];
 async function fixture({ count = 4000, mutateRecord } = {}) {
@@ -31,7 +31,7 @@ async function fixture({ count = 4000, mutateRecord } = {}) {
 test('certifies thousands of deterministic exact and rejected addresses without eager or duplicate loads', async t => {
   const files = await fixture();
   t.after(() => rm(files.directory, { recursive: true, force: true }));
-  const report = await certifyCountyPackage({ manifestPath: files.manifestPath, fips: '48291', sampleSize: 3000, maxLoadMs: 10000 });
+  const report = await certifyCountyPackage({ manifestPath: files.manifestPath, fips: '48291', sampleSize: 3000 });
   assert.equal(report.certificationStatus, 'PASS');
   assert.deepEqual(report.exactMatchStatistics.sampled, 3000);
   assert.equal(report.exactMatchStatistics.passed, 3000);
@@ -44,6 +44,31 @@ test('certifies thousands of deterministic exact and rejected addresses without 
   assert.equal(report.normalizationStatistics.variantsPassed, 9000);
   assert.equal(report.integrityStatistics.packageLoadCount, 1);
   assert.equal(report.indexedAddressCount, 4000);
+});
+
+test('LP134 independently rejects internal-space house numbers from exact sampling', () => {
+  const base = { i: '48027-1', h: '100306', r: 'Main Street', f: '48027', x: -97, y: 31 };
+  assert.equal(eligibleExact(base, '48027'), true);
+  assert.equal(eligibleExact({ ...base, h: '100306 A' }, '48027'), false);
+  assert.equal(eligibleExact({ ...base, h: '14073 1/2' }, '48027'), false);
+});
+
+test('LP134 restricts alias evidence to governed numbered roads', () => {
+  assert.equal(supportedAliases('Cr Moore Road').length, 0);
+  assert.equal(supportedAliases('Us Marshal Road').length, 0);
+  assert.deepEqual(supportedAliases('County Road 101'), ['County Road 101', 'CR 101', 'Co Rd 101']);
+  assert.equal(supportedAliases('FM 1960').length, 3);
+});
+
+test('LP134 performance certification is deterministic and duration is diagnostic only', async t => {
+  const files = await fixture({ count: 20 });
+  t.after(() => rm(files.directory, { recursive: true, force: true }));
+  const pass = await certifyCountyPackage({ manifestPath: files.manifestPath, fips: '48291', maxIndexedRecords: 20 });
+  const fail = await certifyCountyPackage({ manifestPath: files.manifestPath, fips: '48291', maxIndexedRecords: 19 });
+  assert.equal(pass.performanceGate.status, 'PASS');
+  assert.equal(pass.performanceGate.runtimeDurationIsDiagnosticOnly, true);
+  assert.equal(fail.performanceGate.status, 'FAIL');
+  assert.ok(fail.failures.includes('indexed address count exceeded deterministic limit 19'));
 });
 
 test('normalizes the required Texas canonical road aliases', () => {

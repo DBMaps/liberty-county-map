@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Brewster County",
+  "countyFips": "48043",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 334550,
+  "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+  "indexedAddressCount": 9322,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005676999999991494
+  },
+  "exactSample": {
+    "providerIdentity": "b4b8fefad38c63a93545",
+    "houseNumber": "1",
+    "canonicalRoad": "A FRAME DRIVE",
+    "city": "TERLINGUA",
+    "zip": "79852",
+    "county": "Brewster County",
+    "countyFips": "48043",
+    "query": "1 A FRAME DRIVE TERLINGUA TX 79852",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 907,
+    "variantsTested": 2721,
+    "variantsPassed": 2721
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 9322,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 190.34367300000002,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 190.34367300000002,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -124,6 +124,7 @@
     "audit:lp131": "node tools/lp131/audit-statewide-readiness.mjs",
     "verify:lp131": "node tools/lp131/audit-statewide-readiness.mjs --verify",
     "test:lp131": "node --test tests/lp131-statewide-readiness-audit.test.mjs",
+    "test:lp134": "node --test tests/lp1046-texas-address-certification.test.mjs tests/lp134-certification-tooling-refinement.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
