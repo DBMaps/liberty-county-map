@@ -1,0 +1,2300 @@
+{
+  "authorizedCount": 0,
+  "contractRecognition": "EMPTY_CONTRACT",
+  "contractValid": true,
+  "decisions": [
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Anderson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48001",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Andrews County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48003",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Angelina County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48005",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Aransas County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48007",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Archer County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48009",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Armstrong County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48011",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Atascosa County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48013",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Austin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48015",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bailey County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48017",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bandera County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48019",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bastrop County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48021",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Baylor County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48023",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bee County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48025",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48027",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bexar County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48029",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Blanco County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48031",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Borden County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48033",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bosque County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48035",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Bowie County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48037",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Brazoria County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48039",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Brazos County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48041",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Brewster County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48043",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Briscoe County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48045",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Brooks County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48047",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Brown County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48049",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Burleson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48051",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Burnet County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48053",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Caldwell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48055",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Calhoun County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48057",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Callahan County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48059",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cameron County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48061",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Camp County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48063",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Carson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48065",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cass County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48067",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Castro County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48069",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Chambers County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48071",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cherokee County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48073",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Childress County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48075",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Clay County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48077",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cochran County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48079",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Coke County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48081",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Coleman County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48083",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Collin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48085",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Collingsworth County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48087",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Colorado County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48089",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Comal County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48091",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Comanche County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48093",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Concho County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48095",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cooke County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48097",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Coryell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48099",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Cottle County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48101",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Crane County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48103",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Crockett County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48105",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Crosby County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48107",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Culberson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48109",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Dallam County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48111",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Dallas County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48113",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Dawson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48115",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Deaf Smith County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48117",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Delta County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48119",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Denton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48121",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "DeWitt County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48123",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Dickens County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48125",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Dimmit County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48127",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Donley County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48129",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Duval County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48131",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Eastland County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48133",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Ector County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48135",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Edwards County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48137",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Ellis County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48139",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "El Paso County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48141",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Erath County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48143",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Falls County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48145",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Fannin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48147",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Fayette County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48149",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Fisher County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48151",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Floyd County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48153",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Foard County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48155",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Fort Bend County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48157",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Franklin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48159",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Freestone County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48161",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Frio County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48163",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Gaines County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48165",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Galveston County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48167",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Garza County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48169",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Gillespie County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48171",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Glasscock County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48173",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Goliad County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48175",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Gonzales County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48177",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Gray County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48179",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Grayson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48181",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Gregg County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48183",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Grimes County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48185",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Guadalupe County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48187",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hale County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48189",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hall County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48191",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hamilton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48193",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hansford County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48195",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hardeman County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48197",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hardin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48199",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Harris County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48201",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Harrison County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48203",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hartley County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48205",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Haskell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48207",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hays County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48209",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hemphill County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48211",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Henderson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48213",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hidalgo County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48215",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hill County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48217",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hockley County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48219",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hood County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48221",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hopkins County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48223",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Houston County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48225",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Howard County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48227",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hudspeth County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48229",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hunt County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48231",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Hutchinson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48233",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Irion County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48235",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jack County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48237",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jackson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48239",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jasper County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48241",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jeff Davis County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48243",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jefferson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48245",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jim Hogg County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48247",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jim Wells County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48249",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Johnson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48251",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Jones County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48253",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Karnes County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48255",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kaufman County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48257",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kendall County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48259",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kenedy County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48261",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kent County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48263",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kerr County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48265",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kimble County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48267",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "King County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48269",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kinney County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48271",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Kleberg County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48273",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Knox County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48275",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lamar County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48277",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lamb County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48279",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lampasas County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48281",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "La Salle County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48283",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lavaca County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48285",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lee County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48287",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Leon County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48289",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Liberty County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48291",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Limestone County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48293",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lipscomb County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48295",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Live Oak County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48297",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Llano County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48299",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Loving County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48301",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lubbock County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48303",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Lynn County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48305",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "McCulloch County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48307",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "McLennan County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48309",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "McMullen County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48311",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Madison County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48313",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Marion County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48315",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Martin County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48317",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Mason County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48319",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Matagorda County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48321",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Maverick County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48323",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Medina County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48325",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Menard County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48327",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Midland County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48329",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Milam County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48331",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Mills County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48333",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Mitchell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48335",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Montague County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48337",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Montgomery County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48339",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Moore County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48341",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Morris County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48343",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Motley County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48345",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Nacogdoches County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48347",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Navarro County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48349",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Newton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48351",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Nolan County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48353",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Nueces County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48355",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Ochiltree County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48357",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Oldham County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48359",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Orange County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48361",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Palo Pinto County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48363",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Panola County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48365",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Parker County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48367",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Parmer County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48369",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Pecos County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48371",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Polk County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48373",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Potter County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48375",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Presidio County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48377",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Rains County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48379",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Randall County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48381",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Reagan County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48383",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Real County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48385",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Red River County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48387",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Reeves County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48389",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Refugio County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48391",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Roberts County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48393",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Robertson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48395",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Rockwall County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48397",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Runnels County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48399",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Rusk County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48401",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Sabine County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48403",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "San Augustine County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48405",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "San Jacinto County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48407",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "San Patricio County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48409",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "San Saba County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48411",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Schleicher County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48413",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Scurry County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48415",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Shackelford County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48417",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Shelby County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48419",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Sherman County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48421",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Smith County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48423",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Somervell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48425",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Starr County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48427",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Stephens County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48429",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Sterling County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48431",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Stonewall County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48433",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Sutton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48435",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Swisher County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48437",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Tarrant County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48439",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Taylor County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48441",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Terrell County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48443",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Terry County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48445",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Throckmorton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48447",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Titus County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48449",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Tom Green County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48451",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Travis County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48453",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Trinity County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48455",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Tyler County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48457",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Upshur County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48459",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Upton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48461",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Uvalde County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48463",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Val Verde County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48465",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Van Zandt County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48467",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Victoria County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48469",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Walker County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48471",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Waller County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48473",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Ward County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48475",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Washington County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48477",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Webb County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48479",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wharton County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48481",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wheeler County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48483",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wichita County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48485",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wilbarger County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48487",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Willacy County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48489",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Williamson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48491",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wilson County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48493",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Winkler County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48495",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wise County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48497",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Wood County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48499",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Yoakum County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48501",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Young County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48503",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Zapata County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48505",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    },
+    {
+      "authorizationStatus": "NOT_AUTHORIZED",
+      "countyName": "Zavala County",
+      "decision": "NO_DEPLOYMENT_UNAUTHORIZED",
+      "fips": "48507",
+      "rejectionReasons": [
+        "DEPLOYMENT_AUTHORIZATION_ABSENT"
+      ]
+    }
+  ],
+  "deploymentCount": 0,
+  "deploymentPerformed": false,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "malformedContract": false,
+  "milestone": "LP153",
+  "rejectedAuthorizations": [],
+  "schemaVersion": "gridly.lp153.deploymentExecutionReport.v1"
+}
