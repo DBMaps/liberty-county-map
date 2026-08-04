@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gridly-lp143-county-activation-authorization-v1",
+  "title": "LP143 County Activation Authorization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "county",
+    "fips",
+    "authorizationId",
+    "authorizationVersion",
+    "lp132GateReferences",
+    "operationalApproval",
+    "deploymentApproval",
+    "runtimeApproval",
+    "geometryApproval",
+    "membershipApproval",
+    "authorizationStatus",
+    "authorizationTimestamp",
+    "authorizationAuthority",
+    "activationRecommendation"
+  ],
+  "properties": {
+    "county": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fips": {
+      "type": "string",
+      "pattern": "^48[0-9]{3}$"
+    },
+    "authorizationId": {
+      "type": "string",
+      "pattern": "^LP143-TX-48[0-9]{3}-V[1-9][0-9]*$"
+    },
+    "authorizationVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "lp132GateReferences": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object"
+      }
+    },
+    "operationalApproval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    },
+    "deploymentApproval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    },
+    "runtimeApproval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    },
+    "geometryApproval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    },
+    "membershipApproval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    },
+    "authorizationStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_AUTHORIZED",
+        "ACTIVATION_AUTHORIZED"
+      ],
+      "default": "NOT_AUTHORIZED"
+    },
+    "authorizationTimestamp": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "default": null
+    },
+    "authorizationAuthority": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "activationRecommendation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null
+    }
+  }
+}

@@ -16,10 +16,12 @@ const evidenceRefs = Object.freeze([
 ]);
 
 /** Pure LP140 planning. This function reads no files and performs no writes or activation. */
-export function deriveActivationWavePlan({ readiness, certification, integrity, operational, membershipDraft }) {
+export function deriveActivationWavePlan({ readiness, certification, integrity, operational, membershipDraft, authorizationRegistry }) {
   if (integrity.packageIntegrity.classification !== 'PASS') throw new Error('LP130 integrity baseline is not PASS');
   const certifications = new Map(certification.counties.map(row => [row.fips, row]));
   const eligibleGeometry = new Set(membershipDraft.approvedCounties.map(row => row.fips));
+  const authorizationRecords = new Map((authorizationRegistry?.authorizations ?? []).map(record => [record.fips, record]));
+  if (authorizationRecords.size !== (authorizationRegistry?.authorizations ?? []).length) throw new Error('Duplicate authorization FIPS');
 
   const counties = readiness.counties.map(row => {
     const cert = certifications.get(row.fips);
@@ -48,11 +50,12 @@ export function deriveActivationWavePlan({ readiness, certification, integrity, 
       gates.slice(0, 6).every(gate => gate.status === 'PASS') && eligibleGeometry.has(row.fips) && operationalReady && deploymentReady;
     const readinessClass = cert.certificationStatus !== 'CERTIFIED' ? 'BLOCKED' : qualifies ? 'READY_FOR_FUTURE_WAVE' : 'CONDITIONALLY_READY';
     const proposedWave = qualifies ? ({ TIER_1: 0, TIER_2: 1, TIER_3: 2, TIER_4: 3 }[row.tier] ?? 4) : null;
+    const authorization = authorizationRecords.get(row.fips);
     return {
       county: row.county, countyId: row.countyId, fips: row.fips, readinessClass,
       certification: cert.certificationStatus, lp131Tier: row.tier, lp131Readiness: row.status,
       packageIntegrity: 'PASS', gates, geometryMembershipEligible: eligibleGeometry.has(row.fips),
-      operationalPrerequisites: operationalReady ? 'PASS' : 'INCOMPLETE', deploymentPrerequisites: deploymentReady ? 'PASS' : 'INCOMPLETE', activationAuthorization: 'NOT_AUTHORIZED', proposedWave,
+      operationalPrerequisites: operationalReady ? 'PASS' : 'INCOMPLETE', deploymentPrerequisites: deploymentReady ? 'PASS' : 'INCOMPLETE', activationAuthorization: authorization?.authorizationStatus ?? 'NOT_AUTHORIZED', proposedWave,
       governingEvidence: evidenceRefs, blockers,
       unmetRequirements: blockers,
       recommendedAction: readinessClass === 'BLOCKED'
