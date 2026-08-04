@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bandera County",
+  "countyFips": "48019",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 539409,
+  "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+  "indexedAddressCount": 16033,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.007807999999840831
+  },
+  "exactSample": {
+    "providerIdentity": "834ef58842157f995e4a",
+    "houseNumber": "100",
+    "canonicalRoad": "DIANA DRIVE",
+    "city": "Bandera",
+    "zip": "78003",
+    "county": "Bandera County",
+    "countyFips": "48019",
+    "query": "100 Diana Drive Bandera TX 78003",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 917,
+    "variantsTested": 2751,
+    "variantsPassed": 2751
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 16033,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 478.37503300000003,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 478.37503300000003,
+  "certificationStatus": "PASS",
+  "failures": []
+}

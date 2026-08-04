@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "lp134-certification-results-v1",
+  "baseline": "LP131",
+  "previous": {
+    "pass": 240,
+    "fail": 14,
+    "percentage": 94.49
+  },
+  "current": {
+    "pass": 243,
+    "fail": 11,
+    "percentage": 95.67
+  },
+  "resolved": [
+    {
+      "county": "Bandera County",
+      "fips": "48019"
+    },
+    {
+      "county": "Bell County",
+      "fips": "48027"
+    },
+    {
+      "county": "Brewster County",
+      "fips": "48043"
+    }
+  ],
+  "rerunCounties": [
+    {
+      "county": "Bandera County",
+      "fips": "48019",
+      "before": {
+        "status": "FAIL",
+        "packageSha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+        "packageSize": 539409,
+        "sidecarSha256": "c6fd0695acd6bf567a7bd4c8e9e3450a8a5a4fdfa3e2c266c59d9dd3e06b80ec",
+        "failures": [
+          "canonical road alias failed"
+        ]
+      },
+      "after": {
+        "status": "PASS",
+        "packageSha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+        "packageSize": 539409,
+        "sidecarSha256": "c6fd0695acd6bf567a7bd4c8e9e3450a8a5a4fdfa3e2c266c59d9dd3e06b80ec",
+        "failures": []
+      }
+    },
+    {
+      "county": "Bell County",
+      "fips": "48027",
+      "before": {
+        "status": "FAIL",
+        "packageSha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050",
+        "packageSize": 5367668,
+        "sidecarSha256": "419c6a0228e5e0d2438d509e54f645d7a4aec22764073e92dc283ac85b584ef1",
+        "failures": [
+          "exact address sample failed"
+        ]
+      },
+      "after": {
+        "status": "PASS",
+        "packageSha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050",
+        "packageSize": 5367668,
+        "sidecarSha256": "419c6a0228e5e0d2438d509e54f645d7a4aec22764073e92dc283ac85b584ef1",
+        "failures": []
+      }
+    },
+    {
+      "county": "Brewster County",
+      "fips": "48043",
+      "before": {
+        "status": "FAIL",
+        "packageSha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+        "packageSize": 334550,
+        "sidecarSha256": "bdb984c1254ce347e48a769aa881cffa970aee6da11f88051d656a2333c7c1bf",
+        "failures": [
+          "exact address sample failed"
+        ]
+      },
+      "after": {
+        "status": "PASS",
+        "packageSha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+        "packageSize": 334550,
+        "sidecarSha256": "bdb984c1254ce347e48a769aa881cffa970aee6da11f88051d656a2333c7c1bf",
+        "failures": []
+      }
+    }
+  ],
+  "remaining": [
+    {
+      "county": "Cameron County",
+      "fips": "48061",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Cherokee County",
+      "fips": "48073",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Dallas County",
+      "fips": "48113",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Denton County",
+      "fips": "48121",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Ector County",
+      "fips": "48135",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Hudspeth County",
+      "fips": "48229",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Midland County",
+      "fips": "48329",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Presidio County",
+      "fips": "48377",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Rusk County",
+      "fips": "48401",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Somervell County",
+      "fips": "48425",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    },
+    {
+      "county": "Taylor County",
+      "fips": "48441",
+      "reasonCode": "LOCAL_PACKAGE_UNAVAILABLE",
+      "reason": "The immutable LP130 package is not present in this checkout; status is retained until byte-identical recertification can run."
+    }
+  ],
+  "artifactControls": {
+    "packagesModified": 0,
+    "sidecarsModified": 0,
+    "runtimeArtifactsModified": 0,
+    "deploymentArtifactsModified": 0
+  }
+}
