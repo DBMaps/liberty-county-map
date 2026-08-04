@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "gridly-lp130-preflight-v1",
+  "milestone": "LP130",
+  "status": "OWNER_MANUFACTURING_BLOCKED",
+  "decision": "MERGE_PREFLIGHT_HOLD_MANUFACTURING",
+  "branch": "LP130-—-Texas-Address-Expansion-Wave-4",
+  "baseline": "abb3f8555b9dfcbcf633fbf75f7c2b07eeb094fe",
+  "mission": "candidate address manufacturing only",
+  "source": {
+    "identity": "TxGIO 2026 Statewide Address Points",
+    "ownerPath": "C:\\GitHub\\Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026.gdb",
+    "logicalBytes": 1715018101,
+    "componentCount": 126,
+    "recordCount": 12142647,
+    "sourceCrs": "EPSG:3857",
+    "outputCrs": "EPSG:4326",
+    "discoveryRepeated": false,
+    "newSourceIntroduced": false
+  },
+  "lp129Baseline": {
+    "manifestPackages": 34,
+    "uniqueFips": 34,
+    "uniquePackageNames": 34,
+    "requiredFipsPresent": ["48051", "48455", "48469"],
+    "packagesValidated": 3,
+    "sidecarsValidated": 3,
+    "runtimeCertificatesValidated": 3,
+    "certificationReportsValidated": 3,
+    "candidateManifestInactive": true,
+    "deterministicComparatorPresent": true,
+    "ownerRerunEvidencePresent": false,
+    "blocker": "The committed LP129 reconciliation records that distinct owner rerun evidence is pending."
+  },
+  "counties": [
+    { "countyId": "angelina", "county": "Angelina County", "fips": "48005", "adjacentToRepresented": ["Trinity County", "Polk County", "Tyler County", "Jasper County"] },
+    { "countyId": "bastrop", "county": "Bastrop County", "fips": "48021", "adjacentToRepresented": ["Lee County", "Fayette County"] },
+    { "countyId": "bee", "county": "Bee County", "fips": "48025", "adjacentToRepresented": ["Victoria County"] },
+    { "countyId": "bell", "county": "Bell County", "fips": "48027", "adjacentToRepresented": ["Milam County"] },
+    { "countyId": "caldwell", "county": "Caldwell County", "fips": "48055", "adjacentToRepresented": ["Fayette County"] }
+  ],
+  "ordering": "ascending official five-digit FIPS",
+  "ownerCommand": "node tools/lp1051/manufacture-gridly-28-address-counties.mjs --fips 48005,48021,48025,48027,48055 --gdb \"C:\\GitHub\\Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026.gdb\" --reports \"reports/lp130-wave-4\"",
+  "phase1": { "documentationPrepared": true, "preflightEvidencePrepared": true, "focusedTestsPrepared": true, "packagesManufactured": false },
+  "boundaries": {
+    "candidateOnly": true,
+    "runtimeActivated": false,
+    "storageUploadOccurred": false,
+    "supabaseChangesOccurred": false,
+    "runtimeBehaviorChanged": false,
+    "protectedSystemsChanged": false
+  }
+}
