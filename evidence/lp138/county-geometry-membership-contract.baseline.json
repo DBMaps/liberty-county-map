@@ -1,0 +1,2177 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractVersion": "1.0.0",
+  "contractKind": "CURRENT_OPERATIONAL_BASELINE",
+  "milestoneAuthority": "LP138",
+  "generatedAtPolicy": {
+    "mode": "APPROVAL_RECORDED_UTC",
+    "value": null
+  },
+  "approval": {
+    "status": "DRAFT",
+    "recordId": "LP138-CURRENT-OPERATIONAL-BASELINE",
+    "authority": "Historical runtime state recorded by LP138; not a new LP132 approval",
+    "recordRef": "LP137-TEXAS-STATEWIDE-COUNTY-GEOMETRY-GOVERNANCE-RECONCILIATION.md",
+    "candidateOnly": false,
+    "effectiveAt": null,
+    "expiresAt": null
+  },
+  "cohort": {
+    "wave": 0,
+    "cohortId": "pre-lp138-current-operational-runtime-baseline"
+  },
+  "approvedCountyCount": 28,
+  "existingBaselineCountyCount": 28,
+  "newlyApprovedCountyCount": 0,
+  "approvedCounties": [
+    {
+      "countyId": "austin-tx",
+      "fips": "48015",
+      "displayName": "Austin County",
+      "identityEvidenceRef": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson#GEOID=48015",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.austin-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.austin-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "brazoria-tx",
+      "fips": "48039",
+      "displayName": "Brazoria County",
+      "identityEvidenceRef": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson#GEOID=48039",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.brazoria-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.brazoria-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "brazos-tx",
+      "fips": "48041",
+      "displayName": "Brazos County",
+      "identityEvidenceRef": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson#GEOID=48041",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.brazos-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.brazos-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "calhoun-tx",
+      "fips": "48057",
+      "displayName": "Calhoun County",
+      "identityEvidenceRef": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson#GEOID=48057",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.calhoun-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.calhoun-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "chambers-tx",
+      "fips": "48071",
+      "displayName": "Chambers County",
+      "identityEvidenceRef": "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson#GEOID=48071",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.chambers-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.chambers-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "colorado-tx",
+      "fips": "48089",
+      "displayName": "Colorado County",
+      "identityEvidenceRef": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson#GEOID=48089",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.colorado-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.colorado-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "fayette-tx",
+      "fips": "48149",
+      "displayName": "Fayette County",
+      "identityEvidenceRef": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson#GEOID=48149",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.fayette-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.fayette-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "fips": "48157",
+      "displayName": "Fort Bend County",
+      "identityEvidenceRef": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson#GEOID=48157",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.fort-bend-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.fort-bend-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "galveston-tx",
+      "fips": "48167",
+      "displayName": "Galveston County",
+      "identityEvidenceRef": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson#GEOID=48167",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.galveston-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.galveston-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "grimes-tx",
+      "fips": "48185",
+      "displayName": "Grimes County",
+      "identityEvidenceRef": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson#GEOID=48185",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.grimes-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.grimes-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "hardin-tx",
+      "fips": "48199",
+      "displayName": "Hardin County",
+      "identityEvidenceRef": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson#GEOID=48199",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.hardin-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.hardin-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "harris-tx",
+      "fips": "48201",
+      "displayName": "Harris County",
+      "identityEvidenceRef": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson#GEOID=48201",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.harris-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.harris-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "jackson-tx",
+      "fips": "48239",
+      "displayName": "Jackson County",
+      "identityEvidenceRef": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson#GEOID=48239",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.jackson-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.jackson-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "jasper-tx",
+      "fips": "48241",
+      "displayName": "Jasper County",
+      "identityEvidenceRef": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson#GEOID=48241",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.jasper-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.jasper-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "jefferson-tx",
+      "fips": "48245",
+      "displayName": "Jefferson County",
+      "identityEvidenceRef": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson#GEOID=48245",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.jefferson-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.jefferson-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "lavaca-tx",
+      "fips": "48285",
+      "displayName": "Lavaca County",
+      "identityEvidenceRef": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson#GEOID=48285",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.lavaca-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.lavaca-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "liberty-tx",
+      "fips": "48291",
+      "displayName": "Liberty County",
+      "identityEvidenceRef": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson#GEOID=48291",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.liberty-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.liberty-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "matagorda-tx",
+      "fips": "48321",
+      "displayName": "Matagorda County",
+      "identityEvidenceRef": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson#GEOID=48321",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.matagorda-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.matagorda-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "montgomery-tx",
+      "fips": "48339",
+      "displayName": "Montgomery County",
+      "identityEvidenceRef": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson#GEOID=48339",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.montgomery-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.montgomery-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "newton-tx",
+      "fips": "48351",
+      "displayName": "Newton County",
+      "identityEvidenceRef": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson#GEOID=48351",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.newton-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.newton-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "orange-tx",
+      "fips": "48361",
+      "displayName": "Orange County",
+      "identityEvidenceRef": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson#GEOID=48361",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.orange-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.orange-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "polk-tx",
+      "fips": "48373",
+      "displayName": "Polk County",
+      "identityEvidenceRef": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson#GEOID=48373",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.polk-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.polk-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "fips": "48407",
+      "displayName": "San Jacinto County",
+      "identityEvidenceRef": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson#GEOID=48407",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.san-jacinto-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.san-jacinto-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "tyler-tx",
+      "fips": "48457",
+      "displayName": "Tyler County",
+      "identityEvidenceRef": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson#GEOID=48457",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.tyler-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.tyler-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "walker-tx",
+      "fips": "48471",
+      "displayName": "Walker County",
+      "identityEvidenceRef": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson#GEOID=48471",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.walker-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.walker-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "waller-tx",
+      "fips": "48473",
+      "displayName": "Waller County",
+      "identityEvidenceRef": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson#GEOID=48473",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.waller-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.waller-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "washington-tx",
+      "fips": "48477",
+      "displayName": "Washington County",
+      "identityEvidenceRef": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson#GEOID=48477",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.washington-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.washington-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    },
+    {
+      "countyId": "wharton-tx",
+      "fips": "48481",
+      "displayName": "Wharton County",
+      "identityEvidenceRef": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson#GEOID=48481",
+      "activationEvidenceRefs": [
+        "js/app.js#GRIDLY_COUNTY_REGISTRY.wharton-tx",
+        "assets/location-resolution/gridly-authoritative-county-geometry-v1.json#counties.wharton-tx"
+      ],
+      "gates": [
+        {
+          "gate": 1,
+          "name": "Package integrity",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-1",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 2,
+          "name": "Certification complete",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-2",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 3,
+          "name": "Community readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-3",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 4,
+          "name": "Destination readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-4",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 5,
+          "name": "Crossing readiness",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-5",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 6,
+          "name": "Runtime validation",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-6",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        },
+        {
+          "gate": 7,
+          "name": "Production approval",
+          "status": "NOT_EVALUATED",
+          "evidenceRef": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md#gate-7",
+          "evidenceSha256": null,
+          "evaluatedAt": null,
+          "reviewer": null
+        }
+      ]
+    }
+  ],
+  "permissions": {
+    "prepareGeometry": {
+      "authorized": false,
+      "authorityRef": "LP138 baseline-recording non-authorization"
+    },
+    "generateRuntimePackage": {
+      "authorized": false,
+      "authorityRef": "LP138 baseline-recording non-authorization"
+    },
+    "deploy": {
+      "authorized": false,
+      "authorityRef": "LP138 baseline-recording non-authorization"
+    },
+    "activateRuntime": {
+      "authorized": false,
+      "authorityRef": "LP138 baseline-recording non-authorization"
+    },
+    "storageUpload": {
+      "authorized": false,
+      "authorityRef": "LP138 baseline-recording non-authorization"
+    }
+  },
+  "rollback": {
+    "planRef": null,
+    "owner": null,
+    "targetContractRef": null,
+    "triggerRefs": [],
+    "rehearsalEvidenceRef": null
+  },
+  "provenance": {
+    "hashAlgorithm": "SHA-256",
+    "canonicalization": "GRIDLY_CANONICAL_JSON_V1",
+    "membershipSha256": "5f4e09c9ff23794f0bdf38ee199479ba2a72de1bec2ffa034835a0de23197864",
+    "sourceHashes": [
+      {
+        "ref": "js/app.js",
+        "sha256": "57a11cbedf834ba9a104e5ee0f96bb9976fbf94e89ebdc1d5e29452e981f019f"
+      },
+      {
+        "ref": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "sha256": "ba0e44fbaf1a396909f7aad98ace7d55a20f86a23ca9352c980f39116ed32461"
+      },
+      {
+        "ref": "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json",
+        "sha256": "7f7088e7250fca468f95edb5dd33a39bb3703e12781c9845ffe702b7d6539fe2"
+      }
+    ],
+    "evidenceHashes": []
+  }
+}

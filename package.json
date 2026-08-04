@@ -129,6 +129,7 @@
     "verify:lp135": "node tools/lp135/build-statewide-certification.mjs --verify",
     "test:lp135": "node --test tests/lp135-statewide-certification-completion.test.mjs",
     "test:lp136": "node --test tests/lp136-operational-readiness.test.mjs",
+    "test:lp138": "node --test tests/lp138-approval-bound-county-geometry-membership.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
