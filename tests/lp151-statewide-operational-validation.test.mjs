@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildValidation, protectedHashes, verify } from '../tools/lp151/validate-statewide-operations.mjs';
+import { buildValidation, canonicalJsonEqual, gitBlobBytes, protectedHashes, verify } from '../tools/lp151/validate-statewide-operations.mjs';
 
 const validation = buildValidation();
 const report = JSON.parse(readFileSync('reports/lp151/statewide-operational-validation-report.json', 'utf8'));
@@ -11,6 +11,7 @@ const registry = JSON.parse(readFileSync('data/lp151/statewide-operational-valid
 const summary = JSON.parse(readFileSync('reports/lp151/validation-summary.json', 'utf8'));
 const hashReport = JSON.parse(readFileSync('reports/lp151/protected-artifact-hashes.json', 'utf8'));
 function shaFile(path) { return createHash('sha256').update(readFileSync(path)).digest('hex'); }
+function shaGitBlob(path) { return createHash('sha256').update(gitBlobBytes(path)).digest('hex'); }
 function snapshot(paths) { return Object.fromEntries(paths.map((path) => [path, shaFile(path)])); }
 const lp151GeneratedPaths = ['data/lp151/statewide-operational-validation-registry.json', 'reports/lp151/statewide-operational-validation-report.json', 'reports/lp151/gate-results.json', 'reports/lp151/cross-layer-reconciliation.json', 'reports/lp151/protected-artifact-hashes.json', 'reports/lp151/validation-summary.json'];
 const protectedUpstreamPaths = ['evidence/lp138/county-geometry-membership-contract.baseline.json', 'tools/lp140/activation-wave-planner.mjs', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json', 'data/lp149/runtime-county-registry.json', 'data/lp150/membership-transition-registry.json', 'data/lp150/candidate-membership-contract.json'];
@@ -47,9 +48,10 @@ test('protected artifacts are derived from current authoritative inputs and repo
   const current = protectedHashes();
   assert.deepEqual(report.protectedArtifactHashes, current);
   assert.deepEqual(hashReport.hashes, current);
-  assert.equal(current.lp149Registry, shaFile('data/lp149/runtime-county-registry.json'));
-  assert.equal(current.lp150TransitionRegistry, shaFile('data/lp150/membership-transition-registry.json'));
-  assert.equal(current.lp150CandidateContract, shaFile('data/lp150/candidate-membership-contract.json'));
+  assert.equal(current.hashingContract, 'committed Git blob SHA-256 (canonical repository bytes; not platform-converted working-tree bytes)');
+  assert.equal(current.lp149Registry, shaGitBlob('data/lp149/runtime-county-registry.json'));
+  assert.equal(current.lp150TransitionRegistry, shaGitBlob('data/lp150/membership-transition-registry.json'));
+  assert.equal(current.lp150CandidateContract, shaGitBlob('data/lp150/candidate-membership-contract.json'));
   assert.deepEqual(Object.keys(current).sort(), Object.keys(hashReport.hashes).sort());
 
   assert.deepEqual(report.protectedArtifactHashes, protectedHashes());
@@ -78,4 +80,10 @@ test('runtime behavior remains unchanged by LP151', () => {
   assert.equal(summary.deploymentOccurred, false);
   assert.equal(summary.activationOccurred, false);
   assert.equal(report.validationBoundary.readOnly, true);
+});
+
+test('canonical JSON equality accepts equivalent LF and CRLF governed text', () => {
+  const lf = JSON.stringify({ schemaVersion: 'fixture', nested: { ok: true } }, null, 2) + '\n';
+  const crlf = lf.replace(/\n/g, '\r\n');
+  assert.equal(canonicalJsonEqual(crlf, lf), true);
 });
