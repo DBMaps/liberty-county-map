@@ -1,9 +1,5 @@
 {
-  "authorization": {
-    "activationAuthorizationPresent": false,
-    "deploymentAuthorizationPresent": false,
-    "gatePassDoesNotDeploy": true
-  },
+  "failClosed": true,
   "gates": [
     {
       "blockedByPriorFailure": false,
@@ -60,18 +56,47 @@
       "details": {
         "source": "reports/lp151/validation-summary.json"
       },
-      "name": "Operational validation",
+      "name": "Operational Validation",
       "passed": true
     },
     {
       "blockedByPriorFailure": false,
       "details": {
-        "authorizationPresent": false,
-        "blockedCount": 254,
-        "readinessComputedDeterministically": true,
-        "readyPendingAuthorizationCount": 0
+        "authorizedCount": 0,
+        "inferredAuthorizationAllowed": false,
+        "state": "NOT_AUTHORIZED"
       },
-      "name": "Deployment readiness",
+      "name": "Deployment Authorization",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "deployedCount": 0,
+        "deploymentPerformed": false,
+        "state": "NOT_DEPLOYED"
+      },
+      "name": "Deployment",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "authorizedCount": 0,
+        "inferredAuthorizationAllowed": false,
+        "state": "NOT_AUTHORIZED"
+      },
+      "name": "Activation Authorization",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "activationCount": 0,
+        "activationPerformed": false,
+        "state": "NOT_ACTIVE"
+      },
+      "name": "Activation",
       "passed": true
     }
   ],
@@ -89,5 +114,6 @@
     "lp151Registry": "01f8fac864d7620aa0a3afce6f77d619237143074eeaf6257290b4564546fab4",
     "lp151Summary": "c1b7119f99c722906c9d8dbed25a197e41da51086c80989bf5034cd809cc66d6"
   },
-  "schemaVersion": "gridly.lp152.deploymentGateReport.v1"
+  "readOnlyValidationOnly": true,
+  "schemaVersion": "gridly.lp152.operationalGateReport.v1"
 }

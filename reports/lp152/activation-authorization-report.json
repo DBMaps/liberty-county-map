@@ -1,0 +1,1546 @@
+{
+  "activations": [],
+  "activeCount": 0,
+  "authorizations": [],
+  "authorizedCount": 0,
+  "counties": [
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Anderson County",
+      "fips": "48001"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Andrews County",
+      "fips": "48003"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Angelina County",
+      "fips": "48005"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Aransas County",
+      "fips": "48007"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Archer County",
+      "fips": "48009"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Armstrong County",
+      "fips": "48011"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Atascosa County",
+      "fips": "48013"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Austin County",
+      "fips": "48015"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bailey County",
+      "fips": "48017"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bandera County",
+      "fips": "48019"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bastrop County",
+      "fips": "48021"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Baylor County",
+      "fips": "48023"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bee County",
+      "fips": "48025"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bell County",
+      "fips": "48027"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bexar County",
+      "fips": "48029"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Blanco County",
+      "fips": "48031"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Borden County",
+      "fips": "48033"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bosque County",
+      "fips": "48035"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Bowie County",
+      "fips": "48037"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Brazoria County",
+      "fips": "48039"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Brazos County",
+      "fips": "48041"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Brewster County",
+      "fips": "48043"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Briscoe County",
+      "fips": "48045"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Brooks County",
+      "fips": "48047"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Brown County",
+      "fips": "48049"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Burleson County",
+      "fips": "48051"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Burnet County",
+      "fips": "48053"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Caldwell County",
+      "fips": "48055"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Calhoun County",
+      "fips": "48057"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Callahan County",
+      "fips": "48059"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cameron County",
+      "fips": "48061"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Camp County",
+      "fips": "48063"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Carson County",
+      "fips": "48065"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cass County",
+      "fips": "48067"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Castro County",
+      "fips": "48069"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Chambers County",
+      "fips": "48071"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cherokee County",
+      "fips": "48073"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Childress County",
+      "fips": "48075"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Clay County",
+      "fips": "48077"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cochran County",
+      "fips": "48079"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Coke County",
+      "fips": "48081"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Coleman County",
+      "fips": "48083"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Collin County",
+      "fips": "48085"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Collingsworth County",
+      "fips": "48087"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Colorado County",
+      "fips": "48089"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Comal County",
+      "fips": "48091"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Comanche County",
+      "fips": "48093"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Concho County",
+      "fips": "48095"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cooke County",
+      "fips": "48097"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Coryell County",
+      "fips": "48099"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Cottle County",
+      "fips": "48101"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Crane County",
+      "fips": "48103"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Crockett County",
+      "fips": "48105"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Crosby County",
+      "fips": "48107"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Culberson County",
+      "fips": "48109"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Dallam County",
+      "fips": "48111"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Dallas County",
+      "fips": "48113"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Dawson County",
+      "fips": "48115"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Deaf Smith County",
+      "fips": "48117"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Delta County",
+      "fips": "48119"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Denton County",
+      "fips": "48121"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "DeWitt County",
+      "fips": "48123"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Dickens County",
+      "fips": "48125"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Dimmit County",
+      "fips": "48127"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Donley County",
+      "fips": "48129"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Duval County",
+      "fips": "48131"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Eastland County",
+      "fips": "48133"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Ector County",
+      "fips": "48135"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Edwards County",
+      "fips": "48137"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Ellis County",
+      "fips": "48139"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "El Paso County",
+      "fips": "48141"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Erath County",
+      "fips": "48143"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Falls County",
+      "fips": "48145"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Fannin County",
+      "fips": "48147"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Fayette County",
+      "fips": "48149"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Fisher County",
+      "fips": "48151"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Floyd County",
+      "fips": "48153"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Foard County",
+      "fips": "48155"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Fort Bend County",
+      "fips": "48157"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Franklin County",
+      "fips": "48159"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Freestone County",
+      "fips": "48161"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Frio County",
+      "fips": "48163"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Gaines County",
+      "fips": "48165"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Galveston County",
+      "fips": "48167"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Garza County",
+      "fips": "48169"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Gillespie County",
+      "fips": "48171"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Glasscock County",
+      "fips": "48173"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Goliad County",
+      "fips": "48175"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Gonzales County",
+      "fips": "48177"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Gray County",
+      "fips": "48179"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Grayson County",
+      "fips": "48181"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Gregg County",
+      "fips": "48183"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Grimes County",
+      "fips": "48185"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Guadalupe County",
+      "fips": "48187"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hale County",
+      "fips": "48189"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hall County",
+      "fips": "48191"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hamilton County",
+      "fips": "48193"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hansford County",
+      "fips": "48195"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hardeman County",
+      "fips": "48197"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hardin County",
+      "fips": "48199"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Harris County",
+      "fips": "48201"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Harrison County",
+      "fips": "48203"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hartley County",
+      "fips": "48205"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Haskell County",
+      "fips": "48207"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hays County",
+      "fips": "48209"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hemphill County",
+      "fips": "48211"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Henderson County",
+      "fips": "48213"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hidalgo County",
+      "fips": "48215"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hill County",
+      "fips": "48217"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hockley County",
+      "fips": "48219"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hood County",
+      "fips": "48221"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hopkins County",
+      "fips": "48223"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Houston County",
+      "fips": "48225"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Howard County",
+      "fips": "48227"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hudspeth County",
+      "fips": "48229"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hunt County",
+      "fips": "48231"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Hutchinson County",
+      "fips": "48233"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Irion County",
+      "fips": "48235"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jack County",
+      "fips": "48237"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jackson County",
+      "fips": "48239"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jasper County",
+      "fips": "48241"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jeff Davis County",
+      "fips": "48243"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jefferson County",
+      "fips": "48245"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jim Hogg County",
+      "fips": "48247"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jim Wells County",
+      "fips": "48249"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Johnson County",
+      "fips": "48251"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Jones County",
+      "fips": "48253"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Karnes County",
+      "fips": "48255"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kaufman County",
+      "fips": "48257"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kendall County",
+      "fips": "48259"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kenedy County",
+      "fips": "48261"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kent County",
+      "fips": "48263"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kerr County",
+      "fips": "48265"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kimble County",
+      "fips": "48267"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "King County",
+      "fips": "48269"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kinney County",
+      "fips": "48271"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Kleberg County",
+      "fips": "48273"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Knox County",
+      "fips": "48275"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lamar County",
+      "fips": "48277"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lamb County",
+      "fips": "48279"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lampasas County",
+      "fips": "48281"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "La Salle County",
+      "fips": "48283"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lavaca County",
+      "fips": "48285"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lee County",
+      "fips": "48287"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Leon County",
+      "fips": "48289"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Liberty County",
+      "fips": "48291"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Limestone County",
+      "fips": "48293"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lipscomb County",
+      "fips": "48295"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Live Oak County",
+      "fips": "48297"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Llano County",
+      "fips": "48299"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Loving County",
+      "fips": "48301"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lubbock County",
+      "fips": "48303"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Lynn County",
+      "fips": "48305"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "McCulloch County",
+      "fips": "48307"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "McLennan County",
+      "fips": "48309"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "McMullen County",
+      "fips": "48311"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Madison County",
+      "fips": "48313"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Marion County",
+      "fips": "48315"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Martin County",
+      "fips": "48317"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Mason County",
+      "fips": "48319"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Matagorda County",
+      "fips": "48321"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Maverick County",
+      "fips": "48323"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Medina County",
+      "fips": "48325"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Menard County",
+      "fips": "48327"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Midland County",
+      "fips": "48329"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Milam County",
+      "fips": "48331"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Mills County",
+      "fips": "48333"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Mitchell County",
+      "fips": "48335"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Montague County",
+      "fips": "48337"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Montgomery County",
+      "fips": "48339"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Moore County",
+      "fips": "48341"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Morris County",
+      "fips": "48343"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Motley County",
+      "fips": "48345"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Nacogdoches County",
+      "fips": "48347"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Navarro County",
+      "fips": "48349"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Newton County",
+      "fips": "48351"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Nolan County",
+      "fips": "48353"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Nueces County",
+      "fips": "48355"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Ochiltree County",
+      "fips": "48357"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Oldham County",
+      "fips": "48359"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Orange County",
+      "fips": "48361"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Palo Pinto County",
+      "fips": "48363"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Panola County",
+      "fips": "48365"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Parker County",
+      "fips": "48367"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Parmer County",
+      "fips": "48369"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Pecos County",
+      "fips": "48371"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Polk County",
+      "fips": "48373"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Potter County",
+      "fips": "48375"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Presidio County",
+      "fips": "48377"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Rains County",
+      "fips": "48379"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Randall County",
+      "fips": "48381"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Reagan County",
+      "fips": "48383"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Real County",
+      "fips": "48385"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Red River County",
+      "fips": "48387"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Reeves County",
+      "fips": "48389"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Refugio County",
+      "fips": "48391"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Roberts County",
+      "fips": "48393"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Robertson County",
+      "fips": "48395"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Rockwall County",
+      "fips": "48397"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Runnels County",
+      "fips": "48399"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Rusk County",
+      "fips": "48401"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Sabine County",
+      "fips": "48403"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "San Augustine County",
+      "fips": "48405"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "San Jacinto County",
+      "fips": "48407"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "San Patricio County",
+      "fips": "48409"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "San Saba County",
+      "fips": "48411"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Schleicher County",
+      "fips": "48413"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Scurry County",
+      "fips": "48415"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Shackelford County",
+      "fips": "48417"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Shelby County",
+      "fips": "48419"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Sherman County",
+      "fips": "48421"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Smith County",
+      "fips": "48423"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Somervell County",
+      "fips": "48425"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Starr County",
+      "fips": "48427"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Stephens County",
+      "fips": "48429"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Sterling County",
+      "fips": "48431"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Stonewall County",
+      "fips": "48433"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Sutton County",
+      "fips": "48435"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Swisher County",
+      "fips": "48437"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Tarrant County",
+      "fips": "48439"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Taylor County",
+      "fips": "48441"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Terrell County",
+      "fips": "48443"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Terry County",
+      "fips": "48445"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Throckmorton County",
+      "fips": "48447"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Titus County",
+      "fips": "48449"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Tom Green County",
+      "fips": "48451"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Travis County",
+      "fips": "48453"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Trinity County",
+      "fips": "48455"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Tyler County",
+      "fips": "48457"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Upshur County",
+      "fips": "48459"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Upton County",
+      "fips": "48461"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Uvalde County",
+      "fips": "48463"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Val Verde County",
+      "fips": "48465"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Van Zandt County",
+      "fips": "48467"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Victoria County",
+      "fips": "48469"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Walker County",
+      "fips": "48471"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Waller County",
+      "fips": "48473"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Ward County",
+      "fips": "48475"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Washington County",
+      "fips": "48477"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Webb County",
+      "fips": "48479"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wharton County",
+      "fips": "48481"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wheeler County",
+      "fips": "48483"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wichita County",
+      "fips": "48485"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wilbarger County",
+      "fips": "48487"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Willacy County",
+      "fips": "48489"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Williamson County",
+      "fips": "48491"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wilson County",
+      "fips": "48493"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Winkler County",
+      "fips": "48495"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wise County",
+      "fips": "48497"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Wood County",
+      "fips": "48499"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Yoakum County",
+      "fips": "48501"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Young County",
+      "fips": "48503"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Zapata County",
+      "fips": "48505"
+    },
+    {
+      "activationState": "NOT_ACTIVE",
+      "authorizationState": "NOT_AUTHORIZED",
+      "countyName": "Zavala County",
+      "fips": "48507"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP152",
+  "model": {
+    "activationMayBeInferred": false,
+    "authorizationMayBeInferred": false,
+    "authorizationMustBeExplicit": true,
+    "plannerReference": "tools/lp140/activation-wave-planner.mjs",
+    "states": [
+      "NOT_AUTHORIZED",
+      "AUTHORIZED",
+      "ACTIVE"
+    ]
+  },
+  "schemaVersion": "gridly.lp152.activationAuthorizationReport.v1"
+}
