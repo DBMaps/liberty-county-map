@@ -1,6 +1,7 @@
 {
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "hashes": {
+    "hashingContract": "committed Git blob SHA-256 (canonical repository bytes; not platform-converted working-tree bytes)",
     "lp138Baseline": "717c25ab4aa80a282d49899cd8d33d0fe6f82305ced68c0d167cf5f3d1168847",
     "lp140Planner": "0da4df33aa27326bf18349a4bb5e7ef90c6c3884ad232afe4dd2d2180050fc74",
     "lp148Manifest": "67fa26854a7a00699fd119a2a58773ae81a0f18f62f283e89a8216ec92f53f58",
