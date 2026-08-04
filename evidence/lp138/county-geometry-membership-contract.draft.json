@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractVersion": "1.0.0",
+  "contractKind": "FUTURE_APPROVAL_DRAFT",
+  "milestoneAuthority": "LP138",
+  "generatedAtPolicy": { "mode": "APPROVAL_RECORDED_UTC", "value": null },
+  "approval": {
+    "status": "DRAFT",
+    "recordId": null,
+    "authority": null,
+    "recordRef": null,
+    "candidateOnly": true,
+    "effectiveAt": null,
+    "expiresAt": null
+  },
+  "cohort": { "wave": 0, "cohortId": "lp138-design-only-no-approved-cohort" },
+  "approvedCountyCount": 0,
+  "existingBaselineCountyCount": 0,
+  "newlyApprovedCountyCount": 0,
+  "approvedCounties": [],
+  "permissions": {
+    "prepareGeometry": { "authorized": false, "authorityRef": "LP138 design-only non-authorization" },
+    "generateRuntimePackage": { "authorized": false, "authorityRef": "LP138 design-only non-authorization" },
+    "deploy": { "authorized": false, "authorityRef": "LP138 design-only non-authorization" },
+    "activateRuntime": { "authorized": false, "authorityRef": "LP138 design-only non-authorization" },
+    "storageUpload": { "authorized": false, "authorityRef": "LP138 design-only non-authorization" }
+  },
+  "rollback": { "planRef": null, "owner": null, "targetContractRef": null, "triggerRefs": [], "rehearsalEvidenceRef": null },
+  "provenance": {
+    "hashAlgorithm": "SHA-256",
+    "canonicalization": "GRIDLY_CANONICAL_JSON_V1",
+    "membershipSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "sourceHashes": [],
+    "evidenceHashes": []
+  }
+}

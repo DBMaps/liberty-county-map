@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gridly.example/schemas/lp138/county-geometry-membership-contract-v1.json",
+  "title": "LP138 approval-bound county geometry membership contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "contractVersion", "contractKind", "milestoneAuthority", "generatedAtPolicy", "approval", "cohort", "approvedCountyCount", "existingBaselineCountyCount", "newlyApprovedCountyCount", "approvedCounties", "permissions", "rollback", "provenance"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "contractVersion": { "type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$" },
+    "contractKind": { "enum": ["CURRENT_OPERATIONAL_BASELINE", "FUTURE_APPROVAL_DRAFT"] },
+    "milestoneAuthority": { "const": "LP138" },
+    "generatedAtPolicy": {
+      "type": "object", "additionalProperties": false, "required": ["mode", "value"],
+      "properties": { "mode": { "const": "APPROVAL_RECORDED_UTC" }, "value": { "type": ["string", "null"], "format": "date-time" } }
+    },
+    "approval": {
+      "type": "object", "additionalProperties": false, "required": ["status", "recordId", "authority", "recordRef", "candidateOnly", "effectiveAt", "expiresAt"],
+      "properties": {
+        "status": { "enum": ["DRAFT", "EVIDENCE_COMPLETE", "APPROVED_FOR_PACKAGE_GENERATION", "APPROVED_FOR_DEPLOYMENT", "APPROVED_FOR_RUNTIME_ACTIVATION", "REVOKED"] },
+        "recordId": { "type": ["string", "null"] }, "authority": { "type": ["string", "null"] }, "recordRef": { "type": ["string", "null"] },
+        "candidateOnly": { "type": "boolean" }, "effectiveAt": { "type": ["string", "null"], "format": "date-time" }, "expiresAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "cohort": { "type": "object", "additionalProperties": false, "required": ["wave", "cohortId"], "properties": { "wave": { "enum": [0, 1, 2, 3, 4] }, "cohortId": { "type": "string", "minLength": 1 } } },
+    "approvedCountyCount": { "type": "integer", "minimum": 0, "maximum": 254 },
+    "existingBaselineCountyCount": { "type": "integer", "minimum": 0, "maximum": 254 },
+    "newlyApprovedCountyCount": { "type": "integer", "minimum": 0, "maximum": 254 },
+    "approvedCounties": {
+      "type": "array", "maxItems": 254,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["countyId", "fips", "displayName", "identityEvidenceRef", "activationEvidenceRefs", "gates"],
+        "properties": {
+          "countyId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }, "fips": { "type": "string", "pattern": "^48[0-9]{3}$" }, "displayName": { "type": "string", "minLength": 1 },
+          "identityEvidenceRef": { "type": "string", "minLength": 1 }, "activationEvidenceRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "gates": { "type": "array", "minItems": 7, "maxItems": 7, "items": { "$ref": "#/$defs/gate" } }
+        }
+      }
+    },
+    "permissions": {
+      "type": "object", "additionalProperties": false, "required": ["prepareGeometry", "generateRuntimePackage", "deploy", "activateRuntime", "storageUpload"],
+      "properties": { "prepareGeometry": { "$ref": "#/$defs/permission" }, "generateRuntimePackage": { "$ref": "#/$defs/permission" }, "deploy": { "$ref": "#/$defs/permission" }, "activateRuntime": { "$ref": "#/$defs/permission" }, "storageUpload": { "$ref": "#/$defs/permission" } }
+    },
+    "rollback": { "type": "object", "additionalProperties": false, "required": ["planRef", "owner", "targetContractRef", "triggerRefs", "rehearsalEvidenceRef"], "properties": { "planRef": { "type": ["string", "null"] }, "owner": { "type": ["string", "null"] }, "targetContractRef": { "type": ["string", "null"] }, "triggerRefs": { "type": "array", "items": { "type": "string" } }, "rehearsalEvidenceRef": { "type": ["string", "null"] } } },
+    "provenance": { "type": "object", "additionalProperties": false, "required": ["hashAlgorithm", "canonicalization", "membershipSha256", "sourceHashes", "evidenceHashes"], "properties": { "hashAlgorithm": { "const": "SHA-256" }, "canonicalization": { "const": "GRIDLY_CANONICAL_JSON_V1" }, "membershipSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "sourceHashes": { "$ref": "#/$defs/hashRecords" }, "evidenceHashes": { "$ref": "#/$defs/hashRecords" } } }
+  },
+  "$defs": {
+    "gate": { "type": "object", "additionalProperties": false, "required": ["gate", "name", "status", "evidenceRef", "evidenceSha256", "evaluatedAt", "reviewer"], "properties": { "gate": { "type": "integer", "minimum": 1, "maximum": 7 }, "name": { "type": "string" }, "status": { "enum": ["PASS", "BLOCKED", "NOT_EVALUATED"] }, "evidenceRef": { "type": "string" }, "evidenceSha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }, "evaluatedAt": { "type": ["string", "null"], "format": "date-time" }, "reviewer": { "type": ["string", "null"] } } },
+    "permission": { "type": "object", "additionalProperties": false, "required": ["authorized", "authorityRef"], "properties": { "authorized": { "type": "boolean" }, "authorityRef": { "type": "string", "minLength": 1 } } },
+    "hashRecords": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["ref", "sha256"], "properties": { "ref": { "type": "string" }, "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } } } }
+  }
+}
