@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "gridly-lp127b-gap-report-v1",
+  "milestone": "LP127B",
+  "presence": [
+    {
+      "sourceFamily": "Census county ZIP",
+      "status": "PRESENT",
+      "evidencePath": "Census/tl_2025_us_county.zip"
+    },
+    {
+      "sourceFamily": "FRA statewide source",
+      "status": "PRESENT",
+      "evidencePath": "FRA/Raw/fra-crossings-tx-raw.geojson"
+    },
+    {
+      "sourceFamily": "HHSC healthcare source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "NAD R23 archive",
+      "status": "PRESENT",
+      "evidencePath": "National-Address-Database/NAD_r23.zip"
+    },
+    {
+      "sourceFamily": "NAD R23 extracted geodatabase",
+      "status": "PRESENT",
+      "evidencePath": "National-Address-Database/extracted/NAD_r23.gdb"
+    },
+    {
+      "sourceFamily": "OSM Texas PBF",
+      "status": "PRESENT",
+      "evidencePath": "OpenStreetMap/Regional/texas-260625.osm.pbf"
+    },
+    {
+      "sourceFamily": "TCJS workbook",
+      "status": "PRESENT",
+      "evidencePath": "Texas-Public-Safety/TCJS/PopReportCurrent.xlsx"
+    },
+    {
+      "sourceFamily": "TEA education source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "TPWD parks source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "Texas county boundaries",
+      "status": "PRESENT",
+      "evidencePath": "Census/tl_2025_us_county.zip"
+    },
+    {
+      "sourceFamily": "TxDOT statewide roadway source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "TxGIO statewide address source",
+      "status": "PRESENT",
+      "evidencePath": "Texas-Address-Points/Raw/Texas-2026.gdb"
+    },
+    {
+      "sourceFamily": "emergency-management source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "municipal boundaries",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    },
+    {
+      "sourceFamily": "populated places",
+      "status": "DERIVED_ONLY",
+      "evidencePath": "Community-Packages"
+    },
+    {
+      "sourceFamily": "sheriff source",
+      "status": "NOT_IDENTIFIABLE_FROM_INVENTORY",
+      "evidencePath": null
+    }
+  ],
+  "remainingHighPriorityGaps": [
+    {
+      "tier": 1,
+      "dataset": "TxDOT statewide roadway source",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 1,
+      "dataset": "municipal boundaries",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 1,
+      "dataset": "populated places original source",
+      "status": "DERIVED_ONLY"
+    },
+    {
+      "tier": 2,
+      "dataset": "HHSC healthcare source",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 2,
+      "dataset": "TEA education source",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 2,
+      "dataset": "TPWD parks source",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 3,
+      "dataset": "sheriff source",
+      "status": "STILL_NOT_FOUND"
+    },
+    {
+      "tier": 3,
+      "dataset": "emergency-management source",
+      "status": "STILL_NOT_FOUND"
+    }
+  ]
+}

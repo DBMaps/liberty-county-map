@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "gridly-lp127b-reconciliation-v1",
+  "milestone": "LP127B",
+  "records": [
+    {
+      "lp127aGap": "Census tl_2025_us_county.zip",
+      "status": "RESOLVED_PRESENT_IN_OWNER_WORKSPACE",
+      "ownerWorkspacePath": "Census/tl_2025_us_county.zip"
+    },
+    {
+      "lp127aGap": "HHSC healthcare",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "NAD R23 archive",
+      "status": "RESOLVED_PRESENT_IN_OWNER_WORKSPACE",
+      "ownerWorkspacePath": "National-Address-Database/NAD_r23.zip"
+    },
+    {
+      "lp127aGap": "NAD R23 extracted geodatabase",
+      "status": "RESOLVED_PRESENT_IN_OWNER_WORKSPACE",
+      "ownerWorkspacePath": "National-Address-Database/extracted/NAD_r23.gdb"
+    },
+    {
+      "lp127aGap": "OpenStreetMap Regional texas-260625.osm.pbf",
+      "status": "RESOLVED_PRESENT_IN_OWNER_WORKSPACE",
+      "ownerWorkspacePath": "OpenStreetMap/Regional/texas-260625.osm.pbf"
+    },
+    {
+      "lp127aGap": "TEA education",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "TPWD parks",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "TxDOT statewide roadway source snapshot",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "TxGIO StratMap 2026 statewide address geodatabase",
+      "status": "RESOLVED_PRESENT_IN_OWNER_WORKSPACE",
+      "ownerWorkspacePath": "Texas-Address-Points/Raw/Texas-2026.gdb"
+    },
+    {
+      "lp127aGap": "emergency-management data",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "municipal boundaries",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    },
+    {
+      "lp127aGap": "populated places",
+      "status": "DERIVED_ONLY",
+      "ownerWorkspacePath": "Community-Packages"
+    },
+    {
+      "lp127aGap": "sheriff-office data",
+      "status": "STILL_NOT_FOUND",
+      "ownerWorkspacePath": null
+    }
+  ]
+}
