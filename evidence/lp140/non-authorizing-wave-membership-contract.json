@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "gridly-lp140-non-authorizing-wave-contract-v1",
+  "contractKind": "ACTIVATION_WAVE_PLAN",
+  "authority": "NON_AUTHORIZING",
+  "sourceArtifact": "evidence/lp140/activation-wave-planning.json",
+  "membershipOrdering": "ASCENDING_TEXAS_FIPS",
+  "waves": [
+    {
+      "wave": 0,
+      "purpose": "Production control (no new activation)",
+      "countyCount": 0,
+      "members": []
+    },
+    {
+      "wave": 1,
+      "purpose": "Near-ready validation",
+      "countyCount": 0,
+      "members": []
+    },
+    {
+      "wave": 2,
+      "purpose": "Bounded-gap readiness",
+      "countyCount": 0,
+      "members": []
+    },
+    {
+      "wave": 3,
+      "purpose": "Community and coverage expansion",
+      "countyCount": 0,
+      "members": []
+    },
+    {
+      "wave": 4,
+      "purpose": "Statewide completion",
+      "countyCount": 0,
+      "members": []
+    }
+  ],
+  "permissions": {
+    "packageGeneration": false,
+    "deployment": false,
+    "runtimeActivation": false,
+    "storageUpload": false,
+    "registryPromotion": false
+  },
+  "statement": "Planning only. This contract grants no approval and causes no package, deployment, upload, promotion, or activation."
+}
