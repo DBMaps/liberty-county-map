@@ -65,6 +65,14 @@ export function countyCsv(report) {
     .map(row => row.map(quote).join(',')).join('\n') + '\n';
 }
 
+export const normalizeCsvNewlines = text => text.replace(/\r\n?/g, '\n');
+
+export function assertLogicalCountyCsv(actual, expected) {
+  if (normalizeCsvNewlines(actual) !== normalizeCsvNewlines(expected)) {
+    throw new Error('LP135 county certification inventory content differs');
+  }
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const report = await buildStatewideCertification();
   const directory = resolve(ROOT, 'evidence/lp135');
@@ -74,7 +82,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     [resolve(directory, 'county-certification-inventory.csv'), countyCsv(report)]
   ]);
   if (process.argv.includes('--verify')) {
-    for (const [path, expected] of outputs) if (await readFile(path, 'utf8') !== expected) throw new Error(`Stale LP135 output: ${path}`);
+    for (const [path, expected] of outputs) {
+      const actual = await readFile(path, 'utf8');
+      if (path.endsWith('.csv')) assertLogicalCountyCsv(actual, expected);
+      else if (actual !== expected) throw new Error(`Stale LP135 output: ${path}`);
+    }
   } else for (const [path, content] of outputs) await writeFile(path, content);
   console.log(JSON.stringify(report.summary));
 }

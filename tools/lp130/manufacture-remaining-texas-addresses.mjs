@@ -108,9 +108,13 @@ async function inspectCounty(county, batchDirectory) {
 
 async function isComplete(county, batchDirectory) { try { return await inspectCounty(county, batchDirectory); } catch { return null; } }
 
-async function writePlan(plan, reports) {
-  await Promise.all([json(join(EVIDENCE, 'statewide-batch-plan.json'), plan), atomic(join(EVIDENCE, 'statewide-batch-plan.csv'), planCsv(plan)),
-    json(join(reports, 'statewide-batch-plan.json'), plan), atomic(join(reports, 'statewide-batch-plan.csv'), planCsv(plan))]);
+async function writePlan(plan, reports, { governedEvidence = true } = {}) {
+  const outputs = [json(join(reports, 'statewide-batch-plan.json'), plan), atomic(join(reports, 'statewide-batch-plan.csv'), planCsv(plan))];
+  if (governedEvidence) outputs.push(
+    json(join(EVIDENCE, 'statewide-batch-plan.json'), plan),
+    atomic(join(EVIDENCE, 'statewide-batch-plan.csv'), planCsv(plan))
+  );
+  await Promise.all(outputs);
 }
 
 export async function run(options, dependencies = {}) {
@@ -122,7 +126,10 @@ export async function run(options, dependencies = {}) {
   const savedPlan = !options.dryRun && !options.registry && !options.aggregate
     ? await readJson(join(reports, 'statewide-batch-plan.json')).catch(() => null) : null;
   const plan = savedPlan?.batchSize === computedPlan.batchSize ? savedPlan : computedPlan;
-  await writePlan(plan, reports);
+  // A dry run is observational: its plan belongs only in the caller-selected report directory.
+  // In particular, a test using the completed live manifest must never replace the governed
+  // nine-batch LP130 evidence with the live zero-batch plan.
+  await writePlan(plan, reports, { governedEvidence: !options.dryRun });
   if (options.dryRun) return { plan, manufactured: false };
   const selected = options.all ? plan.batches : [plan.batches[options.batch - 1]];
   if (selected.some(item => !item)) throw new Error(`Batch ${options.batch} does not exist`);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { buildStatewideCertification, countyCsv } from '../tools/lp135/build-statewide-certification.mjs';
+import { assertLogicalCountyCsv, buildStatewideCertification, countyCsv, normalizeCsvNewlines } from '../tools/lp135/build-statewide-certification.mjs';
 
 const committed = JSON.parse(await readFile(new URL('../evidence/lp135/statewide-certification.json', import.meta.url)));
 
@@ -31,5 +31,14 @@ test('LP135 locks the non-modification boundary and generated inventory', async 
   assert.equal(committed.regression.runtimeArtifactsModified, false);
   assert.equal(committed.regression.deploymentModified, false);
   assert.equal(committed.regression.protectedSystemsModified, false);
-  assert.equal(await readFile(new URL('../evidence/lp135/county-certification-inventory.csv', import.meta.url), 'utf8'), countyCsv(committed));
+  assertLogicalCountyCsv(await readFile(new URL('../evidence/lp135/county-certification-inventory.csv', import.meta.url), 'utf8'), countyCsv(committed));
+});
+
+test('LP135 CSV comparison accepts LF and CRLF without weakening content checks', () => {
+  const lf = countyCsv(committed);
+  const crlf = lf.replaceAll('\n', '\r\n');
+  assert.equal(normalizeCsvNewlines(lf), normalizeCsvNewlines(crlf));
+  assert.doesNotThrow(() => assertLogicalCountyCsv(lf, lf));
+  assert.doesNotThrow(() => assertLogicalCountyCsv(crlf, lf));
+  assert.throws(() => assertLogicalCountyCsv(lf.replace('CERTIFIED', 'CERTIFICATION_BLOCKED'), lf), /content differs/);
 });

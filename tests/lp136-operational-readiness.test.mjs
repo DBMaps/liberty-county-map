@@ -7,10 +7,19 @@ const root = new URL('../', import.meta.url);
 const audit = JSON.parse(await readFile(new URL('evidence/lp136/statewide-operational-readiness.json', root)));
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 
+export function assertLockedArtifact(bytes, evidence) {
+  assert.equal(digest(bytes), evidence.sha256, evidence.path);
+}
+
 test('LP136 preserves every locked authoritative and runtime artifact', async () => {
   for (const evidence of Object.values(audit.immutableEvidence)) {
-    assert.equal(digest(await readFile(new URL(evidence.path, root))), evidence.sha256, evidence.path);
+    assertLockedArtifact(await readFile(new URL(evidence.path, root)), evidence);
   }
+});
+
+test('LP136 artifact lock rejects a genuinely altered artifact', () => {
+  const evidence = audit.immutableEvidence.lp130;
+  assert.throws(() => assertLockedArtifact(Buffer.from('genuinely altered'), evidence), /final-reconciliation\.json/);
 });
 
 test('LP136 reconciles manufacturing and certification arithmetic', () => {
