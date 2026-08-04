@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "gridly-lp141-county-activation-evidence-dossier-v1",
+  "milestone": "LP141",
+  "scope": "GOVERNANCE_EVIDENCE_ONLY",
+  "authority": "NON_AUTHORIZING",
+  "identity": {
+    "county": "Gray County",
+    "countyId": "gray",
+    "countyFips": "48179",
+    "package": {
+      "name": "gray-48179.addresses.jsonl.gz",
+      "sizeBytes": 363629,
+      "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33"
+    },
+    "certification": {
+      "status": "CERTIFIED",
+      "classification": "OBSERVED_PASS",
+      "evidenceReference": "reports/lp130-statewide-addresses/batch-04/certification/gray-48179.certification.json"
+    }
+  },
+  "lp132Gates": [
+    {
+      "gate": 1,
+      "name": "Package integrity",
+      "status": "COMPLETE",
+      "observedSourceStatus": "PASS",
+      "evidence": [
+        "evidence/lp130/final-reconciliation.json"
+      ]
+    },
+    {
+      "gate": 2,
+      "name": "Certification complete",
+      "status": "COMPLETE",
+      "observedSourceStatus": "PASS",
+      "evidence": [
+        "reports/lp130-statewide-addresses/batch-04/certification/gray-48179.certification.json",
+        "evidence/lp135/statewide-certification.json"
+      ]
+    },
+    {
+      "gate": 3,
+      "name": "Community readiness",
+      "status": "NOT_OBSERVED",
+      "observedSourceStatus": "NOT_EVALUATED",
+      "evidence": []
+    },
+    {
+      "gate": 4,
+      "name": "Destination readiness",
+      "status": "NOT_OBSERVED",
+      "observedSourceStatus": "NOT_EVALUATED",
+      "evidence": []
+    },
+    {
+      "gate": 5,
+      "name": "Crossing readiness",
+      "status": "NOT_OBSERVED",
+      "observedSourceStatus": "NOT_EVALUATED",
+      "evidence": []
+    },
+    {
+      "gate": 6,
+      "name": "Runtime validation",
+      "status": "NOT_OBSERVED",
+      "observedSourceStatus": "NOT_EVALUATED",
+      "evidence": []
+    },
+    {
+      "gate": 7,
+      "name": "Production approval",
+      "status": "NOT_OBSERVED",
+      "observedSourceStatus": "NOT_EVALUATED",
+      "evidence": []
+    }
+  ],
+  "missingEvidence": [
+    "GOVERNED_COMMUNITY_READINESS_EVIDENCE",
+    "GOVERNED_DESTINATION_READINESS_EVIDENCE",
+    "GOVERNED_CROSSING_READINESS_EVIDENCE",
+    "COUNTY_SPECIFIC_RUNTIME_REGRESSION_CONSUMER_AND_OPERATIONAL_VALIDATION",
+    "TIME_BOUNDED_PRODUCTION_APPROVAL",
+    "GEOMETRY_MEMBERSHIP_APPROVAL",
+    "COUNTY_OPERATIONAL_PREREQUISITES",
+    "DEPLOYMENT_PREREQUISITES"
+  ],
+  "failedEvidence": [],
+  "unmetOperationalPrerequisites": [
+    "NAMED_OWNER_AND_ON_CALL_ACKNOWLEDGEMENT",
+    "DASHBOARDS_AND_ALERTS_ACKNOWLEDGEMENT",
+    "RUNBOOK_ACKNOWLEDGEMENT",
+    "ROLLBACK_TRIGGER_PROCEDURE_AND_REHEARSAL_EVIDENCE",
+    "SUPPORT_BRIEFING",
+    "OBSERVATION_WINDOW",
+    "INCIDENT_AUTHORITY"
+  ],
+  "unmetDeploymentPrerequisites": [
+    "COMPLETE_GATES_1_THROUGH_6_DOSSIER",
+    "RISK_AND_EXCEPTION_REGISTER",
+    "PROPOSED_BATCH",
+    "CHANGE_AND_ROLLBACK_PLAN",
+    "OBSERVATION_PLAN",
+    "ACCOUNTABLE_OWNERS",
+    "GEOMETRY_MEMBERSHIP_APPROVAL",
+    "TIME_BOUNDED_PRODUCTION_APPROVAL"
+  ],
+  "summaryClassification": "WAITING_ON_GOVERNANCE_EVIDENCE",
+  "activationRecommendation": null,
+  "governingEvidence": [
+    "evidence/lp140/activation-wave-planning.json",
+    "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md",
+    "evidence/lp135/statewide-certification.json",
+    "evidence/lp136/statewide-operational-readiness.json",
+    "evidence/lp138/county-geometry-membership-contract.draft.json"
+  ]
+}
