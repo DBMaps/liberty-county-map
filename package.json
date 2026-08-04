@@ -148,6 +148,9 @@
     "build:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs",
     "verify:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs --verify",
     "test:lp145": "node --test tests/lp145-statewide-operational-constraint-analysis.test.mjs",
-    "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
+    "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs",
+    "build:lp146": "node tools/lp146/reconcile-production-storage.mjs",
+    "verify:lp146": "node tools/lp146/reconcile-production-storage.mjs --verify",
+    "test:lp146": "node --test tests/lp146-storage-reconciliation.test.mjs"
   }
 }
