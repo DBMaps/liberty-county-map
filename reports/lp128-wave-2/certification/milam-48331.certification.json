@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Milam County",
+  "countyFips": "48331",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 375753,
+  "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
+  "indexedAddressCount": 10992,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005100000009406358
+  },
+  "exactSample": {
+    "providerIdentity": "c058c8691f9dd78b63d0",
+    "houseNumber": "100",
+    "canonicalRoad": "CHAMPIONS DR",
+    "city": "",
+    "zip": "0",
+    "county": "Milam County",
+    "countyFips": "48331",
+    "query": "100 CHAMPIONS DR TX 0",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 93.99400000000605,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,13 @@
+{
+  "countyId": "milam",
+  "county": "Milam",
+  "fips": "48331",
+  "sourceRecordsRead": 10992,
+  "acceptedRecords": 10992,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 375753,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\milam-48331.addresses.jsonl.gz",
+  "packageHash": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
+  "outputCrs": "EPSG:4326"
+}

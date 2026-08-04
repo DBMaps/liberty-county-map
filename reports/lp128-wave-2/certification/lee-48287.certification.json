@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lee County",
+  "countyFips": "48287",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 370322,
+  "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+  "indexedAddressCount": 11030,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006699999968986958
+  },
+  "exactSample": {
+    "providerIdentity": "ab92afd69f70e6942733",
+    "houseNumber": "100",
+    "canonicalRoad": "MESQUITE STREET",
+    "city": "US",
+    "zip": "78942",
+    "county": "Lee County",
+    "countyFips": "48287",
+    "query": "100 Mesquite Street US TX 78942",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 123.45730000000913,
+  "certificationStatus": "PASS",
+  "failures": []
+}

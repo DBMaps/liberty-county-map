@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "gridly-lp1051-manufacturing-report-v1",
+  "cohort": "selected",
+  "activated": false,
+  "completedCount": 3,
+  "successCount": 3,
+  "failureCount": 0,
+  "counties": [
+    {
+      "county": "Lee County",
+      "fips": "48287",
+      "buildStatus": "BUILT",
+      "resumedStatus": false,
+      "packagePath": "data/generated/lp104/txgio-addresses/lee-48287.addresses.jsonl.gz",
+      "packageSize": 370322,
+      "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "PASS",
+      "indexedAddressCount": 11030,
+      "runtimeLoadDurationMs": 123.45730000000913,
+      "failures": []
+    },
+    {
+      "county": "Milam County",
+      "fips": "48331",
+      "buildStatus": "BUILT",
+      "resumedStatus": false,
+      "packagePath": "data/generated/lp104/txgio-addresses/milam-48331.addresses.jsonl.gz",
+      "packageSize": 375753,
+      "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "PASS",
+      "indexedAddressCount": 10992,
+      "runtimeLoadDurationMs": 93.99400000000605,
+      "failures": []
+    },
+    {
+      "county": "Robertson County",
+      "fips": "48395",
+      "buildStatus": "BUILT",
+      "resumedStatus": false,
+      "packagePath": "data/generated/lp104/txgio-addresses/robertson-48395.addresses.jsonl.gz",
+      "packageSize": 401846,
+      "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "PASS",
+      "indexedAddressCount": 11846,
+      "runtimeLoadDurationMs": 96.25150000001304,
+      "failures": []
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly-txgio-address-package-manifest-v1",
-  "generatedAt": "2026-08-03T21:15:55.411Z",
+  "generatedAt": "2026-08-04T01:23:48.806Z",
   "source": "TxGIO 2026 Statewide Address Points",
   "sourceRecordCount": 12142647,
   "sourceCrs": "EPSG:3857",
@@ -215,6 +215,19 @@
       "outputCrs": "EPSG:4326"
     },
     {
+      "countyId": "lee",
+      "county": "Lee",
+      "fips": "48287",
+      "sourceRecordsRead": 11096,
+      "acceptedRecords": 11030,
+      "rejectedRecords": 0,
+      "duplicates": 66,
+      "outputBytes": 370322,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\lee-48287.addresses.jsonl.gz",
+      "packageHash": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+      "outputCrs": "EPSG:4326"
+    },
+    {
       "countyId": "liberty",
       "county": "Liberty",
       "fips": "48291",
@@ -238,6 +251,19 @@
       "outputBytes": 899427,
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\matagorda-48321.addresses.jsonl.gz",
       "packageHash": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6",
+      "outputCrs": "EPSG:4326"
+    },
+    {
+      "countyId": "milam",
+      "county": "Milam",
+      "fips": "48331",
+      "sourceRecordsRead": 10992,
+      "acceptedRecords": 10992,
+      "rejectedRecords": 0,
+      "duplicates": 0,
+      "outputBytes": 375753,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\milam-48331.addresses.jsonl.gz",
+      "packageHash": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
       "outputCrs": "EPSG:4326"
     },
     {
@@ -290,6 +316,19 @@
       "outputBytes": 1231358,
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\polk-48373.addresses.jsonl.gz",
       "packageHash": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865",
+      "outputCrs": "EPSG:4326"
+    },
+    {
+      "countyId": "robertson",
+      "county": "Robertson",
+      "fips": "48395",
+      "sourceRecordsRead": 11846,
+      "acceptedRecords": 11846,
+      "rejectedRecords": 0,
+      "duplicates": 0,
+      "outputBytes": 401846,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\robertson-48395.addresses.jsonl.gz",
+      "packageHash": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
       "outputCrs": "EPSG:4326"
     },
     {
@@ -369,24 +408,6 @@
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\wharton-48481.addresses.jsonl.gz",
       "packageHash": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357",
       "outputCrs": "EPSG:4326"
-    },
-    {
-      "countyId": "lee",
-      "county": "Lee",
-      "fips": "48287",
-      "status": "GENERATED"
-    },
-    {
-      "countyId": "milam",
-      "county": "Milam",
-      "fips": "48331",
-      "status": "GENERATED"
-    },
-    {
-      "countyId": "robertson",
-      "county": "Robertson",
-      "fips": "48395",
-      "status": "GENERATED"
     }
   ]
 }

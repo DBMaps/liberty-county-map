@@ -1,0 +1,13 @@
+{
+  "countyId": "robertson",
+  "county": "Robertson",
+  "fips": "48395",
+  "sourceRecordsRead": 11846,
+  "acceptedRecords": 11846,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 401846,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\robertson-48395.addresses.jsonl.gz",
+  "packageHash": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+  "outputCrs": "EPSG:4326"
+}
