@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp130-batch-completion-v1",
+  "milestone": "LP130",
+  "batch": "batch-01",
+  "candidateOnly": true,
+  "activated": false,
+  "runtimeActivationProhibited": true,
+  "storageChanged": false,
+  "supabaseChanged": false,
+  "manufacturingStatus": "COMPLETE",
+  "expectedCountyCount": 25,
+  "manufacturedCountyCount": 25,
+  "certificationPassCount": 22,
+  "certificationBlockedCount": 3,
+  "packageIntegrityFailureCount": 0,
+  "manifestReconciliation": {
+    "baselinePackageCount": 34,
+    "currentPackageCount": 59,
+    "actualNewUniqueFipsCount": 25,
+    "uniqueFips": true,
+    "uniqueOutputBasenames": true
+  },
+  "certificationBlocked": [
+    {
+      "county": "Bandera County", "fips": "48019", "records": 16033, "bytes": 539409,
+      "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+      "failureReasons": ["canonical road alias failed"],
+      "exactSamples": { "passed": 3000, "failed": 0 },
+      "normalizationVariants": { "passed": 5455, "tested": 5493 }
+    },
+    {
+      "county": "Bell County", "fips": "48027", "records": 174693, "bytes": 5367668,
+      "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050",
+      "failureReasons": ["exact address sample failed"],
+      "exactSamples": { "passed": 2998, "failed": 2 }, "normalizationStatus": "PASS"
+    },
+    {
+      "county": "Brewster County", "fips": "48043", "records": 9322, "bytes": 334550,
+      "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+      "failureReasons": ["exact address sample failed"],
+      "exactSamples": { "passed": 2999, "failed": 1 }, "normalizationStatus": "PASS"
+    }
+  ],
+  "resumeFips": []
+}

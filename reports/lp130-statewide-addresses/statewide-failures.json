@@ -1,4 +1,5 @@
 {
   "schemaVersion": "gridly-lp130-failures-v1",
+  "failureType": "PACKAGE_OR_METADATA_INTEGRITY",
   "failures": []
 }

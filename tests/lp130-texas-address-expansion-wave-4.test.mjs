@@ -10,15 +10,15 @@ const readJson = async path => JSON.parse(await readFile(new URL(path, root), 'u
 const registry = await readJson('data/lp104/texas-counties.json');
 const manifest = await readJson('data/generated/lp104/txgio-addresses/manifest.json');
 const productionBefore = await readFile(new URL('data/generated/lp104/txgio-addresses/runtime-manifest.json', root));
-const plan = createPlan(registry, manifest, 25);
+const plan = await readJson('reports/lp130-statewide-addresses/statewide-batch-plan.json');
+const completion = await readJson('evidence/lp130/batch-01-manufacturing-completion.json');
 
 test('official, existing, and remaining identities reconcile without duplicates', () => {
   assert.equal(registry.counties.length, 254);
   assert.equal(new Set(registry.counties.map(item => item.fips)).size, 254);
   assert.equal(plan.startingCandidateCount, 34);
   assert.equal(plan.remainingCountyCount, 220);
-  assert.equal(new Set(manifest.packages.map(item => item.fips)).size, 34);
-  assert.equal(new Set(manifest.packages.map(item => item.outputPath.split(/[\\/]/).at(-1))).size, 34);
+  assert.equal(new Set(plan.existingFips).size, 34);
   assert.ok(['48051', '48455', '48469'].every(fips => plan.existingFips.includes(fips)));
 });
 
@@ -36,7 +36,7 @@ test('batch size override is deterministic and existing candidates are excluded'
   const override = createPlan(registry, manifest, 40);
   assert.deepEqual(override.batches.map(batch => batch.counties.length), [40, 40, 40, 40, 40, 20]);
   const remaining = new Set(override.batches.flatMap(batch => batch.counties.map(county => county.fips)));
-  assert.ok(manifest.packages.every(item => !remaining.has(item.fips)));
+  assert.ok(override.existingFips.every(fips => !remaining.has(fips)));
 });
 
 test('CLI enforces modes and supports required options', () => {
@@ -62,11 +62,32 @@ test('planning never activates or changes the production runtime manifest', asyn
   assert.equal(plan.candidateOnly, true);
 });
 
+test('Batch 1 completion records certification blockers without integrity failures', () => {
+  assert.deepEqual([completion.manufacturedCountyCount, completion.certificationPassCount, completion.certificationBlockedCount, completion.packageIntegrityFailureCount], [25, 22, 3, 0]);
+  assert.deepEqual(completion.certificationBlocked.map(item => item.fips), ['48019', '48027', '48043']);
+  assert.deepEqual(completion.certificationBlocked.map(item => item.failureReasons[0]), ['canonical road alias failed', 'exact address sample failed', 'exact address sample failed']);
+  assert.deepEqual(completion.resumeFips, []);
+  assert.equal(completion.candidateOnly, true); assert.equal(completion.activated, false); assert.equal(completion.runtimeActivationProhibited, true);
+  assert.deepEqual(completion.manifestReconciliation, { baselinePackageCount: 34, currentPackageCount: 59, actualNewUniqueFipsCount: 25, uniqueFips: true, uniqueOutputBasenames: true });
+});
+
+test('saved governed plan is stable while the live manifest may grow', () => {
+  assert.deepEqual([plan.startingCandidateCount, plan.remainingCountyCount, plan.batchCount], [34, 220, 9]);
+  assert.deepEqual(plan.batches[0].counties.map(item => item.fips), ['48001','48003','48005','48007','48009','48011','48013','48017','48019','48021','48023','48025','48027','48029','48031','48033','48035','48037','48043','48045','48047','48049','48053','48055','48059']);
+  const grown = structuredClone(manifest);
+  grown.packages.push(...plan.batches[0].counties.map(({ countyId, fips }) => ({ fips, outputPath: `${countyId}-${fips}.addresses.jsonl.gz` })));
+  assert.equal(new Set(grown.packages.map(item => item.fips)).size, 59);
+  assert.deepEqual([plan.remainingCountyCount, plan.batchCount], [220, 9]);
+});
+
 test('resume and failures remain explicit in runner implementation', async () => {
   const source = await readFile(new URL('tools/lp130/manufacture-remaining-texas-addresses.mjs', root), 'utf8');
   assert.match(source, /options\.resume && await isComplete/);
   assert.match(source, /statewide-resume-list\.txt/);
-  assert.match(source, /status: batchFailures\.length.*'INCOMPLETE'/s);
+  assert.match(source, /CERTIFICATION_BLOCKED/);
+  assert.match(source, /const actualNewFips = new Set/);
+  assert.match(source, /passed: passed\.map/);
+  assert.match(source, /certificationBlocked: certificationBlocked\.map/);
   assert.doesNotMatch(source, /--force/);
 });
 

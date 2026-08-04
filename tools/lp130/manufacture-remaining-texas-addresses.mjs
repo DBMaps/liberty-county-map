@@ -72,6 +72,11 @@ export function planCsv(plan) {
     `${batch.id},${batch.number},${i + 1},${county.countyId},${county.county},${county.fips}`))].join('\n') + '\n';
 }
 
+function certificationFailures(certification) {
+  const failures = Array.isArray(certification.failures) ? certification.failures : [];
+  return failures.map(failure => typeof failure === 'string' ? failure : failure?.reason || failure?.message || JSON.stringify(failure));
+}
+
 async function inspectCounty(county, batchDirectory) {
   const stem = `${county.countyId}-${county.fips}`;
   const packagePath = join(PACKAGE_DIR, `${stem}.addresses.jsonl.gz`);
@@ -92,8 +97,13 @@ async function inspectCounty(county, batchDirectory) {
   if (!reconciled || records !== sidecar.acceptedRecords || packageStat.size !== sidecar.outputBytes || hash !== sidecar.packageHash ||
       certificate.fips !== county.fips || certificate.sizeBytes !== packageStat.size || certificate.sha256 !== hash ||
       certification.countyFips !== county.fips || certification.packageSize !== packageStat.size || certification.sha256 !== hash ||
-      certification.indexedAddressCount !== records || certification.certificationStatus !== 'PASS') throw new Error(`${county.fips}: package metadata validation failed`);
-  return { ...county, package: `${stem}.addresses.jsonl.gz`, sizeBytes: packageStat.size, sha256: hash, records, status: 'PASS' };
+      certification.indexedAddressCount !== records || !['PASS', 'FAIL'].includes(certification.certificationStatus)) throw new Error(`${county.fips}: package metadata validation failed`);
+  const status = certification.certificationStatus === 'PASS' ? 'PASS' : 'CERTIFICATION_BLOCKED';
+  const failureReasons = status === 'CERTIFICATION_BLOCKED' ? certificationFailures(certification) : [];
+  if (status === 'CERTIFICATION_BLOCKED' && failureReasons.length === 0) failureReasons.push('LP104.6 certification status FAIL');
+  return { ...county, package: `${stem}.addresses.jsonl.gz`, sizeBytes: packageStat.size, sha256: hash, records, status,
+    certificationStatus: certification.certificationStatus, certificationFailureReasons: failureReasons,
+    candidateOnly: true, activated: false, runtimeEligible: false };
 }
 
 async function isComplete(county, batchDirectory) { try { return await inspectCounty(county, batchDirectory); } catch { return null; } }
@@ -135,27 +145,35 @@ export async function run(options, dependencies = {}) {
       catch (error) { batchFailures.push({ ...county, failure: error.message }); }
     }
     // The candidate surface is deliberately the complete batch cohort, including valid resumed counties.
-    const valid = [...skipped, ...completed].sort((a, b) => a.fips.localeCompare(b.fips));
+    const inspected = [...skipped, ...completed].sort((a, b) => a.fips.localeCompare(b.fips));
+    const passed = inspected.filter(item => item.status === 'PASS');
+    const certificationBlocked = inspected.filter(item => item.status === 'CERTIFICATION_BLOCKED');
     const aggregateAfter = await readJson(AGGREGATE);
     const afterFips = aggregateAfter.packages.map(item => item.fips);
     const afterNames = aggregateAfter.packages.map(item => item.outputPath.split(/[\\/]/).at(-1));
     const beforeFips = new Set(aggregateBefore.packages.map(item => item.fips));
-    const newlyCompleted = completed.filter(item => !beforeFips.has(item.fips)).length;
-    if (aggregateAfter.packages.length !== aggregateBefore.packages.length + newlyCompleted ||
+    const actualNewFips = new Set(afterFips.filter(fips => !beforeFips.has(fips)));
+    if (aggregateAfter.packages.length !== aggregateBefore.packages.length + actualNewFips.size ||
         new Set(afterFips).size !== afterFips.length || new Set(afterNames).size !== afterNames.length) {
       throw new Error(`${batch.id}: aggregate manifest count or uniqueness validation failed`);
     }
     await json(join(batchDirectory, 'runtime-manifest.candidate.json'), { schemaVersion: 1, milestone: 'LP130-candidate', batch: batch.id, activated: false,
-      packages: valid.map(item => ({ countyId: `${item.countyId}-tx`, county: item.county, fips: item.fips, path: `data/generated/lp104/txgio-addresses/${item.package}`, sizeBytes: item.sizeBytes, sha256: item.sha256,
+      packages: passed.map(item => ({ countyId: `${item.countyId}-tx`, county: item.county, fips: item.fips, path: `data/generated/lp104/txgio-addresses/${item.package}`, sizeBytes: item.sizeBytes, sha256: item.sha256,
         certificate: `reports/lp130-statewide-addresses/${batch.id}/certificates/${item.package.replace('.addresses.jsonl.gz', '.runtime-certificate.json')}` })) });
     await json(join(batchDirectory, 'validation-report.json'), { schemaVersion: 'gridly-lp130-batch-validation-v1', batch: batch.id,
-      expectedCountyCount: batch.counties.length, completedCountyCount: valid.length, status: valid.length === batch.counties.length && !batchFailures.length ? 'PASS' : 'FAIL', counties: valid, failures: batchFailures });
+      expectedCountyCount: batch.counties.length, manufacturedCountyCount: inspected.length, passCount: passed.length,
+      certificationBlockedCount: certificationBlocked.length, packageIntegrityFailureCount: batchFailures.length,
+      status: inspected.length === batch.counties.length && !batchFailures.length ? 'MANUFACTURING_COMPLETE' : 'INCOMPLETE',
+      counties: inspected, certificationBlocked, failures: batchFailures });
     await json(join(batchDirectory, 'package-hashes.json'), { schemaVersion: 'gridly-lp130-package-hashes-v1', batch: batch.id,
-      packages: valid.map(({ fips, package: name, sizeBytes, sha256 }) => ({ fips, package: name, sizeBytes, sha256 })) });
-    progress.push({ batch: batch.id, expected: batch.counties.length, skipped: skipped.map(item => item.fips), completed: completed.map(item => item.fips), failed: batchFailures.map(item => item.fips), status: batchFailures.length || valid.length !== batch.counties.length ? 'INCOMPLETE' : 'COMPLETE' });
+      packages: inspected.map(({ fips, package: name, sizeBytes, sha256 }) => ({ fips, package: name, sizeBytes, sha256 })) });
+    progress.push({ batch: batch.id, expected: batch.counties.length, skipped: skipped.map(item => item.fips), completed: completed.map(item => item.fips),
+      passed: passed.map(item => item.fips), certificationBlocked: certificationBlocked.map(item => ({ fips: item.fips, failureReasons: item.certificationFailureReasons })),
+      failed: batchFailures.map(item => item.fips), actualNewFips: [...actualNewFips].sort(),
+      status: batchFailures.length || inspected.length !== batch.counties.length ? 'INCOMPLETE' : 'COMPLETE' });
     failures.push(...batchFailures.map(item => ({ batch: batch.id, ...item })));
     void manufacturingResult;
-    process.stdout.write(`${batch.id}: ${valid.length}/${batch.counties.length} complete; ${batchFailures.length} failed.\nFiles ready to stage: data/generated/lp104/txgio-addresses, ${batchDirectory}\nCommit: Add Texas statewide address batch ${batch.id.slice(-2)}\n`);
+    process.stdout.write(`${batch.id}: ${inspected.length}/${batch.counties.length} manufactured; ${passed.length} PASS; ${certificationBlocked.length} certification blocked; ${batchFailures.length} package-integrity failed.\nFiles ready to stage: data/generated/lp104/txgio-addresses, ${batchDirectory}\nCommit: Add Texas statewide address batch ${batch.id.slice(-2)}\n`);
   }
   if (await sha256File(PRODUCTION) !== productionBefore) throw new Error('Production runtime manifest changed during LP130 orchestration');
   const resumeFips = failures.map(item => item.fips).sort();
