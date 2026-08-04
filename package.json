@@ -121,6 +121,9 @@
     "test:lp128": "node --test tests/lp128-texas-address-expansion-wave-2.test.mjs",
     "test:lp129": "node --test tests/lp129-texas-address-expansion-wave-3.test.mjs",
     "test:lp130": "node --test tests/lp130-texas-address-expansion-wave-4.test.mjs",
+    "audit:lp131": "node tools/lp131/audit-statewide-readiness.mjs",
+    "verify:lp131": "node tools/lp131/audit-statewide-readiness.mjs --verify",
+    "test:lp131": "node --test tests/lp131-statewide-readiness-audit.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
