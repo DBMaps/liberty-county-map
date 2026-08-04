@@ -1,16 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { buildAudit } from '../tools/lp131/audit-statewide-readiness.mjs';
+import { access, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { buildAudit, resolveRepositoryPath } from '../tools/lp131/audit-statewide-readiness.mjs';
 
 const committed = JSON.parse(await readFile(new URL('../evidence/lp131/statewide-readiness-audit.json', import.meta.url)));
+const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+
+test('repository source paths preserve native and Windows absolutes', () => {
+  assert.equal(resolveRepositoryPath(repositoryRoot, 'evidence/lp131/statewide-readiness-audit.json'), fileURLToPath(new URL('../evidence/lp131/statewide-readiness-audit.json', import.meta.url)));
+  assert.equal(resolveRepositoryPath('/different/repository', repositoryRoot), repositoryRoot);
+  const windowsSource = String.raw`C:\GitHub\liberty-county-map\data\generated\lp104\txgio-addresses\manifest.json`;
+  assert.equal(resolveRepositoryPath(String.raw`D:\checkout`, windowsSource), windowsSource);
+  assert.doesNotMatch(resolveRepositoryPath(String.raw`D:\checkout`, windowsSource), /^[A-Za-z]:\\[A-Za-z]:\\/);
+  assert.equal(resolveRepositoryPath(String.raw`C:\GitHub\liberty-county-map`, 'evidence/lp131/statewide-readiness-audit.json'), String.raw`C:\GitHub\liberty-county-map\evidence\lp131\statewide-readiness-audit.json`);
+});
+
+test('root-level LP131 report exists', async () => {
+  await access(new URL('../LP131-TEXAS-STATEWIDE-COVERAGE-AND-ACTIVATION-READINESS-AUDIT.md', import.meta.url));
+});
 
 test('LP131 deterministically inventories all Texas counties', async () => {
   const built = await buildAudit();
   assert.deepEqual(built, committed);
   assert.equal(built.counties.length, 254);
   assert.equal(new Set(built.counties.map(x => x.fips)).size, 254);
-  assert.ok(built.counties.every(x => x.activationBlocker && x.tier));
+  assert.ok(built.counties.every(x => typeof x.activationBlocker === 'string' && x.activationBlocker.length > 0));
+  assert.ok(built.counties.every(x => ['TIER_1', 'TIER_2', 'TIER_3', 'TIER_4'].includes(x.tier)));
 });
 
 test('audit preserves candidate and runtime boundaries', () => {
