@@ -132,6 +132,7 @@
     "test:lp136": "node --test tests/lp136-operational-readiness.test.mjs",
     "test:lp138": "node --test tests/lp138-approval-bound-county-geometry-membership.test.mjs",
     "test:lp139": "node --test tests/lp139-contract-bound-geometry-membership.test.mjs",
+    "test:lp140": "node --test tests/lp140-activation-wave-planning.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
