@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "gridly-lp129-preflight-v1",
+  "milestone": "LP129",
+  "status": "BLOCKED_SOURCE_UNAVAILABLE",
+  "decision": "DO_NOT_MANUFACTURE",
+  "baseline": "9ae36009cd9cae7ae743521839961b43d628b162",
+  "branch": "LP129-—-Texas-Address-Expansion-Wave-3",
+  "mission": "candidate address manufacturing only",
+  "source": {
+    "identity": "TxGIO 2026 Statewide Address Points",
+    "ownerRelativePath": "Texas-Address-Points/Raw/Texas-2026.gdb",
+    "requiredLogicalBytes": 1715018101,
+    "requiredComponentCount": 126,
+    "requiredRecordCount": 12142647,
+    "sourceCrs": "EPSG:3857",
+    "outputCrs": "EPSG:4326",
+    "availableInWorkspace": false,
+    "originalSourceCommitted": false,
+    "finding": "Neither Texas-2026.gdb nor another file geodatabase is mounted in the workspace. LP127B evidence describes an owner-controlled source; it does not contain the source bytes required by the builder."
+  },
+  "counties": [
+    { "countyId": "burleson", "county": "Burleson County", "fips": "48051", "status": "NOT_MANUFACTURED" },
+    { "countyId": "trinity", "county": "Trinity County", "fips": "48455", "status": "NOT_MANUFACTURED" },
+    { "countyId": "victoria", "county": "Victoria County", "fips": "48469", "status": "NOT_MANUFACTURED" }
+  ],
+  "audit": {
+    "startupBaselineMatched": true,
+    "requiredBranchEstablished": true,
+    "countyManifestEntriesVerified": true,
+    "existingCandidatePackages": 0,
+    "existingCandidateSidecars": 0,
+    "existingRuntimeCertificates": 0,
+    "existingCertificationReports": 0,
+    "productionRuntimeManifestSha256": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a"
+  },
+  "authorizedResume": {
+    "command": "node tools/lp1051/manufacture-gridly-28-address-counties.mjs --fips 48051,48455,48469 --gdb <owner-path>/Texas-2026.gdb --reports reports/lp129-wave-3",
+    "requirements": [
+      "Mount the LP127B-inventoried owner source without committing it.",
+      "Run the selected three-county cohort only.",
+      "Independently audit package bytes, hashes, gzip JSONL records, sidecars, certificates, and certification reports.",
+      "Repeat manufacturing and compare governed package bytes for determinism.",
+      "Keep the candidate manifest activated false and do not alter the production runtime manifest."
+    ]
+  },
+  "boundaries": {
+    "candidateOnly": true,
+    "candidateApproval": false,
+    "productionAuthorization": false,
+    "runtimeEligible": false,
+    "storageUploadOccurred": false,
+    "deploymentOccurred": false,
+    "runtimeActivated": false,
+    "protectedSystemsChanged": false,
+    "productionRuntimeManifestChanged": false
+  }
+}
