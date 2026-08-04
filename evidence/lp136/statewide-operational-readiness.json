@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "gridly-lp136-operational-readiness-v1",
+  "milestone": "LP136",
+  "observationDate": "2026-08-04",
+  "scope": "AUDIT_ONLY",
+  "overallClassification": "CONDITIONALLY_READY",
+  "governedActivationMayBegin": true,
+  "activationAuthorized": false,
+  "deploymentAuthorized": false,
+  "baseline": {
+    "manufacturedPackages": 254,
+    "sidecars": 254,
+    "packageIntegrityFailures": 0,
+    "certified": 243,
+    "certificationBlocked": 11,
+    "certificationTotal": 254
+  },
+  "immutableEvidence": {
+    "lp130": { "path": "evidence/lp130/final-reconciliation.json", "sha256": "6223a7b592a006f59615353d553e1a3753e1fa61d6f2167debb5e88fa119fd83" },
+    "lp132": { "path": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md", "sha256": "be1f57355db98799d69d7d4b7020fb0c23f4d44eb32b1ad9e1870ed38a996ce0" },
+    "lp135": { "path": "evidence/lp135/statewide-certification.json", "sha256": "ef594fd4c6f1ce797c1c8fc9efa5084f9ebcf9a851b053e4e4f12475098d1a26" },
+    "operationalCountyRegistry": { "path": "js/app.js", "sha256": "57a11cbedf834ba9a104e5ee0f96bb9976fbf94e89ebdc1d5e29452e981f019f" },
+    "countyGeometryPackage": { "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", "sha256": "ba0e44fbaf1a396909f7aad98ace7d55a20f86a23ca9352c980f39116ed32461" },
+    "countyGeometryManifest": { "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json", "sha256": "7f7088e7250fca468f95edb5dd33a39bb3703e12781c9845ffe702b7d6539fe2" },
+    "addressRuntimeManifest": { "path": "data/generated/lp104/txgio-addresses/runtime-manifest.json", "sha256": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a" }
+  },
+  "readinessMatrix": [
+    { "area": "Manufacturing", "status": "READY", "governingEvidence": "LP130 records 254 packages, 254 sidecars, and zero integrity failures; its evidence hash is locked above.", "readinessImpact": "The immutable candidate artifact inventory is sufficient for county gate evaluation without rebuilding.", "recommendedNextAction": "At Gate 1, re-observe the selected package and sidecar identity; do not regenerate either artifact." },
+    { "area": "Certification", "status": "CONDITIONALLY_READY", "governingEvidence": "LP135 deterministically reconciles 243 CERTIFIED plus 11 CERTIFICATION_BLOCKED to 254, with no inferred PASS.", "readinessImpact": "The 243 certified counties may enter other LP132 prerequisite checks; the 11 blocked counties cannot pass Gate 2.", "recommendedNextAction": "For each blocked county, mount the byte-identical LP130 package, verify identity, and run the LP134 certifier twice." },
+    { "area": "Runtime", "status": "READY", "governingEvidence": "The operational registry, authoritative geometry package and manifest, and address runtime manifest retain the locked hashes above; runtime regression checks exercise integrity and fail-closed boundaries.", "readinessImpact": "A stable control exists for future non-production candidate validation; this does not establish a candidate's Gate 6 PASS.", "recommendedNextAction": "Use the unchanged runtime only in an authorized validation environment and record county-specific Gate 6 evidence." },
+    { "area": "Activation governance", "status": "READY", "governingEvidence": "The locked LP132 roadmap retains seven sequential fail-closed gates, Waves 0–4, eligibility-before-ranking, and candidate-only boundaries.", "readinessImpact": "Future activation has a deterministic decision process; LP136 grants no gate result or approval.", "recommendedNextAction": "Create a county-specific dossier and execute Gates 1–7 in order without waiver or inference." },
+    { "area": "Activation prerequisites", "status": "CONDITIONALLY_READY", "governingEvidence": "LP131 inventories community, destination, crossing, and runtime gaps, while LP132 requires named artifacts and PASS evidence for every gate.", "readinessImpact": "No first-wave candidate is approved by this statewide audit; only evidence-qualified counties may proceed.", "recommendedNextAction": "Select only a certified candidate, refresh its LP131 evidence, and complete its Gate 1–6 dossier before requesting Gate 7." },
+    { "area": "Protected systems", "status": "READY", "governingEvidence": "LP136 changes are limited to documentation, audit evidence, and an audit test; runtime, deployment, Storage, Supabase, Edge Functions, alert generation, hazard lifecycle, awareness filtering, and Route Watch are untouched.", "readinessImpact": "The audit introduces no production behavior or protected-system drift.", "recommendedNextAction": "Preserve the clean diff boundary and repeat protected-system regression checks before any later activation change." },
+    { "area": "Deployment", "status": "BLOCKED", "governingEvidence": "LP132 Gate 7 requires a complete county dossier, risk register, change/rollback and observation plans, accountable owners, and explicit time-bounded approval; LP136 supplies none of those candidate-specific approvals.", "readinessImpact": "No deployment or activation may occur from LP136.", "recommendedNextAction": "After Gates 1–6 pass for a named candidate, obtain explicit Gate 7 approval in a separate governed activation milestone." }
+  ],
+  "protectedSystemsModified": {
+    "runtime": false, "deployment": false, "storage": false, "supabase": false,
+    "edgeFunctions": false, "alertGeneration": false, "hazardLifecycle": false,
+    "awarenessFiltering": false, "routeWatch": false, "packages": false, "sidecars": false
+  }
+}
