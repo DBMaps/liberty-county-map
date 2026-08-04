@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "robertson-tx",
+  "county": "Robertson County",
+  "fips": "48395",
+  "artifact": "robertson-48395.addresses.jsonl.gz",
+  "sizeBytes": 401846,
+  "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

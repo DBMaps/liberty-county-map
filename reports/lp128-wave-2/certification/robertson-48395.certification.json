@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Robertson County",
+  "countyFips": "48395",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 401846,
+  "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+  "indexedAddressCount": 11846,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004500000039115548
+  },
+  "exactSample": {
+    "providerIdentity": "4cd45e6d1c2d5f3a7b2e",
+    "houseNumber": "1",
+    "canonicalRoad": "BRADY DRIVE",
+    "city": "",
+    "zip": "77859",
+    "county": "Robertson County",
+    "countyFips": "48395",
+    "query": "1 BRADY DRIVE TX 77859",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1292,
+    "variantsTested": 3876,
+    "variantsPassed": 3876
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 96.25150000001304,
+  "certificationStatus": "PASS",
+  "failures": []
+}

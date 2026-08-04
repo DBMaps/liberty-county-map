@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "lee-tx",
+      "county": "Lee County",
+      "fips": "48287",
+      "path": "data/generated/lp104/txgio-addresses/lee-48287.addresses.jsonl.gz",
+      "sizeBytes": 370322,
+      "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+      "certificate": "reports/lp128-wave-2/certificates/lee-48287.runtime-certificate.json"
+    },
+    {
+      "countyId": "milam-tx",
+      "county": "Milam County",
+      "fips": "48331",
+      "path": "data/generated/lp104/txgio-addresses/milam-48331.addresses.jsonl.gz",
+      "sizeBytes": 375753,
+      "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
+      "certificate": "reports/lp128-wave-2/certificates/milam-48331.runtime-certificate.json"
+    },
+    {
+      "countyId": "robertson-tx",
+      "county": "Robertson County",
+      "fips": "48395",
+      "path": "data/generated/lp104/txgio-addresses/robertson-48395.addresses.jsonl.gz",
+      "sizeBytes": 401846,
+      "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+      "certificate": "reports/lp128-wave-2/certificates/robertson-48395.runtime-certificate.json"
+    }
+  ]
+}

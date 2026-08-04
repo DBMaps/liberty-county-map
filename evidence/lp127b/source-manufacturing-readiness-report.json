@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "gridly-lp127b-readiness-v1",
+  "milestone": "LP127B",
+  "records": [
+    {
+      "dataset": "Census 2025 US county boundaries",
+      "sourcePath": "Census/tl_2025_us_county.zip",
+      "authoritativeSourceSnapshot": true,
+      "acquisitionMetadata": false,
+      "parser": true,
+      "adapter": false,
+      "singleCountyBuilder": true,
+      "multiCountyBuilder": true,
+      "statewideOrchestrator": true,
+      "deterministicSerialization": true,
+      "certificateGenerator": true,
+      "manifestGenerator": true,
+      "tests": true,
+      "runtimeIntegration": true,
+      "nextEngineeringAction": "manufacture additional counties"
+    },
+    {
+      "dataset": "FRA Texas statewide crossings",
+      "sourcePath": "FRA/Raw/fra-crossings-tx-raw.geojson",
+      "authoritativeSourceSnapshot": true,
+      "acquisitionMetadata": false,
+      "parser": true,
+      "adapter": true,
+      "singleCountyBuilder": true,
+      "multiCountyBuilder": true,
+      "statewideOrchestrator": true,
+      "deterministicSerialization": true,
+      "certificateGenerator": true,
+      "manifestGenerator": true,
+      "tests": true,
+      "runtimeIntegration": true,
+      "nextEngineeringAction": "manufacture additional counties"
+    },
+    {
+      "dataset": "NAD R23",
+      "sourcePath": "National-Address-Database/NAD_r23.zip",
+      "authoritativeSourceSnapshot": true,
+      "acquisitionMetadata": true,
+      "parser": true,
+      "adapter": true,
+      "singleCountyBuilder": true,
+      "multiCountyBuilder": false,
+      "statewideOrchestrator": false,
+      "deterministicSerialization": true,
+      "certificateGenerator": true,
+      "manifestGenerator": true,
+      "tests": true,
+      "runtimeIntegration": false,
+      "nextEngineeringAction": "verify source identity"
+    },
+    {
+      "dataset": "OSM Texas regional PBF",
+      "sourcePath": "OpenStreetMap/Regional/texas-260625.osm.pbf",
+      "authoritativeSourceSnapshot": true,
+      "acquisitionMetadata": false,
+      "parser": true,
+      "adapter": false,
+      "singleCountyBuilder": true,
+      "multiCountyBuilder": true,
+      "statewideOrchestrator": false,
+      "deterministicSerialization": true,
+      "certificateGenerator": true,
+      "manifestGenerator": true,
+      "tests": true,
+      "runtimeIntegration": true,
+      "nextEngineeringAction": "add multi-county orchestration"
+    },
+    {
+      "dataset": "TxGIO Texas-2026 address points",
+      "sourcePath": "Texas-Address-Points/Raw/Texas-2026.gdb",
+      "authoritativeSourceSnapshot": true,
+      "acquisitionMetadata": false,
+      "parser": true,
+      "adapter": true,
+      "singleCountyBuilder": true,
+      "multiCountyBuilder": true,
+      "statewideOrchestrator": false,
+      "deterministicSerialization": true,
+      "certificateGenerator": true,
+      "manifestGenerator": true,
+      "tests": true,
+      "runtimeIntegration": true,
+      "nextEngineeringAction": "manufacture additional counties"
+    }
+  ],
+  "recommendedNextWave": {
+    "dataset": "TxGIO Texas-2026 address points",
+    "physicalSourcePath": "Texas-Address-Points/Raw/Texas-2026.gdb",
+    "sourceHashStatus": "HASH_NOT_CALCULATED (directory components)",
+    "targetScope": "adjacent-county multi-county run",
+    "targetCounties": [
+      "Lee",
+      "Milam",
+      "Robertson"
+    ],
+    "existingBuilder": "tools/lp104/build-txgio-address-packages.mjs",
+    "existingMultiCountyOrchestrator": "tools/lp1051/manufacture-gridly-28-address-counties.mjs",
+    "missingOrchestration": "generalize governed county selection beyond the prior 28-county configuration",
+    "expectedOutputs": [
+      "county address JSONL packages",
+      "manifests",
+      "certificates"
+    ],
+    "certificationRequirements": "deterministic rebuild, source identity/hash review, per-county certification",
+    "humanReviewRequirements": "county attribution and sample address review",
+    "prohibitedActions": [
+      "manufacturing in LP127B",
+      "candidate activation",
+      "production approval",
+      "runtime integration"
+    ]
+  }
+}
