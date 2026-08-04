@@ -148,6 +148,10 @@
     "build:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs",
     "verify:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs --verify",
     "test:lp145": "node --test tests/lp145-statewide-operational-constraint-analysis.test.mjs",
+    "plan:lp147": "node tools/lp147/publish-statewide-storage.mjs --plan",
+    "upload:lp147": "node tools/lp147/publish-statewide-storage.mjs --upload",
+    "verify-remote:lp147": "node tools/lp147/publish-statewide-storage.mjs --verify-remote",
+    "test:lp147": "node --test tests/lp147-statewide-storage-publication.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }
