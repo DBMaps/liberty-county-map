@@ -1,21 +1,31 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { resolve, relative, join } from 'node:path';
+import { resolve, relative, join, isAbsolute, win32 } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
-const root = resolve(new URL('../../', import.meta.url).pathname);
-const readJson = async path => JSON.parse((await readFile(resolve(root, path), 'utf8')).replace(/^\uFEFF/, ''));
+const root = fileURLToPath(new URL('../../', import.meta.url));
+
+export function resolveRepositoryPath(repositoryRoot, sourcePath) {
+  if (isAbsolute(sourcePath) || win32.isAbsolute(sourcePath)) return sourcePath;
+  return win32.isAbsolute(repositoryRoot) && !isAbsolute(repositoryRoot)
+    ? win32.resolve(repositoryRoot, sourcePath)
+    : resolve(repositoryRoot, sourcePath);
+}
+
+const readJson = async (repositoryRoot, sourcePath) => JSON.parse((await readFile(resolveRepositoryPath(repositoryRoot, sourcePath), 'utf8')).replace(/^\uFEFF/, ''));
 const slash = path => path.replaceAll('\\', '/');
 const walk = dir => existsSync(dir) ? readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)]) : [];
 
-export async function buildAudit() {
+export async function buildAudit(repositoryRoot = root) {
+  const fromRoot = sourcePath => resolveRepositoryPath(repositoryRoot, sourcePath);
   const [addressManifest, reconciliation, communityManifest, crossingManifest, evidenceMatrix, runtimeManifest] = await Promise.all([
-    readJson('data/generated/lp104/txgio-addresses/manifest.json'), readJson('evidence/lp130/final-reconciliation.json'),
-    readJson('Community-Packages/county-manifest.json'), readJson('Crossing-Packages/production-crossing-manifest.json'),
-    readJson('evidence/lp126/texas-statewide-multi-class-evidence.json'), readJson('data/generated/lp104/txgio-addresses/runtime-manifest.json')
+    readJson(repositoryRoot, 'data/generated/lp104/txgio-addresses/manifest.json'), readJson(repositoryRoot, 'evidence/lp130/final-reconciliation.json'),
+    readJson(repositoryRoot, 'Community-Packages/county-manifest.json'), readJson(repositoryRoot, 'Crossing-Packages/production-crossing-manifest.json'),
+    readJson(repositoryRoot, 'evidence/lp126/texas-statewide-multi-class-evidence.json'), readJson(repositoryRoot, 'data/generated/lp104/txgio-addresses/runtime-manifest.json')
   ]);
-  const certificationFiles = walk(resolve(root, 'reports')).concat(walk(resolve(root, 'data/generated/lp1051/certification'))).filter(path => path.endsWith('.certification.json'));
-  const certifications = new Map(certificationFiles.map(path => { const item = JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, '')); return [item.countyFips, { ...item, path: slash(relative(root, path)) }]; }));
+  const certificationFiles = walk(fromRoot('reports')).concat(walk(fromRoot('data/generated/lp1051/certification'))).filter(path => path.endsWith('.certification.json'));
+  const certifications = new Map(certificationFiles.map(path => { const item = JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, '')); return [item.countyFips, { ...item, path: slash(relative(repositoryRoot, path)) }]; }));
   const communities = new Map(communityManifest.counties.map(item => [item.county.toLowerCase(), item]));
   const crossings = new Map(crossingManifest.records.map(item => [item.county.toLowerCase(), item]));
   const matrix = new Map(evidenceMatrix.matrix.map(item => [`${item.countyFips}:${item.evidenceClass}`, item]));
@@ -24,8 +34,8 @@ export async function buildAudit() {
   const blockedFips = new Set(reconciliation.certificationBlockedInventory.counties.map(item => item.fips));
 
   const context = { window: {} };
-  vm.runInNewContext(await readFile(resolve(root, 'js/lp097-curated-destinations.js'), 'utf8'), context);
-  vm.runInNewContext(await readFile(resolve(root, 'js/lp098-curated-destinations.js'), 'utf8'), context);
+  vm.runInNewContext(await readFile(fromRoot('js/lp097-curated-destinations.js'), 'utf8'), context);
+  vm.runInNewContext(await readFile(fromRoot('js/lp098-curated-destinations.js'), 'utf8'), context);
   const destinations = context.window.GRIDLY_LP098_CURATED_DESTINATIONS;
 
   const counties = addressManifest.packages.map(pkg => {
@@ -88,9 +98,9 @@ function csv(audit) {
   return [header, ...audit.counties.map(x => [x.county,x.fips,x.address.status,x.communities.count,x.destinations.count,x.crossings.count,`A:${x.search.address?'Y':'N'} C:${x.search.community?'Y':'N'} D:${x.search.destination?'Y':'N'}`,x.runtime,x.activationBlocker,x.tier,x.status,x.missingEvidence.join('; ')])].map(row => row.map(quote).join(',')).join('\n') + '\n';
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname)) {
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
   const audit = await buildAudit();
-  const out = resolve(root, 'evidence/lp131'); await mkdir(out, { recursive: true });
+  const out = resolveRepositoryPath(root, 'evidence/lp131'); await mkdir(out, { recursive: true });
   const json = JSON.stringify(audit, null, 2) + '\n'; const csvText = csv(audit);
   if (process.argv.includes('--verify')) {
     if (await readFile(join(out, 'statewide-readiness-audit.json'), 'utf8') !== json || await readFile(join(out, 'county-inventory.csv'), 'utf8') !== csvText) throw new Error('LP131 outputs are stale; run without --verify');
