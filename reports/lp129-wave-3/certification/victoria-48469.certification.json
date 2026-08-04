@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Victoria County",
+  "countyFips": "48469",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1326361,
+  "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711",
+  "indexedAddressCount": 45991,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006300000000010186
+  },
+  "exactSample": {
+    "providerIdentity": "5c9383a44bf37975fc19",
+    "houseNumber": "1",
+    "canonicalRoad": "ALBERT AVENUE",
+    "city": "",
+    "zip": "",
+    "county": "Victoria County",
+    "countyFips": "48469",
+    "query": "1 ALBERT AVENUE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2121,
+    "variantsTested": 6363,
+    "variantsPassed": 6363
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 365.8811999999998,
+  "certificationStatus": "PASS",
+  "failures": []
+}

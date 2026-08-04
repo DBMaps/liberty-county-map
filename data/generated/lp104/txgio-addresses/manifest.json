@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly-txgio-address-package-manifest-v1",
-  "generatedAt": "2026-08-04T01:23:48.806Z",
+  "generatedAt": "2026-08-04T02:18:40.699Z",
   "source": "TxGIO 2026 Statewide Address Points",
   "sourceRecordCount": 12142647,
   "sourceCrs": "EPSG:3857",
@@ -43,6 +43,19 @@
       "outputBytes": 3078907,
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brazos-48041.addresses.jsonl.gz",
       "packageHash": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2",
+      "outputCrs": "EPSG:4326"
+    },
+    {
+      "countyId": "burleson",
+      "county": "Burleson",
+      "fips": "48051",
+      "sourceRecordsRead": 17790,
+      "acceptedRecords": 17790,
+      "rejectedRecords": 0,
+      "duplicates": 0,
+      "outputBytes": 596519,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\burleson-48051.addresses.jsonl.gz",
+      "packageHash": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb",
       "outputCrs": "EPSG:4326"
     },
     {
@@ -345,6 +358,19 @@
       "outputCrs": "EPSG:4326"
     },
     {
+      "countyId": "trinity",
+      "county": "Trinity",
+      "fips": "48455",
+      "sourceRecordsRead": 13792,
+      "acceptedRecords": 13750,
+      "rejectedRecords": 0,
+      "duplicates": 42,
+      "outputBytes": 499106,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\trinity-48455.addresses.jsonl.gz",
+      "packageHash": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62",
+      "outputCrs": "EPSG:4326"
+    },
+    {
       "countyId": "tyler",
       "county": "Tyler",
       "fips": "48457",
@@ -355,6 +381,19 @@
       "outputBytes": 492755,
       "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\tyler-48457.addresses.jsonl.gz",
       "packageHash": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b",
+      "outputCrs": "EPSG:4326"
+    },
+    {
+      "countyId": "victoria",
+      "county": "Victoria",
+      "fips": "48469",
+      "sourceRecordsRead": 46129,
+      "acceptedRecords": 45991,
+      "rejectedRecords": 0,
+      "duplicates": 138,
+      "outputBytes": 1326361,
+      "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\victoria-48469.addresses.jsonl.gz",
+      "packageHash": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711",
       "outputCrs": "EPSG:4326"
     },
     {

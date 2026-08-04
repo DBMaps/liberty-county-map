@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Trinity County",
+  "countyFips": "48455",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 499106,
+  "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62",
+  "indexedAddressCount": 13750,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0045999999997548
+  },
+  "exactSample": {
+    "providerIdentity": "b3ff210e9a3eaaf3e9d6",
+    "houseNumber": "1",
+    "canonicalRoad": "COTTONWOOD ROAD",
+    "city": "",
+    "zip": "",
+    "county": "Trinity County",
+    "countyFips": "48455",
+    "query": "1 Cottonwood Road TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1300,
+    "variantsTested": 3900,
+    "variantsPassed": 3900
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 102.02800000000025,
+  "certificationStatus": "PASS",
+  "failures": []
+}

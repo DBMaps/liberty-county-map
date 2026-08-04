@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "trinity-tx",
+  "county": "Trinity County",
+  "fips": "48455",
+  "artifact": "trinity-48455.addresses.jsonl.gz",
+  "sizeBytes": 499106,
+  "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

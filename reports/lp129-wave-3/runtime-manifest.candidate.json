@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "burleson-tx",
+      "county": "Burleson County",
+      "fips": "48051",
+      "path": "data/generated/lp104/txgio-addresses/burleson-48051.addresses.jsonl.gz",
+      "sizeBytes": 596519,
+      "sha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb",
+      "certificate": "reports/lp129-wave-3/certificates/burleson-48051.runtime-certificate.json"
+    },
+    {
+      "countyId": "trinity-tx",
+      "county": "Trinity County",
+      "fips": "48455",
+      "path": "data/generated/lp104/txgio-addresses/trinity-48455.addresses.jsonl.gz",
+      "sizeBytes": 499106,
+      "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62",
+      "certificate": "reports/lp129-wave-3/certificates/trinity-48455.runtime-certificate.json"
+    },
+    {
+      "countyId": "victoria-tx",
+      "county": "Victoria County",
+      "fips": "48469",
+      "path": "data/generated/lp104/txgio-addresses/victoria-48469.addresses.jsonl.gz",
+      "sizeBytes": 1326361,
+      "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711",
+      "certificate": "reports/lp129-wave-3/certificates/victoria-48469.runtime-certificate.json"
+    }
+  ]
+}

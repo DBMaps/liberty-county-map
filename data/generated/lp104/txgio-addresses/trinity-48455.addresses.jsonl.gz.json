@@ -1,0 +1,13 @@
+{
+  "countyId": "trinity",
+  "county": "Trinity",
+  "fips": "48455",
+  "sourceRecordsRead": 13792,
+  "acceptedRecords": 13750,
+  "rejectedRecords": 0,
+  "duplicates": 42,
+  "outputBytes": 499106,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\trinity-48455.addresses.jsonl.gz",
+  "packageHash": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62",
+  "outputCrs": "EPSG:4326"
+}

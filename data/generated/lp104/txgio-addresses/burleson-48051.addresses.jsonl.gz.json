@@ -1,0 +1,13 @@
+{
+  "countyId": "burleson",
+  "county": "Burleson",
+  "fips": "48051",
+  "sourceRecordsRead": 17790,
+  "acceptedRecords": 17790,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 596519,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\burleson-48051.addresses.jsonl.gz",
+  "packageHash": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb",
+  "outputCrs": "EPSG:4326"
+}

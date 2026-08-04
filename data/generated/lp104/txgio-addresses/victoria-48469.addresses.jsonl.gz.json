@@ -1,0 +1,13 @@
+{
+  "countyId": "victoria",
+  "county": "Victoria",
+  "fips": "48469",
+  "sourceRecordsRead": 46129,
+  "acceptedRecords": 45991,
+  "rejectedRecords": 0,
+  "duplicates": 138,
+  "outputBytes": 1326361,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\victoria-48469.addresses.jsonl.gz",
+  "packageHash": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711",
+  "outputCrs": "EPSG:4326"
+}

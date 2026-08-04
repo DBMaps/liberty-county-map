@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "burleson-tx",
+  "county": "Burleson County",
+  "fips": "48051",
+  "artifact": "burleson-48051.addresses.jsonl.gz",
+  "sizeBytes": 596519,
+  "sha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}
