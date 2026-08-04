@@ -1,0 +1,37 @@
+{
+  "activationAuthorizationCount": 0,
+  "activationAuthorizationEmpty": true,
+  "activationCount": 0,
+  "activationExecutionReportSha256": "f72c4948d89e308ea6ac40299da2339a0b62d59c05681bcaa6cfe92671758525",
+  "deploymentAuthorizationCount": 0,
+  "deploymentAuthorizationEmpty": true,
+  "deploymentCount": 0,
+  "deploymentExecutionReportSha256": "b891ef0e02641f793339e5d0e19f3b2cd0f0e560c3bdcd4c7d7356602fefcfac",
+  "evaluatedCountyCount": 254,
+  "executionRegistrySha256": "e718e07a746af0cbe2bf7a1f3db0cb5e88f4d2f141cd6676c0660d7a499a8f69",
+  "executionTraceSha256": "2fa0e5d91e83df5bb498155d9bf8bb174f967abf667b3c00796b428a9e3adc11",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "identityCount": 254,
+  "milestone": "LP153",
+  "operationalCountyCount": 28,
+  "passed": true,
+  "performsActivation": false,
+  "performsDeployment": false,
+  "preExistingBaselineFailures": [
+    {
+      "introducedByLp153": false,
+      "message": "[LP148] tracked/generated package does not match deterministic rebuild",
+      "milestone": "LP148",
+      "repairedByLp153": false
+    }
+  ],
+  "protectedArtifactsUnchanged": true,
+  "remainingBlockers": [
+    "No deployment authorization is committed.",
+    "No activation authorization is committed.",
+    "LP148 deterministic rebuild condition remains pre-existing and unmodified."
+  ],
+  "runtimeMembershipChanged": false,
+  "schemaVersion": "gridly.lp153.executionSummary.v1",
+  "validatesOperationalExecution": true
+}

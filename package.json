@@ -171,6 +171,9 @@
     "test:lp151": "node --test tests/lp151-statewide-operational-validation.test.mjs",
     "build:lp152": "node tools/lp152/build-deployment-readiness.mjs --write",
     "verify:lp152": "node tools/lp152/build-deployment-readiness.mjs",
-    "test:lp152": "node --test tests/lp152-deployment-readiness.test.mjs"
+    "test:lp152": "node --test tests/lp152-deployment-readiness.test.mjs",
+    "build:lp153": "node tools/lp153/execute-statewide-operations.mjs --write",
+    "verify:lp153": "node tools/lp153/execute-statewide-operations.mjs",
+    "test:lp153": "node --test tests/lp153-statewide-operational-execution.test.mjs"
   }
 }
