@@ -2,5 +2,20 @@
   "schemaVersion": "gridly-lp130-progress-v1",
   "candidateOnly": true,
   "activated": false,
-  "batches": []
+  "runtimeActivationProhibited": true,
+  "batches": [
+    {
+      "batch": "batch-01",
+      "expected": 25,
+      "manufactured": 25,
+      "passedCount": 22,
+      "certificationBlocked": [
+        { "fips": "48019", "failureReasons": ["canonical road alias failed"] },
+        { "fips": "48027", "failureReasons": ["exact address sample failed"] },
+        { "fips": "48043", "failureReasons": ["exact address sample failed"] }
+      ],
+      "failed": [],
+      "status": "COMPLETE"
+    }
+  ]
 }
