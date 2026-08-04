@@ -1,0 +1,165 @@
+{
+  "confirmedAbsentAccessibleLocations": [
+    {
+      "tier": 1,
+      "dataset": "TxDOT statewide roadway network source snapshot",
+      "status": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS",
+      "evidence": "Only Census TIGER county roads and OSM corridor extracts are present; TxDOT references/configuration do not establish a preserved source snapshot."
+    },
+    {
+      "tier": 1,
+      "dataset": "Texas municipal boundaries authoritative source snapshot",
+      "status": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS"
+    },
+    {
+      "tier": 2,
+      "dataset": "HHSC statewide healthcare facilities authoritative source snapshot",
+      "status": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS"
+    },
+    {
+      "tier": 2,
+      "dataset": "TEA AskTED/campus/district authoritative source snapshot",
+      "status": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS"
+    },
+    {
+      "tier": 2,
+      "dataset": "TPWD parks/natural areas/WMA authoritative source snapshot",
+      "status": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS"
+    }
+  ],
+  "referencedButSourceSnapshotNotFound": [
+    {
+      "tier": 1,
+      "dataset": "TxGIO StratMap 2026 statewide address geodatabase",
+      "status": "REFERENCED_SOURCE_NOT_FOUND",
+      "evidence": "28 county derivatives and manifests exist; NAD_r23.zip/NAD_r23.gdb are absent."
+    },
+    {
+      "tier": 1,
+      "dataset": "OpenStreetMap Regional texas-260625.osm.pbf",
+      "status": "REFERENCED_SOURCE_NOT_FOUND",
+      "evidence": "Community-Packages/county-manifest.json references it; no PBF is present."
+    },
+    {
+      "tier": 1,
+      "dataset": "Census tl_2025_us_county.zip",
+      "status": "REFERENCED_SOURCE_NOT_FOUND",
+      "evidence": "Community-Packages/county-manifest.json references the archive; county extracts are present."
+    }
+  ],
+  "ownerExternalWorkspaceNotMounted": [
+    {
+      "dataset": "Owner C:\\GitHub\\Gridly-Source-Data repository",
+      "status": "OWNER_WORKSPACE_NOT_MOUNTED",
+      "classificationRule": "Datasets potentially held there are not classified missing from the owner ecosystem."
+    }
+  ],
+  "presentOnlyAsDerivedOutput": [
+    {
+      "dataset": "TxGIO 2026 address points for 28 counties",
+      "inventoryIds": [
+        "lp127a-657d1b02c5357abc",
+        "lp127a-09eaf889f1bfdbfc",
+        "lp127a-5d5df7782be3ccee",
+        "lp127a-a0549cbe1d0ae61e",
+        "lp127a-9916ebc2f8d1829e",
+        "lp127a-2e30f3e8d3440a59",
+        "lp127a-c7e32b066c042e0e",
+        "lp127a-bac12929c0d66a6e",
+        "lp127a-18f0722cbd09c9b3",
+        "lp127a-456e67b94c8daa43",
+        "lp127a-94893443b6a112ec",
+        "lp127a-0bbc251c4a117e60",
+        "lp127a-6f4c163f7ce6e299",
+        "lp127a-ba29d84256b53f38",
+        "lp127a-1dfe23cfcb374609",
+        "lp127a-a767cf6a3439daef",
+        "lp127a-1655e18f66d7fd66",
+        "lp127a-2ee8279e2d9061fa",
+        "lp127a-aee40f1ada0c4c67",
+        "lp127a-2fd33469de296b71",
+        "lp127a-6e12b3a34704da8f",
+        "lp127a-2fa4ea9861992fe8",
+        "lp127a-e3c5d0c7320d3ce6",
+        "lp127a-b1ea48fd48de2824",
+        "lp127a-c6722a38e6f996aa",
+        "lp127a-d14d40ce59cff379",
+        "lp127a-3433974b1e8d6832",
+        "lp127a-cfe0cba9472b774d"
+      ]
+    }
+  ],
+  "presentSourceIdentityIncomplete": [
+    {
+      "dataset": "Prior 28-county community configuration",
+      "reason": "Manifest references absent upstream OSM PBF and Census archive."
+    }
+  ],
+  "presentButStale": [],
+  "presentReadyForManufacturing": [
+    {
+      "dataset": "FRA Texas Highway-Rail Crossing Inventory",
+      "scope": "statewide/county attributable"
+    },
+    {
+      "dataset": "Repository-local Census TIGER county boundary extracts",
+      "scope": "28 counties"
+    },
+    {
+      "dataset": "LP122 Lee/Milam/Robertson authoritative community evidence",
+      "scope": "3 counties"
+    }
+  ],
+  "presentAlreadyManufactured": [
+    {
+      "dataset": "28-county FRA crossing packages"
+    },
+    {
+      "dataset": "28-county TxGIO address packages"
+    },
+    {
+      "dataset": "LP124 county government statewide evidence"
+    },
+    {
+      "dataset": "LP125 county jail statewide evidence"
+    },
+    {
+      "dataset": "LP126 statewide multi-class evidence"
+    }
+  ],
+  "presentRuntimeActive": [
+    {
+      "dataset": "Liberty TxGIO address package"
+    },
+    {
+      "dataset": "County roadway runtime assets listed in roadway manifest"
+    },
+    {
+      "dataset": "Promoted county boundaries"
+    }
+  ],
+  "recommendedNextManufacturingWave": {
+    "recommendation": "FRA statewide deterministic remanufacturing/certification wave across the existing 28-county scope, followed by repository-local Census boundary extracts for the same counties.",
+    "sourceSnapshot": "GRIDLY_APP_REPO/Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "scope": "Existing 28 configured counties",
+    "existingTooling": [
+      "tools/lp115/manufacture-candidate-crossings.mjs",
+      "tools/lp126/manufacture-statewide-evidence.mjs",
+      "rail_crossings LP126 adapter"
+    ],
+    "missingTooling": [
+      "A governed statewide orchestration wrapper that emits LP127-era aggregate certificate evidence if required"
+    ],
+    "expectedAdapters": [
+      "rail_crossings"
+    ],
+    "expectedOutputs": [
+      "deterministic review packages",
+      "production candidates",
+      "county certificates",
+      "aggregate manifest/report"
+    ],
+    "reviewBoundaries": "Review outputs remain candidates; compare counts/hashes and preserve county attribution.",
+    "productionBoundaries": "No approval, promotion, activation, deployment, or production-manifest mutation in LP127A."
+  }
+}
