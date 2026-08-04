@@ -3,10 +3,11 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const vm = require('vm');
+const { validateMembershipContract } = require('./lp138/county-geometry-membership.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const REGISTRY_SOURCE = 'js/app.js';
-const EXPECTED_COUNT = 28;
+const MEMBERSHIP_CONTRACT_PATH = 'evidence/lp138/county-geometry-membership-contract.baseline.json';
 const PACKAGE_PATH = 'assets/location-resolution/gridly-authoritative-county-geometry-v1.json';
 const MANIFEST_PATH = 'assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json';
 const SCHEMA_VERSION = 'gridly.authoritativeCountyGeometry.schema.v1';
@@ -14,7 +15,13 @@ const PACKAGE_VERSION = 'lp036.1c-runtime-county-geometry-v1';
 const GENERATED_AT = '1970-01-01T00:00:00.000Z';
 
 function fail(message) { throw new Error(message); }
-function readText(rel) { return fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8'); }
+function readText(rel) { return fs.readFileSync(path.isAbsolute(rel) ? rel : path.join(REPO_ROOT, rel), 'utf8'); }
+function readJson(rel) { return JSON.parse(readText(rel)); }
+function loadMembershipContract(contractPath = MEMBERSHIP_CONTRACT_PATH) {
+  const contract = readJson(contractPath);
+  validateMembershipContract(contract, { expectedContractKind: 'CURRENT_OPERATIONAL_BASELINE' });
+  return contract;
+}
 function sha256Buffer(buf) { return crypto.createHash('sha256').update(buf).digest('hex'); }
 function stableJson(value) { return JSON.stringify(sortStable(value)) + '\n'; }
 function sortStable(value) {
@@ -161,13 +168,27 @@ function geometryFromGeoJson(json, countyId) {
   if (candidates.length && !candidates.includes(countyId)) fail(`${countyId} source county identity mismatch: ${candidates.join(', ')}`);
   return geom;
 }
+function identityFromBoundary(boundaryPath, countyId) {
+  const json = readJson(boundaryPath);
+  const feature = json.type === 'FeatureCollection' ? json.features?.[0] : (json.type === 'Feature' ? json : null);
+  const properties = feature?.properties || {};
+  const fips = String(properties.GEOID || properties.FIPS || '');
+  if (!/^48\d{3}$/.test(fips)) fail(`${countyId} boundary source is missing a five-digit Texas FIPS identity`);
+  return { countyId, fips };
+}
 function loadCounties() {
+  const contract = loadMembershipContract();
   const registry = extractRegistry();
-  const counties = Object.entries(registry).filter(([, cfg]) => cfg && cfg.operational === true).sort(([a], [b]) => a.localeCompare(b));
-  if (counties.length !== EXPECTED_COUNT) fail(`Expected exactly ${EXPECTED_COUNT} operational counties, found ${counties.length}`);
-  return counties.map(([countyId, cfg]) => {
-    if (!/^[a-z0-9-]+-tx$/.test(countyId)) fail(`Invalid canonical county id ${countyId}`);
+  const operational = Object.entries(registry).filter(([, cfg]) => cfg && cfg.operational === true);
+  const registryMembers = operational.map(([countyId, cfg]) => {
     if (!cfg.boundaryPath) fail(`${countyId} missing boundaryPath`);
+    return identityFromBoundary(cfg.boundaryPath, countyId);
+  });
+  validateMembershipContract(contract, { expectedContractKind: 'CURRENT_OPERATIONAL_BASELINE', registryMembers });
+  const registryById = new Map(operational);
+  return contract.approvedCounties.map(({ countyId }) => {
+    const cfg = registryById.get(countyId);
+    if (!/^[a-z0-9-]+-tx$/.test(countyId)) fail(`Invalid canonical county id ${countyId}`);
     const sourcePath = cfg.boundaryPath;
     const abs = path.join(REPO_ROOT, sourcePath);
     if (!fs.existsSync(abs)) fail(`${countyId} source file missing: ${sourcePath}`);
@@ -179,8 +200,9 @@ function loadCounties() {
 }
 function buildPackage() {
   const counties = loadCounties();
+  const expectedOperationalCountyCount = loadMembershipContract().approvedCounties.length;
   const sourceTotalByteLength = counties.reduce((sum, c) => sum + c.source.byteLength, 0);
-  const pkg = { schemaVersion: SCHEMA_VERSION, packageVersion: PACKAGE_VERSION, generatedAt: GENERATED_AT, expectedOperationalCountyCount: EXPECTED_COUNT, counties, certification: runPointCertification(counties), sourceSummary: { registrySource: REGISTRY_SOURCE, sourceTotalByteLength } };
+  const pkg = { schemaVersion: SCHEMA_VERSION, packageVersion: PACKAGE_VERSION, generatedAt: GENERATED_AT, expectedOperationalCountyCount, counties, certification: runPointCertification(counties), sourceSummary: { registrySource: REGISTRY_SOURCE, sourceTotalByteLength } };
   return pkg;
 }
 function pointInRing(lng, lat, ring) {
@@ -274,10 +296,12 @@ function runFixtureValidation() {
 }
 
 function writeOutputs() {
+  const contract = loadMembershipContract();
+  if (contract.permissions.generateRuntimePackage.authorized !== true) fail('Governed runtime package writes are not authorized by the membership contract');
   const pkg = buildPackage();
   const packageText = stableJson(pkg);
   const packageHash = sha256Buffer(Buffer.from(packageText));
-  const manifest = { schemaVersion: 'gridly.authoritativeCountyGeometry.manifest.v1', packageVersion: PACKAGE_VERSION, generatedAt: GENERATED_AT, packagePath: PACKAGE_PATH, expectedOperationalCountyCount: EXPECTED_COUNT, packagedCountyCount: pkg.counties.length, blockedCountyCount: 0, missingSourceCount: 0, invalidGeometryCount: 0, packageSha256: packageHash, packageByteLength: Buffer.byteLength(packageText), sourceTotalByteLength: pkg.sourceSummary.sourceTotalByteLength, packagedGeometryByteLength: Buffer.byteLength(JSON.stringify(pkg.counties.map((c) => c.geometry))), deterministicBuildSupported: true, certification: pkg.certification };
+  const manifest = { schemaVersion: 'gridly.authoritativeCountyGeometry.manifest.v1', packageVersion: PACKAGE_VERSION, generatedAt: GENERATED_AT, packagePath: PACKAGE_PATH, expectedOperationalCountyCount: pkg.expectedOperationalCountyCount, packagedCountyCount: pkg.counties.length, blockedCountyCount: 0, missingSourceCount: 0, invalidGeometryCount: 0, packageSha256: packageHash, packageByteLength: Buffer.byteLength(packageText), sourceTotalByteLength: pkg.sourceSummary.sourceTotalByteLength, packagedGeometryByteLength: Buffer.byteLength(JSON.stringify(pkg.counties.map((c) => c.geometry))), deterministicBuildSupported: true, certification: pkg.certification };
   fs.mkdirSync(path.dirname(path.join(REPO_ROOT, PACKAGE_PATH)), { recursive: true });
   fs.writeFileSync(path.join(REPO_ROOT, PACKAGE_PATH), packageText);
   fs.writeFileSync(path.join(REPO_ROOT, MANIFEST_PATH), stableJson(manifest));
@@ -290,8 +314,20 @@ function verifyOutputs(expectedHash, expectedBytes) {
   const pkg = JSON.parse(p.toString('utf8'));
   if (sha256Buffer(p) !== expectedHash || p.length !== expectedBytes) fail('Generated package hash or byte length verification failed');
   if (m.packageSha256 !== expectedHash || m.packageByteLength !== expectedBytes) fail('Manifest package hash or byte length verification failed');
-  if (!Array.isArray(pkg.counties) || pkg.counties.length !== EXPECTED_COUNT || m.packagedCountyCount !== EXPECTED_COUNT) fail('Packaged county count verification failed');
+  const contract = loadMembershipContract();
+  const packageMembers = pkg.counties.map(({ countyId, source }) => identityFromBoundary(source.boundaryPath, countyId));
+  validateMembershipContract(contract, { expectedContractKind: 'CURRENT_OPERATIONAL_BASELINE', packageMembers });
+  if (!Array.isArray(pkg.counties) || pkg.counties.length !== contract.approvedCounties.length || m.packagedCountyCount !== contract.approvedCounties.length) fail('Packaged county count verification failed');
+  if (pkg.expectedOperationalCountyCount !== contract.approvedCounties.length || m.expectedOperationalCountyCount !== contract.approvedCounties.length) fail('Contract-derived expected membership count verification failed');
   if (m.blockedCountyCount !== 0) fail('Blocked counties are not allowed');
+}
+function auditRuntimeGeometry() {
+  const packageBuffer = fs.readFileSync(path.join(REPO_ROOT, PACKAGE_PATH));
+  const manifest = readJson(MANIFEST_PATH);
+  const pkg = JSON.parse(packageBuffer.toString('utf8'));
+  verifyOutputs(manifest.packageSha256, manifest.packageByteLength);
+  if (sha256Buffer(packageBuffer) !== manifest.packageSha256 || packageBuffer.length !== manifest.packageByteLength) fail('Committed runtime package does not match its manifest');
+  return { passed: true, contractPath: MEMBERSHIP_CONTRACT_PATH, membershipSha256: loadMembershipContract().provenance.membershipSha256, packagedCountyCount: pkg.counties.length, packageSha256: manifest.packageSha256, packageByteLength: manifest.packageByteLength };
 }
 function verifyDeterministic() {
   const first = stableJson(buildPackage()); const second = stableJson(buildPackage());
@@ -300,8 +336,8 @@ function verifyDeterministic() {
 }
 if (require.main === module) {
   try {
-    const result = process.argv.includes('--self-test-fixtures') ? runFixtureValidation() : (process.argv.includes('--verify-deterministic') ? verifyDeterministic() : writeOutputs());
+    const result = process.argv.includes('--self-test-fixtures') ? runFixtureValidation() : (process.argv.includes('--audit-runtime') ? auditRuntimeGeometry() : (process.argv.includes('--verify-deterministic') ? verifyDeterministic() : writeOutputs()));
     console.log(JSON.stringify(result, null, 2));
   } catch (error) { console.error(`[LP036.1C] ${error.message}`); process.exit(1); }
 }
-module.exports = { buildPackage, verifyDeterministic, stableJson, loadCounties, containsGeom, runFixtureValidation, extractRegistryExpression, extractRegistry };
+module.exports = { auditRuntimeGeometry, buildPackage, verifyDeterministic, stableJson, loadCounties, containsGeom, runFixtureValidation, extractRegistryExpression, extractRegistry, loadMembershipContract, writeOutputs };
