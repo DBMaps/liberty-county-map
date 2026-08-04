@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createPlan, parseArguments, planCsv, run } from '../tools/lp130/manufacture-remaining-texas-addresses.mjs';
@@ -49,11 +49,18 @@ test('CLI enforces modes and supports required options', () => {
 
 test('dry-run writes plans and creates no package artifacts', async () => {
   const reports = await mkdtemp(join(tmpdir(), 'lp130-dry-run-'));
+  const governedPaths = ['evidence/lp130/statewide-batch-plan.csv', 'evidence/lp130/statewide-batch-plan.json'];
+  const governedBefore = await Promise.all(governedPaths.map(path => readFile(new URL(path, root))));
   const before = new Set(await readdir(new URL('data/generated/lp104/txgio-addresses/', root)));
-  const result = await run({ dryRun: true, batchSize: 25, reports, registry, aggregate: manifest });
-  assert.equal(result.manufactured, false);
-  assert.deepEqual((await readdir(reports)).sort(), ['statewide-batch-plan.csv', 'statewide-batch-plan.json']);
-  assert.deepEqual(new Set(await readdir(new URL('data/generated/lp104/txgio-addresses/', root))), before);
+  try {
+    const result = await run({ dryRun: true, batchSize: 25, reports, registry, aggregate: manifest });
+    assert.equal(result.manufactured, false);
+    assert.deepEqual((await readdir(reports)).sort(), ['statewide-batch-plan.csv', 'statewide-batch-plan.json']);
+    assert.deepEqual(new Set(await readdir(new URL('data/generated/lp104/txgio-addresses/', root))), before);
+    assert.deepEqual(await Promise.all(governedPaths.map(path => readFile(new URL(path, root)))), governedBefore);
+  } finally {
+    await rm(reports, { recursive: true, force: true });
+  }
 });
 
 test('planning never activates or changes the production runtime manifest', async () => {
