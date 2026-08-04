@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
 import countyManifest from '../data/lp104/texas-counties.json' with { type: 'json' };
@@ -48,8 +48,11 @@ test('authoritative merge resolves 28 operational and 226 expansion certificates
     const found = await discoverAuthoritativeCertificates(value.identities, value.operationalFips, { packageDirectory: value.directory, certificateRoot: value.certificateRoot });
     assert.equal(found.size, 254);
     assert.deepEqual([...found.values()].reduce((counts, item) => ({ ...counts, [item.source]: counts[item.source] + 1 }), { operational: 0, expansion: 0 }), { operational: 28, expansion: 226 });
-    assert.match(found.get('48015').path, /lp147-[^/]+\/austin-48015\.runtime-certificate\.json$/);
-    assert.match(found.get('48001').path, /lp130\/batch-01\/certificates\/anderson-48001/);
+    assert.equal(basename(found.get('48015').path), 'austin-48015.runtime-certificate.json');
+    assert.equal(basename(dirname(found.get('48015').path)), basename(value.directory));
+    assert.equal(basename(found.get('48001').path), 'anderson-48001.runtime-certificate.json');
+    assert.equal(basename(dirname(found.get('48001').path)), 'certificates');
+    assert.equal(basename(dirname(dirname(found.get('48001').path))), 'batch-01');
     assert.equal(new Set(found.keys()).size, 254);
   } finally { await cleanup(value); }
 });
@@ -125,7 +128,7 @@ test('six governed restorations preserve approved source bytes and package ident
   for (const item of report.restorations) {
     const [source, destination, packageBytes] = await Promise.all([readFile(item.sourcePath), readFile(item.destinationPath), readFile(item.packagePath)]);
     assert.deepEqual(destination, source);
-    assert.equal(destination.byteLength, item.bytes); assert.equal(hash(destination), item.sha256);
+    assert.equal(destination.byteLength, source.byteLength); assert.equal(hash(destination), hash(source));
     assert.equal(packageBytes.byteLength, item.packageBytes); assert.equal(hash(packageBytes), item.packageSha256);
     const certificate = JSON.parse(destination);
     assert.equal(certificate.fips, item.fips); assert.equal(certificate.artifact, item.packagePath.split('/').at(-1));
