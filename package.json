@@ -117,6 +117,7 @@
     "build:lp125:tcjs": "node tools/lp125/build-tcjs-county-jail-evidence.mjs",
     "test:lp125": "node --test tests/lp125-tcjs-workbook-acquisition.test.mjs",
     "manufacture:lp126:evidence": "node tools/lp126/manufacture-statewide-evidence.mjs --all-registered",
-    "test:lp126": "node --test tests/lp126-texas-statewide-multi-class-evidence-manufacturing.test.mjs"
+    "test:lp126": "node --test tests/lp126-texas-statewide-multi-class-evidence-manufacturing.test.mjs",
+    "test:lp128": "node --test tests/lp128-texas-address-expansion-wave-2.test.mjs"
   }
 }

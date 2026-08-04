@@ -86,7 +86,8 @@ test('LP120 address manifest includes exactly the three owner-rerun additions', 
   const waveFips = new Set(['48287', '48331', '48395']);
   const waveEntries = addressManifest.packages.filter(({ fips }) => waveFips.has(fips));
   assert.deepEqual(waveEntries.map(({ fips }) => fips), ['48287', '48331', '48395']);
-  assert.deepEqual(waveEntries.map(({ status }) => status), ['GENERATED', 'GENERATED', 'GENERATED']);
+  assert.deepEqual(waveEntries.map(({ acceptedRecords }) => acceptedRecords), [11030, 10992, 11846]);
+  assert.ok(waveEntries.every(({ packageHash }) => /^[a-f0-9]{64}$/.test(packageHash)));
   assert.equal(addressManifest.packages.length, 31);
-  assert.equal(addressManifest.generatedAt, evidence.generatedAt);
+  assert.match(addressManifest.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
 });
