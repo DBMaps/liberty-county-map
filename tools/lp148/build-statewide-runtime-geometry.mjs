@@ -117,7 +117,7 @@ function parseArgs(argv) {
   const out = {}; for (let i = 0; i < argv.length; i += 1) { const a = argv[i]; if (a === '--source') out.sourcePath = argv[++i]; else if (a === '--membership') out.membershipPath = argv[++i]; else if (a === '--package') out.packagePath = argv[++i]; else if (a === '--manifest') out.manifestPath = argv[++i]; else if (a === '--expected-count') out.expectedCount = Number(argv[++i]); }
   return out;
 }
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const args = parseArgs(process.argv.slice(2));
     const command = process.argv.find(arg => ['--plan', '--build', '--verify', '--audit-runtime'].includes(arg)) ?? '--plan';
