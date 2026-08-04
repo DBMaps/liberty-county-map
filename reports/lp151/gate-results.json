@@ -1,0 +1,102 @@
+{
+  "gates": [
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "matchesIdentityFips": true,
+        "packageHashArtifactCount": 220,
+        "recognizedPackageIdentities": 254,
+        "uniquePackageHashFips": 220
+      },
+      "name": "Manufacturing",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "blockerCount": 28,
+        "certificateCount": 226,
+        "matchesIdentityFips": false,
+        "uniqueCertificateFips": 226
+      },
+      "name": "Certification",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "certificatePresenceCount": 226,
+        "packagePresenceCount": 254,
+        "publicationArtifactPresent": true,
+        "verificationStatus": "READ_ONLY_RECONCILED"
+      },
+      "name": "Storage",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "ascending": true,
+        "identityCount": 254,
+        "lp148Condition": "[LP148] tracked/generated package does not match deterministic rebuild",
+        "recognized": true
+      },
+      "name": "Geometry",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "ascending": true,
+        "count": 254,
+        "oneCountyPerIdentity": true,
+        "unique": true
+      },
+      "name": "Identity",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "activationCount": 0,
+        "approvedCountyCount": 0,
+        "candidateCountyCount": 0,
+        "deployedTransitionCountyCount": 0,
+        "lp138OperationalCount": 28,
+        "operationalCountyCount": 28
+      },
+      "name": "Membership",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "plannerArtifactPresent": true,
+        "preserved": true,
+        "waveAssignmentsDeterministic": true
+      },
+      "name": "Planner",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "deployedTransitionCountyCount": 0,
+        "deploymentPerformed": false
+      },
+      "name": "Deployment",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "activationCount": 0,
+        "activationPerformed": false
+      },
+      "name": "Activation",
+      "passed": true
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "schemaVersion": "gridly.lp151.gateResults.v1"
+}
