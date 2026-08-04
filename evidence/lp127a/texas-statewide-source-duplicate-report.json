@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "gridly-lp127a-duplicate-report-v1",
+  "milestone": "LP127A",
+  "exactDuplicateGroups": [
+    {
+      "duplicateGroup": "sha256-022b1738187f7cb9",
+      "sha256": "022b1738187f7cb9ef33a6508bfa1b60ff919043f49b410fbfc9db723f451536",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-044742a4dbd86628",
+      "sha256": "044742a4dbd8662863eaccd6c302a77a768703cce71bb316dac498f891c1cafa",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/calhoun-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-1074fc150fd2c7d1",
+      "sha256": "1074fc150fd2c7d1e0dd5b4e1b5c309176d912f6955e7a94f77d38fc2a28b6ab",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-11cd71a97dba1fd5",
+      "sha256": "11cd71a97dba1fd5de6061feff641426ac1f3d205d220c3d636eb9b200a290ed",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/lavaca-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-18d9b9d8678f2981",
+      "sha256": "18d9b9d8678f2981abf01906266ad913799ff5163bd215d1687f9739aa1029e9",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/fort-bend-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-1d9f25ac36406b33",
+      "sha256": "1d9f25ac36406b33facaa279226ab17a6aad622038a812e32224ef482b11ee5f",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/wharton-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-218c5d55f71fc668",
+      "sha256": "218c5d55f71fc66858d6eab44a56f54cfd901c74323d05aa5da69118fc168157",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/galveston-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-290a02386f4dacb2",
+      "sha256": "290a02386f4dacb21f7ffb3301e2fce4e04c6b05f2dda10530116fcb343ada8f",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/brazos-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-392de9ff3b02ce1e",
+      "sha256": "392de9ff3b02ce1ea3aefec83b7479bae9982bb7d6cf5bb1435c339a15d36ee9",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/orange-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/orange/boundary/orange-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-3b4978ceb1c0f6ec",
+      "sha256": "3b4978ceb1c0f6ec11e8ab48cb3fe469160297985d1d52e0ea2c69aedda14e19",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/tyler-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-3cec1bf5eb0cb064",
+      "sha256": "3cec1bf5eb0cb064475b363704362151c0ec2b83923685221beb2fd4f7afcd67",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/polk-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/polk/boundary/polk-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-59ba29fdff1aa6e8",
+      "sha256": "59ba29fdff1aa6e8e3b35f8e2e886101912639041d4b9f1b91dfe7ee4c88f764",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/jasper-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-5bf60d7c1d656794",
+      "sha256": "5bf60d7c1d656794a278254465da0bb15273540a4481c560fa3250049293d749",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/chambers-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-608204e127a06bf8",
+      "sha256": "608204e127a06bf8ed258695e54dbd183872998830db5637bc10b539a2a10118",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/jackson-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-672e5decc1ad9bbd",
+      "sha256": "672e5decc1ad9bbd5f7a1f128335751e2c9939edb30ed41fb1018d41e2fee255",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/jefferson-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-67cc770866661a8c",
+      "sha256": "67cc770866661a8c5463a09a0b4da25fbbe66c9ed8a63b3deb76d83348a8d154",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/grimes-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-6870da1816eaace0",
+      "sha256": "6870da1816eaace0f28bd7048a22f1fb3e6da9b4e1a79f3962ad0fc1f4b3904e",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/waller-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/waller/boundary/waller-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-6c56ac55bc50c829",
+      "sha256": "6c56ac55bc50c829e935bdafe67b69b59eda7e9d7478a34b1b85115a953c3edd",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/colorado-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-75323185a0bb51c3",
+      "sha256": "75323185a0bb51c3ed8a47c3a9cf738832f5a223e32d65d2c460404b965f1144",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/brazoria-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-78eece5350dcf582",
+      "sha256": "78eece5350dcf582f25287ba74bcde35724166f94ec0629f352a0f80b151b899",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/matagorda-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-7abd1020a19c7d9c",
+      "sha256": "7abd1020a19c7d9c2b7c4461f26fa9d09663c4230a4a6036f24a4b540619b2fc",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/fayette-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-84613cc1c9eaa371",
+      "sha256": "84613cc1c9eaa3711efe2bd29ed7ed2ed7efa4c8b8d1c4374e6e9b7a7af15b70",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/montgomery-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-a2016a99efa42275",
+      "sha256": "a2016a99efa422750b871b423a77b8e8844342b302433b72346ea883fc98a218",
+      "paths": [
+        "GRIDLY_APP_REPO/Crossing-Packages/tyler/Production/tyler-production-crossings.geojson",
+        "GRIDLY_APP_REPO/Crossing-Packages/tyler/tyler-crossings.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-bff86efafb05e8f3",
+      "sha256": "bff86efafb05e8f388a8d44384bac83e120da350ad0c0eb988ffb7c4fb77e72d",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/harris-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/harris/boundary/harris-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-c0806f8383340b5f",
+      "sha256": "c0806f8383340b5fe58939967ba4d71050f83d8d46b7ba7c8f972717b803c52c",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/walker-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/walker/boundary/walker-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-c3e6fe33fb477e8a",
+      "sha256": "c3e6fe33fb477e8a81906db9d5acaf9c0e3507770fd4bb8b69c7e6e08a2e141d",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/san-jacinto-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-ce61f1aa493c4fc9",
+      "sha256": "ce61f1aa493c4fc9bff747f1dbffb2b17d6e813c82ef53b60121ad63c167358c",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/newton-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/newton/boundary/newton-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-d5a551256e549928",
+      "sha256": "d5a551256e5499287ac1105c4f22cefb64cf0a0d632034e907ceb7f99a2b0c65",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/austin-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/austin/boundary/austin-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    },
+    {
+      "duplicateGroup": "sha256-eb777d28624f87d6",
+      "sha256": "eb777d28624f87d6f97ac40042fba5e273000a366288c59720250f5b1ffb2824",
+      "paths": [
+        "GRIDLY_APP_REPO/Gridly-Source-Data/Census/washington-county-2025-wgs84.geojson",
+        "GRIDLY_APP_REPO/assets/county-implementation/washington/boundary/washington-county-boundary.geojson"
+      ],
+      "classification": "EXACT_DUPLICATE",
+      "recommendation": "Retain governed source and runtime copies until a separate migration authorizes consolidation; do not delete in LP127A."
+    }
+  ],
+  "supersessionFindings": [
+    {
+      "family": "Rail Crossings",
+      "olderPattern": "GRIDLY_APP_REPO/Crossing-Packages/<county>/<county>-crossings.geojson",
+      "newerPattern": "GRIDLY_APP_REPO/Crossing-Packages/<county>/Production/<county>-production-crossings.geojson",
+      "classification": "REVIEW_SUPERSEDED_BY_PRODUCTION_CANDIDATE",
+      "recommendation": "Retain both under existing governance; treat review packages as superseded for production selection."
+    },
+    {
+      "family": "Addresses",
+      "source": "TxGIO statewide geodatabase",
+      "derivatives": "28 county JSONL.GZ packages",
+      "classification": "SOURCE_REFERENCED_BUT_NOT_PRESENT_DERIVATIVES_PRESENT",
+      "recommendation": "Do not mistake county derivatives for the statewide source."
+    }
+  ],
+  "sameNameDifferentHashGroups": []
+}
