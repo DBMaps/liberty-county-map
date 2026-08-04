@@ -119,6 +119,7 @@
     "manufacture:lp126:evidence": "node tools/lp126/manufacture-statewide-evidence.mjs --all-registered",
     "test:lp126": "node --test tests/lp126-texas-statewide-multi-class-evidence-manufacturing.test.mjs",
     "test:lp128": "node --test tests/lp128-texas-address-expansion-wave-2.test.mjs",
-    "test:lp129": "node --test tests/lp129-texas-address-expansion-wave-3.test.mjs"
+    "test:lp129": "node --test tests/lp129-texas-address-expansion-wave-3.test.mjs",
+    "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }

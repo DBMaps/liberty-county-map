@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "gridly-lp129-preflight-v1",
+  "schemaVersion": "gridly-lp129-reconciliation-v1",
   "milestone": "LP129",
-  "status": "BLOCKED_SOURCE_UNAVAILABLE",
-  "decision": "DO_NOT_MANUFACTURE",
-  "baseline": "9ae36009cd9cae7ae743521839961b43d628b162",
+  "status": "CANDIDATE_MANUFACTURING_COMPLETE",
+  "decision": "MERGE_CANDIDATE_ONLY",
+  "ownerManufacturingCommit": "7c558757",
   "branch": "LP129-—-Texas-Address-Expansion-Wave-3",
   "mission": "candidate address manufacturing only",
   "source": {
@@ -14,41 +14,50 @@
     "requiredRecordCount": 12142647,
     "sourceCrs": "EPSG:3857",
     "outputCrs": "EPSG:4326",
-    "availableInWorkspace": false,
-    "originalSourceCommitted": false,
-    "finding": "Neither Texas-2026.gdb nor another file geodatabase is mounted in the workspace. LP127B evidence describes an owner-controlled source; it does not contain the source bytes required by the builder."
+    "availableInReconciliationWorkspace": false,
+    "originalSourceCommitted": false
   },
   "counties": [
-    { "countyId": "burleson", "county": "Burleson County", "fips": "48051", "status": "NOT_MANUFACTURED" },
-    { "countyId": "trinity", "county": "Trinity County", "fips": "48455", "status": "NOT_MANUFACTURED" },
-    { "countyId": "victoria", "county": "Victoria County", "fips": "48469", "status": "NOT_MANUFACTURED" }
+    { "countyId": "burleson", "county": "Burleson County", "fips": "48051", "sourceRecordsRead": 17790, "acceptedRecords": 17790, "rejectedRecords": 0, "duplicates": 0, "packageBytes": 596519, "packageSha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb", "decompressedSha256": "38b0d09ba1e9b03377e24d7659e84b13cbff290400d47bba2672b35a0e0ff6cb", "status": "CANDIDATE_CERTIFIED" },
+    { "countyId": "trinity", "county": "Trinity County", "fips": "48455", "sourceRecordsRead": 13792, "acceptedRecords": 13750, "rejectedRecords": 0, "duplicates": 42, "packageBytes": 499106, "packageSha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62", "decompressedSha256": "cd67f65f0b6992db5d5acb22d97e4097e8a9911fac17e0ac2fc6d0407e9fa1f2", "status": "CANDIDATE_CERTIFIED" },
+    { "countyId": "victoria", "county": "Victoria County", "fips": "48469", "sourceRecordsRead": 46129, "acceptedRecords": 45991, "rejectedRecords": 0, "duplicates": 138, "packageBytes": 1326361, "packageSha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711", "decompressedSha256": "9dd05acd9aed0b67c7c90087905e59ff8d80d307e2c80f315c01658ffc8ef36a", "status": "CANDIDATE_CERTIFIED" }
   ],
+  "totals": { "sourceRecordsRead": 77711, "acceptedRecords": 77531, "rejectedRecords": 0, "duplicates": 180, "packageBytes": 2421986 },
   "audit": {
-    "startupBaselineMatched": true,
-    "requiredBranchEstablished": true,
-    "countyManifestEntriesVerified": true,
-    "existingCandidatePackages": 0,
-    "existingCandidateSidecars": 0,
-    "existingRuntimeCertificates": 0,
-    "existingCertificationReports": 0,
+    "committedOutputsOnly": true,
+    "manufacturingRerun": false,
+    "gzipAndJsonlValidatedWithNode": true,
+    "manifestPreviousBaseline": 31,
+    "manifestAdded": 3,
+    "manifestTotal": 34,
+    "uniqueManifestFips": 34,
+    "uniqueManifestPackageNames": 34,
     "productionRuntimeManifestSha256": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a"
   },
-  "authorizedResume": {
-    "command": "node tools/lp1051/manufacture-gridly-28-address-counties.mjs --fips 48051,48455,48469 --gdb <owner-path>/Texas-2026.gdb --reports reports/lp129-wave-3",
-    "requirements": [
-      "Mount the LP127B-inventoried owner source without committing it.",
-      "Run the selected three-county cohort only.",
-      "Independently audit package bytes, hashes, gzip JSONL records, sidecars, certificates, and certification reports.",
-      "Repeat manufacturing and compare governed package bytes for determinism.",
-      "Keep the candidate manifest activated false and do not alter the production runtime manifest."
-    ]
+  "determinism": {
+    "firstCommittedHashesReconciled": true,
+    "ownerRerunEvidencePresent": false,
+    "status": "FIRST_COMMITTED_BYTES_RECONCILED_RERUN_PENDING",
+    "comparisonCommand": "node tools/lp129/reconcile-package-rerun.mjs --first <first-run-package-directory> --second <rerun-package-directory>",
+    "governedFields": ["package filename", "compressed byte size", "package SHA-256"],
+    "ignoredMetadata": ["generatedAt", "report timestamps", "certificate timestamps", "absolute local paths"]
   },
+  "testsRun": [
+    "npm run test:lp129",
+    "npm run test:lp128",
+    "npm run test:lp1044:txgio",
+    "npm run test:lp1046",
+    "npm run test:lp1051",
+    "Node-based gzip/JSONL validation (included in test:lp129)",
+    "git diff --check"
+  ],
   "boundaries": {
     "candidateOnly": true,
     "candidateApproval": false,
     "productionAuthorization": false,
     "runtimeEligible": false,
     "storageUploadOccurred": false,
+    "supabaseChangesOccurred": false,
     "deploymentOccurred": false,
     "runtimeActivated": false,
     "protectedSystemsChanged": false,
