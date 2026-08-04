@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hockley-tx",
+  "county": "Hockley County",
+  "fips": "48219",
+  "artifact": "hockley-48219.addresses.jsonl.gz",
+  "sizeBytes": 362312,
+  "sha256": "a0d260678ad5abbd2732eb6e4036f4aa06f15c44d17ff8140bc3f84b7bea8171",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

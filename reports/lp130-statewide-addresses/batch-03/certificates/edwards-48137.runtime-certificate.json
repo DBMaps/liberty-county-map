@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "edwards-tx",
+  "county": "Edwards County",
+  "fips": "48137",
+  "artifact": "edwards-48137.addresses.jsonl.gz",
+  "sizeBytes": 136002,
+  "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

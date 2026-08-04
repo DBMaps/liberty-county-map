@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hill-tx",
+  "county": "Hill County",
+  "fips": "48217",
+  "artifact": "hill-48217.addresses.jsonl.gz",
+  "sizeBytes": 615230,
+  "sha256": "af888bfceb269fe6bd2fd281b5d8bca4f38724f700c80ad97f3b538e2d0ffa1d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

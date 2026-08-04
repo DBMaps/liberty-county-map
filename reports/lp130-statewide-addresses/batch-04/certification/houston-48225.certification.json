@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Houston County",
+  "countyFips": "48225",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 530218,
+  "sha256": "4481a984fc38a5490eed2c5dcf8658ab3d96532b3504b3b69a9bcb4daf52ce35",
+  "indexedAddressCount": 15044,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00390000082552433
+  },
+  "exactSample": {
+    "providerIdentity": "d0270300b5255fb20503",
+    "houseNumber": "100",
+    "canonicalRoad": "ANN STREET",
+    "city": "",
+    "zip": "",
+    "county": "Houston County",
+    "countyFips": "48225",
+    "query": "100 Ann Street TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 78.05960000120103,
+  "certificationStatus": "PASS",
+  "failures": []
+}

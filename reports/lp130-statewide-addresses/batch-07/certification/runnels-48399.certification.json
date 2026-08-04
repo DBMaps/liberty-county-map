@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Runnels County",
+  "countyFips": "48399",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 210395,
+  "sha256": "0196744b5ff61655e27ce3e1853c7a5308564d41ce4ea9d96a9cf3611f3cdea5",
+  "indexedAddressCount": 6957,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "8c29dafede27b5e998a1",
+    "houseNumber": "10",
+    "canonicalRoad": "BELLA VISTA",
+    "city": "BALLINGER",
+    "zip": "76821",
+    "county": "Runnels County",
+    "countyFips": "48399",
+    "query": "10 BELLA VISTA BALLINGER TX 76821",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2033,
+    "variantsTested": 6099,
+    "variantsPassed": 6099
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 33.4919999986887,
+  "certificationStatus": "PASS",
+  "failures": []
+}

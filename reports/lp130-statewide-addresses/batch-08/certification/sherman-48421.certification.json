@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Sherman County",
+  "countyFips": "48421",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 56729,
+  "sha256": "748423d24e05d41b5675de4775a7655fbe7ee996a475c69d123f47254c2514fd",
+  "indexedAddressCount": 1853,
+  "exactMatchStatistics": {
+    "sampled": 1853,
+    "passed": 1853,
+    "failed": 0,
+    "p95LookupMs": 0.008500002324581146
+  },
+  "exactSample": {
+    "providerIdentity": "dd40819fc18a5e062ac7",
+    "houseNumber": "10",
+    "canonicalRoad": "SOUTH MAPLE STREET",
+    "city": "",
+    "zip": "79084",
+    "county": "Sherman County",
+    "countyFips": "48421",
+    "query": "10 SOUTH MAPLE STREET TX 79084",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1853,
+    "truthfulNoResults": 1853,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1853,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1853,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 470,
+    "variantsTested": 1410,
+    "variantsPassed": 1410
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.711500000208616,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "clay-tx",
+  "county": "Clay County",
+  "fips": "48077",
+  "artifact": "clay-48077.addresses.jsonl.gz",
+  "sizeBytes": 214600,
+  "sha256": "22aa7426e8b9a9e53f622074f084d19b77ea41eb5f84fcd402573b561de5224b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

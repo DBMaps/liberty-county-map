@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kaufman County",
+  "countyFips": "48257",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2751662,
+  "sha256": "c737f45232b1d9bde1e859a61b3c13c6f67168eda274b63201f737bc27d46aa6",
+  "indexedAddressCount": 93927,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005099998787045479
+  },
+  "exactSample": {
+    "providerIdentity": "d00a24bd42a57b6e975a",
+    "houseNumber": "1",
+    "canonicalRoad": "BIRDSONG COURT",
+    "city": "Terrell",
+    "zip": "75160",
+    "county": "Kaufman County",
+    "countyFips": "48257",
+    "query": "1 Birdsong Court Terrell TX 75160",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 608.499200001359,
+  "certificationStatus": "PASS",
+  "failures": []
+}

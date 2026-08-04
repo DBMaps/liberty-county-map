@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cass-tx",
+  "county": "Cass County",
+  "fips": "48067",
+  "artifact": "cass-48067.addresses.jsonl.gz",
+  "sizeBytes": 581032,
+  "sha256": "e61469e71ac6dc74dcf47e60418f4cc3991ee680e79d6394c4247bbbef526392",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

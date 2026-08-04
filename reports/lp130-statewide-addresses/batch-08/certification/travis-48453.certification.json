@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Travis County",
+  "countyFips": "48453",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 14405442,
+  "sha256": "2c3774cfbc04bb7eaf7a16ef013ab02fc6c70978206309ce7a8c348bc0be2c1e",
+  "indexedAddressCount": 439984,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.010699998587369919
+  },
+  "exactSample": {
+    "providerIdentity": "ca35eafa603733a8651c",
+    "houseNumber": "1",
+    "canonicalRoad": "APPLEGREEN COURT",
+    "city": "Austin",
+    "zip": "78738",
+    "county": "Travis County",
+    "countyFips": "48453",
+    "query": "1 Applegreen Court Austin TX 78738",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1504,
+    "variantsTested": 4512,
+    "variantsPassed": 4512
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 3160.2719000019133,
+  "certificationStatus": "PASS",
+  "failures": []
+}

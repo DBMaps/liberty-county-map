@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "titus-tx",
+  "county": "Titus County",
+  "fips": "48449",
+  "artifact": "titus-48449.addresses.jsonl.gz",
+  "sizeBytes": 473449,
+  "sha256": "bcb39dea85ebdf6105e36511192cf630334f95e400110248677dacaf4b323f87",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

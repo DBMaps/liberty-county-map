@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Cottle County",
+  "countyFips": "48101",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 38539,
+  "sha256": "8d5b49f5de43af20ba67efa6b6bdbad31dc973e44458ec544e5ff2e31fd22f00",
+  "indexedAddressCount": 1218,
+  "exactMatchStatistics": {
+    "sampled": 1218,
+    "passed": 1218,
+    "failed": 0,
+    "p95LookupMs": 0.003800000064074993
+  },
+  "exactSample": {
+    "providerIdentity": "097f5ebf2a86911a6c0f",
+    "houseNumber": "100",
+    "canonicalRoad": "CLARE STREET",
+    "city": "PADUCAH",
+    "zip": "79248",
+    "county": "Cottle County",
+    "countyFips": "48101",
+    "query": "100 CLARE STREET PADUCAH TX 79248",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1218,
+    "truthfulNoResults": 1218,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1218,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1218,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 281,
+    "variantsTested": 843,
+    "variantsPassed": 843
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 11.996099999640137,
+  "certificationStatus": "PASS",
+  "failures": []
+}

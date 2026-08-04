@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "real-tx",
+  "county": "Real County",
+  "fips": "48385",
+  "artifact": "real-48385.addresses.jsonl.gz",
+  "sizeBytes": 153752,
+  "sha256": "46a7cca175e8401a7de48ba4d50caf10ea76966d064369ba536b5067e41fbe04",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

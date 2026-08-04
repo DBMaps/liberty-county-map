@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Zapata County",
+  "countyFips": "48505",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 365220,
+  "sha256": "7a9bbec3f625b785a0dc5cc4e78a82640177054b53e6df22e5f80a5c864ffd3c",
+  "indexedAddressCount": 10968,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "537ea5bf7916f2a1a3c2",
+    "houseNumber": "1",
+    "canonicalRoad": "LAS PALMAS LOOP",
+    "city": "",
+    "zip": "",
+    "county": "Zapata County",
+    "countyFips": "48505",
+    "query": "1 Las Palmas Loop TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 351,
+    "variantsTested": 1053,
+    "variantsPassed": 1053
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 54.54690000042319,
+  "certificationStatus": "PASS",
+  "failures": []
+}

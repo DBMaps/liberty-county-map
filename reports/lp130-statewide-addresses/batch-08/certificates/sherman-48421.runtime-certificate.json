@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "sherman-tx",
+  "county": "Sherman County",
+  "fips": "48421",
+  "artifact": "sherman-48421.addresses.jsonl.gz",
+  "sizeBytes": 56729,
+  "sha256": "748423d24e05d41b5675de4775a7655fbe7ee996a475c69d123f47254c2514fd",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

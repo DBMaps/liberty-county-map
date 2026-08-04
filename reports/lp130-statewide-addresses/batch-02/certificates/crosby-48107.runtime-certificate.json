@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "crosby-tx",
+  "county": "Crosby County",
+  "fips": "48107",
+  "artifact": "crosby-48107.addresses.jsonl.gz",
+  "sizeBytes": 105139,
+  "sha256": "04779b8783f2f82a9587331d820275cff1e48d1397f1a76ab6ac622a4778f089",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

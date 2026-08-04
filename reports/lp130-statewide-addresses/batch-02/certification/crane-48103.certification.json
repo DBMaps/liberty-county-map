@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Crane County",
+  "countyFips": "48103",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 48793,
+  "sha256": "e7cb5f03ff9367798e137ae858a34a2210d8cd7137b1e7469bb0b40c6fb68c13",
+  "indexedAddressCount": 1497,
+  "exactMatchStatistics": {
+    "sampled": 1496,
+    "passed": 1496,
+    "failed": 0,
+    "p95LookupMs": 0.0030999998562037945
+  },
+  "exactSample": {
+    "providerIdentity": "c5a7800b8de7931cef8b",
+    "houseNumber": "100",
+    "canonicalRoad": "BURK STREET",
+    "city": "",
+    "zip": "79731",
+    "county": "Crane County",
+    "countyFips": "48103",
+    "query": "100 BURK STREET TX 79731",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1496,
+    "truthfulNoResults": 1496,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1496,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1496,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 14,
+    "variantsTested": 42,
+    "variantsPassed": 42
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 7.853300000075251,
+  "certificationStatus": "PASS",
+  "failures": []
+}

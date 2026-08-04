@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lipscomb County",
+  "countyFips": "48295",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 45911,
+  "sha256": "d347a9651dde12f35ee37f64f0918a85d731f2382af783250f44c29e8f092ae3",
+  "indexedAddressCount": 1419,
+  "exactMatchStatistics": {
+    "sampled": 1416,
+    "passed": 1416,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "e8e8eb01ed54e7efb6ae",
+    "houseNumber": "1",
+    "canonicalRoad": "EAST MITCHELL ROAD",
+    "city": "",
+    "zip": "79005",
+    "county": "Lipscomb County",
+    "countyFips": "48295",
+    "query": "1 EAST MITCHELL ROAD TX 79005",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1416,
+    "truthfulNoResults": 1416,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1416,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1416,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 215,
+    "variantsTested": 645,
+    "variantsPassed": 645
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 7.867900000885129,
+  "certificationStatus": "PASS",
+  "failures": []
+}

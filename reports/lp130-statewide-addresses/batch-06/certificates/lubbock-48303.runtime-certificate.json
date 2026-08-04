@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lubbock-tx",
+  "county": "Lubbock County",
+  "fips": "48303",
+  "artifact": "lubbock-48303.addresses.jsonl.gz",
+  "sizeBytes": 4986893,
+  "sha256": "60c43c58661f474849ea7ff0dd47326ecfdc9491cc2995e572235dfdef872efc",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

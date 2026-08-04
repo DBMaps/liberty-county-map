@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "ellis-tx",
+  "county": "Ellis County",
+  "fips": "48139",
+  "artifact": "ellis-48139.addresses.jsonl.gz",
+  "sizeBytes": 2800026,
+  "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

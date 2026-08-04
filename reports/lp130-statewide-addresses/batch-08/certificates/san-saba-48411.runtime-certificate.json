@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "san-saba-tx",
+  "county": "San Saba County",
+  "fips": "48411",
+  "artifact": "san-saba-48411.addresses.jsonl.gz",
+  "sizeBytes": 156432,
+  "sha256": "52d9933dfc4be898f6ad620e6517fb0d081254739e5167dcea4ef7002381a1ac",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "parmer-tx",
+  "county": "Parmer County",
+  "fips": "48369",
+  "artifact": "parmer-48369.addresses.jsonl.gz",
+  "sizeBytes": 134975,
+  "sha256": "957f7042d4686f8e0e9c98dddffb085175fe73f1ea892aa8e2b0bf4886196563",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

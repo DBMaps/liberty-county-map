@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "La Salle County",
+  "countyFips": "48283",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 138933,
+  "sha256": "6443183bb0b4c1794a91e8cb4f10e0a65c2f1fe94497742e07c9e4f23978f258",
+  "indexedAddressCount": 4297,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037999991327524185
+  },
+  "exactSample": {
+    "providerIdentity": "c6d886a89a0bded6a276",
+    "houseNumber": "100",
+    "canonicalRoad": "BLUE BONNET STREET",
+    "city": "",
+    "zip": "78019",
+    "county": "La Salle County",
+    "countyFips": "48283",
+    "query": "100 BLUE BONNET STREET TX 78019",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 261,
+    "variantsTested": 783,
+    "variantsPassed": 783
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 35.55140000022948,
+  "certificationStatus": "PASS",
+  "failures": []
+}

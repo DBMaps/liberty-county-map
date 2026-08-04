@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "harrison-tx",
+  "county": "Harrison County",
+  "fips": "48203",
+  "artifact": "harrison-48203.addresses.jsonl.gz",
+  "sizeBytes": 1069866,
+  "sha256": "e8d9c2aa5baa19993fd7181cad89bf1851915fbd0729313e13e3c1ecf650203e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

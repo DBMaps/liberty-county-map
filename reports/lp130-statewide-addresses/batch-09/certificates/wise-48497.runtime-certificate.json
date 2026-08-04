@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wise-tx",
+  "county": "Wise County",
+  "fips": "48497",
+  "artifact": "wise-48497.addresses.jsonl.gz",
+  "sizeBytes": 1366288,
+  "sha256": "e2fdc49e6bd22c60eb7eaaebae35a226a87ede21d52b2eda09cc3f177add05f7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

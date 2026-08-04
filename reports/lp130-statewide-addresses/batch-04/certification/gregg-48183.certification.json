@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Gregg County",
+  "countyFips": "48183",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 760830,
+  "sha256": "c859177b90e8839ba995878f4a95a20bf53e54ddc3d74f6de911da0747ecc3ff",
+  "indexedAddressCount": 23776,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "cca42f343ac4c1f722f4",
+    "houseNumber": "1",
+    "canonicalRoad": "BAR CHASE TRAIL",
+    "city": "LONGVIEW",
+    "zip": "75605",
+    "county": "Gregg County",
+    "countyFips": "48183",
+    "query": "1 BAR CHASE TRAIL LONGVIEW TX 75605",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2620,
+    "variantsTested": 7860,
+    "variantsPassed": 7860
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 138.87739999964833,
+  "certificationStatus": "PASS",
+  "failures": []
+}

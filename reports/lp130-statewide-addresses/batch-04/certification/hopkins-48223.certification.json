@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hopkins County",
+  "countyFips": "48223",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 641263,
+  "sha256": "4cc146b1e839ff1cbe51ddb27f276bb3577d493b3680a5dec96b99414bf26196",
+  "indexedAddressCount": 20350,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0044999998062849045
+  },
+  "exactSample": {
+    "providerIdentity": "64313f07d7f4e71cbcb5",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 2397",
+    "city": "Winnsboro",
+    "zip": "75494",
+    "county": "Hopkins County",
+    "countyFips": "48223",
+    "query": "1 County Road 2397 Winnsboro TX 75494",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 125.38609999977052,
+  "certificationStatus": "PASS",
+  "failures": []
+}

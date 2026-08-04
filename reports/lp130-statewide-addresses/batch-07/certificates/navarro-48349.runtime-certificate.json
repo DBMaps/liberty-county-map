@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "navarro-tx",
+  "county": "Navarro County",
+  "fips": "48349",
+  "artifact": "navarro-48349.addresses.jsonl.gz",
+  "sizeBytes": 856474,
+  "sha256": "25be1fa1c50f123c2058f6e1c5bcc695b52228e5858b837463933d32409d73ef",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

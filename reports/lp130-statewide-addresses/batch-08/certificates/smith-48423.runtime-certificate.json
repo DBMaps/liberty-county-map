@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "smith-tx",
+  "county": "Smith County",
+  "fips": "48423",
+  "artifact": "smith-48423.addresses.jsonl.gz",
+  "sizeBytes": 4082413,
+  "sha256": "81ec218b7fe9612bbe3a0d05dddfcaffdff6c9bcd703e27e9237c77390803093",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

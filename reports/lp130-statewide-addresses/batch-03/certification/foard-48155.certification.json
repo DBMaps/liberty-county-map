@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Foard County",
+  "countyFips": "48155",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 33122,
+  "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef",
+  "indexedAddressCount": 1040,
+  "exactMatchStatistics": {
+    "sampled": 1040,
+    "passed": 1040,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "7201dce77d1e97eedb8c",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST COMMERCE STREET",
+    "city": "CROWELL",
+    "zip": "79227",
+    "county": "Foard County",
+    "countyFips": "48155",
+    "query": "100 EAST COMMERCE STREET CROWELL TX 79227",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1040,
+    "truthfulNoResults": 1040,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1040,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1040,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 279,
+    "variantsTested": 837,
+    "variantsPassed": 837
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 8.624699999578297,
+  "certificationStatus": "PASS",
+  "failures": []
+}

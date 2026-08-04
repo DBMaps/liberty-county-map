@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "live-oak-tx",
+  "county": "Live Oak County",
+  "fips": "48297",
+  "artifact": "live-oak-48297.addresses.jsonl.gz",
+  "sizeBytes": 132323,
+  "sha256": "2f1eae8281d7b2328c168cc9d9a8b88b62fe8ff04c4f268173bd33a2d0a9bc3e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

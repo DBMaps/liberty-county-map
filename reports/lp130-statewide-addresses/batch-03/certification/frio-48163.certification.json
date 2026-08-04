@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Frio County",
+  "countyFips": "48163",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 201804,
+  "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c",
+  "indexedAddressCount": 6334,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003999999724328518
+  },
+  "exactSample": {
+    "providerIdentity": "eb4a3acccf252d9a2a63",
+    "houseNumber": "1",
+    "canonicalRoad": "GREY WOLF DRIVE",
+    "city": "Dilley",
+    "zip": "78017",
+    "county": "Frio County",
+    "countyFips": "48163",
+    "query": "1 Grey Wolf Drive Dilley TX 78017",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 32.50250000040978,
+  "certificationStatus": "PASS",
+  "failures": []
+}

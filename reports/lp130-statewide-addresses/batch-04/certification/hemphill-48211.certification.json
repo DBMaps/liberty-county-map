@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hemphill County",
+  "countyFips": "48211",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 65577,
+  "sha256": "bf673e84ea159d3710553cb464a9c979718ec0e66cc27e178f88b22f96103e9a",
+  "indexedAddressCount": 2083,
+  "exactMatchStatistics": {
+    "sampled": 2083,
+    "passed": 2083,
+    "failed": 0,
+    "p95LookupMs": 0.0040000006556510925
+  },
+  "exactSample": {
+    "providerIdentity": "a55b2fd543d8d79cb8d4",
+    "houseNumber": "1",
+    "canonicalRoad": "MAIN STREET",
+    "city": "",
+    "zip": "79014",
+    "county": "Hemphill County",
+    "countyFips": "48211",
+    "query": "1 MAIN STREET TX 79014",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2083,
+    "truthfulNoResults": 2083,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2083,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2083,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 407,
+    "variantsTested": 1221,
+    "variantsPassed": 1221
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.434699999168515,
+  "certificationStatus": "PASS",
+  "failures": []
+}

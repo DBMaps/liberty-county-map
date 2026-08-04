@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lampasas-tx",
+  "county": "Lampasas County",
+  "fips": "48281",
+  "artifact": "lampasas-48281.addresses.jsonl.gz",
+  "sizeBytes": 347475,
+  "sha256": "ea2062b469b9b8271e7abdcfa3046b8fa218cb46ce7c68e692c78735c44edb29",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Dallam County",
+  "countyFips": "48111",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 128707,
+  "sha256": "3be8b587f2d76a952b58cf3fac6b1ea9b5eca2af4960edfbbf6bd037279f31b7",
+  "indexedAddressCount": 4284,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0032999999821186066
+  },
+  "exactSample": {
+    "providerIdentity": "1dae099cc5a364f9f413",
+    "houseNumber": "1",
+    "canonicalRoad": "CHERRYWOOD PLACE",
+    "city": "",
+    "zip": "79022",
+    "county": "Dallam County",
+    "countyFips": "48111",
+    "query": "1 CHERRYWOOD PLACE TX 79022",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 492,
+    "variantsTested": 1476,
+    "variantsPassed": 1476
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 20.62930000014603,
+  "certificationStatus": "PASS",
+  "failures": []
+}

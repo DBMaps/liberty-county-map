@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "collingsworth-tx",
+  "county": "Collingsworth County",
+  "fips": "48087",
+  "artifact": "collingsworth-48087.addresses.jsonl.gz",
+  "sizeBytes": 59143,
+  "sha256": "4b2c8c3e41fb4dc9a61b38026d774bebd671a8fa491ac794f4784fb7b5769265",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

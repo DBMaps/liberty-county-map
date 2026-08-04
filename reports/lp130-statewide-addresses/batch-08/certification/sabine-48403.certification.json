@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Sabine County",
+  "countyFips": "48403",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 471304,
+  "sha256": "966c256761daac545efed2345919416d60ab9904498ae6eb5532ee5d0cd60f45",
+  "indexedAddressCount": 12603,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004099998623132706
+  },
+  "exactSample": {
+    "providerIdentity": "08fc26c879fb56d14e4e",
+    "houseNumber": "100",
+    "canonicalRoad": "APPOMATTOX STREET",
+    "city": "",
+    "zip": "",
+    "county": "Sabine County",
+    "countyFips": "48403",
+    "query": "100 Appomattox Street TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 733,
+    "variantsTested": 2199,
+    "variantsPassed": 2199
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 87.37240000069141,
+  "certificationStatus": "PASS",
+  "failures": []
+}

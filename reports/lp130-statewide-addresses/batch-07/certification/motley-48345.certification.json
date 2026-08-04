@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Motley County",
+  "countyFips": "48345",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 38453,
+  "sha256": "7715b0b9f21025760bc2c7ed16c78c3062b88bb123750c4f0c15efcdf3f0d189",
+  "indexedAddressCount": 1202,
+  "exactMatchStatistics": {
+    "sampled": 1143,
+    "passed": 1143,
+    "failed": 0,
+    "p95LookupMs": 0.004099998623132706
+  },
+  "exactSample": {
+    "providerIdentity": "221bb7c136c29623262b",
+    "houseNumber": "10",
+    "canonicalRoad": "CR 114",
+    "city": "MATADOR",
+    "zip": "79244",
+    "county": "Motley County",
+    "countyFips": "48345",
+    "query": "10 COUNTY ROAD 114 MATADOR TX 79244",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1143,
+    "truthfulNoResults": 1143,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1143,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1143,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 283,
+    "variantsTested": 849,
+    "variantsPassed": 849
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 12.014699999243021,
+  "certificationStatus": "PASS",
+  "failures": []
+}

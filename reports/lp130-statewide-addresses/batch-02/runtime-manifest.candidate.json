@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-02",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "camp-tx",
+      "county": "Camp County",
+      "fips": "48063",
+      "path": "data/generated/lp104/txgio-addresses/camp-48063.addresses.jsonl.gz",
+      "sizeBytes": 271291,
+      "sha256": "c3f3bd18cabc9d04110406f8a5a84bae6a5427e42b62d84641300c2b17114e9b",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/camp-48063.runtime-certificate.json"
+    },
+    {
+      "countyId": "carson-tx",
+      "county": "Carson County",
+      "fips": "48065",
+      "path": "data/generated/lp104/txgio-addresses/carson-48065.addresses.jsonl.gz",
+      "sizeBytes": 118586,
+      "sha256": "984013aca1f622f3d35b729f92abbc9bc1cbed4faecdceddf919422b2c5eb9fb",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/carson-48065.runtime-certificate.json"
+    },
+    {
+      "countyId": "cass-tx",
+      "county": "Cass County",
+      "fips": "48067",
+      "path": "data/generated/lp104/txgio-addresses/cass-48067.addresses.jsonl.gz",
+      "sizeBytes": 581032,
+      "sha256": "e61469e71ac6dc74dcf47e60418f4cc3991ee680e79d6394c4247bbbef526392",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/cass-48067.runtime-certificate.json"
+    },
+    {
+      "countyId": "castro-tx",
+      "county": "Castro County",
+      "fips": "48069",
+      "path": "data/generated/lp104/txgio-addresses/castro-48069.addresses.jsonl.gz",
+      "sizeBytes": 119147,
+      "sha256": "a43b9e008b31bd9547a6b9bbbe7679184f3ca54a49ccbd5a663fbe7954fbe499",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/castro-48069.runtime-certificate.json"
+    },
+    {
+      "countyId": "childress-tx",
+      "county": "Childress County",
+      "fips": "48075",
+      "path": "data/generated/lp104/txgio-addresses/childress-48075.addresses.jsonl.gz",
+      "sizeBytes": 99342,
+      "sha256": "2772834a3bcfac66769cdb523574573254dbaa09e85dfa5426d95f894e0fe80d",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/childress-48075.runtime-certificate.json"
+    },
+    {
+      "countyId": "clay-tx",
+      "county": "Clay County",
+      "fips": "48077",
+      "path": "data/generated/lp104/txgio-addresses/clay-48077.addresses.jsonl.gz",
+      "sizeBytes": 214600,
+      "sha256": "22aa7426e8b9a9e53f622074f084d19b77ea41eb5f84fcd402573b561de5224b",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/clay-48077.runtime-certificate.json"
+    },
+    {
+      "countyId": "cochran-tx",
+      "county": "Cochran County",
+      "fips": "48079",
+      "path": "data/generated/lp104/txgio-addresses/cochran-48079.addresses.jsonl.gz",
+      "sizeBytes": 48182,
+      "sha256": "ea0a0ccead83d3c19741765704c2fd6f0e2566b53bf4cc43593f653d3f608add",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/cochran-48079.runtime-certificate.json"
+    },
+    {
+      "countyId": "coke-tx",
+      "county": "Coke County",
+      "fips": "48081",
+      "path": "data/generated/lp104/txgio-addresses/coke-48081.addresses.jsonl.gz",
+      "sizeBytes": 103197,
+      "sha256": "9003dd61418ef336a53c9e2d24182b0a6ad322335648b0655498ed7cbb02d645",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/coke-48081.runtime-certificate.json"
+    },
+    {
+      "countyId": "coleman-tx",
+      "county": "Coleman County",
+      "fips": "48083",
+      "path": "data/generated/lp104/txgio-addresses/coleman-48083.addresses.jsonl.gz",
+      "sizeBytes": 231311,
+      "sha256": "053afabb0188ff65ada991072aaf1383e10d5230947693b93165f3d7f9729d1d",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/coleman-48083.runtime-certificate.json"
+    },
+    {
+      "countyId": "collin-tx",
+      "county": "Collin County",
+      "fips": "48085",
+      "path": "data/generated/lp104/txgio-addresses/collin-48085.addresses.jsonl.gz",
+      "sizeBytes": 9981010,
+      "sha256": "1b9b9ea4116e505358abfb1274bb10d3702e753ebcc9dd3626b98a2d3aebb87d",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/collin-48085.runtime-certificate.json"
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "county": "Collingsworth County",
+      "fips": "48087",
+      "path": "data/generated/lp104/txgio-addresses/collingsworth-48087.addresses.jsonl.gz",
+      "sizeBytes": 59143,
+      "sha256": "4b2c8c3e41fb4dc9a61b38026d774bebd671a8fa491ac794f4784fb7b5769265",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/collingsworth-48087.runtime-certificate.json"
+    },
+    {
+      "countyId": "comal-tx",
+      "county": "Comal County",
+      "fips": "48091",
+      "path": "data/generated/lp104/txgio-addresses/comal-48091.addresses.jsonl.gz",
+      "sizeBytes": 3360569,
+      "sha256": "f5cd65b8c56cb74e7137f861ab35ba5e140923d2e51e64e9a5b8f8d14b67e0cd",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/comal-48091.runtime-certificate.json"
+    },
+    {
+      "countyId": "comanche-tx",
+      "county": "Comanche County",
+      "fips": "48093",
+      "path": "data/generated/lp104/txgio-addresses/comanche-48093.addresses.jsonl.gz",
+      "sizeBytes": 323511,
+      "sha256": "6093c84a7f48163df60827191c86ee258fedb9136dd5d104c6233600c2e99ede",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/comanche-48093.runtime-certificate.json"
+    },
+    {
+      "countyId": "concho-tx",
+      "county": "Concho County",
+      "fips": "48095",
+      "path": "data/generated/lp104/txgio-addresses/concho-48095.addresses.jsonl.gz",
+      "sizeBytes": 104851,
+      "sha256": "77d291f9e853f88d6753c5738b0801515b1e69a3a2f83303d12d20b167c327e2",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/concho-48095.runtime-certificate.json"
+    },
+    {
+      "countyId": "cooke-tx",
+      "county": "Cooke County",
+      "fips": "48097",
+      "path": "data/generated/lp104/txgio-addresses/cooke-48097.addresses.jsonl.gz",
+      "sizeBytes": 745531,
+      "sha256": "dce3ee97d5f7be2a50e20c5b969bd25ec4c036ffab60b30713416ac75a4b6923",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/cooke-48097.runtime-certificate.json"
+    },
+    {
+      "countyId": "coryell-tx",
+      "county": "Coryell County",
+      "fips": "48099",
+      "path": "data/generated/lp104/txgio-addresses/coryell-48099.addresses.jsonl.gz",
+      "sizeBytes": 916235,
+      "sha256": "d41c610089480eecd4c92b4619e0b2cca831c5a10b531315854c8f5c0f3163b7",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/coryell-48099.runtime-certificate.json"
+    },
+    {
+      "countyId": "cottle-tx",
+      "county": "Cottle County",
+      "fips": "48101",
+      "path": "data/generated/lp104/txgio-addresses/cottle-48101.addresses.jsonl.gz",
+      "sizeBytes": 38539,
+      "sha256": "8d5b49f5de43af20ba67efa6b6bdbad31dc973e44458ec544e5ff2e31fd22f00",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/cottle-48101.runtime-certificate.json"
+    },
+    {
+      "countyId": "crane-tx",
+      "county": "Crane County",
+      "fips": "48103",
+      "path": "data/generated/lp104/txgio-addresses/crane-48103.addresses.jsonl.gz",
+      "sizeBytes": 48793,
+      "sha256": "e7cb5f03ff9367798e137ae858a34a2210d8cd7137b1e7469bb0b40c6fb68c13",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/crane-48103.runtime-certificate.json"
+    },
+    {
+      "countyId": "crockett-tx",
+      "county": "Crockett County",
+      "fips": "48105",
+      "path": "data/generated/lp104/txgio-addresses/crockett-48105.addresses.jsonl.gz",
+      "sizeBytes": 100165,
+      "sha256": "e960b94bd070c90a5bc1a2cf38a522e7f25b89392bf5e1fa6d8e5e3d0205fc84",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/crockett-48105.runtime-certificate.json"
+    },
+    {
+      "countyId": "crosby-tx",
+      "county": "Crosby County",
+      "fips": "48107",
+      "path": "data/generated/lp104/txgio-addresses/crosby-48107.addresses.jsonl.gz",
+      "sizeBytes": 105139,
+      "sha256": "04779b8783f2f82a9587331d820275cff1e48d1397f1a76ab6ac622a4778f089",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/crosby-48107.runtime-certificate.json"
+    },
+    {
+      "countyId": "culberson-tx",
+      "county": "Culberson County",
+      "fips": "48109",
+      "path": "data/generated/lp104/txgio-addresses/culberson-48109.addresses.jsonl.gz",
+      "sizeBytes": 87166,
+      "sha256": "77ec6ea6b8fcc2c0008b516f9258a059768a14f013dd22fb27476defd83a66dc",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/culberson-48109.runtime-certificate.json"
+    },
+    {
+      "countyId": "dallam-tx",
+      "county": "Dallam County",
+      "fips": "48111",
+      "path": "data/generated/lp104/txgio-addresses/dallam-48111.addresses.jsonl.gz",
+      "sizeBytes": 128707,
+      "sha256": "3be8b587f2d76a952b58cf3fac6b1ea9b5eca2af4960edfbbf6bd037279f31b7",
+      "certificate": "reports/lp130-statewide-addresses/batch-02/certificates/dallam-48111.runtime-certificate.json"
+    }
+  ]
+}

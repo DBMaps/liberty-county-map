@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "camp-tx",
+  "county": "Camp County",
+  "fips": "48063",
+  "artifact": "camp-48063.addresses.jsonl.gz",
+  "sizeBytes": 271291,
+  "sha256": "c3f3bd18cabc9d04110406f8a5a84bae6a5427e42b62d84641300c2b17114e9b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

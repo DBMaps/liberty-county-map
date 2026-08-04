@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "ector-tx",
+  "county": "Ector County",
+  "fips": "48135",
+  "artifact": "ector-48135.addresses.jsonl.gz",
+  "sizeBytes": 2044691,
+  "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

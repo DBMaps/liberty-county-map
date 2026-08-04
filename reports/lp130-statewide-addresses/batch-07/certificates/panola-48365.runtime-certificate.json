@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "panola-tx",
+  "county": "Panola County",
+  "fips": "48365",
+  "artifact": "panola-48365.addresses.jsonl.gz",
+  "sizeBytes": 514964,
+  "sha256": "6365321596b61d8fe1d6b53a8911f4fa505d7e962332e7cd9fbab953ceac6044",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

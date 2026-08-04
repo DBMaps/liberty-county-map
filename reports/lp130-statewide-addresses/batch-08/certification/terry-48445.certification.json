@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Terry County",
+  "countyFips": "48445",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 190412,
+  "sha256": "d63fb32d707fa04ca7cf713b8503e0ce6c7f7b1b56c44de4cbc60dd0fb2c37c3",
+  "indexedAddressCount": 5984,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "a1ad90bf42e57c528f14",
+    "houseNumber": "100",
+    "canonicalRoad": "SEAGRAVES ROAD",
+    "city": "BROWNFIELD",
+    "zip": "79316",
+    "county": "Terry County",
+    "countyFips": "48445",
+    "query": "100 SEAGRAVES ROAD BROWNFIELD TX 79316",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1048,
+    "variantsTested": 3144,
+    "variantsPassed": 3144
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 32.342599999159575,
+  "certificationStatus": "PASS",
+  "failures": []
+}

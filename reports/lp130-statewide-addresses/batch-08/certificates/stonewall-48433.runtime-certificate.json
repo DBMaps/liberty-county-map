@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "stonewall-tx",
+  "county": "Stonewall County",
+  "fips": "48433",
+  "artifact": "stonewall-48433.addresses.jsonl.gz",
+  "sizeBytes": 44573,
+  "sha256": "d3ba0de5719b8906eef8c70d6ed9f55c425d3e90e69e140227b451ac7f4db206",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

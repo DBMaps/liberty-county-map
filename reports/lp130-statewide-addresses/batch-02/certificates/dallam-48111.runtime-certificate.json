@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dallam-tx",
+  "county": "Dallam County",
+  "fips": "48111",
+  "artifact": "dallam-48111.addresses.jsonl.gz",
+  "sizeBytes": 128707,
+  "sha256": "3be8b587f2d76a952b58cf3fac6b1ea9b5eca2af4960edfbbf6bd037279f31b7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

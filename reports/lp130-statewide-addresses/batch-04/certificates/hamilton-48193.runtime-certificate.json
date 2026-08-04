@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hamilton-tx",
+  "county": "Hamilton County",
+  "fips": "48193",
+  "artifact": "hamilton-48193.addresses.jsonl.gz",
+  "sizeBytes": 141949,
+  "sha256": "7e1b7c1b0eecf52e94a2ad550e587889177f00379d136312a0f7734a7ba0312b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

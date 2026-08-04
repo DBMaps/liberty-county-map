@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hall County",
+  "countyFips": "48191",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 65154,
+  "sha256": "f98eff64e7f38c07c568778ddc6a2ff3846d66281ecb47162ef44168b09b2381",
+  "indexedAddressCount": 2162,
+  "exactMatchStatistics": {
+    "sampled": 2161,
+    "passed": 2161,
+    "failed": 0,
+    "p95LookupMs": 0.003100000321865082
+  },
+  "exactSample": {
+    "providerIdentity": "c13edb0f52a93205b9d0",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST NOEL STREET",
+    "city": "",
+    "zip": "79245",
+    "county": "Hall County",
+    "countyFips": "48191",
+    "query": "100 EAST NOEL STREET TX 79245",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2161,
+    "truthfulNoResults": 2161,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2161,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2161,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 271,
+    "variantsTested": 813,
+    "variantsPassed": 813
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 11.541799999773502,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "McCulloch County",
+  "countyFips": "48307",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 190964,
+  "sha256": "29df3edb5dda0b6e6dc6b309b93d0446f345d21f088768b23391c47f900ae48e",
+  "indexedAddressCount": 6058,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "b261d59396b3979b9ff3",
+    "houseNumber": "10",
+    "canonicalRoad": "CR 203",
+    "city": "",
+    "zip": "76825",
+    "county": "McCulloch County",
+    "countyFips": "48307",
+    "query": "10 COUNTY ROAD 203 TX 76825",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1319,
+    "variantsTested": 3957,
+    "variantsPassed": 3957
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 31.748999999836087,
+  "certificationStatus": "PASS",
+  "failures": []
+}

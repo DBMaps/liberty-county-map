@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Clay County",
+  "countyFips": "48077",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 214600,
+  "sha256": "22aa7426e8b9a9e53f622074f084d19b77ea41eb5f84fcd402573b561de5224b",
+  "indexedAddressCount": 6507,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003900000359863043
+  },
+  "exactSample": {
+    "providerIdentity": "77d4f186c884f394a640",
+    "houseNumber": "100",
+    "canonicalRoad": "BLACKFEET TRAIL",
+    "city": "WICHITA FALLS",
+    "zip": "76310",
+    "county": "Clay County",
+    "countyFips": "48077",
+    "query": "100 BLACKFEET TRAIL WICHITA FALLS TX 76310",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1234,
+    "variantsTested": 3702,
+    "variantsPassed": 3702
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 33.61409999988973,
+  "certificationStatus": "PASS",
+  "failures": []
+}

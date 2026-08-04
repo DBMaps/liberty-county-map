@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "coryell-tx",
+  "county": "Coryell County",
+  "fips": "48099",
+  "artifact": "coryell-48099.addresses.jsonl.gz",
+  "sizeBytes": 916235,
+  "sha256": "d41c610089480eecd4c92b4619e0b2cca831c5a10b531315854c8f5c0f3163b7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

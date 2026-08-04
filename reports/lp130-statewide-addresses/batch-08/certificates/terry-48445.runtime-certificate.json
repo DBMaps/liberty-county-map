@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "terry-tx",
+  "county": "Terry County",
+  "fips": "48445",
+  "artifact": "terry-48445.addresses.jsonl.gz",
+  "sizeBytes": 190412,
+  "sha256": "d63fb32d707fa04ca7cf713b8503e0ce6c7f7b1b56c44de4cbc60dd0fb2c37c3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

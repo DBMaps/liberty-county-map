@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kendall-tx",
+  "county": "Kendall County",
+  "fips": "48259",
+  "artifact": "kendall-48259.addresses.jsonl.gz",
+  "sizeBytes": 663438,
+  "sha256": "d8dce017a48d4b9af29116780e070485243e944fc7d5718128e9541b9209cf48",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

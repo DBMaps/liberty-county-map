@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cottle-tx",
+  "county": "Cottle County",
+  "fips": "48101",
+  "artifact": "cottle-48101.addresses.jsonl.gz",
+  "sizeBytes": 38539,
+  "sha256": "8d5b49f5de43af20ba67efa6b6bdbad31dc973e44458ec544e5ff2e31fd22f00",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

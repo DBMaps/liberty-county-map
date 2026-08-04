@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hudspeth-tx",
+  "county": "Hudspeth County",
+  "fips": "48229",
+  "artifact": "hudspeth-48229.addresses.jsonl.gz",
+  "sizeBytes": 166512,
+  "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

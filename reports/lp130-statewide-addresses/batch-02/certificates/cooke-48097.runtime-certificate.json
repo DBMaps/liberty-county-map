@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cooke-tx",
+  "county": "Cooke County",
+  "fips": "48097",
+  "artifact": "cooke-48097.addresses.jsonl.gz",
+  "sizeBytes": 745531,
+  "sha256": "dce3ee97d5f7be2a50e20c5b969bd25ec4c036ffab60b30713416ac75a4b6923",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "loving-tx",
+  "county": "Loving County",
+  "fips": "48301",
+  "artifact": "loving-48301.addresses.jsonl.gz",
+  "sizeBytes": 16861,
+  "sha256": "125ca269e57b8a855c9656b5d3cc5ed990a87ad46e105180808d1e259bb316de",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

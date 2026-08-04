@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jack-tx",
+  "county": "Jack County",
+  "fips": "48237",
+  "artifact": "jack-48237.addresses.jsonl.gz",
+  "sizeBytes": 193457,
+  "sha256": "1c19eb1792b97d79faa9f5fe13a5391dc78529f983a894a38bd1de2f62b0372a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

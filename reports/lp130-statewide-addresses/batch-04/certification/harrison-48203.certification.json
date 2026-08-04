@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Harrison County",
+  "countyFips": "48203",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1069866,
+  "sha256": "e8d9c2aa5baa19993fd7181cad89bf1851915fbd0729313e13e3c1ecf650203e",
+  "indexedAddressCount": 35812,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "76c7e7540eb9987ef1ca",
+    "houseNumber": "1",
+    "canonicalRoad": "BOBCAT LANE",
+    "city": "",
+    "zip": "",
+    "county": "Harrison County",
+    "countyFips": "48203",
+    "query": "1 BOBCAT LANE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 206.9317999985069,
+  "certificationStatus": "PASS",
+  "failures": []
+}

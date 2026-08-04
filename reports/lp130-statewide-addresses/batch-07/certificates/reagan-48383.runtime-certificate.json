@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "reagan-tx",
+  "county": "Reagan County",
+  "fips": "48383",
+  "artifact": "reagan-48383.addresses.jsonl.gz",
+  "sizeBytes": 71024,
+  "sha256": "a7b783e9d5b0face9d85dfc7c7debb44013b4edff2e181765579a4c5159d5127",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

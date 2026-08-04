@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Leon County",
+  "countyFips": "48289",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 613908,
+  "sha256": "ed2515773d14818354a28f51b38063cb653a8c089516e0e9e262c22a8dcd047a",
+  "indexedAddressCount": 19084,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00430000014603138
+  },
+  "exactSample": {
+    "providerIdentity": "6d9596ff3d0649e8fcf2",
+    "houseNumber": "1",
+    "canonicalRoad": "ACAPULCO",
+    "city": "",
+    "zip": "77871",
+    "county": "Leon County",
+    "countyFips": "48289",
+    "query": "1 ACAPULCO TX 77871",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 150.34510000050068,
+  "certificationStatus": "PASS",
+  "failures": []
+}

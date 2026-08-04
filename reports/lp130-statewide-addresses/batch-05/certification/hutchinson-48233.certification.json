@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hutchinson County",
+  "countyFips": "48233",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 426276,
+  "sha256": "d59051429512e5ed2fec96b2465a059745a51f4ccc12133ce38fa711c049489f",
+  "indexedAddressCount": 14521,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004200000315904617
+  },
+  "exactSample": {
+    "providerIdentity": "92d4e6031bafb2bb1929",
+    "houseNumber": "1",
+    "canonicalRoad": "ADOBE TRAIL",
+    "city": "",
+    "zip": "79007",
+    "county": "Hutchinson County",
+    "countyFips": "48233",
+    "query": "1 ADOBE TRAIL TX 79007",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 239,
+    "variantsTested": 717,
+    "variantsPassed": 717
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 70.1871000006795,
+  "certificationStatus": "PASS",
+  "failures": []
+}

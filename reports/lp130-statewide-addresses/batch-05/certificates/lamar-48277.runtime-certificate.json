@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lamar-tx",
+  "county": "Lamar County",
+  "fips": "48277",
+  "artifact": "lamar-48277.addresses.jsonl.gz",
+  "sizeBytes": 975524,
+  "sha256": "9cf98fae55e83590986cc83cd3ec8b99f4c22dc08d8e3ee952eff2e22dfee5b2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

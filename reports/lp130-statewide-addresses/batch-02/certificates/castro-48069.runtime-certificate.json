@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "castro-tx",
+  "county": "Castro County",
+  "fips": "48069",
+  "artifact": "castro-48069.addresses.jsonl.gz",
+  "sizeBytes": 119147,
+  "sha256": "a43b9e008b31bd9547a6b9bbbe7679184f3ca54a49ccbd5a663fbe7954fbe499",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

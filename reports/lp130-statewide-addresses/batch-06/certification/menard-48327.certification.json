@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Menard County",
+  "countyFips": "48327",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 72721,
+  "sha256": "a14bce324779a0dac657bc07fa7ca108c83d03467146ee5a81ac85d19566c282",
+  "indexedAddressCount": 2293,
+  "exactMatchStatistics": {
+    "sampled": 2293,
+    "passed": 2293,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "8d4f700727223be62055",
+    "houseNumber": "1",
+    "canonicalRoad": "FRISCO AVENUE",
+    "city": "",
+    "zip": "76859",
+    "county": "Menard County",
+    "countyFips": "48327",
+    "query": "1 FRISCO AVENUE TX 76859",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2293,
+    "truthfulNoResults": 2293,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2293,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2293,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 236,
+    "variantsTested": 708,
+    "variantsPassed": 708
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 11.185699999332428,
+  "certificationStatus": "PASS",
+  "failures": []
+}

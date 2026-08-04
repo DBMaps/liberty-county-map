@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hartley County",
+  "countyFips": "48205",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 90352,
+  "sha256": "367e9fb77b4bc4f70aed2a5f0bdb90df3cd27889b5c0a01385e72e2cfb543592",
+  "indexedAddressCount": 2968,
+  "exactMatchStatistics": {
+    "sampled": 2968,
+    "passed": 2968,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "f99d0b958f1f2d29b3e0",
+    "houseNumber": "1",
+    "canonicalRoad": "CANYON VIEW DRIVE",
+    "city": "",
+    "zip": "79022",
+    "county": "Hartley County",
+    "countyFips": "48205",
+    "query": "1 CANYON VIEW DRIVE TX 79022",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2968,
+    "truthfulNoResults": 2968,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2968,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2968,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 674,
+    "variantsTested": 2022,
+    "variantsPassed": 2022
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.997400000691414,
+  "certificationStatus": "PASS",
+  "failures": []
+}

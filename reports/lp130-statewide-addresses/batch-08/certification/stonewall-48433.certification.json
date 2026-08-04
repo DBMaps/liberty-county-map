@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Stonewall County",
+  "countyFips": "48433",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 44573,
+  "sha256": "d3ba0de5719b8906eef8c70d6ed9f55c425d3e90e69e140227b451ac7f4db206",
+  "indexedAddressCount": 1417,
+  "exactMatchStatistics": {
+    "sampled": 1416,
+    "passed": 1416,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "fe1a99e72de15185cc1c",
+    "houseNumber": "100",
+    "canonicalRoad": "CR 126",
+    "city": "OLD GLORY",
+    "zip": "79540",
+    "county": "Stonewall County",
+    "countyFips": "48433",
+    "query": "100 COUNTY ROAD 126 OLD GLORY TX 79540",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1416,
+    "truthfulNoResults": 1416,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1416,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1416,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 570,
+    "variantsTested": 1710,
+    "variantsPassed": 1710
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 7.812099996954203,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Sutton County",
+  "countyFips": "48435",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 92124,
+  "sha256": "c918feefc80359d0a2a89621364821b093c6075afb18c9af71a81c96b8ba186f",
+  "indexedAddressCount": 2885,
+  "exactMatchStatistics": {
+    "sampled": 2885,
+    "passed": 2885,
+    "failed": 0,
+    "p95LookupMs": 0.004799999296665192
+  },
+  "exactSample": {
+    "providerIdentity": "6edd56a07ca9c4b09386",
+    "houseNumber": "1",
+    "canonicalRoad": "PUEBLO DRIVE",
+    "city": "",
+    "zip": "76950",
+    "county": "Sutton County",
+    "countyFips": "48435",
+    "query": "1 PUEBLO DRIVE TX 76950",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2885,
+    "truthfulNoResults": 2885,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2885,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2885,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "NOT_APPLICABLE",
+    "eligibleRecords": 0,
+    "variantsTested": 0,
+    "variantsPassed": 0
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.463599998503923,
+  "certificationStatus": "PASS",
+  "failures": []
+}

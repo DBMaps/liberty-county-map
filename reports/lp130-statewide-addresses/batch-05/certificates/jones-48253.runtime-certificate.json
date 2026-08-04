@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jones-tx",
+  "county": "Jones County",
+  "fips": "48253",
+  "artifact": "jones-48253.addresses.jsonl.gz",
+  "sizeBytes": 308268,
+  "sha256": "96557820286aad411c2d8dc4829d1a84cc96d30cfb43205764b5f2c814f21c7b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

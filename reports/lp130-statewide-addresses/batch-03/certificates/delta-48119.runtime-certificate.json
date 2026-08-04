@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "delta-tx",
+  "county": "Delta County",
+  "fips": "48119",
+  "artifact": "delta-48119.addresses.jsonl.gz",
+  "sizeBytes": 122734,
+  "sha256": "6f0371b453eef74e4e84255692c5b4e1c71d639949f6be4af0504f9869f1322f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "knox-tx",
+  "county": "Knox County",
+  "fips": "48275",
+  "artifact": "knox-48275.addresses.jsonl.gz",
+  "sizeBytes": 84184,
+  "sha256": "025593cd42a3fdc3b5a89246b5cad44013f85b4c7e460c40de67fbdbf7fda839",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

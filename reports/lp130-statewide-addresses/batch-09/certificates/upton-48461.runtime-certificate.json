@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "upton-tx",
+  "county": "Upton County",
+  "fips": "48461",
+  "artifact": "upton-48461.addresses.jsonl.gz",
+  "sizeBytes": 94640,
+  "sha256": "66537982fd43a5e78c0025c0213c743040ae9c2d6fe41137953e25117c983559",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

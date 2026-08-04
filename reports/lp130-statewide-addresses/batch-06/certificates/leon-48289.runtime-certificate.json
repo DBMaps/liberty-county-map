@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "leon-tx",
+  "county": "Leon County",
+  "fips": "48289",
+  "artifact": "leon-48289.addresses.jsonl.gz",
+  "sizeBytes": 613908,
+  "sha256": "ed2515773d14818354a28f51b38063cb653a8c089516e0e9e262c22a8dcd047a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

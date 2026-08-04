@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Somervell County",
+  "countyFips": "48425",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 164537,
+  "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1",
+  "indexedAddressCount": 5357,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 2999,
+    "failed": 1,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "d3505cbac43b6320e14f",
+    "houseNumber": "100",
+    "canonicalRoad": "ARAPAHO COURT",
+    "city": "Glen Rose",
+    "zip": "76043",
+    "county": "Somervell County",
+    "countyFips": "48425",
+    "query": "100 Arapaho Court Glen Rose TX 76043",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2329,
+    "variantsTested": 6987,
+    "variantsPassed": 6987
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 28.007000003010035,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "exact address sample failed"
+  ]
+}

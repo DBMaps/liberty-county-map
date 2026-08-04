@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dewitt-tx",
+  "county": "DeWitt County",
+  "fips": "48123",
+  "artifact": "dewitt-48123.addresses.jsonl.gz",
+  "sizeBytes": 406896,
+  "sha256": "d1e17e1ad29fbc24cc684c4dea3371bd9c77cdd834e7dfcaaaa7c73bed55a331",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

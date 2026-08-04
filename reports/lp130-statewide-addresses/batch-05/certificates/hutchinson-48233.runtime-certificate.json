@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hutchinson-tx",
+  "county": "Hutchinson County",
+  "fips": "48233",
+  "artifact": "hutchinson-48233.addresses.jsonl.gz",
+  "sizeBytes": 426276,
+  "sha256": "d59051429512e5ed2fec96b2465a059745a51f4ccc12133ce38fa711c049489f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

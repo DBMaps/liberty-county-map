@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "stephens-tx",
+  "county": "Stephens County",
+  "fips": "48429",
+  "artifact": "stephens-48429.addresses.jsonl.gz",
+  "sizeBytes": 207755,
+  "sha256": "1182861cc5acdc2fbeb2f535a5b4fe3a8201e3db296df4d75c636da552b57ae3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

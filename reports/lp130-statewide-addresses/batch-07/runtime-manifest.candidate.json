@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-07",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "motley-tx",
+      "county": "Motley County",
+      "fips": "48345",
+      "path": "data/generated/lp104/txgio-addresses/motley-48345.addresses.jsonl.gz",
+      "sizeBytes": 38453,
+      "sha256": "7715b0b9f21025760bc2c7ed16c78c3062b88bb123750c4f0c15efcdf3f0d189",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/motley-48345.runtime-certificate.json"
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "county": "Nacogdoches County",
+      "fips": "48347",
+      "path": "data/generated/lp104/txgio-addresses/nacogdoches-48347.addresses.jsonl.gz",
+      "sizeBytes": 1248185,
+      "sha256": "ce2564d3e5342f4fdb4cec2a19cda512ac6b1c0ef5305435614aff461322e86b",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/nacogdoches-48347.runtime-certificate.json"
+    },
+    {
+      "countyId": "navarro-tx",
+      "county": "Navarro County",
+      "fips": "48349",
+      "path": "data/generated/lp104/txgio-addresses/navarro-48349.addresses.jsonl.gz",
+      "sizeBytes": 856474,
+      "sha256": "25be1fa1c50f123c2058f6e1c5bcc695b52228e5858b837463933d32409d73ef",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/navarro-48349.runtime-certificate.json"
+    },
+    {
+      "countyId": "nolan-tx",
+      "county": "Nolan County",
+      "fips": "48353",
+      "path": "data/generated/lp104/txgio-addresses/nolan-48353.addresses.jsonl.gz",
+      "sizeBytes": 277927,
+      "sha256": "8eb3ab8c6b1255de66731d0348e9684347e13c7f74c68e33ef61cd5c581c2e6a",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/nolan-48353.runtime-certificate.json"
+    },
+    {
+      "countyId": "nueces-tx",
+      "county": "Nueces County",
+      "fips": "48355",
+      "path": "data/generated/lp104/txgio-addresses/nueces-48355.addresses.jsonl.gz",
+      "sizeBytes": 260448,
+      "sha256": "4e10f0644f741388c762d0bddbe1f07314d15d91f35e16ce2b45a0e87985857d",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/nueces-48355.runtime-certificate.json"
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "county": "Ochiltree County",
+      "fips": "48357",
+      "path": "data/generated/lp104/txgio-addresses/ochiltree-48357.addresses.jsonl.gz",
+      "sizeBytes": 173093,
+      "sha256": "d68ac8e8b990f28dcd17a05bfad9de79d188557e7d4864b645f6a5c92f44cff7",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/ochiltree-48357.runtime-certificate.json"
+    },
+    {
+      "countyId": "oldham-tx",
+      "county": "Oldham County",
+      "fips": "48359",
+      "path": "data/generated/lp104/txgio-addresses/oldham-48359.addresses.jsonl.gz",
+      "sizeBytes": 40245,
+      "sha256": "83a31fba54e5c688aba5bc3ccdab17ddfd62cd407fdd09283e02650805e56ff7",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/oldham-48359.runtime-certificate.json"
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "county": "Palo Pinto County",
+      "fips": "48363",
+      "path": "data/generated/lp104/txgio-addresses/palo-pinto-48363.addresses.jsonl.gz",
+      "sizeBytes": 809038,
+      "sha256": "f9bfb4a6329cc73689fe21953fa5435bf736f42b44b5782b6982e55d864a5ea9",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/palo-pinto-48363.runtime-certificate.json"
+    },
+    {
+      "countyId": "panola-tx",
+      "county": "Panola County",
+      "fips": "48365",
+      "path": "data/generated/lp104/txgio-addresses/panola-48365.addresses.jsonl.gz",
+      "sizeBytes": 514964,
+      "sha256": "6365321596b61d8fe1d6b53a8911f4fa505d7e962332e7cd9fbab953ceac6044",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/panola-48365.runtime-certificate.json"
+    },
+    {
+      "countyId": "parker-tx",
+      "county": "Parker County",
+      "fips": "48367",
+      "path": "data/generated/lp104/txgio-addresses/parker-48367.addresses.jsonl.gz",
+      "sizeBytes": 2597310,
+      "sha256": "545852ca251be618ce4296ff4e10ae9fdce32306c8d081deeec19bcb98610fc0",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/parker-48367.runtime-certificate.json"
+    },
+    {
+      "countyId": "parmer-tx",
+      "county": "Parmer County",
+      "fips": "48369",
+      "path": "data/generated/lp104/txgio-addresses/parmer-48369.addresses.jsonl.gz",
+      "sizeBytes": 134975,
+      "sha256": "957f7042d4686f8e0e9c98dddffb085175fe73f1ea892aa8e2b0bf4886196563",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/parmer-48369.runtime-certificate.json"
+    },
+    {
+      "countyId": "pecos-tx",
+      "county": "Pecos County",
+      "fips": "48371",
+      "path": "data/generated/lp104/txgio-addresses/pecos-48371.addresses.jsonl.gz",
+      "sizeBytes": 245342,
+      "sha256": "3d41b2fc463abd55eda5571b7df1d8ae930771586ab0c40657a2f7b8f6582ad1",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/pecos-48371.runtime-certificate.json"
+    },
+    {
+      "countyId": "potter-tx",
+      "county": "Potter County",
+      "fips": "48375",
+      "path": "data/generated/lp104/txgio-addresses/potter-48375.addresses.jsonl.gz",
+      "sizeBytes": 1693714,
+      "sha256": "7bc611d7c45866ff12da78931391ad233208b69a7f2848bed9a36b2d0446292a",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/potter-48375.runtime-certificate.json"
+    },
+    {
+      "countyId": "rains-tx",
+      "county": "Rains County",
+      "fips": "48379",
+      "path": "data/generated/lp104/txgio-addresses/rains-48379.addresses.jsonl.gz",
+      "sizeBytes": 295604,
+      "sha256": "332d4e58940a468b62a4e7e982b9b11e9633ca56ff667dc81748f9bc4ddc1ff9",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/rains-48379.runtime-certificate.json"
+    },
+    {
+      "countyId": "randall-tx",
+      "county": "Randall County",
+      "fips": "48381",
+      "path": "data/generated/lp104/txgio-addresses/randall-48381.addresses.jsonl.gz",
+      "sizeBytes": 2058473,
+      "sha256": "7fd2fa55a801a7b2922886396439f64d623f391fdd2227f888e38800dc7b1978",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/randall-48381.runtime-certificate.json"
+    },
+    {
+      "countyId": "reagan-tx",
+      "county": "Reagan County",
+      "fips": "48383",
+      "path": "data/generated/lp104/txgio-addresses/reagan-48383.addresses.jsonl.gz",
+      "sizeBytes": 71024,
+      "sha256": "a7b783e9d5b0face9d85dfc7c7debb44013b4edff2e181765579a4c5159d5127",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/reagan-48383.runtime-certificate.json"
+    },
+    {
+      "countyId": "real-tx",
+      "county": "Real County",
+      "fips": "48385",
+      "path": "data/generated/lp104/txgio-addresses/real-48385.addresses.jsonl.gz",
+      "sizeBytes": 153752,
+      "sha256": "46a7cca175e8401a7de48ba4d50caf10ea76966d064369ba536b5067e41fbe04",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/real-48385.runtime-certificate.json"
+    },
+    {
+      "countyId": "red-river-tx",
+      "county": "Red River County",
+      "fips": "48387",
+      "path": "data/generated/lp104/txgio-addresses/red-river-48387.addresses.jsonl.gz",
+      "sizeBytes": 302485,
+      "sha256": "928150e1ab9fc99c45c4768c046e5c74e578b874b3f9843f0fed84e8e6cb5b3f",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/red-river-48387.runtime-certificate.json"
+    },
+    {
+      "countyId": "reeves-tx",
+      "county": "Reeves County",
+      "fips": "48389",
+      "path": "data/generated/lp104/txgio-addresses/reeves-48389.addresses.jsonl.gz",
+      "sizeBytes": 245206,
+      "sha256": "2085a7934312134cd0d68ef513e910e88e6f3febe0d2e309164821e5c83bb4fe",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/reeves-48389.runtime-certificate.json"
+    },
+    {
+      "countyId": "refugio-tx",
+      "county": "Refugio County",
+      "fips": "48391",
+      "path": "data/generated/lp104/txgio-addresses/refugio-48391.addresses.jsonl.gz",
+      "sizeBytes": 168816,
+      "sha256": "a6ef1a3ef90dff56a4f50bdd2b293e144c07120c56da9460f8dcc2785512d482",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/refugio-48391.runtime-certificate.json"
+    },
+    {
+      "countyId": "roberts-tx",
+      "county": "Roberts County",
+      "fips": "48393",
+      "path": "data/generated/lp104/txgio-addresses/roberts-48393.addresses.jsonl.gz",
+      "sizeBytes": 22999,
+      "sha256": "4db42e85eea204429273c9727fc73bf608d66b80be42586bd84b6bd697fda45d",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/roberts-48393.runtime-certificate.json"
+    },
+    {
+      "countyId": "rockwall-tx",
+      "county": "Rockwall County",
+      "fips": "48397",
+      "path": "data/generated/lp104/txgio-addresses/rockwall-48397.addresses.jsonl.gz",
+      "sizeBytes": 1681408,
+      "sha256": "beee33f9fcda1f2a9bd8040543e797b1e9af5953f048d1181467e6415fa7068b",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/rockwall-48397.runtime-certificate.json"
+    },
+    {
+      "countyId": "runnels-tx",
+      "county": "Runnels County",
+      "fips": "48399",
+      "path": "data/generated/lp104/txgio-addresses/runnels-48399.addresses.jsonl.gz",
+      "sizeBytes": 210395,
+      "sha256": "0196744b5ff61655e27ce3e1853c7a5308564d41ce4ea9d96a9cf3611f3cdea5",
+      "certificate": "reports/lp130-statewide-addresses/batch-07/certificates/runnels-48399.runtime-certificate.json"
+    }
+  ]
+}

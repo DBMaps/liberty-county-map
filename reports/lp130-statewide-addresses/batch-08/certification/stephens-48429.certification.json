@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Stephens County",
+  "countyFips": "48429",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 207755,
+  "sha256": "1182861cc5acdc2fbeb2f535a5b4fe3a8201e3db296df4d75c636da552b57ae3",
+  "indexedAddressCount": 6948,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "17ecf7c835acff677d90",
+    "houseNumber": "1",
+    "canonicalRoad": "CHAPARRAL LANE",
+    "city": "BRECKENRIDGE",
+    "zip": "76424",
+    "county": "Stephens County",
+    "countyFips": "48429",
+    "query": "1 CHAPARRAL LANE BRECKENRIDGE TX 76424",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2641,
+    "variantsTested": 7923,
+    "variantsPassed": 7923
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 36.08560000360012,
+  "certificationStatus": "PASS",
+  "failures": []
+}

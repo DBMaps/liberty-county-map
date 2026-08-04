@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "el-paso-tx",
+  "county": "El Paso County",
+  "fips": "48141",
+  "artifact": "el-paso-48141.addresses.jsonl.gz",
+  "sizeBytes": 7154400,
+  "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Titus County",
+  "countyFips": "48449",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 473449,
+  "sha256": "bcb39dea85ebdf6105e36511192cf630334f95e400110248677dacaf4b323f87",
+  "indexedAddressCount": 15184,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "5c289ce148d84b062416",
+    "houseNumber": "1",
+    "canonicalRoad": "GANDY STREET",
+    "city": "Winfield",
+    "zip": "75493",
+    "county": "Titus County",
+    "countyFips": "48449",
+    "query": "1 Gandy Street Winfield TX 75493",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 85.73540000244975,
+  "certificationStatus": "PASS",
+  "failures": []
+}

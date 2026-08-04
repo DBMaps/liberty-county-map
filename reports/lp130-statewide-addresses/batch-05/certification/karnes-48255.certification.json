@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Karnes County",
+  "countyFips": "48255",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 273885,
+  "sha256": "83f60626c3a4317c8235441d105c6caea0e747a49dc84a55e4c595aa44c6e131",
+  "indexedAddressCount": 8380,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00430000014603138
+  },
+  "exactSample": {
+    "providerIdentity": "7f2b62c53a55af8d5c6f",
+    "houseNumber": "1",
+    "canonicalRoad": "MILL STREET",
+    "city": "Kenedy",
+    "zip": "78119",
+    "county": "Karnes County",
+    "countyFips": "48255",
+    "query": "1 Mill Street Kenedy TX 78119",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 45.7989999987185,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mclennan-tx",
+  "county": "McLennan County",
+  "fips": "48309",
+  "artifact": "mclennan-48309.addresses.jsonl.gz",
+  "sizeBytes": 3390624,
+  "sha256": "c917299a66fcb52d63829636310ea4a0e33ec56cc7a1f479cf1fa3b5aea1130a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

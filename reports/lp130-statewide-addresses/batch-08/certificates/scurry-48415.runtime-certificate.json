@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "scurry-tx",
+  "county": "Scurry County",
+  "fips": "48415",
+  "artifact": "scurry-48415.addresses.jsonl.gz",
+  "sizeBytes": 280529,
+  "sha256": "1cf63d5dbff6aeeaa210284df3a04296a04529328cba4dc767ed416693d88728",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

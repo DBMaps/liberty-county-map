@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "sabine-tx",
+  "county": "Sabine County",
+  "fips": "48403",
+  "artifact": "sabine-48403.addresses.jsonl.gz",
+  "sizeBytes": 471304,
+  "sha256": "966c256761daac545efed2345919416d60ab9904498ae6eb5532ee5d0cd60f45",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

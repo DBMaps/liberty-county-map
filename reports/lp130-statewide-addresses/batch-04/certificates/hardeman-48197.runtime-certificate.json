@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hardeman-tx",
+  "county": "Hardeman County",
+  "fips": "48197",
+  "artifact": "hardeman-48197.addresses.jsonl.gz",
+  "sizeBytes": 78259,
+  "sha256": "aef9178830532bb77db5ccc2e01dca879a1fc9101c42e63bfbcc6e72f70f1dbf",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

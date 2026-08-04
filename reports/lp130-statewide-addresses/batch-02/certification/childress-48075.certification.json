@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Childress County",
+  "countyFips": "48075",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 99342,
+  "sha256": "2772834a3bcfac66769cdb523574573254dbaa09e85dfa5426d95f894e0fe80d",
+  "indexedAddressCount": 3381,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004999999888241291
+  },
+  "exactSample": {
+    "providerIdentity": "a21b9a1a604997f7b414",
+    "houseNumber": "1",
+    "canonicalRoad": "HILLCREST ADDITION STREET",
+    "city": "",
+    "zip": "79201",
+    "county": "Childress County",
+    "countyFips": "48075",
+    "query": "1 HILLCREST ADDITION STREET TX 79201",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 490,
+    "variantsTested": 1470,
+    "variantsPassed": 1470
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 22.17479999968782,
+  "certificationStatus": "PASS",
+  "failures": []
+}

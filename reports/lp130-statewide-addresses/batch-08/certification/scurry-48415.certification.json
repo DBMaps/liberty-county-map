@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Scurry County",
+  "countyFips": "48415",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 280529,
+  "sha256": "1cf63d5dbff6aeeaa210284df3a04296a04529328cba4dc767ed416693d88728",
+  "indexedAddressCount": 9380,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "365a5b8b4e994cbed1f3",
+    "houseNumber": "100",
+    "canonicalRoad": "23RD STREET",
+    "city": "SNYDER",
+    "zip": "79549",
+    "county": "Scurry County",
+    "countyFips": "48415",
+    "query": "100 23RD STREET SNYDER TX 79549",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1418,
+    "variantsTested": 4254,
+    "variantsPassed": 4254
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 47.54160000011325,
+  "certificationStatus": "PASS",
+  "failures": []
+}

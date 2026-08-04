@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Wilbarger County",
+  "countyFips": "48487",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 240373,
+  "sha256": "9f1297239c4fb36724a50f2c459bf364be472af21c565d6726c92caed1512d4f",
+  "indexedAddressCount": 7595,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "011c865eb32b816d981a",
+    "houseNumber": "1",
+    "canonicalRoad": "COUNTRY CLUB ROAD EAST",
+    "city": "VERNON",
+    "zip": "76384",
+    "county": "Wilbarger County",
+    "countyFips": "48487",
+    "query": "1 COUNTRY CLUB ROAD EAST VERNON TX 76384",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1063,
+    "variantsTested": 3189,
+    "variantsPassed": 3189
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 45.3332000002265,
+  "certificationStatus": "PASS",
+  "failures": []
+}

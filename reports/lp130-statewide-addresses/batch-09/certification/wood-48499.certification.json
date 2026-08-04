@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Wood County",
+  "countyFips": "48499",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1061130,
+  "sha256": "a53ee9bcb3950849d3bc3262639ed71da5d172b3b798f1e4e909324e81a0eb6e",
+  "indexedAddressCount": 32276,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100002348423004
+  },
+  "exactSample": {
+    "providerIdentity": "987aa46adfbf8d512230",
+    "houseNumber": "100",
+    "canonicalRoad": "BRETT LANE",
+    "city": "MINEOLA",
+    "zip": "75773",
+    "county": "Wood County",
+    "countyFips": "48499",
+    "query": "100 BRETT LANE MINEOLA TX 75773",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 178.86670000106096,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "rusk-tx",
+  "county": "Rusk County",
+  "fips": "48401",
+  "artifact": "rusk-48401.addresses.jsonl.gz",
+  "sizeBytes": 782267,
+  "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

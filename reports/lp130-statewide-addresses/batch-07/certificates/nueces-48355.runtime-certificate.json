@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "nueces-tx",
+  "county": "Nueces County",
+  "fips": "48355",
+  "artifact": "nueces-48355.addresses.jsonl.gz",
+  "sizeBytes": 260448,
+  "sha256": "4e10f0644f741388c762d0bddbe1f07314d15d91f35e16ce2b45a0e87985857d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

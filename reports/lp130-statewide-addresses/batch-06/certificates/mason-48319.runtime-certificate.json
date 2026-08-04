@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mason-tx",
+  "county": "Mason County",
+  "fips": "48319",
+  "artifact": "mason-48319.addresses.jsonl.gz",
+  "sizeBytes": 139845,
+  "sha256": "7b0cad4a85fb3cce3c3599533e44463f1713b195c227b070e273ffa62f143f18",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

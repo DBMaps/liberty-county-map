@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Van Zandt County",
+  "countyFips": "48467",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1173187,
+  "sha256": "2ed67b23a9a728601e44bcd03355571f0557324d694ac9dd343fb34aa1e00056",
+  "indexedAddressCount": 35232,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "fada2c2f6f626f19a6ea",
+    "houseNumber": "1",
+    "canonicalRoad": "HILLSIDE DRIVE",
+    "city": "WILLS POINT",
+    "zip": "75169",
+    "county": "Van Zandt County",
+    "countyFips": "48467",
+    "query": "1 HILLSIDE DRIVE WILLS POINT TX 75169",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 219.06550000235438,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Terrell County",
+  "countyFips": "48443",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 35870,
+  "sha256": "d17e81cc50c4889104d512ab63ace3c7d5f8c2659f974bfcca5af67977d6f29a",
+  "indexedAddressCount": 1063,
+  "exactMatchStatistics": {
+    "sampled": 1063,
+    "passed": 1063,
+    "failed": 0,
+    "p95LookupMs": 0.0032999999821186066
+  },
+  "exactSample": {
+    "providerIdentity": "0b9efed443a4da6cec3b",
+    "houseNumber": "1",
+    "canonicalRoad": "UNITED STATES HIGHWAY 90 WEST",
+    "city": "",
+    "zip": "78851",
+    "county": "Terrell County",
+    "countyFips": "48443",
+    "query": "1 UNITED STATES HIGHWAY 90 WEST TX 78851",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1063,
+    "truthfulNoResults": 1063,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1063,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1063,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 45,
+    "variantsTested": 135,
+    "variantsPassed": 135
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 6.435200002044439,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-06",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "la-salle-tx",
+      "county": "La Salle County",
+      "fips": "48283",
+      "path": "data/generated/lp104/txgio-addresses/la-salle-48283.addresses.jsonl.gz",
+      "sizeBytes": 138933,
+      "sha256": "6443183bb0b4c1794a91e8cb4f10e0a65c2f1fe94497742e07c9e4f23978f258",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/la-salle-48283.runtime-certificate.json"
+    },
+    {
+      "countyId": "leon-tx",
+      "county": "Leon County",
+      "fips": "48289",
+      "path": "data/generated/lp104/txgio-addresses/leon-48289.addresses.jsonl.gz",
+      "sizeBytes": 613908,
+      "sha256": "ed2515773d14818354a28f51b38063cb653a8c089516e0e9e262c22a8dcd047a",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/leon-48289.runtime-certificate.json"
+    },
+    {
+      "countyId": "limestone-tx",
+      "county": "Limestone County",
+      "fips": "48293",
+      "path": "data/generated/lp104/txgio-addresses/limestone-48293.addresses.jsonl.gz",
+      "sizeBytes": 302446,
+      "sha256": "0c5718f4c1d6c425c1f1bde919316f03132f2d6de3a999596db9be0d5ceb191a",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/limestone-48293.runtime-certificate.json"
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "county": "Lipscomb County",
+      "fips": "48295",
+      "path": "data/generated/lp104/txgio-addresses/lipscomb-48295.addresses.jsonl.gz",
+      "sizeBytes": 45911,
+      "sha256": "d347a9651dde12f35ee37f64f0918a85d731f2382af783250f44c29e8f092ae3",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/lipscomb-48295.runtime-certificate.json"
+    },
+    {
+      "countyId": "live-oak-tx",
+      "county": "Live Oak County",
+      "fips": "48297",
+      "path": "data/generated/lp104/txgio-addresses/live-oak-48297.addresses.jsonl.gz",
+      "sizeBytes": 132323,
+      "sha256": "2f1eae8281d7b2328c168cc9d9a8b88b62fe8ff04c4f268173bd33a2d0a9bc3e",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/live-oak-48297.runtime-certificate.json"
+    },
+    {
+      "countyId": "llano-tx",
+      "county": "Llano County",
+      "fips": "48299",
+      "path": "data/generated/lp104/txgio-addresses/llano-48299.addresses.jsonl.gz",
+      "sizeBytes": 741243,
+      "sha256": "b865d368ec8832e3f9514388eb3fa83b91a35a5cd3983a8f61dae2149afd2f8e",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/llano-48299.runtime-certificate.json"
+    },
+    {
+      "countyId": "loving-tx",
+      "county": "Loving County",
+      "fips": "48301",
+      "path": "data/generated/lp104/txgio-addresses/loving-48301.addresses.jsonl.gz",
+      "sizeBytes": 16861,
+      "sha256": "125ca269e57b8a855c9656b5d3cc5ed990a87ad46e105180808d1e259bb316de",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/loving-48301.runtime-certificate.json"
+    },
+    {
+      "countyId": "lubbock-tx",
+      "county": "Lubbock County",
+      "fips": "48303",
+      "path": "data/generated/lp104/txgio-addresses/lubbock-48303.addresses.jsonl.gz",
+      "sizeBytes": 4986893,
+      "sha256": "60c43c58661f474849ea7ff0dd47326ecfdc9491cc2995e572235dfdef872efc",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/lubbock-48303.runtime-certificate.json"
+    },
+    {
+      "countyId": "lynn-tx",
+      "county": "Lynn County",
+      "fips": "48305",
+      "path": "data/generated/lp104/txgio-addresses/lynn-48305.addresses.jsonl.gz",
+      "sizeBytes": 122163,
+      "sha256": "4372755098b3e3a2bd591ef0711436c318e32d73a3565fa0eff6d85362fdb34c",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/lynn-48305.runtime-certificate.json"
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "county": "McCulloch County",
+      "fips": "48307",
+      "path": "data/generated/lp104/txgio-addresses/mcculloch-48307.addresses.jsonl.gz",
+      "sizeBytes": 190964,
+      "sha256": "29df3edb5dda0b6e6dc6b309b93d0446f345d21f088768b23391c47f900ae48e",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mcculloch-48307.runtime-certificate.json"
+    },
+    {
+      "countyId": "mclennan-tx",
+      "county": "McLennan County",
+      "fips": "48309",
+      "path": "data/generated/lp104/txgio-addresses/mclennan-48309.addresses.jsonl.gz",
+      "sizeBytes": 3390624,
+      "sha256": "c917299a66fcb52d63829636310ea4a0e33ec56cc7a1f479cf1fa3b5aea1130a",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mclennan-48309.runtime-certificate.json"
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "county": "McMullen County",
+      "fips": "48311",
+      "path": "data/generated/lp104/txgio-addresses/mcmullen-48311.addresses.jsonl.gz",
+      "sizeBytes": 57657,
+      "sha256": "42296a9915722291cfe59cd59f01b30e886b273c9f9fa16cd7eca831d19a9efe",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mcmullen-48311.runtime-certificate.json"
+    },
+    {
+      "countyId": "madison-tx",
+      "county": "Madison County",
+      "fips": "48313",
+      "path": "data/generated/lp104/txgio-addresses/madison-48313.addresses.jsonl.gz",
+      "sizeBytes": 348761,
+      "sha256": "622f378e0b08ce617c65ef96bbf2641064dba262c8f93db8ad77a5ffe0bc1345",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/madison-48313.runtime-certificate.json"
+    },
+    {
+      "countyId": "marion-tx",
+      "county": "Marion County",
+      "fips": "48315",
+      "path": "data/generated/lp104/txgio-addresses/marion-48315.addresses.jsonl.gz",
+      "sizeBytes": 288214,
+      "sha256": "9d017294d10801d50627a53c8ca5afde89f4e109c2cdc86ac85ad979d6d27c0a",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/marion-48315.runtime-certificate.json"
+    },
+    {
+      "countyId": "martin-tx",
+      "county": "Martin County",
+      "fips": "48317",
+      "path": "data/generated/lp104/txgio-addresses/martin-48317.addresses.jsonl.gz",
+      "sizeBytes": 123542,
+      "sha256": "2074e7aded7149a9a1b3cfba034bd05883002d9f3025625da33fcddcb0fb6b42",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/martin-48317.runtime-certificate.json"
+    },
+    {
+      "countyId": "mason-tx",
+      "county": "Mason County",
+      "fips": "48319",
+      "path": "data/generated/lp104/txgio-addresses/mason-48319.addresses.jsonl.gz",
+      "sizeBytes": 139845,
+      "sha256": "7b0cad4a85fb3cce3c3599533e44463f1713b195c227b070e273ffa62f143f18",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mason-48319.runtime-certificate.json"
+    },
+    {
+      "countyId": "maverick-tx",
+      "county": "Maverick County",
+      "fips": "48323",
+      "path": "data/generated/lp104/txgio-addresses/maverick-48323.addresses.jsonl.gz",
+      "sizeBytes": 774570,
+      "sha256": "b7c77df9eb00753f04bd3da9805b27d681799a7244dcd1a95b25e82acbad4bbe",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/maverick-48323.runtime-certificate.json"
+    },
+    {
+      "countyId": "medina-tx",
+      "county": "Medina County",
+      "fips": "48325",
+      "path": "data/generated/lp104/txgio-addresses/medina-48325.addresses.jsonl.gz",
+      "sizeBytes": 1001796,
+      "sha256": "0a7bf30af420f2996173939962106b2faa273e72d7d9fbcefc46e2f503621d8f",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/medina-48325.runtime-certificate.json"
+    },
+    {
+      "countyId": "menard-tx",
+      "county": "Menard County",
+      "fips": "48327",
+      "path": "data/generated/lp104/txgio-addresses/menard-48327.addresses.jsonl.gz",
+      "sizeBytes": 72721,
+      "sha256": "a14bce324779a0dac657bc07fa7ca108c83d03467146ee5a81ac85d19566c282",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/menard-48327.runtime-certificate.json"
+    },
+    {
+      "countyId": "mills-tx",
+      "county": "Mills County",
+      "fips": "48333",
+      "path": "data/generated/lp104/txgio-addresses/mills-48333.addresses.jsonl.gz",
+      "sizeBytes": 93554,
+      "sha256": "4c131cde012df1e5e22586ed45ac58967af364b2d0d3ad9d90da7b004447cb85",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mills-48333.runtime-certificate.json"
+    },
+    {
+      "countyId": "mitchell-tx",
+      "county": "Mitchell County",
+      "fips": "48335",
+      "path": "data/generated/lp104/txgio-addresses/mitchell-48335.addresses.jsonl.gz",
+      "sizeBytes": 178259,
+      "sha256": "1af31e1dc277fd8458163cf0529124c58facfa577c2bf65c6e3c0d79cea4377e",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/mitchell-48335.runtime-certificate.json"
+    },
+    {
+      "countyId": "montague-tx",
+      "county": "Montague County",
+      "fips": "48337",
+      "path": "data/generated/lp104/txgio-addresses/montague-48337.addresses.jsonl.gz",
+      "sizeBytes": 454875,
+      "sha256": "7f68ae7e8e5423e09f712ca9ee47a2157b740fea5997ce120f872b3acb99503a",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/montague-48337.runtime-certificate.json"
+    },
+    {
+      "countyId": "moore-tx",
+      "county": "Moore County",
+      "fips": "48341",
+      "path": "data/generated/lp104/txgio-addresses/moore-48341.addresses.jsonl.gz",
+      "sizeBytes": 289254,
+      "sha256": "ca9ae74854e12bd381539faca97956428026c06550514b228f850fd9ca49241c",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/moore-48341.runtime-certificate.json"
+    },
+    {
+      "countyId": "morris-tx",
+      "county": "Morris County",
+      "fips": "48343",
+      "path": "data/generated/lp104/txgio-addresses/morris-48343.addresses.jsonl.gz",
+      "sizeBytes": 242673,
+      "sha256": "912cb4c4de21fbb06b4ad72403410a6f6575e7a642d63230ab9a050be1041d0c",
+      "certificate": "reports/lp130-statewide-addresses/batch-06/certificates/morris-48343.runtime-certificate.json"
+    }
+  ]
+}

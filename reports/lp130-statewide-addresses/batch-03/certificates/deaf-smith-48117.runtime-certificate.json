@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "deaf-smith-tx",
+  "county": "Deaf Smith County",
+  "fips": "48117",
+  "artifact": "deaf-smith-48117.addresses.jsonl.gz",
+  "sizeBytes": 246957,
+  "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

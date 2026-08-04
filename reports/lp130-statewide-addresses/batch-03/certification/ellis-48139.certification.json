@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Ellis County",
+  "countyFips": "48139",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2800026,
+  "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596",
+  "indexedAddressCount": 97179,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005300000309944153
+  },
+  "exactSample": {
+    "providerIdentity": "49eb8e1c1fcfe5826728",
+    "houseNumber": "1",
+    "canonicalRoad": "ATLANTIC AVENUE",
+    "city": "Midlothian",
+    "zip": "76065",
+    "county": "Ellis County",
+    "countyFips": "48139",
+    "query": "1 Atlantic Avenue Midlothian TX 76065",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 616.4706000005826,
+  "certificationStatus": "PASS",
+  "failures": []
+}

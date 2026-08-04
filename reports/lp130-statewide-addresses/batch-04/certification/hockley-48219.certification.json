@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hockley County",
+  "countyFips": "48219",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 362312,
+  "sha256": "a0d260678ad5abbd2732eb6e4036f4aa06f15c44d17ff8140bc3f84b7bea8171",
+  "indexedAddressCount": 11262,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003999998793005943
+  },
+  "exactSample": {
+    "providerIdentity": "4a32002c548d23115d37",
+    "houseNumber": "1",
+    "canonicalRoad": "CROCKETT CIRCLE",
+    "city": "LEVELLAND",
+    "zip": "79336",
+    "county": "Hockley County",
+    "countyFips": "48219",
+    "query": "1 CROCKETT CIRCLE LEVELLAND TX 79336",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 201,
+    "variantsTested": 603,
+    "variantsPassed": 603
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 54.84329999983311,
+  "certificationStatus": "PASS",
+  "failures": []
+}

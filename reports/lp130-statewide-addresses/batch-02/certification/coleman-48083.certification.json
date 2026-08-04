@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Coleman County",
+  "countyFips": "48083",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 231311,
+  "sha256": "053afabb0188ff65ada991072aaf1383e10d5230947693b93165f3d7f9729d1d",
+  "indexedAddressCount": 7521,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000002339482307
+  },
+  "exactSample": {
+    "providerIdentity": "90bc2913ea0686cf27d3",
+    "houseNumber": "100",
+    "canonicalRoad": "ANGELA DRIVE",
+    "city": "COLEMAN",
+    "zip": "76834",
+    "county": "Coleman County",
+    "countyFips": "48083",
+    "query": "100 ANGELA DRIVE COLEMAN TX 76834",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2256,
+    "variantsTested": 6768,
+    "variantsPassed": 6768
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 35.49279999965802,
+  "certificationStatus": "PASS",
+  "failures": []
+}

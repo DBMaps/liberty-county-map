@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Eastland County",
+  "countyFips": "48133",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 401665,
+  "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2",
+  "indexedAddressCount": 13441,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038999998942017555
+  },
+  "exactSample": {
+    "providerIdentity": "8bdb39312fe6040c72b5",
+    "houseNumber": "1",
+    "canonicalRoad": "COUNTRY CLUB RIDGE",
+    "city": "CISCO",
+    "zip": "76437",
+    "county": "Eastland County",
+    "countyFips": "48133",
+    "query": "1 COUNTRY CLUB RIDGE CISCO TX 76437",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 66.00339999981225,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "ward-tx",
+  "county": "Ward County",
+  "fips": "48475",
+  "artifact": "ward-48475.addresses.jsonl.gz",
+  "sizeBytes": 169038,
+  "sha256": "b92586e3d6969a3310926e1b6aa757cac4a2c1ac54b5d66d495ad25d509b8e07",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "winkler-tx",
+  "county": "Winkler County",
+  "fips": "48495",
+  "artifact": "winkler-48495.addresses.jsonl.gz",
+  "sizeBytes": 85761,
+  "sha256": "704d01f7af5e00136c6c8c5b24d21b0d5140f872bfbc5a2ebf04945a6d5b9413",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

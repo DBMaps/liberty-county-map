@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Deaf Smith County",
+  "countyFips": "48117",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 246957,
+  "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23",
+  "indexedAddressCount": 8422,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006099999882280827
+  },
+  "exactSample": {
+    "providerIdentity": "5217658a8b0128e48a25",
+    "houseNumber": "1",
+    "canonicalRoad": "BARTLETT II DRIVE",
+    "city": "",
+    "zip": "79045",
+    "county": "Deaf Smith County",
+    "countyFips": "48117",
+    "query": "1 BARTLETT II DRIVE TX 79045",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1494,
+    "variantsTested": 4482,
+    "variantsPassed": 4482
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 48.06979999970645,
+  "certificationStatus": "PASS",
+  "failures": []
+}

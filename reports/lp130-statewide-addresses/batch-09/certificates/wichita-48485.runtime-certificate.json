@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wichita-tx",
+  "county": "Wichita County",
+  "fips": "48485",
+  "artifact": "wichita-48485.addresses.jsonl.gz",
+  "sizeBytes": 1691936,
+  "sha256": "3d7d6895508e31ff7be92b2cf6e91832b76f3d16a583484374fd4d72942db672",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

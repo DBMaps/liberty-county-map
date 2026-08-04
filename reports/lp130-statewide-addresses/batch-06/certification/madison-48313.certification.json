@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Madison County",
+  "countyFips": "48313",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 348761,
+  "sha256": "622f378e0b08ce617c65ef96bbf2641064dba262c8f93db8ad77a5ffe0bc1345",
+  "indexedAddressCount": 10645,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "c2c6f99d8ccc11b79a04",
+    "houseNumber": "1",
+    "canonicalRoad": "MANNING",
+    "city": "",
+    "zip": "77864",
+    "county": "Madison County",
+    "countyFips": "48313",
+    "query": "1 MANNING TX 77864",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2805,
+    "variantsTested": 8415,
+    "variantsPassed": 8415
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 51.87529999949038,
+  "certificationStatus": "PASS",
+  "failures": []
+}

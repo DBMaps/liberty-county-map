@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "houston-tx",
+  "county": "Houston County",
+  "fips": "48225",
+  "artifact": "houston-48225.addresses.jsonl.gz",
+  "sizeBytes": 530218,
+  "sha256": "4481a984fc38a5490eed2c5dcf8658ab3d96532b3504b3b69a9bcb4daf52ce35",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

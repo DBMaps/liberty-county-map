@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mcculloch-tx",
+  "county": "McCulloch County",
+  "fips": "48307",
+  "artifact": "mcculloch-48307.addresses.jsonl.gz",
+  "sizeBytes": 190964,
+  "sha256": "29df3edb5dda0b6e6dc6b309b93d0446f345d21f088768b23391c47f900ae48e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

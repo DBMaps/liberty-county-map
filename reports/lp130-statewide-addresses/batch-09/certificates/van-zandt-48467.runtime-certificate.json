@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "van-zandt-tx",
+  "county": "Van Zandt County",
+  "fips": "48467",
+  "artifact": "van-zandt-48467.addresses.jsonl.gz",
+  "sizeBytes": 1173187,
+  "sha256": "2ed67b23a9a728601e44bcd03355571f0557324d694ac9dd343fb34aa1e00056",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

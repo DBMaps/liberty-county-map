@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "nolan-tx",
+  "county": "Nolan County",
+  "fips": "48353",
+  "artifact": "nolan-48353.addresses.jsonl.gz",
+  "sizeBytes": 277927,
+  "sha256": "8eb3ab8c6b1255de66731d0348e9684347e13c7f74c68e33ef61cd5c581c2e6a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

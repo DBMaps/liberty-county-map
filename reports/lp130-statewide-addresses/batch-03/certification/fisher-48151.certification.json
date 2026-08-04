@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Fisher County",
+  "countyFips": "48151",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 92189,
+  "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0",
+  "indexedAddressCount": 2980,
+  "exactMatchStatistics": {
+    "sampled": 2978,
+    "passed": 2978,
+    "failed": 0,
+    "p95LookupMs": 0.0032999999821186066
+  },
+  "exactSample": {
+    "providerIdentity": "35d12a4cbb2e374800e7",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST FORREST STREET",
+    "city": "ROTAN",
+    "zip": "79546",
+    "county": "Fisher County",
+    "countyFips": "48151",
+    "query": "100 EAST FORREST STREET ROTAN TX 79546",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2978,
+    "truthfulNoResults": 2978,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2978,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2978,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1400,
+    "variantsTested": 4200,
+    "variantsPassed": 4200
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.142500000074506,
+  "certificationStatus": "PASS",
+  "failures": []
+}

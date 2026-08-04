@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lampasas County",
+  "countyFips": "48281",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 347475,
+  "sha256": "ea2062b469b9b8271e7abdcfa3046b8fa218cb46ce7c68e692c78735c44edb29",
+  "indexedAddressCount": 10746,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "137b736fd7e1ccdb75d2",
+    "houseNumber": "1",
+    "canonicalRoad": "ACORN ST",
+    "city": "LAMPASAS",
+    "zip": "76550",
+    "county": "Lampasas County",
+    "countyFips": "48281",
+    "query": "1 ACORN ST LAMPASAS TX 76550",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 55.31290000118315,
+  "certificationStatus": "PASS",
+  "failures": []
+}

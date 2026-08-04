@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dickens-tx",
+  "county": "Dickens County",
+  "fips": "48125",
+  "artifact": "dickens-48125.addresses.jsonl.gz",
+  "sizeBytes": 61403,
+  "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

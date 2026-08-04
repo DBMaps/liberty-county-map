@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dallas-tx",
+  "county": "Dallas County",
+  "fips": "48113",
+  "artifact": "dallas-48113.addresses.jsonl.gz",
+  "sizeBytes": 32972921,
+  "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "eastland-tx",
+  "county": "Eastland County",
+  "fips": "48133",
+  "artifact": "eastland-48133.addresses.jsonl.gz",
+  "sizeBytes": 401665,
+  "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

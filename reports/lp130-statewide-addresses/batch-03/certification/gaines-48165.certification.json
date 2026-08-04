@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Gaines County",
+  "countyFips": "48165",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 284626,
+  "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592",
+  "indexedAddressCount": 8679,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0036000004038214684
+  },
+  "exactSample": {
+    "providerIdentity": "f2fccaca943bcc91b1c2",
+    "houseNumber": "100",
+    "canonicalRoad": "12TH STREET",
+    "city": "SEAGRAVES",
+    "zip": "79359",
+    "county": "Gaines County",
+    "countyFips": "48165",
+    "query": "100 12TH STREET SEAGRAVES TX 79359",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 43.17929999995977,
+  "certificationStatus": "PASS",
+  "failures": []
+}

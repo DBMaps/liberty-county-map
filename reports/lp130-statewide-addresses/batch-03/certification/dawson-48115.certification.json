@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Dawson County",
+  "countyFips": "48115",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 155032,
+  "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03",
+  "indexedAddressCount": 4856,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00409999955445528
+  },
+  "exactSample": {
+    "providerIdentity": "a55ad37705c905986156",
+    "houseNumber": "1",
+    "canonicalRoad": "AVENUE E",
+    "city": "ACKERLY",
+    "zip": "79713",
+    "county": "Dawson County",
+    "countyFips": "48115",
+    "query": "1 AVENUE E ACKERLY TX 79713",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 466,
+    "variantsTested": 1398,
+    "variantsPassed": 1398
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 41.872999999672174,
+  "certificationStatus": "PASS",
+  "failures": []
+}

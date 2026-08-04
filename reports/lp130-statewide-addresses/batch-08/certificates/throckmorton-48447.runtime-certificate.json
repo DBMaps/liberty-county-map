@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "throckmorton-tx",
+  "county": "Throckmorton County",
+  "fips": "48447",
+  "artifact": "throckmorton-48447.addresses.jsonl.gz",
+  "sizeBytes": 47074,
+  "sha256": "69de5919ec12a74f1b7c2bf4efbb325affb297d5d336fccf4bd4a55139649130",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

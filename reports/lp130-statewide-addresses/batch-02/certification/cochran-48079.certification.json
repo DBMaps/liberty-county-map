@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Cochran County",
+  "countyFips": "48079",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 48182,
+  "sha256": "ea0a0ccead83d3c19741765704c2fd6f0e2566b53bf4cc43593f653d3f608add",
+  "indexedAddressCount": 1535,
+  "exactMatchStatistics": {
+    "sampled": 1531,
+    "passed": 1531,
+    "failed": 0,
+    "p95LookupMs": 0.003599999938160181
+  },
+  "exactSample": {
+    "providerIdentity": "99bd9d53ea0f2980d5ec",
+    "houseNumber": "100",
+    "canonicalRoad": "ADAMS STREET",
+    "city": "MORTON",
+    "zip": "79346",
+    "county": "Cochran County",
+    "countyFips": "48079",
+    "query": "100 ADAMS STREET MORTON TX 79346",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1531,
+    "truthfulNoResults": 1531,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1531,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1531,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 320,
+    "variantsTested": 960,
+    "variantsPassed": 960
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 8.085699999704957,
+  "certificationStatus": "PASS",
+  "failures": []
+}

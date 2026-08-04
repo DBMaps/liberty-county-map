@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Mills County",
+  "countyFips": "48333",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 93554,
+  "sha256": "4c131cde012df1e5e22586ed45ac58967af364b2d0d3ad9d90da7b004447cb85",
+  "indexedAddressCount": 2949,
+  "exactMatchStatistics": {
+    "sampled": 2949,
+    "passed": 2949,
+    "failed": 0,
+    "p95LookupMs": 0.0030000004917383194
+  },
+  "exactSample": {
+    "providerIdentity": "f1a421f7556080518a32",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 536",
+    "city": "MULLIN",
+    "zip": "76864",
+    "county": "Mills County",
+    "countyFips": "48333",
+    "query": "1 COUNTY ROAD 536 MULLIN TX 76864",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2949,
+    "truthfulNoResults": 2949,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2949,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2949,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2321,
+    "variantsTested": 6963,
+    "variantsPassed": 6963
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 17.273799998685718,
+  "certificationStatus": "PASS",
+  "failures": []
+}

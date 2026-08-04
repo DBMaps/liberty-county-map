@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wilson-tx",
+  "county": "Wilson County",
+  "fips": "48493",
+  "artifact": "wilson-48493.addresses.jsonl.gz",
+  "sizeBytes": 740747,
+  "sha256": "1a2736ae8088896f854cf57fe680fc8aa2217215a39fed5c729f8ccf50db1e32",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

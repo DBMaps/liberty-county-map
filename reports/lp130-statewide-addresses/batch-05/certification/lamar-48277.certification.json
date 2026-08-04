@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lamar County",
+  "countyFips": "48277",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 975524,
+  "sha256": "9cf98fae55e83590986cc83cd3ec8b99f4c22dc08d8e3ee952eff2e22dfee5b2",
+  "indexedAddressCount": 32071,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004200000315904617
+  },
+  "exactSample": {
+    "providerIdentity": "c89da3f6fef0d84c50c3",
+    "houseNumber": "1",
+    "canonicalRoad": "PRIVATE ROAD 24310",
+    "city": "Roxton",
+    "zip": "75477",
+    "county": "Lamar County",
+    "countyFips": "48277",
+    "query": "1 Private Road 24310 Roxton TX 75477",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 188.6878999993205,
+  "certificationStatus": "PASS",
+  "failures": []
+}

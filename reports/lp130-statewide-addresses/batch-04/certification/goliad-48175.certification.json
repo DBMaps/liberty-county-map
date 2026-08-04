@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Goliad County",
+  "countyFips": "48175",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 176244,
+  "sha256": "cf45d4f6ecb936a975f4e795825bf0f9b14c0f690d283d2dc05c50aec3813a4b",
+  "indexedAddressCount": 5530,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "d648b9c5366d99447d6c",
+    "houseNumber": "1",
+    "canonicalRoad": "CABRERA ROAD",
+    "city": "GOLIAD",
+    "zip": "77963",
+    "county": "Goliad County",
+    "countyFips": "48175",
+    "query": "1 CABRERA ROAD GOLIAD TX 77963",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1018,
+    "variantsTested": 3054,
+    "variantsPassed": 3054
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 31.69590000063181,
+  "certificationStatus": "PASS",
+  "failures": []
+}

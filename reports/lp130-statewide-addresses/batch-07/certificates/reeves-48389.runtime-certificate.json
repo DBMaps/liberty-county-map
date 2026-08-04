@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "reeves-tx",
+  "county": "Reeves County",
+  "fips": "48389",
+  "artifact": "reeves-48389.addresses.jsonl.gz",
+  "sizeBytes": 245206,
+  "sha256": "2085a7934312134cd0d68ef513e910e88e6f3febe0d2e309164821e5c83bb4fe",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

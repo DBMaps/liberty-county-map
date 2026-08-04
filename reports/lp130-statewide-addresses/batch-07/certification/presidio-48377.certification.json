@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Presidio County",
+  "countyFips": "48377",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 183109,
+  "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce",
+  "indexedAddressCount": 5266,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000030279159546
+  },
+  "exactSample": {
+    "providerIdentity": "02ccf9a7e98bf8b4015d",
+    "houseNumber": "1",
+    "canonicalRoad": "CALVARY ROW",
+    "city": "MARFA",
+    "zip": "79843",
+    "county": "Presidio County",
+    "countyFips": "48377",
+    "query": "1 CALVARY ROW MARFA TX 79843",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "FAIL",
+    "eligibleRecords": 578,
+    "variantsTested": 1734,
+    "variantsPassed": 1732
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 28.076400000602007,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "canonical road alias failed"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hale County",
+  "countyFips": "48189",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 419289,
+  "sha256": "5e7e1c7af1e3dc3eb2ac6e69a9782733e818b6a322a06f19d89d35a0a669be3f",
+  "indexedAddressCount": 14180,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00390000082552433
+  },
+  "exactSample": {
+    "providerIdentity": "1f73bbc52d2322db57ec",
+    "houseNumber": "1",
+    "canonicalRoad": "PARK PL",
+    "city": "PLAINVIEW",
+    "zip": "",
+    "county": "Hale County",
+    "countyFips": "48189",
+    "query": "1 PARK PL PLAINVIEW TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1460,
+    "variantsTested": 4380,
+    "variantsPassed": 4380
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 68.70890000090003,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kent-tx",
+  "county": "Kent County",
+  "fips": "48263",
+  "artifact": "kent-48263.addresses.jsonl.gz",
+  "sizeBytes": 28638,
+  "sha256": "8bf80745c1fd525c3557a1900dc647fe9ff02fccdd944ca9b0d1f177888ad168",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

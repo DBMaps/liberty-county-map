@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kaufman-tx",
+  "county": "Kaufman County",
+  "fips": "48257",
+  "artifact": "kaufman-48257.addresses.jsonl.gz",
+  "sizeBytes": 2751662,
+  "sha256": "c737f45232b1d9bde1e859a61b3c13c6f67168eda274b63201f737bc27d46aa6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

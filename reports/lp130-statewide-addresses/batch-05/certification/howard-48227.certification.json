@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Howard County",
+  "countyFips": "48227",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 454004,
+  "sha256": "268e0baeda497c8f2c48f0a09f3d9b75a83df98c3cee5e0cd230afe2711932a2",
+  "indexedAddressCount": 15149,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00430000014603138
+  },
+  "exactSample": {
+    "providerIdentity": "158636e4a420b0fcc283",
+    "houseNumber": "1",
+    "canonicalRoad": "AVALON COURT",
+    "city": "",
+    "zip": "",
+    "county": "Howard County",
+    "countyFips": "48227",
+    "query": "1 AVALON COURT TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 40,
+    "variantsTested": 120,
+    "variantsPassed": 120
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 117.07210000045598,
+  "certificationStatus": "PASS",
+  "failures": []
+}

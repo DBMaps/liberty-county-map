@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Live Oak County",
+  "countyFips": "48297",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 132323,
+  "sha256": "2f1eae8281d7b2328c168cc9d9a8b88b62fe8ff04c4f268173bd33a2d0a9bc3e",
+  "indexedAddressCount": 4150,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "62c37936c03bf2299efb",
+    "houseNumber": "100",
+    "canonicalRoad": "AUSTIN STREET",
+    "city": "George West",
+    "zip": "78022",
+    "county": "Live Oak County",
+    "countyFips": "48297",
+    "query": "100 Austin Street George West TX 78022",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 764,
+    "variantsTested": 2292,
+    "variantsPassed": 2292
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 25.948200000450015,
+  "certificationStatus": "PASS",
+  "failures": []
+}

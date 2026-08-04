@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Smith County",
+  "countyFips": "48423",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 4082413,
+  "sha256": "81ec218b7fe9612bbe3a0d05dddfcaffdff6c9bcd703e27e9237c77390803093",
+  "indexedAddressCount": 132401,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004799999296665192
+  },
+  "exactSample": {
+    "providerIdentity": "e1cd021412377345ef9d",
+    "houseNumber": "0",
+    "canonicalRoad": "CR 1130",
+    "city": "Flint",
+    "zip": "75762",
+    "county": "Smith County",
+    "countyFips": "48423",
+    "query": "0 County Road 1130 Flint TX 75762",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 849.9703000001609,
+  "certificationStatus": "PASS",
+  "failures": []
+}

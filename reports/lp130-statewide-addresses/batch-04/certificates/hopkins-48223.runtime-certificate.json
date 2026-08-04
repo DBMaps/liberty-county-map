@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hopkins-tx",
+  "county": "Hopkins County",
+  "fips": "48223",
+  "artifact": "hopkins-48223.addresses.jsonl.gz",
+  "sizeBytes": 641263,
+  "sha256": "4cc146b1e839ff1cbe51ddb27f276bb3577d493b3680a5dec96b99414bf26196",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

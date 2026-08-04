@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Marion County",
+  "countyFips": "48315",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 288214,
+  "sha256": "9d017294d10801d50627a53c8ca5afde89f4e109c2cdc86ac85ad979d6d27c0a",
+  "indexedAddressCount": 8705,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "e3d3dabcc763bf7eddd1",
+    "houseNumber": "100",
+    "canonicalRoad": "BEL AIRE STREET",
+    "city": "ORE CITY",
+    "zip": "75683",
+    "county": "Marion County",
+    "countyFips": "48315",
+    "query": "100 BEL AIRE STREET ORE CITY TX 75683",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1818,
+    "variantsTested": 5454,
+    "variantsPassed": 5454
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 45.591799998655915,
+  "certificationStatus": "PASS",
+  "failures": []
+}

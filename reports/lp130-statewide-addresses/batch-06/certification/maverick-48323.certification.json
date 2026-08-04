@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Maverick County",
+  "countyFips": "48323",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 774570,
+  "sha256": "b7c77df9eb00753f04bd3da9805b27d681799a7244dcd1a95b25e82acbad4bbe",
+  "indexedAddressCount": 24548,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "20ea7723644e3e3d3ea3",
+    "houseNumber": "1",
+    "canonicalRoad": "CENDERO STREET",
+    "city": "EAGLE PASS",
+    "zip": "78852",
+    "county": "Maverick County",
+    "countyFips": "48323",
+    "query": "1 CENDERO STREET EAGLE PASS TX 78852",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1120,
+    "variantsTested": 3360,
+    "variantsPassed": 3360
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 144.9879999998957,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "red-river-tx",
+  "county": "Red River County",
+  "fips": "48387",
+  "artifact": "red-river-48387.addresses.jsonl.gz",
+  "sizeBytes": 302485,
+  "sha256": "928150e1ab9fc99c45c4768c046e5c74e578b874b3f9843f0fed84e8e6cb5b3f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

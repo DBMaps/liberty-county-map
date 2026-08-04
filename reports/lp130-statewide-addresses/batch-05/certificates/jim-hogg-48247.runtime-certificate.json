@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jim-hogg-tx",
+  "county": "Jim Hogg County",
+  "fips": "48247",
+  "artifact": "jim-hogg-48247.addresses.jsonl.gz",
+  "sizeBytes": 93148,
+  "sha256": "447d06f7811824c2d3140aea92c1f551b67ac1714167c942074cff90f634a584",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

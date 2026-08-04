@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "yoakum-tx",
+  "county": "Yoakum County",
+  "fips": "48501",
+  "artifact": "yoakum-48501.addresses.jsonl.gz",
+  "sizeBytes": 120822,
+  "sha256": "843a9225782612b891c637514d4f43e8754b62e781ca7561a5d897a5c8bf17c4",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

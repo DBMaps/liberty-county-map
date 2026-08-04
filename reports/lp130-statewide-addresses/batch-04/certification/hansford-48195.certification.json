@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hansford County",
+  "countyFips": "48195",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 92637,
+  "sha256": "84e8e3e9119089263a089b61ed7a91085a39070a5dd2459163d073029fb777af",
+  "indexedAddressCount": 3118,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003200000151991844
+  },
+  "exactSample": {
+    "providerIdentity": "bda4c454af40d36c981b",
+    "houseNumber": "1",
+    "canonicalRoad": "NORTHEAST COURT STREET",
+    "city": "",
+    "zip": "79081",
+    "county": "Hansford County",
+    "countyFips": "48195",
+    "query": "1 NORTHEAST COURT STREET TX 79081",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 328,
+    "variantsTested": 984,
+    "variantsPassed": 984
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.957100000232458,
+  "certificationStatus": "PASS",
+  "failures": []
+}

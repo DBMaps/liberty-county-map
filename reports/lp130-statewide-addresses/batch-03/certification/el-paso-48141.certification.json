@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "El Paso County",
+  "countyFips": "48141",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 7154400,
+  "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f",
+  "indexedAddressCount": 252944,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00559999980032444
+  },
+  "exactSample": {
+    "providerIdentity": "2b29974aa403d6863634",
+    "houseNumber": "0",
+    "canonicalRoad": "N ZARAGOZA RD",
+    "city": "CITY OF EL PASO",
+    "zip": "",
+    "county": "El Paso County",
+    "countyFips": "48141",
+    "query": "0 N ZARAGOZA RD CITY OF EL PASO TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "NOT_APPLICABLE",
+    "eligibleRecords": 0,
+    "variantsTested": 0,
+    "variantsPassed": 0
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 1681.2215999998152,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "erath-tx",
+  "county": "Erath County",
+  "fips": "48143",
+  "artifact": "erath-48143.addresses.jsonl.gz",
+  "sizeBytes": 664582,
+  "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

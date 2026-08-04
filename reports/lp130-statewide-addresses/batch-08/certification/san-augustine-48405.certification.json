@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "San Augustine County",
+  "countyFips": "48405",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 250781,
+  "sha256": "928822ef1362db74bc68e51bb7f1a674e6704750b8dbe98cd8cc3b8eb8441774",
+  "indexedAddressCount": 7534,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "4c488ff7e2c6694b7931",
+    "houseNumber": "100",
+    "canonicalRoad": "WEST COLUMBIA",
+    "city": "",
+    "zip": "",
+    "county": "San Augustine County",
+    "countyFips": "48405",
+    "query": "100 West Columbia TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 47.600500002503395,
+  "certificationStatus": "PASS",
+  "failures": []
+}

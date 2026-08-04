@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "frio-tx",
+  "county": "Frio County",
+  "fips": "48163",
+  "artifact": "frio-48163.addresses.jsonl.gz",
+  "sizeBytes": 201804,
+  "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

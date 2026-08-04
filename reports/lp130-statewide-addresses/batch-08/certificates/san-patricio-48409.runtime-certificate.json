@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "san-patricio-tx",
+  "county": "San Patricio County",
+  "fips": "48409",
+  "artifact": "san-patricio-48409.addresses.jsonl.gz",
+  "sizeBytes": 501799,
+  "sha256": "524ed0ed14528680bb1f297699136971073b0fd3d76e61a46afc2943d0c4ae2a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

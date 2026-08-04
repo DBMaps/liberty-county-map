@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "fannin-tx",
+  "county": "Fannin County",
+  "fips": "48147",
+  "artifact": "fannin-48147.addresses.jsonl.gz",
+  "sizeBytes": 675117,
+  "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "uvalde-tx",
+  "county": "Uvalde County",
+  "fips": "48463",
+  "artifact": "uvalde-48463.addresses.jsonl.gz",
+  "sizeBytes": 493131,
+  "sha256": "ffaf87c92d875d74f5f41b1ff0084312d9048771f9c61de2224d4cb3cc8c32d9",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

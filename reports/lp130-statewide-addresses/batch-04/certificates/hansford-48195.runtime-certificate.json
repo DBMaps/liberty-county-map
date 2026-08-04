@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hansford-tx",
+  "county": "Hansford County",
+  "fips": "48195",
+  "artifact": "hansford-48195.addresses.jsonl.gz",
+  "sizeBytes": 92637,
+  "sha256": "84e8e3e9119089263a089b61ed7a91085a39070a5dd2459163d073029fb777af",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

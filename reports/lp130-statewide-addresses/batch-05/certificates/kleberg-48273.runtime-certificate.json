@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kleberg-tx",
+  "county": "Kleberg County",
+  "fips": "48273",
+  "artifact": "kleberg-48273.addresses.jsonl.gz",
+  "sizeBytes": 327913,
+  "sha256": "292ca5eaa617d654920d2afd50e38b011bf4bb6122ebeea106ba8e7b2dbe7107",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

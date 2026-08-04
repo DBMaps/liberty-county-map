@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jack County",
+  "countyFips": "48237",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 193457,
+  "sha256": "1c19eb1792b97d79faa9f5fe13a5391dc78529f983a894a38bd1de2f62b0372a",
+  "indexedAddressCount": 5876,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000011652708054
+  },
+  "exactSample": {
+    "providerIdentity": "35feada760aa31f08e2e",
+    "houseNumber": "1",
+    "canonicalRoad": "CLAYTON DRIVE",
+    "city": "BRYSON",
+    "zip": "76427",
+    "county": "Jack County",
+    "countyFips": "48237",
+    "query": "1 CLAYTON DRIVE BRYSON TX 76427",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 958,
+    "variantsTested": 2874,
+    "variantsPassed": 2874
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 30.883300000801682,
+  "certificationStatus": "PASS",
+  "failures": []
+}

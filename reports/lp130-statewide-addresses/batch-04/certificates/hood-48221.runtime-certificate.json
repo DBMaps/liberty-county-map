@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hood-tx",
+  "county": "Hood County",
+  "fips": "48221",
+  "artifact": "hood-48221.addresses.jsonl.gz",
+  "sizeBytes": 1205211,
+  "sha256": "696af3bde0fa863fec8057aa3213c994c4396172b1f4c6f51252bf19f6d46afa",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

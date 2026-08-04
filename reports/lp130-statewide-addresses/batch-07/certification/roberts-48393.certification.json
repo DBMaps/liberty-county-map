@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Roberts County",
+  "countyFips": "48393",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 22999,
+  "sha256": "4db42e85eea204429273c9727fc73bf608d66b80be42586bd84b6bd697fda45d",
+  "indexedAddressCount": 685,
+  "exactMatchStatistics": {
+    "sampled": 685,
+    "passed": 685,
+    "failed": 0,
+    "p95LookupMs": 0.003100000321865082
+  },
+  "exactSample": {
+    "providerIdentity": "0a238bfacace0aec0734",
+    "houseNumber": "100",
+    "canonicalRoad": "AIRPORT DRIVE",
+    "city": "",
+    "zip": "79059",
+    "county": "Roberts County",
+    "countyFips": "48393",
+    "query": "100 AIRPORT DRIVE TX 79059",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 685,
+    "truthfulNoResults": 685,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 685,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 685,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 57,
+    "variantsTested": 171,
+    "variantsPassed": 171
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 4.206200003623962,
+  "certificationStatus": "PASS",
+  "failures": []
+}

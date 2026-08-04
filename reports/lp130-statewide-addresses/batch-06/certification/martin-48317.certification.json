@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Martin County",
+  "countyFips": "48317",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 123542,
+  "sha256": "2074e7aded7149a9a1b3cfba034bd05883002d9f3025625da33fcddcb0fb6b42",
+  "indexedAddressCount": 3777,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "171f9d134bf257423214",
+    "houseNumber": "100",
+    "canonicalRoad": "SOUTH SAINT MARY STREET",
+    "city": "",
+    "zip": "79782",
+    "county": "Martin County",
+    "countyFips": "48317",
+    "query": "100 SOUTH SAINT MARY STREET TX 79782",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 490,
+    "variantsTested": 1470,
+    "variantsPassed": 1470
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 18.959100000560284,
+  "certificationStatus": "PASS",
+  "failures": []
+}

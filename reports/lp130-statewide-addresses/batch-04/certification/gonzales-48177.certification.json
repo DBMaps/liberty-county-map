@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Gonzales County",
+  "countyFips": "48177",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 411398,
+  "sha256": "b8338310eb064e7b3d991dfb5f649513c95eb10c636810391c12771c34e5d216",
+  "indexedAddressCount": 13185,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00390000082552433
+  },
+  "exactSample": {
+    "providerIdentity": "8d21cfa24499e8f59ce6",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 197",
+    "city": "GONZALES",
+    "zip": "78629",
+    "county": "Gonzales County",
+    "countyFips": "48177",
+    "query": "1 COUNTY ROAD 197 GONZALES TX 78629",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 77.57679999992251,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hamilton County",
+  "countyFips": "48193",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 141949,
+  "sha256": "7e1b7c1b0eecf52e94a2ad550e587889177f00379d136312a0f7734a7ba0312b",
+  "indexedAddressCount": 4187,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.007200000807642937
+  },
+  "exactSample": {
+    "providerIdentity": "b1e9049cd41edd5a029b",
+    "houseNumber": "100",
+    "canonicalRoad": "HERCULES ST",
+    "city": "HAMILTON",
+    "zip": "76531",
+    "county": "Hamilton County",
+    "countyFips": "48193",
+    "query": "100 HERCULES ST HAMILTON TX 76531",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2511,
+    "variantsTested": 7533,
+    "variantsPassed": 7533
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 21.482600001618266,
+  "certificationStatus": "PASS",
+  "failures": []
+}

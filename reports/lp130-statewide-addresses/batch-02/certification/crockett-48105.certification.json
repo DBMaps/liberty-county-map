@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Crockett County",
+  "countyFips": "48105",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 100165,
+  "sha256": "e960b94bd070c90a5bc1a2cf38a522e7f25b89392bf5e1fa6d8e5e3d0205fc84",
+  "indexedAddressCount": 3146,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "929fea5118c390a500dd",
+    "houseNumber": "1",
+    "canonicalRoad": "LOOP 466",
+    "city": "",
+    "zip": "",
+    "county": "Crockett County",
+    "countyFips": "48105",
+    "query": "1 LOOP 466 TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 599,
+    "variantsTested": 1797,
+    "variantsPassed": 1797
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.515100000426173,
+  "certificationStatus": "PASS",
+  "failures": []
+}

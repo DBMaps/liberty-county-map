@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Webb County",
+  "countyFips": "48479",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 3249000,
+  "sha256": "de111d7849ab761639983a4e11a63a92baf6d397725046435899d9c4b8dd49ae",
+  "indexedAddressCount": 85581,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0047000013291835785
+  },
+  "exactSample": {
+    "providerIdentity": "1e09c3ee7d319d23d78c",
+    "houseNumber": "1",
+    "canonicalRoad": "CANDLEWOOD ROAD",
+    "city": "LAREDO",
+    "zip": "",
+    "county": "Webb County",
+    "countyFips": "48479",
+    "query": "1 Candlewood Road LAREDO TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 536,
+    "variantsTested": 1608,
+    "variantsPassed": 1608
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 547.1035000011325,
+  "certificationStatus": "PASS",
+  "failures": []
+}

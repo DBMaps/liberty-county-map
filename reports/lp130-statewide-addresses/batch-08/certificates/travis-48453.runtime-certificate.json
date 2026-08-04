@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "travis-tx",
+  "county": "Travis County",
+  "fips": "48453",
+  "artifact": "travis-48453.addresses.jsonl.gz",
+  "sizeBytes": 14405442,
+  "sha256": "2c3774cfbc04bb7eaf7a16ef013ab02fc6c70978206309ce7a8c348bc0be2c1e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

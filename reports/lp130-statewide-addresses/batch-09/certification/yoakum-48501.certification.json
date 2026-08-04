@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Yoakum County",
+  "countyFips": "48501",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 120822,
+  "sha256": "843a9225782612b891c637514d4f43e8754b62e781ca7561a5d897a5c8bf17c4",
+  "indexedAddressCount": 3797,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "1f4ff16b7115c93418d5",
+    "houseNumber": "100",
+    "canonicalRoad": "13TH STREET",
+    "city": "PLAINS",
+    "zip": "79355",
+    "county": "Yoakum County",
+    "countyFips": "48501",
+    "query": "100 13TH STREET PLAINS TX 79355",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 887,
+    "variantsTested": 2661,
+    "variantsPassed": 2661
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 19.005199998617172,
+  "certificationStatus": "PASS",
+  "failures": []
+}

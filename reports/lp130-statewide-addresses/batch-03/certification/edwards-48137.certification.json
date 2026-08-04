@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Edwards County",
+  "countyFips": "48137",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 136002,
+  "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba",
+  "indexedAddressCount": 4062,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003200000151991844
+  },
+  "exactSample": {
+    "providerIdentity": "b9ee0e8c6b0de2b2bd65",
+    "houseNumber": "1",
+    "canonicalRoad": "SD 24500",
+    "city": "ROCKSPRINGS",
+    "zip": "78880",
+    "county": "Edwards County",
+    "countyFips": "48137",
+    "query": "1 SD 24500 ROCKSPRINGS TX 78880",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 709,
+    "variantsTested": 2127,
+    "variantsPassed": 2127
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 19.514999999664724,
+  "certificationStatus": "PASS",
+  "failures": []
+}

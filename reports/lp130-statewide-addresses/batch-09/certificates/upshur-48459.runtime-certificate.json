@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "upshur-tx",
+  "county": "Upshur County",
+  "fips": "48459",
+  "artifact": "upshur-48459.addresses.jsonl.gz",
+  "sizeBytes": 899624,
+  "sha256": "b448bffc8859867179c8ab8264ab3824245ef77875e3927d4b943a1a177faac2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Upshur County",
+  "countyFips": "48459",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 899624,
+  "sha256": "b448bffc8859867179c8ab8264ab3824245ef77875e3927d4b943a1a177faac2",
+  "indexedAddressCount": 25881,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00780000165104866
+  },
+  "exactSample": {
+    "providerIdentity": "55f6afec5260494e4858",
+    "houseNumber": "1",
+    "canonicalRoad": "ACADEMY BOULEVARD",
+    "city": "BIG SANDY",
+    "zip": "75755",
+    "county": "Upshur County",
+    "countyFips": "48459",
+    "query": "1 ACADEMY BOULEVARD BIG SANDY TX 75755",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 196.5565000027418,
+  "certificationStatus": "PASS",
+  "failures": []
+}

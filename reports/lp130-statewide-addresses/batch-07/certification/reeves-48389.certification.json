@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Reeves County",
+  "countyFips": "48389",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 245206,
+  "sha256": "2085a7934312134cd0d68ef513e910e88e6f3febe0d2e309164821e5c83bb4fe",
+  "indexedAddressCount": 7251,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000030279159546
+  },
+  "exactSample": {
+    "providerIdentity": "f2f526087099052d18bc",
+    "houseNumber": "1",
+    "canonicalRoad": "BRIARWOOD CIRCLE",
+    "city": "",
+    "zip": "79772",
+    "county": "Reeves County",
+    "countyFips": "48389",
+    "query": "1 BRIARWOOD CIRCLE TX 79772",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1614,
+    "variantsTested": 4842,
+    "variantsPassed": 4842
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 38.85869999974966,
+  "certificationStatus": "PASS",
+  "failures": []
+}

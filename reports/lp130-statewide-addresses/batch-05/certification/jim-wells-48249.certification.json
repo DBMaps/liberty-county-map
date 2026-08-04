@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jim Wells County",
+  "countyFips": "48249",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 540185,
+  "sha256": "150250b599bc6d621f3a7505b6ae63cc3ac5ca49e75c5ccfe6b1cf6d1275fa9a",
+  "indexedAddressCount": 16637,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004099998623132706
+  },
+  "exactSample": {
+    "providerIdentity": "bfc960d52c914ef93779",
+    "houseNumber": "1",
+    "canonicalRoad": "CALETA CIRCLE",
+    "city": "",
+    "zip": "78332",
+    "county": "Jim Wells County",
+    "countyFips": "48249",
+    "query": "1 Caleta Circle TX 78332",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 89.5793999992311,
+  "certificationStatus": "PASS",
+  "failures": []
+}

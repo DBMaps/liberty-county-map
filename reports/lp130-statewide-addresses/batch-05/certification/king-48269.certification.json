@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "King County",
+  "countyFips": "48269",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 10467,
+  "sha256": "422c1a959a3c2fd81c791ebb1eeb56ab4346881395ec2ee5336c513755b69a85",
+  "indexedAddressCount": 324,
+  "exactMatchStatistics": {
+    "sampled": 324,
+    "passed": 324,
+    "failed": 0,
+    "p95LookupMs": 0.003200000151991844
+  },
+  "exactSample": {
+    "providerIdentity": "c0dee4f4850deb0bbdd2",
+    "houseNumber": "100",
+    "canonicalRoad": "SHELBY STREET",
+    "city": "PADUCAH",
+    "zip": "79248",
+    "county": "King County",
+    "countyFips": "48269",
+    "query": "100 SHELBY STREET PADUCAH TX 79248",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 324,
+    "truthfulNoResults": 324,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 324,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 324,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 120,
+    "variantsTested": 360,
+    "variantsPassed": 360
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 2.457200000062585,
+  "certificationStatus": "PASS",
+  "failures": []
+}

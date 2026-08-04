@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "motley-tx",
+  "county": "Motley County",
+  "fips": "48345",
+  "artifact": "motley-48345.addresses.jsonl.gz",
+  "sizeBytes": 38453,
+  "sha256": "7715b0b9f21025760bc2c7ed16c78c3062b88bb123750c4f0c15efcdf3f0d189",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

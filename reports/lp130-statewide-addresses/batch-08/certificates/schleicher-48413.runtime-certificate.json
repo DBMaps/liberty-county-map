@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "schleicher-tx",
+  "county": "Schleicher County",
+  "fips": "48413",
+  "artifact": "schleicher-48413.addresses.jsonl.gz",
+  "sizeBytes": 59945,
+  "sha256": "559897c8e0ff8b25724676be33c05a3bb61d7d12093d452ef2a3fa47f6d6a95b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

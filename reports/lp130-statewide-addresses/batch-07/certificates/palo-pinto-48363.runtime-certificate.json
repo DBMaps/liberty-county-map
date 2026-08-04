@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "palo-pinto-tx",
+  "county": "Palo Pinto County",
+  "fips": "48363",
+  "artifact": "palo-pinto-48363.addresses.jsonl.gz",
+  "sizeBytes": 809038,
+  "sha256": "f9bfb4a6329cc73689fe21953fa5435bf736f42b44b5782b6982e55d864a5ea9",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

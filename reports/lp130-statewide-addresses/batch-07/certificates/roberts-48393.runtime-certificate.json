@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "roberts-tx",
+  "county": "Roberts County",
+  "fips": "48393",
+  "artifact": "roberts-48393.addresses.jsonl.gz",
+  "sizeBytes": 22999,
+  "sha256": "4db42e85eea204429273c9727fc73bf608d66b80be42586bd84b6bd697fda45d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

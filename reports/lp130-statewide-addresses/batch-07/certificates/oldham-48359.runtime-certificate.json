@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "oldham-tx",
+  "county": "Oldham County",
+  "fips": "48359",
+  "artifact": "oldham-48359.addresses.jsonl.gz",
+  "sizeBytes": 40245,
+  "sha256": "83a31fba54e5c688aba5bc3ccdab17ddfd62cd407fdd09283e02650805e56ff7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

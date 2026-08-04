@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "concho-tx",
+  "county": "Concho County",
+  "fips": "48095",
+  "artifact": "concho-48095.addresses.jsonl.gz",
+  "sizeBytes": 104851,
+  "sha256": "77d291f9e853f88d6753c5738b0801515b1e69a3a2f83303d12d20b167c327e2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

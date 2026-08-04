@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "rockwall-tx",
+  "county": "Rockwall County",
+  "fips": "48397",
+  "artifact": "rockwall-48397.addresses.jsonl.gz",
+  "sizeBytes": 1681408,
+  "sha256": "beee33f9fcda1f2a9bd8040543e797b1e9af5953f048d1181467e6415fa7068b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

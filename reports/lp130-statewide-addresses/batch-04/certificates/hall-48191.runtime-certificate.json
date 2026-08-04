@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hall-tx",
+  "county": "Hall County",
+  "fips": "48191",
+  "artifact": "hall-48191.addresses.jsonl.gz",
+  "sizeBytes": 65154,
+  "sha256": "f98eff64e7f38c07c568778ddc6a2ff3846d66281ecb47162ef44168b09b2381",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

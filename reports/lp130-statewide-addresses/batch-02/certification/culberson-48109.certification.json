@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Culberson County",
+  "countyFips": "48109",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 87166,
+  "sha256": "77ec6ea6b8fcc2c0008b516f9258a059768a14f013dd22fb27476defd83a66dc",
+  "indexedAddressCount": 2633,
+  "exactMatchStatistics": {
+    "sampled": 2514,
+    "passed": 2514,
+    "failed": 0,
+    "p95LookupMs": 0.0034000002779066563
+  },
+  "exactSample": {
+    "providerIdentity": "06c5b8ab19767aae8ded",
+    "houseNumber": "1",
+    "canonicalRoad": "EAST HURDS DRAW ROAD",
+    "city": "",
+    "zip": "79855",
+    "county": "Culberson County",
+    "countyFips": "48109",
+    "query": "1 EAST HURDS DRAW ROAD TX 79855",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2514,
+    "truthfulNoResults": 2514,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2514,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2514,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 205,
+    "variantsTested": 615,
+    "variantsPassed": 615
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.612800000235438,
+  "certificationStatus": "PASS",
+  "failures": []
+}

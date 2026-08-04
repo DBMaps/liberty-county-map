@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Carson County",
+  "countyFips": "48065",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 118586,
+  "sha256": "984013aca1f622f3d35b729f92abbc9bc1cbed4faecdceddf919422b2c5eb9fb",
+  "indexedAddressCount": 4003,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0032999999821186066
+  },
+  "exactSample": {
+    "providerIdentity": "2d2c8dab5af8141d4a8e",
+    "houseNumber": "1",
+    "canonicalRoad": "DOGWOOD LANE",
+    "city": "",
+    "zip": "79068",
+    "county": "Carson County",
+    "countyFips": "48065",
+    "query": "1 DOGWOOD LANE TX 79068",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 548,
+    "variantsTested": 1644,
+    "variantsPassed": 1644
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 19.357799999881536,
+  "certificationStatus": "PASS",
+  "failures": []
+}

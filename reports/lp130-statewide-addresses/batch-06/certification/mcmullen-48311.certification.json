@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "McMullen County",
+  "countyFips": "48311",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 57657,
+  "sha256": "42296a9915722291cfe59cd59f01b30e886b273c9f9fa16cd7eca831d19a9efe",
+  "indexedAddressCount": 1686,
+  "exactMatchStatistics": {
+    "sampled": 1686,
+    "passed": 1686,
+    "failed": 0,
+    "p95LookupMs": 0.003600001335144043
+  },
+  "exactSample": {
+    "providerIdentity": "1573e54d427a0b13c094",
+    "houseNumber": "100",
+    "canonicalRoad": "ASH STREET",
+    "city": "Tilden",
+    "zip": "78072",
+    "county": "McMullen County",
+    "countyFips": "48311",
+    "query": "100 Ash Street Tilden TX 78072",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1686,
+    "truthfulNoResults": 1686,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1686,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1686,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 583,
+    "variantsTested": 1749,
+    "variantsPassed": 1749
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 9.85109999962151,
+  "certificationStatus": "PASS",
+  "failures": []
+}

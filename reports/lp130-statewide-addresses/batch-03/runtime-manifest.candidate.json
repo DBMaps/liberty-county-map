@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-03",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "dawson-tx",
+      "county": "Dawson County",
+      "fips": "48115",
+      "path": "data/generated/lp104/txgio-addresses/dawson-48115.addresses.jsonl.gz",
+      "sizeBytes": 155032,
+      "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/dawson-48115.runtime-certificate.json"
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "county": "Deaf Smith County",
+      "fips": "48117",
+      "path": "data/generated/lp104/txgio-addresses/deaf-smith-48117.addresses.jsonl.gz",
+      "sizeBytes": 246957,
+      "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/deaf-smith-48117.runtime-certificate.json"
+    },
+    {
+      "countyId": "delta-tx",
+      "county": "Delta County",
+      "fips": "48119",
+      "path": "data/generated/lp104/txgio-addresses/delta-48119.addresses.jsonl.gz",
+      "sizeBytes": 122734,
+      "sha256": "6f0371b453eef74e4e84255692c5b4e1c71d639949f6be4af0504f9869f1322f",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/delta-48119.runtime-certificate.json"
+    },
+    {
+      "countyId": "dewitt-tx",
+      "county": "DeWitt County",
+      "fips": "48123",
+      "path": "data/generated/lp104/txgio-addresses/dewitt-48123.addresses.jsonl.gz",
+      "sizeBytes": 406896,
+      "sha256": "d1e17e1ad29fbc24cc684c4dea3371bd9c77cdd834e7dfcaaaa7c73bed55a331",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/dewitt-48123.runtime-certificate.json"
+    },
+    {
+      "countyId": "dickens-tx",
+      "county": "Dickens County",
+      "fips": "48125",
+      "path": "data/generated/lp104/txgio-addresses/dickens-48125.addresses.jsonl.gz",
+      "sizeBytes": 61403,
+      "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/dickens-48125.runtime-certificate.json"
+    },
+    {
+      "countyId": "dimmit-tx",
+      "county": "Dimmit County",
+      "fips": "48127",
+      "path": "data/generated/lp104/txgio-addresses/dimmit-48127.addresses.jsonl.gz",
+      "sizeBytes": 208993,
+      "sha256": "2bf0d28205bd585b7f7f78b44b6a7f8a9c642f8424a04ab40833ab54681e90ec",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/dimmit-48127.runtime-certificate.json"
+    },
+    {
+      "countyId": "donley-tx",
+      "county": "Donley County",
+      "fips": "48129",
+      "path": "data/generated/lp104/txgio-addresses/donley-48129.addresses.jsonl.gz",
+      "sizeBytes": 189573,
+      "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/donley-48129.runtime-certificate.json"
+    },
+    {
+      "countyId": "duval-tx",
+      "county": "Duval County",
+      "fips": "48131",
+      "path": "data/generated/lp104/txgio-addresses/duval-48131.addresses.jsonl.gz",
+      "sizeBytes": 99456,
+      "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/duval-48131.runtime-certificate.json"
+    },
+    {
+      "countyId": "eastland-tx",
+      "county": "Eastland County",
+      "fips": "48133",
+      "path": "data/generated/lp104/txgio-addresses/eastland-48133.addresses.jsonl.gz",
+      "sizeBytes": 401665,
+      "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/eastland-48133.runtime-certificate.json"
+    },
+    {
+      "countyId": "edwards-tx",
+      "county": "Edwards County",
+      "fips": "48137",
+      "path": "data/generated/lp104/txgio-addresses/edwards-48137.addresses.jsonl.gz",
+      "sizeBytes": 136002,
+      "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/edwards-48137.runtime-certificate.json"
+    },
+    {
+      "countyId": "ellis-tx",
+      "county": "Ellis County",
+      "fips": "48139",
+      "path": "data/generated/lp104/txgio-addresses/ellis-48139.addresses.jsonl.gz",
+      "sizeBytes": 2800026,
+      "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/ellis-48139.runtime-certificate.json"
+    },
+    {
+      "countyId": "el-paso-tx",
+      "county": "El Paso County",
+      "fips": "48141",
+      "path": "data/generated/lp104/txgio-addresses/el-paso-48141.addresses.jsonl.gz",
+      "sizeBytes": 7154400,
+      "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/el-paso-48141.runtime-certificate.json"
+    },
+    {
+      "countyId": "erath-tx",
+      "county": "Erath County",
+      "fips": "48143",
+      "path": "data/generated/lp104/txgio-addresses/erath-48143.addresses.jsonl.gz",
+      "sizeBytes": 664582,
+      "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/erath-48143.runtime-certificate.json"
+    },
+    {
+      "countyId": "falls-tx",
+      "county": "Falls County",
+      "fips": "48145",
+      "path": "data/generated/lp104/txgio-addresses/falls-48145.addresses.jsonl.gz",
+      "sizeBytes": 270714,
+      "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/falls-48145.runtime-certificate.json"
+    },
+    {
+      "countyId": "fannin-tx",
+      "county": "Fannin County",
+      "fips": "48147",
+      "path": "data/generated/lp104/txgio-addresses/fannin-48147.addresses.jsonl.gz",
+      "sizeBytes": 675117,
+      "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/fannin-48147.runtime-certificate.json"
+    },
+    {
+      "countyId": "fisher-tx",
+      "county": "Fisher County",
+      "fips": "48151",
+      "path": "data/generated/lp104/txgio-addresses/fisher-48151.addresses.jsonl.gz",
+      "sizeBytes": 92189,
+      "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/fisher-48151.runtime-certificate.json"
+    },
+    {
+      "countyId": "floyd-tx",
+      "county": "Floyd County",
+      "fips": "48153",
+      "path": "data/generated/lp104/txgio-addresses/floyd-48153.addresses.jsonl.gz",
+      "sizeBytes": 107816,
+      "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/floyd-48153.runtime-certificate.json"
+    },
+    {
+      "countyId": "foard-tx",
+      "county": "Foard County",
+      "fips": "48155",
+      "path": "data/generated/lp104/txgio-addresses/foard-48155.addresses.jsonl.gz",
+      "sizeBytes": 33122,
+      "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/foard-48155.runtime-certificate.json"
+    },
+    {
+      "countyId": "franklin-tx",
+      "county": "Franklin County",
+      "fips": "48159",
+      "path": "data/generated/lp104/txgio-addresses/franklin-48159.addresses.jsonl.gz",
+      "sizeBytes": 270786,
+      "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/franklin-48159.runtime-certificate.json"
+    },
+    {
+      "countyId": "freestone-tx",
+      "county": "Freestone County",
+      "fips": "48161",
+      "path": "data/generated/lp104/txgio-addresses/freestone-48161.addresses.jsonl.gz",
+      "sizeBytes": 337120,
+      "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/freestone-48161.runtime-certificate.json"
+    },
+    {
+      "countyId": "frio-tx",
+      "county": "Frio County",
+      "fips": "48163",
+      "path": "data/generated/lp104/txgio-addresses/frio-48163.addresses.jsonl.gz",
+      "sizeBytes": 201804,
+      "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/frio-48163.runtime-certificate.json"
+    },
+    {
+      "countyId": "gaines-tx",
+      "county": "Gaines County",
+      "fips": "48165",
+      "path": "data/generated/lp104/txgio-addresses/gaines-48165.addresses.jsonl.gz",
+      "sizeBytes": 284626,
+      "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/gaines-48165.runtime-certificate.json"
+    },
+    {
+      "countyId": "garza-tx",
+      "county": "Garza County",
+      "fips": "48169",
+      "path": "data/generated/lp104/txgio-addresses/garza-48169.addresses.jsonl.gz",
+      "sizeBytes": 101925,
+      "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb",
+      "certificate": "reports/lp130-statewide-addresses/batch-03/certificates/garza-48169.runtime-certificate.json"
+    }
+  ]
+}

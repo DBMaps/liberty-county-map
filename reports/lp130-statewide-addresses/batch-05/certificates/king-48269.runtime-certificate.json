@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "king-tx",
+  "county": "King County",
+  "fips": "48269",
+  "artifact": "king-48269.addresses.jsonl.gz",
+  "sizeBytes": 10467,
+  "sha256": "422c1a959a3c2fd81c791ebb1eeb56ab4346881395ec2ee5336c513755b69a85",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jeff Davis County",
+  "countyFips": "48243",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 84171,
+  "sha256": "72b99b7b4da2b891eb986e59f0d25c435f871a285be15b04a2c6cada1822da90",
+  "indexedAddressCount": 2403,
+  "exactMatchStatistics": {
+    "sampled": 2400,
+    "passed": 2400,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "d835fb2abc85ba9d5815",
+    "houseNumber": "1",
+    "canonicalRoad": "APOLLO LANDING",
+    "city": "FORT DAVIS",
+    "zip": "79734",
+    "county": "Jeff Davis County",
+    "countyFips": "48243",
+    "query": "1 APOLLO LANDING FORT DAVIS TX 79734",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2400,
+    "truthfulNoResults": 2400,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2400,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2400,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 204,
+    "variantsTested": 612,
+    "variantsPassed": 612
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 13.584599999710917,
+  "certificationStatus": "PASS",
+  "failures": []
+}

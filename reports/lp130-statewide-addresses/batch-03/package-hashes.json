@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "gridly-lp130-package-hashes-v1",
+  "batch": "batch-03",
+  "packages": [
+    {
+      "fips": "48115",
+      "package": "dawson-48115.addresses.jsonl.gz",
+      "sizeBytes": 155032,
+      "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03"
+    },
+    {
+      "fips": "48117",
+      "package": "deaf-smith-48117.addresses.jsonl.gz",
+      "sizeBytes": 246957,
+      "sha256": "77b1072755dc2395bfaf397a10cb62d7b5658c6dcd174aa2a025e695626adb23"
+    },
+    {
+      "fips": "48119",
+      "package": "delta-48119.addresses.jsonl.gz",
+      "sizeBytes": 122734,
+      "sha256": "6f0371b453eef74e4e84255692c5b4e1c71d639949f6be4af0504f9869f1322f"
+    },
+    {
+      "fips": "48121",
+      "package": "denton-48121.addresses.jsonl.gz",
+      "sizeBytes": 11819588,
+      "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17"
+    },
+    {
+      "fips": "48123",
+      "package": "dewitt-48123.addresses.jsonl.gz",
+      "sizeBytes": 406896,
+      "sha256": "d1e17e1ad29fbc24cc684c4dea3371bd9c77cdd834e7dfcaaaa7c73bed55a331"
+    },
+    {
+      "fips": "48125",
+      "package": "dickens-48125.addresses.jsonl.gz",
+      "sizeBytes": 61403,
+      "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1"
+    },
+    {
+      "fips": "48127",
+      "package": "dimmit-48127.addresses.jsonl.gz",
+      "sizeBytes": 208993,
+      "sha256": "2bf0d28205bd585b7f7f78b44b6a7f8a9c642f8424a04ab40833ab54681e90ec"
+    },
+    {
+      "fips": "48129",
+      "package": "donley-48129.addresses.jsonl.gz",
+      "sizeBytes": 189573,
+      "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9"
+    },
+    {
+      "fips": "48131",
+      "package": "duval-48131.addresses.jsonl.gz",
+      "sizeBytes": 99456,
+      "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2"
+    },
+    {
+      "fips": "48133",
+      "package": "eastland-48133.addresses.jsonl.gz",
+      "sizeBytes": 401665,
+      "sha256": "406799311fc308f4406afcf7afa66e4a5bf203e2f561c1c2e929b87a06edb9c2"
+    },
+    {
+      "fips": "48135",
+      "package": "ector-48135.addresses.jsonl.gz",
+      "sizeBytes": 2044691,
+      "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9"
+    },
+    {
+      "fips": "48137",
+      "package": "edwards-48137.addresses.jsonl.gz",
+      "sizeBytes": 136002,
+      "sha256": "c305daaa264c8aea46bd7f7c5acbb68efa64213f37cc295ef2506b49ae368bba"
+    },
+    {
+      "fips": "48139",
+      "package": "ellis-48139.addresses.jsonl.gz",
+      "sizeBytes": 2800026,
+      "sha256": "e6ccafb8814b6b62db6317bdff7a75e9bc10b2b8b8bbdab383dfe3bd8b951596"
+    },
+    {
+      "fips": "48141",
+      "package": "el-paso-48141.addresses.jsonl.gz",
+      "sizeBytes": 7154400,
+      "sha256": "f9efb58548446aeb99673a104d6733221cd4a033ea2a0849dba7c0ee285e043f"
+    },
+    {
+      "fips": "48143",
+      "package": "erath-48143.addresses.jsonl.gz",
+      "sizeBytes": 664582,
+      "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c"
+    },
+    {
+      "fips": "48145",
+      "package": "falls-48145.addresses.jsonl.gz",
+      "sizeBytes": 270714,
+      "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15"
+    },
+    {
+      "fips": "48147",
+      "package": "fannin-48147.addresses.jsonl.gz",
+      "sizeBytes": 675117,
+      "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb"
+    },
+    {
+      "fips": "48151",
+      "package": "fisher-48151.addresses.jsonl.gz",
+      "sizeBytes": 92189,
+      "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0"
+    },
+    {
+      "fips": "48153",
+      "package": "floyd-48153.addresses.jsonl.gz",
+      "sizeBytes": 107816,
+      "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4"
+    },
+    {
+      "fips": "48155",
+      "package": "foard-48155.addresses.jsonl.gz",
+      "sizeBytes": 33122,
+      "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef"
+    },
+    {
+      "fips": "48159",
+      "package": "franklin-48159.addresses.jsonl.gz",
+      "sizeBytes": 270786,
+      "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f"
+    },
+    {
+      "fips": "48161",
+      "package": "freestone-48161.addresses.jsonl.gz",
+      "sizeBytes": 337120,
+      "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4"
+    },
+    {
+      "fips": "48163",
+      "package": "frio-48163.addresses.jsonl.gz",
+      "sizeBytes": 201804,
+      "sha256": "d47eeec12b9bc3e93b970a152e5b096d0dada04dc478378d9ab2effb46018f7c"
+    },
+    {
+      "fips": "48165",
+      "package": "gaines-48165.addresses.jsonl.gz",
+      "sizeBytes": 284626,
+      "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592"
+    },
+    {
+      "fips": "48169",
+      "package": "garza-48169.addresses.jsonl.gz",
+      "sizeBytes": 101925,
+      "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb"
+    }
+  ]
+}

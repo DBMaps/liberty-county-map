@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "donley-tx",
+  "county": "Donley County",
+  "fips": "48129",
+  "artifact": "donley-48129.addresses.jsonl.gz",
+  "sizeBytes": 189573,
+  "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

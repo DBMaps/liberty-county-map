@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hartley-tx",
+  "county": "Hartley County",
+  "fips": "48205",
+  "artifact": "hartley-48205.addresses.jsonl.gz",
+  "sizeBytes": 90352,
+  "sha256": "367e9fb77b4bc4f70aed2a5f0bdb90df3cd27889b5c0a01385e72e2cfb543592",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

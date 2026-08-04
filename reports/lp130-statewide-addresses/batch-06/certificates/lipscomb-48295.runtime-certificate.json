@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lipscomb-tx",
+  "county": "Lipscomb County",
+  "fips": "48295",
+  "artifact": "lipscomb-48295.addresses.jsonl.gz",
+  "sizeBytes": 45911,
+  "sha256": "d347a9651dde12f35ee37f64f0918a85d731f2382af783250f44c29e8f092ae3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

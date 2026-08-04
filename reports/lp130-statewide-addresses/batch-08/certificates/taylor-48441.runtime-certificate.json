@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "taylor-tx",
+  "county": "Taylor County",
+  "fips": "48441",
+  "artifact": "taylor-48441.addresses.jsonl.gz",
+  "sizeBytes": 2563385,
+  "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "foard-tx",
+  "county": "Foard County",
+  "fips": "48155",
+  "artifact": "foard-48155.addresses.jsonl.gz",
+  "sizeBytes": 33122,
+  "sha256": "d96e8b65168d4a220584ec4e8ec4533d926cd4f4224d3b6bfa43764d7dbf01ef",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

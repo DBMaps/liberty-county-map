@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "maverick-tx",
+  "county": "Maverick County",
+  "fips": "48323",
+  "artifact": "maverick-48323.addresses.jsonl.gz",
+  "sizeBytes": 774570,
+  "sha256": "b7c77df9eb00753f04bd3da9805b27d681799a7244dcd1a95b25e82acbad4bbe",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

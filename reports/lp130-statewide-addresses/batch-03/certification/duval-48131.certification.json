@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Duval County",
+  "countyFips": "48131",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 99456,
+  "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2",
+  "indexedAddressCount": 3138,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003999999724328518
+  },
+  "exactSample": {
+    "providerIdentity": "ebb7176854e0894f4dc5",
+    "houseNumber": "100",
+    "canonicalRoad": "CARLE STREET",
+    "city": "Freer",
+    "zip": "78357",
+    "county": "Duval County",
+    "countyFips": "48131",
+    "query": "100 Carle Street Freer TX 78357",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 343,
+    "variantsTested": 1029,
+    "variantsPassed": 1029
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 17.57200000062585,
+  "certificationStatus": "PASS",
+  "failures": []
+}

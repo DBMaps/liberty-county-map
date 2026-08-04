@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "potter-tx",
+  "county": "Potter County",
+  "fips": "48375",
+  "artifact": "potter-48375.addresses.jsonl.gz",
+  "sizeBytes": 1693714,
+  "sha256": "7bc611d7c45866ff12da78931391ad233208b69a7f2848bed9a36b2d0446292a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

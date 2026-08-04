@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Knox County",
+  "countyFips": "48275",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 84184,
+  "sha256": "025593cd42a3fdc3b5a89246b5cad44013f85b4c7e460c40de67fbdbf7fda839",
+  "indexedAddressCount": 2765,
+  "exactMatchStatistics": {
+    "sampled": 2764,
+    "passed": 2764,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "9ea3e4ec5e4016829619",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST MAIN STREET",
+    "city": "KNOX CITY",
+    "zip": "79529",
+    "county": "Knox County",
+    "countyFips": "48275",
+    "query": "100 EAST MAIN STREET KNOX CITY TX 79529",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2764,
+    "truthfulNoResults": 2764,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2764,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2764,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 700,
+    "variantsTested": 2100,
+    "variantsPassed": 2100
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.130599999800324,
+  "certificationStatus": "PASS",
+  "failures": []
+}

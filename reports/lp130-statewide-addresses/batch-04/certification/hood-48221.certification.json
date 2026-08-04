@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hood County",
+  "countyFips": "48221",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1205211,
+  "sha256": "696af3bde0fa863fec8057aa3213c994c4396172b1f4c6f51252bf19f6d46afa",
+  "indexedAddressCount": 40891,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004599999636411667
+  },
+  "exactSample": {
+    "providerIdentity": "8c065124f9d3031346b2",
+    "houseNumber": "1",
+    "canonicalRoad": "LAMBERT COURT",
+    "city": "Granbury",
+    "zip": "76048",
+    "county": "Hood County",
+    "countyFips": "48221",
+    "query": "1 Lambert Court Granbury TX 76048",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 86,
+    "variantsTested": 258,
+    "variantsPassed": 258
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 248.59799999929965,
+  "certificationStatus": "PASS",
+  "failures": []
+}

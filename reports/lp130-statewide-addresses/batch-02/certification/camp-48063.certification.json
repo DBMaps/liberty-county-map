@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Camp County",
+  "countyFips": "48063",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 271291,
+  "sha256": "c3f3bd18cabc9d04110406f8a5a84bae6a5427e42b62d84641300c2b17114e9b",
+  "indexedAddressCount": 8492,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00419999985024333
+  },
+  "exactSample": {
+    "providerIdentity": "824d3c60ef7b3339317a",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 2404",
+    "city": "",
+    "zip": "",
+    "county": "Camp County",
+    "countyFips": "48063",
+    "query": "1 COUNTY ROAD 2404 TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 44.270800000056624,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kerr-tx",
+  "county": "Kerr County",
+  "fips": "48265",
+  "artifact": "kerr-48265.addresses.jsonl.gz",
+  "sizeBytes": 1368466,
+  "sha256": "3ec6e7cc2897084fb9a98d3b6b77261050c3157fef2752b340b13ebf7979746c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

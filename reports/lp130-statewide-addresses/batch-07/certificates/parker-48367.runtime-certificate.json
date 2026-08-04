@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "parker-tx",
+  "county": "Parker County",
+  "fips": "48367",
+  "artifact": "parker-48367.addresses.jsonl.gz",
+  "sizeBytes": 2597310,
+  "sha256": "545852ca251be618ce4296ff4e10ae9fdce32306c8d081deeec19bcb98610fc0",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

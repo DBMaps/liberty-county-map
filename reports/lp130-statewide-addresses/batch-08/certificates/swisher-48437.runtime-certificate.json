@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "swisher-tx",
+  "county": "Swisher County",
+  "fips": "48437",
+  "artifact": "swisher-48437.addresses.jsonl.gz",
+  "sizeBytes": 117953,
+  "sha256": "3a822c705ae23e66c247520c4b6d51c1f894975070df79bd9298f63e4d5b887c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

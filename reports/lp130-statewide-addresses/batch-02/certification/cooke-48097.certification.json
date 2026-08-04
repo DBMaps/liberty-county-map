@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Cooke County",
+  "countyFips": "48097",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 745531,
+  "sha256": "dce3ee97d5f7be2a50e20c5b969bd25ec4c036ffab60b30713416ac75a4b6923",
+  "indexedAddressCount": 22489,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006099999882280827
+  },
+  "exactSample": {
+    "providerIdentity": "ed1f8fb1a522abb80e93",
+    "houseNumber": "1",
+    "canonicalRoad": "BROOKHOLLOW CIRCLE",
+    "city": "GAINESVILLE",
+    "zip": "76240",
+    "county": "Cooke County",
+    "countyFips": "48097",
+    "query": "1 BROOKHOLLOW CIRCLE GAINESVILLE TX 76240",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 128.3666000002995,
+  "certificationStatus": "PASS",
+  "failures": []
+}

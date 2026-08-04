@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Erath County",
+  "countyFips": "48143",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 664582,
+  "sha256": "11c4a88f677a5c8352e52a6cd34a2a30617c08abcb80cf06a426c9c94e50942c",
+  "indexedAddressCount": 22138,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006799999624490738
+  },
+  "exactSample": {
+    "providerIdentity": "83d86ae0c02961b2190e",
+    "houseNumber": "100",
+    "canonicalRoad": "ADOBE DRIVE",
+    "city": "Stephenville",
+    "zip": "76401",
+    "county": "Erath County",
+    "countyFips": "48143",
+    "query": "100 Adobe Drive Stephenville TX 76401",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 140.45519999973476,
+  "certificationStatus": "PASS",
+  "failures": []
+}

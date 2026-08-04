@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "guadalupe-tx",
+  "county": "Guadalupe County",
+  "fips": "48187",
+  "artifact": "guadalupe-48187.addresses.jsonl.gz",
+  "sizeBytes": 3015561,
+  "sha256": "c71ab72303688c36d0add6673734818a658ea18b538673b05e02e9e9c8d2786e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "irion-tx",
+  "county": "Irion County",
+  "fips": "48235",
+  "artifact": "irion-48235.addresses.jsonl.gz",
+  "sizeBytes": 53316,
+  "sha256": "a07bd8ab5145455b8deda60fddf00f4f094e35cb48ae48f22e95a8300769c50d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

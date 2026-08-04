@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wilbarger-tx",
+  "county": "Wilbarger County",
+  "fips": "48487",
+  "artifact": "wilbarger-48487.addresses.jsonl.gz",
+  "sizeBytes": 240373,
+  "sha256": "9f1297239c4fb36724a50f2c459bf364be472af21c565d6726c92caed1512d4f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

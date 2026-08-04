@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "gray-tx",
+  "county": "Gray County",
+  "fips": "48179",
+  "artifact": "gray-48179.addresses.jsonl.gz",
+  "sizeBytes": 363629,
+  "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

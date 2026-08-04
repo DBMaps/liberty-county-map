@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "culberson-tx",
+  "county": "Culberson County",
+  "fips": "48109",
+  "artifact": "culberson-48109.addresses.jsonl.gz",
+  "sizeBytes": 87166,
+  "sha256": "77ec6ea6b8fcc2c0008b516f9258a059768a14f013dd22fb27476defd83a66dc",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

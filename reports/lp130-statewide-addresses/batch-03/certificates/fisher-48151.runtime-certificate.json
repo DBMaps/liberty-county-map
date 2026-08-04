@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "fisher-tx",
+  "county": "Fisher County",
+  "fips": "48151",
+  "artifact": "fisher-48151.addresses.jsonl.gz",
+  "sizeBytes": 92189,
+  "sha256": "6b7ddf9331ba24e2f30ee4fbe4134c7e6f3de580ab7c19914fc8c8fe2e0acaa0",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

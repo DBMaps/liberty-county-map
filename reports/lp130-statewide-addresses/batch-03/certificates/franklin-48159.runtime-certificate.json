@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "franklin-tx",
+  "county": "Franklin County",
+  "fips": "48159",
+  "artifact": "franklin-48159.addresses.jsonl.gz",
+  "sizeBytes": 270786,
+  "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

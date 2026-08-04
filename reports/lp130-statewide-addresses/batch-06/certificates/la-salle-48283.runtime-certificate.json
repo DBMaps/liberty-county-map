@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "la-salle-tx",
+  "county": "La Salle County",
+  "fips": "48283",
+  "artifact": "la-salle-48283.addresses.jsonl.gz",
+  "sizeBytes": 138933,
+  "sha256": "6443183bb0b4c1794a91e8cb4f10e0a65c2f1fe94497742e07c9e4f23978f258",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

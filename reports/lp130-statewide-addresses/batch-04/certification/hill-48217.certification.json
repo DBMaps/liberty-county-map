@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hill County",
+  "countyFips": "48217",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 615230,
+  "sha256": "af888bfceb269fe6bd2fd281b5d8bca4f38724f700c80ad97f3b538e2d0ffa1d",
+  "indexedAddressCount": 19506,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "9e242a8d3da6f3e912df",
+    "houseNumber": "1",
+    "canonicalRoad": "N WACO ST",
+    "city": "HILLSBORO",
+    "zip": "76645",
+    "county": "Hill County",
+    "countyFips": "48217",
+    "query": "1 N WACO ST HILLSBORO TX 76645",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 102.57460000179708,
+  "certificationStatus": "PASS",
+  "failures": []
+}

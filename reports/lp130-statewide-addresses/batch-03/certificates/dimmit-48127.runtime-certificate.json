@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dimmit-tx",
+  "county": "Dimmit County",
+  "fips": "48127",
+  "artifact": "dimmit-48127.addresses.jsonl.gz",
+  "sizeBytes": 208993,
+  "sha256": "2bf0d28205bd585b7f7f78b44b6a7f8a9c642f8424a04ab40833ab54681e90ec",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "llano-tx",
+  "county": "Llano County",
+  "fips": "48299",
+  "artifact": "llano-48299.addresses.jsonl.gz",
+  "sizeBytes": 741243,
+  "sha256": "b865d368ec8832e3f9514388eb3fa83b91a35a5cd3983a8f61dae2149afd2f8e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

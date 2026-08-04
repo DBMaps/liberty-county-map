@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "garza-tx",
+  "county": "Garza County",
+  "fips": "48169",
+  "artifact": "garza-48169.addresses.jsonl.gz",
+  "sizeBytes": 101925,
+  "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

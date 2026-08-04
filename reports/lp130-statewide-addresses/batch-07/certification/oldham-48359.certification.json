@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Oldham County",
+  "countyFips": "48359",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 40245,
+  "sha256": "83a31fba54e5c688aba5bc3ccdab17ddfd62cd407fdd09283e02650805e56ff7",
+  "indexedAddressCount": 1282,
+  "exactMatchStatistics": {
+    "sampled": 1270,
+    "passed": 1270,
+    "failed": 0,
+    "p95LookupMs": 0.0032000020146369934
+  },
+  "exactSample": {
+    "providerIdentity": "2e9314d2183ec8f82f6b",
+    "houseNumber": "1",
+    "canonicalRoad": "CURRY DRIVE",
+    "city": "",
+    "zip": "79001",
+    "county": "Oldham County",
+    "countyFips": "48359",
+    "query": "1 CURRY DRIVE TX 79001",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1270,
+    "truthfulNoResults": 1270,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1270,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1270,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 145,
+    "variantsTested": 435,
+    "variantsPassed": 435
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 6.5378000028431416,
+  "certificationStatus": "PASS",
+  "failures": []
+}

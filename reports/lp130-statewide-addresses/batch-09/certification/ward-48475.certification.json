@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Ward County",
+  "countyFips": "48475",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 169038,
+  "sha256": "b92586e3d6969a3310926e1b6aa757cac4a2c1ac54b5d66d495ad25d509b8e07",
+  "indexedAddressCount": 5097,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003600001335144043
+  },
+  "exactSample": {
+    "providerIdentity": "0ac7492cbc71218b563a",
+    "houseNumber": "1",
+    "canonicalRoad": "PENN STREET",
+    "city": "",
+    "zip": "79742",
+    "county": "Ward County",
+    "countyFips": "48475",
+    "query": "1 PENN STREET TX 79742",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 796,
+    "variantsTested": 2388,
+    "variantsPassed": 2388
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 27.409200001507998,
+  "certificationStatus": "PASS",
+  "failures": []
+}

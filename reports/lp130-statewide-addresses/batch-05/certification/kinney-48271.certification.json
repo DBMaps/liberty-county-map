@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kinney County",
+  "countyFips": "48271",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 92138,
+  "sha256": "c69c1d51596ba42155bb40efbcb36a64a52be2aecf1ff4fcab027214c4d3e7b8",
+  "indexedAddressCount": 2909,
+  "exactMatchStatistics": {
+    "sampled": 2908,
+    "passed": 2908,
+    "failed": 0,
+    "p95LookupMs": 0.003600001335144043
+  },
+  "exactSample": {
+    "providerIdentity": "fb55c4edaca69f0dd093",
+    "houseNumber": "1",
+    "canonicalRoad": "CENIZO CIRCLE",
+    "city": "",
+    "zip": "78832",
+    "county": "Kinney County",
+    "countyFips": "48271",
+    "query": "1 CENIZO CIRCLE TX 78832",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2908,
+    "truthfulNoResults": 2908,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2908,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2908,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1,
+    "variantsTested": 3,
+    "variantsPassed": 3
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.7989999987185,
+  "certificationStatus": "PASS",
+  "failures": []
+}

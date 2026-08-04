@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lynn-tx",
+  "county": "Lynn County",
+  "fips": "48305",
+  "artifact": "lynn-48305.addresses.jsonl.gz",
+  "sizeBytes": 122163,
+  "sha256": "4372755098b3e3a2bd591ef0711436c318e32d73a3565fa0eff6d85362fdb34c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

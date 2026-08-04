@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "coke-tx",
+  "county": "Coke County",
+  "fips": "48081",
+  "artifact": "coke-48081.addresses.jsonl.gz",
+  "sizeBytes": 103197,
+  "sha256": "9003dd61418ef336a53c9e2d24182b0a6ad322335648b0655498ed7cbb02d645",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

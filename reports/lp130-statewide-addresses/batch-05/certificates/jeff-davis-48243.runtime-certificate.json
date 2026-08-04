@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jeff-davis-tx",
+  "county": "Jeff Davis County",
+  "fips": "48243",
+  "artifact": "jeff-davis-48243.addresses.jsonl.gz",
+  "sizeBytes": 84171,
+  "sha256": "72b99b7b4da2b891eb986e59f0d25c435f871a285be15b04a2c6cada1822da90",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

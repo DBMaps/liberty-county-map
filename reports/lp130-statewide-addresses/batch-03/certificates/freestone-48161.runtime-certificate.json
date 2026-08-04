@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "freestone-tx",
+  "county": "Freestone County",
+  "fips": "48161",
+  "artifact": "freestone-48161.addresses.jsonl.gz",
+  "sizeBytes": 337120,
+  "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

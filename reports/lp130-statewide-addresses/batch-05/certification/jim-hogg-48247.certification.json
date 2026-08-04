@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jim Hogg County",
+  "countyFips": "48247",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 93148,
+  "sha256": "447d06f7811824c2d3140aea92c1f551b67ac1714167c942074cff90f634a584",
+  "indexedAddressCount": 2871,
+  "exactMatchStatistics": {
+    "sampled": 2871,
+    "passed": 2871,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "35bb33cf6689d7ba5466",
+    "houseNumber": "1",
+    "canonicalRoad": "FM 649",
+    "city": "",
+    "zip": "",
+    "county": "Jim Hogg County",
+    "countyFips": "48247",
+    "query": "1 Farm to Market 649 TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2871,
+    "truthfulNoResults": 2871,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2871,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2871,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 155,
+    "variantsTested": 465,
+    "variantsPassed": 465
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.273899998515844,
+  "certificationStatus": "PASS",
+  "failures": []
+}

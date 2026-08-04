@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hidalgo-tx",
+  "county": "Hidalgo County",
+  "fips": "48215",
+  "artifact": "hidalgo-48215.addresses.jsonl.gz",
+  "sizeBytes": 10760923,
+  "sha256": "22216223b920693eda56b0a53098aedf2cf5ce365458b9afb20b7adef009b7ed",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

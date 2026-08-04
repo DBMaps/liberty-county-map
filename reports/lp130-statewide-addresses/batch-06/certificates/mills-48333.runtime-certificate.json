@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mills-tx",
+  "county": "Mills County",
+  "fips": "48333",
+  "artifact": "mills-48333.addresses.jsonl.gz",
+  "sizeBytes": 93554,
+  "sha256": "4c131cde012df1e5e22586ed45ac58967af364b2d0d3ad9d90da7b004447cb85",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

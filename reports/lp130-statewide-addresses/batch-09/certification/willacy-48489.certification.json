@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Willacy County",
+  "countyFips": "48489",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 290509,
+  "sha256": "201ff688bae687df0307a9b800cf540fca24839f15cab2e7902376b1d9c7c02b",
+  "indexedAddressCount": 8421,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "62d74e216a8cf64db0ce",
+    "houseNumber": "100",
+    "canonicalRoad": "IH 69E",
+    "city": "RAYMONDVILLE",
+    "zip": "",
+    "county": "Willacy County",
+    "countyFips": "48489",
+    "query": "100 IH 69E RAYMONDVILLE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 861,
+    "variantsTested": 2583,
+    "variantsPassed": 2583
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 44.042499996721745,
+  "certificationStatus": "PASS",
+  "failures": []
+}

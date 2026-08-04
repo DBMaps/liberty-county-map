@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "denton-tx",
+  "county": "Denton County",
+  "fips": "48121",
+  "artifact": "denton-48121.addresses.jsonl.gz",
+  "sizeBytes": 11819588,
+  "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "falls-tx",
+  "county": "Falls County",
+  "fips": "48145",
+  "artifact": "falls-48145.addresses.jsonl.gz",
+  "sizeBytes": 270714,
+  "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

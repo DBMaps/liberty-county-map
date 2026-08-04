@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Real County",
+  "countyFips": "48385",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 153752,
+  "sha256": "46a7cca175e8401a7de48ba4d50caf10ea76966d064369ba536b5067e41fbe04",
+  "indexedAddressCount": 4574,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "7899a815303849d58d11",
+    "houseNumber": "1",
+    "canonicalRoad": "PINE MOUNTAIN ROAD",
+    "city": "",
+    "zip": "78833",
+    "county": "Real County",
+    "countyFips": "48385",
+    "query": "1 PINE MOUNTAIN ROAD TX 78833",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1,
+    "variantsTested": 3,
+    "variantsPassed": 3
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 24.651200000196695,
+  "certificationStatus": "PASS",
+  "failures": []
+}

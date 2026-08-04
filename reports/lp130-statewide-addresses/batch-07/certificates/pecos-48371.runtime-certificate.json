@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "pecos-tx",
+  "county": "Pecos County",
+  "fips": "48371",
+  "artifact": "pecos-48371.addresses.jsonl.gz",
+  "sizeBytes": 245342,
+  "sha256": "3d41b2fc463abd55eda5571b7df1d8ae930771586ab0c40657a2f7b8f6582ad1",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

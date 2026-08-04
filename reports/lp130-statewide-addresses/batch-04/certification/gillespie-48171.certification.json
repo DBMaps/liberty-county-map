@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Gillespie County",
+  "countyFips": "48171",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 563671,
+  "sha256": "9bef39e940399dce1fa5b33840a1d9dcf87ce9965610e7dcfb23929a40598f8c",
+  "indexedAddressCount": 17057,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "59ad0314b324d1ef6f5c",
+    "houseNumber": "1",
+    "canonicalRoad": "EAST LEDGE STONE DRIVE",
+    "city": "",
+    "zip": "",
+    "county": "Gillespie County",
+    "countyFips": "48171",
+    "query": "1 East Ledge Stone Drive TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 147,
+    "variantsTested": 441,
+    "variantsPassed": 441
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 173.3879000004381,
+  "certificationStatus": "PASS",
+  "failures": []
+}

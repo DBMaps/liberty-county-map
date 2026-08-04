@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "willacy-tx",
+  "county": "Willacy County",
+  "fips": "48489",
+  "artifact": "willacy-48489.addresses.jsonl.gz",
+  "sizeBytes": 290509,
+  "sha256": "201ff688bae687df0307a9b800cf540fca24839f15cab2e7902376b1d9c7c02b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

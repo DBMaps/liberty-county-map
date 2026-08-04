@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Crosby County",
+  "countyFips": "48107",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 105139,
+  "sha256": "04779b8783f2f82a9587331d820275cff1e48d1397f1a76ab6ac622a4778f089",
+  "indexedAddressCount": 3297,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0035000001080334187
+  },
+  "exactSample": {
+    "providerIdentity": "e4b9f3821692f3db4293",
+    "houseNumber": "1",
+    "canonicalRoad": "ELM ROAD",
+    "city": "SPUR",
+    "zip": "79370",
+    "county": "Crosby County",
+    "countyFips": "48107",
+    "query": "1 ELM ROAD SPUR TX 79370",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 948,
+    "variantsTested": 2844,
+    "variantsPassed": 2844
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 17.097399999853224,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Potter County",
+  "countyFips": "48375",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1693714,
+  "sha256": "7bc611d7c45866ff12da78931391ad233208b69a7f2848bed9a36b2d0446292a",
+  "indexedAddressCount": 55686,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00469999760389328
+  },
+  "exactSample": {
+    "providerIdentity": "db8c3bd19d09a91c83a3",
+    "houseNumber": "0",
+    "canonicalRoad": "DATE",
+    "city": "Valle de Oro",
+    "zip": "79010",
+    "county": "Potter County",
+    "countyFips": "48375",
+    "query": "0 Date Valle de Oro TX 79010",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 136,
+    "variantsTested": 408,
+    "variantsPassed": 408
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 352.8539999984205,
+  "certificationStatus": "PASS",
+  "failures": []
+}

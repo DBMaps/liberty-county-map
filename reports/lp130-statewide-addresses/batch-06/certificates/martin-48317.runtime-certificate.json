@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "martin-tx",
+  "county": "Martin County",
+  "fips": "48317",
+  "artifact": "martin-48317.addresses.jsonl.gz",
+  "sizeBytes": 123542,
+  "sha256": "2074e7aded7149a9a1b3cfba034bd05883002d9f3025625da33fcddcb0fb6b42",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

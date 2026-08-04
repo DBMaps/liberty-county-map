@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Falls County",
+  "countyFips": "48145",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 270714,
+  "sha256": "9f4f1fde4a503ecd57de12b193f8c8b7a68ec2e46a2b3ffc63d515d7fa977b15",
+  "indexedAddressCount": 8652,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003800000064074993
+  },
+  "exactSample": {
+    "providerIdentity": "3f63df9d38a32a66970b",
+    "houseNumber": "100",
+    "canonicalRoad": "BURNETT ST",
+    "city": "MARLIN",
+    "zip": "76661",
+    "county": "Falls County",
+    "countyFips": "48145",
+    "query": "100 BURNETT ST MARLIN TX 76661",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 64.3918999992311,
+  "certificationStatus": "PASS",
+  "failures": []
+}

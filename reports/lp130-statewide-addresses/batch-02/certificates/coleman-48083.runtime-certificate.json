@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "coleman-tx",
+  "county": "Coleman County",
+  "fips": "48083",
+  "artifact": "coleman-48083.addresses.jsonl.gz",
+  "sizeBytes": 231311,
+  "sha256": "053afabb0188ff65ada991072aaf1383e10d5230947693b93165f3d7f9729d1d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

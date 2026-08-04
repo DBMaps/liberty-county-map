@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hays County",
+  "countyFips": "48209",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 3574767,
+  "sha256": "df23069af137c08aa2e1db06cd892d6ee70b1712e17530bd24501ec1698d2c57",
+  "indexedAddressCount": 119102,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005100000649690628
+  },
+  "exactSample": {
+    "providerIdentity": "b1ecb2ebac6dbe9b43f2",
+    "houseNumber": "1",
+    "canonicalRoad": "ABILENE",
+    "city": "Wimberley",
+    "zip": "78676",
+    "county": "Hays County",
+    "countyFips": "48209",
+    "query": "1 Abilene Wimberley TX 78676",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 511,
+    "variantsTested": 1533,
+    "variantsPassed": 1533
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 742.6602999996394,
+  "certificationStatus": "PASS",
+  "failures": []
+}

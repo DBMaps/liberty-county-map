@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "crockett-tx",
+  "county": "Crockett County",
+  "fips": "48105",
+  "artifact": "crockett-48105.addresses.jsonl.gz",
+  "sizeBytes": 100165,
+  "sha256": "e960b94bd070c90a5bc1a2cf38a522e7f25b89392bf5e1fa6d8e5e3d0205fc84",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

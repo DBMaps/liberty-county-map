@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "McLennan County",
+  "countyFips": "48309",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 3390624,
+  "sha256": "c917299a66fcb52d63829636310ea4a0e33ec56cc7a1f479cf1fa3b5aea1130a",
+  "indexedAddressCount": 109118,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004900000989437103
+  },
+  "exactSample": {
+    "providerIdentity": "b0ae1e892b5ff5a1fce6",
+    "houseNumber": "1",
+    "canonicalRoad": "AMTRAK BOULEVARD",
+    "city": "Mcgregor",
+    "zip": "76657",
+    "county": "McLennan County",
+    "countyFips": "48309",
+    "query": "1 Amtrak Boulevard Mcgregor TX 76657",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 69,
+    "variantsTested": 207,
+    "variantsPassed": 207
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 683.4329000003636,
+  "certificationStatus": "PASS",
+  "failures": []
+}

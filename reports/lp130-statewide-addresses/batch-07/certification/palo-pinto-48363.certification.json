@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Palo Pinto County",
+  "countyFips": "48363",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 809038,
+  "sha256": "f9bfb4a6329cc73689fe21953fa5435bf736f42b44b5782b6982e55d864a5ea9",
+  "indexedAddressCount": 28183,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006800003349781036
+  },
+  "exactSample": {
+    "providerIdentity": "099d4494c4a1726eba34",
+    "houseNumber": "0",
+    "canonicalRoad": "PARK RD 71",
+    "city": "Mineral Wells",
+    "zip": "76067",
+    "county": "Palo Pinto County",
+    "countyFips": "48363",
+    "query": "0 Park Rd 71 Mineral Wells TX 76067",
+    "completeAddressMatchCount": 17
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1196,
+    "variantsTested": 3588,
+    "variantsPassed": 3588
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 168.7910000011325,
+  "certificationStatus": "PASS",
+  "failures": []
+}

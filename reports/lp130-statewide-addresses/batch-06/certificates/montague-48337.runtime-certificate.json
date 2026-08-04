@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "montague-tx",
+  "county": "Montague County",
+  "fips": "48337",
+  "artifact": "montague-48337.addresses.jsonl.gz",
+  "sizeBytes": 454875,
+  "sha256": "7f68ae7e8e5423e09f712ca9ee47a2157b740fea5997ce120f872b3acb99503a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

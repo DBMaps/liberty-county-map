@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "howard-tx",
+  "county": "Howard County",
+  "fips": "48227",
+  "artifact": "howard-48227.addresses.jsonl.gz",
+  "sizeBytes": 454004,
+  "sha256": "268e0baeda497c8f2c48f0a09f3d9b75a83df98c3cee5e0cd230afe2711932a2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

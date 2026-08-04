@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lamb-tx",
+  "county": "Lamb County",
+  "fips": "48279",
+  "artifact": "lamb-48279.addresses.jsonl.gz",
+  "sizeBytes": 200784,
+  "sha256": "03cbe849a1711eab5c1550861b85e44e5e8a997334831e9992689d7aa3609e22",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

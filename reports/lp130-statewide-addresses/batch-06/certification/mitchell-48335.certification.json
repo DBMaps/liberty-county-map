@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Mitchell County",
+  "countyFips": "48335",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 178259,
+  "sha256": "1af31e1dc277fd8458163cf0529124c58facfa577c2bf65c6e3c0d79cea4377e",
+  "indexedAddressCount": 5566,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00390000082552433
+  },
+  "exactSample": {
+    "providerIdentity": "447373f0370b8563eff1",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 157",
+    "city": "COLORADO CITY",
+    "zip": "79512",
+    "county": "Mitchell County",
+    "countyFips": "48335",
+    "query": "1 COUNTY ROAD 157 COLORADO CITY TX 79512",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 833,
+    "variantsTested": 2499,
+    "variantsPassed": 2499
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 30.37550000101328,
+  "certificationStatus": "PASS",
+  "failures": []
+}

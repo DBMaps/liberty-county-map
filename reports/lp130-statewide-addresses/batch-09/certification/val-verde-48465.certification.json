@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Val Verde County",
+  "countyFips": "48465",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 716092,
+  "sha256": "c62dcee91b022c062ada005e518ec81b88b85dd9a2ac368cb2123524cd6783ab",
+  "indexedAddressCount": 23515,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004200000315904617
+  },
+  "exactSample": {
+    "providerIdentity": "6bf019bdcda558b68709",
+    "houseNumber": "1",
+    "canonicalRoad": "BUENA VISTA CIRCLE",
+    "city": "",
+    "zip": "78840",
+    "county": "Val Verde County",
+    "countyFips": "48465",
+    "query": "1 BUENA VISTA CIRCLE TX 78840",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 160,
+    "variantsTested": 480,
+    "variantsPassed": 480
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 143.6447999998927,
+  "certificationStatus": "PASS",
+  "failures": []
+}

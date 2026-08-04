@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Williamson County",
+  "countyFips": "48491",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 11284618,
+  "sha256": "b5cfeb6afa1e1c5969b9ed1fb732e178abc90f12245cbf62bd6de0d72247d8b2",
+  "indexedAddressCount": 356595,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0054000020027160645
+  },
+  "exactSample": {
+    "providerIdentity": "c0fc3f04562d46f7f809",
+    "houseNumber": "1",
+    "canonicalRoad": "ACACIA WAY",
+    "city": "Georgetown",
+    "zip": "78633",
+    "county": "Williamson County",
+    "countyFips": "48491",
+    "query": "1 Acacia Way Georgetown TX 78633",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 2358.965300001204,
+  "certificationStatus": "PASS",
+  "failures": []
+}

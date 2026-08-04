@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Swisher County",
+  "countyFips": "48437",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 117953,
+  "sha256": "3a822c705ae23e66c247520c4b6d51c1f894975070df79bd9298f63e4d5b887c",
+  "indexedAddressCount": 3917,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0033999979496002197
+  },
+  "exactSample": {
+    "providerIdentity": "027ba642ee1327455e6e",
+    "houseNumber": "1",
+    "canonicalRoad": "FANNIN DRIVE",
+    "city": "",
+    "zip": "79088",
+    "county": "Swisher County",
+    "countyFips": "48437",
+    "query": "1 FANNIN DRIVE TX 79088",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 660,
+    "variantsTested": 1980,
+    "variantsPassed": 1980
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 24.789700001478195,
+  "certificationStatus": "PASS",
+  "failures": []
+}

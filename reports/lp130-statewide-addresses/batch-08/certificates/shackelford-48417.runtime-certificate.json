@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "shackelford-tx",
+  "county": "Shackelford County",
+  "fips": "48417",
+  "artifact": "shackelford-48417.addresses.jsonl.gz",
+  "sizeBytes": 80835,
+  "sha256": "dce1f2803fe4362fc06a48114353872a66c28fb2ce880136bfe52f7dd1b2f3ea",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

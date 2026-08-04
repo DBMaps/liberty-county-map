@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hale-tx",
+  "county": "Hale County",
+  "fips": "48189",
+  "artifact": "hale-48189.addresses.jsonl.gz",
+  "sizeBytes": 419289,
+  "sha256": "5e7e1c7af1e3dc3eb2ac6e69a9782733e818b6a322a06f19d89d35a0a669be3f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

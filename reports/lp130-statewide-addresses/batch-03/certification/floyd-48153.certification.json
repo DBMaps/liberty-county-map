@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Floyd County",
+  "countyFips": "48153",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 107816,
+  "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4",
+  "indexedAddressCount": 3341,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000002339482307
+  },
+  "exactSample": {
+    "providerIdentity": "c8b57db9e3fe874c1ca3",
+    "houseNumber": "10",
+    "canonicalRoad": "CR 119",
+    "city": "LOCKNEY",
+    "zip": "79241",
+    "county": "Floyd County",
+    "countyFips": "48153",
+    "query": "10 COUNTY ROAD 119 LOCKNEY TX 79241",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 968,
+    "variantsTested": 2904,
+    "variantsPassed": 2904
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 17.326799999922514,
+  "certificationStatus": "PASS",
+  "failures": []
+}

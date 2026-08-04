@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "jim-wells-tx",
+  "county": "Jim Wells County",
+  "fips": "48249",
+  "artifact": "jim-wells-48249.addresses.jsonl.gz",
+  "sizeBytes": 540185,
+  "sha256": "150250b599bc6d621f3a7505b6ae63cc3ac5ca49e75c5ccfe6b1cf6d1275fa9a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

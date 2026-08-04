@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "tom-green-tx",
+  "county": "Tom Green County",
+  "fips": "48451",
+  "artifact": "tom-green-48451.addresses.jsonl.gz",
+  "sizeBytes": 1818806,
+  "sha256": "b1f8cb3d5edbbaa684c366ab51ebf2ad4c14dfee29dec6ceea56c797f838f0bf",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

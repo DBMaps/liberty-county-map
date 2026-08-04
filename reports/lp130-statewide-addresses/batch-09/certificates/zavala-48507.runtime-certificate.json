@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "zavala-tx",
+  "county": "Zavala County",
+  "fips": "48507",
+  "artifact": "zavala-48507.addresses.jsonl.gz",
+  "sizeBytes": 196465,
+  "sha256": "b545ed4e4e01c8fa3c3b283ae8fc014ae425475e471406f5f562facb641b56cf",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

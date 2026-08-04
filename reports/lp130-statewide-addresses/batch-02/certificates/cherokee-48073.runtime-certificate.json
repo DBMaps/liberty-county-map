@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cherokee-tx",
+  "county": "Cherokee County",
+  "fips": "48073",
+  "artifact": "cherokee-48073.addresses.jsonl.gz",
+  "sizeBytes": 1066374,
+  "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

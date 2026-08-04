@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hunt-tx",
+  "county": "Hunt County",
+  "fips": "48231",
+  "artifact": "hunt-48231.addresses.jsonl.gz",
+  "sizeBytes": 1959694,
+  "sha256": "802f388c65cdbfd384065fd265a50d0fa71a78b9741fd41a5bbf4c7598aa9f50",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

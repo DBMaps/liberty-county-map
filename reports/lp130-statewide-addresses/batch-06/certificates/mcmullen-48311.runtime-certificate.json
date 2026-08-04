@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mcmullen-tx",
+  "county": "McMullen County",
+  "fips": "48311",
+  "artifact": "mcmullen-48311.addresses.jsonl.gz",
+  "sizeBytes": 57657,
+  "sha256": "42296a9915722291cfe59cd59f01b30e886b273c9f9fa16cd7eca831d19a9efe",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

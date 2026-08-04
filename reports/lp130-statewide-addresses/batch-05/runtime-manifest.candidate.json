@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-05",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "howard-tx",
+      "county": "Howard County",
+      "fips": "48227",
+      "path": "data/generated/lp104/txgio-addresses/howard-48227.addresses.jsonl.gz",
+      "sizeBytes": 454004,
+      "sha256": "268e0baeda497c8f2c48f0a09f3d9b75a83df98c3cee5e0cd230afe2711932a2",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/howard-48227.runtime-certificate.json"
+    },
+    {
+      "countyId": "hunt-tx",
+      "county": "Hunt County",
+      "fips": "48231",
+      "path": "data/generated/lp104/txgio-addresses/hunt-48231.addresses.jsonl.gz",
+      "sizeBytes": 1959694,
+      "sha256": "802f388c65cdbfd384065fd265a50d0fa71a78b9741fd41a5bbf4c7598aa9f50",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/hunt-48231.runtime-certificate.json"
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "county": "Hutchinson County",
+      "fips": "48233",
+      "path": "data/generated/lp104/txgio-addresses/hutchinson-48233.addresses.jsonl.gz",
+      "sizeBytes": 426276,
+      "sha256": "d59051429512e5ed2fec96b2465a059745a51f4ccc12133ce38fa711c049489f",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/hutchinson-48233.runtime-certificate.json"
+    },
+    {
+      "countyId": "irion-tx",
+      "county": "Irion County",
+      "fips": "48235",
+      "path": "data/generated/lp104/txgio-addresses/irion-48235.addresses.jsonl.gz",
+      "sizeBytes": 53316,
+      "sha256": "a07bd8ab5145455b8deda60fddf00f4f094e35cb48ae48f22e95a8300769c50d",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/irion-48235.runtime-certificate.json"
+    },
+    {
+      "countyId": "jack-tx",
+      "county": "Jack County",
+      "fips": "48237",
+      "path": "data/generated/lp104/txgio-addresses/jack-48237.addresses.jsonl.gz",
+      "sizeBytes": 193457,
+      "sha256": "1c19eb1792b97d79faa9f5fe13a5391dc78529f983a894a38bd1de2f62b0372a",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/jack-48237.runtime-certificate.json"
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "county": "Jeff Davis County",
+      "fips": "48243",
+      "path": "data/generated/lp104/txgio-addresses/jeff-davis-48243.addresses.jsonl.gz",
+      "sizeBytes": 84171,
+      "sha256": "72b99b7b4da2b891eb986e59f0d25c435f871a285be15b04a2c6cada1822da90",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/jeff-davis-48243.runtime-certificate.json"
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "county": "Jim Hogg County",
+      "fips": "48247",
+      "path": "data/generated/lp104/txgio-addresses/jim-hogg-48247.addresses.jsonl.gz",
+      "sizeBytes": 93148,
+      "sha256": "447d06f7811824c2d3140aea92c1f551b67ac1714167c942074cff90f634a584",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/jim-hogg-48247.runtime-certificate.json"
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "county": "Jim Wells County",
+      "fips": "48249",
+      "path": "data/generated/lp104/txgio-addresses/jim-wells-48249.addresses.jsonl.gz",
+      "sizeBytes": 540185,
+      "sha256": "150250b599bc6d621f3a7505b6ae63cc3ac5ca49e75c5ccfe6b1cf6d1275fa9a",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/jim-wells-48249.runtime-certificate.json"
+    },
+    {
+      "countyId": "johnson-tx",
+      "county": "Johnson County",
+      "fips": "48251",
+      "path": "data/generated/lp104/txgio-addresses/johnson-48251.addresses.jsonl.gz",
+      "sizeBytes": 2481089,
+      "sha256": "f2d1a68f39b991f5bdd6748a43d3a4f51ad0dfce59a3078a568fdc87d266c20f",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/johnson-48251.runtime-certificate.json"
+    },
+    {
+      "countyId": "jones-tx",
+      "county": "Jones County",
+      "fips": "48253",
+      "path": "data/generated/lp104/txgio-addresses/jones-48253.addresses.jsonl.gz",
+      "sizeBytes": 308268,
+      "sha256": "96557820286aad411c2d8dc4829d1a84cc96d30cfb43205764b5f2c814f21c7b",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/jones-48253.runtime-certificate.json"
+    },
+    {
+      "countyId": "karnes-tx",
+      "county": "Karnes County",
+      "fips": "48255",
+      "path": "data/generated/lp104/txgio-addresses/karnes-48255.addresses.jsonl.gz",
+      "sizeBytes": 273885,
+      "sha256": "83f60626c3a4317c8235441d105c6caea0e747a49dc84a55e4c595aa44c6e131",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/karnes-48255.runtime-certificate.json"
+    },
+    {
+      "countyId": "kaufman-tx",
+      "county": "Kaufman County",
+      "fips": "48257",
+      "path": "data/generated/lp104/txgio-addresses/kaufman-48257.addresses.jsonl.gz",
+      "sizeBytes": 2751662,
+      "sha256": "c737f45232b1d9bde1e859a61b3c13c6f67168eda274b63201f737bc27d46aa6",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kaufman-48257.runtime-certificate.json"
+    },
+    {
+      "countyId": "kendall-tx",
+      "county": "Kendall County",
+      "fips": "48259",
+      "path": "data/generated/lp104/txgio-addresses/kendall-48259.addresses.jsonl.gz",
+      "sizeBytes": 663438,
+      "sha256": "d8dce017a48d4b9af29116780e070485243e944fc7d5718128e9541b9209cf48",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kendall-48259.runtime-certificate.json"
+    },
+    {
+      "countyId": "kenedy-tx",
+      "county": "Kenedy County",
+      "fips": "48261",
+      "path": "data/generated/lp104/txgio-addresses/kenedy-48261.addresses.jsonl.gz",
+      "sizeBytes": 18302,
+      "sha256": "8804b6537405c0a2f8841a723fcbb6f72951971261970f099b7bef04ae877824",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kenedy-48261.runtime-certificate.json"
+    },
+    {
+      "countyId": "kent-tx",
+      "county": "Kent County",
+      "fips": "48263",
+      "path": "data/generated/lp104/txgio-addresses/kent-48263.addresses.jsonl.gz",
+      "sizeBytes": 28638,
+      "sha256": "8bf80745c1fd525c3557a1900dc647fe9ff02fccdd944ca9b0d1f177888ad168",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kent-48263.runtime-certificate.json"
+    },
+    {
+      "countyId": "kerr-tx",
+      "county": "Kerr County",
+      "fips": "48265",
+      "path": "data/generated/lp104/txgio-addresses/kerr-48265.addresses.jsonl.gz",
+      "sizeBytes": 1368466,
+      "sha256": "3ec6e7cc2897084fb9a98d3b6b77261050c3157fef2752b340b13ebf7979746c",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kerr-48265.runtime-certificate.json"
+    },
+    {
+      "countyId": "kimble-tx",
+      "county": "Kimble County",
+      "fips": "48267",
+      "path": "data/generated/lp104/txgio-addresses/kimble-48267.addresses.jsonl.gz",
+      "sizeBytes": 145998,
+      "sha256": "6537e8453c31d105c5a332cca109209eacc2dbc82535350a47f8860c260f7892",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kimble-48267.runtime-certificate.json"
+    },
+    {
+      "countyId": "king-tx",
+      "county": "King County",
+      "fips": "48269",
+      "path": "data/generated/lp104/txgio-addresses/king-48269.addresses.jsonl.gz",
+      "sizeBytes": 10467,
+      "sha256": "422c1a959a3c2fd81c791ebb1eeb56ab4346881395ec2ee5336c513755b69a85",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/king-48269.runtime-certificate.json"
+    },
+    {
+      "countyId": "kinney-tx",
+      "county": "Kinney County",
+      "fips": "48271",
+      "path": "data/generated/lp104/txgio-addresses/kinney-48271.addresses.jsonl.gz",
+      "sizeBytes": 92138,
+      "sha256": "c69c1d51596ba42155bb40efbcb36a64a52be2aecf1ff4fcab027214c4d3e7b8",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kinney-48271.runtime-certificate.json"
+    },
+    {
+      "countyId": "kleberg-tx",
+      "county": "Kleberg County",
+      "fips": "48273",
+      "path": "data/generated/lp104/txgio-addresses/kleberg-48273.addresses.jsonl.gz",
+      "sizeBytes": 327913,
+      "sha256": "292ca5eaa617d654920d2afd50e38b011bf4bb6122ebeea106ba8e7b2dbe7107",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/kleberg-48273.runtime-certificate.json"
+    },
+    {
+      "countyId": "knox-tx",
+      "county": "Knox County",
+      "fips": "48275",
+      "path": "data/generated/lp104/txgio-addresses/knox-48275.addresses.jsonl.gz",
+      "sizeBytes": 84184,
+      "sha256": "025593cd42a3fdc3b5a89246b5cad44013f85b4c7e460c40de67fbdbf7fda839",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/knox-48275.runtime-certificate.json"
+    },
+    {
+      "countyId": "lamar-tx",
+      "county": "Lamar County",
+      "fips": "48277",
+      "path": "data/generated/lp104/txgio-addresses/lamar-48277.addresses.jsonl.gz",
+      "sizeBytes": 975524,
+      "sha256": "9cf98fae55e83590986cc83cd3ec8b99f4c22dc08d8e3ee952eff2e22dfee5b2",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/lamar-48277.runtime-certificate.json"
+    },
+    {
+      "countyId": "lamb-tx",
+      "county": "Lamb County",
+      "fips": "48279",
+      "path": "data/generated/lp104/txgio-addresses/lamb-48279.addresses.jsonl.gz",
+      "sizeBytes": 200784,
+      "sha256": "03cbe849a1711eab5c1550861b85e44e5e8a997334831e9992689d7aa3609e22",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/lamb-48279.runtime-certificate.json"
+    },
+    {
+      "countyId": "lampasas-tx",
+      "county": "Lampasas County",
+      "fips": "48281",
+      "path": "data/generated/lp104/txgio-addresses/lampasas-48281.addresses.jsonl.gz",
+      "sizeBytes": 347475,
+      "sha256": "ea2062b469b9b8271e7abdcfa3046b8fa218cb46ce7c68e692c78735c44edb29",
+      "certificate": "reports/lp130-statewide-addresses/batch-05/certificates/lampasas-48281.runtime-certificate.json"
+    }
+  ]
+}

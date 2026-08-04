@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "comanche-tx",
+  "county": "Comanche County",
+  "fips": "48093",
+  "artifact": "comanche-48093.addresses.jsonl.gz",
+  "sizeBytes": 323511,
+  "sha256": "6093c84a7f48163df60827191c86ee258fedb9136dd5d104c6233600c2e99ede",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Parker County",
+  "countyFips": "48367",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2597310,
+  "sha256": "545852ca251be618ce4296ff4e10ae9fdce32306c8d081deeec19bcb98610fc0",
+  "indexedAddressCount": 86758,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00480000302195549
+  },
+  "exactSample": {
+    "providerIdentity": "4e14f11e1aadadc2a293",
+    "houseNumber": "0",
+    "canonicalRoad": "LIVE OAK LOOP",
+    "city": "Mineral Wells",
+    "zip": "76067",
+    "county": "Parker County",
+    "countyFips": "48367",
+    "query": "0 Live Oak Loop Mineral Wells TX 76067",
+    "completeAddressMatchCount": 2
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 956,
+    "variantsTested": 2868,
+    "variantsPassed": 2868
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 567.9895999990404,
+  "certificationStatus": "PASS",
+  "failures": []
+}

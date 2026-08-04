@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Randall County",
+  "countyFips": "48381",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2058473,
+  "sha256": "7fd2fa55a801a7b2922886396439f64d623f391fdd2227f888e38800dc7b1978",
+  "indexedAddressCount": 67305,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004500001668930054
+  },
+  "exactSample": {
+    "providerIdentity": "5f7e75973a45f3dfd635",
+    "houseNumber": "0",
+    "canonicalRoad": "BIG PINE TRAIL",
+    "city": "Canyon",
+    "zip": "79015",
+    "county": "Randall County",
+    "countyFips": "48381",
+    "query": "0 Big Pine Trail Canyon TX 79015",
+    "completeAddressMatchCount": 5
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 917,
+    "variantsTested": 2751,
+    "variantsPassed": 2751
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 402.76709999889135,
+  "certificationStatus": "PASS",
+  "failures": []
+}

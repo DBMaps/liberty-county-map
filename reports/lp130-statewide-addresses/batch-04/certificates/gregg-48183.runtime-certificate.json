@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "gregg-tx",
+  "county": "Gregg County",
+  "fips": "48183",
+  "artifact": "gregg-48183.addresses.jsonl.gz",
+  "sizeBytes": 760830,
+  "sha256": "c859177b90e8839ba995878f4a95a20bf53e54ddc3d74f6de911da0747ecc3ff",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

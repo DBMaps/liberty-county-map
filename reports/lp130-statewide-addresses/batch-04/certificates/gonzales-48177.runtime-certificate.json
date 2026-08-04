@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "gonzales-tx",
+  "county": "Gonzales County",
+  "fips": "48177",
+  "artifact": "gonzales-48177.addresses.jsonl.gz",
+  "sizeBytes": 411398,
+  "sha256": "b8338310eb064e7b3d991dfb5f649513c95eb10c636810391c12771c34e5d216",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

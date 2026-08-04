@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lynn County",
+  "countyFips": "48305",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 122163,
+  "sha256": "4372755098b3e3a2bd591ef0711436c318e32d73a3565fa0eff6d85362fdb34c",
+  "indexedAddressCount": 3886,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003899998962879181
+  },
+  "exactSample": {
+    "providerIdentity": "a81462ae53b196d65c1b",
+    "houseNumber": "100",
+    "canonicalRoad": "6TH STREET",
+    "city": "ODONNELL",
+    "zip": "79351",
+    "county": "Lynn County",
+    "countyFips": "48305",
+    "query": "100 6TH STREET ODONNELL TX 79351",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 882,
+    "variantsTested": 2646,
+    "variantsPassed": 2646
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 33.880599999800324,
+  "certificationStatus": "PASS",
+  "failures": []
+}

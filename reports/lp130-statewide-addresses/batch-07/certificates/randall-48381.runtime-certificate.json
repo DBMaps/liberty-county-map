@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "randall-tx",
+  "county": "Randall County",
+  "fips": "48381",
+  "artifact": "randall-48381.addresses.jsonl.gz",
+  "sizeBytes": 2058473,
+  "sha256": "7fd2fa55a801a7b2922886396439f64d623f391fdd2227f888e38800dc7b1978",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

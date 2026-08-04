@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "dawson-tx",
+  "county": "Dawson County",
+  "fips": "48115",
+  "artifact": "dawson-48115.addresses.jsonl.gz",
+  "sizeBytes": 155032,
+  "sha256": "e3e1e8232b3565f3bc5a0cb1b60bb8645ab0ad37f3b2f1b7dcce558ec4723a03",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

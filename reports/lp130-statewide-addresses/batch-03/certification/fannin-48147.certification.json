@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Fannin County",
+  "countyFips": "48147",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 675117,
+  "sha256": "09c5b0b01cf7f90b6e7aaf9833eeabb1839e6686130c6522f7f539c8514f14eb",
+  "indexedAddressCount": 20571,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "39ce693b244189857cf2",
+    "houseNumber": "1",
+    "canonicalRoad": "NORTH CENTER STREET",
+    "city": "BONHAM",
+    "zip": "75418",
+    "county": "Fannin County",
+    "countyFips": "48147",
+    "query": "1 NORTH CENTER STREET BONHAM TX 75418",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 130.05090000014752,
+  "certificationStatus": "PASS",
+  "failures": []
+}

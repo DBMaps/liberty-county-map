@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Limestone County",
+  "countyFips": "48293",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 302446,
+  "sha256": "0c5718f4c1d6c425c1f1bde919316f03132f2d6de3a999596db9be0d5ceb191a",
+  "indexedAddressCount": 9772,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "9d7b6e911ecc7c480256",
+    "houseNumber": "1",
+    "canonicalRoad": "GLENN ALAN CT",
+    "city": "GROESBECK",
+    "zip": "76642",
+    "county": "Limestone County",
+    "countyFips": "48293",
+    "query": "1 GLENN ALAN CT GROESBECK TX 76642",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 57.44240000098944,
+  "certificationStatus": "PASS",
+  "failures": []
+}

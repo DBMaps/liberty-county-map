@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "starr-tx",
+  "county": "Starr County",
+  "fips": "48427",
+  "artifact": "starr-48427.addresses.jsonl.gz",
+  "sizeBytes": 756261,
+  "sha256": "577e7b5ddd11b67b78c307a1e34de7c6d797fb104c324d9c5842b71dd7b8d1e5",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

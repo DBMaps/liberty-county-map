@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Shackelford County",
+  "countyFips": "48417",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 80835,
+  "sha256": "dce1f2803fe4362fc06a48114353872a66c28fb2ce880136bfe52f7dd1b2f3ea",
+  "indexedAddressCount": 2608,
+  "exactMatchStatistics": {
+    "sampled": 2606,
+    "passed": 2606,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "b6bcc48f741ef08559ad",
+    "houseNumber": "1",
+    "canonicalRoad": "GRIFFIN CIRCLE",
+    "city": "ALBANY",
+    "zip": "76430",
+    "county": "Shackelford County",
+    "countyFips": "48417",
+    "query": "1 GRIFFIN CIRCLE ALBANY TX 76430",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2606,
+    "truthfulNoResults": 2606,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2606,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2606,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 597,
+    "variantsTested": 1791,
+    "variantsPassed": 1791
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 14.746199999004602,
+  "certificationStatus": "PASS",
+  "failures": []
+}

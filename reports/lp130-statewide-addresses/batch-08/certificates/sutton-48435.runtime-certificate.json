@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "sutton-tx",
+  "county": "Sutton County",
+  "fips": "48435",
+  "artifact": "sutton-48435.addresses.jsonl.gz",
+  "sizeBytes": 92124,
+  "sha256": "c918feefc80359d0a2a89621364821b093c6075afb18c9af71a81c96b8ba186f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "childress-tx",
+  "county": "Childress County",
+  "fips": "48075",
+  "artifact": "childress-48075.addresses.jsonl.gz",
+  "sizeBytes": 99342,
+  "sha256": "2772834a3bcfac66769cdb523574573254dbaa09e85dfa5426d95f894e0fe80d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

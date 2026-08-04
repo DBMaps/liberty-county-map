@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Coke County",
+  "countyFips": "48081",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 103197,
+  "sha256": "9003dd61418ef336a53c9e2d24182b0a6ad322335648b0655498ed7cbb02d645",
+  "indexedAddressCount": 3202,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0030999998562037945
+  },
+  "exactSample": {
+    "providerIdentity": "7d320f08adb826b4dd0e",
+    "houseNumber": "1",
+    "canonicalRoad": "WEST 16TH STREET",
+    "city": "",
+    "zip": "",
+    "county": "Coke County",
+    "countyFips": "48081",
+    "query": "1 WEST 16TH STREET TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 184,
+    "variantsTested": 552,
+    "variantsPassed": 552
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.831199999898672,
+  "certificationStatus": "PASS",
+  "failures": []
+}

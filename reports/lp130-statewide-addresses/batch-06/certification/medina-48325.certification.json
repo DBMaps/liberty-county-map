@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Medina County",
+  "countyFips": "48325",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1001796,
+  "sha256": "0a7bf30af420f2996173939962106b2faa273e72d7d9fbcefc46e2f503621d8f",
+  "indexedAddressCount": 32571,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0040000006556510925
+  },
+  "exactSample": {
+    "providerIdentity": "6aba60506729c5980a89",
+    "houseNumber": "0",
+    "canonicalRoad": "GOLDEN EAGLE",
+    "city": "SAN ANTONIO",
+    "zip": "78253",
+    "county": "Medina County",
+    "countyFips": "48325",
+    "query": "0 GOLDEN EAGLE SAN ANTONIO TX 78253",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 225.13740000128746,
+  "certificationStatus": "PASS",
+  "failures": []
+}

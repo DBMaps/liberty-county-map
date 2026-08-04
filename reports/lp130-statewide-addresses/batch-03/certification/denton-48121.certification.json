@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Denton County",
+  "countyFips": "48121",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 11819588,
+  "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17",
+  "indexedAddressCount": 408815,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00559999980032444
+  },
+  "exactSample": {
+    "providerIdentity": "f4781c2da47f0fc8a0dc",
+    "houseNumber": "0",
+    "canonicalRoad": "ADMINISTRATION DR",
+    "city": "TEXAS WOMENS UNIVERSITY",
+    "zip": "76209",
+    "county": "Denton County",
+    "countyFips": "48121",
+    "query": "0 ADMINISTRATION DR TEXAS WOMENS UNIVERSITY TX 76209",
+    "completeAddressMatchCount": 2
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "FAIL",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 8982
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 2802.752000000328,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "canonical road alias failed"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Rockwall County",
+  "countyFips": "48397",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1681408,
+  "sha256": "beee33f9fcda1f2a9bd8040543e797b1e9af5953f048d1181467e6415fa7068b",
+  "indexedAddressCount": 59194,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004900000989437103
+  },
+  "exactSample": {
+    "providerIdentity": "528cd67a92d9dddc6bb4",
+    "houseNumber": "1",
+    "canonicalRoad": "AMANDA LANE",
+    "city": "Rockwall",
+    "zip": "75032",
+    "county": "Rockwall County",
+    "countyFips": "48397",
+    "query": "1 Amanda Lane Rockwall TX 75032",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 464,
+    "variantsTested": 1392,
+    "variantsPassed": 1392
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 362.68019999936223,
+  "certificationStatus": "PASS",
+  "failures": []
+}

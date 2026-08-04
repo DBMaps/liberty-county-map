@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cameron-tx",
+  "county": "Cameron County",
+  "fips": "48061",
+  "artifact": "cameron-48061.addresses.jsonl.gz",
+  "sizeBytes": 5373433,
+  "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

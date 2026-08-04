@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "comal-tx",
+  "county": "Comal County",
+  "fips": "48091",
+  "artifact": "comal-48091.addresses.jsonl.gz",
+  "sizeBytes": 3360569,
+  "sha256": "f5cd65b8c56cb74e7137f861ab35ba5e140923d2e51e64e9a5b8f8d14b67e0cd",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

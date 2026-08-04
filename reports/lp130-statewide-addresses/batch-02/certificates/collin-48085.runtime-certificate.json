@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "collin-tx",
+  "county": "Collin County",
+  "fips": "48085",
+  "artifact": "collin-48085.addresses.jsonl.gz",
+  "sizeBytes": 9981010,
+  "sha256": "1b9b9ea4116e505358abfb1274bb10d3702e753ebcc9dd3626b98a2d3aebb87d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

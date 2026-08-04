@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Concho County",
+  "countyFips": "48095",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 104851,
+  "sha256": "77d291f9e853f88d6753c5738b0801515b1e69a3a2f83303d12d20b167c327e2",
+  "indexedAddressCount": 3177,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "a42b140163c1cc99300c",
+    "houseNumber": "1",
+    "canonicalRoad": "EAST BRYAN STREET",
+    "city": "",
+    "zip": "76837",
+    "county": "Concho County",
+    "countyFips": "48095",
+    "query": "1 EAST BRYAN STREET TX 76837",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1049,
+    "variantsTested": 3147,
+    "variantsPassed": 3147
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.460299999918789,
+  "certificationStatus": "PASS",
+  "failures": []
+}

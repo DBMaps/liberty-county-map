@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Nacogdoches County",
+  "countyFips": "48347",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1248185,
+  "sha256": "ce2564d3e5342f4fdb4cec2a19cda512ac6b1c0ef5305435614aff461322e86b",
+  "indexedAddressCount": 36259,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004799999296665192
+  },
+  "exactSample": {
+    "providerIdentity": "a2e9290c37c4e77312b5",
+    "houseNumber": "1",
+    "canonicalRoad": "WATERFORD CIRCLE",
+    "city": "Nacogdoches",
+    "zip": "75965",
+    "county": "Nacogdoches County",
+    "countyFips": "48347",
+    "query": "1 Waterford Circle Nacogdoches TX 75965",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 266.78940000012517,
+  "certificationStatus": "PASS",
+  "failures": []
+}

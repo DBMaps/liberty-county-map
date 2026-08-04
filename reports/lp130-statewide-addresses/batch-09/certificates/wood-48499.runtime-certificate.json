@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wood-tx",
+  "county": "Wood County",
+  "fips": "48499",
+  "artifact": "wood-48499.addresses.jsonl.gz",
+  "sizeBytes": 1061130,
+  "sha256": "a53ee9bcb3950849d3bc3262639ed71da5d172b3b798f1e4e909324e81a0eb6e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

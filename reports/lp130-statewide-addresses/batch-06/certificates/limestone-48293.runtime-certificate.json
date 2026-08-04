@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "limestone-tx",
+  "county": "Limestone County",
+  "fips": "48293",
+  "artifact": "limestone-48293.addresses.jsonl.gz",
+  "sizeBytes": 302446,
+  "sha256": "0c5718f4c1d6c425c1f1bde919316f03132f2d6de3a999596db9be0d5ceb191a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

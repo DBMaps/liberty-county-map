@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "val-verde-tx",
+  "county": "Val Verde County",
+  "fips": "48465",
+  "artifact": "val-verde-48465.addresses.jsonl.gz",
+  "sizeBytes": 716092,
+  "sha256": "c62dcee91b022c062ada005e518ec81b88b85dd9a2ac368cb2123524cd6783ab",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

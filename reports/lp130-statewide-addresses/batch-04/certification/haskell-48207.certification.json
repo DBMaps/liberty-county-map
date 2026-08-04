@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Haskell County",
+  "countyFips": "48207",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 138065,
+  "sha256": "47e988eb2063bb543532c1b152a971eb5dfc13067b60b94f0e98d2ed1d9b214e",
+  "indexedAddressCount": 4548,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00390000082552433
+  },
+  "exactSample": {
+    "providerIdentity": "298bd7138eb8b404b1e7",
+    "houseNumber": "1",
+    "canonicalRoad": "AVENUE B EAST",
+    "city": "HASKELL",
+    "zip": "79521",
+    "county": "Haskell County",
+    "countyFips": "48207",
+    "query": "1 AVENUE B EAST HASKELL TX 79521",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 790,
+    "variantsTested": 2370,
+    "variantsPassed": 2370
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 26.31680000014603,
+  "certificationStatus": "PASS",
+  "failures": []
+}

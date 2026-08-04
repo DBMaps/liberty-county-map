@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "sterling-tx",
+  "county": "Sterling County",
+  "fips": "48431",
+  "artifact": "sterling-48431.addresses.jsonl.gz",
+  "sizeBytes": 36592,
+  "sha256": "55efc6ff2b94ed429a4e47b99d0e526614283486623dc8d73d27548d348b8f6a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

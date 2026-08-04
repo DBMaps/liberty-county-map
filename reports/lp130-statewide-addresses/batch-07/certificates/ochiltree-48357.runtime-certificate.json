@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "ochiltree-tx",
+  "county": "Ochiltree County",
+  "fips": "48357",
+  "artifact": "ochiltree-48357.addresses.jsonl.gz",
+  "sizeBytes": 173093,
+  "sha256": "d68ac8e8b990f28dcd17a05bfad9de79d188557e7d4864b645f6a5c92f44cff7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

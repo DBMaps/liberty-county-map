@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kleberg County",
+  "countyFips": "48273",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 327913,
+  "sha256": "292ca5eaa617d654920d2afd50e38b011bf4bb6122ebeea106ba8e7b2dbe7107",
+  "indexedAddressCount": 10871,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "830f4862a78d7741f56b",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST CORRAL AVENUE",
+    "city": "Kingsville",
+    "zip": "78363",
+    "county": "Kleberg County",
+    "countyFips": "48273",
+    "query": "100 East Corral Avenue Kingsville TX 78363",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "NOT_APPLICABLE",
+    "eligibleRecords": 0,
+    "variantsTested": 0,
+    "variantsPassed": 0
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 66.46789999864995,
+  "certificationStatus": "PASS",
+  "failures": []
+}

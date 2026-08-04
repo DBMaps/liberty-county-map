@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "henderson-tx",
+  "county": "Henderson County",
+  "fips": "48213",
+  "artifact": "henderson-48213.addresses.jsonl.gz",
+  "sizeBytes": 1722286,
+  "sha256": "e9bf619978f5512dc5f5c4e8ee5e050801f99aab241f8ebdfe99a9c4b11b765b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

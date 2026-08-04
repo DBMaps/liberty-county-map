@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Upton County",
+  "countyFips": "48461",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 94640,
+  "sha256": "66537982fd43a5e78c0025c0213c743040ae9c2d6fe41137953e25117c983559",
+  "indexedAddressCount": 2958,
+  "exactMatchStatistics": {
+    "sampled": 2951,
+    "passed": 2951,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "d5a06ad3e2670fb4cac9",
+    "houseNumber": "1",
+    "canonicalRoad": "PECAN STREET",
+    "city": "",
+    "zip": "79755",
+    "county": "Upton County",
+    "countyFips": "48461",
+    "query": "1 PECAN STREET TX 79755",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2951,
+    "truthfulNoResults": 2951,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2951,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2951,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 374,
+    "variantsTested": 1122,
+    "variantsPassed": 1122
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 23.374199997633696,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "runnels-tx",
+  "county": "Runnels County",
+  "fips": "48399",
+  "artifact": "runnels-48399.addresses.jsonl.gz",
+  "sizeBytes": 210395,
+  "sha256": "0196744b5ff61655e27ce3e1853c7a5308564d41ce4ea9d96a9cf3611f3cdea5",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

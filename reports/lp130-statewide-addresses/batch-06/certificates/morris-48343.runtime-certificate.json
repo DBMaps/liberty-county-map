@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "morris-tx",
+  "county": "Morris County",
+  "fips": "48343",
+  "artifact": "morris-48343.addresses.jsonl.gz",
+  "sizeBytes": 242673,
+  "sha256": "912cb4c4de21fbb06b4ad72403410a6f6575e7a642d63230ab9a050be1041d0c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

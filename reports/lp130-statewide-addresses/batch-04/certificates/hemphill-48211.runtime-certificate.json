@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hemphill-tx",
+  "county": "Hemphill County",
+  "fips": "48211",
+  "artifact": "hemphill-48211.addresses.jsonl.gz",
+  "sizeBytes": 65577,
+  "sha256": "bf673e84ea159d3710553cb464a9c979718ec0e66cc27e178f88b22f96103e9a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

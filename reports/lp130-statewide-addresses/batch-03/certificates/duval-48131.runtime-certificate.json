@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "duval-tx",
+  "county": "Duval County",
+  "fips": "48131",
+  "artifact": "duval-48131.addresses.jsonl.gz",
+  "sizeBytes": 99456,
+  "sha256": "1e3d32ebe88a784c028c685710247aaf6e22bd0aed63acfc78f40cab0bf2cbc2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

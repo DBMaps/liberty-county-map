@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Refugio County",
+  "countyFips": "48391",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 168816,
+  "sha256": "a6ef1a3ef90dff56a4f50bdd2b293e144c07120c56da9460f8dcc2785512d482",
+  "indexedAddressCount": 5466,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "13069cf8436d50f5981b",
+    "houseNumber": "10",
+    "canonicalRoad": "BURTON STREET",
+    "city": "Woodsboro",
+    "zip": "78393",
+    "county": "Refugio County",
+    "countyFips": "48391",
+    "query": "10 Burton Street Woodsboro TX 78393",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 341,
+    "variantsTested": 1023,
+    "variantsPassed": 1023
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 29.727099999785423,
+  "certificationStatus": "PASS",
+  "failures": []
+}

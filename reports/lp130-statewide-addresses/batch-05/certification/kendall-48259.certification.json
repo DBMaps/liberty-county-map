@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kendall County",
+  "countyFips": "48259",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 663438,
+  "sha256": "d8dce017a48d4b9af29116780e070485243e944fc7d5718128e9541b9209cf48",
+  "indexedAddressCount": 21800,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004100000485777855
+  },
+  "exactSample": {
+    "providerIdentity": "0c6359edd82c5a054a3d",
+    "houseNumber": "1",
+    "canonicalRoad": "ALLEN ROAD",
+    "city": "",
+    "zip": "",
+    "county": "Kendall County",
+    "countyFips": "48259",
+    "query": "1 Allen Road TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 744,
+    "variantsTested": 2232,
+    "variantsPassed": 2232
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 117.02589999884367,
+  "certificationStatus": "PASS",
+  "failures": []
+}

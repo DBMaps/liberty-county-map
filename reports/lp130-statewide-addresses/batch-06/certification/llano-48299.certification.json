@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Llano County",
+  "countyFips": "48299",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 741243,
+  "sha256": "b865d368ec8832e3f9514388eb3fa83b91a35a5cd3983a8f61dae2149afd2f8e",
+  "indexedAddressCount": 21724,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "4cb4294192886af637fc",
+    "houseNumber": "1",
+    "canonicalRoad": "APPLEHEAD ISLAND DRIVE",
+    "city": "Hsb llano co",
+    "zip": "78657",
+    "county": "Llano County",
+    "countyFips": "48299",
+    "query": "1 Applehead Island Drive Hsb llano co TX 78657",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1614,
+    "variantsTested": 4842,
+    "variantsPassed": 4842
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 129.3416999988258,
+  "certificationStatus": "PASS",
+  "failures": []
+}

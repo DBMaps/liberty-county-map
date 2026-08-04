@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "grayson-tx",
+  "county": "Grayson County",
+  "fips": "48181",
+  "artifact": "grayson-48181.addresses.jsonl.gz",
+  "sizeBytes": 2560440,
+  "sha256": "c775d5868b5b420fa34d53595cfd893efaf1bfa0f042de39532789ac755ffe5b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

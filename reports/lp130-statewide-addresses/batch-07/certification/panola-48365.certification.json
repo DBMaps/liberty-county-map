@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Panola County",
+  "countyFips": "48365",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 514964,
+  "sha256": "6365321596b61d8fe1d6b53a8911f4fa505d7e962332e7cd9fbab953ceac6044",
+  "indexedAddressCount": 16177,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004200000315904617
+  },
+  "exactSample": {
+    "providerIdentity": "b5bf81b06e4dd1d4fcc3",
+    "houseNumber": "100",
+    "canonicalRoad": "ANNES WAY",
+    "city": "BECKVILLE",
+    "zip": "75631",
+    "county": "Panola County",
+    "countyFips": "48365",
+    "query": "100 ANNES WAY BECKVILLE TX 75631",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 116.94209999963641,
+  "certificationStatus": "PASS",
+  "failures": []
+}

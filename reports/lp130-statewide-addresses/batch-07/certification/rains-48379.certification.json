@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Rains County",
+  "countyFips": "48379",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 295604,
+  "sha256": "332d4e58940a468b62a4e7e982b9b11e9633ca56ff667dc81748f9bc4ddc1ff9",
+  "indexedAddressCount": 9031,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "849d60843a54011674ec",
+    "houseNumber": "100",
+    "canonicalRoad": "AVENUE A",
+    "city": "POINT",
+    "zip": "75472",
+    "county": "Rains County",
+    "countyFips": "48379",
+    "query": "100 AVENUE A POINT TX 75472",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1074,
+    "variantsTested": 3222,
+    "variantsPassed": 3222
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 45.59589999914169,
+  "certificationStatus": "PASS",
+  "failures": []
+}

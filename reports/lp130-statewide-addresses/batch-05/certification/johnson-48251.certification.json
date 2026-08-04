@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Johnson County",
+  "countyFips": "48251",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2481089,
+  "sha256": "f2d1a68f39b991f5bdd6748a43d3a4f51ad0dfce59a3078a568fdc87d266c20f",
+  "indexedAddressCount": 84707,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005000000819563866
+  },
+  "exactSample": {
+    "providerIdentity": "6967085e459fd6f0e102",
+    "houseNumber": "1",
+    "canonicalRoad": "BLUE STAR DRIVE",
+    "city": "Keene",
+    "zip": "76059",
+    "county": "Johnson County",
+    "countyFips": "48251",
+    "query": "1 Blue Star Drive Keene TX 76059",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 536.3127999994904,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Collingsworth County",
+  "countyFips": "48087",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 59143,
+  "sha256": "4b2c8c3e41fb4dc9a61b38026d774bebd671a8fa491ac794f4784fb7b5769265",
+  "indexedAddressCount": 1970,
+  "exactMatchStatistics": {
+    "sampled": 1970,
+    "passed": 1970,
+    "failed": 0,
+    "p95LookupMs": 0.003599999938160181
+  },
+  "exactSample": {
+    "providerIdentity": "f99ef5e467e7a044a1fe",
+    "houseNumber": "1",
+    "canonicalRoad": "CATFISH",
+    "city": "",
+    "zip": "79245",
+    "county": "Collingsworth County",
+    "countyFips": "48087",
+    "query": "1 CATFISH TX 79245",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1970,
+    "truthfulNoResults": 1970,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1970,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1970,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 459,
+    "variantsTested": 1377,
+    "variantsPassed": 1377
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 10.832899999804795,
+  "certificationStatus": "PASS",
+  "failures": []
+}

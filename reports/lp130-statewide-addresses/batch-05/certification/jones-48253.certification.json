@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Jones County",
+  "countyFips": "48253",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 308268,
+  "sha256": "96557820286aad411c2d8dc4829d1a84cc96d30cfb43205764b5f2c814f21c7b",
+  "indexedAddressCount": 9947,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "e6edb628a6610a5a1dfd",
+    "houseNumber": "1",
+    "canonicalRoad": "BAIZE DRIVE",
+    "city": "STAMFORD",
+    "zip": "79553",
+    "county": "Jones County",
+    "countyFips": "48253",
+    "query": "1 BAIZE DRIVE STAMFORD TX 79553",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 71.40240000002086,
+  "certificationStatus": "PASS",
+  "failures": []
+}

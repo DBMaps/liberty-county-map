@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kenedy County",
+  "countyFips": "48261",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 18302,
+  "sha256": "8804b6537405c0a2f8841a723fcbb6f72951971261970f099b7bef04ae877824",
+  "indexedAddressCount": 577,
+  "exactMatchStatistics": {
+    "sampled": 577,
+    "passed": 577,
+    "failed": 0,
+    "p95LookupMs": 0.003200000151991844
+  },
+  "exactSample": {
+    "providerIdentity": "90631ae173b6da2ac76b",
+    "houseNumber": "100",
+    "canonicalRoad": "CANELO RANCH ROAD",
+    "city": "Armstrong",
+    "zip": "78338",
+    "county": "Kenedy County",
+    "countyFips": "48261",
+    "query": "100 Canelo Ranch Road Armstrong TX 78338",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 577,
+    "truthfulNoResults": 577,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 577,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 577,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "NOT_APPLICABLE",
+    "eligibleRecords": 0,
+    "variantsTested": 0,
+    "variantsPassed": 0
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 3.783999999985099,
+  "certificationStatus": "PASS",
+  "failures": []
+}

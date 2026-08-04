@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "menard-tx",
+  "county": "Menard County",
+  "fips": "48327",
+  "artifact": "menard-48327.addresses.jsonl.gz",
+  "sizeBytes": 72721,
+  "sha256": "a14bce324779a0dac657bc07fa7ca108c83d03467146ee5a81ac85d19566c282",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

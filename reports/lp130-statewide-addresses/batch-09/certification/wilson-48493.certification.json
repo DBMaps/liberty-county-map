@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Wilson County",
+  "countyFips": "48493",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 740747,
+  "sha256": "1a2736ae8088896f854cf57fe680fc8aa2217215a39fed5c729f8ccf50db1e32",
+  "indexedAddressCount": 24534,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006299998611211777
+  },
+  "exactSample": {
+    "providerIdentity": "ef04e2f47d8d6abdcd0c",
+    "houseNumber": "1",
+    "canonicalRoad": "CR 359",
+    "city": "La Vernia",
+    "zip": "78121",
+    "county": "Wilson County",
+    "countyFips": "48493",
+    "query": "1 County Road 359 La Vernia TX 78121",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 140.53739999979734,
+  "certificationStatus": "PASS",
+  "failures": []
+}

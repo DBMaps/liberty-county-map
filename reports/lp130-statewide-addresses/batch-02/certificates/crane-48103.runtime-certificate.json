@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "crane-tx",
+  "county": "Crane County",
+  "fips": "48103",
+  "artifact": "crane-48103.addresses.jsonl.gz",
+  "sizeBytes": 48793,
+  "sha256": "e7cb5f03ff9367798e137ae858a34a2210d8cd7137b1e7469bb0b40c6fb68c13",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

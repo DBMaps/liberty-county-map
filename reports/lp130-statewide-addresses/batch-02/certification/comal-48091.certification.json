@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Comal County",
+  "countyFips": "48091",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 3360569,
+  "sha256": "f5cd65b8c56cb74e7137f861ab35ba5e140923d2e51e64e9a5b8f8d14b67e0cd",
+  "indexedAddressCount": 102661,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005100000184029341
+  },
+  "exactSample": {
+    "providerIdentity": "05ce77474352747799f9",
+    "houseNumber": "1",
+    "canonicalRoad": "ANHALT CV",
+    "city": "NEW BRAUNFELS",
+    "zip": "",
+    "county": "Comal County",
+    "countyFips": "48091",
+    "query": "1 ANHALT CV NEW BRAUNFELS TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2502,
+    "variantsTested": 7506,
+    "variantsPassed": 7506
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 628.5056999996305,
+  "certificationStatus": "PASS",
+  "failures": []
+}

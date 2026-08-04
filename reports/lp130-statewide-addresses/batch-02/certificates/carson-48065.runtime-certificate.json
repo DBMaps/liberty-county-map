@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "carson-tx",
+  "county": "Carson County",
+  "fips": "48065",
+  "artifact": "carson-48065.addresses.jsonl.gz",
+  "sizeBytes": 118586,
+  "sha256": "984013aca1f622f3d35b729f92abbc9bc1cbed4faecdceddf919422b2c5eb9fb",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

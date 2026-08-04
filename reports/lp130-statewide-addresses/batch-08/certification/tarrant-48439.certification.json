@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Tarrant County",
+  "countyFips": "48439",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 23796609,
+  "sha256": "3e8ff5d504357f8ba42e7d4cebb5abb3baa72386f52f1fc484b40ac035828ed3",
+  "indexedAddressCount": 706796,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005499999970197678
+  },
+  "exactSample": {
+    "providerIdentity": "e9eb17a55eef88f9db0d",
+    "houseNumber": "1",
+    "canonicalRoad": "ABBEY RD",
+    "city": "EULESS",
+    "zip": "",
+    "county": "Tarrant County",
+    "countyFips": "48439",
+    "query": "1 ABBEY RD EULESS TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 97,
+    "variantsTested": 291,
+    "variantsPassed": 291
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 4943.327600002289,
+  "certificationStatus": "PASS",
+  "failures": []
+}

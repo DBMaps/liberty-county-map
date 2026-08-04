@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "somervell-tx",
+  "county": "Somervell County",
+  "fips": "48425",
+  "artifact": "somervell-48425.addresses.jsonl.gz",
+  "sizeBytes": 164537,
+  "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

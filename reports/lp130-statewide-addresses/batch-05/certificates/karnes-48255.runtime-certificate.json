@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "karnes-tx",
+  "county": "Karnes County",
+  "fips": "48255",
+  "artifact": "karnes-48255.addresses.jsonl.gz",
+  "sizeBytes": 273885,
+  "sha256": "83f60626c3a4317c8235441d105c6caea0e747a49dc84a55e4c595aa44c6e131",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

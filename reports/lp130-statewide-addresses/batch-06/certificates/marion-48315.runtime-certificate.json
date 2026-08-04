@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "marion-tx",
+  "county": "Marion County",
+  "fips": "48315",
+  "artifact": "marion-48315.addresses.jsonl.gz",
+  "sizeBytes": 288214,
+  "sha256": "9d017294d10801d50627a53c8ca5afde89f4e109c2cdc86ac85ad979d6d27c0a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "San Saba County",
+  "countyFips": "48411",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 156432,
+  "sha256": "52d9933dfc4be898f6ad620e6517fb0d081254739e5167dcea4ef7002381a1ac",
+  "indexedAddressCount": 4716,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "64f94415a08a18a34972",
+    "houseNumber": "100",
+    "canonicalRoad": "AZTEC ST",
+    "city": "CHEROKEE",
+    "zip": "76832",
+    "county": "San Saba County",
+    "countyFips": "48411",
+    "query": "100 AZTEC ST CHEROKEE TX 76832",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2168,
+    "variantsTested": 6504,
+    "variantsPassed": 6504
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 24.85250000283122,
+  "certificationStatus": "PASS",
+  "failures": []
+}

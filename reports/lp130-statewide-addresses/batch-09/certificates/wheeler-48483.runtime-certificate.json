@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "wheeler-tx",
+  "county": "Wheeler County",
+  "fips": "48483",
+  "artifact": "wheeler-48483.addresses.jsonl.gz",
+  "sizeBytes": 111290,
+  "sha256": "ba9cca0ec43b4aa263f1fd4851cb6545da46193afb623deed5eb62eaf552f1b7",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

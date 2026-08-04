@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "young-tx",
+  "county": "Young County",
+  "fips": "48503",
+  "artifact": "young-48503.addresses.jsonl.gz",
+  "sizeBytes": 345917,
+  "sha256": "8860e222a1d19cf9935bfaaf9b24b209a45f6d7bea228cfb2d37fb09dac57274",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

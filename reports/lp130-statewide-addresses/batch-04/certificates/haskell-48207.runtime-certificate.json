@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "haskell-tx",
+  "county": "Haskell County",
+  "fips": "48207",
+  "artifact": "haskell-48207.addresses.jsonl.gz",
+  "sizeBytes": 138065,
+  "sha256": "47e988eb2063bb543532c1b152a971eb5dfc13067b60b94f0e98d2ed1d9b214e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

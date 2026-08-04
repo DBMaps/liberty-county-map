@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Navarro County",
+  "countyFips": "48349",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 856474,
+  "sha256": "25be1fa1c50f123c2058f6e1c5bcc695b52228e5858b837463933d32409d73ef",
+  "indexedAddressCount": 28383,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004600003361701965
+  },
+  "exactSample": {
+    "providerIdentity": "4f6d46234505e32592bd",
+    "houseNumber": "10",
+    "canonicalRoad": "DOBBINS CROSSING",
+    "city": "",
+    "zip": "75110",
+    "county": "Navarro County",
+    "countyFips": "48349",
+    "query": "10 Dobbins Crossing TX 75110",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2744,
+    "variantsTested": 8232,
+    "variantsPassed": 8232
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 213.0659000016749,
+  "certificationStatus": "PASS",
+  "failures": []
+}

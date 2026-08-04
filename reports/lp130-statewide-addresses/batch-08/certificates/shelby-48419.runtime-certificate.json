@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "shelby-tx",
+  "county": "Shelby County",
+  "fips": "48419",
+  "artifact": "shelby-48419.addresses.jsonl.gz",
+  "sizeBytes": 564899,
+  "sha256": "65ea2173f4608b0add79a549953a515965afc8d12ac01de996f184b2857493a4",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

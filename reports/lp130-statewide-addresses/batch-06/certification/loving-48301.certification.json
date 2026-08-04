@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Loving County",
+  "countyFips": "48301",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 16861,
+  "sha256": "125ca269e57b8a855c9656b5d3cc5ed990a87ad46e105180808d1e259bb316de",
+  "indexedAddressCount": 503,
+  "exactMatchStatistics": {
+    "sampled": 503,
+    "passed": 503,
+    "failed": 0,
+    "p95LookupMs": 0.003399999812245369
+  },
+  "exactSample": {
+    "providerIdentity": "17854fc2f95e3953cdb0",
+    "houseNumber": "100",
+    "canonicalRoad": "AVENUE B",
+    "city": "MENTONE",
+    "zip": "79754",
+    "county": "Loving County",
+    "countyFips": "48301",
+    "query": "100 AVENUE B MENTONE TX 79754",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 503,
+    "truthfulNoResults": 503,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 503,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 503,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 165,
+    "variantsTested": 495,
+    "variantsPassed": 495
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 3.712600000202656,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Dallas County",
+  "countyFips": "48113",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 32972921,
+  "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953",
+  "indexedAddressCount": 1028372,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004800000227987766
+  },
+  "exactSample": {
+    "providerIdentity": "552f5c179b972f073b29",
+    "houseNumber": "0",
+    "canonicalRoad": "1000 ALAN AVE W",
+    "city": "Carrollton",
+    "zip": "75006",
+    "county": "Dallas County",
+    "countyFips": "48113",
+    "query": "0 1000 ALAN AVE W Carrollton TX 75006",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "FAIL",
+    "eligibleRecords": 372,
+    "variantsTested": 1116,
+    "variantsPassed": 1106
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 6535.563000000082,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "runtime load exceeded 5000ms",
+    "canonical road alias failed"
+  ]
+}

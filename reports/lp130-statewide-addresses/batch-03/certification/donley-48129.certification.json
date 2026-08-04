@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Donley County",
+  "countyFips": "48129",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 189573,
+  "sha256": "33c8b613531161e0d8c47b4924eb82f92c209e8ded6a2b7b0001f5540ac034e9",
+  "indexedAddressCount": 6606,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0036000004038214684
+  },
+  "exactSample": {
+    "providerIdentity": "1482c5a41c678801a74c",
+    "houseNumber": "1",
+    "canonicalRoad": "B PARK ROAD",
+    "city": "",
+    "zip": "79226",
+    "county": "Donley County",
+    "countyFips": "48129",
+    "query": "1 B PARK ROAD TX 79226",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 460,
+    "variantsTested": 1380,
+    "variantsPassed": 1380
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 29.690899999812245,
+  "certificationStatus": "PASS",
+  "failures": []
+}

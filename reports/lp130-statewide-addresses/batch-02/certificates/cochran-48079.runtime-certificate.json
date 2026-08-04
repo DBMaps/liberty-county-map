@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "cochran-tx",
+  "county": "Cochran County",
+  "fips": "48079",
+  "artifact": "cochran-48079.addresses.jsonl.gz",
+  "sizeBytes": 48182,
+  "sha256": "ea0a0ccead83d3c19741765704c2fd6f0e2566b53bf4cc43593f653d3f608add",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

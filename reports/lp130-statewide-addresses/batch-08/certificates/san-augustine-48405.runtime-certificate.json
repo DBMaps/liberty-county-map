@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "san-augustine-tx",
+  "county": "San Augustine County",
+  "fips": "48405",
+  "artifact": "san-augustine-48405.addresses.jsonl.gz",
+  "sizeBytes": 250781,
+  "sha256": "928822ef1362db74bc68e51bb7f1a674e6704750b8dbe98cd8cc3b8eb8441774",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

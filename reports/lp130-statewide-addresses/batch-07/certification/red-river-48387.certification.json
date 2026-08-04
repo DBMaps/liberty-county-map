@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Red River County",
+  "countyFips": "48387",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 302485,
+  "sha256": "928150e1ab9fc99c45c4768c046e5c74e578b874b3f9843f0fed84e8e6cb5b3f",
+  "indexedAddressCount": 9517,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004099998623132706
+  },
+  "exactSample": {
+    "providerIdentity": "24d763cebda612de9ee2",
+    "houseNumber": "10",
+    "canonicalRoad": "CR 2347",
+    "city": "Bagwell",
+    "zip": "75412",
+    "county": "Red River County",
+    "countyFips": "48387",
+    "query": "10 County Road 2347 Bagwell TX 75412",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 49.15890000015497,
+  "certificationStatus": "PASS",
+  "failures": []
+}

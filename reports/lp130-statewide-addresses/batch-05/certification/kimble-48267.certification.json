@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kimble County",
+  "countyFips": "48267",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 145998,
+  "sha256": "6537e8453c31d105c5a332cca109209eacc2dbc82535350a47f8860c260f7892",
+  "indexedAddressCount": 4361,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037999991327524185
+  },
+  "exactSample": {
+    "providerIdentity": "ea35873019a7be220bf3",
+    "houseNumber": "100",
+    "canonicalRoad": "COLLEGE STREET",
+    "city": "",
+    "zip": "76849",
+    "county": "Kimble County",
+    "countyFips": "48267",
+    "query": "100 COLLEGE STREET TX 76849",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 24,
+    "variantsTested": 72,
+    "variantsPassed": 72
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 30.483799999579787,
+  "certificationStatus": "PASS",
+  "failures": []
+}

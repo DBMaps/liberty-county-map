@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Parmer County",
+  "countyFips": "48369",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 134975,
+  "sha256": "957f7042d4686f8e0e9c98dddffb085175fe73f1ea892aa8e2b0bf4886196563",
+  "indexedAddressCount": 4482,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000030279159546
+  },
+  "exactSample": {
+    "providerIdentity": "bc56c4e491296e2a2639",
+    "houseNumber": "1",
+    "canonicalRoad": "FM 2013",
+    "city": "",
+    "zip": "79035",
+    "county": "Parmer County",
+    "countyFips": "48369",
+    "query": "1 FM 2013 TX 79035",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 930,
+    "variantsTested": 2790,
+    "variantsPassed": 2790
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 29.416499998420477,
+  "certificationStatus": "PASS",
+  "failures": []
+}

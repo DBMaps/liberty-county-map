@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lubbock County",
+  "countyFips": "48303",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 4986893,
+  "sha256": "60c43c58661f474849ea7ff0dd47326ecfdc9491cc2995e572235dfdef872efc",
+  "indexedAddressCount": 184376,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00430000014603138
+  },
+  "exactSample": {
+    "providerIdentity": "68bec0059c8315131603",
+    "houseNumber": "0",
+    "canonicalRoad": "C R 1170",
+    "city": "",
+    "zip": "",
+    "county": "Lubbock County",
+    "countyFips": "48303",
+    "query": "0 C R 1170 TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 19,
+    "variantsTested": 57,
+    "variantsPassed": 57
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 1108.4059999994934,
+  "certificationStatus": "PASS",
+  "failures": []
+}

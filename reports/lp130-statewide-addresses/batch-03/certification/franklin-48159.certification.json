@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Franklin County",
+  "countyFips": "48159",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 270786,
+  "sha256": "8903c3e31585618a9c21be281d9d61547a7aa1bffb12264689dd03c57956f85f",
+  "indexedAddressCount": 8361,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004200000315904617
+  },
+  "exactSample": {
+    "providerIdentity": "b0bb994fd9460e65d198",
+    "houseNumber": "1",
+    "canonicalRoad": "COUNTY ROAD SE 4396",
+    "city": "Scroggins",
+    "zip": "75480",
+    "county": "Franklin County",
+    "countyFips": "48159",
+    "query": "1 County Road Se 4396 Scroggins TX 75480",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 937,
+    "variantsTested": 2811,
+    "variantsPassed": 2811
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 51.21710000000894,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Mason County",
+  "countyFips": "48319",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 139845,
+  "sha256": "7b0cad4a85fb3cce3c3599533e44463f1713b195c227b070e273ffa62f143f18",
+  "indexedAddressCount": 4078,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003600001335144043
+  },
+  "exactSample": {
+    "providerIdentity": "247a24972986ac7b739e",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST RAINEY STREET",
+    "city": "MASON",
+    "zip": "76856",
+    "county": "Mason County",
+    "countyFips": "48319",
+    "query": "100 EAST RAINEY STREET MASON TX 76856",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 99,
+    "variantsTested": 297,
+    "variantsPassed": 297
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 20.823900001123548,
+  "certificationStatus": "PASS",
+  "failures": []
+}

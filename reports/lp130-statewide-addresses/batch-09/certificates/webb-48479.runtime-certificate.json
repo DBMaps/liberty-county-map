@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "webb-tx",
+  "county": "Webb County",
+  "fips": "48479",
+  "artifact": "webb-48479.addresses.jsonl.gz",
+  "sizeBytes": 3249000,
+  "sha256": "de111d7849ab761639983a4e11a63a92baf6d397725046435899d9c4b8dd49ae",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

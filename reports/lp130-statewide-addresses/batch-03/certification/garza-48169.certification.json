@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Garza County",
+  "countyFips": "48169",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 101925,
+  "sha256": "4f09a0d8fd0665ccbaf8a1745b8c3584b2c9eba8d29ea8c6579d75171d2cd8eb",
+  "indexedAddressCount": 3230,
+  "exactMatchStatistics": {
+    "sampled": 2947,
+    "passed": 2947,
+    "failed": 0,
+    "p95LookupMs": 0.003800000064074993
+  },
+  "exactSample": {
+    "providerIdentity": "00b420fb97c32027e23b",
+    "houseNumber": "10",
+    "canonicalRoad": "BURLINGTON PLACE",
+    "city": "POST",
+    "zip": "79356",
+    "county": "Garza County",
+    "countyFips": "48169",
+    "query": "10 BURLINGTON PLACE POST TX 79356",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2947,
+    "truthfulNoResults": 2947,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2947,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2947,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 890,
+    "variantsTested": 2670,
+    "variantsPassed": 2670
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 16.469099999405444,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "tarrant-tx",
+  "county": "Tarrant County",
+  "fips": "48439",
+  "artifact": "tarrant-48439.addresses.jsonl.gz",
+  "sizeBytes": 23796609,
+  "sha256": "3e8ff5d504357f8ba42e7d4cebb5abb3baa72386f52f1fc484b40ac035828ed3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

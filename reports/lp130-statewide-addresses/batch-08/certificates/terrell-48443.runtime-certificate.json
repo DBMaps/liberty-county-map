@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "terrell-tx",
+  "county": "Terrell County",
+  "fips": "48443",
+  "artifact": "terrell-48443.addresses.jsonl.gz",
+  "sizeBytes": 35870,
+  "sha256": "d17e81cc50c4889104d512ab63ace3c7d5f8c2659f974bfcca5af67977d6f29a",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

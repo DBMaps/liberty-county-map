@@ -51,6 +51,12 @@
       "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55"
     },
     {
+      "fips": "48019",
+      "package": "bandera-48019.addresses.jsonl.gz",
+      "sizeBytes": 539409,
+      "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f"
+    },
+    {
       "fips": "48021",
       "package": "bastrop-48021.addresses.jsonl.gz",
       "sizeBytes": 1906657,
@@ -67,6 +73,12 @@
       "package": "bee-48025.addresses.jsonl.gz",
       "sizeBytes": 225545,
       "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6"
+    },
+    {
+      "fips": "48027",
+      "package": "bell-48027.addresses.jsonl.gz",
+      "sizeBytes": 5367668,
+      "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050"
     },
     {
       "fips": "48029",
@@ -97,6 +109,12 @@
       "package": "bowie-48037.addresses.jsonl.gz",
       "sizeBytes": 1499449,
       "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9"
+    },
+    {
+      "fips": "48043",
+      "package": "brewster-48043.addresses.jsonl.gz",
+      "sizeBytes": 334550,
+      "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2"
     },
     {
       "fips": "48045",

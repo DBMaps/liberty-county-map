@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "nacogdoches-tx",
+  "county": "Nacogdoches County",
+  "fips": "48347",
+  "artifact": "nacogdoches-48347.addresses.jsonl.gz",
+  "sizeBytes": 1248185,
+  "sha256": "ce2564d3e5342f4fdb4cec2a19cda512ac6b1c0ef5305435614aff461322e86b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Uvalde County",
+  "countyFips": "48463",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 493131,
+  "sha256": "ffaf87c92d875d74f5f41b1ff0084312d9048771f9c61de2224d4cb3cc8c32d9",
+  "indexedAddressCount": 15602,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0040000006556510925
+  },
+  "exactSample": {
+    "providerIdentity": "ce0288eb8769391bb0df",
+    "houseNumber": "1",
+    "canonicalRoad": "BIRCH CIRCLE",
+    "city": "",
+    "zip": "",
+    "county": "Uvalde County",
+    "countyFips": "48463",
+    "query": "1 BIRCH CIRCLE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2167,
+    "variantsTested": 6501,
+    "variantsPassed": 6501
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 100.51149999722838,
+  "certificationStatus": "PASS",
+  "failures": []
+}

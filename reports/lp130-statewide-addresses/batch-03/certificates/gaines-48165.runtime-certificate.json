@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "gaines-tx",
+  "county": "Gaines County",
+  "fips": "48165",
+  "artifact": "gaines-48165.addresses.jsonl.gz",
+  "sizeBytes": 284626,
+  "sha256": "aded3c1045bddc0346efe3913060fe0456a3c31d2e8d45e62fb804a6094a4592",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

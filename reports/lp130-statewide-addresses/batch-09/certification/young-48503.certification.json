@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Young County",
+  "countyFips": "48503",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 345917,
+  "sha256": "8860e222a1d19cf9935bfaaf9b24b209a45f6d7bea228cfb2d37fb09dac57274",
+  "indexedAddressCount": 10738,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "424207f8a6ce59e71557",
+    "houseNumber": "1",
+    "canonicalRoad": "BANKHEAD DRIVE",
+    "city": "OLNEY",
+    "zip": "76374",
+    "county": "Young County",
+    "countyFips": "48503",
+    "query": "1 BANKHEAD DRIVE OLNEY TX 76374",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1533,
+    "variantsTested": 4599,
+    "variantsPassed": 4599
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 54.375300001353025,
+  "certificationStatus": "PASS",
+  "failures": []
+}

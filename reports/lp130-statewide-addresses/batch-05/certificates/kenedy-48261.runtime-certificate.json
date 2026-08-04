@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kenedy-tx",
+  "county": "Kenedy County",
+  "fips": "48261",
+  "artifact": "kenedy-48261.addresses.jsonl.gz",
+  "sizeBytes": 18302,
+  "sha256": "8804b6537405c0a2f8841a723fcbb6f72951971261970f099b7bef04ae877824",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

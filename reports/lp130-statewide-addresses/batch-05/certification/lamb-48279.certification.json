@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Lamb County",
+  "countyFips": "48279",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 200784,
+  "sha256": "03cbe849a1711eab5c1550861b85e44e5e8a997334831e9992689d7aa3609e22",
+  "indexedAddressCount": 6179,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0035000015050172806
+  },
+  "exactSample": {
+    "providerIdentity": "157176b46cef1952381d",
+    "houseNumber": "100",
+    "canonicalRoad": "4TH STREET",
+    "city": "OLTON",
+    "zip": "79064",
+    "county": "Lamb County",
+    "countyFips": "48279",
+    "query": "100 4TH STREET OLTON TX 79064",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1360,
+    "variantsTested": 4080,
+    "variantsPassed": 4080
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 29.598500000312924,
+  "certificationStatus": "PASS",
+  "failures": []
+}

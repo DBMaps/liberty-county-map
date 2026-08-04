@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Sterling County",
+  "countyFips": "48431",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 36592,
+  "sha256": "55efc6ff2b94ed429a4e47b99d0e526614283486623dc8d73d27548d348b8f6a",
+  "indexedAddressCount": 1188,
+  "exactMatchStatistics": {
+    "sampled": 1188,
+    "passed": 1188,
+    "failed": 0,
+    "p95LookupMs": 0.003199998289346695
+  },
+  "exactSample": {
+    "providerIdentity": "a4dabef9a2737c2d5fd8",
+    "houseNumber": "1",
+    "canonicalRoad": "GLASS LANE",
+    "city": "",
+    "zip": "",
+    "county": "Sterling County",
+    "countyFips": "48431",
+    "query": "1 GLASS LANE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1188,
+    "truthfulNoResults": 1188,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1188,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1188,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 209,
+    "variantsTested": 627,
+    "variantsPassed": 627
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 6.343299999833107,
+  "certificationStatus": "PASS",
+  "failures": []
+}

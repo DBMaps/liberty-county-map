@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Nueces County",
+  "countyFips": "48355",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 260448,
+  "sha256": "4e10f0644f741388c762d0bddbe1f07314d15d91f35e16ce2b45a0e87985857d",
+  "indexedAddressCount": 9005,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003999996930360794
+  },
+  "exactSample": {
+    "providerIdentity": "eac9c96e583a316eb01d",
+    "houseNumber": "1",
+    "canonicalRoad": "PR HARBOR ISLAND ROAD",
+    "city": "Port Aransas",
+    "zip": "78373",
+    "county": "Nueces County",
+    "countyFips": "48355",
+    "query": "1 PR Harbor Island Road Port Aransas TX 78373",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 13,
+    "variantsTested": 39,
+    "variantsPassed": 39
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 47.10680000111461,
+  "certificationStatus": "PASS",
+  "failures": []
+}

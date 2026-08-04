@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Winkler County",
+  "countyFips": "48495",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 85761,
+  "sha256": "704d01f7af5e00136c6c8c5b24d21b0d5140f872bfbc5a2ebf04945a6d5b9413",
+  "indexedAddressCount": 2607,
+  "exactMatchStatistics": {
+    "sampled": 2607,
+    "passed": 2607,
+    "failed": 0,
+    "p95LookupMs": 0.0035999976098537445
+  },
+  "exactSample": {
+    "providerIdentity": "e5a5f846844ab433ab5b",
+    "houseNumber": "100",
+    "canonicalRoad": "BLACK WOLF ROAD",
+    "city": "",
+    "zip": "79789",
+    "county": "Winkler County",
+    "countyFips": "48495",
+    "query": "100 BLACK WOLF ROAD TX 79789",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2607,
+    "truthfulNoResults": 2607,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2607,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2607,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 142,
+    "variantsTested": 426,
+    "variantsPassed": 426
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 16.360599998384714,
+  "certificationStatus": "PASS",
+  "failures": []
+}

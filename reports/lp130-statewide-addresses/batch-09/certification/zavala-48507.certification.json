@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Zavala County",
+  "countyFips": "48507",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 196465,
+  "sha256": "b545ed4e4e01c8fa3c3b283ae8fc014ae425475e471406f5f562facb641b56cf",
+  "indexedAddressCount": 6253,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038000009953975677
+  },
+  "exactSample": {
+    "providerIdentity": "a4123ac48fe77eb4b317",
+    "houseNumber": "1",
+    "canonicalRoad": "BROOKSIDE DRIVE",
+    "city": "",
+    "zip": "",
+    "county": "Zavala County",
+    "countyFips": "48507",
+    "query": "1 BROOKSIDE DRIVE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 637,
+    "variantsTested": 1911,
+    "variantsPassed": 1911
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 33.860699996352196,
+  "certificationStatus": "PASS",
+  "failures": []
+}

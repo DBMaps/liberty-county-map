@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "medina-tx",
+  "county": "Medina County",
+  "fips": "48325",
+  "artifact": "medina-48325.addresses.jsonl.gz",
+  "sizeBytes": 1001796,
+  "sha256": "0a7bf30af420f2996173939962106b2faa273e72d7d9fbcefc46e2f503621d8f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

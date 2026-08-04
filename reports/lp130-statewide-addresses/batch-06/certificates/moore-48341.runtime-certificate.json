@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "moore-tx",
+  "county": "Moore County",
+  "fips": "48341",
+  "artifact": "moore-48341.addresses.jsonl.gz",
+  "sizeBytes": 289254,
+  "sha256": "ca9ae74854e12bd381539faca97956428026c06550514b228f850fd9ca49241c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

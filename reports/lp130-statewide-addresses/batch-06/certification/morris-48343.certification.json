@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Morris County",
+  "countyFips": "48343",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 242673,
+  "sha256": "912cb4c4de21fbb06b4ad72403410a6f6575e7a642d63230ab9a050be1041d0c",
+  "indexedAddressCount": 7970,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003999998793005943
+  },
+  "exactSample": {
+    "providerIdentity": "dbd93fcf07b0cb98e07f",
+    "houseNumber": "10",
+    "canonicalRoad": "CHISM LANE",
+    "city": "Daingerfield",
+    "zip": "75638",
+    "county": "Morris County",
+    "countyFips": "48343",
+    "query": "10 Chism Lane Daingerfield TX 75638",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 46.770500000566244,
+  "certificationStatus": "PASS",
+  "failures": []
+}

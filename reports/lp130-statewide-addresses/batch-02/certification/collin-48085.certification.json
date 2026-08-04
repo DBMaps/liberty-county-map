@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Collin County",
+  "countyFips": "48085",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 9981010,
+  "sha256": "1b9b9ea4116e505358abfb1274bb10d3702e753ebcc9dd3626b98a2d3aebb87d",
+  "indexedAddressCount": 329114,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00570000009611249
+  },
+  "exactSample": {
+    "providerIdentity": "db1041d3322af656d245",
+    "houseNumber": "0",
+    "canonicalRoad": "NORTH MAXWELL CREEK ROAD",
+    "city": "Plano",
+    "zip": "75094",
+    "county": "Collin County",
+    "countyFips": "48085",
+    "query": "0 North Maxwell Creek Road Plano TX 75094",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 2153.7028999999166,
+  "certificationStatus": "PASS",
+  "failures": []
+}

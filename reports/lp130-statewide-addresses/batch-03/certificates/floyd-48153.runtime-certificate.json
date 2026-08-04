@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "floyd-tx",
+  "county": "Floyd County",
+  "fips": "48153",
+  "artifact": "floyd-48153.addresses.jsonl.gz",
+  "sizeBytes": 107816,
+  "sha256": "c16962dbbec9331f9747763e932d4b49bd6d83a3d9317813c5bea0baaafb49d4",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

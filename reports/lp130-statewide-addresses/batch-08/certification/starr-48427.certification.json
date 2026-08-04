@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Starr County",
+  "countyFips": "48427",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 756261,
+  "sha256": "577e7b5ddd11b67b78c307a1e34de7c6d797fb104c324d9c5842b71dd7b8d1e5",
+  "indexedAddressCount": 20326,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "75118dfac8bae50d8261",
+    "houseNumber": "0",
+    "canonicalRoad": "MAYORGA STREET",
+    "city": "RGC",
+    "zip": "78582",
+    "county": "Starr County",
+    "countyFips": "48427",
+    "query": "0 Mayorga Street RGC TX 78582",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 667,
+    "variantsTested": 2001,
+    "variantsPassed": 2001
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 123.29089999943972,
+  "certificationStatus": "PASS",
+  "failures": []
+}

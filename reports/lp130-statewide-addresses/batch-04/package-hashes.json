@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "gridly-lp130-package-hashes-v1",
+  "batch": "batch-04",
+  "packages": [
+    {
+      "fips": "48171",
+      "package": "gillespie-48171.addresses.jsonl.gz",
+      "sizeBytes": 563671,
+      "sha256": "9bef39e940399dce1fa5b33840a1d9dcf87ce9965610e7dcfb23929a40598f8c"
+    },
+    {
+      "fips": "48173",
+      "package": "glasscock-48173.addresses.jsonl.gz",
+      "sizeBytes": 39983,
+      "sha256": "1479892acb0931fa37658b0c309c81c3a51359971dae021777e30c194801eab6"
+    },
+    {
+      "fips": "48175",
+      "package": "goliad-48175.addresses.jsonl.gz",
+      "sizeBytes": 176244,
+      "sha256": "cf45d4f6ecb936a975f4e795825bf0f9b14c0f690d283d2dc05c50aec3813a4b"
+    },
+    {
+      "fips": "48177",
+      "package": "gonzales-48177.addresses.jsonl.gz",
+      "sizeBytes": 411398,
+      "sha256": "b8338310eb064e7b3d991dfb5f649513c95eb10c636810391c12771c34e5d216"
+    },
+    {
+      "fips": "48179",
+      "package": "gray-48179.addresses.jsonl.gz",
+      "sizeBytes": 363629,
+      "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33"
+    },
+    {
+      "fips": "48181",
+      "package": "grayson-48181.addresses.jsonl.gz",
+      "sizeBytes": 2560440,
+      "sha256": "c775d5868b5b420fa34d53595cfd893efaf1bfa0f042de39532789ac755ffe5b"
+    },
+    {
+      "fips": "48183",
+      "package": "gregg-48183.addresses.jsonl.gz",
+      "sizeBytes": 760830,
+      "sha256": "c859177b90e8839ba995878f4a95a20bf53e54ddc3d74f6de911da0747ecc3ff"
+    },
+    {
+      "fips": "48187",
+      "package": "guadalupe-48187.addresses.jsonl.gz",
+      "sizeBytes": 3015561,
+      "sha256": "c71ab72303688c36d0add6673734818a658ea18b538673b05e02e9e9c8d2786e"
+    },
+    {
+      "fips": "48189",
+      "package": "hale-48189.addresses.jsonl.gz",
+      "sizeBytes": 419289,
+      "sha256": "5e7e1c7af1e3dc3eb2ac6e69a9782733e818b6a322a06f19d89d35a0a669be3f"
+    },
+    {
+      "fips": "48191",
+      "package": "hall-48191.addresses.jsonl.gz",
+      "sizeBytes": 65154,
+      "sha256": "f98eff64e7f38c07c568778ddc6a2ff3846d66281ecb47162ef44168b09b2381"
+    },
+    {
+      "fips": "48193",
+      "package": "hamilton-48193.addresses.jsonl.gz",
+      "sizeBytes": 141949,
+      "sha256": "7e1b7c1b0eecf52e94a2ad550e587889177f00379d136312a0f7734a7ba0312b"
+    },
+    {
+      "fips": "48195",
+      "package": "hansford-48195.addresses.jsonl.gz",
+      "sizeBytes": 92637,
+      "sha256": "84e8e3e9119089263a089b61ed7a91085a39070a5dd2459163d073029fb777af"
+    },
+    {
+      "fips": "48197",
+      "package": "hardeman-48197.addresses.jsonl.gz",
+      "sizeBytes": 78259,
+      "sha256": "aef9178830532bb77db5ccc2e01dca879a1fc9101c42e63bfbcc6e72f70f1dbf"
+    },
+    {
+      "fips": "48203",
+      "package": "harrison-48203.addresses.jsonl.gz",
+      "sizeBytes": 1069866,
+      "sha256": "e8d9c2aa5baa19993fd7181cad89bf1851915fbd0729313e13e3c1ecf650203e"
+    },
+    {
+      "fips": "48205",
+      "package": "hartley-48205.addresses.jsonl.gz",
+      "sizeBytes": 90352,
+      "sha256": "367e9fb77b4bc4f70aed2a5f0bdb90df3cd27889b5c0a01385e72e2cfb543592"
+    },
+    {
+      "fips": "48207",
+      "package": "haskell-48207.addresses.jsonl.gz",
+      "sizeBytes": 138065,
+      "sha256": "47e988eb2063bb543532c1b152a971eb5dfc13067b60b94f0e98d2ed1d9b214e"
+    },
+    {
+      "fips": "48209",
+      "package": "hays-48209.addresses.jsonl.gz",
+      "sizeBytes": 3574767,
+      "sha256": "df23069af137c08aa2e1db06cd892d6ee70b1712e17530bd24501ec1698d2c57"
+    },
+    {
+      "fips": "48211",
+      "package": "hemphill-48211.addresses.jsonl.gz",
+      "sizeBytes": 65577,
+      "sha256": "bf673e84ea159d3710553cb464a9c979718ec0e66cc27e178f88b22f96103e9a"
+    },
+    {
+      "fips": "48213",
+      "package": "henderson-48213.addresses.jsonl.gz",
+      "sizeBytes": 1722286,
+      "sha256": "e9bf619978f5512dc5f5c4e8ee5e050801f99aab241f8ebdfe99a9c4b11b765b"
+    },
+    {
+      "fips": "48215",
+      "package": "hidalgo-48215.addresses.jsonl.gz",
+      "sizeBytes": 10760923,
+      "sha256": "22216223b920693eda56b0a53098aedf2cf5ce365458b9afb20b7adef009b7ed"
+    },
+    {
+      "fips": "48217",
+      "package": "hill-48217.addresses.jsonl.gz",
+      "sizeBytes": 615230,
+      "sha256": "af888bfceb269fe6bd2fd281b5d8bca4f38724f700c80ad97f3b538e2d0ffa1d"
+    },
+    {
+      "fips": "48219",
+      "package": "hockley-48219.addresses.jsonl.gz",
+      "sizeBytes": 362312,
+      "sha256": "a0d260678ad5abbd2732eb6e4036f4aa06f15c44d17ff8140bc3f84b7bea8171"
+    },
+    {
+      "fips": "48221",
+      "package": "hood-48221.addresses.jsonl.gz",
+      "sizeBytes": 1205211,
+      "sha256": "696af3bde0fa863fec8057aa3213c994c4396172b1f4c6f51252bf19f6d46afa"
+    },
+    {
+      "fips": "48223",
+      "package": "hopkins-48223.addresses.jsonl.gz",
+      "sizeBytes": 641263,
+      "sha256": "4cc146b1e839ff1cbe51ddb27f276bb3577d493b3680a5dec96b99414bf26196"
+    },
+    {
+      "fips": "48225",
+      "package": "houston-48225.addresses.jsonl.gz",
+      "sizeBytes": 530218,
+      "sha256": "4481a984fc38a5490eed2c5dcf8658ab3d96532b3504b3b69a9bcb4daf52ce35"
+    }
+  ]
+}

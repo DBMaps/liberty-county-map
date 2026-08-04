@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Throckmorton County",
+  "countyFips": "48447",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 47074,
+  "sha256": "69de5919ec12a74f1b7c2bf4efbb325affb297d5d336fccf4bd4a55139649130",
+  "indexedAddressCount": 1501,
+  "exactMatchStatistics": {
+    "sampled": 1500,
+    "passed": 1500,
+    "failed": 0,
+    "p95LookupMs": 0.0037999972701072693
+  },
+  "exactSample": {
+    "providerIdentity": "d0dc7108adc44939a255",
+    "houseNumber": "100",
+    "canonicalRoad": "CR 214",
+    "city": "THROCKMORTON",
+    "zip": "76483",
+    "county": "Throckmorton County",
+    "countyFips": "48447",
+    "query": "100 COUNTY ROAD 214 THROCKMORTON TX 76483",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1500,
+    "truthfulNoResults": 1500,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1500,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1500,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 369,
+    "variantsTested": 1107,
+    "variantsPassed": 1107
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 7.809800002723932,
+  "certificationStatus": "PASS",
+  "failures": []
+}

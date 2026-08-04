@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Pecos County",
+  "countyFips": "48371",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 245342,
+  "sha256": "3d41b2fc463abd55eda5571b7df1d8ae930771586ab0c40657a2f7b8f6582ad1",
+  "indexedAddressCount": 6964,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00350000336766243
+  },
+  "exactSample": {
+    "providerIdentity": "d153271364c53cdac37e",
+    "houseNumber": "1",
+    "canonicalRoad": "NORTH SPRING DRIVE",
+    "city": "",
+    "zip": "79735",
+    "county": "Pecos County",
+    "countyFips": "48371",
+    "query": "1 NORTH SPRING DRIVE TX 79735",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 330,
+    "variantsTested": 990,
+    "variantsPassed": 990
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 37.02100000157952,
+  "certificationStatus": "PASS",
+  "failures": []
+}

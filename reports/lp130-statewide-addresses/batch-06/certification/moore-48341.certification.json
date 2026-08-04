@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Moore County",
+  "countyFips": "48341",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 289254,
+  "sha256": "ca9ae74854e12bd381539faca97956428026c06550514b228f850fd9ca49241c",
+  "indexedAddressCount": 9979,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "1726039193021f38836c",
+    "houseNumber": "1",
+    "canonicalRoad": "CHARMAIN ROAD",
+    "city": "",
+    "zip": "79029",
+    "county": "Moore County",
+    "countyFips": "48341",
+    "query": "1 CHARMAIN ROAD TX 79029",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 592,
+    "variantsTested": 1776,
+    "variantsPassed": 1776
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 46.19209999963641,
+  "certificationStatus": "PASS",
+  "failures": []
+}

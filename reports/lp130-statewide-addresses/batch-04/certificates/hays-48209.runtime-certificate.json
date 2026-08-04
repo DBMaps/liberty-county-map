@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "hays-tx",
+  "county": "Hays County",
+  "fips": "48209",
+  "artifact": "hays-48209.addresses.jsonl.gz",
+  "sizeBytes": 3574767,
+  "sha256": "df23069af137c08aa2e1db06cd892d6ee70b1712e17530bd24501ec1698d2c57",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

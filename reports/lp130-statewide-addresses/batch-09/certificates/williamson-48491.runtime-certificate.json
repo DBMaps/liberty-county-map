@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "williamson-tx",
+  "county": "Williamson County",
+  "fips": "48491",
+  "artifact": "williamson-48491.addresses.jsonl.gz",
+  "sizeBytes": 11284618,
+  "sha256": "b5cfeb6afa1e1c5969b9ed1fb732e178abc90f12245cbf62bd6de0d72247d8b2",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

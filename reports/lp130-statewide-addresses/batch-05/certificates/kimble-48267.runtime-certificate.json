@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kimble-tx",
+  "county": "Kimble County",
+  "fips": "48267",
+  "artifact": "kimble-48267.addresses.jsonl.gz",
+  "sizeBytes": 145998,
+  "sha256": "6537e8453c31d105c5a332cca109209eacc2dbc82535350a47f8860c260f7892",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

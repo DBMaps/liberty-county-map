@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Freestone County",
+  "countyFips": "48161",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 337120,
+  "sha256": "cd2b486e6d974f35775559c16accb72a6f7361ef127345c8cc8d69f8d00c4ee4",
+  "indexedAddressCount": 10749,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000002339482307
+  },
+  "exactSample": {
+    "providerIdentity": "32ebf8c4b761aeaa9020",
+    "houseNumber": "1",
+    "canonicalRoad": "CIRCLE DR",
+    "city": "TEAGUE",
+    "zip": "75860",
+    "county": "Freestone County",
+    "countyFips": "48161",
+    "query": "1 CIRCLE DR TEAGUE TX 75860",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 55.67640000022948,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Montague County",
+  "countyFips": "48337",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 454875,
+  "sha256": "7f68ae7e8e5423e09f712ca9ee47a2157b740fea5997ce120f872b3acb99503a",
+  "indexedAddressCount": 13788,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0040000006556510925
+  },
+  "exactSample": {
+    "providerIdentity": "feaa8b54160b356c1518",
+    "houseNumber": "1",
+    "canonicalRoad": "APACHE COURT",
+    "city": "NOCONA",
+    "zip": "76255",
+    "county": "Montague County",
+    "countyFips": "48337",
+    "query": "1 APACHE COURT NOCONA TX 76255",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1936,
+    "variantsTested": 5808,
+    "variantsPassed": 5808
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 69.85720000043511,
+  "certificationStatus": "PASS",
+  "failures": []
+}

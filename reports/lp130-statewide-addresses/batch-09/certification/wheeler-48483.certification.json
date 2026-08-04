@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Wheeler County",
+  "countyFips": "48483",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 111290,
+  "sha256": "ba9cca0ec43b4aa263f1fd4851cb6545da46193afb623deed5eb62eaf552f1b7",
+  "indexedAddressCount": 3713,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003400001674890518
+  },
+  "exactSample": {
+    "providerIdentity": "407ca4aad0eb8853d5c0",
+    "houseNumber": "1",
+    "canonicalRoad": "MCDOWELL RANCH ROAD",
+    "city": "",
+    "zip": "79079",
+    "county": "Wheeler County",
+    "countyFips": "48483",
+    "query": "1 MCDOWELL RANCH ROAD TX 79079",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 802,
+    "variantsTested": 2406,
+    "variantsPassed": 2406
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 34.33350000157952,
+  "certificationStatus": "PASS",
+  "failures": []
+}

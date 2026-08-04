@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kerr County",
+  "countyFips": "48265",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1368466,
+  "sha256": "3ec6e7cc2897084fb9a98d3b6b77261050c3157fef2752b340b13ebf7979746c",
+  "indexedAddressCount": 46167,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0044999998062849045
+  },
+  "exactSample": {
+    "providerIdentity": "a6985463c77e456be2e9",
+    "houseNumber": "1",
+    "canonicalRoad": "ANTELOPE TRL E",
+    "city": "KERRVILLE",
+    "zip": "",
+    "county": "Kerr County",
+    "countyFips": "48265",
+    "query": "1 ANTELOPE TRL E KERRVILLE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 348,
+    "variantsTested": 1044,
+    "variantsPassed": 1044
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 269.2172999996692,
+  "certificationStatus": "PASS",
+  "failures": []
+}

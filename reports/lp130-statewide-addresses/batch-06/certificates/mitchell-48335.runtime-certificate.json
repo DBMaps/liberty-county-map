@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "mitchell-tx",
+  "county": "Mitchell County",
+  "fips": "48335",
+  "artifact": "mitchell-48335.addresses.jsonl.gz",
+  "sizeBytes": 178259,
+  "sha256": "1af31e1dc277fd8458163cf0529124c58facfa577c2bf65c6e3c0d79cea4377e",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

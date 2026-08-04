@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Ochiltree County",
+  "countyFips": "48357",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 173093,
+  "sha256": "d68ac8e8b990f28dcd17a05bfad9de79d188557e7d4864b645f6a5c92f44cff7",
+  "indexedAddressCount": 5824,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003400001674890518
+  },
+  "exactSample": {
+    "providerIdentity": "c7a2fd14163984ad4115",
+    "houseNumber": "1",
+    "canonicalRoad": "EAST SANTA FE AVENUE",
+    "city": "",
+    "zip": "79070",
+    "county": "Ochiltree County",
+    "countyFips": "48357",
+    "query": "1 EAST SANTA FE AVENUE TX 79070",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 681,
+    "variantsTested": 2043,
+    "variantsPassed": 2043
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 27.967000000178814,
+  "certificationStatus": "PASS",
+  "failures": []
+}

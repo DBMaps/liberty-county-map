@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "presidio-tx",
+  "county": "Presidio County",
+  "fips": "48377",
+  "artifact": "presidio-48377.addresses.jsonl.gz",
+  "sizeBytes": 183109,
+  "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

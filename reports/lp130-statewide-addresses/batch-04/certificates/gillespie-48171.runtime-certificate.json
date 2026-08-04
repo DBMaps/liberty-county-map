@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "gillespie-tx",
+  "county": "Gillespie County",
+  "fips": "48171",
+  "artifact": "gillespie-48171.addresses.jsonl.gz",
+  "sizeBytes": 563671,
+  "sha256": "9bef39e940399dce1fa5b33840a1d9dcf87ce9965610e7dcfb23929a40598f8c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

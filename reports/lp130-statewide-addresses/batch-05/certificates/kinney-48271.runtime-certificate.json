@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "kinney-tx",
+  "county": "Kinney County",
+  "fips": "48271",
+  "artifact": "kinney-48271.addresses.jsonl.gz",
+  "sizeBytes": 92138,
+  "sha256": "c69c1d51596ba42155bb40efbcb36a64a52be2aecf1ff4fcab027214c4d3e7b8",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

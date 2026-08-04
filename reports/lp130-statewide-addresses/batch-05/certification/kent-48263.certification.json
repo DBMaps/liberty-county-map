@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Kent County",
+  "countyFips": "48263",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 28638,
+  "sha256": "8bf80745c1fd525c3557a1900dc647fe9ff02fccdd944ca9b0d1f177888ad168",
+  "indexedAddressCount": 902,
+  "exactMatchStatistics": {
+    "sampled": 902,
+    "passed": 902,
+    "failed": 0,
+    "p95LookupMs": 0.002900000661611557
+  },
+  "exactSample": {
+    "providerIdentity": "e06606d47b12903cf7b2",
+    "houseNumber": "100",
+    "canonicalRoad": "CR 143",
+    "city": "JAYTON",
+    "zip": "79528",
+    "county": "Kent County",
+    "countyFips": "48263",
+    "query": "100 COUNTY ROAD 143 JAYTON TX 79528",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 902,
+    "truthfulNoResults": 902,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 902,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 902,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 279,
+    "variantsTested": 837,
+    "variantsPassed": 837
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 5.3212000001221895,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "gridly-lp130-package-hashes-v1",
+  "batch": "batch-08",
+  "packages": [
+    {
+      "fips": "48403",
+      "package": "sabine-48403.addresses.jsonl.gz",
+      "sizeBytes": 471304,
+      "sha256": "966c256761daac545efed2345919416d60ab9904498ae6eb5532ee5d0cd60f45"
+    },
+    {
+      "fips": "48405",
+      "package": "san-augustine-48405.addresses.jsonl.gz",
+      "sizeBytes": 250781,
+      "sha256": "928822ef1362db74bc68e51bb7f1a674e6704750b8dbe98cd8cc3b8eb8441774"
+    },
+    {
+      "fips": "48409",
+      "package": "san-patricio-48409.addresses.jsonl.gz",
+      "sizeBytes": 501799,
+      "sha256": "524ed0ed14528680bb1f297699136971073b0fd3d76e61a46afc2943d0c4ae2a"
+    },
+    {
+      "fips": "48411",
+      "package": "san-saba-48411.addresses.jsonl.gz",
+      "sizeBytes": 156432,
+      "sha256": "52d9933dfc4be898f6ad620e6517fb0d081254739e5167dcea4ef7002381a1ac"
+    },
+    {
+      "fips": "48413",
+      "package": "schleicher-48413.addresses.jsonl.gz",
+      "sizeBytes": 59945,
+      "sha256": "559897c8e0ff8b25724676be33c05a3bb61d7d12093d452ef2a3fa47f6d6a95b"
+    },
+    {
+      "fips": "48415",
+      "package": "scurry-48415.addresses.jsonl.gz",
+      "sizeBytes": 280529,
+      "sha256": "1cf63d5dbff6aeeaa210284df3a04296a04529328cba4dc767ed416693d88728"
+    },
+    {
+      "fips": "48417",
+      "package": "shackelford-48417.addresses.jsonl.gz",
+      "sizeBytes": 80835,
+      "sha256": "dce1f2803fe4362fc06a48114353872a66c28fb2ce880136bfe52f7dd1b2f3ea"
+    },
+    {
+      "fips": "48419",
+      "package": "shelby-48419.addresses.jsonl.gz",
+      "sizeBytes": 564899,
+      "sha256": "65ea2173f4608b0add79a549953a515965afc8d12ac01de996f184b2857493a4"
+    },
+    {
+      "fips": "48421",
+      "package": "sherman-48421.addresses.jsonl.gz",
+      "sizeBytes": 56729,
+      "sha256": "748423d24e05d41b5675de4775a7655fbe7ee996a475c69d123f47254c2514fd"
+    },
+    {
+      "fips": "48423",
+      "package": "smith-48423.addresses.jsonl.gz",
+      "sizeBytes": 4082413,
+      "sha256": "81ec218b7fe9612bbe3a0d05dddfcaffdff6c9bcd703e27e9237c77390803093"
+    },
+    {
+      "fips": "48425",
+      "package": "somervell-48425.addresses.jsonl.gz",
+      "sizeBytes": 164537,
+      "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1"
+    },
+    {
+      "fips": "48427",
+      "package": "starr-48427.addresses.jsonl.gz",
+      "sizeBytes": 756261,
+      "sha256": "577e7b5ddd11b67b78c307a1e34de7c6d797fb104c324d9c5842b71dd7b8d1e5"
+    },
+    {
+      "fips": "48429",
+      "package": "stephens-48429.addresses.jsonl.gz",
+      "sizeBytes": 207755,
+      "sha256": "1182861cc5acdc2fbeb2f535a5b4fe3a8201e3db296df4d75c636da552b57ae3"
+    },
+    {
+      "fips": "48431",
+      "package": "sterling-48431.addresses.jsonl.gz",
+      "sizeBytes": 36592,
+      "sha256": "55efc6ff2b94ed429a4e47b99d0e526614283486623dc8d73d27548d348b8f6a"
+    },
+    {
+      "fips": "48433",
+      "package": "stonewall-48433.addresses.jsonl.gz",
+      "sizeBytes": 44573,
+      "sha256": "d3ba0de5719b8906eef8c70d6ed9f55c425d3e90e69e140227b451ac7f4db206"
+    },
+    {
+      "fips": "48435",
+      "package": "sutton-48435.addresses.jsonl.gz",
+      "sizeBytes": 92124,
+      "sha256": "c918feefc80359d0a2a89621364821b093c6075afb18c9af71a81c96b8ba186f"
+    },
+    {
+      "fips": "48437",
+      "package": "swisher-48437.addresses.jsonl.gz",
+      "sizeBytes": 117953,
+      "sha256": "3a822c705ae23e66c247520c4b6d51c1f894975070df79bd9298f63e4d5b887c"
+    },
+    {
+      "fips": "48439",
+      "package": "tarrant-48439.addresses.jsonl.gz",
+      "sizeBytes": 23796609,
+      "sha256": "3e8ff5d504357f8ba42e7d4cebb5abb3baa72386f52f1fc484b40ac035828ed3"
+    },
+    {
+      "fips": "48441",
+      "package": "taylor-48441.addresses.jsonl.gz",
+      "sizeBytes": 2563385,
+      "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff"
+    },
+    {
+      "fips": "48443",
+      "package": "terrell-48443.addresses.jsonl.gz",
+      "sizeBytes": 35870,
+      "sha256": "d17e81cc50c4889104d512ab63ace3c7d5f8c2659f974bfcca5af67977d6f29a"
+    },
+    {
+      "fips": "48445",
+      "package": "terry-48445.addresses.jsonl.gz",
+      "sizeBytes": 190412,
+      "sha256": "d63fb32d707fa04ca7cf713b8503e0ce6c7f7b1b56c44de4cbc60dd0fb2c37c3"
+    },
+    {
+      "fips": "48447",
+      "package": "throckmorton-48447.addresses.jsonl.gz",
+      "sizeBytes": 47074,
+      "sha256": "69de5919ec12a74f1b7c2bf4efbb325affb297d5d336fccf4bd4a55139649130"
+    },
+    {
+      "fips": "48449",
+      "package": "titus-48449.addresses.jsonl.gz",
+      "sizeBytes": 473449,
+      "sha256": "bcb39dea85ebdf6105e36511192cf630334f95e400110248677dacaf4b323f87"
+    },
+    {
+      "fips": "48451",
+      "package": "tom-green-48451.addresses.jsonl.gz",
+      "sizeBytes": 1818806,
+      "sha256": "b1f8cb3d5edbbaa684c366ab51ebf2ad4c14dfee29dec6ceea56c797f838f0bf"
+    },
+    {
+      "fips": "48453",
+      "package": "travis-48453.addresses.jsonl.gz",
+      "sizeBytes": 14405442,
+      "sha256": "2c3774cfbc04bb7eaf7a16ef013ab02fc6c70978206309ce7a8c348bc0be2c1e"
+    }
+  ]
+}

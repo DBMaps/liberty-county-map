@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Shelby County",
+  "countyFips": "48419",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 564899,
+  "sha256": "65ea2173f4608b0add79a549953a515965afc8d12ac01de996f184b2857493a4",
+  "indexedAddressCount": 16367,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "85f8ddca487e26de15be",
+    "houseNumber": "1",
+    "canonicalRoad": "LANE PLACE",
+    "city": "",
+    "zip": "",
+    "county": "Shelby County",
+    "countyFips": "48419",
+    "query": "1 Lane Place TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 89.10839999839664,
+  "certificationStatus": "PASS",
+  "failures": []
+}

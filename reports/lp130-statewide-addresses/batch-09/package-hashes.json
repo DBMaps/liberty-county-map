@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "gridly-lp130-package-hashes-v1",
+  "batch": "batch-09",
+  "packages": [
+    {
+      "fips": "48459",
+      "package": "upshur-48459.addresses.jsonl.gz",
+      "sizeBytes": 899624,
+      "sha256": "b448bffc8859867179c8ab8264ab3824245ef77875e3927d4b943a1a177faac2"
+    },
+    {
+      "fips": "48461",
+      "package": "upton-48461.addresses.jsonl.gz",
+      "sizeBytes": 94640,
+      "sha256": "66537982fd43a5e78c0025c0213c743040ae9c2d6fe41137953e25117c983559"
+    },
+    {
+      "fips": "48463",
+      "package": "uvalde-48463.addresses.jsonl.gz",
+      "sizeBytes": 493131,
+      "sha256": "ffaf87c92d875d74f5f41b1ff0084312d9048771f9c61de2224d4cb3cc8c32d9"
+    },
+    {
+      "fips": "48465",
+      "package": "val-verde-48465.addresses.jsonl.gz",
+      "sizeBytes": 716092,
+      "sha256": "c62dcee91b022c062ada005e518ec81b88b85dd9a2ac368cb2123524cd6783ab"
+    },
+    {
+      "fips": "48467",
+      "package": "van-zandt-48467.addresses.jsonl.gz",
+      "sizeBytes": 1173187,
+      "sha256": "2ed67b23a9a728601e44bcd03355571f0557324d694ac9dd343fb34aa1e00056"
+    },
+    {
+      "fips": "48475",
+      "package": "ward-48475.addresses.jsonl.gz",
+      "sizeBytes": 169038,
+      "sha256": "b92586e3d6969a3310926e1b6aa757cac4a2c1ac54b5d66d495ad25d509b8e07"
+    },
+    {
+      "fips": "48479",
+      "package": "webb-48479.addresses.jsonl.gz",
+      "sizeBytes": 3249000,
+      "sha256": "de111d7849ab761639983a4e11a63a92baf6d397725046435899d9c4b8dd49ae"
+    },
+    {
+      "fips": "48483",
+      "package": "wheeler-48483.addresses.jsonl.gz",
+      "sizeBytes": 111290,
+      "sha256": "ba9cca0ec43b4aa263f1fd4851cb6545da46193afb623deed5eb62eaf552f1b7"
+    },
+    {
+      "fips": "48485",
+      "package": "wichita-48485.addresses.jsonl.gz",
+      "sizeBytes": 1691936,
+      "sha256": "3d7d6895508e31ff7be92b2cf6e91832b76f3d16a583484374fd4d72942db672"
+    },
+    {
+      "fips": "48487",
+      "package": "wilbarger-48487.addresses.jsonl.gz",
+      "sizeBytes": 240373,
+      "sha256": "9f1297239c4fb36724a50f2c459bf364be472af21c565d6726c92caed1512d4f"
+    },
+    {
+      "fips": "48489",
+      "package": "willacy-48489.addresses.jsonl.gz",
+      "sizeBytes": 290509,
+      "sha256": "201ff688bae687df0307a9b800cf540fca24839f15cab2e7902376b1d9c7c02b"
+    },
+    {
+      "fips": "48491",
+      "package": "williamson-48491.addresses.jsonl.gz",
+      "sizeBytes": 11284618,
+      "sha256": "b5cfeb6afa1e1c5969b9ed1fb732e178abc90f12245cbf62bd6de0d72247d8b2"
+    },
+    {
+      "fips": "48493",
+      "package": "wilson-48493.addresses.jsonl.gz",
+      "sizeBytes": 740747,
+      "sha256": "1a2736ae8088896f854cf57fe680fc8aa2217215a39fed5c729f8ccf50db1e32"
+    },
+    {
+      "fips": "48495",
+      "package": "winkler-48495.addresses.jsonl.gz",
+      "sizeBytes": 85761,
+      "sha256": "704d01f7af5e00136c6c8c5b24d21b0d5140f872bfbc5a2ebf04945a6d5b9413"
+    },
+    {
+      "fips": "48497",
+      "package": "wise-48497.addresses.jsonl.gz",
+      "sizeBytes": 1366288,
+      "sha256": "e2fdc49e6bd22c60eb7eaaebae35a226a87ede21d52b2eda09cc3f177add05f7"
+    },
+    {
+      "fips": "48499",
+      "package": "wood-48499.addresses.jsonl.gz",
+      "sizeBytes": 1061130,
+      "sha256": "a53ee9bcb3950849d3bc3262639ed71da5d172b3b798f1e4e909324e81a0eb6e"
+    },
+    {
+      "fips": "48501",
+      "package": "yoakum-48501.addresses.jsonl.gz",
+      "sizeBytes": 120822,
+      "sha256": "843a9225782612b891c637514d4f43e8754b62e781ca7561a5d897a5c8bf17c4"
+    },
+    {
+      "fips": "48503",
+      "package": "young-48503.addresses.jsonl.gz",
+      "sizeBytes": 345917,
+      "sha256": "8860e222a1d19cf9935bfaaf9b24b209a45f6d7bea228cfb2d37fb09dac57274"
+    },
+    {
+      "fips": "48505",
+      "package": "zapata-48505.addresses.jsonl.gz",
+      "sizeBytes": 365220,
+      "sha256": "7a9bbec3f625b785a0dc5cc4e78a82640177054b53e6df22e5f80a5c864ffd3c"
+    },
+    {
+      "fips": "48507",
+      "package": "zavala-48507.addresses.jsonl.gz",
+      "sizeBytes": 196465,
+      "sha256": "b545ed4e4e01c8fa3c3b283ae8fc014ae425475e471406f5f562facb641b56cf"
+    }
+  ]
+}

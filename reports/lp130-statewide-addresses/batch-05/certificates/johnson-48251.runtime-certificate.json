@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "johnson-tx",
+  "county": "Johnson County",
+  "fips": "48251",
+  "artifact": "johnson-48251.addresses.jsonl.gz",
+  "sizeBytes": 2481089,
+  "sha256": "f2d1a68f39b991f5bdd6748a43d3a4f51ad0dfce59a3078a568fdc87d266c20f",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

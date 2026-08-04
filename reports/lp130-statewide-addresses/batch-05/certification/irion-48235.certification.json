@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Irion County",
+  "countyFips": "48235",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 53316,
+  "sha256": "a07bd8ab5145455b8deda60fddf00f4f094e35cb48ae48f22e95a8300769c50d",
+  "indexedAddressCount": 1614,
+  "exactMatchStatistics": {
+    "sampled": 1614,
+    "passed": 1614,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "373aaa739e70f7bb7e9c",
+    "houseNumber": "100",
+    "canonicalRoad": "ANN ROAD",
+    "city": "",
+    "zip": "",
+    "county": "Irion County",
+    "countyFips": "48235",
+    "query": "100 ANN ROAD TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1614,
+    "truthfulNoResults": 1614,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1614,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1614,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 206,
+    "variantsTested": 618,
+    "variantsPassed": 618
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 9.697799999266863,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "glasscock-tx",
+  "county": "Glasscock County",
+  "fips": "48173",
+  "artifact": "glasscock-48173.addresses.jsonl.gz",
+  "sizeBytes": 39983,
+  "sha256": "1479892acb0931fa37658b0c309c81c3a51359971dae021777e30c194801eab6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

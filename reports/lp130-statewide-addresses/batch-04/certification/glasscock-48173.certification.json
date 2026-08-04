@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Glasscock County",
+  "countyFips": "48173",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 39983,
+  "sha256": "1479892acb0931fa37658b0c309c81c3a51359971dae021777e30c194801eab6",
+  "indexedAddressCount": 1202,
+  "exactMatchStatistics": {
+    "sampled": 1202,
+    "passed": 1202,
+    "failed": 0,
+    "p95LookupMs": 0.003699999302625656
+  },
+  "exactSample": {
+    "providerIdentity": "f5784ac6c182e8ebdda4",
+    "houseNumber": "100",
+    "canonicalRoad": "ALLEN ROAD",
+    "city": "BIG SPRINGS",
+    "zip": "79720",
+    "county": "Glasscock County",
+    "countyFips": "48173",
+    "query": "100 ALLEN ROAD BIG SPRINGS TX 79720",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1202,
+    "truthfulNoResults": 1202,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1202,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1202,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 705,
+    "variantsTested": 2115,
+    "variantsPassed": 2115
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 8.761400001123548,
+  "certificationStatus": "PASS",
+  "failures": []
+}

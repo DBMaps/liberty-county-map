@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Reagan County",
+  "countyFips": "48383",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 71024,
+  "sha256": "a7b783e9d5b0face9d85dfc7c7debb44013b4edff2e181765579a4c5159d5127",
+  "indexedAddressCount": 2377,
+  "exactMatchStatistics": {
+    "sampled": 2377,
+    "passed": 2377,
+    "failed": 0,
+    "p95LookupMs": 0.0034999996423721313
+  },
+  "exactSample": {
+    "providerIdentity": "2781b4e7d9d4f8a7c110",
+    "houseNumber": "1",
+    "canonicalRoad": "WEST 12TH STREET",
+    "city": "",
+    "zip": "",
+    "county": "Reagan County",
+    "countyFips": "48383",
+    "query": "1 WEST 12TH STREET TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2377,
+    "truthfulNoResults": 2377,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2377,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2377,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 73,
+    "variantsTested": 219,
+    "variantsPassed": 219
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 12.84970000013709,
+  "certificationStatus": "PASS",
+  "failures": []
+}

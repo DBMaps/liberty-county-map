@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "zapata-tx",
+  "county": "Zapata County",
+  "fips": "48505",
+  "artifact": "zapata-48505.addresses.jsonl.gz",
+  "sizeBytes": 365220,
+  "sha256": "7a9bbec3f625b785a0dc5cc4e78a82640177054b53e6df22e5f80a5c864ffd3c",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

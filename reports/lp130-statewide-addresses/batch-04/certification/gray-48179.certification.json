@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Gray County",
+  "countyFips": "48179",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 363629,
+  "sha256": "f2d0cd4253bd03d5a328f94c07abe65de5ef0e1c12c5f4abc2abe7499dd0dd33",
+  "indexedAddressCount": 12586,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0037000011652708054
+  },
+  "exactSample": {
+    "providerIdentity": "e208ef5a145d85472db5",
+    "houseNumber": "1",
+    "canonicalRoad": "CYPRESS POINT",
+    "city": "",
+    "zip": "79065",
+    "county": "Gray County",
+    "countyFips": "48179",
+    "query": "1 CYPRESS POINT TX 79065",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 563,
+    "variantsTested": 1689,
+    "variantsPassed": 1689
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 67.11250000074506,
+  "certificationStatus": "PASS",
+  "failures": []
+}

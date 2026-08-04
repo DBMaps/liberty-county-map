@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "goliad-tx",
+  "county": "Goliad County",
+  "fips": "48175",
+  "artifact": "goliad-48175.addresses.jsonl.gz",
+  "sizeBytes": 176244,
+  "sha256": "cf45d4f6ecb936a975f4e795825bf0f9b14c0f690d283d2dc05c50aec3813a4b",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

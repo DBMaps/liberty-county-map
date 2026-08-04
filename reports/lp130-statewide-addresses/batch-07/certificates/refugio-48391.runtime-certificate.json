@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "refugio-tx",
+  "county": "Refugio County",
+  "fips": "48391",
+  "artifact": "refugio-48391.addresses.jsonl.gz",
+  "sizeBytes": 168816,
+  "sha256": "a6ef1a3ef90dff56a4f50bdd2b293e144c07120c56da9460f8dcc2785512d482",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

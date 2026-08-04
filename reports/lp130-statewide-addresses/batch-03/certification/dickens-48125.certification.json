@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Dickens County",
+  "countyFips": "48125",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 61403,
+  "sha256": "ab3e3f1cde7dcb32bdfb311bf45add87aae918121c2c89146363b491b03139b1",
+  "indexedAddressCount": 1892,
+  "exactMatchStatistics": {
+    "sampled": 1838,
+    "passed": 1838,
+    "failed": 0,
+    "p95LookupMs": 0.003800000064074993
+  },
+  "exactSample": {
+    "providerIdentity": "ec955010f4d5974418aa",
+    "houseNumber": "10",
+    "canonicalRoad": "CR 112",
+    "city": "MCADOO",
+    "zip": "79243",
+    "county": "Dickens County",
+    "countyFips": "48125",
+    "query": "10 COUNTY ROAD 112 MCADOO TX 79243",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1838,
+    "truthfulNoResults": 1838,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1838,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1838,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 666,
+    "variantsTested": 1998,
+    "variantsPassed": 1998
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 9.60190000012517,
+  "certificationStatus": "PASS",
+  "failures": []
+}
