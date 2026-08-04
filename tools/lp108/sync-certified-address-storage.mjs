@@ -14,11 +14,11 @@ const DEFAULT_UPLOAD_TIMEOUT_MS = 120000;
 export function parseArguments(argv) { const o = {};
   for (let i=0;i<argv.length;i++) { const a=argv[i]; if (a==='--plan') o.plan=true; else if(a==='--verify-remote') o.verifyRemote=true; else if(a==='--upload') o.upload=true; else if(a==='--replace-mismatched') o.replaceMismatched=true; else if(a==='--county-fips') o.countyFips=argv[++i]; else throw new Error(`unknown option: ${a}`); }
   if(o.replaceMismatched&&!o.upload) throw new Error('--replace-mismatched requires --upload'); if (!o.plan && !o.verifyRemote && !o.upload) throw new Error('select --plan, --verify-remote, or --upload'); if(o.plan&&(o.upload||o.verifyRemote)) throw new Error('--plan cannot perform remote actions'); return o; }
-const credentials = env => { const url=env.SUPABASE_URL || env.GRIDLY_SUPABASE_URL; const key=env.SUPABASE_SERVICE_ROLE_KEY; if(!url||!key) throw new Error('REMOTE EXECUTION NOT COMPLETED: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required'); return {url:url.replace(/\/$/,''),key}; };
+export const credentials = env => { const url=env.SUPABASE_URL || env.GRIDLY_SUPABASE_URL; const key=env.SUPABASE_SERVICE_ROLE_KEY; if(!url||!key) throw new Error('REMOTE EXECUTION NOT COMPLETED: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required'); return {url:url.replace(/\/$/,''),key}; };
 export const storageObjectPath = (bucket, objectPath) =>
   `object/authenticated/${encodeURIComponent(bucket)}/${objectPath.split('/').map(encodeURIComponent).join('/')}`;
 
-async function request(auth, path, init={}, hooks={}) {
+export async function storageRequest(auth, path, init={}, hooks={}) {
   const fetchImpl=hooks.fetchImpl||fetch;
   const attempts=hooks.attempts??3;
   for(let n=0;n<attempts;n++){
@@ -55,7 +55,7 @@ const safeDiagnostic=(status,body,operation='download')=>redact(`Storage ${opera
 
 export async function verifyRemoteObject(auth, objectPath, expected, hooks={}) {
   let response;
-  try { response=await request(auth,storageObjectPath(hooks.bucket||BUCKET,objectPath),{method:'GET'},hooks); }
+  try { response=await storageRequest(auth,storageObjectPath(hooks.bucket||BUCKET,objectPath),{method:'GET'},hooks); }
   catch(error){return {status:'inaccessible',diagnostic:redact(error?.name==='AbortError'?'Storage download timed out':`Storage download network failure: ${error?.message||'unknown error'}`).slice(0,320)};}
   if(!response||typeof response.ok!=='boolean'||typeof response.status!=='number')return {status:'inaccessible',diagnostic:'Storage download returned a malformed response'};
   if(!response.ok){let body='';try{body=await response.text();}catch{return {status:'inaccessible',diagnostic:`Storage download error body was unreadable (${response.status})`};}return isDefinitiveStorageNotFound(response.status,body)?{status:'missing'}:{status:'inaccessible',diagnostic:safeDiagnostic(response.status,body)};}
@@ -72,7 +72,7 @@ export async function syncRemoteObject(auth, objectPath, expected, bytes, conten
   if(!eligible)return {...current,uploaded:false};
   let response;
   const uploadHooks={...hooks,timeoutMs:hooks.uploadTimeoutMs??DEFAULT_UPLOAD_TIMEOUT_MS};
-  try { response=await request(auth,`object/${hooks.bucket||BUCKET}/${objectPath}`,{method:current.status==='missing'?'POST':'PUT',headers:{'content-type':contentType,'x-upsert':current.status==='missing'?'false':'true','x-metadata':JSON.stringify({sha256:expected.sha256})},body:bytes},uploadHooks); }
+  try { response=await storageRequest(auth,`object/${hooks.bucket||BUCKET}/${objectPath}`,{method:current.status==='missing'?'POST':'PUT',headers:{'content-type':contentType,'x-upsert':current.status==='missing'?'false':'true','x-metadata':JSON.stringify({sha256:expected.sha256})},body:bytes},uploadHooks); }
   catch(error){const reason=error?.lp108Failure==='timeout'?'timed out':'network failure';return {status:'upload_failed',uploaded:false,diagnostic:redact(`Storage upload ${reason} after ${error?.lp108Attempts??1} attempt(s): ${error?.message||'unknown error'}`).slice(0,320)};}
   if(!response||typeof response.ok!=='boolean'||!response.ok){let body='';try{body=await response?.text?.()||'';}catch{}return {status:'upload_failed',uploaded:false,diagnostic:safeDiagnostic(response?.status??'unknown',body,'upload')};}
   const verified=await verifyRemoteObject(auth,objectPath,expected,hooks);
@@ -84,7 +84,7 @@ export async function run(options, hooks={}) {
   const local=[]; for(const county of counties){ const stem=`${county.slug}-${county.fips}`, pkg=join(packageDirectory,`${stem}.addresses.jsonl.gz`), cert=join(packageDirectory,`${stem}.runtime-certificate.json`); const digest=await stableDigest(pkg).catch(e=>{throw new Error(`required local package missing or unstable: ${county.fips}: ${e.message}`)}); const certificate=JSON.parse(await readFile(cert,'utf8').catch(()=>{throw new Error(`required local certificate missing: ${county.fips}`)})); const expected=certificateFor(county,`${stem}.addresses.jsonl.gz`,digest.sizeBytes,digest.sha256); const failures=validateRuntimeCertificate(certificate,expected); if(failures.length)throw new Error(`${county.fips}: ${failures.join('; ')}`); local.push({countySlug:county.slug,countyFips:county.fips,...objectPaths(county),packageSizeBytes:digest.sizeBytes,packageSha256:digest.sha256,certificateSha256:(await import('node:crypto')).createHash('sha256').update(await readFile(cert)).digest('hex'),paths:{pkg,cert}}); }
   const report={schemaVersion:'gridly-lp108-storage-v1',mode:options.plan?'plan':options.upload?'upload':'verify-remote',evidence:options.plan?'local-only':'remote Storage verification attempted',bucket:BUCKET,totals:{counties:local.length,localPackagesValid:local.length,localCertificatesValid:local.length,expectedObjects:local.length*2,present:0,matching:0,missing:0,mismatched:0,inaccessible:0,unverifiable:0,uploaded:0},objects:[]};
   if(options.plan){report.objects=local.flatMap(x=>[{countyFips:x.countyFips,path:x.package,status:'planned'},{countyFips:x.countyFips,path:x.certificate,status:'planned'}]); await atomicJson(join(REPORT,'storage-plan.json'),report); return report;}
-  const auth=credentials(hooks.env||process.env); const requestHooks={fetchImpl:hooks.fetchImpl,timeoutMs:hooks.timeoutMs,uploadTimeoutMs:hooks.uploadTimeoutMs,attempts:hooks.attempts}; const bucket=await request(auth,'bucket/'+BUCKET,{},requestHooks); if(!bucket.ok)throw new Error(`Storage target ambiguous or inaccessible (${bucket.status})`);
+  const auth=credentials(hooks.env||process.env); const requestHooks={fetchImpl:hooks.fetchImpl,timeoutMs:hooks.timeoutMs,uploadTimeoutMs:hooks.uploadTimeoutMs,attempts:hooks.attempts}; const bucket=await storageRequest(auth,'bucket/'+BUCKET,{},requestHooks); if(!bucket.ok)throw new Error(`Storage target ambiguous or inaccessible (${bucket.status})`);
   for(const item of local) for(const kind of ['package','certificate']) { const path=item[kind], localPath=item.paths[kind==='package'?'pkg':'cert']; const expectedSize=kind==='package'?item.packageSizeBytes:(await readFile(localPath)).byteLength; let status,metadata={};
     if(!options.upload){const result=await verifyRemoteObject(auth,path,{sizeBytes:expectedSize,sha256:kind==='package'?item.packageSha256:item.certificateSha256},requestHooks);status=result.status;metadata=result;}
     else {const bytes=await readFile(localPath);metadata=await syncRemoteObject(auth,path,{sizeBytes:expectedSize,sha256:kind==='package'?item.packageSha256:item.certificateSha256},bytes,kind==='package'?'application/gzip':'application/json',options,requestHooks);status=metadata.status;if(metadata.uploaded)report.totals.uploaded++;}
