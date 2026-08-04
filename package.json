@@ -145,6 +145,9 @@
     "build:lp144": "node tools/lp144/manufacture-operational-authorizations.mjs",
     "verify:lp144": "node tools/lp144/manufacture-operational-authorizations.mjs --verify",
     "test:lp144": "node --test tests/lp144-operational-authorization-manufacturing.test.mjs",
+    "build:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs",
+    "verify:lp145": "node tools/lp145/analyze-statewide-operational-constraints.mjs --verify",
+    "test:lp145": "node --test tests/lp145-statewide-operational-constraint-analysis.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }

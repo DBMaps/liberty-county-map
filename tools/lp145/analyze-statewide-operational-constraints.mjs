@@ -1,0 +1,104 @@
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const OUTPUT = resolve(ROOT, 'reports/lp145');
+
+export const constraints = Object.freeze([
+  {
+    dependencyOrder: 3, constraintId: 'PRODUCTION_STORAGE_NOT_STATEWIDE', category: 'STORAGE',
+    sourceLocations: ['docs/LP108-28-COUNTY-STORAGE-UPLOAD-AND-RUNTIME-CERTIFICATION.md', 'reports/lp144/summary.json'],
+    governingMilestones: ['LP108', 'LP130', 'LP144'], blockingSeverity: 'CRITICAL', classification: 'TECHNICAL',
+    scope: 'STATEWIDE_THEN_PER_COUNTY',
+    evidence: 'LP130 manufactured and LP135/LP136 verified package identities, but no tracked evidence proves production Storage objects for the 243 expansion counties; LP108 explicitly records even its 28-county remote execution as not completed.',
+    requiredAction: 'Using the existing certified identities, upload each authorized county package and certificate to the private certified-addresses contract and record hash/size remote verification. Do not rebuild package bytes.'
+  },
+  {
+    dependencyOrder: 4, constraintId: 'RUNTIME_IDENTITY_AND_REGISTRY_LIMITED_TO_28', category: 'RUNTIME',
+    sourceLocations: ['supabase/functions/_shared/certified-address-identities.mjs', 'supabase/functions/_shared/liberty-certified-address.mjs', 'js/app.js'],
+    governingMilestones: ['LP108', 'LP130', 'LP138', 'LP139'], blockingSeverity: 'CRITICAL', classification: 'TECHNICAL_AND_GOVERNANCE',
+    scope: 'INDIVIDUAL_PER_COUNTY',
+    evidence: 'The server lookup is format-capable for governed identities, but its identity inventory has exactly 28 entries and the browser operational registry selects exactly the current 28. LP130 candidates are not production runtime configuration.',
+    requiredAction: 'After authorization and verified Storage, add the approved county identities and operational registry entries through a reviewed runtime change, deploy the unchanged lookup contract, and execute county-specific exact/negative/consumer regression validation.'
+  },
+  {
+    dependencyOrder: 5, constraintId: 'RUNTIME_GEOMETRY_PACKAGE_REMAINS_BASELINE_28', category: 'GEOMETRY',
+    sourceLocations: ['LP137-TEXAS-STATEWIDE-COUNTY-GEOMETRY-GOVERNANCE-RECONCILIATION.md', 'assets/location-resolution/gridly-authoritative-county-geometry-v1.json'],
+    governingMilestones: ['LP137', 'LP138', 'LP139'], blockingSeverity: 'HIGH', classification: 'TECHNICAL_AND_GOVERNANCE',
+    scope: 'PER_APPROVED_COHORT',
+    evidence: 'All 254 source boundaries are available, so geometry content is not a statewide data blocker. The committed runtime package intentionally remains the certified 28-county baseline and may only be regenerated from exact approved membership; LP137 also records a source-byte provenance qualification to resolve during an authorized build.',
+    requiredAction: 'Once an exact membership contract authorizes a cohort, resolve the documented provenance-byte check, generate the runtime geometry package from that set, certify it, and preserve rollback evidence.'
+  },
+  {
+    dependencyOrder: 6, constraintId: 'NO_EXPANSION_MEMBERSHIP_AUTHORIZED', category: 'MEMBERSHIP',
+    sourceLocations: ['evidence/lp138/county-geometry-membership-contract.draft.json', 'evidence/lp138/county-geometry-membership-contract.baseline.json', 'reports/lp143/activation-authorizations.json'],
+    governingMilestones: ['LP138', 'LP139', 'LP143'], blockingSeverity: 'CRITICAL', classification: 'GOVERNANCE',
+    scope: 'PER_APPROVED_COHORT',
+    evidence: 'The baseline contract records 28 counties. The future contract has zero members and all permissions false, while the LP143 registry has zero activation authorizations.',
+    requiredAction: 'Record an explicit, time-bounded, exact-set authorization satisfying the LP138 contract, including membership, package-generation, Storage, deployment, runtime, and rollback authorities. Then validate the authorized set before any implementation.'
+  },
+  {
+    dependencyOrder: 7, constraintId: 'COUNTY_OPERATIONAL_AND_DEPLOYMENT_PREREQUISITES_INCOMPLETE', category: 'DEPLOYMENT',
+    sourceLocations: ['reports/lp142/advancement-matrix.json', 'reports/lp144/summary.json', 'evidence/lp140/activation-wave-planning.json'],
+    governingMilestones: ['LP132', 'LP140', 'LP142', 'LP144'], blockingSeverity: 'CRITICAL', classification: 'TECHNICAL_AND_GOVERNANCE',
+    scope: 'INDIVIDUAL_PER_COUNTY',
+    evidence: 'All 243 expansion counties lack Gate 6 runtime validation, deployment prerequisites, geometry membership approval, and Gate 7 approval. Community evidence is missing for 240; destination and crossing evidence are each missing for 215. LP144 classifies all 243 NOT_READY.',
+    requiredAction: 'Complete only the observed county-specific gaps, validate runtime and rollback against deployed candidate bytes, obtain the required approvals, and then perform a separately authorized deployment. The LP140 planner needs no redesign; it will classify counties when its governed inputs change.'
+  }
+]);
+
+export function buildReports() {
+  const analysis = {
+    schemaVersion: 'gridly-lp145-statewide-operational-constraint-analysis-v1', milestone: 'LP145',
+    scope: 'READ_ONLY_INVESTIGATION', authority: 'NON_AUTHORIZING', observationDate: '2026-08-04',
+    currentOperationalCountyCount: 28, expansionCountyCount: 243,
+    packageCapabilityConclusion: 'LP130 package bytes and certificate format are runtime-compatible; immediate production use is blocked by absent verified Storage objects, absent runtime identity/registry configuration, absent authorized membership, and incomplete county deployment validation.',
+    plannerConclusion: 'LP140 is technically functional and deterministic. It is blocked by governed evidence and authorization inputs, not by missing planner implementation.',
+    dependencyChain: [
+      { order: 1, node: 'Statewide Manufacturing', status: 'READY' },
+      { order: 2, node: 'Certification', status: 'READY' },
+      { order: 3, node: 'Storage', status: 'BLOCKED', constraintIds: ['PRODUCTION_STORAGE_NOT_STATEWIDE'] },
+      { order: 4, node: 'Runtime', status: 'BLOCKED', constraintIds: ['RUNTIME_IDENTITY_AND_REGISTRY_LIMITED_TO_28'] },
+      { order: 5, node: 'Geometry', status: 'BLOCKED', constraintIds: ['RUNTIME_GEOMETRY_PACKAGE_REMAINS_BASELINE_28'] },
+      { order: 6, node: 'Membership', status: 'BLOCKED', constraintIds: ['NO_EXPANSION_MEMBERSHIP_AUTHORIZED'] },
+      { order: 7, node: 'Deployment', status: 'BLOCKED', constraintIds: ['COUNTY_OPERATIONAL_AND_DEPLOYMENT_PREREQUISITES_INCOMPLETE'] },
+      { order: 8, node: 'Operational Expansion', status: 'BLOCKED' }
+    ],
+    firstRemainingBlockingNode: 'Storage',
+    minimumGovernedOperationalChange: 'For the first eligible county or bounded cohort: complete its observed LP132 evidence gaps; issue an exact LP143/LP144 operational authorization and LP138 membership contract; upload and remotely verify the already-manufactured certified assets; add only the authorized runtime identity, operational registry, and geometry membership; deploy; and run county-specific runtime/rollback validation.',
+    constraints
+  };
+  const readiness = {
+    schemaVersion: 'gridly-lp145-statewide-expansion-readiness-v1', milestone: 'LP145', scope: 'READ_ONLY_INVESTIGATION',
+    classifications: ['READY', 'BLOCKED', 'NOT_APPLICABLE'],
+    categories: [
+      { category: 'manufacturing readiness', classification: 'READY', basis: 'LP130 reconciles manufactured assets for all 254 Texas counties.' },
+      { category: 'certification readiness', classification: 'READY', basis: 'LP135 and LP136 establish the authoritative 254/254 certification baseline.' },
+      { category: 'runtime readiness', classification: 'BLOCKED', basis: 'Production identity and operational registries remain limited to 28 counties.' },
+      { category: 'storage readiness', classification: 'BLOCKED', basis: 'No production upload and remote-integrity evidence exists for statewide expansion assets.' },
+      { category: 'geometry readiness', classification: 'READY', basis: 'All 254 authoritative boundaries exist; package inclusion is controlled separately by membership.' },
+      { category: 'membership readiness', classification: 'BLOCKED', basis: 'Future LP138 membership is empty and no LP143 activation authorization exists.' },
+      { category: 'deployment readiness', classification: 'BLOCKED', basis: 'All 243 expansion counties have incomplete runtime/deployment prerequisites and no deployment occurred.' },
+      { category: 'governance readiness', classification: 'BLOCKED', basis: 'The framework exists, but no expansion county has the required explicit operational authorization.' }
+    ],
+    overallClassification: 'BLOCKED', firstRemainingBlockingNode: 'Storage'
+  };
+  return { analysis, readiness };
+}
+
+const stableJson = value => `${JSON.stringify(value, null, 2)}\n`;
+export async function writeReports({ verify = false } = {}) {
+  const reports = buildReports();
+  for (const [name, value] of Object.entries({ 'statewide-operational-constraint-analysis.json': reports.analysis, 'statewide-expansion-readiness.json': reports.readiness })) {
+    const path = resolve(OUTPUT, name); const expected = stableJson(value);
+    if (verify) { if (await readFile(path, 'utf8') !== expected) throw new Error(`LP145 output drift: ${name}`); }
+    else { await mkdir(OUTPUT, { recursive: true }); await writeFile(path, expected); }
+  }
+  return reports;
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await writeReports({ verify: process.argv.includes('--verify') });
+  console.log(`${process.argv.includes('--verify') ? 'Verified' : 'Wrote'} deterministic LP145 constraint reports.`);
+}

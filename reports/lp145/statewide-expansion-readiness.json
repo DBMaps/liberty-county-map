@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "gridly-lp145-statewide-expansion-readiness-v1",
+  "milestone": "LP145",
+  "scope": "READ_ONLY_INVESTIGATION",
+  "classifications": [
+    "READY",
+    "BLOCKED",
+    "NOT_APPLICABLE"
+  ],
+  "categories": [
+    {
+      "category": "manufacturing readiness",
+      "classification": "READY",
+      "basis": "LP130 reconciles manufactured assets for all 254 Texas counties."
+    },
+    {
+      "category": "certification readiness",
+      "classification": "READY",
+      "basis": "LP135 and LP136 establish the authoritative 254/254 certification baseline."
+    },
+    {
+      "category": "runtime readiness",
+      "classification": "BLOCKED",
+      "basis": "Production identity and operational registries remain limited to 28 counties."
+    },
+    {
+      "category": "storage readiness",
+      "classification": "BLOCKED",
+      "basis": "No production upload and remote-integrity evidence exists for statewide expansion assets."
+    },
+    {
+      "category": "geometry readiness",
+      "classification": "READY",
+      "basis": "All 254 authoritative boundaries exist; package inclusion is controlled separately by membership."
+    },
+    {
+      "category": "membership readiness",
+      "classification": "BLOCKED",
+      "basis": "Future LP138 membership is empty and no LP143 activation authorization exists."
+    },
+    {
+      "category": "deployment readiness",
+      "classification": "BLOCKED",
+      "basis": "All 243 expansion counties have incomplete runtime/deployment prerequisites and no deployment occurred."
+    },
+    {
+      "category": "governance readiness",
+      "classification": "BLOCKED",
+      "basis": "The framework exists, but no expansion county has the required explicit operational authorization."
+    }
+  ],
+  "overallClassification": "BLOCKED",
+  "firstRemainingBlockingNode": "Storage"
+}
