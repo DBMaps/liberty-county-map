@@ -26,11 +26,13 @@ There are no LP129 packages, sidecars, runtime certificates, certification repor
 
 From a workspace with the inventoried geodatabase mounted, run only the selected cohort:
 
-```bash
-node tools/lp1051/manufacture-gridly-28-address-counties.mjs \
-  --fips 48051,48455,48469 \
-  --gdb <owner-path>/Texas-2026.gdb \
-  --reports reports/lp129-wave-3
+```powershell
+Set-Location C:\GitHub\liberty-county-map
+
+node tools/lp1051/manufacture-gridly-28-address-counties.mjs `
+  --fips 48051,48455,48469 `
+  --gdb "C:\GitHub\Gridly-Source-Data\Texas-Address-Points\Raw\Texas-2026.gdb" `
+  --reports "reports/lp129-wave-3"
 ```
 
 The completed run must then be independently reconciled. Validate gzip integrity, every JSONL record, county identity, source/accepted/rejected/duplicate counts, sidecars, byte sizes, SHA-256 values, runtime certificates, and LP104.6 certification reports. Run manufacturing twice and compare the governed package bytes. Do not commit the geodatabase or temporary extraction files.
