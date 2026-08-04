@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "lee-tx",
+  "county": "Lee County",
+  "fips": "48287",
+  "artifact": "lee-48287.addresses.jsonl.gz",
+  "sizeBytes": 370322,
+  "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

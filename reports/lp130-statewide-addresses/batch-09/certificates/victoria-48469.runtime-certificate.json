@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "victoria-tx",
+  "county": "Victoria County",
+  "fips": "48469",
+  "artifact": "victoria-48469.addresses.jsonl.gz",
+  "sizeBytes": 1326361,
+  "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}
