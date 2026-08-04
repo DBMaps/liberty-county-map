@@ -1,0 +1,38 @@
+{
+  "candidateContractSha256": "9235f3a5e4fe17480d02a9769021132ac8fea8ca3b7381b179490c6f59ba6941",
+  "checks": {
+    "activationUnchanged": true,
+    "approvedAndDeployedSeparate": true,
+    "candidateAndApprovedSeparate": true,
+    "deployedAndActiveSeparate": true,
+    "deploymentUnchanged": true,
+    "deterministicAscendingFipsOrdering": true,
+    "emptyCommittedCandidateContract": true,
+    "exact254KnownCountyIdentities": true,
+    "exactly28CurrentOperationalCounties": true,
+    "identityAndMembershipSeparate": true,
+    "lp138BaselineUnchanged": true,
+    "lp140PlannerUnchanged": true,
+    "lp148ArtifactsUnchanged": true,
+    "lp149RegistryUnchanged": true,
+    "noDuplicates": true,
+    "noInferredActivation": true,
+    "noInferredApproval": true,
+    "noInferredDeployment": true,
+    "productionRuntimeManifestUnchanged": true,
+    "runtimeSelectionUnchanged": true
+  },
+  "failures": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "passed": true,
+  "preExistingBaselineFailures": [
+    {
+      "command": "npm run test:lp148",
+      "introducedByLp150": false,
+      "message": "[LP148] tracked/generated package does not match deterministic rebuild",
+      "milestone": "LP148"
+    }
+  ],
+  "schemaVersion": "gridly.lp150.membershipTransitionValidation.v1",
+  "transitionRegistrySha256": "0f1173945727d3f9956e78f7a2722d0a9899464eff554b2c233d7c2141a5a495"
+}

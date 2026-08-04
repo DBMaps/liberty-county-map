@@ -1,0 +1,37 @@
+{
+  "boundary": {
+    "emptyContractPreservesCurrentRuntime": true,
+    "nonActivating": true,
+    "nonAuthorizing": true,
+    "nonDeploying": true
+  },
+  "candidateCounties": [],
+  "candidateCountyCount": 0,
+  "contractKind": "CANDIDATE_MEMBERSHIP_NON_AUTHORIZING",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP150",
+  "permissions": {
+    "activation": {
+      "authorityRef": null,
+      "authorized": false
+    },
+    "approval": {
+      "authorityRef": null,
+      "authorized": false
+    },
+    "deployment": {
+      "authorityRef": null,
+      "authorized": false
+    },
+    "runtimeSelection": {
+      "authorityRef": null,
+      "authorized": false
+    }
+  },
+  "provenance": {
+    "lp138Baseline": "evidence/lp138/county-geometry-membership-contract.baseline.json",
+    "lp149Registry": "data/lp149/runtime-county-registry.json"
+  },
+  "schemaVersion": "gridly.lp150.candidateMembershipContract.v1",
+  "sort": "ascending-fips"
+}
