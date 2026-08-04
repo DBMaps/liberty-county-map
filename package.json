@@ -168,6 +168,9 @@
     "test:lp150": "node --test tests/lp150-membership-transition.test.mjs",
     "build:lp151": "node tools/lp151/validate-statewide-operations.mjs --write",
     "verify:lp151": "node tools/lp151/validate-statewide-operations.mjs",
-    "test:lp151": "node --test tests/lp151-statewide-operational-validation.test.mjs"
+    "test:lp151": "node --test tests/lp151-statewide-operational-validation.test.mjs",
+    "build:lp152": "node tools/lp152/build-deployment-readiness.mjs --write",
+    "verify:lp152": "node tools/lp152/build-deployment-readiness.mjs",
+    "test:lp152": "node --test tests/lp152-deployment-readiness.test.mjs"
   }
 }
