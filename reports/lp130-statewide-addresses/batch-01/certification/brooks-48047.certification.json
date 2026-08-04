@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Brooks County",
+  "countyFips": "48047",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 101543,
+  "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88",
+  "indexedAddressCount": 3288,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.009399999864399433
+  },
+  "exactSample": {
+    "providerIdentity": "0d50c5def78db88c43a9",
+    "houseNumber": "100",
+    "canonicalRoad": "EAST ALLEN STREET",
+    "city": "Falfurrias",
+    "zip": "78355",
+    "county": "Brooks County",
+    "countyFips": "48047",
+    "query": "100 East Allen Street Falfurrias TX 78355",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 782,
+    "variantsTested": 2346,
+    "variantsPassed": 2346
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 44.891100000124425,
+  "certificationStatus": "PASS",
+  "failures": []
+}

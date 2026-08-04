@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "angelina-tx",
+  "county": "Angelina County",
+  "fips": "48005",
+  "artifact": "angelina-48005.addresses.jsonl.gz",
+  "sizeBytes": 1335591,
+  "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

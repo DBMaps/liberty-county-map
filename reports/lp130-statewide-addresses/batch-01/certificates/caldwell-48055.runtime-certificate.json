@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "caldwell-tx",
+  "county": "Caldwell County",
+  "fips": "48055",
+  "artifact": "caldwell-48055.addresses.jsonl.gz",
+  "sizeBytes": 850854,
+  "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

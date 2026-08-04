@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Armstrong County",
+  "countyFips": "48011",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 41191,
+  "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509",
+  "indexedAddressCount": 1309,
+  "exactMatchStatistics": {
+    "sampled": 1309,
+    "passed": 1309,
+    "failed": 0,
+    "p95LookupMs": 0.0030999998562037945
+  },
+  "exactSample": {
+    "providerIdentity": "7e5c1dec58fa9521fa3e",
+    "houseNumber": "1",
+    "canonicalRoad": "LONE STAR LANE",
+    "city": "",
+    "zip": "79019",
+    "county": "Armstrong County",
+    "countyFips": "48011",
+    "query": "1 LONE STAR LANE TX 79019",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1309,
+    "truthfulNoResults": 1309,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1309,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1309,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 411,
+    "variantsTested": 1233,
+    "variantsPassed": 1233
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 7.643300000112504,
+  "certificationStatus": "PASS",
+  "failures": []
+}

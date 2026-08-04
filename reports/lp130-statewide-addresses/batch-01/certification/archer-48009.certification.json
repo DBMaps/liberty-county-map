@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Archer County",
+  "countyFips": "48009",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 176349,
+  "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d",
+  "indexedAddressCount": 5388,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.003900000359863043
+  },
+  "exactSample": {
+    "providerIdentity": "16cfcffc3f9a69b4b82e",
+    "houseNumber": "1",
+    "canonicalRoad": "BURKETT CIRCLE",
+    "city": "ARCHER CITY",
+    "zip": "76351",
+    "county": "Archer County",
+    "countyFips": "48009",
+    "query": "1 BURKETT CIRCLE ARCHER CITY TX 76351",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 952,
+    "variantsTested": 2856,
+    "variantsPassed": 2856
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 31.300499999895692,
+  "certificationStatus": "PASS",
+  "failures": []
+}

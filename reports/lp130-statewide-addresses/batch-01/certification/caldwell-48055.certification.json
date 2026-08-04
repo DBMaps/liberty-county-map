@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Caldwell County",
+  "countyFips": "48055",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 850854,
+  "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126",
+  "indexedAddressCount": 26125,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.011100000236183405
+  },
+  "exactSample": {
+    "providerIdentity": "6846d91e50e7ed376d01",
+    "houseNumber": "1",
+    "canonicalRoad": "CALLE DE TOBIAS",
+    "city": "Kyle",
+    "zip": "78640",
+    "county": "Caldwell County",
+    "countyFips": "48055",
+    "query": "1 Calle De Tobias Kyle TX 78640",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1726,
+    "variantsTested": 5178,
+    "variantsPassed": 5178
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 279.49729999992996,
+  "certificationStatus": "PASS",
+  "failures": []
+}

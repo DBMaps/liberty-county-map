@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bee County",
+  "countyFips": "48025",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 225545,
+  "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6",
+  "indexedAddressCount": 7390,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0038999998942017555
+  },
+  "exactSample": {
+    "providerIdentity": "df8190cc11376c90af32",
+    "houseNumber": "1",
+    "canonicalRoad": "COUNTRY CLUB PLACE",
+    "city": "Beeville",
+    "zip": "78102",
+    "county": "Bee County",
+    "countyFips": "48025",
+    "query": "1 Country Club Place Beeville TX 78102",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 737,
+    "variantsTested": 2211,
+    "variantsPassed": 2211
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 44.43069999990985,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "bee-tx",
+  "county": "Bee County",
+  "fips": "48025",
+  "artifact": "bee-48025.addresses.jsonl.gz",
+  "sizeBytes": 225545,
+  "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

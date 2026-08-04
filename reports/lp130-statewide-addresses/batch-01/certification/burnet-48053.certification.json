@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Burnet County",
+  "countyFips": "48053",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1257248,
+  "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491",
+  "indexedAddressCount": 35857,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.010300000198185444
+  },
+  "exactSample": {
+    "providerIdentity": "1f2e3ebe6944247279a6",
+    "houseNumber": "1",
+    "canonicalRoad": "AUGUSTA DRIVE",
+    "city": "Meadowlakes",
+    "zip": "78654",
+    "county": "Burnet County",
+    "countyFips": "48053",
+    "query": "1 Augusta Drive Meadowlakes TX 78654",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 461.0030000000261,
+  "certificationStatus": "PASS",
+  "failures": []
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Aransas County",
+  "countyFips": "48007",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 448181,
+  "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46",
+  "indexedAddressCount": 14670,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004999999888241291
+  },
+  "exactSample": {
+    "providerIdentity": "9cda5f7daa1a0729ac96",
+    "houseNumber": "1",
+    "canonicalRoad": "ALBATROSS LANE",
+    "city": "Rockport",
+    "zip": "78382",
+    "county": "Aransas County",
+    "countyFips": "48007",
+    "query": "1 Albatross Lane Rockport TX 78382",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 202,
+    "variantsTested": 606,
+    "variantsPassed": 606
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 82.36799999978393,
+  "certificationStatus": "PASS",
+  "failures": []
+}

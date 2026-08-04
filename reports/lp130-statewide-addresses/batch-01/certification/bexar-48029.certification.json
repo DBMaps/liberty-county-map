@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bexar County",
+  "countyFips": "48029",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 21101375,
+  "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9",
+  "indexedAddressCount": 721120,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005499999970197678
+  },
+  "exactSample": {
+    "providerIdentity": "14bd8bb7b79e4ce39432",
+    "houseNumber": "1",
+    "canonicalRoad": "ABBY WOOD",
+    "city": "SAN ANTONIO",
+    "zip": "",
+    "county": "Bexar County",
+    "countyFips": "48029",
+    "query": "1 ABBY WOOD SAN ANTONIO TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 4857.185199999716,
+  "certificationStatus": "PASS",
+  "failures": []
+}

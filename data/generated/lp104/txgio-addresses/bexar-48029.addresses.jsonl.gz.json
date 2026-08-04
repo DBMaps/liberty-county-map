@@ -1,0 +1,13 @@
+{
+  "countyId": "bexar",
+  "county": "Bexar",
+  "fips": "48029",
+  "sourceRecordsRead": 721120,
+  "acceptedRecords": 721120,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 21101375,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bexar-48029.addresses.jsonl.gz",
+  "packageHash": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9",
+  "outputCrs": "EPSG:4326"
+}

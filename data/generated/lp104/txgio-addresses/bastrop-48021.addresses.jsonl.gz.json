@@ -1,0 +1,13 @@
+{
+  "countyId": "bastrop",
+  "county": "Bastrop",
+  "fips": "48021",
+  "sourceRecordsRead": 63519,
+  "acceptedRecords": 63471,
+  "rejectedRecords": 0,
+  "duplicates": 48,
+  "outputBytes": 1906657,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bastrop-48021.addresses.jsonl.gz",
+  "packageHash": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8",
+  "outputCrs": "EPSG:4326"
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bosque County",
+  "countyFips": "48035",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 337704,
+  "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0",
+  "indexedAddressCount": 10962,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006099999882280827
+  },
+  "exactSample": {
+    "providerIdentity": "700dd3bafc9599fc363c",
+    "houseNumber": "1",
+    "canonicalRoad": "SLEEPY HOLLOW",
+    "city": "VALLEY MILLS",
+    "zip": "76689",
+    "county": "Bosque County",
+    "countyFips": "48035",
+    "query": "1 SLEEPY HOLLOW VALLEY MILLS TX 76689",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 54.91270000021905,
+  "certificationStatus": "PASS",
+  "failures": []
+}

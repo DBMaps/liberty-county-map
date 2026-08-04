@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "bosque-tx",
+  "county": "Bosque County",
+  "fips": "48035",
+  "artifact": "bosque-48035.addresses.jsonl.gz",
+  "sizeBytes": 337704,
+  "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

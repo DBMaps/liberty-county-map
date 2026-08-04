@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bastrop County",
+  "countyFips": "48021",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1906657,
+  "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8",
+  "indexedAddressCount": 63471,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.005000000353902578
+  },
+  "exactSample": {
+    "providerIdentity": "6a5c68502c29fe6c6149",
+    "houseNumber": "1",
+    "canonicalRoad": "GENTRY STREET",
+    "city": "Smithville",
+    "zip": "78957",
+    "county": "Bastrop County",
+    "countyFips": "48021",
+    "query": "1 Gentry Street Smithville TX 78957",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 389.04500000039116,
+  "certificationStatus": "PASS",
+  "failures": []
+}

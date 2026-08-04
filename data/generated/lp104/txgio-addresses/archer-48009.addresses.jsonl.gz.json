@@ -1,0 +1,13 @@
+{
+  "countyId": "archer",
+  "county": "Archer",
+  "fips": "48009",
+  "sourceRecordsRead": 5388,
+  "acceptedRecords": 5388,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 176349,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\archer-48009.addresses.jsonl.gz",
+  "packageHash": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d",
+  "outputCrs": "EPSG:4326"
+}

@@ -1,0 +1,13 @@
+{
+  "countyId": "brewster",
+  "county": "Brewster",
+  "fips": "48043",
+  "sourceRecordsRead": 9322,
+  "acceptedRecords": 9322,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 334550,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brewster-48043.addresses.jsonl.gz",
+  "packageHash": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+  "outputCrs": "EPSG:4326"
+}

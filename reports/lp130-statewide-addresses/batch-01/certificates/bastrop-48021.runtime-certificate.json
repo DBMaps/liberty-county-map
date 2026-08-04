@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "bastrop-tx",
+  "county": "Bastrop County",
+  "fips": "48021",
+  "artifact": "bastrop-48021.addresses.jsonl.gz",
+  "sizeBytes": 1906657,
+  "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

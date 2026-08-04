@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "briscoe-tx",
+  "county": "Briscoe County",
+  "fips": "48045",
+  "artifact": "briscoe-48045.addresses.jsonl.gz",
+  "sizeBytes": 38147,
+  "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

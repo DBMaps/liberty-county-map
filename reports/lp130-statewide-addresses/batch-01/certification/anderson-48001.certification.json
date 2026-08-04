@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Anderson County",
+  "countyFips": "48001",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 937861,
+  "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c",
+  "indexedAddressCount": 27798,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.006000000052154064
+  },
+  "exactSample": {
+    "providerIdentity": "3e577294cb3fe50a18a0",
+    "houseNumber": "1",
+    "canonicalRoad": "ANDERSON DRIVE",
+    "city": "PALESTINE",
+    "zip": "75801",
+    "county": "Anderson County",
+    "countyFips": "48001",
+    "query": "1 ANDERSON DRIVE PALESTINE TX 75801",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2297,
+    "variantsTested": 6891,
+    "variantsPassed": 6891
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 215.40250000031665,
+  "certificationStatus": "PASS",
+  "failures": []
+}

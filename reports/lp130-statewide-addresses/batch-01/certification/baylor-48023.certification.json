@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Baylor County",
+  "countyFips": "48023",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 84590,
+  "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf",
+  "indexedAddressCount": 2730,
+  "exactMatchStatistics": {
+    "sampled": 2730,
+    "passed": 2730,
+    "failed": 0,
+    "p95LookupMs": 0.0036999997682869434
+  },
+  "exactSample": {
+    "providerIdentity": "3cdd09101b20d3b053b9",
+    "houseNumber": "10",
+    "canonicalRoad": "ARLEDGE DRIVE",
+    "city": "SEYMOUR",
+    "zip": "76380",
+    "county": "Baylor County",
+    "countyFips": "48023",
+    "query": "10 ARLEDGE DRIVE SEYMOUR TX 76380",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 2730,
+    "truthfulNoResults": 2730,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 2730,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 2730,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 391,
+    "variantsTested": 1173,
+    "variantsPassed": 1173
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 16.7461000001058,
+  "certificationStatus": "PASS",
+  "failures": []
+}

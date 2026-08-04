@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Blanco County",
+  "countyFips": "48031",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 307471,
+  "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115",
+  "indexedAddressCount": 8477,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00430000014603138
+  },
+  "exactSample": {
+    "providerIdentity": "1b895cf9a170ff70a601",
+    "houseNumber": "1",
+    "canonicalRoad": "ENCINITAS DRIVE",
+    "city": "Johnson city",
+    "zip": "78636",
+    "county": "Blanco County",
+    "countyFips": "48031",
+    "query": "1 Encinitas Drive Johnson city TX 78636",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 26,
+    "variantsTested": 78,
+    "variantsPassed": 78
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 46.20019999984652,
+  "certificationStatus": "PASS",
+  "failures": []
+}

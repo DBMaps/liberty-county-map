@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bailey County",
+  "countyFips": "48017",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 105773,
+  "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55",
+  "indexedAddressCount": 3346,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004999999888241291
+  },
+  "exactSample": {
+    "providerIdentity": "b79cda5c110787b3e299",
+    "houseNumber": "100",
+    "canonicalRoad": "CR 1008",
+    "city": "FARWELL",
+    "zip": "79325",
+    "county": "Bailey County",
+    "countyFips": "48017",
+    "query": "100 COUNTY ROAD 1008 FARWELL TX 79325",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1137,
+    "variantsTested": 3411,
+    "variantsPassed": 3411
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 32.78909999970347,
+  "certificationStatus": "PASS",
+  "failures": []
+}

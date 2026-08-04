@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "burnet-tx",
+  "county": "Burnet County",
+  "fips": "48053",
+  "artifact": "burnet-48053.addresses.jsonl.gz",
+  "sizeBytes": 1257248,
+  "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

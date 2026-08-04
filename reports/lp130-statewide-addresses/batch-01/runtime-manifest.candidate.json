@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP130-candidate",
+  "batch": "batch-01",
+  "activated": false,
+  "packages": [
+    {
+      "countyId": "anderson-tx",
+      "county": "Anderson County",
+      "fips": "48001",
+      "path": "data/generated/lp104/txgio-addresses/anderson-48001.addresses.jsonl.gz",
+      "sizeBytes": 937861,
+      "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/anderson-48001.runtime-certificate.json"
+    },
+    {
+      "countyId": "andrews-tx",
+      "county": "Andrews County",
+      "fips": "48003",
+      "path": "data/generated/lp104/txgio-addresses/andrews-48003.addresses.jsonl.gz",
+      "sizeBytes": 248776,
+      "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/andrews-48003.runtime-certificate.json"
+    },
+    {
+      "countyId": "angelina-tx",
+      "county": "Angelina County",
+      "fips": "48005",
+      "path": "data/generated/lp104/txgio-addresses/angelina-48005.addresses.jsonl.gz",
+      "sizeBytes": 1335591,
+      "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/angelina-48005.runtime-certificate.json"
+    },
+    {
+      "countyId": "aransas-tx",
+      "county": "Aransas County",
+      "fips": "48007",
+      "path": "data/generated/lp104/txgio-addresses/aransas-48007.addresses.jsonl.gz",
+      "sizeBytes": 448181,
+      "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/aransas-48007.runtime-certificate.json"
+    },
+    {
+      "countyId": "archer-tx",
+      "county": "Archer County",
+      "fips": "48009",
+      "path": "data/generated/lp104/txgio-addresses/archer-48009.addresses.jsonl.gz",
+      "sizeBytes": 176349,
+      "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/archer-48009.runtime-certificate.json"
+    },
+    {
+      "countyId": "armstrong-tx",
+      "county": "Armstrong County",
+      "fips": "48011",
+      "path": "data/generated/lp104/txgio-addresses/armstrong-48011.addresses.jsonl.gz",
+      "sizeBytes": 41191,
+      "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/armstrong-48011.runtime-certificate.json"
+    },
+    {
+      "countyId": "atascosa-tx",
+      "county": "Atascosa County",
+      "fips": "48013",
+      "path": "data/generated/lp104/txgio-addresses/atascosa-48013.addresses.jsonl.gz",
+      "sizeBytes": 839784,
+      "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/atascosa-48013.runtime-certificate.json"
+    },
+    {
+      "countyId": "bailey-tx",
+      "county": "Bailey County",
+      "fips": "48017",
+      "path": "data/generated/lp104/txgio-addresses/bailey-48017.addresses.jsonl.gz",
+      "sizeBytes": 105773,
+      "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bailey-48017.runtime-certificate.json"
+    },
+    {
+      "countyId": "bastrop-tx",
+      "county": "Bastrop County",
+      "fips": "48021",
+      "path": "data/generated/lp104/txgio-addresses/bastrop-48021.addresses.jsonl.gz",
+      "sizeBytes": 1906657,
+      "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bastrop-48021.runtime-certificate.json"
+    },
+    {
+      "countyId": "baylor-tx",
+      "county": "Baylor County",
+      "fips": "48023",
+      "path": "data/generated/lp104/txgio-addresses/baylor-48023.addresses.jsonl.gz",
+      "sizeBytes": 84590,
+      "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/baylor-48023.runtime-certificate.json"
+    },
+    {
+      "countyId": "bee-tx",
+      "county": "Bee County",
+      "fips": "48025",
+      "path": "data/generated/lp104/txgio-addresses/bee-48025.addresses.jsonl.gz",
+      "sizeBytes": 225545,
+      "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bee-48025.runtime-certificate.json"
+    },
+    {
+      "countyId": "bexar-tx",
+      "county": "Bexar County",
+      "fips": "48029",
+      "path": "data/generated/lp104/txgio-addresses/bexar-48029.addresses.jsonl.gz",
+      "sizeBytes": 21101375,
+      "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bexar-48029.runtime-certificate.json"
+    },
+    {
+      "countyId": "blanco-tx",
+      "county": "Blanco County",
+      "fips": "48031",
+      "path": "data/generated/lp104/txgio-addresses/blanco-48031.addresses.jsonl.gz",
+      "sizeBytes": 307471,
+      "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/blanco-48031.runtime-certificate.json"
+    },
+    {
+      "countyId": "borden-tx",
+      "county": "Borden County",
+      "fips": "48033",
+      "path": "data/generated/lp104/txgio-addresses/borden-48033.addresses.jsonl.gz",
+      "sizeBytes": 23819,
+      "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/borden-48033.runtime-certificate.json"
+    },
+    {
+      "countyId": "bosque-tx",
+      "county": "Bosque County",
+      "fips": "48035",
+      "path": "data/generated/lp104/txgio-addresses/bosque-48035.addresses.jsonl.gz",
+      "sizeBytes": 337704,
+      "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bosque-48035.runtime-certificate.json"
+    },
+    {
+      "countyId": "bowie-tx",
+      "county": "Bowie County",
+      "fips": "48037",
+      "path": "data/generated/lp104/txgio-addresses/bowie-48037.addresses.jsonl.gz",
+      "sizeBytes": 1499449,
+      "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/bowie-48037.runtime-certificate.json"
+    },
+    {
+      "countyId": "briscoe-tx",
+      "county": "Briscoe County",
+      "fips": "48045",
+      "path": "data/generated/lp104/txgio-addresses/briscoe-48045.addresses.jsonl.gz",
+      "sizeBytes": 38147,
+      "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/briscoe-48045.runtime-certificate.json"
+    },
+    {
+      "countyId": "brooks-tx",
+      "county": "Brooks County",
+      "fips": "48047",
+      "path": "data/generated/lp104/txgio-addresses/brooks-48047.addresses.jsonl.gz",
+      "sizeBytes": 101543,
+      "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/brooks-48047.runtime-certificate.json"
+    },
+    {
+      "countyId": "brown-tx",
+      "county": "Brown County",
+      "fips": "48049",
+      "path": "data/generated/lp104/txgio-addresses/brown-48049.addresses.jsonl.gz",
+      "sizeBytes": 831260,
+      "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/brown-48049.runtime-certificate.json"
+    },
+    {
+      "countyId": "burnet-tx",
+      "county": "Burnet County",
+      "fips": "48053",
+      "path": "data/generated/lp104/txgio-addresses/burnet-48053.addresses.jsonl.gz",
+      "sizeBytes": 1257248,
+      "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/burnet-48053.runtime-certificate.json"
+    },
+    {
+      "countyId": "caldwell-tx",
+      "county": "Caldwell County",
+      "fips": "48055",
+      "path": "data/generated/lp104/txgio-addresses/caldwell-48055.addresses.jsonl.gz",
+      "sizeBytes": 850854,
+      "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/caldwell-48055.runtime-certificate.json"
+    },
+    {
+      "countyId": "callahan-tx",
+      "county": "Callahan County",
+      "fips": "48059",
+      "path": "data/generated/lp104/txgio-addresses/callahan-48059.addresses.jsonl.gz",
+      "sizeBytes": 310500,
+      "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110",
+      "certificate": "reports/lp130-statewide-addresses/batch-01/certificates/callahan-48059.runtime-certificate.json"
+    }
+  ]
+}

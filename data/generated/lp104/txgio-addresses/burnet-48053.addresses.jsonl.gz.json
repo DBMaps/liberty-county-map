@@ -1,0 +1,13 @@
+{
+  "countyId": "burnet",
+  "county": "Burnet",
+  "fips": "48053",
+  "sourceRecordsRead": 35857,
+  "acceptedRecords": 35857,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 1257248,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\burnet-48053.addresses.jsonl.gz",
+  "packageHash": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491",
+  "outputCrs": "EPSG:4326"
+}

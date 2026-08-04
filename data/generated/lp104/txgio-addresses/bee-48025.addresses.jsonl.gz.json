@@ -1,0 +1,13 @@
+{
+  "countyId": "bee",
+  "county": "Bee",
+  "fips": "48025",
+  "sourceRecordsRead": 7390,
+  "acceptedRecords": 7390,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 225545,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bee-48025.addresses.jsonl.gz",
+  "packageHash": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6",
+  "outputCrs": "EPSG:4326"
+}

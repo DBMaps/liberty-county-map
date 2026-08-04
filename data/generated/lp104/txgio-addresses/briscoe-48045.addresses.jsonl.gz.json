@@ -1,0 +1,13 @@
+{
+  "countyId": "briscoe",
+  "county": "Briscoe",
+  "fips": "48045",
+  "sourceRecordsRead": 1202,
+  "acceptedRecords": 1202,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 38147,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\briscoe-48045.addresses.jsonl.gz",
+  "packageHash": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621",
+  "outputCrs": "EPSG:4326"
+}

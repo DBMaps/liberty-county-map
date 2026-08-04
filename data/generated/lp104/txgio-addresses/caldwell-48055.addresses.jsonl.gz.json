@@ -1,0 +1,13 @@
+{
+  "countyId": "caldwell",
+  "county": "Caldwell",
+  "fips": "48055",
+  "sourceRecordsRead": 26125,
+  "acceptedRecords": 26125,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 850854,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\caldwell-48055.addresses.jsonl.gz",
+  "packageHash": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126",
+  "outputCrs": "EPSG:4326"
+}

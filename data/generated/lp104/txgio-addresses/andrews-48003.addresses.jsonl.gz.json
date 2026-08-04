@@ -1,0 +1,13 @@
+{
+  "countyId": "andrews",
+  "county": "Andrews",
+  "fips": "48003",
+  "sourceRecordsRead": 7983,
+  "acceptedRecords": 7983,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 248776,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\andrews-48003.addresses.jsonl.gz",
+  "packageHash": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1",
+  "outputCrs": "EPSG:4326"
+}

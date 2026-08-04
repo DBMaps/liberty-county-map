@@ -1,0 +1,13 @@
+{
+  "countyId": "bowie",
+  "county": "Bowie",
+  "fips": "48037",
+  "sourceRecordsRead": 49765,
+  "acceptedRecords": 49765,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 1499449,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bowie-48037.addresses.jsonl.gz",
+  "packageHash": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9",
+  "outputCrs": "EPSG:4326"
+}

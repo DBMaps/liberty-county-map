@@ -1,0 +1,13 @@
+{
+  "countyId": "borden",
+  "county": "Borden",
+  "fips": "48033",
+  "sourceRecordsRead": 713,
+  "acceptedRecords": 713,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 23819,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\borden-48033.addresses.jsonl.gz",
+  "packageHash": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d",
+  "outputCrs": "EPSG:4326"
+}

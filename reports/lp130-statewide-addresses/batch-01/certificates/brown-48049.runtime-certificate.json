@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "brown-tx",
+  "county": "Brown County",
+  "fips": "48049",
+  "artifact": "brown-48049.addresses.jsonl.gz",
+  "sizeBytes": 831260,
+  "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

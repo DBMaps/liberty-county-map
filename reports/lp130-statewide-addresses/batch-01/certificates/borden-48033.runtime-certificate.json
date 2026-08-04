@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "borden-tx",
+  "county": "Borden County",
+  "fips": "48033",
+  "artifact": "borden-48033.addresses.jsonl.gz",
+  "sizeBytes": 23819,
+  "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

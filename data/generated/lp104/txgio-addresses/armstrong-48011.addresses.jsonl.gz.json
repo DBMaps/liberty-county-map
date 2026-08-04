@@ -1,0 +1,13 @@
+{
+  "countyId": "armstrong",
+  "county": "Armstrong",
+  "fips": "48011",
+  "sourceRecordsRead": 1309,
+  "acceptedRecords": 1309,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 41191,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\armstrong-48011.addresses.jsonl.gz",
+  "packageHash": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509",
+  "outputCrs": "EPSG:4326"
+}

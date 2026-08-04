@@ -1,0 +1,13 @@
+{
+  "countyId": "angelina",
+  "county": "Angelina",
+  "fips": "48005",
+  "sourceRecordsRead": 36328,
+  "acceptedRecords": 36209,
+  "rejectedRecords": 0,
+  "duplicates": 119,
+  "outputBytes": 1335591,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\angelina-48005.addresses.jsonl.gz",
+  "packageHash": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d",
+  "outputCrs": "EPSG:4326"
+}

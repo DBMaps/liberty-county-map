@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "armstrong-tx",
+  "county": "Armstrong County",
+  "fips": "48011",
+  "artifact": "armstrong-48011.addresses.jsonl.gz",
+  "sizeBytes": 41191,
+  "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

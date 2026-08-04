@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "andrews-tx",
+  "county": "Andrews County",
+  "fips": "48003",
+  "artifact": "andrews-48003.addresses.jsonl.gz",
+  "sizeBytes": 248776,
+  "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

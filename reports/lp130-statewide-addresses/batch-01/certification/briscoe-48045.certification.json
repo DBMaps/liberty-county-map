@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Briscoe County",
+  "countyFips": "48045",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 38147,
+  "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621",
+  "indexedAddressCount": 1202,
+  "exactMatchStatistics": {
+    "sampled": 1202,
+    "passed": 1202,
+    "failed": 0,
+    "p95LookupMs": 0.005200000014156103
+  },
+  "exactSample": {
+    "providerIdentity": "127c25ef76d1fd401122",
+    "houseNumber": "100",
+    "canonicalRoad": "BRAIDFOOT STREET",
+    "city": "",
+    "zip": "79257",
+    "county": "Briscoe County",
+    "countyFips": "48045",
+    "query": "100 BRAIDFOOT STREET TX 79257",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 1202,
+    "truthfulNoResults": 1202,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 1202,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 1202,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 180,
+    "variantsTested": 540,
+    "variantsPassed": 540
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 15.324699999764562,
+  "certificationStatus": "PASS",
+  "failures": []
+}

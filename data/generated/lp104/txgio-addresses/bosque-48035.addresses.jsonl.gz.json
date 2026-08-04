@@ -1,0 +1,13 @@
+{
+  "countyId": "bosque",
+  "county": "Bosque",
+  "fips": "48035",
+  "sourceRecordsRead": 10962,
+  "acceptedRecords": 10962,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 337704,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bosque-48035.addresses.jsonl.gz",
+  "packageHash": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0",
+  "outputCrs": "EPSG:4326"
+}

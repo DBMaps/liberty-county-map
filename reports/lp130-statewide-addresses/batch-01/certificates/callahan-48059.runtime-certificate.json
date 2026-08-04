@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "callahan-tx",
+  "county": "Callahan County",
+  "fips": "48059",
+  "artifact": "callahan-48059.addresses.jsonl.gz",
+  "sizeBytes": 310500,
+  "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "countyId": "baylor",
+  "county": "Baylor",
+  "fips": "48023",
+  "sourceRecordsRead": 2730,
+  "acceptedRecords": 2730,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 84590,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\baylor-48023.addresses.jsonl.gz",
+  "packageHash": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf",
+  "outputCrs": "EPSG:4326"
+}

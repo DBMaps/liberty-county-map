@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Callahan County",
+  "countyFips": "48059",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 310500,
+  "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110",
+  "indexedAddressCount": 9792,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.010100000072270632
+  },
+  "exactSample": {
+    "providerIdentity": "a2ebf5bb7ade1ea17246",
+    "houseNumber": "10",
+    "canonicalRoad": "PRIVATE ROAD 5291",
+    "city": "BAIRD",
+    "zip": "79504",
+    "county": "Callahan County",
+    "countyFips": "48059",
+    "query": "10 PRIVATE ROAD 5291 BAIRD TX 79504",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 110.8859999999404,
+  "certificationStatus": "PASS",
+  "failures": []
+}

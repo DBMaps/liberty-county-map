@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Borden County",
+  "countyFips": "48033",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 23819,
+  "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d",
+  "indexedAddressCount": 713,
+  "exactMatchStatistics": {
+    "sampled": 713,
+    "passed": 713,
+    "failed": 0,
+    "p95LookupMs": 0.003200000151991844
+  },
+  "exactSample": {
+    "providerIdentity": "bdc9ded0dd58aae55d13",
+    "houseNumber": "100",
+    "canonicalRoad": "CEMETERY ROAD",
+    "city": "GAIL",
+    "zip": "79738",
+    "county": "Borden County",
+    "countyFips": "48033",
+    "query": "100 CEMETERY ROAD GAIL TX 79738",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 713,
+    "truthfulNoResults": 713,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 713,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 713,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 321,
+    "variantsTested": 963,
+    "variantsPassed": 963
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 4.128299999982119,
+  "certificationStatus": "PASS",
+  "failures": []
+}

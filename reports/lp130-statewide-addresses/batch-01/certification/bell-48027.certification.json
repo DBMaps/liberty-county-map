@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Bell County",
+  "countyFips": "48027",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 5367668,
+  "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050",
+  "indexedAddressCount": 174693,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 2998,
+    "failed": 2,
+    "p95LookupMs": 0.005600000000413274
+  },
+  "exactSample": {
+    "providerIdentity": "b918bd1af9fc5905c66a",
+    "houseNumber": "1",
+    "canonicalRoad": "ADMIRALS CIR",
+    "city": "MORGANS POINT RESORT",
+    "zip": "76513",
+    "county": "Bell County",
+    "countyFips": "48027",
+    "query": "1 ADMIRALS CIR MORGANS POINT RESORT TX 76513",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 2787,
+    "variantsTested": 8361,
+    "variantsPassed": 8361
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 1161.9343999999996,
+  "certificationStatus": "FAIL",
+  "failures": [
+    "exact address sample failed"
+  ]
+}

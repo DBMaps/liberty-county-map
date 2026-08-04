@@ -1,0 +1,249 @@
+{
+  "schemaVersion": "gridly-lp130-batch-validation-v1",
+  "batch": "batch-01",
+  "expectedCountyCount": 25,
+  "completedCountyCount": 22,
+  "status": "FAIL",
+  "counties": [
+    {
+      "countyId": "anderson",
+      "county": "Anderson County",
+      "fips": "48001",
+      "package": "anderson-48001.addresses.jsonl.gz",
+      "sizeBytes": 937861,
+      "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c",
+      "records": 27798,
+      "status": "PASS"
+    },
+    {
+      "countyId": "andrews",
+      "county": "Andrews County",
+      "fips": "48003",
+      "package": "andrews-48003.addresses.jsonl.gz",
+      "sizeBytes": 248776,
+      "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1",
+      "records": 7983,
+      "status": "PASS"
+    },
+    {
+      "countyId": "angelina",
+      "county": "Angelina County",
+      "fips": "48005",
+      "package": "angelina-48005.addresses.jsonl.gz",
+      "sizeBytes": 1335591,
+      "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d",
+      "records": 36209,
+      "status": "PASS"
+    },
+    {
+      "countyId": "aransas",
+      "county": "Aransas County",
+      "fips": "48007",
+      "package": "aransas-48007.addresses.jsonl.gz",
+      "sizeBytes": 448181,
+      "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46",
+      "records": 14670,
+      "status": "PASS"
+    },
+    {
+      "countyId": "archer",
+      "county": "Archer County",
+      "fips": "48009",
+      "package": "archer-48009.addresses.jsonl.gz",
+      "sizeBytes": 176349,
+      "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d",
+      "records": 5388,
+      "status": "PASS"
+    },
+    {
+      "countyId": "armstrong",
+      "county": "Armstrong County",
+      "fips": "48011",
+      "package": "armstrong-48011.addresses.jsonl.gz",
+      "sizeBytes": 41191,
+      "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509",
+      "records": 1309,
+      "status": "PASS"
+    },
+    {
+      "countyId": "atascosa",
+      "county": "Atascosa County",
+      "fips": "48013",
+      "package": "atascosa-48013.addresses.jsonl.gz",
+      "sizeBytes": 839784,
+      "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5",
+      "records": 25919,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bailey",
+      "county": "Bailey County",
+      "fips": "48017",
+      "package": "bailey-48017.addresses.jsonl.gz",
+      "sizeBytes": 105773,
+      "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55",
+      "records": 3346,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bastrop",
+      "county": "Bastrop County",
+      "fips": "48021",
+      "package": "bastrop-48021.addresses.jsonl.gz",
+      "sizeBytes": 1906657,
+      "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8",
+      "records": 63471,
+      "status": "PASS"
+    },
+    {
+      "countyId": "baylor",
+      "county": "Baylor County",
+      "fips": "48023",
+      "package": "baylor-48023.addresses.jsonl.gz",
+      "sizeBytes": 84590,
+      "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf",
+      "records": 2730,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bee",
+      "county": "Bee County",
+      "fips": "48025",
+      "package": "bee-48025.addresses.jsonl.gz",
+      "sizeBytes": 225545,
+      "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6",
+      "records": 7390,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bexar",
+      "county": "Bexar County",
+      "fips": "48029",
+      "package": "bexar-48029.addresses.jsonl.gz",
+      "sizeBytes": 21101375,
+      "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9",
+      "records": 721120,
+      "status": "PASS"
+    },
+    {
+      "countyId": "blanco",
+      "county": "Blanco County",
+      "fips": "48031",
+      "package": "blanco-48031.addresses.jsonl.gz",
+      "sizeBytes": 307471,
+      "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115",
+      "records": 8477,
+      "status": "PASS"
+    },
+    {
+      "countyId": "borden",
+      "county": "Borden County",
+      "fips": "48033",
+      "package": "borden-48033.addresses.jsonl.gz",
+      "sizeBytes": 23819,
+      "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d",
+      "records": 713,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bosque",
+      "county": "Bosque County",
+      "fips": "48035",
+      "package": "bosque-48035.addresses.jsonl.gz",
+      "sizeBytes": 337704,
+      "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0",
+      "records": 10962,
+      "status": "PASS"
+    },
+    {
+      "countyId": "bowie",
+      "county": "Bowie County",
+      "fips": "48037",
+      "package": "bowie-48037.addresses.jsonl.gz",
+      "sizeBytes": 1499449,
+      "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9",
+      "records": 49765,
+      "status": "PASS"
+    },
+    {
+      "countyId": "briscoe",
+      "county": "Briscoe County",
+      "fips": "48045",
+      "package": "briscoe-48045.addresses.jsonl.gz",
+      "sizeBytes": 38147,
+      "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621",
+      "records": 1202,
+      "status": "PASS"
+    },
+    {
+      "countyId": "brooks",
+      "county": "Brooks County",
+      "fips": "48047",
+      "package": "brooks-48047.addresses.jsonl.gz",
+      "sizeBytes": 101543,
+      "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88",
+      "records": 3288,
+      "status": "PASS"
+    },
+    {
+      "countyId": "brown",
+      "county": "Brown County",
+      "fips": "48049",
+      "package": "brown-48049.addresses.jsonl.gz",
+      "sizeBytes": 831260,
+      "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3",
+      "records": 25327,
+      "status": "PASS"
+    },
+    {
+      "countyId": "burnet",
+      "county": "Burnet County",
+      "fips": "48053",
+      "package": "burnet-48053.addresses.jsonl.gz",
+      "sizeBytes": 1257248,
+      "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491",
+      "records": 35857,
+      "status": "PASS"
+    },
+    {
+      "countyId": "caldwell",
+      "county": "Caldwell County",
+      "fips": "48055",
+      "package": "caldwell-48055.addresses.jsonl.gz",
+      "sizeBytes": 850854,
+      "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126",
+      "records": 26125,
+      "status": "PASS"
+    },
+    {
+      "countyId": "callahan",
+      "county": "Callahan County",
+      "fips": "48059",
+      "package": "callahan-48059.addresses.jsonl.gz",
+      "sizeBytes": 310500,
+      "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110",
+      "records": 9792,
+      "status": "PASS"
+    }
+  ],
+  "failures": [
+    {
+      "countyId": "bandera",
+      "county": "Bandera County",
+      "fips": "48019",
+      "failure": "48019: package metadata validation failed"
+    },
+    {
+      "countyId": "bell",
+      "county": "Bell County",
+      "fips": "48027",
+      "failure": "48027: package metadata validation failed"
+    },
+    {
+      "countyId": "brewster",
+      "county": "Brewster County",
+      "fips": "48043",
+      "failure": "48043: package metadata validation failed"
+    }
+  ]
+}

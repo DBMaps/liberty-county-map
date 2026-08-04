@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "bowie-tx",
+  "county": "Bowie County",
+  "fips": "48037",
+  "artifact": "bowie-48037.addresses.jsonl.gz",
+  "sizeBytes": 1499449,
+  "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

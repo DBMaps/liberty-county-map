@@ -1,0 +1,13 @@
+{
+  "countyId": "brooks",
+  "county": "Brooks",
+  "fips": "48047",
+  "sourceRecordsRead": 3288,
+  "acceptedRecords": 3288,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 101543,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brooks-48047.addresses.jsonl.gz",
+  "packageHash": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88",
+  "outputCrs": "EPSG:4326"
+}

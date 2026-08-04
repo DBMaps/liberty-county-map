@@ -1,0 +1,13 @@
+{
+  "countyId": "anderson",
+  "county": "Anderson",
+  "fips": "48001",
+  "sourceRecordsRead": 27798,
+  "acceptedRecords": 27798,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 937861,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\anderson-48001.addresses.jsonl.gz",
+  "packageHash": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c",
+  "outputCrs": "EPSG:4326"
+}

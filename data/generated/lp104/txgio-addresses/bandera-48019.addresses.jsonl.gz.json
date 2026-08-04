@@ -1,0 +1,13 @@
+{
+  "countyId": "bandera",
+  "county": "Bandera",
+  "fips": "48019",
+  "sourceRecordsRead": 16033,
+  "acceptedRecords": 16033,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 539409,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bandera-48019.addresses.jsonl.gz",
+  "packageHash": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+  "outputCrs": "EPSG:4326"
+}

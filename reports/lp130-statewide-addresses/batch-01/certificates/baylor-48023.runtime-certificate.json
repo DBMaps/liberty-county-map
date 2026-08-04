@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP105.1-candidate",
+  "countyId": "baylor-tx",
+  "county": "Baylor County",
+  "fips": "48023",
+  "artifact": "baylor-48023.addresses.jsonl.gz",
+  "sizeBytes": 84590,
+  "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf",
+  "sourcePackageModified": false,
+  "acceptance": {
+    "houseNumber": "exact",
+    "road": "canonical_exact",
+    "interpolation": false,
+    "nearbyHouseSubstitution": false
+  }
+}

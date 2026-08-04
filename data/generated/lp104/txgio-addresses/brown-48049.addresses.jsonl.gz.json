@@ -1,0 +1,13 @@
+{
+  "countyId": "brown",
+  "county": "Brown",
+  "fips": "48049",
+  "sourceRecordsRead": 25327,
+  "acceptedRecords": 25327,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 831260,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\brown-48049.addresses.jsonl.gz",
+  "packageHash": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3",
+  "outputCrs": "EPSG:4326"
+}

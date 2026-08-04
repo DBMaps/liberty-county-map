@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly-lp1051-manufacturing-report-v1",
+  "cohort": "selected",
+  "activated": false,
+  "completedCount": 3,
+  "successCount": 0,
+  "failureCount": 3,
+  "counties": [
+    {
+      "county": "Bandera County",
+      "fips": "48019",
+      "buildStatus": "RESUMED",
+      "resumedStatus": true,
+      "packagePath": "data/generated/lp104/txgio-addresses/bandera-48019.addresses.jsonl.gz",
+      "packageSize": 539409,
+      "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "FAIL",
+      "indexedAddressCount": 16033,
+      "runtimeLoadDurationMs": 122.10640000000012,
+      "failures": [
+        "LP104.6: canonical road alias failed"
+      ]
+    },
+    {
+      "county": "Bell County",
+      "fips": "48027",
+      "buildStatus": "RESUMED",
+      "resumedStatus": true,
+      "packagePath": "data/generated/lp104/txgio-addresses/bell-48027.addresses.jsonl.gz",
+      "packageSize": 5367668,
+      "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "FAIL",
+      "indexedAddressCount": 174693,
+      "runtimeLoadDurationMs": 1161.9343999999996,
+      "failures": [
+        "LP104.6: exact address sample failed"
+      ]
+    },
+    {
+      "county": "Brewster County",
+      "fips": "48043",
+      "buildStatus": "RESUMED",
+      "resumedStatus": true,
+      "packagePath": "data/generated/lp104/txgio-addresses/brewster-48043.addresses.jsonl.gz",
+      "packageSize": 334550,
+      "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2",
+      "runtimeCertificateStatus": "GENERATED",
+      "candidateManifestStatus": "INCLUDED",
+      "lp1046CertificationStatus": "FAIL",
+      "indexedAddressCount": 9322,
+      "runtimeLoadDurationMs": 51.84909999999945,
+      "failures": [
+        "LP104.6: exact address sample failed"
+      ]
+    }
+  ]
+}

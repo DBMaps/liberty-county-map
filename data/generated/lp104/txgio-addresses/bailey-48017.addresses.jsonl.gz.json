@@ -1,0 +1,13 @@
+{
+  "countyId": "bailey",
+  "county": "Bailey",
+  "fips": "48017",
+  "sourceRecordsRead": 3346,
+  "acceptedRecords": 3346,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 105773,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\bailey-48017.addresses.jsonl.gz",
+  "packageHash": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55",
+  "outputCrs": "EPSG:4326"
+}

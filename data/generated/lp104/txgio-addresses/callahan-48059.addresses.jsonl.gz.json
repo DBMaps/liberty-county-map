@@ -1,0 +1,13 @@
+{
+  "countyId": "callahan",
+  "county": "Callahan",
+  "fips": "48059",
+  "sourceRecordsRead": 9792,
+  "acceptedRecords": 9792,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 310500,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\callahan-48059.addresses.jsonl.gz",
+  "packageHash": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110",
+  "outputCrs": "EPSG:4326"
+}

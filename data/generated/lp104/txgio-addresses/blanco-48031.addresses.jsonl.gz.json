@@ -1,0 +1,13 @@
+{
+  "countyId": "blanco",
+  "county": "Blanco",
+  "fips": "48031",
+  "sourceRecordsRead": 8483,
+  "acceptedRecords": 8477,
+  "rejectedRecords": 6,
+  "duplicates": 0,
+  "outputBytes": 307471,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\blanco-48031.addresses.jsonl.gz",
+  "packageHash": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115",
+  "outputCrs": "EPSG:4326"
+}

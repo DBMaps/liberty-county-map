@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Atascosa County",
+  "countyFips": "48013",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 839784,
+  "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5",
+  "indexedAddressCount": 25919,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.004399999976158142
+  },
+  "exactSample": {
+    "providerIdentity": "5a2219349d33dd8df8b1",
+    "houseNumber": "1",
+    "canonicalRoad": "BOCAWOOD DRIVE",
+    "city": "POTEET",
+    "zip": "78065",
+    "county": "Atascosa County",
+    "countyFips": "48013",
+    "query": "1 Bocawood Drive POTEET TX 78065",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 164.30190000031143,
+  "certificationStatus": "PASS",
+  "failures": []
+}

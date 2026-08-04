@@ -1,0 +1,13 @@
+{
+  "countyId": "aransas",
+  "county": "Aransas",
+  "fips": "48007",
+  "sourceRecordsRead": 14670,
+  "acceptedRecords": 14670,
+  "rejectedRecords": 0,
+  "duplicates": 0,
+  "outputBytes": 448181,
+  "outputPath": "C:\\GitHub\\liberty-county-map\\data\\generated\\lp104\\txgio-addresses\\aransas-48007.addresses.jsonl.gz",
+  "packageHash": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46",
+  "outputCrs": "EPSG:4326"
+}

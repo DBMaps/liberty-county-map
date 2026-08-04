@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Brown County",
+  "countyFips": "48049",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 831260,
+  "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3",
+  "indexedAddressCount": 25327,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.007400000002235174
+  },
+  "exactSample": {
+    "providerIdentity": "bc3eedf7c7277af51c07",
+    "houseNumber": "1",
+    "canonicalRoad": "ALAMO COURT",
+    "city": "BROWNWOOD",
+    "zip": "76801",
+    "county": "Brown County",
+    "countyFips": "48049",
+    "query": "1 ALAMO COURT BROWNWOOD TX 76801",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "runtimeLoadDurationMs": 475.0672999997623,
+  "certificationStatus": "PASS",
+  "failures": []
+}
