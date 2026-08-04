@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "gridly-lp128-final-reconciliation-v1",
+  "milestone": "LP128",
+  "status": "CANDIDATE_MANUFACTURING_COMPLETE",
+  "manufacturingCommit": "466878abf931d156786e4ae68ee00bf7c4da657c",
+  "sequence": [
+    "The isolated Codex environment could not access the TxGIO source geodatabase.",
+    "The owner manufactured the selected cohort locally from the verified source.",
+    "The owner committed the resulting packages and reports.",
+    "Codex audited and reconciled the committed artifacts without rerunning extraction or manufacturing."
+  ],
+  "source": {
+    "identity": "TxGIO 2026 Statewide Address Points",
+    "ownerPath": "Texas-Address-Points/Raw/Texas-2026.gdb",
+    "logicalBytes": 1715018101,
+    "componentCount": 126,
+    "recordCount": 12142647,
+    "sourceCrs": "EPSG:3857",
+    "outputCrs": "EPSG:4326",
+    "hashStatus": "HASH_NOT_CALCULATED (directory components)",
+    "mountedDuringReconciliation": false
+  },
+  "counties": [
+    {
+      "countyId": "lee",
+      "county": "Lee County",
+      "fips": "48287",
+      "sourceRecordsRead": 11096,
+      "acceptedRecords": 11030,
+      "rejectedRecords": 0,
+      "duplicates": 66,
+      "packageBytes": 370322,
+      "packageSha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53",
+      "decompressedSha256": "68642c1c2d13b68c374ee61fd366d4d7b94f91c1295c56f6bc670145982534a8"
+    },
+    {
+      "countyId": "milam",
+      "county": "Milam County",
+      "fips": "48331",
+      "sourceRecordsRead": 10992,
+      "acceptedRecords": 10992,
+      "rejectedRecords": 0,
+      "duplicates": 0,
+      "packageBytes": 375753,
+      "packageSha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0",
+      "decompressedSha256": "b1e2d219bce6031c90b0526c6de6fbd8f4ec5a86a6548940897b6413fca18e46"
+    },
+    {
+      "countyId": "robertson",
+      "county": "Robertson County",
+      "fips": "48395",
+      "sourceRecordsRead": 11846,
+      "acceptedRecords": 11846,
+      "rejectedRecords": 0,
+      "duplicates": 0,
+      "packageBytes": 401846,
+      "packageSha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6",
+      "decompressedSha256": "407a2620bab9b65d05819f77f7bc4b97f06f32d717dda17dca5c981066d21ee7"
+    }
+  ],
+  "totals": {
+    "sourceRecordsRead": 33934,
+    "acceptedRecords": 33868,
+    "rejectedRecords": 0,
+    "duplicates": 66,
+    "packageBytes": 1147921
+  },
+  "artifacts": {
+    "packages": 3,
+    "sidecars": 3,
+    "aggregateManifest": "data/generated/lp104/txgio-addresses/manifest.json",
+    "runtimeCertificates": 3,
+    "certificationReports": 3,
+    "candidateRuntimeManifest": "reports/lp128-wave-2/runtime-manifest.candidate.json",
+    "manufacturingReport": "reports/lp128-wave-2/lp1051-28-county-manufacturing-report.json",
+    "firstRunHashes": "reports/lp128-wave-2/lp128-run-1-hashes.csv",
+    "secondRunHashes": "reports/lp128-wave-2/lp128-run-2-hashes.csv",
+    "secondRunDecompressedHashes": "reports/lp128-wave-2/lp128-run-2-decompressed-hashes.csv"
+  },
+  "determinism": {
+    "governedFields": ["county identity", "counts", "package bytes", "package SHA-256"],
+    "packageComparison": "BYTE_IDENTICAL",
+    "allCountiesMatch": true,
+    "operationalMetadataExcluded": ["generatedAt", "report timestamps", "certificate timestamps", "local output paths"]
+  },
+  "boundaries": {
+    "candidateOnly": true,
+    "candidateApproval": false,
+    "productionAuthorization": false,
+    "runtimeEligible": false,
+    "storageUploadOccurred": false,
+    "deploymentOccurred": false,
+    "runtimeActivated": false,
+    "protectedSystemsChanged": false,
+    "productionRuntimeManifestChanged": false
+  },
+  "excludedCountyOutputs": ["Burleson", "Trinity", "Victoria", "unrelated Grimes"],
+  "sourceDatasetCommittedByLp128": false,
+  "temporaryRecordsCommittedByLp128": false
+}
