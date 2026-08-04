@@ -1,0 +1,21 @@
+{
+  "activationCount": 0,
+  "activationOccurred": false,
+  "candidateCountyCount": 0,
+  "deploymentCount": 0,
+  "deploymentOccurred": false,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "identityCount": 254,
+  "milestone": "LP151",
+  "operationalCountyCount": 28,
+  "passed": true,
+  "preExistingBaselineFailures": [
+    {
+      "introducedByLp151": false,
+      "message": "[LP148] tracked/generated package does not match deterministic rebuild",
+      "milestone": "LP148"
+    }
+  ],
+  "runtimeMembershipChanged": false,
+  "schemaVersion": "gridly.lp151.validationSummary.v1"
+}

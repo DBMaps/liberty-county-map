@@ -1,0 +1,202 @@
+{
+  "authoritativeInputs": {
+    "cand150": "data/lp150/candidate-membership-contract.json",
+    "counties": "data/lp104/texas-counties.json",
+    "gates": "reports/lp151/gate-results.json",
+    "hashes": "reports/lp151/protected-artifact-hashes.json",
+    "lp138": "evidence/lp138/county-geometry-membership-contract.baseline.json",
+    "man148": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json",
+    "pkg148": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+    "planner": "tools/lp140/activation-wave-planner.mjs",
+    "recon": "reports/lp151/cross-layer-reconciliation.json",
+    "reg149": "data/lp149/runtime-county-registry.json",
+    "registry": "data/lp151/statewide-operational-validation-registry.json",
+    "report": "reports/lp151/statewide-operational-validation-report.json",
+    "storage147": "reports/lp147/statewide-storage-publication.json",
+    "summary": "reports/lp151/validation-summary.json",
+    "trans150": "data/lp150/membership-transition-registry.json"
+  },
+  "crossLayerReconciliation": {
+    "certification": {
+      "blockerCount": 28,
+      "certificateCount": 226,
+      "matchesIdentityFips": false,
+      "uniqueCertificateFips": 226
+    },
+    "geometry": {
+      "ascending": true,
+      "identityCount": 254,
+      "lp148Condition": "[LP148] tracked/generated package does not match deterministic rebuild",
+      "recognized": true
+    },
+    "identity": {
+      "ascending": true,
+      "count": 254,
+      "oneCountyPerIdentity": true,
+      "unique": true
+    },
+    "manufacturing": {
+      "matchesIdentityFips": true,
+      "packageHashArtifactCount": 220,
+      "recognizedPackageIdentities": 254,
+      "uniquePackageHashFips": 220
+    },
+    "membership": {
+      "activationCount": 0,
+      "approvedCountyCount": 0,
+      "candidateCountyCount": 0,
+      "deployedTransitionCountyCount": 0,
+      "lp138OperationalCount": 28,
+      "operationalCountyCount": 28
+    },
+    "planner": {
+      "plannerArtifactPresent": true,
+      "preserved": true,
+      "waveAssignmentsDeterministic": true
+    },
+    "storage": {
+      "certificatePresenceCount": 226,
+      "packagePresenceCount": 254,
+      "publicationArtifactPresent": true,
+      "verificationStatus": "READ_ONLY_RECONCILED"
+    }
+  },
+  "gates": [
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "matchesIdentityFips": true,
+        "packageHashArtifactCount": 220,
+        "recognizedPackageIdentities": 254,
+        "uniquePackageHashFips": 220
+      },
+      "name": "Manufacturing",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "blockerCount": 28,
+        "certificateCount": 226,
+        "matchesIdentityFips": false,
+        "uniqueCertificateFips": 226
+      },
+      "name": "Certification",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "certificatePresenceCount": 226,
+        "packagePresenceCount": 254,
+        "publicationArtifactPresent": true,
+        "verificationStatus": "READ_ONLY_RECONCILED"
+      },
+      "name": "Storage",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "ascending": true,
+        "identityCount": 254,
+        "lp148Condition": "[LP148] tracked/generated package does not match deterministic rebuild",
+        "recognized": true
+      },
+      "name": "Geometry",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "ascending": true,
+        "count": 254,
+        "oneCountyPerIdentity": true,
+        "unique": true
+      },
+      "name": "Identity",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "activationCount": 0,
+        "approvedCountyCount": 0,
+        "candidateCountyCount": 0,
+        "deployedTransitionCountyCount": 0,
+        "lp138OperationalCount": 28,
+        "operationalCountyCount": 28
+      },
+      "name": "Membership",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "plannerArtifactPresent": true,
+        "preserved": true,
+        "waveAssignmentsDeterministic": true
+      },
+      "name": "Planner",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "deployedTransitionCountyCount": 0,
+        "deploymentPerformed": false
+      },
+      "name": "Deployment",
+      "passed": true
+    },
+    {
+      "blockedByPriorFailure": false,
+      "details": {
+        "activationCount": 0,
+        "activationPerformed": false
+      },
+      "name": "Activation",
+      "passed": true
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP151",
+  "protectedArtifactHashes": {
+    "lp138Baseline": "717c25ab4aa80a282d49899cd8d33d0fe6f82305ced68c0d167cf5f3d1168847",
+    "lp140Planner": "0da4df33aa27326bf18349a4bb5e7ef90c6c3884ad232afe4dd2d2180050fc74",
+    "lp148Manifest": "67fa26854a7a00699fd119a2a58773ae81a0f18f62f283e89a8216ec92f53f58",
+    "lp148Package": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49",
+    "lp149Registry": "0185e7d3aac7965fff83ce7859c829604091284eda96f33669f2d2757c977f22",
+    "lp150CandidateContract": "9235f3a5e4fe17480d02a9769021132ac8fea8ca3b7381b179490c6f59ba6941",
+    "lp150TransitionRegistry": "0f1173945727d3f9956e78f7a2722d0a9899464eff554b2c233d7c2141a5a495"
+  },
+  "schemaVersion": "gridly.lp151.statewideOperationalValidation.v1",
+  "summary": {
+    "activationCount": 0,
+    "activationOccurred": false,
+    "candidateCountyCount": 0,
+    "deploymentCount": 0,
+    "deploymentOccurred": false,
+    "generatedAt": "1970-01-01T00:00:00.000Z",
+    "identityCount": 254,
+    "milestone": "LP151",
+    "operationalCountyCount": 28,
+    "passed": true,
+    "preExistingBaselineFailures": [
+      {
+        "introducedByLp151": false,
+        "message": "[LP148] tracked/generated package does not match deterministic rebuild",
+        "milestone": "LP148"
+      }
+    ],
+    "runtimeMembershipChanged": false,
+    "schemaVersion": "gridly.lp151.validationSummary.v1"
+  },
+  "validationBoundary": {
+    "activatesCounties": false,
+    "authorizesDeployment": false,
+    "modifiesPlanner": false,
+    "modifiesRuntimeSelection": false,
+    "readOnly": true
+  }
+}

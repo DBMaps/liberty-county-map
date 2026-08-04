@@ -165,6 +165,9 @@
     "test:lp149": "node --test tests/lp149-runtime-identity-registry.test.mjs",
     "build:lp150": "node tools/lp150/build-membership-transition.mjs --write",
     "verify:lp150": "node tools/lp150/build-membership-transition.mjs",
-    "test:lp150": "node --test tests/lp150-membership-transition.test.mjs"
+    "test:lp150": "node --test tests/lp150-membership-transition.test.mjs",
+    "build:lp151": "node tools/lp151/validate-statewide-operations.mjs --write",
+    "verify:lp151": "node tools/lp151/validate-statewide-operations.mjs",
+    "test:lp151": "node --test tests/lp151-statewide-operational-validation.test.mjs"
   }
 }
