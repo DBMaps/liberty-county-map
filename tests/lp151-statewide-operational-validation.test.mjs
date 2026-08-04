@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { buildValidation, protectedHashes, verify } from '../tools/lp151/validate-statewide-operations.mjs';
@@ -8,6 +9,11 @@ const validation = buildValidation();
 const report = JSON.parse(readFileSync('reports/lp151/statewide-operational-validation-report.json', 'utf8'));
 const registry = JSON.parse(readFileSync('data/lp151/statewide-operational-validation-registry.json', 'utf8'));
 const summary = JSON.parse(readFileSync('reports/lp151/validation-summary.json', 'utf8'));
+const hashReport = JSON.parse(readFileSync('reports/lp151/protected-artifact-hashes.json', 'utf8'));
+function shaFile(path) { return createHash('sha256').update(readFileSync(path)).digest('hex'); }
+function snapshot(paths) { return Object.fromEntries(paths.map((path) => [path, shaFile(path)])); }
+const lp151GeneratedPaths = ['data/lp151/statewide-operational-validation-registry.json', 'reports/lp151/statewide-operational-validation-report.json', 'reports/lp151/gate-results.json', 'reports/lp151/cross-layer-reconciliation.json', 'reports/lp151/protected-artifact-hashes.json', 'reports/lp151/validation-summary.json'];
+const protectedUpstreamPaths = ['evidence/lp138/county-geometry-membership-contract.baseline.json', 'tools/lp140/activation-wave-planner.mjs', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json', 'data/lp149/runtime-county-registry.json', 'data/lp150/membership-transition-registry.json', 'data/lp150/candidate-membership-contract.json'];
 
 test('validates all 254 runtime identities exactly once in deterministic FIPS order', () => {
   assert.equal(registry.countyCount, 254);
@@ -37,16 +43,34 @@ test('candidate contract is empty and no deployment or activation is inferred', 
   assert.equal(report.gates.find((gate) => gate.name === 'Activation').passed, true);
 });
 
-test('protected artifacts are unchanged during validation', () => {
+test('protected artifacts are derived from current authoritative inputs and reports agree', () => {
+  const current = protectedHashes();
+  assert.deepEqual(report.protectedArtifactHashes, current);
+  assert.deepEqual(hashReport.hashes, current);
+  assert.equal(current.lp149Registry, shaFile('data/lp149/runtime-county-registry.json'));
+  assert.equal(current.lp150TransitionRegistry, shaFile('data/lp150/membership-transition-registry.json'));
+  assert.equal(current.lp150CandidateContract, shaFile('data/lp150/candidate-membership-contract.json'));
+  assert.deepEqual(Object.keys(current).sort(), Object.keys(hashReport.hashes).sort());
+
   assert.deepEqual(report.protectedArtifactHashes, protectedHashes());
   assert.equal(report.validationBoundary.modifiesRuntimeSelection, false);
   assert.equal(report.validationBoundary.modifiesPlanner, false);
 });
 
-test('validation is deterministic and repeated verification is byte-identical', () => {
+test('tracked LP151 artifacts match deterministic rebuild', () => {
+  assert.deepEqual(validation.stateRegistry, registry);
+  assert.deepEqual(validation.report, report);
   assert.deepEqual(validation.summary, summary);
+});
+
+test('validation is read-only and repeated verification is byte-identical', () => {
+  const beforeGenerated = snapshot(lp151GeneratedPaths);
+  const beforeProtected = snapshot(protectedUpstreamPaths);
   assert.deepEqual(verify(), summary);
   execFileSync('node', ['tools/lp151/validate-statewide-operations.mjs'], { stdio: 'pipe' });
+  execFileSync('node', ['tools/lp151/validate-statewide-operations.mjs'], { stdio: 'pipe' });
+  assert.deepEqual(snapshot(lp151GeneratedPaths), beforeGenerated);
+  assert.deepEqual(snapshot(protectedUpstreamPaths), beforeProtected);
 });
 
 test('runtime behavior remains unchanged by LP151', () => {

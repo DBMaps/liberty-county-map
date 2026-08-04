@@ -1,14 +1,19 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildTransition, emptyContract, validateCandidate, validateTransition } from '../tools/lp150/build-membership-transition.mjs';
+import { buildTransition, emptyContract, protectedHashes, stableJson, validateCandidate, validateTransition } from '../tools/lp150/build-membership-transition.mjs';
 
 const registry = JSON.parse(readFileSync('data/lp149/runtime-county-registry.json', 'utf8'));
 const committedContract = JSON.parse(readFileSync('data/lp150/candidate-membership-contract.json', 'utf8'));
 const transition = JSON.parse(readFileSync('data/lp150/membership-transition-registry.json', 'utf8'));
 
 function assertThrowsLp150(fn, pattern) { assert.throws(fn, pattern); }
+function shaFile(path) { return createHash('sha256').update(readFileSync(path)).digest('hex'); }
+function snapshot(paths) { return Object.fromEntries(paths.map((path) => [path, shaFile(path)])); }
+const lp150GeneratedPaths = ['data/lp150/candidate-membership-contract.json', 'data/lp150/membership-transition-registry.json', 'reports/lp150/membership-transition-validation.json'];
+const protectedUpstreamPaths = ['evidence/lp138/county-geometry-membership-contract.baseline.json', 'tools/lp140/activation-wave-planner.mjs', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json', 'assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json', 'data/lp149/runtime-county-registry.json'];
 
 test('transition model includes all 254 LP149 identities in ascending FIPS order', () => {
   assert.equal(transition.countyCount, 254);
@@ -47,6 +52,12 @@ test('candidate does not imply approval, approval does not imply deployment, and
   assert.equal(row.activeRuntimeStatus, 'NOT_ACTIVE');
 });
 
+test('protected artifacts are derived from current committed authoritative inputs', () => {
+  assert.deepEqual(transition.protectedArtifactHashes, protectedHashes());
+  assert.equal(transition.protectedArtifactHashes.lp149Registry, shaFile('data/lp149/runtime-county-registry.json'));
+  assert.equal(transition.protectedArtifactHashes.lp148Package, shaFile('assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json'));
+});
+
 test('protected artifacts and runtime selection remain unchanged', () => {
   const report = validateTransition(transition, committedContract);
   assert.equal(report.passed, true);
@@ -58,6 +69,15 @@ test('protected artifacts and runtime selection remain unchanged', () => {
   assert.equal(report.checks.runtimeSelectionUnchanged, true);
 });
 
-test('repeated LP150 verification is byte-identical with tracked artifacts', () => {
+test('tracked LP150 artifacts match deterministic rebuild', () => {
+  assert.equal(readFileSync('data/lp150/membership-transition-registry.json', 'utf8'), stableJson(buildTransition(committedContract)));
+});
+
+test('LP150 verification is read-only and repeated verification is byte-identical', () => {
+  const beforeGenerated = snapshot(lp150GeneratedPaths);
+  const beforeProtected = snapshot(protectedUpstreamPaths);
   execFileSync('node', ['tools/lp150/build-membership-transition.mjs'], { stdio: 'pipe' });
+  execFileSync('node', ['tools/lp150/build-membership-transition.mjs'], { stdio: 'pipe' });
+  assert.deepEqual(snapshot(lp150GeneratedPaths), beforeGenerated);
+  assert.deepEqual(snapshot(protectedUpstreamPaths), beforeProtected);
 });
