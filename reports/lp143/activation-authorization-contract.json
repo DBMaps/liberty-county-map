@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "gridly-lp143-activation-authorization-transition-contract-v1",
+  "milestone": "LP143",
+  "scope": "DESCRIPTIVE_GOVERNANCE_ONLY",
+  "authority": "NON_AUTHORIZING",
+  "transition": {
+    "from": "CONDITIONALLY_READY",
+    "to": "ACTIVATION_AUTHORIZED"
+  },
+  "grantsAuthority": false,
+  "prerequisites": [
+    {
+      "id": "LP132_GOVERNANCE_SATISFIED",
+      "requirement": "All seven LP132 gates have governed, affirmative evidence."
+    },
+    {
+      "id": "AUTHORIZATION_RECORD_EXISTS",
+      "requirement": "A schema-valid county authorization record exists in the statewide registry."
+    },
+    {
+      "id": "REQUIRED_APPROVALS_PRESENT",
+      "requirement": "Operational, deployment, runtime, geometry, and membership approvals are all present and governed."
+    },
+    {
+      "id": "RUNTIME_PREREQUISITES_SATISFIED",
+      "requirement": "County-specific runtime validation and operational controls are satisfied."
+    },
+    {
+      "id": "DEPLOYMENT_PREREQUISITES_SATISFIED",
+      "requirement": "Change, rollback, observation, ownership, and production controls are satisfied."
+    },
+    {
+      "id": "PLANNER_EVALUATION_COMPLETED",
+      "requirement": "The non-authorizing planner has evaluated the valid authorization record."
+    }
+  ],
+  "failClosedRule": "Missing, null, invalid, inferred, or incomplete evidence never authorizes activation.",
+  "prohibitedEffects": [
+    "AUTHORIZE_COUNTY",
+    "ACTIVATE_COUNTY",
+    "DEPLOY_RUNTIME",
+    "MODIFY_RUNTIME_GEOMETRY",
+    "MODIFY_MEMBERSHIP_CONTRACT"
+  ]
+}

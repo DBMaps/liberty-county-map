@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "gridly-lp143-statewide-activation-authorization-registry-v1",
+  "version": 1,
+  "generatedFrom": "evidence/lp140/activation-wave-planning.json",
+  "generatedAt": "2026-08-04T00:00:00.000Z",
+  "authorizationCount": 0,
+  "authorizations": []
+}

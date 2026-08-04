@@ -139,6 +139,9 @@
     "build:lp142": "node tools/lp142/audit-activation-evidence.mjs",
     "verify:lp142": "node tools/lp142/audit-activation-evidence.mjs --verify",
     "test:lp142": "node --test tests/lp142-activation-evidence-advancement-audit.test.mjs",
+    "build:lp143": "node tools/lp143/manufacture-activation-authorizations.mjs",
+    "verify:lp143": "node tools/lp143/manufacture-activation-authorizations.mjs --verify",
+    "test:lp143": "node --test tests/lp143-activation-authorization-framework.test.mjs",
     "reconcile:lp129:rerun": "node tools/lp129/reconcile-package-rerun.mjs"
   }
 }

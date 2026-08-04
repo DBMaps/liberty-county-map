@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly-lp143-county-activation-authorization-v1",
+  "milestone": "LP143",
+  "scope": "GOVERNANCE_TEMPLATE_ONLY",
+  "authority": "NON_AUTHORIZING",
+  "county": "Jasper County",
+  "fips": "48241",
+  "authorizationId": "LP143-TX-48241-V1",
+  "authorizationVersion": 1,
+  "lp132GateReferences": [
+    {
+      "gate": 1,
+      "name": "Package integrity",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/0"
+    },
+    {
+      "gate": 2,
+      "name": "Certification complete",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/1"
+    },
+    {
+      "gate": 3,
+      "name": "Community readiness",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/2"
+    },
+    {
+      "gate": 4,
+      "name": "Destination readiness",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/3"
+    },
+    {
+      "gate": 5,
+      "name": "Crossing readiness",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/4"
+    },
+    {
+      "gate": 6,
+      "name": "Runtime validation",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/5"
+    },
+    {
+      "gate": 7,
+      "name": "Production approval",
+      "evidenceReference": "reports/lp141/county-48241.json#/lp132Gates/6"
+    }
+  ],
+  "operationalApproval": null,
+  "deploymentApproval": null,
+  "runtimeApproval": null,
+  "geometryApproval": null,
+  "membershipApproval": null,
+  "authorizationStatus": "NOT_AUTHORIZED",
+  "authorizationTimestamp": null,
+  "authorizationAuthority": null,
+  "activationRecommendation": null,
+  "governingEvidence": [
+    "reports/lp141/county-48241.json",
+    "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md",
+    "reports/lp143/activation-authorization-contract.json"
+  ]
+}
