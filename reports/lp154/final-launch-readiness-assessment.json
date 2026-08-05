@@ -1,0 +1,199 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "launchBlockers": [
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Austin County",
+      "fips": "48015"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Brazoria County",
+      "fips": "48039"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Brazos County",
+      "fips": "48041"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Calhoun County",
+      "fips": "48057"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Chambers County",
+      "fips": "48071"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Colorado County",
+      "fips": "48089"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Fayette County",
+      "fips": "48149"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Fort Bend County",
+      "fips": "48157"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Galveston County",
+      "fips": "48167"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Grimes County",
+      "fips": "48185"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Hardin County",
+      "fips": "48199"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Harris County",
+      "fips": "48201"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Jackson County",
+      "fips": "48239"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Jasper County",
+      "fips": "48241"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Jefferson County",
+      "fips": "48245"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Lavaca County",
+      "fips": "48285"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Matagorda County",
+      "fips": "48321"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Montgomery County",
+      "fips": "48339"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Newton County",
+      "fips": "48351"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Orange County",
+      "fips": "48361"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Polk County",
+      "fips": "48373"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "San Jacinto County",
+      "fips": "48407"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Tyler County",
+      "fips": "48457"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Walker County",
+      "fips": "48471"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Waller County",
+      "fips": "48473"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Washington County",
+      "fips": "48477"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "countyName": "Wharton County",
+      "fips": "48481"
+    }
+  ],
+  "milestone": "LP154",
+  "passed": false,
+  "reason": "Operational counties lack county-specific consumer experience certification evidence.",
+  "recommendation": "NO_GO",
+  "schemaVersion": "gridly.lp154.finalLaunchReadinessAssessment.v1"
+}

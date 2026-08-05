@@ -1,0 +1,149 @@
+{
+  "benchmarkCounty": "Liberty",
+  "certificationAreas": [
+    {
+      "checks": [
+        "exact address lookup",
+        "rural addresses",
+        "County Roads",
+        "FM Roads",
+        "State Highways",
+        "US Highways",
+        "Interstate addresses",
+        "apartment/unit handling where supported",
+        "truthful No Results",
+        "no interpolation",
+        "no nearby substitutions"
+      ],
+      "id": "CE-1",
+      "key": "addressSearch",
+      "title": "Statewide Address Search Certification"
+    },
+    {
+      "checks": [
+        "grocery",
+        "fuel",
+        "medical",
+        "restaurants",
+        "hotels",
+        "retail",
+        "government",
+        "schools",
+        "parks",
+        "representative brands"
+      ],
+      "id": "CE-2",
+      "key": "businessSearch",
+      "title": "Statewide Business Search Certification"
+    },
+    {
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "id": "CE-3",
+      "key": "destinationRouting",
+      "title": "Destination Routing Certification"
+    },
+    {
+      "checks": [
+        "hazards affecting the route",
+        "railroad crossings affecting the route",
+        "weather affecting the route",
+        "route-aware updates",
+        "off-route filtering"
+      ],
+      "id": "CE-4",
+      "key": "routeWatch",
+      "title": "Route Watch Certification"
+    },
+    {
+      "checks": [
+        "what happened",
+        "where",
+        "how recent",
+        "how reliable",
+        "meaningful roads/highways/intersections/communities/landmarks",
+        "no private/unknown/unnamed/internal terminology"
+      ],
+      "id": "CE-5",
+      "key": "notificationQuality",
+      "title": "Notification Relevance Certification"
+    },
+    {
+      "checks": [
+        "searchable crossings",
+        "consumer-friendly names",
+        "correct placement",
+        "awareness integration",
+        "route integration"
+      ],
+      "id": "CE-6",
+      "key": "crossingExperience",
+      "title": "Crossing Experience Certification"
+    },
+    {
+      "checks": [
+        "hazard placement",
+        "consumer wording",
+        "confidence messaging",
+        "freshness",
+        "trust messaging",
+        "confirmation flow",
+        "cleared state"
+      ],
+      "id": "CE-7",
+      "key": "hazardExperience",
+      "title": "Hazard Experience Certification"
+    },
+    {
+      "checks": [
+        "reporting",
+        "Confirm Still Active",
+        "Mark Cleared",
+        "participation acknowledgement",
+        "trust messaging"
+      ],
+      "id": "CE-8",
+      "key": "communityExperience",
+      "title": "Community Experience Certification"
+    },
+    {
+      "checks": [
+        "addresses",
+        "businesses",
+        "communities",
+        "roads",
+        "landmarks",
+        "partial names",
+        "common misspellings",
+        "brand aliases"
+      ],
+      "id": "CE-9",
+      "key": "searchIntelligence",
+      "title": "Search Intelligence Certification"
+    }
+  ],
+  "constraints": [
+    "no operational runtime expansion",
+    "no deployment authorization change",
+    "no activation authorization change",
+    "no certified address package rebuild",
+    "no runtime certificate rebuild",
+    "no protected system modification",
+    "no framework introduction",
+    "no infrastructure governance layer"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP154",
+  "philosophy": [
+    "Awareness Platform First",
+    "Route Intelligence Second",
+    "Audit First",
+    "Patch Second"
+  ],
+  "schemaVersion": "gridly.lp154.consumerExperienceChecklist.v1"
+}
