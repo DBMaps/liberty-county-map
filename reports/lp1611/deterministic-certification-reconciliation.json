@@ -1,0 +1,40 @@
+{
+  "driftChecks": {
+    "lp1601mFinalManufacturingCertificationPasses": true,
+    "lp160DestinationSourceManifestDeterministic": true,
+    "lp161DestinationIntegrationReportDeterministic": true,
+    "noDestinationManufacturingRebuildPerformed": true,
+    "noRuntimeChangePerformed": true
+  },
+  "engineeringPhilosophy": [
+    "Audit First",
+    "Patch Second"
+  ],
+  "finalClassification": "DETERMINISTIC_CERTIFICATION_RECONCILED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "lp160": {
+    "destinationSourceManifest": "data/lp160/destination-source-manifest.json",
+    "destinationSourceManifestSha256": "7286b0a1ecf3b0c46383d023db53110ec28ec69f96a1bc7247e65c4162012e32",
+    "finalClassification": "CONDITIONALLY_READY"
+  },
+  "lp1601m": {
+    "finalClassification": "MANUFACTURING_COMPLETE",
+    "manufacturingComplete": true,
+    "status": "PASS"
+  },
+  "lp161": {
+    "destinationIntegrationReport": "reports/lp161/destination-integration-report.json",
+    "destinationIntegrationReportSha256": "18625250df564f6d7591b6dfc930524e271a6493359b06dc3112d0b544f34966",
+    "finalClassification": "INTEGRATION_CERTIFIED"
+  },
+  "milestone": "LP161.1",
+  "mission": "Know Before You Go",
+  "productPhilosophy": [
+    "Awareness Platform First",
+    "Route Intelligence Second"
+  ],
+  "protectedArtifactsModified": [],
+  "schemaVersion": "gridly.lp1611.deterministicCertificationReconciliation.v1",
+  "scope": "Read-only deterministic certification reconciliation; no governed Overture source, staging JSONL, county destination manufacturing outputs, runtime, deployment, or activation changes.",
+  "status": "PASS"
+}
