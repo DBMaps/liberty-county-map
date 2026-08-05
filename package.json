@@ -194,6 +194,9 @@
     "test:lp159": "node --test tests/lp159-destination-source-selection.test.mjs",
     "build:lp160": "node tools/lp160-build-statewide-destination-integration.mjs --write",
     "verify:lp160": "node tools/lp160-build-statewide-destination-integration.mjs",
-    "test:lp160": "node --test tests/lp160-statewide-destination-integration.test.mjs"
+    "test:lp160": "node --test tests/lp160-statewide-destination-integration.test.mjs",
+    "build:lp1601": "node tools/lp1601-manufacture-overture-texas-destinations.mjs --write",
+    "verify:lp1601": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
+    "test:lp1601": "node --test tests/lp1601-overture-texas-destination-manufacturing.test.mjs"
   }
 }

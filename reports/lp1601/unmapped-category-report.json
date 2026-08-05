@@ -1,0 +1,12 @@
+{
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "Owner-provided approved Overture Places source is unavailable. No LP160 fixture or fabricated data was used.",
+  "schemaVersion": "gridly.lp1601.sourceUnavailable.v1",
+  "status": "SOURCE_UNAVAILABLE"
+}

@@ -1,0 +1,174 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mappings": [
+    {
+      "categoryFamily": "Transportation",
+      "categoryType": "airport",
+      "sourceCategory": "airport"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categoryType": "beach",
+      "sourceCategory": "beach"
+    },
+    {
+      "categoryFamily": "Transportation",
+      "categoryType": "bus_station",
+      "sourceCategory": "bus_station"
+    },
+    {
+      "categoryFamily": "Government",
+      "categoryType": "city_hall",
+      "sourceCategory": "city_hall"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categoryType": "clinic",
+      "sourceCategory": "clinic"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categoryType": "convenience_store",
+      "sourceCategory": "convenience_store"
+    },
+    {
+      "categoryFamily": "Government",
+      "categoryType": "courthouse",
+      "sourceCategory": "courthouse"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categoryType": "department_store",
+      "sourceCategory": "department_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categoryType": "doctor",
+      "sourceCategory": "doctor"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categoryType": "emergency_room",
+      "sourceCategory": "emergency_room"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "categoryType": "fast_food",
+      "sourceCategory": "fast_food"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categoryType": "fire_station",
+      "sourceCategory": "fire_station"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categoryType": "fuel",
+      "sourceCategory": "fuel"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categoryType": "gas_station",
+      "sourceCategory": "gas_station"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categoryType": "grocery_store",
+      "sourceCategory": "grocery_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categoryType": "hospital",
+      "sourceCategory": "hospital"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categoryType": "lake",
+      "sourceCategory": "lake"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categoryType": "park",
+      "sourceCategory": "park"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categoryType": "pharmacy",
+      "sourceCategory": "pharmacy"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categoryType": "police",
+      "sourceCategory": "police"
+    },
+    {
+      "categoryFamily": "Transportation",
+      "categoryType": "port",
+      "sourceCategory": "port"
+    },
+    {
+      "categoryFamily": "Government",
+      "categoryType": "post_office",
+      "sourceCategory": "post_office"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categoryType": "power_plant",
+      "sourceCategory": "power_plant"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categoryType": "refinery",
+      "sourceCategory": "refinery"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "categoryType": "restaurant",
+      "sourceCategory": "restaurant"
+    },
+    {
+      "categoryFamily": "Education",
+      "categoryType": "school",
+      "sourceCategory": "school"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categoryType": "sheriff",
+      "sourceCategory": "sheriff"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categoryType": "stadium",
+      "sourceCategory": "stadium"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categoryType": "supermarket",
+      "sourceCategory": "supermarket"
+    },
+    {
+      "categoryFamily": "Education",
+      "categoryType": "university",
+      "sourceCategory": "university"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categoryType": "water_treatment",
+      "sourceCategory": "water_treatment"
+    }
+  ],
+  "milestone": "LP160.1",
+  "requiredFamilies": [
+    "Retail",
+    "Fuel",
+    "Restaurant",
+    "Medical",
+    "Government",
+    "Education",
+    "Transportation",
+    "Recreation",
+    "Public Safety",
+    "Critical Infrastructure"
+  ],
+  "schemaVersion": "gridly.lp1601.categoryMapping.v1"
+}
