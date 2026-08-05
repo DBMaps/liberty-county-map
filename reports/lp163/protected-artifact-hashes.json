@@ -1,0 +1,18 @@
+{
+  "activation": "UNAUTHORIZED",
+  "artifacts": {
+    "data/generated/lp104/txgio-addresses/runtime-manifest.json": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a",
+    "data/lp1601/texas-destination-candidate-registry-manifest.json": "596f70a0e21876607d5398f370ba4583b1faa591254217308cb72ef97477a275",
+    "data/roadway-runtime-manifest.json": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a",
+    "evidence/lp135/statewide-certification.json": "ef594fd4c6f1ce797c1c8fc9efa5084f9ebcf9a851b053e4e4f12475098d1a26",
+    "reports/lp161/lp161-summary.json": "f14fd6a44a6144d70989074399c5544fabc4a584095de4177bdabecebda2686a",
+    "reports/lp162/lp162-summary.json": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04"
+  },
+  "deployment": "UNAUTHORIZED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hashAlgorithm": "SHA-256",
+  "milestone": "LP163",
+  "runtime": "UNCHANGED",
+  "schemaVersion": "gridly.lp163.protectedArtifactHashes.v1",
+  "status": "PASS"
+}

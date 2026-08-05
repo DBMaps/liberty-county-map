@@ -88973,20 +88973,25 @@ async function renderRoutePreviewLine(startCoordinates, destinationCoordinates) 
       monitoredRouteEtaMinutes = Math.max(1, Math.round(osrmDurationSeconds / 60));
     }
   } catch (error) {
-    routeGeometrySource = "fallback";
+    // A straight line is not a route. Preserve the selected destination and
+    // report provider failure instead of presenting interpolation as a route.
+    routeGeometrySource = "unavailable";
     osrmRouteSuccess = false;
     lastRouteError = String(error?.message || error || "OSRM route failed");
-    lastRouteGeometryPointCount = fallbackPoints.length;
+    lastRouteGeometryPointCount = 0;
     monitoredRouteDistanceMiles = null;
-    console.info("Gridly route geometry point count", { pointCount: fallbackPoints.length, source: "fallback" });
+    monitoredRouteDurationSeconds = null;
+    monitoredRouteEtaMinutes = null;
+    console.info("Gridly route geometry unavailable", { pointCount: 0, source: "unavailable" });
     markRouteRenderAuditState({
       rendered: false,
-      source: "fallback",
-      pointCount: fallbackPoints.length,
+      source: "unavailable",
+      pointCount: 0,
       osrmRouteSuccess: false,
       renderedAt: null
     });
     captureRouteAttempt({ osrmCallSucceeded: false, finalFailureReason: lastRouteError });
+    return false;
   }
 
   const corridorUnderlay = L.polyline(previewPoints, gridlyGetVisualSignatureRouteStyle("halo"));

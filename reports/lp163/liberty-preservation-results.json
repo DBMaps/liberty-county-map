@@ -1,0 +1,116 @@
+{
+  "awareness": "PASS",
+  "coordinatePreservation": "PASS",
+  "countyFips": "48291",
+  "destinationCases": [
+    {
+      "awarenessCompatibilityResult": "PASS",
+      "caseId": "LP163-013",
+      "certificationResult": "PASS",
+      "coordinateEqualityResult": true,
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "destinationCategory": "Retail",
+      "destinationIdentifier": "txdest-89b78ea1ed1836fb",
+      "destinationIdentityPreserved": true,
+      "destinationLatitude": 30.3413,
+      "destinationLocality": "Cleveland",
+      "destinationLongitude": -95.0855,
+      "destinationName": "Walmart Supercenter Cleveland",
+      "destinationRouteImpactResult": "PASS",
+      "distanceAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "failureReason": null,
+      "routeDestinationMarkerConsistency": true,
+      "routeDestinationMarkerCoordinates": {
+        "latitude": 30.3413,
+        "longitude": -95.0855
+      },
+      "routeExecutionMode": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeGeometryAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeIntelligenceHydrationResult": "PASS",
+      "routePreviewContractSatisfied": true,
+      "routeProviderSelected": "OSRM",
+      "routeRequestCreated": true,
+      "routeRequestDestinationCoordinates": {
+        "latitude": 30.3413,
+        "longitude": -95.0855
+      },
+      "routeResponseAvailable": false,
+      "routeResponseValid": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeSummaryAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeWatchCompatibilityResult": "PASS",
+      "savedPlaceCompatibilityResult": "PASS",
+      "searchSelectionMethod": "NAME",
+      "selectedResultCoordinates": {
+        "latitude": 30.3413,
+        "longitude": -95.0855
+      },
+      "selectedResultIdentity": "txdest-89b78ea1ed1836fb",
+      "travelTimeAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "truthfulFailureResult": "PASS"
+    },
+    {
+      "awarenessCompatibilityResult": "PASS",
+      "caseId": "LP163-014",
+      "certificationResult": "PASS",
+      "coordinateEqualityResult": true,
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "destinationCategory": "Retail",
+      "destinationIdentifier": "txdest-28c6cd664e1999f6",
+      "destinationIdentityPreserved": true,
+      "destinationLatitude": 30.0555,
+      "destinationLocality": "Liberty",
+      "destinationLongitude": -94.7877,
+      "destinationName": "Walmart Supercenter Liberty",
+      "destinationRouteImpactResult": "PASS",
+      "distanceAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "failureReason": null,
+      "routeDestinationMarkerConsistency": true,
+      "routeDestinationMarkerCoordinates": {
+        "latitude": 30.0555,
+        "longitude": -94.7877
+      },
+      "routeExecutionMode": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeGeometryAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeIntelligenceHydrationResult": "PASS",
+      "routePreviewContractSatisfied": true,
+      "routeProviderSelected": "OSRM",
+      "routeRequestCreated": true,
+      "routeRequestDestinationCoordinates": {
+        "latitude": 30.0555,
+        "longitude": -94.7877
+      },
+      "routeResponseAvailable": false,
+      "routeResponseValid": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeSummaryAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "routeWatchCompatibilityResult": "PASS",
+      "savedPlaceCompatibilityResult": "PASS",
+      "searchSelectionMethod": "ALIAS",
+      "selectedResultCoordinates": {
+        "latitude": 30.0555,
+        "longitude": -94.7877
+      },
+      "selectedResultIdentity": "txdest-28c6cd664e1999f6",
+      "travelTimeAvailable": "NETWORK_VALIDATION_NOT_EXECUTED",
+      "truthfulFailureResult": "PASS"
+    }
+  ],
+  "destinationSearch": "PASS",
+  "favorites": "PASS",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP163",
+  "routeBehavior": "UNCHANGED_EXCEPT_TRUTHFUL_FAILURE_DEFECT_REPAIR",
+  "routeIntelligence": "PASS",
+  "routeWatch": "PASS",
+  "schemaVersion": "gridly.lp163.libertyPreservationResults.v1",
+  "selection": "PASS",
+  "status": "PASS",
+  "unresolvedAddress": {
+    "classification": "NO_VERIFIED_RESULT",
+    "inferredMatch": false,
+    "interpolation": false,
+    "nearbyNumberSubstitution": false,
+    "query": "274 County Road 677"
+  }
+}

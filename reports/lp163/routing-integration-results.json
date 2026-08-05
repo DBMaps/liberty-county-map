@@ -1,0 +1,44 @@
+{
+  "architecture": {
+    "generation": "startInlineRouteWatch -> renderRoutePreviewLine -> OSRM",
+    "networkBoundary": "Public OSRM HTTPS is required for live route execution and is not deterministic",
+    "preview": "validated OSRM GeoJSON -> Leaflet route layer and endpoint markers",
+    "selection": "destination candidate -> selected destination/saved place"
+  },
+  "audit": {
+    "awareness": true,
+    "exactRequestOrder": true,
+    "favorites": true,
+    "networkRequired": true,
+    "provider": "OSRM",
+    "routeIntelligence": true,
+    "routePreviewRequiresLayer": true,
+    "routeWatch": true,
+    "truthfulProviderFailure": true,
+    "validatesGeometry": true
+  },
+  "fixtureContract": {
+    "invalidDestination": {
+      "classification": "INVALID_DESTINATION",
+      "ok": false,
+      "reason": "Destination coordinates are invalid"
+    },
+    "missingGeometry": {
+      "classification": "INVALID_ROUTE_RESPONSE",
+      "geometryAvailable": false,
+      "ok": false
+    },
+    "validResponse": {
+      "classification": "PASS",
+      "distanceAvailable": true,
+      "geometryAvailable": true,
+      "ok": true,
+      "pointCount": 2,
+      "travelTimeAvailable": true
+    }
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP163",
+  "schemaVersion": "gridly.lp163.routingIntegrationResults.v1",
+  "status": "PASS"
+}
