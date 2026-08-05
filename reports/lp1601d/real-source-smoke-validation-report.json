@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "jsonLinesParsed": false
+  },
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1D",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "Governed owner GeoParquet source is not readable in this execution environment; adapter and deterministic SQL are recorded for owner execution.",
+  "schemaVersion": "gridly.lp1601d.realSourceSmokeValidationReport.v1",
+  "scope": "not executed without owner source",
+  "status": "SOURCE_UNAVAILABLE"
+}

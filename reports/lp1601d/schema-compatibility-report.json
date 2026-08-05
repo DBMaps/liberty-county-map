@@ -1,0 +1,25 @@
+{
+  "adapterVersion": "overture-places-2026-07-22.0-struct-map-v1",
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1D",
+  "numericMapAccessAbsent": true,
+  "optionalFields": [
+    "categories",
+    "addresses",
+    "brand",
+    "confidence"
+  ],
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "Governed owner GeoParquet source is not readable in this execution environment; adapter and deterministic SQL are recorded for owner execution.",
+  "requiredFields": [
+    "id",
+    "names",
+    "geometry"
+  ],
+  "schemaVersion": "gridly.lp1601d.schemaCompatibilityReport.v1",
+  "status": "SOURCE_UNAVAILABLE"
+}

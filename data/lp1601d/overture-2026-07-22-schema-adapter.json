@@ -1,0 +1,66 @@
+{
+  "adapterVersion": "overture-places-2026-07-22.0-struct-map-v1",
+  "expressions": {
+    "brandCommonEnglish": "map_extract_value(brand.names.common, 'en')::VARCHAR",
+    "brandCommonNames": "brand.names.common",
+    "brandName": "COALESCE(brand.names.primary, map_extract_value(brand.names.common, 'en'))::VARCHAR",
+    "brandNameSource": "CASE WHEN brand.names.primary IS NOT NULL THEN 'PRIMARY' WHEN map_extract_value(brand.names.common, 'en') IS NOT NULL THEN 'COMMON_EN' ELSE 'UNRESOLVED' END",
+    "brandPrimary": "brand.names.primary::VARCHAR",
+    "brandWikidata": "brand.wikidata::VARCHAR",
+    "commonNameEnglish": "map_extract_value(names.common, 'en')::VARCHAR",
+    "commonNames": "names.common",
+    "confidence": "confidence::DOUBLE",
+    "formattedAddress": "addresses.freeform::VARCHAR",
+    "geometryValid": "geometry IS NOT NULL",
+    "id": "id::VARCHAR",
+    "latitude": "ST_Y(geometry)::DOUBLE",
+    "lifecycleStatus": "'UNKNOWN'::VARCHAR",
+    "longitude": "ST_X(geometry)::DOUBLE",
+    "name": "COALESCE(names.primary, map_extract_value(names.common, 'en'))::VARCHAR",
+    "nameSource": "CASE WHEN names.primary IS NOT NULL THEN 'PRIMARY' WHEN map_extract_value(names.common, 'en') IS NOT NULL THEN 'COMMON_EN' ELSE 'UNRESOLVED' END",
+    "postalCode": "addresses.postcode::VARCHAR",
+    "primaryName": "names.primary::VARCHAR",
+    "sourceAlternateCategories": "list_sort(list_distinct(list_filter(categories.alternate, x -> x IS NOT NULL)))",
+    "sourceLocality": "addresses.locality::VARCHAR",
+    "sourcePrimaryCategory": "categories.primary::VARCHAR",
+    "sourceRegion": "addresses.region::VARCHAR"
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1D",
+  "notes": [
+    "Uses inspected Overture Places 2026-07-22.0 struct and map access only.",
+    "County FIPS remains geometry-derived downstream; address region is preserved as sourceRegion only."
+  ],
+  "optionalFields": [
+    "categories",
+    "addresses",
+    "brand",
+    "confidence"
+  ],
+  "prohibitedSqlPatterns": [
+    "names[1]",
+    "names[1].value",
+    "names.common[1]",
+    "brand.names[1]",
+    "brand.names.common[1]",
+    "map_extract_value(names.common, 1)",
+    "map_extract_value(brand.names.common, 1)"
+  ],
+  "release": "2026-07-22.0",
+  "requiredFields": [
+    "id",
+    "names",
+    "geometry"
+  ],
+  "schemaVersion": "gridly.lp1601d.overtureSchemaAdapter.v1",
+  "sourceName": "Overture Maps Places",
+  "verifiedSchema": {
+    "addresses": "STRUCT(freeform VARCHAR, locality VARCHAR, postcode VARCHAR, region VARCHAR)",
+    "brand": "STRUCT(wikidata VARCHAR, names STRUCT(primary VARCHAR, common MAP(VARCHAR, VARCHAR)))",
+    "categories": "STRUCT(primary VARCHAR, alternate VARCHAR[])",
+    "confidence": "DOUBLE",
+    "geometry": "GEOMETRY('ogc:crs84')",
+    "id": "VARCHAR",
+    "names": "STRUCT(primary VARCHAR, common MAP(VARCHAR, VARCHAR))"
+  }
+}

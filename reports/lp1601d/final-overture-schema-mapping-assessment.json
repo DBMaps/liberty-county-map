@@ -1,0 +1,16 @@
+{
+  "classification": "SOURCE_UNAVAILABLE",
+  "finalClassification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "invalidNumericMapAccessRemoved": true,
+  "milestone": "LP160.1D",
+  "ownerRunRequired": true,
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "protectedSystemsUnchanged": true,
+  "reason": "Governed owner GeoParquet source is not readable in this execution environment; adapter and deterministic SQL are recorded for owner execution.",
+  "schemaVersion": "gridly.lp1601d.finalOvertureSchemaMappingAssessment.v1",
+  "status": "SOURCE_UNAVAILABLE"
+}
