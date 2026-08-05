@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp1601j.categoryMappingExecutionReport.v1",
+  "milestone": "LP160.1J",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "categoryTotals": {
+    "Retail": 1,
+    "Fuel": 1,
+    "Restaurant": 0,
+    "Medical": 0,
+    "Government": 0,
+    "Education": 0,
+    "Transportation": 0,
+    "Recreation": 0,
+    "Public Safety": 0,
+    "Critical Infrastructure": 0
+  }
+}
