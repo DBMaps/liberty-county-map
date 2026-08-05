@@ -1,14 +1,19 @@
 {
   "activation": "UNAUTHORIZED",
   "deployment": "UNAUTHORIZED",
+  "deterministicContract": {
+    "excludedMutableOrchestrationArtifacts": [
+      "package.json"
+    ],
+    "protectedArtifactPolicy": "Hash only runtime/data artifacts explicitly governed by LP161; exclude mutable orchestration surfaces added by later milestones."
+  },
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "milestone": "LP161",
   "protectedArtifactsModified": false,
   "protectedHashes": {
     "data/lp1601/texas-destination-candidate-registry-manifest.json": "596f70a0e21876607d5398f370ba4583b1faa591254217308cb72ef97477a275",
     "data/lp1601/texas-destination-candidate-registry.json": "cb96cf191f11a4ef6088b0b07b161df51e8c417916adadf6b0a1c5531578e53e",
-    "data/roadway-runtime-manifest.json": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a",
-    "package.json": "b4b891c47ff20026a2c025db850d4536f87208ec9fe2df8cf1fc5298245c393b"
+    "data/roadway-runtime-manifest.json": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a"
   },
   "protectedSystems": [
     "Shared Reports",

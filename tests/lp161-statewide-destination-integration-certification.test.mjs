@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { P, buildReports, verify } from '../tools/lp161-certify-statewide-destination-integration.mjs';
 
 const reports = buildReports();
@@ -64,6 +64,23 @@ test('LP161 runtime preservation remains unchanged and certification generation 
   assert.deepEqual(verify(), reports[P.summary]);
   execFileSync('node', ['tools/lp161-certify-statewide-destination-integration.mjs'], { stdio: 'pipe' });
   assert.deepEqual(reportSnapshot(), before);
+});
+
+
+test('LP161 runtime hash contract excludes mutable package orchestration', () => {
+  const runtime = reports[P.runtime];
+  assert.equal(runtime.deterministicContract.protectedArtifactPolicy, 'Hash only runtime/data artifacts explicitly governed by LP161; exclude mutable orchestration surfaces added by later milestones.');
+  assert.deepEqual(runtime.deterministicContract.excludedMutableOrchestrationArtifacts, ['package.json']);
+  assert.equal(Object.hasOwn(runtime.protectedHashes, 'package.json'), false);
+  const originalPackage = readFileSync('package.json', 'utf8');
+  try {
+    const mutatedPackage = `${originalPackage.trimEnd()}
+`;
+    writeFileSync('package.json', mutatedPackage);
+    assert.deepEqual(buildReports()[P.runtime], runtime);
+  } finally {
+    writeFileSync('package.json', originalPackage);
+  }
 });
 
 test('LP161 summary emits the expected final certification classification', () => {
