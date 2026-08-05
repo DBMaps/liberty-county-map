@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp1601j.countyCategoryCoverageMatrix.v1",
-  "milestone": "LP160.1J",
+  "milestone": "LP160.1L",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -180,7 +180,7 @@
     "48029": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -372,7 +372,7 @@
     "48061": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -684,7 +684,7 @@
     "48113": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -852,7 +852,7 @@
     "48141": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -1211,8 +1211,8 @@
     },
     "48201": {
       "Retail": 0,
-      "Fuel": 1,
-      "Restaurant": 0,
+      "Fuel": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -1750,9 +1750,9 @@
       "Critical Infrastructure": 0
     },
     "48291": {
-      "Retail": 1,
+      "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -1824,7 +1824,7 @@
     "48303": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -1860,7 +1860,7 @@
     "48309": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -2256,7 +2256,7 @@
     "48375": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -2640,7 +2640,7 @@
     "48439": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -2724,7 +2724,7 @@
     "48453": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
@@ -2880,7 +2880,7 @@
     "48479": {
       "Retail": 0,
       "Fuel": 0,
-      "Restaurant": 0,
+      "Restaurant": 1,
       "Medical": 0,
       "Government": 0,
       "Education": 0,
