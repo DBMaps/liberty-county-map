@@ -226,6 +226,9 @@
     "verify:lp1601m": "node tools/lp1601m-verify-final-manufacturing-certification.mjs",
     "test:lp1601m": "node --test tests/lp1601m-final-manufacturing-certification.test.mjs",
     "verify:lp161": "node tools/lp161-certify-statewide-destination-integration.mjs",
-    "test:lp161": "node --test tests/lp161-statewide-destination-integration-certification.test.mjs"
+    "test:lp161": "node --test tests/lp161-statewide-destination-integration-certification.test.mjs",
+    "verify:lp1611": "node tools/lp1611-deterministic-certification-reconciliation.mjs",
+    "build:lp1611": "node tools/lp1611-deterministic-certification-reconciliation.mjs --write",
+    "test:lp1611": "node --test tests/lp1611-deterministic-certification-reconciliation.test.mjs"
   }
 }
