@@ -1,0 +1,13 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP158",
+  "policy": "Prefer governed destination display names over generic nearby-place wording when confidence and proximity support it.",
+  "preferredNotificationExamples": [
+    "Train blocking crossing near Buc-ee's, Luling",
+    "Flooding near Memorial Hermann, Texas Medical Center",
+    "Hazard approaching George Bush Intercontinental Airport",
+    "Beach flooding near Galveston Beach"
+  ],
+  "schemaVersion": "gridly.lp158.destinationContextReport.v1",
+  "status": "PASS"
+}
