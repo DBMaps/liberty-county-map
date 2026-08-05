@@ -1,0 +1,10 @@
+{
+  "answer": "Every non-Liberty Texas county still needs executed consumer-facing evidence before Gridly can claim Liberty County-quality statewide launch readiness.",
+  "blockerCount": 2024,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "launchReadyCountyCount": 1,
+  "milestone": "LP155",
+  "notReadyCountyCount": 253,
+  "recommendation": "NO_GO",
+  "schemaVersion": "gridly.lp155.finalStatewideConsumerReadinessAssessment.v1"
+}

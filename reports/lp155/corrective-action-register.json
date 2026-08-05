@@ -1,0 +1,119 @@
+{
+  "actions": [
+    {
+      "action": "Execute and record county-specific Address Search consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-1-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Business Search consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-2-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Destination Routing consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-3-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Route Watch consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-4-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Notification Quality consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-5-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Railroad Crossing Experience consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-6-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Hazard Experience consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-7-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    },
+    {
+      "action": "Execute and record county-specific Community Experience consumer validation; patch only verified consumer-facing defects.",
+      "blockerId": "CEE-8-BLOCKER",
+      "prohibitedActions": [
+        "does not expand operational runtime",
+        "does not authorize deployment",
+        "does not authorize activation",
+        "does not rebuild certified address packages",
+        "does not rebuild runtime certificates",
+        "does not modify protected infrastructure",
+        "does not introduce frameworks"
+      ],
+      "requiredEvidence": "Before changing status to PASS, attach executed query/route/notification/community evidence for each affected county."
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP155",
+  "schemaVersion": "gridly.lp155.correctiveActionRegister.v1"
+}
