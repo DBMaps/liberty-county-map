@@ -2,10 +2,20 @@
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "milestone": "LP160.1",
   "powershell": {
-    "build": "$env:OVERTURE_PLACES_SOURCE=\"C:\\path\\to\\overture-places.jsonl\"; $env:OVERTURE_PLACES_RELEASE=\"YYYY-MM-DD\"; $env:OVERTURE_PLACES_LICENSE=\"CDLA Permissive 2.0\"; $env:OVERTURE_PLACES_ATTRIBUTION=\"Overture Maps Foundation\"; $env:OVERTURE_PLACES_RETRIEVAL_DATE=\"YYYY-MM-DD\"; npm run build:lp1601",
-    "test": "npm run test:lp1601",
-    "verify": "$env:OVERTURE_PLACES_SOURCE=\"C:\\path\\to\\overture-places.jsonl\"; npm run verify:lp1601"
+    "build": "Set-Location C:\\GitHub\\liberty-county-map; npm run build:lp1601 -- --source \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\" --release \"<release>\" --retrieval-date \"YYYY-MM-DD\" --license \"CDLA Permissive 2.0\" --attribution \"Overture Maps Foundation\" --write",
+    "test": "npm run test:lp1601a",
+    "verify": "Set-Location C:\\GitHub\\liberty-county-map; npm run verify:lp1601a"
   },
-  "schemaVersion": "gridly.lp1601.ownerExecutionInstructions.v1",
-  "status": "SOURCE_UNAVAILABLE"
+  "schemaVersion": "gridly.lp1601.ownerExecutionInstructions.v2",
+  "sourceHashCommand": "Get-FileHash -Algorithm SHA256 \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\"",
+  "status": "SOURCE_UNAVAILABLE",
+  "supportedCliArguments": [
+    "--source",
+    "--release",
+    "--retrieval-date",
+    "--license",
+    "--attribution",
+    "--staging-directory",
+    "--write"
+  ]
 }

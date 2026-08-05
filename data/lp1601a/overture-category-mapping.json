@@ -1,0 +1,180 @@
+{
+  "families": [
+    "Retail",
+    "Fuel",
+    "Restaurant",
+    "Medical",
+    "Government",
+    "Education",
+    "Transportation",
+    "Recreation",
+    "Public Safety",
+    "Critical Infrastructure"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mappings": [
+    {
+      "categoryFamily": "Transportation",
+      "categorySubtype": "airport",
+      "sourceCategory": "airport"
+    },
+    {
+      "categoryFamily": "Transportation",
+      "categorySubtype": "bus_station",
+      "sourceCategory": "bus_station"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "categorySubtype": "cafe",
+      "sourceCategory": "cafe"
+    },
+    {
+      "categoryFamily": "Government",
+      "categorySubtype": "city_hall",
+      "sourceCategory": "city_hall"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categorySubtype": "clinic",
+      "sourceCategory": "clinic"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categorySubtype": "convenience_store",
+      "sourceCategory": "convenience_store"
+    },
+    {
+      "categoryFamily": "Government",
+      "categorySubtype": "courthouse",
+      "sourceCategory": "courthouse"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categorySubtype": "department_store",
+      "sourceCategory": "department_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categorySubtype": "doctor",
+      "sourceCategory": "doctor"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "categorySubtype": "fast_food",
+      "sourceCategory": "fast_food"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categorySubtype": "fire_station",
+      "sourceCategory": "fire_station"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categorySubtype": "fuel",
+      "sourceCategory": "fuel"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "categorySubtype": "gas_station",
+      "sourceCategory": "gas_station"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categorySubtype": "grocery_store",
+      "sourceCategory": "grocery_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "categorySubtype": "hospital",
+      "sourceCategory": "hospital"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categorySubtype": "park",
+      "sourceCategory": "park"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categorySubtype": "pharmacy",
+      "sourceCategory": "pharmacy"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categorySubtype": "police",
+      "sourceCategory": "police"
+    },
+    {
+      "categoryFamily": "Government",
+      "categorySubtype": "post_office",
+      "sourceCategory": "post_office"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categorySubtype": "power_plant",
+      "sourceCategory": "power_plant"
+    },
+    {
+      "categoryFamily": "Transportation",
+      "categorySubtype": "railway_station",
+      "sourceCategory": "railway_station"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "categorySubtype": "restaurant",
+      "sourceCategory": "restaurant"
+    },
+    {
+      "categoryFamily": "Education",
+      "categorySubtype": "school",
+      "sourceCategory": "school"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "categorySubtype": "sheriff",
+      "sourceCategory": "sheriff"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categorySubtype": "shop",
+      "sourceCategory": "shop"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "categorySubtype": "stadium",
+      "sourceCategory": "stadium"
+    },
+    {
+      "categoryFamily": "Retail",
+      "categorySubtype": "supermarket",
+      "sourceCategory": "supermarket"
+    },
+    {
+      "categoryFamily": "Education",
+      "categorySubtype": "university",
+      "sourceCategory": "university"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categorySubtype": "water_treatment",
+      "sourceCategory": "water_treatment"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "categorySubtype": "water_works",
+      "sourceCategory": "water_works"
+    }
+  ],
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "schemaVersion": "gridly.lp1601a.overtureCategoryMapping.v1",
+  "sourceCategoryFields": [
+    "categories.primary",
+    "categories.alternate",
+    "categories.main",
+    "categories"
+  ],
+  "unmappedPolicy": "UNMAPPED"
+}

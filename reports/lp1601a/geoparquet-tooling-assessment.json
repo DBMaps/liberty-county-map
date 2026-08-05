@@ -1,0 +1,47 @@
+{
+  "detected": {
+    "duckdb": {
+      "available": false,
+      "command": "duckdb --version",
+      "version": null
+    },
+    "ogr2ogr": {
+      "available": false,
+      "command": "ogr2ogr --version",
+      "version": null
+    },
+    "python": {
+      "available": true,
+      "command": "python --version",
+      "version": "Python 3.14.4"
+    }
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "installCommandIfMissing": "winget install DuckDB.cli",
+  "milestone": "LP160.1A",
+  "networkProhibitedDuringVerification": true,
+  "networkRequiredDuringManufacturing": false,
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reasonSelected": "Small isolated manufacturing dependency that reads partitioned GeoParquet through SQL without loading full input into Node memory.",
+  "rejectedAlternatives": [
+    {
+      "reason": "Not already declared in package.json; avoid adding runtime npm dependency.",
+      "tool": "DuckDB Node package"
+    },
+    {
+      "reason": "Larger Python dependency and less direct SQL/spatial workflow.",
+      "tool": "PyArrow"
+    },
+    {
+      "reason": "Rejected as primary because nested Overture schema fidelity is harder to prove deterministically.",
+      "tool": "GDAL/ogr2ogr"
+    }
+  ],
+  "requiredVersion": ">=1.0.0",
+  "schemaVersion": "gridly.lp1601a.geoparquetToolingAssessment.v1",
+  "selectedTool": "DuckDB CLI with spatial extension",
+  "versionCheckCommand": "duckdb --version"
+}

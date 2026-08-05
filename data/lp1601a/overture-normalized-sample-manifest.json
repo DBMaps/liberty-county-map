@@ -1,0 +1,13 @@
+{
+  "cannotSatisfyManufacturingReadiness": true,
+  "fixtureLabel": "CONTROLLED_TEST_FIXTURE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "No third-party statewide source-derived sample committed; tests use in-memory structural fixtures only.",
+  "sampleRecordsCommitted": 0,
+  "schemaVersion": "gridly.lp1601a.overtureNormalizedSampleManifest.v1"
+}

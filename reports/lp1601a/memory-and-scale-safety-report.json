@@ -1,0 +1,18 @@
+{
+  "boundedMethod": "DuckDB read_parquet SQL extraction writes deterministic staged JSONL/Parquet partitions; Node consumes staged line streams/partition manifests only.",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "peakMemoryBound": "Bounded by DuckDB vector size, output partition size, and Node stream highWaterMark; not by statewide source byte size.",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "prohibitedNodeOperations": [
+    "whole-file readFileSync for real source records",
+    "full-file UTF-8 conversion",
+    "full-file JSON.parse",
+    "full-file JSONL split"
+  ],
+  "protectedArtifactsModified": false,
+  "schemaVersion": "gridly.lp1601a.memoryAndScaleSafetyReport.v1",
+  "status": "BOUNDED_MEMORY_DESIGN"
+}

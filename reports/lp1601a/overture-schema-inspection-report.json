@@ -1,0 +1,36 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "inspectionCommand": "duckdb -c \"DESCRIBE SELECT * FROM read_parquet(<source>) LIMIT 0\"",
+  "milestone": "LP160.1A",
+  "missingOptionalFields": [],
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "requiredFieldStatus": {
+    "geometry": "REQUIRED",
+    "id": "REQUIRED"
+  },
+  "requiredFields": [
+    "id",
+    "geometry"
+  ],
+  "schemaCompatibilityStatus": "STRUCTURAL_FIXTURE_COMPATIBLE",
+  "schemaVersion": "gridly.lp1601a.overtureSchemaInspectionReport.v1",
+  "status": "STRUCTURAL_FIXTURE_ONLY_SOURCE_UNAVAILABLE",
+  "supportedOptionalFields": [
+    "bbox",
+    "names.primary",
+    "names.common",
+    "categories.primary",
+    "categories.alternate",
+    "addresses",
+    "brand",
+    "confidence",
+    "sources",
+    "websites",
+    "socials",
+    "emails",
+    "phones"
+  ]
+}

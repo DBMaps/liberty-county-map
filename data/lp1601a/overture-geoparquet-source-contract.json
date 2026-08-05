@@ -1,0 +1,27 @@
+{
+  "acceptedSourceTypes": [
+    ".parquet",
+    ".geoparquet"
+  ],
+  "fixturePolicy": "CONTROLLED_TEST_FIXTURE cannot satisfy statewide manufacturing readiness",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "rejectedStatewideSourceTypes": [
+    ".json",
+    ".jsonl"
+  ],
+  "requiredIdentity": [
+    "source",
+    "release",
+    "retrievalDate",
+    "license",
+    "attribution",
+    "sha256"
+  ],
+  "schemaVersion": "gridly.lp1601a.overtureGeoParquetSourceContract.v1",
+  "sourceIdentity": null
+}
