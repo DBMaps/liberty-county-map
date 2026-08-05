@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "gridly.lp1601f.oversizedStringPathAudit.v1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "paths": [
+    {
+      "file": "tools/lp1601-manufacture-overture-texas-destinations.mjs",
+      "function": "legacy buildArtifacts",
+      "operation": "statewide staged records accumulated before JSON.stringify",
+      "risk": "V8 oversized string and heap exhaustion on Texas-scale source",
+      "replacementStrategy": "LP160.1F routes GeoParquet through DuckDB COPY direct-to-disk partitions and county manifests only",
+      "status": "REPLACED_FOR_REAL_GEOPARQUET_PATH"
+    },
+    {
+      "file": "tools/lp1601-manufacture-overture-texas-destinations.mjs",
+      "function": "legacy extractRealSource",
+      "operation": "DuckDB JSON result passed through process stdout",
+      "risk": "stdout buffer and stdout.toString can create statewide string",
+      "replacementStrategy": "spawn DuckDB asynchronously with .read SQL file; stdout/stderr stream to logs; records written by COPY",
+      "status": "REPLACED_FOR_REAL_GEOPARQUET_PATH"
+    },
+    {
+      "file": "tools/lp1601-manufacture-overture-texas-destinations.mjs",
+      "function": "legacy verify",
+      "operation": "readFileSync utf8 of generated artifacts",
+      "risk": "unsafe if applied to statewide staged artifacts",
+      "replacementStrategy": "verification reads committed bounded manifests only; external partitions are hash-checked by stream metadata",
+      "status": "BOUNDED_MANIFEST_ONLY"
+    }
+  ],
+  "realGeoParquetPathContainsStatewideWholeStringOperation": false
+}
