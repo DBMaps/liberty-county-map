@@ -1,0 +1,205 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP157",
+  "relationships": [
+    {
+      "communityId": "tx-dayton-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4819408",
+      "name": "Dayton",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-cleveland-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4815128",
+      "name": "Cleveland",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-liberty-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4842820",
+      "name": "Liberty",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-ames-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4803248",
+      "name": "Ames",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-daisetta-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4818580",
+      "name": "Daisetta",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-devers-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4819952",
+      "name": "Devers",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-hardin-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4832236",
+      "name": "Hardin",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-kenefick-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4839028",
+      "name": "Kenefick",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-north-cleveland-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4851960",
+      "name": "North Cleveland",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-plum-grove-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4858244",
+      "name": "Plum Grove",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-conroe-48339",
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4816432",
+      "name": "Conroe",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-waco-48309",
+      "county": "McLennan",
+      "countyFips": "48309",
+      "fips": "4876000",
+      "name": "Waco",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-amarillo-48375",
+      "county": "Potter",
+      "countyFips": "48375",
+      "fips": "4803000",
+      "name": "Amarillo",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-laredo-48479",
+      "county": "Webb",
+      "countyFips": "48479",
+      "fips": "4841464",
+      "name": "Laredo",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-brownsville-48061",
+      "county": "Cameron",
+      "countyFips": "48061",
+      "fips": "4810768",
+      "name": "Brownsville",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-fredericksburg-48171",
+      "county": "Gillespie",
+      "countyFips": "48171",
+      "fips": "4827396",
+      "name": "Fredericksburg",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-lufkin-48005",
+      "county": "Angelina",
+      "countyFips": "48005",
+      "fips": "4845036",
+      "name": "Lufkin",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-port-arthur-48245",
+      "county": "Jefferson",
+      "countyFips": "48245",
+      "fips": "4858808",
+      "name": "Port Arthur",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-brenham-48477",
+      "county": "Washington",
+      "countyFips": "48477",
+      "fips": "4810132",
+      "name": "Brenham",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-the-woodlands-48339",
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4872656",
+      "name": "The Woodlands",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-new-caney-48339",
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4850636",
+      "name": "New Caney",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "communityId": "tx-hull-48291",
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": null,
+      "name": "Hull",
+      "state": "Texas",
+      "stateFips": "48"
+    }
+  ],
+  "schemaVersion": "gridly.lp157.communityRelationshipRegistry.v1"
+}

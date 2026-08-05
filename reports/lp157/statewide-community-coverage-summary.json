@@ -1,0 +1,27 @@
+{
+  "classificationCounts": {
+    "cdp": 2,
+    "city": 18,
+    "recognized_unincorporated_community": 1,
+    "town": 1
+  },
+  "communityCount": 22,
+  "contextSha256": "68d3f355fda64d4d93b74b96a03fd5e1c1d3b6d17a3322909c61f87f443f02d4",
+  "countyCount": 10,
+  "deliverables": [
+    "data/lp157/texas-community-intelligence-registry.json",
+    "data/lp157/texas-community-relationship-registry.json",
+    "reports/lp157/community-search-report.json",
+    "reports/lp157/community-routing-report.json",
+    "reports/lp157/community-context-report.json",
+    "reports/lp157/community-quality-report.json"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP157",
+  "qualitySha256": "47e204b500c5da42a4cbfa5c2a868a01de952c1fb203e0ed4f052af60615619b",
+  "registrySha256": "59a79d0bdf83c61d52e8bedee7ad77660d6f71b673c13b381af4bf235978ec92",
+  "relationshipsSha256": "ee5c14e0c63a8985957264f11cbaa049d3b610f4077414f8395425c72d8c16a5",
+  "routingSha256": "dfe0b0deac0a74f47b83bf77f1b31b8deceb7e16fc2f434ffa067a9ffc856107",
+  "schemaVersion": "gridly.lp157.statewideCommunityCoverageSummary.v1",
+  "searchSha256": "34d704fb7fa2d17815bbd74359113d4e7cc9aad4ce4905f0fe242e32d47b2754"
+}

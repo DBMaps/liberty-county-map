@@ -1,0 +1,612 @@
+{
+  "communities": [
+    {
+      "alternateNames": [
+        "Dayton TX",
+        "Dayton Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.0466,
+        "lon": -94.8852
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4819408",
+      "id": "tx-dayton-48291",
+      "name": "Dayton",
+      "population": 8597,
+      "searchTokens": [
+        "Dayton",
+        "Dayton TX",
+        "Dayton Texas",
+        "dayton",
+        "dayton tx",
+        "dayton texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Cleveland TX",
+        "Cleveland Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.3413,
+        "lon": -95.0855
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4815128",
+      "id": "tx-cleveland-48291",
+      "name": "Cleveland",
+      "population": 7675,
+      "searchTokens": [
+        "Cleveland",
+        "Cleveland TX",
+        "Cleveland Texas",
+        "cleveland",
+        "cleveland tx",
+        "cleveland texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Liberty TX",
+        "Liberty Texas",
+        "Liberty County seat"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.0579,
+        "lon": -94.7955
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4842820",
+      "id": "tx-liberty-48291",
+      "name": "Liberty",
+      "population": 8397,
+      "searchTokens": [
+        "Liberty",
+        "Liberty TX",
+        "Liberty Texas",
+        "Liberty County seat",
+        "liberty",
+        "liberty tx",
+        "liberty texas",
+        "liberty county seat"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Ames TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.0536,
+        "lon": -94.7435
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4803248",
+      "id": "tx-ames-48291",
+      "name": "Ames",
+      "population": 1038,
+      "searchTokens": [
+        "Ames",
+        "Ames TX",
+        "ames",
+        "ames tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Daisetta TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.113,
+        "lon": -94.6424
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4818580",
+      "id": "tx-daisetta-48291",
+      "name": "Daisetta",
+      "population": 894,
+      "searchTokens": [
+        "Daisetta",
+        "Daisetta TX",
+        "daisetta",
+        "daisetta tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Devers TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.0258,
+        "lon": -94.5866
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4819952",
+      "id": "tx-devers-48291",
+      "name": "Devers",
+      "population": 383,
+      "searchTokens": [
+        "Devers",
+        "Devers TX",
+        "devers",
+        "devers tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Hardin TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.153,
+        "lon": -94.7399
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4832236",
+      "id": "tx-hardin-48291",
+      "name": "Hardin",
+      "population": 819,
+      "searchTokens": [
+        "Hardin",
+        "Hardin TX",
+        "hardin",
+        "hardin tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Kenefick TX"
+      ],
+      "classification": "town",
+      "coordinates": {
+        "lat": 30.1097,
+        "lon": -94.8563
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4839028",
+      "id": "tx-kenefick-48291",
+      "name": "Kenefick",
+      "population": 621,
+      "searchTokens": [
+        "Kenefick",
+        "Kenefick TX",
+        "kenefick",
+        "kenefick tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "North Cleveland TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.3638,
+        "lon": -95.093
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4851960",
+      "id": "tx-north-cleveland-48291",
+      "name": "North Cleveland",
+      "population": 263,
+      "searchTokens": [
+        "North Cleveland",
+        "North Cleveland TX",
+        "north cleveland",
+        "north cleveland tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Plum Grove TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.1972,
+        "lon": -95.0944
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": "4858244",
+      "id": "tx-plum-grove-48291",
+      "name": "Plum Grove",
+      "population": 600,
+      "searchTokens": [
+        "Plum Grove",
+        "Plum Grove TX",
+        "plum grove",
+        "plum grove tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Conroe TX",
+        "Conroe Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.3119,
+        "lon": -95.4561
+      },
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4816432",
+      "id": "tx-conroe-48339",
+      "name": "Conroe",
+      "population": 94400,
+      "searchTokens": [
+        "Conroe",
+        "Conroe TX",
+        "Conroe Texas",
+        "conroe",
+        "conroe tx",
+        "conroe texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Waco TX",
+        "Waco Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 31.5493,
+        "lon": -97.1467
+      },
+      "county": "McLennan",
+      "countyFips": "48309",
+      "fips": "4876000",
+      "id": "tx-waco-48309",
+      "name": "Waco",
+      "population": 143984,
+      "searchTokens": [
+        "Waco",
+        "Waco TX",
+        "Waco Texas",
+        "waco",
+        "waco tx",
+        "waco texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Amarillo TX",
+        "Amarillo Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 35.2072,
+        "lon": -101.8338
+      },
+      "county": "Potter",
+      "countyFips": "48375",
+      "fips": "4803000",
+      "id": "tx-amarillo-48375",
+      "name": "Amarillo",
+      "population": 201291,
+      "searchTokens": [
+        "Amarillo",
+        "Amarillo TX",
+        "Amarillo Texas",
+        "amarillo",
+        "amarillo tx",
+        "amarillo texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Laredo TX",
+        "Laredo Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 27.5064,
+        "lon": -99.5075
+      },
+      "county": "Webb",
+      "countyFips": "48479",
+      "fips": "4841464",
+      "id": "tx-laredo-48479",
+      "name": "Laredo",
+      "population": 256153,
+      "searchTokens": [
+        "Laredo",
+        "Laredo TX",
+        "Laredo Texas",
+        "laredo",
+        "laredo tx",
+        "laredo texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Brownsville TX",
+        "Brownsville Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 25.9017,
+        "lon": -97.4975
+      },
+      "county": "Cameron",
+      "countyFips": "48061",
+      "fips": "4810768",
+      "id": "tx-brownsville-48061",
+      "name": "Brownsville",
+      "population": 187831,
+      "searchTokens": [
+        "Brownsville",
+        "Brownsville TX",
+        "Brownsville Texas",
+        "brownsville",
+        "brownsville tx",
+        "brownsville texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Fredericksburg TX",
+        "Fburg",
+        "Fredricksburg"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.2752,
+        "lon": -98.8719
+      },
+      "county": "Gillespie",
+      "countyFips": "48171",
+      "fips": "4827396",
+      "id": "tx-fredericksburg-48171",
+      "name": "Fredericksburg",
+      "population": 11072,
+      "searchTokens": [
+        "Fredericksburg",
+        "Fredericksburg TX",
+        "Fburg",
+        "Fredricksburg",
+        "fredericksburg",
+        "fredericksburg tx",
+        "fburg",
+        "fredricksburg"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Lufkin TX",
+        "Lufkin Texas"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 31.3382,
+        "lon": -94.7291
+      },
+      "county": "Angelina",
+      "countyFips": "48005",
+      "fips": "4845036",
+      "id": "tx-lufkin-48005",
+      "name": "Lufkin",
+      "population": 34143,
+      "searchTokens": [
+        "Lufkin",
+        "Lufkin TX",
+        "Lufkin Texas",
+        "lufkin",
+        "lufkin tx",
+        "lufkin texas"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Port Arthur TX",
+        "PA TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 29.8849,
+        "lon": -93.9399
+      },
+      "county": "Jefferson",
+      "countyFips": "48245",
+      "fips": "4858808",
+      "id": "tx-port-arthur-48245",
+      "name": "Port Arthur",
+      "population": 55839,
+      "searchTokens": [
+        "Port Arthur",
+        "Port Arthur TX",
+        "PA TX",
+        "port arthur",
+        "port arthur tx",
+        "pa tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Brenham TX"
+      ],
+      "classification": "city",
+      "coordinates": {
+        "lat": 30.1669,
+        "lon": -96.3977
+      },
+      "county": "Washington",
+      "countyFips": "48477",
+      "fips": "4810132",
+      "id": "tx-brenham-48477",
+      "name": "Brenham",
+      "population": 17727,
+      "searchTokens": [
+        "Brenham",
+        "Brenham TX",
+        "brenham",
+        "brenham tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Woodlands",
+        "The Woodlands TX"
+      ],
+      "classification": "cdp",
+      "coordinates": {
+        "lat": 30.1734,
+        "lon": -95.5047
+      },
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4872656",
+      "id": "tx-the-woodlands-48339",
+      "name": "The Woodlands",
+      "population": 119000,
+      "searchTokens": [
+        "The Woodlands",
+        "Woodlands",
+        "The Woodlands TX",
+        "the woodlands",
+        "woodlands",
+        "the woodlands tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "New Caney TX"
+      ],
+      "classification": "cdp",
+      "coordinates": {
+        "lat": 30.1555,
+        "lon": -95.2172
+      },
+      "county": "Montgomery",
+      "countyFips": "48339",
+      "fips": "4850636",
+      "id": "tx-new-caney-48339",
+      "name": "New Caney",
+      "population": null,
+      "searchTokens": [
+        "New Caney",
+        "New Caney TX",
+        "new caney",
+        "new caney tx"
+      ],
+      "sourceConfidence": "authoritative_census_place",
+      "state": "Texas",
+      "stateFips": "48"
+    },
+    {
+      "alternateNames": [
+        "Hull TX",
+        "Hull-Daisetta area"
+      ],
+      "classification": "recognized_unincorporated_community",
+      "coordinates": {
+        "lat": 30.146,
+        "lon": -94.642
+      },
+      "county": "Liberty",
+      "countyFips": "48291",
+      "fips": null,
+      "id": "tx-hull-48291",
+      "name": "Hull",
+      "population": null,
+      "searchTokens": [
+        "Hull",
+        "Hull TX",
+        "Hull-Daisetta area",
+        "hull",
+        "hull tx",
+        "hull daisetta area"
+      ],
+      "sourceConfidence": "governed_authoritative_local_reference",
+      "state": "Texas",
+      "stateFips": "48"
+    }
+  ],
+  "coveragePolicy": "Statewide governed inventory contract seeded from authoritative Texas place evidence and expandable without runtime activation.",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP157",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "rebuildsCertifiedPackages": false,
+  "schemaVersion": "gridly.lp157.texasCommunityIntelligenceRegistry.v1",
+  "sources": [
+    "U.S. Census Bureau 2024 Gazetteer Places/TIGER place identifiers for incorporated places and CDPs",
+    "U.S. Census Bureau county FIPS relationships for deterministic county/state mapping",
+    "Governed Gridly Liberty County community benchmark aliases preserved from prior consumer behavior"
+  ]
+}

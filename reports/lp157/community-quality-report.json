@@ -1,0 +1,25 @@
+{
+  "duplicateIds": [],
+  "duplicateNameCountyKeys": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "invalidCoordinates": [],
+  "libertyBenchmark": {
+    "communityIds": [
+      "tx-dayton-48291",
+      "tx-cleveland-48291",
+      "tx-liberty-48291",
+      "tx-ames-48291",
+      "tx-daisetta-48291",
+      "tx-devers-48291",
+      "tx-hardin-48291",
+      "tx-kenefick-48291",
+      "tx-north-cleveland-48291",
+      "tx-plum-grove-48291",
+      "tx-hull-48291"
+    ],
+    "status": "PASS"
+  },
+  "milestone": "LP157",
+  "missingCountyFips": [],
+  "schemaVersion": "gridly.lp157.communityQualityReport.v1"
+}

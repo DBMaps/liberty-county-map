@@ -1,0 +1,13 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "genericWordingPolicy": "Avoid generic nearby-area wording when a governed community anchor is available.",
+  "milestone": "LP157",
+  "preferredNotificationExamples": [
+    "Near Waco",
+    "Near Brenham",
+    "Near Dayton",
+    "Near Lufkin"
+  ],
+  "schemaVersion": "gridly.lp157.communityContextReport.v1",
+  "status": "PASS"
+}

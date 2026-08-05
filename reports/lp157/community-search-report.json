@@ -1,0 +1,81 @@
+{
+  "aliasExamples": [
+    {
+      "matchedId": "tx-fredericksburg-48171",
+      "query": "Fburg"
+    },
+    {
+      "matchedId": "tx-the-woodlands-48339",
+      "query": "Woodlands"
+    },
+    {
+      "matchedId": "tx-port-arthur-48245",
+      "query": "PA TX"
+    },
+    {
+      "matchedId": "tx-fredericksburg-48171",
+      "query": "Fredricksburg"
+    }
+  ],
+  "consumerExpectations": [
+    {
+      "matchedId": "tx-dayton-48291",
+      "query": "Dayton",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-cleveland-48291",
+      "query": "Cleveland",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-conroe-48339",
+      "query": "Conroe",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-waco-48309",
+      "query": "Waco",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-amarillo-48375",
+      "query": "Amarillo",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-laredo-48479",
+      "query": "Laredo",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-brownsville-48061",
+      "query": "Brownsville",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-fredericksburg-48171",
+      "query": "Fredericksburg",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-lufkin-48005",
+      "query": "Lufkin",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "tx-port-arthur-48245",
+      "query": "Port Arthur",
+      "status": "PASS"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP157",
+  "schemaVersion": "gridly.lp157.communitySearchReport.v1",
+  "supportedModes": [
+    "exact",
+    "alias",
+    "common abbreviation",
+    "governed misspelling"
+  ]
+}
