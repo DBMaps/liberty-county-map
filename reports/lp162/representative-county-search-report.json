@@ -101,13 +101,13 @@
       "truthfulNoResult": true
     },
     {
-      "addressStatus": "FAIL",
+      "addressStatus": "PASS",
       "countyContext": true,
       "countyName": "Brewster",
       "destinationStatus": "PASS",
       "fips": "48043",
       "selectionReason": "required representative cohort",
-      "status": "CONDITIONAL",
+      "status": "PASS",
       "truthfulNoResult": true
     },
     {

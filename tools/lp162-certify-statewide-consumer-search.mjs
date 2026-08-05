@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = 'reports/lp162';
 const AT = '1970-01-01T00:00:00.000Z';
+export const ADDRESS_CERTIFICATION_EVIDENCE = 'evidence/lp135/statewide-certification.json';
 const files = [
   'statewide-consumer-search-inventory.json', 'address-search-certification.json',
   'destination-search-certification.json', 'business-search-certification.json',
@@ -47,18 +48,18 @@ function destinationRows(manifest, counties, matrix) {
 export function buildReports() {
   const counties = read('data/lp104/texas-counties.json').counties.slice().sort((a, b) => a.fips.localeCompare(b.fips));
   const manifest = read('data/lp1601/texas-destination-candidate-registry-manifest.json');
-  const audit = read('evidence/lp131/statewide-readiness-audit.json');
+  const certification = read(ADDRESS_CERTIFICATION_EVIDENCE);
   const matrix = read('reports/lp1601j/county-category-coverage-matrix.json').counties;
   const lp161 = read('reports/lp161/lp161-summary.json');
-  const auditByFips = new Map(audit.counties.map((c) => [c.fips, c]));
+  const certificationByFips = new Map(certification.counties.map((c) => [c.fips, c]));
   const destRows = destinationRows(manifest, counties, matrix);
   const fips = counties.map((c) => c.fips);
   const duplicateFips = fips.filter((v, i) => fips.indexOf(v) !== i);
   const addressRows = counties.map((c) => {
-    const evidence = auditByFips.get(c.fips)?.address;
-    const pass = evidence?.packageExists === true && evidence?.certificationStatus === 'PASS' && evidence?.integrity === 'PASS';
-    return { fips: c.fips, countyName: c.countyName, packageAvailable: evidence?.packageExists === true,
-      certificationEvidence: evidence?.certificationEvidence || null, certificationStatus: evidence?.certificationStatus || 'UNAVAILABLE',
+    const evidence = certificationByFips.get(c.fips);
+    const pass = evidence?.certificationStatus === 'CERTIFIED';
+    return { fips: c.fips, countyName: c.countyName, packageAvailable: Boolean(evidence?.packageIdentity),
+      certificationEvidence: evidence?.evidenceReference || null, certificationStatus: evidence?.certificationStatus || 'UNAVAILABLE',
       exactHouseNumberRequired: true, governedRoadIdentityRequired: true, authoritativeCoordinatesRequired: true,
       countyContainmentRequired: true, truthfulNoResultSupported: true, interpolationAllowed: false,
       nearbyNumberSubstitutionAllowed: false, roadOnlyPromotionAllowed: false, status: pass ? 'PASS' : 'FAIL' };
@@ -67,8 +68,9 @@ export function buildReports() {
   const inventory = { ...base('statewideConsumerSearchInventory'), countyCount: counties.length, uniqueFipsCount: new Set(fips).size,
     duplicateFips, missingFips: manifest.counties.map((c) => c.countyFips).filter((x) => !fips.includes(x)), deterministicFipsOrdering: fips.every((x, i) => !i || fips[i - 1] < x),
     countyNameFipsReconciled: counties.every((c) => manifest.counties.some((m) => m.countyFips === c.fips && m.countyName === `${c.countyName} County`)),
-    counties: counties.map((c) => ({ fips: c.fips, countyName: c.countyName, addressEvidenceAvailable: auditByFips.get(c.fips)?.address?.packageExists === true, destinationEvidenceAvailable: manifest.counties.some((m) => m.countyFips === c.fips) })) };
-  const address = { ...base('addressSearchCertification', blocked.length ? 'CONDITIONAL' : 'PASS'), trustContract: { exactHouseNumber: true, exactGovernedRoadIdentity: true, authoritativeCoordinatesOnly: true, noInterpolation: true, noNearbyNumberSubstitution: true, noRoadOnlyPromotion: true, noSilentLocationConflict: true, truthfulNoResult: true }, counties: addressRows, blockerCount: blocked.length, blockers: blocked.map(({ fips, countyName, certificationStatus }) => ({ fips, countyName, certificationStatus })), passCount: addressRows.length - blocked.length, failCount: blocked.length };
+    addressCertificationEvidence: ADDRESS_CERTIFICATION_EVIDENCE,
+    counties: counties.map((c) => ({ fips: c.fips, countyName: c.countyName, addressEvidenceAvailable: Boolean(certificationByFips.get(c.fips)?.packageIdentity), destinationEvidenceAvailable: manifest.counties.some((m) => m.countyFips === c.fips) })) };
+  const address = { ...base('addressSearchCertification', blocked.length ? 'CONDITIONAL' : 'PASS'), authoritativeEvidence: ADDRESS_CERTIFICATION_EVIDENCE, trustContract: { exactHouseNumber: true, exactGovernedRoadIdentity: true, authoritativeCoordinatesOnly: true, noInterpolation: true, noNearbyNumberSubstitution: true, noRoadOnlyPromotion: true, noSilentLocationConflict: true, truthfulNoResult: true }, counties: addressRows, blockerCount: blocked.length, blockers: blocked.map(({ fips, countyName, certificationStatus }) => ({ fips, countyName, certificationStatus })), passCount: addressRows.length - blocked.length, failCount: blocked.length };
   const destination = { ...base('destinationSearchCertification'), sourceEvidence: ['LP160', 'LP160.1M', 'LP161'], runtimeActivationAuthorized: false,
     supportedContracts: ['exact destination name', 'business name', 'normalized name', 'governed alias', 'governed category', 'destination type', 'county context', 'authoritative coordinates'], counties: destRows,
     passCount: destRows.filter((r) => r.status === 'PASS').length, failCount: destRows.filter((r) => r.status === 'FAIL').length };

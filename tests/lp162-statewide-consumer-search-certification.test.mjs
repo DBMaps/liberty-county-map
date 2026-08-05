@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import test from 'node:test';
-import { buildReports, serialize, verify } from '../tools/lp162-certify-statewide-consumer-search.mjs';
+import { ADDRESS_CERTIFICATION_EVIDENCE, buildReports, serialize, verify } from '../tools/lp162-certify-statewide-consumer-search.mjs';
 
 const summaryPath = 'reports/lp162/lp162-summary.json';
 
@@ -16,9 +16,21 @@ test('evaluates all counties independently and discloses address blockers', () =
   assert.equal(inventory.uniqueFipsCount, 254);
   assert.equal(inventory.deterministicFipsOrdering, true);
   assert.equal(address.counties.length, 254);
-  assert.equal(address.passCount + address.failCount, 254);
-  assert.ok(address.failCount > 0, 'unresolved address evidence must not become PASS');
+  assert.equal(ADDRESS_CERTIFICATION_EVIDENCE, 'evidence/lp135/statewide-certification.json');
+  assert.equal(inventory.addressCertificationEvidence, ADDRESS_CERTIFICATION_EVIDENCE);
+  assert.equal(address.authoritativeEvidence, ADDRESS_CERTIFICATION_EVIDENCE);
+  assert.equal(address.passCount, 243);
+  assert.equal(address.failCount, 11);
+  assert.equal(summary.metrics.addressCertificationPassCount, 243);
+  assert.equal(summary.metrics.addressCertificationFailCount, 11);
   assert.equal(destination.passCount, 254);
+  assert.equal(reports['reports/lp162/business-search-certification.json'].passCount, 254);
+  assert.equal(reports['reports/lp162/alias-search-certification.json'].passCount, 254);
+  assert.equal(reports['reports/lp162/category-search-certification.json'].passCount, 254);
+  assert.equal(summary.libertyPreservationStatus, 'PASS');
+  assert.equal(summary.runtimeStatus, 'UNCHANGED');
+  assert.equal(summary.deploymentStatus, 'UNAUTHORIZED');
+  assert.equal(summary.activationStatus, 'UNAUTHORIZED');
   assert.equal(summary.finalClassification, 'CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN');
 });
 
