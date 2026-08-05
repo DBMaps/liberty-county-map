@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertDeterministicReport } from './deterministic-report-diagnostics.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const GEN = '1970-01-01T00:00:00.000Z';
@@ -75,5 +76,5 @@ export function buildReports() {
   return all;
 }
 export function writeAll() { const reports = buildReports(); for (const [path, report] of Object.entries(reports)) { mkdirSync(dirname(abs(path)), { recursive: true }); writeFileSync(abs(path), json(report)); } return reports[P.summary]; }
-export function verify() { const reports = buildReports(); for (const [path, report] of Object.entries(reports)) { if (!existsSync(abs(path))) throw new Error(`[LP161] missing ${path}`); if (readFileSync(abs(path), 'utf8') !== json(report)) throw new Error(`[LP161] ${path} differs from deterministic certification output`); } return reports[P.summary]; }
+export function verify() { const reports = buildReports(); for (const [path, report] of Object.entries(reports)) { if (!existsSync(abs(path))) throw new Error(`[LP161] missing ${path}`); assertDeterministicReport(path, readFileSync(abs(path), 'utf8'), json(report), 'LP161', 'differs from deterministic certification output'); } return reports[P.summary]; }
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) { try { const result = process.argv.includes('--write') ? writeAll() : verify(); console.log(json(result)); if (result.status !== 'PASS') process.exitCode = 1; } catch (e) { console.error(e.message); process.exitCode = 1; } }

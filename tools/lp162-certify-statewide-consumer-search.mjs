@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertDeterministicReport } from './deterministic-report-diagnostics.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = 'reports/lp162';
@@ -99,7 +100,7 @@ export function buildReports() {
 }
 
 export function writeAll() { const reports = buildReports(); for (const [path, value] of Object.entries(reports)) { mkdirSync(dirname(abs(path)), { recursive: true }); writeFileSync(abs(path), serialize(value)); } return clone(reports[reportPath('lp162-summary')]); }
-export function verify() { const reports = buildReports(); for (const [path, value] of Object.entries(reports)) { if (!existsSync(abs(path))) throw new Error(`[LP162] missing ${path}; use --write explicitly`); if (readFileSync(abs(path), 'utf8') !== serialize(value)) throw new Error(`[LP162] deterministic drift in ${path}; use --write explicitly`); } return clone(reports[reportPath('lp162-summary')]); }
+export function verify() { const reports = buildReports(); for (const [path, value] of Object.entries(reports)) { if (!existsSync(abs(path))) throw new Error(`[LP162] missing ${path}; use --write explicitly`); assertDeterministicReport(path, readFileSync(abs(path), 'utf8'), serialize(value), 'LP162', 'deterministic drift; use --write explicitly'); } return clone(reports[reportPath('lp162-summary')]); }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try { const result = process.argv.includes('--write') ? writeAll() : verify(); console.log(serialize(result)); if (result.status === 'FAIL') process.exitCode = 1; }
