@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.lp159.integrationPlan.v1",
+  "milestone": "LP159",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "constraints": {"deployDestinationData": false, "activateRuntime": false, "modifyProtectedInfrastructure": false, "replaceDestinationRegistry": false, "introduceFrameworks": false},
+  "integration": [
+    {"surface": "Community Registry (LP157)", "plan": "Resolve every accepted destination to community, county FIPS, state FIPS, and statewide identity context before consumer use."},
+    {"surface": "Destination Registry (LP158)", "plan": "Treat LP158 as protected governed baseline; LP159 creates source-selection policy only and requires a future patch milestone for record ingestion."},
+    {"surface": "Address Search", "plan": "Keep address search authoritative and separate; use destination candidates only as POI results with explicit source provenance and address confidence."},
+    {"surface": "Route Watch", "plan": "Allow only quality-gated, non-sensitive, routable destinations with valid coordinates and county containment into Route Watch candidate planning."},
+    {"surface": "Notification Context", "plan": "Use destination names to improve awareness context, while suppressing sensitive infrastructure details unless consumer-safe wording is approved."},
+    {"surface": "Search Intelligence", "plan": "Build aliases, brand variants, misspellings, and category boosts from approved/conditional sources, with source isolation for ODbL and commercial terms."}
+  ]
+}

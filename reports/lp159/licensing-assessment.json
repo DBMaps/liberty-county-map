@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "gridly.lp159.licensingAssessment.v1",
+  "milestone": "LP159",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "assessments": [
+    {"sourceId": "overture-places", "commercialUse": "approved", "redistribution": "approved_with_attribution", "storage": "approved", "search": "approved", "offlineUsage": "approved", "refreshRights": "approved_monthly_release_window", "attribution": "required"},
+    {"sourceId": "fsq-os-places", "commercialUse": "approved", "redistribution": "approved_with_notice", "storage": "approved", "search": "approved", "offlineUsage": "approved", "refreshRights": "approved_subject_to_release_availability", "attribution": "preserve Foursquare NOTICE"},
+    {"sourceId": "osm-poi", "commercialUse": "approved", "redistribution": "conditional_odbl_share_alike", "storage": "approved_if_odbl_governed", "search": "approved_if_attributed", "offlineUsage": "approved_if_odbl_governed", "refreshRights": "approved", "attribution": "required"},
+    {"sourceId": "texas-open-data-tnris-txdot-twdb", "commercialUse": "approved_unless_layer_terms_differ", "redistribution": "approved_with_agency_terms", "storage": "approved", "search": "approved", "offlineUsage": "approved", "refreshRights": "layer_specific", "attribution": "agency attribution/disclaimer required"},
+    {"sourceId": "federal-hifld-epa-frs", "commercialUse": "conditional_layer_specific", "redistribution": "conditional_public_domain_or_provider_terms_only", "storage": "conditional_layer_specific", "search": "conditional_sensitivity_review", "offlineUsage": "conditional_layer_specific", "refreshRights": "provider_specific", "attribution": "agency/source attribution required where applicable"},
+    {"sourceId": "google-places", "commercialUse": "conditional_api_use", "redistribution": "rejected", "storage": "rejected_for_durable_registry", "search": "rejected_for_stored_index", "offlineUsage": "rejected", "refreshRights": "api_only", "attribution": "Google terms required"},
+    {"sourceId": "safegraph-places", "commercialUse": "conditional_contract", "redistribution": "conditional_contract", "storage": "conditional_contract", "search": "conditional_contract", "offlineUsage": "conditional_contract", "refreshRights": "conditional_contract_monthly", "attribution": "contract-specific"}
+  ]
+}
