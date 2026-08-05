@@ -1,0 +1,3621 @@
+{
+  "benchmarkCounty": "Liberty",
+  "certificationStatus": "NO_GO_PENDING_COUNTY_EVIDENCE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP154",
+  "passed": false,
+  "rows": [
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Anderson County",
+      "fips": "48001",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Andrews County",
+      "fips": "48003",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Angelina County",
+      "fips": "48005",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Aransas County",
+      "fips": "48007",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Archer County",
+      "fips": "48009",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Armstrong County",
+      "fips": "48011",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Atascosa County",
+      "fips": "48013",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Austin County",
+      "fips": "48015",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bailey County",
+      "fips": "48017",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bandera County",
+      "fips": "48019",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bastrop County",
+      "fips": "48021",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Baylor County",
+      "fips": "48023",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bee County",
+      "fips": "48025",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bell County",
+      "fips": "48027",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bexar County",
+      "fips": "48029",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Blanco County",
+      "fips": "48031",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Borden County",
+      "fips": "48033",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bosque County",
+      "fips": "48035",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Bowie County",
+      "fips": "48037",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Brazoria County",
+      "fips": "48039",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Brazos County",
+      "fips": "48041",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Brewster County",
+      "fips": "48043",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Briscoe County",
+      "fips": "48045",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Brooks County",
+      "fips": "48047",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Brown County",
+      "fips": "48049",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Burleson County",
+      "fips": "48051",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Burnet County",
+      "fips": "48053",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Caldwell County",
+      "fips": "48055",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Calhoun County",
+      "fips": "48057",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Callahan County",
+      "fips": "48059",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cameron County",
+      "fips": "48061",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Camp County",
+      "fips": "48063",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Carson County",
+      "fips": "48065",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cass County",
+      "fips": "48067",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Castro County",
+      "fips": "48069",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Chambers County",
+      "fips": "48071",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cherokee County",
+      "fips": "48073",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Childress County",
+      "fips": "48075",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Clay County",
+      "fips": "48077",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cochran County",
+      "fips": "48079",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Coke County",
+      "fips": "48081",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Coleman County",
+      "fips": "48083",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Collin County",
+      "fips": "48085",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Collingsworth County",
+      "fips": "48087",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Colorado County",
+      "fips": "48089",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Comal County",
+      "fips": "48091",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Comanche County",
+      "fips": "48093",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Concho County",
+      "fips": "48095",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cooke County",
+      "fips": "48097",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Coryell County",
+      "fips": "48099",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Cottle County",
+      "fips": "48101",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Crane County",
+      "fips": "48103",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Crockett County",
+      "fips": "48105",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Crosby County",
+      "fips": "48107",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Culberson County",
+      "fips": "48109",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Dallam County",
+      "fips": "48111",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Dallas County",
+      "fips": "48113",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Dawson County",
+      "fips": "48115",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Deaf Smith County",
+      "fips": "48117",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Delta County",
+      "fips": "48119",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Denton County",
+      "fips": "48121",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "DeWitt County",
+      "fips": "48123",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Dickens County",
+      "fips": "48125",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Dimmit County",
+      "fips": "48127",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Donley County",
+      "fips": "48129",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Duval County",
+      "fips": "48131",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Eastland County",
+      "fips": "48133",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Ector County",
+      "fips": "48135",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Edwards County",
+      "fips": "48137",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Ellis County",
+      "fips": "48139",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "El Paso County",
+      "fips": "48141",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Erath County",
+      "fips": "48143",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Falls County",
+      "fips": "48145",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Fannin County",
+      "fips": "48147",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Fayette County",
+      "fips": "48149",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Fisher County",
+      "fips": "48151",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Floyd County",
+      "fips": "48153",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Foard County",
+      "fips": "48155",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Fort Bend County",
+      "fips": "48157",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Franklin County",
+      "fips": "48159",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Freestone County",
+      "fips": "48161",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Frio County",
+      "fips": "48163",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Gaines County",
+      "fips": "48165",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Galveston County",
+      "fips": "48167",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Garza County",
+      "fips": "48169",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Gillespie County",
+      "fips": "48171",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Glasscock County",
+      "fips": "48173",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Goliad County",
+      "fips": "48175",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Gonzales County",
+      "fips": "48177",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Gray County",
+      "fips": "48179",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Grayson County",
+      "fips": "48181",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Gregg County",
+      "fips": "48183",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Grimes County",
+      "fips": "48185",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Guadalupe County",
+      "fips": "48187",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hale County",
+      "fips": "48189",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hall County",
+      "fips": "48191",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hamilton County",
+      "fips": "48193",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hansford County",
+      "fips": "48195",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hardeman County",
+      "fips": "48197",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hardin County",
+      "fips": "48199",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Harris County",
+      "fips": "48201",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Harrison County",
+      "fips": "48203",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hartley County",
+      "fips": "48205",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Haskell County",
+      "fips": "48207",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hays County",
+      "fips": "48209",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hemphill County",
+      "fips": "48211",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Henderson County",
+      "fips": "48213",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hidalgo County",
+      "fips": "48215",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hill County",
+      "fips": "48217",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hockley County",
+      "fips": "48219",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hood County",
+      "fips": "48221",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hopkins County",
+      "fips": "48223",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Houston County",
+      "fips": "48225",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Howard County",
+      "fips": "48227",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hudspeth County",
+      "fips": "48229",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hunt County",
+      "fips": "48231",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Hutchinson County",
+      "fips": "48233",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Irion County",
+      "fips": "48235",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jack County",
+      "fips": "48237",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jackson County",
+      "fips": "48239",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jasper County",
+      "fips": "48241",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jeff Davis County",
+      "fips": "48243",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jefferson County",
+      "fips": "48245",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jim Hogg County",
+      "fips": "48247",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jim Wells County",
+      "fips": "48249",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Johnson County",
+      "fips": "48251",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Jones County",
+      "fips": "48253",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Karnes County",
+      "fips": "48255",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kaufman County",
+      "fips": "48257",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kendall County",
+      "fips": "48259",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kenedy County",
+      "fips": "48261",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kent County",
+      "fips": "48263",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kerr County",
+      "fips": "48265",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kimble County",
+      "fips": "48267",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "King County",
+      "fips": "48269",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kinney County",
+      "fips": "48271",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Kleberg County",
+      "fips": "48273",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Knox County",
+      "fips": "48275",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lamar County",
+      "fips": "48277",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lamb County",
+      "fips": "48279",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lampasas County",
+      "fips": "48281",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "La Salle County",
+      "fips": "48283",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lavaca County",
+      "fips": "48285",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lee County",
+      "fips": "48287",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Leon County",
+      "fips": "48289",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Liberty County",
+      "fips": "48291",
+      "launchReadyCandidate": true,
+      "status": "BENCHMARK_CERTIFIED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Limestone County",
+      "fips": "48293",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lipscomb County",
+      "fips": "48295",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Live Oak County",
+      "fips": "48297",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Llano County",
+      "fips": "48299",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Loving County",
+      "fips": "48301",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lubbock County",
+      "fips": "48303",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Lynn County",
+      "fips": "48305",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "McCulloch County",
+      "fips": "48307",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "McLennan County",
+      "fips": "48309",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "McMullen County",
+      "fips": "48311",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Madison County",
+      "fips": "48313",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Marion County",
+      "fips": "48315",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Martin County",
+      "fips": "48317",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Mason County",
+      "fips": "48319",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Matagorda County",
+      "fips": "48321",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Maverick County",
+      "fips": "48323",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Medina County",
+      "fips": "48325",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Menard County",
+      "fips": "48327",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Midland County",
+      "fips": "48329",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Milam County",
+      "fips": "48331",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Mills County",
+      "fips": "48333",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Mitchell County",
+      "fips": "48335",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Montague County",
+      "fips": "48337",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Montgomery County",
+      "fips": "48339",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Moore County",
+      "fips": "48341",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Morris County",
+      "fips": "48343",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Motley County",
+      "fips": "48345",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Nacogdoches County",
+      "fips": "48347",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Navarro County",
+      "fips": "48349",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Newton County",
+      "fips": "48351",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Nolan County",
+      "fips": "48353",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Nueces County",
+      "fips": "48355",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Ochiltree County",
+      "fips": "48357",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Oldham County",
+      "fips": "48359",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Orange County",
+      "fips": "48361",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Palo Pinto County",
+      "fips": "48363",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Panola County",
+      "fips": "48365",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Parker County",
+      "fips": "48367",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Parmer County",
+      "fips": "48369",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Pecos County",
+      "fips": "48371",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Polk County",
+      "fips": "48373",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Potter County",
+      "fips": "48375",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Presidio County",
+      "fips": "48377",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Rains County",
+      "fips": "48379",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Randall County",
+      "fips": "48381",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Reagan County",
+      "fips": "48383",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Real County",
+      "fips": "48385",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Red River County",
+      "fips": "48387",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Reeves County",
+      "fips": "48389",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Refugio County",
+      "fips": "48391",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Roberts County",
+      "fips": "48393",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Robertson County",
+      "fips": "48395",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Rockwall County",
+      "fips": "48397",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Runnels County",
+      "fips": "48399",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Rusk County",
+      "fips": "48401",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Sabine County",
+      "fips": "48403",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "San Augustine County",
+      "fips": "48405",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "San Jacinto County",
+      "fips": "48407",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "San Patricio County",
+      "fips": "48409",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "San Saba County",
+      "fips": "48411",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Schleicher County",
+      "fips": "48413",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Scurry County",
+      "fips": "48415",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Shackelford County",
+      "fips": "48417",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Shelby County",
+      "fips": "48419",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Sherman County",
+      "fips": "48421",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Smith County",
+      "fips": "48423",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Somervell County",
+      "fips": "48425",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Starr County",
+      "fips": "48427",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Stephens County",
+      "fips": "48429",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Sterling County",
+      "fips": "48431",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Stonewall County",
+      "fips": "48433",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Sutton County",
+      "fips": "48435",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Swisher County",
+      "fips": "48437",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Tarrant County",
+      "fips": "48439",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Taylor County",
+      "fips": "48441",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Terrell County",
+      "fips": "48443",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Terry County",
+      "fips": "48445",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Throckmorton County",
+      "fips": "48447",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Titus County",
+      "fips": "48449",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Tom Green County",
+      "fips": "48451",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Travis County",
+      "fips": "48453",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Trinity County",
+      "fips": "48455",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Tyler County",
+      "fips": "48457",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Upshur County",
+      "fips": "48459",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Upton County",
+      "fips": "48461",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Uvalde County",
+      "fips": "48463",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Val Verde County",
+      "fips": "48465",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Van Zandt County",
+      "fips": "48467",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Victoria County",
+      "fips": "48469",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Walker County",
+      "fips": "48471",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Waller County",
+      "fips": "48473",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Ward County",
+      "fips": "48475",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Washington County",
+      "fips": "48477",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Webb County",
+      "fips": "48479",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [
+        "Requires county-specific consumer experience evidence before public launch"
+      ],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wharton County",
+      "fips": "48481",
+      "launchReadyCandidate": true,
+      "status": "CERTIFICATION_REQUIRED_AGAINST_LIBERTY"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wheeler County",
+      "fips": "48483",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wichita County",
+      "fips": "48485",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wilbarger County",
+      "fips": "48487",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Willacy County",
+      "fips": "48489",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Williamson County",
+      "fips": "48491",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wilson County",
+      "fips": "48493",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Winkler County",
+      "fips": "48495",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wise County",
+      "fips": "48497",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Wood County",
+      "fips": "48499",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Yoakum County",
+      "fips": "48501",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Young County",
+      "fips": "48503",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Zapata County",
+      "fips": "48505",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    },
+    {
+      "blockers": [],
+      "checks": [
+        "route generation",
+        "route preview",
+        "route recalculation",
+        "route persistence",
+        "route clearing"
+      ],
+      "countyName": "Zavala County",
+      "fips": "48507",
+      "launchReadyCandidate": false,
+      "status": "NOT_LAUNCH_READY_NOT_EVALUATED"
+    }
+  ],
+  "schemaVersion": "gridly.lp154.destinationRouting.v1",
+  "title": "Destination Routing Certification"
+}
