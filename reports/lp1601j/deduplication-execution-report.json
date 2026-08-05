@@ -8,6 +8,6 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "duplicatesRemoved": 0,
+  "duplicatesRemoved": 1,
   "strategy": "streaming deterministic exact key"
 }

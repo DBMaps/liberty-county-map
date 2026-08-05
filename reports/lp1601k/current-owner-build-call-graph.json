@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp1601k.currentOwnerBuildCallGraph.v1",
+  "milestone": "LP160.1K",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "buildScriptEntryPoint": "package.json scripts.build:lp1601 -> node tools/lp1601f-streaming-manufacture.mjs",
+  "preflightFunction": "ownerPreflight",
+  "sourceCountFunction": "runDuckDbScalar/read_parquet source-row-count",
+  "stagingDiscoveryFunction": "discoverRealStagingFiles",
+  "stagingCountFunction": "countStagingRows/countStagingFileRows",
+  "jsonlValidationFunction": "inspectStagingFormat + validateJsonlBounded",
+  "lp1601jProcessorFunction": "executeJsonlCountyManufacturing",
+  "finalAssessmentFunction": "executeOwnerLocalManufacturing returns P1601J.final",
+  "currentEarlyReturnLocations": [
+    {
+      "function": "executeOwnerLocalManufacturingLegacy",
+      "location": "after LP160.1H staging row count",
+      "removedBy": "LP160.1K orchestrator routes to executeJsonlCountyManufacturing before final output"
+    },
+    {
+      "function": "executeOwnerLocalManufacturingLegacy",
+      "location": "LP160.1H placeholder exclusions = stagingRows",
+      "removedBy": "LP160.1K final assessment uses LP160.1J governed exclusions only"
+    }
+  ],
+  "verifiedStopBeforeLp1601j": "legacy owner function finalized LP160.1G after LP160.1H row count"
+}

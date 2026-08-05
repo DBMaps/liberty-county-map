@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "gridly.lp1601k.candidateWriterInvocationReport.v1",
+  "milestone": "LP160.1K",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "candidateWriterInvoked": true,
+  "manifestEntries": 254,
+  "controlledFixtureCannotProduceStatewideCompletion": true
+}

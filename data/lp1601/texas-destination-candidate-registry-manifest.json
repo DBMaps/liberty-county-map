@@ -1314,14 +1314,14 @@
       "countyName": "Texas County 48201",
       "countyFips": "48201",
       "recordCount": 1,
-      "byteSize": 1,
-      "sha256": "7CE24DFD27863C06818832C44629D7E485B72EC511091A5781BA758B418347BE",
+      "byteSize": 124,
+      "sha256": "650BAB34011658581591E367352010B53FD4AB42BFFC1B4170C2ABA03719827F",
       "format": "jsonl.gz",
       "compression": "gzip",
       "sourceRelease": "2026-07-22.0",
       "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
       "schemaVersion": "gridly.lp1601j.destinationCandidate.v1",
-      "candidateFilePathIdentity": "texas-county-48201-48201.destinations.jsonl.gz"
+      "candidateFilePathIdentity": "/tmp/lp1601k-znyvZz/manufactured/counties/texas-county-48201-48201.destinations.jsonl.gz"
     },
     {
       "countyName": "Texas County 48203",
@@ -1899,14 +1899,14 @@
       "countyName": "Liberty County",
       "countyFips": "48291",
       "recordCount": 1,
-      "byteSize": 1,
-      "sha256": "63BB81316C695ADFD8A5A90E5F5B473C4A5D1E48694C507C4083E0927DF8764A",
+      "byteSize": 124,
+      "sha256": "4C9F54347AB91B382F8E347E3A226358C5BF477D8B0A09B2E200F94411846934",
       "format": "jsonl.gz",
       "compression": "gzip",
       "sourceRelease": "2026-07-22.0",
       "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
       "schemaVersion": "gridly.lp1601j.destinationCandidate.v1",
-      "candidateFilePathIdentity": "liberty-48291.destinations.jsonl.gz"
+      "candidateFilePathIdentity": "/tmp/lp1601k-znyvZz/manufactured/counties/liberty-48291.destinations.jsonl.gz"
     },
     {
       "countyName": "Texas County 48293",

@@ -10,8 +10,8 @@
   "protectedArtifactsModified": false,
   "strategy": "Node readline streaming with bounded counters and county-scoped outputs",
   "batchSize": 1,
-  "peakRss": 54247424,
-  "peakHeap": 5632360,
+  "peakRss": 56827904,
+  "peakHeap": 7034584,
   "maximumBufferedRecords": 1,
   "fullStagingStringCreated": false,
   "statewideRecordArrayCreated": false
