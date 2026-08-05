@@ -1,0 +1,38 @@
+{
+  "conclusion": "Notification Context Assessment: Requires Acquisition. LP155 leaves non-Liberty notification quality NOT TESTED; generic private/unknown labels must be rejected.",
+  "coverageCompleteness": "PARTIAL_EVIDENCE_ONLY",
+  "currentSource": "Road, community, county, landmark, crossing, hazard, and route context",
+  "dataQualityClassification": "Requires Acquisition",
+  "evidence": {
+    "lp131": "evidence/lp131/statewide-readiness-audit.json",
+    "lp131Gaps": {
+      "candidateOnlyCounties": 239,
+      "certificationBlockedCounties": 14,
+      "countiesMissingCommunities": 251,
+      "countiesMissingCrossings": 226,
+      "countiesMissingDestinations": 226,
+      "runtimeEligibleCounties": 1
+    },
+    "lp131Totals": {
+      "addressPackages": 254,
+      "candidateOnly": 239,
+      "certificationBlocked": 14,
+      "certifiedPackages": 240,
+      "communities": 12,
+      "countiesAudited": 254,
+      "crossings": 3771,
+      "destinations": 153,
+      "runtimeReadyCounties": 1
+    },
+    "lp155": "reports/lp155/final-statewide-consumer-readiness-assessment.json",
+    "lp155Recommendation": "NO_GO"
+  },
+  "findings": [
+    "LP155 leaves non-Liberty notification quality NOT TESTED; generic private/unknown labels must be rejected."
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "launchDependency": "Critical Before Launch",
+  "milestone": "LP156",
+  "schemaVersion": "gridly.lp156.notificationsAssessment.v1",
+  "title": "Notification Context Assessment"
+}

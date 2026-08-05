@@ -1,0 +1,23 @@
+{
+  "acquisitionRegisterSha256": "2586b0b22195ecf61d3a2ab6c348125c054bd7d8e394e4912d9d4f200dfab564",
+  "addressesSha256": "fcca4b5bfff7acc4a1a227ffc7e744825677e3884f43309567cb8c2c2ca72824",
+  "businessesSha256": "3b6801b4d9df03ec57943e79412b85c82d8fc885cfc80aeee6a31bcaca1b7f5b",
+  "communitiesSha256": "28310fea8217cd890cd2b93c12a7449ff5bb850aae87553fcb45a716e9cd0260",
+  "coverageMatrixSha256": "f545f99ed5129baa33176ee64b4c7ab3c7be77b84a3b5c9119d76e0c029bf2ef",
+  "crossingsSha256": "f90e2e7201cef0b075e66cd840b5da3844dcf5266085347ec2ee063443fd2bdd",
+  "domainCount": 8,
+  "finalAssessmentSha256": "818fe75533281d8bb4a360e931bc816c77ad1e06a60475da959075e2398e4eb3",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hazardsSha256": "1e7208bec62e3f02edd360d01d936ff29dbc8b154ca83e4df613073e586d3ed4",
+  "launchDependencyMatrixSha256": "54167373b9ef97dc4471fb01f1a0c8c9a367653e855467242de862fa1d38bf4b",
+  "milestone": "LP156",
+  "notificationsSha256": "25d433754a0c1cbf49f5774b3575ab24154827e830a532eba9cded3893e2e551",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "planSha256": "e69449003f03476abb448aaa66f0f72ea5853054a06080714eec6abeeacd3167",
+  "rebuildsCertifiedPackages": false,
+  "routesSha256": "8b6d7f65a0d05cad9325b47e53f1a6bfe3300c46a0a9df5789a039ca2a1c8778",
+  "schemaVersion": "gridly.lp156.statewideDataReadinessSummary.v1",
+  "searchSha256": "993652dc9972266ad5c46e657825935b9234334fa55e818b30ee74bb286bc879"
+}

@@ -1,0 +1,87 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP156",
+  "rows": [
+    {
+      "coverage": "Statewide with documented exceptions",
+      "currentSource": "TXGIO Texas statewide address packages",
+      "dataQualityClassification": "Ready with Monitoring",
+      "domain": "addresses",
+      "launchDependency": "Critical Before Launch",
+      "launchReady": "CONDITIONAL",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "Defined by TXGIO package refresh and certification workflow"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Curated destination/business search datasets",
+      "dataQualityClassification": "Requires Acquisition",
+      "domain": "businesses",
+      "launchDependency": "Critical Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Runtime community manifest plus governed place labels",
+      "dataQualityClassification": "Requires Acquisition",
+      "domain": "communities",
+      "launchDependency": "Critical Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "FRA crossing source and production crossing packages",
+      "dataQualityClassification": "Requires Enrichment",
+      "domain": "crossings",
+      "launchDependency": "Recommended Before Launch",
+      "launchReady": "NO",
+      "license": "Authoritative public-source verification required per package",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Gridly hazard reports, weather association, road-event/community report inputs",
+      "dataQualityClassification": "Requires Enrichment",
+      "domain": "hazards",
+      "launchDependency": "Recommended Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Route generation/persistence with hazard, crossing, and weather association",
+      "dataQualityClassification": "Requires Enrichment",
+      "domain": "routes",
+      "launchDependency": "Recommended Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Road, community, county, landmark, crossing, hazard, and route context",
+      "dataQualityClassification": "Requires Acquisition",
+      "domain": "notifications",
+      "launchDependency": "Critical Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    },
+    {
+      "coverage": "Partial / needs expansion",
+      "currentSource": "Address, business, community, landmark, alias, and misspelling indexes",
+      "dataQualityClassification": "Requires Acquisition",
+      "domain": "search",
+      "launchDependency": "Critical Before Launch",
+      "launchReady": "NO",
+      "license": "Verified where existing repository evidence exists; acquisition rows require source license verification",
+      "refresh": "TBD during acquisition or enrichment"
+    }
+  ],
+  "schemaVersion": "gridly.lp156.statewideCoverageMatrix.v1"
+}
