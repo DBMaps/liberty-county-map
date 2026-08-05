@@ -1,0 +1,33 @@
+{
+  "activationOccurred": false,
+  "boundedMemoryStatus": "BOUNDED_MEMORY_DESIGN",
+  "categoryCompatibilityStatus": "IMPLEMENTED",
+  "countyAssignmentStatus": "IMPLEMENTED",
+  "deploymentOccurred": false,
+  "deterministicVerificationStatus": "PASS",
+  "finalClassification": "SOURCE_UNAVAILABLE",
+  "fixtureIsolationStatus": "PASS",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "libertyRegressionStatus": "PASS",
+  "milestone": "LP160.1A",
+  "ownerInstructionsStatus": "PASS",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsChanged": false,
+  "protectedArtifactsModified": false,
+  "remainingConditions": [
+    "Owner must provide governed Texas Overture Places GeoParquet source with explicit release, retrieval date, license, attribution, byte size, and SHA-256 before statewide manufacturing can complete."
+  ],
+  "runtimeChanged": false,
+  "schemaCompatibilityStatus": "STRUCTURAL_FIXTURE_ONLY_SOURCE_UNAVAILABLE",
+  "schemaVersion": "gridly.lp1601a.finalGeoParquetCompatibilityAssessment.v1",
+  "selectedGeoParquetProcessingTool": "DuckDB CLI with spatial extension",
+  "selectedToolVersion": "OWNER_VERSION_CHECK_REQUIRED",
+  "stagingFormat": "partitioned-jsonl",
+  "supportedSourceFormats": [
+    ".parquet",
+    ".geoparquet"
+  ],
+  "texasExtractionStatus": "IMPLEMENTED_PENDING_OWNER_SOURCE"
+}

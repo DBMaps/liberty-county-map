@@ -1,0 +1,17 @@
+{
+  "conversionCommand": "npm run build:lp1601 -- --source <geoparquet> --release <release> --staging-directory data/generated/lp1601a/staged --write",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "outputs": [],
+  "partitioning": "countyFips",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "recordsSourceIdentity": true,
+  "recovery": "county partitions can be regenerated independently",
+  "schemaVersion": "gridly.lp1601a.stagingFormatContract.v1",
+  "selectedFormat": "partitioned-jsonl",
+  "stableFieldOrdering": true,
+  "streamReadable": true
+}

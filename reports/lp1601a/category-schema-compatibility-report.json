@@ -1,0 +1,29 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "schemaVersion": "gridly.lp1601a.categorySchemaCompatibilityReport.v1",
+  "sourceFields": [
+    "categories.primary",
+    "categories.alternate",
+    "categories.main",
+    "categories"
+  ],
+  "status": "IMPLEMENTED",
+  "supportedFamilies": [
+    "Retail",
+    "Fuel",
+    "Restaurant",
+    "Medical",
+    "Government",
+    "Education",
+    "Transportation",
+    "Recreation",
+    "Public Safety",
+    "Critical Infrastructure"
+  ],
+  "unmappedPolicy": "UNMAPPED"
+}

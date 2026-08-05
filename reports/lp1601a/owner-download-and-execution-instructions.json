@@ -1,0 +1,28 @@
+{
+  "approvedReleaseSelection": "Use Overture STAC latest release dynamically unless owner pins an approved release.",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "powershell": [
+    "duckdb --version",
+    "Set-Location C:\\GitHub\\liberty-county-map",
+    "$release = (duckdb -c \"SELECT latest FROM read_json_auto('https://stac.overturemaps.org/catalog.json');\")",
+    "$folder = \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\$release\"",
+    "New-Item -ItemType Directory -Force -Path $folder",
+    "$source = Join-Path $folder \"texas-places.geoparquet\"",
+    "duckdb -c \"INSTALL spatial; LOAD spatial; COPY (SELECT * FROM read_parquet('s3://overturemaps-us-west-2/release/' || $release || '/theme=places/type=place/*') WHERE bbox.xmin <= -93.5 AND bbox.xmax >= -106.7 AND bbox.ymin <= 36.6 AND bbox.ymax >= 25.5) TO '$source' (FORMAT PARQUET);\"",
+    "Get-FileHash -Algorithm SHA256 $source",
+    "npm run build:lp1601 -- --source \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\" --release \"<release>\" --retrieval-date \"YYYY-MM-DD\" --license \"CDLA Permissive 2.0\" --attribution \"Overture Maps Foundation\" --write",
+    "npm run verify:lp1601a",
+    "npm run test:lp1601a"
+  ],
+  "protectedArtifactsModified": false,
+  "schemaVersion": "gridly.lp1601a.ownerDownloadAndExecutionInstructions.v1",
+  "sourceNotes": [
+    "Overture publishes cloud-native GeoParquet partitioned by theme/type and documents STAC latest-release access.",
+    "Do not download global Places unless explicitly approved."
+  ],
+  "status": "READY"
+}

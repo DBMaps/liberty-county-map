@@ -1,0 +1,16 @@
+{
+  "coordinatesUnchanged": true,
+  "curatedDestinationsUnchanged": true,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1A",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "productionDestinationRegistryReplaced": false,
+  "protectedArtifactsModified": false,
+  "routingUnchanged": true,
+  "runtimeIntegrationOccurred": false,
+  "schemaVersion": "gridly.lp1601a.libertyCompatibilityRegressionReport.v1",
+  "searchAliasesUnchanged": true,
+  "status": "PASS"
+}
