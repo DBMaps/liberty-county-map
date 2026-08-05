@@ -222,6 +222,8 @@
     "verify:lp1601k": "node -e \"import('./tools/lp1601f-streaming-manufacture.mjs').then(m=>m.verifyLp1601k()).then(r=>console.log(JSON.stringify(r,null,2)))\"",
     "test:lp1601k": "node --test tests/lp1601k-owner-build-wiring.test.mjs",
     "verify:lp1601l": "node -e \"import('./tools/lp1601f-streaming-manufacture.mjs').then(m=>m.verifyLp1601l()).then(r=>console.log(JSON.stringify(r,null,2)))\"",
-    "test:lp1601l": "node --test tests/lp1601l-county-assignment-writer-repair.test.mjs"
+    "test:lp1601l": "node --test tests/lp1601l-county-assignment-writer-repair.test.mjs",
+    "verify:lp1601m": "node tools/lp1601m-verify-final-manufacturing-certification.mjs",
+    "test:lp1601m": "node --test tests/lp1601m-final-manufacturing-certification.test.mjs"
   }
 }
