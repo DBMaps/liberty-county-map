@@ -1,0 +1,21 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "geographicScope": "Texas only",
+  "milestone": "LP160",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedInfrastructureModified": false,
+  "schemaVersion": "gridly.lp160.destinationSourceManifest.v1",
+  "sourceChecksum": "b75080e82e4ef3f5bf26e4127ad9e4bbab5f4d9ed7a1fd3e5de2a99ffee74aec",
+  "sourceIdentity": {
+    "attribution": "Overture Maps Foundation contributors",
+    "geographicScope": "Texas source records only for deterministic LP160 owner execution",
+    "license": "CDLA Permissive 2.0",
+    "release": "local-owner-snapshot-lp160",
+    "retrievalDate": "2026-01-01",
+    "sourceId": "overture-places",
+    "sourceName": "Overture Maps Places governed local execution snapshot"
+  },
+  "sourceRecordCount": 20
+}

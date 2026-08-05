@@ -1,0 +1,29 @@
+{
+  "excludedRecords": [
+    {
+      "reasons": [
+        "OUTSIDE_TEXAS_OR_INVALID_COORDINATES",
+        "UNRESOLVED_TEXAS_COUNTY_FIPS"
+      ],
+      "sourceRecordId": "overture-place-outside",
+      "stage": "extraction"
+    },
+    {
+      "reasons": [
+        "UNMAPPED_CATEGORY"
+      ],
+      "sourceRecordId": "overture-place-unknown-category",
+      "stage": "normalization"
+    },
+    {
+      "reasons": [
+        "DUPLICATE_RECORD"
+      ],
+      "sourceRecordId": "overture-place-walmart-liberty",
+      "stage": "deduplication"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.destinationExclusionRegister.v1"
+}

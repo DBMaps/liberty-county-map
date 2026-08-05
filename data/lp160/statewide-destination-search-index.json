@@ -1,0 +1,761 @@
+{
+  "entries": [
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "10070 i 10 luling tx"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "2121 us 90 liberty tx"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "2401 s 31st st temple tx"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "2800 n terminal rd houston tx"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "401 e 5th st austin tx"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "7800 airport blvd houston tx"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "austin"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "austin fire station 1"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "austin fire station 1"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "baylor scott and white"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "baylor scott and white"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "baylor scott and white medical center temple"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "baylor scott and white medical center temple"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "bell"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "bell"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "brazos"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "brazos"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "buc ees"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "buc ees"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "buc ees"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "buc ees luling"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "buc ees luling"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "bucees"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "bush airport"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "caldwell"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "cfa"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "chick fil a"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "chick fil a"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "chick fil a"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "chick fil a college station"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "chick fil a college station"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "cleveland"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "cleveland tx"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "college station"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "college station"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "college station tx"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "college station tx"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "courthouse"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "education"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "education"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "emergency room"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "fire station"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "fuel"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "alias/locality/category token",
+      "token": "galveston"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "alias/locality/category token",
+      "token": "galveston"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "galveston beach"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "alias/locality/category token",
+      "token": "galveston beach"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "galveston beach"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "george bush intercontinental airport"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "george bush intercontinental airport"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "government"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "h e b"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "h e b"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "h e b"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "h e b temple"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "h e b temple"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "harris"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "harris county courthouse"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "harris county courthouse"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "harris county sheriffs office"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "harris county sheriffs office"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "heb"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "hobby airport"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "hobby airport"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "hospital"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "hou"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "houston"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "houston hobby"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "houston port"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "houston ship channel houston tx"
+    },
+    {
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "reason": "alias/locality/category token",
+      "token": "houston tx"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "houston tx"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "huntsville"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "huntsville tx"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "iah"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "iah"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "iah"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "lake livingston"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "lake livingston"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "lake livingston tx"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "liberty"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "liberty"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "liberty"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "livingston"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "livingston lake"
+    },
+    {
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "reason": "alias/locality/category token",
+      "token": "luling"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "medical"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "nrg pkwy houston tx"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "nrg stadium"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "nrg stadium"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "nrg stadium"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "nrg stadium"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "polk"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "port houston"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "port houston"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "port of houston"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "port of houston"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "public safety"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "public safety"
+    },
+    {
+      "destinationId": "txdest-125616511e6fd35f",
+      "reason": "alias/locality/category token",
+      "token": "recreation"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "alias/locality/category token",
+      "token": "recreation"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "recreation"
+    },
+    {
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "reason": "alias/locality/category token",
+      "token": "reliant stadium"
+    },
+    {
+      "destinationId": "txdest-aab029b212ad7163",
+      "reason": "alias/locality/category token",
+      "token": "restaurant"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "retail"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "retail"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "retail"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "sam houston state"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "sam houston state"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "sam houston state university"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "sam houston state university"
+    },
+    {
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "reason": "alias/locality/category token",
+      "token": "seawall blvd galveston tx"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "sheriff office"
+    },
+    {
+      "destinationId": "txdest-6000cc492356e7f9",
+      "reason": "alias/locality/category token",
+      "token": "sheriffs office"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "shsu"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "tamu"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "temple"
+    },
+    {
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "reason": "alias/locality/category token",
+      "token": "temple"
+    },
+    {
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "reason": "alias/locality/category token",
+      "token": "temple tx"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "texas a and m"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "texas a and m"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "texas a and m university"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "texas a and m university"
+    },
+    {
+      "destinationId": "txdest-576950cd56068929",
+      "reason": "alias/locality/category token",
+      "token": "texas am"
+    },
+    {
+      "destinationId": "txdest-43ba9fff38023412",
+      "reason": "alias/locality/category token",
+      "token": "transportation"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "transportation"
+    },
+    {
+      "destinationId": "txdest-765371a87b7af1af",
+      "reason": "alias/locality/category token",
+      "token": "transportation"
+    },
+    {
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "reason": "alias/locality/category token",
+      "token": "travis"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "wal mart"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "wal mart"
+    },
+    {
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "reason": "alias/locality/category token",
+      "token": "walker"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "walmart"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "walmart"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "walmart"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "walmart"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "walmart supercenter cleveland"
+    },
+    {
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "reason": "alias/locality/category token",
+      "token": "walmart supercenter cleveland"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "walmart supercenter liberty"
+    },
+    {
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "reason": "alias/locality/category token",
+      "token": "walmart supercenter liberty"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "exact name/alias/category/locality/address token",
+      "token": "william p hobby airport"
+    },
+    {
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "reason": "alias/locality/category token",
+      "token": "william p hobby airport"
+    }
+  ],
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.destinationSearchIndex.v1"
+}

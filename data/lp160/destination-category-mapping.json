@@ -1,0 +1,120 @@
+{
+  "categoryFamilies": [
+    "Retail",
+    "Fuel",
+    "Restaurant",
+    "Medical",
+    "Government",
+    "Education",
+    "Transportation",
+    "Recreation",
+    "Public Safety",
+    "Critical Infrastructure"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mappings": [
+    {
+      "categoryFamily": "Transportation",
+      "sourceCategory": "airport"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "sourceCategory": "beach"
+    },
+    {
+      "categoryFamily": "Government",
+      "sourceCategory": "city_hall"
+    },
+    {
+      "categoryFamily": "Medical",
+      "sourceCategory": "clinic"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "sourceCategory": "convenience_store"
+    },
+    {
+      "categoryFamily": "Government",
+      "sourceCategory": "courthouse"
+    },
+    {
+      "categoryFamily": "Retail",
+      "sourceCategory": "department_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "sourceCategory": "emergency_room"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "sourceCategory": "fast_food"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "sourceCategory": "fire_station"
+    },
+    {
+      "categoryFamily": "Fuel",
+      "sourceCategory": "gas_station"
+    },
+    {
+      "categoryFamily": "Retail",
+      "sourceCategory": "grocery_store"
+    },
+    {
+      "categoryFamily": "Medical",
+      "sourceCategory": "hospital"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "sourceCategory": "lake"
+    },
+    {
+      "categoryFamily": "Retail",
+      "sourceCategory": "pharmacy"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "sourceCategory": "police"
+    },
+    {
+      "categoryFamily": "Transportation",
+      "sourceCategory": "port"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "sourceCategory": "power_plant"
+    },
+    {
+      "categoryFamily": "Critical Infrastructure",
+      "sourceCategory": "refinery"
+    },
+    {
+      "categoryFamily": "Restaurant",
+      "sourceCategory": "restaurant"
+    },
+    {
+      "categoryFamily": "Education",
+      "sourceCategory": "school"
+    },
+    {
+      "categoryFamily": "Public Safety",
+      "sourceCategory": "sheriff"
+    },
+    {
+      "categoryFamily": "Recreation",
+      "sourceCategory": "stadium"
+    },
+    {
+      "categoryFamily": "Retail",
+      "sourceCategory": "supermarket"
+    },
+    {
+      "categoryFamily": "Education",
+      "sourceCategory": "university"
+    }
+  ],
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.destinationCategoryMapping.v1",
+  "unmappedPolicy": "UNMAPPED categories are reported and excluded from consumer registry until governed mapping is added."
+}

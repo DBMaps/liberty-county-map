@@ -1,0 +1,137 @@
+{
+  "checks": [
+    "destination selection",
+    "coordinate handoff",
+    "route preview",
+    "route creation",
+    "route persistence",
+    "route clearing",
+    "no address interpolation",
+    "no nearby-coordinate substitution"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.destinationRoutingIntegrationReport.v1",
+  "status": "PASS",
+  "validatedDestinations": [
+    {
+      "coordinates": {
+        "latitude": 30.747,
+        "longitude": -95.066
+      },
+      "destinationId": "txdest-125616511e6fd35f"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.7606,
+        "longitude": -95.3571
+      },
+      "destinationId": "txdest-1e8bcd530ac781f2"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.0555,
+        "longitude": -94.7877
+      },
+      "destinationId": "txdest-28c6cd664e1999f6"
+    },
+    {
+      "coordinates": {
+        "latitude": 31.0982,
+        "longitude": -97.3428
+      },
+      "destinationId": "txdest-298ecfa30d660ac6"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.2682,
+        "longitude": -97.7428
+      },
+      "destinationId": "txdest-2a118f5d5cd0dc4d"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.7308,
+        "longitude": -95.2655
+      },
+      "destinationId": "txdest-43ba9fff38023412"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.7139,
+        "longitude": -95.5476
+      },
+      "destinationId": "txdest-4cba5e2fad6fca09"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.6801,
+        "longitude": -97.6477
+      },
+      "destinationId": "txdest-4e3567e3ed4c1847"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.6104,
+        "longitude": -96.3414
+      },
+      "destinationId": "txdest-576950cd56068929"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.3013,
+        "longitude": -94.7977
+      },
+      "destinationId": "txdest-59214a5ba26d79a9"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.7642,
+        "longitude": -95.3662
+      },
+      "destinationId": "txdest-6000cc492356e7f9"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.6454,
+        "longitude": -95.2789
+      },
+      "destinationId": "txdest-6b045e8ed875dd18"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.6847,
+        "longitude": -95.4107
+      },
+      "destinationId": "txdest-6e254644e19a9eb0"
+    },
+    {
+      "coordinates": {
+        "latitude": 29.9902,
+        "longitude": -95.3368
+      },
+      "destinationId": "txdest-765371a87b7af1af"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.3413,
+        "longitude": -95.0855
+      },
+      "destinationId": "txdest-89b78ea1ed1836fb"
+    },
+    {
+      "coordinates": {
+        "latitude": 30.6187,
+        "longitude": -96.3388
+      },
+      "destinationId": "txdest-aab029b212ad7163"
+    },
+    {
+      "coordinates": {
+        "latitude": 31.0793,
+        "longitude": -97.3656
+      },
+      "destinationId": "txdest-d84e5b4da13bd02e"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "decisions": [
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "lake livingston|Lake Livingston, TX|48373|30.74700|-95.06600",
+      "retainedDestinationId": "txdest-125616511e6fd35f"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "harris county courthouse|Houston, TX|48201|29.76060|-95.35710",
+      "retainedDestinationId": "txdest-1e8bcd530ac781f2"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "walmart supercenter liberty|2121 US-90, Liberty, TX|48291|30.05550|-94.78770",
+      "retainedDestinationId": "txdest-28c6cd664e1999f6"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "h e b temple|Temple, TX|48027|31.09820|-97.34280",
+      "retainedDestinationId": "txdest-298ecfa30d660ac6"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "austin fire station 1|401 E 5th St, Austin, TX|48453|30.26820|-97.74280",
+      "retainedDestinationId": "txdest-2a118f5d5cd0dc4d"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "port of houston|Houston Ship Channel, Houston, TX|48201|29.73080|-95.26550",
+      "retainedDestinationId": "txdest-43ba9fff38023412"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "sam houston state university|Huntsville, TX|48471|30.71390|-95.54760",
+      "retainedDestinationId": "txdest-4cba5e2fad6fca09"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "buc ees luling|10070 I-10, Luling, TX|48055|29.68010|-97.64770",
+      "retainedDestinationId": "txdest-4e3567e3ed4c1847"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "texas a and m university|College Station, TX|48041|30.61040|-96.34140",
+      "retainedDestinationId": "txdest-576950cd56068929"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "galveston beach|Seawall Blvd, Galveston, TX|48167|29.30130|-94.79770",
+      "retainedDestinationId": "txdest-59214a5ba26d79a9"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "harris county sheriffs office|Houston, TX|48201|29.76420|-95.36620",
+      "retainedDestinationId": "txdest-6000cc492356e7f9"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "william p hobby airport|7800 Airport Blvd, Houston, TX|48201|29.64540|-95.27890",
+      "retainedDestinationId": "txdest-6b045e8ed875dd18"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "nrg stadium|NRG Pkwy, Houston, TX|48201|29.68470|-95.41070",
+      "retainedDestinationId": "txdest-6e254644e19a9eb0"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "george bush intercontinental airport|2800 N Terminal Rd, Houston, TX|48201|29.99020|-95.33680",
+      "retainedDestinationId": "txdest-765371a87b7af1af"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "walmart supercenter cleveland|Cleveland, TX|48291|30.34130|-95.08550",
+      "retainedDestinationId": "txdest-89b78ea1ed1836fb"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "chick fil a college station|College Station, TX|48041|30.61870|-96.33880",
+      "retainedDestinationId": "txdest-aab029b212ad7163"
+    },
+    {
+      "decision": "MERGE_EXACT_DUPLICATE",
+      "evidence": "walmart supercenter liberty|2121 US-90, Liberty, TX|48291|30.05550|-94.78770",
+      "removedDestinationId": "txdest-b56fc8cd20487220",
+      "retainedDestinationId": "txdest-28c6cd664e1999f6"
+    },
+    {
+      "decision": "RETAIN_DISTINCT_DESTINATION",
+      "evidence": "baylor scott and white medical center temple|2401 S 31st St, Temple, TX|48027|31.07930|-97.36560",
+      "retainedDestinationId": "txdest-d84e5b4da13bd02e"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.duplicateDecisionRegister.v1"
+}

@@ -1,0 +1,17 @@
+{
+  "categoryTotals": {
+    "Critical Infrastructure": 0,
+    "Education": 2,
+    "Fuel": 1,
+    "Government": 1,
+    "Medical": 1,
+    "Public Safety": 2,
+    "Recreation": 3,
+    "Restaurant": 1,
+    "Retail": 3,
+    "Transportation": 3
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.categoryCoverageReport.v1"
+}

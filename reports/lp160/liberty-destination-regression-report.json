@@ -1,0 +1,9 @@
+{
+  "curatedLibertyPrecedencePreserved": true,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "libertyRecords": 2,
+  "milestone": "LP160",
+  "runtimeBehaviorChanged": false,
+  "schemaVersion": "gridly.lp160.libertyDestinationRegressionReport.v1",
+  "status": "PASS"
+}
