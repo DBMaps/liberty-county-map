@@ -216,6 +216,8 @@
     "verify:lp1601h": "node tools/lp1601f-streaming-manufacture.mjs",
     "test:lp1601h": "node --test tests/lp1601h-real-staging-consumption.test.mjs",
     "verify:lp1601i": "node tools/lp1601f-streaming-manufacture.mjs",
-    "test:lp1601i": "node --test tests/lp1601i-jsonl-staging-consumption.test.mjs"
+    "test:lp1601i": "node --test tests/lp1601i-jsonl-staging-consumption.test.mjs",
+    "verify:lp1601j": "node -e \"import('./tools/lp1601f-streaming-manufacture.mjs').then(m=>m.verifyLp1601j()).then(r=>console.log(JSON.stringify(r,null,2)))\"",
+    "test:lp1601j": "node --test tests/lp1601j-jsonl-county-manufacturing.test.mjs"
   }
 }

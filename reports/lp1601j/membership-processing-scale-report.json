@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.lp1601j.membershipProcessingScaleReport.v1",
+  "milestone": "LP160.1J",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "strategy": "Node readline streaming with bounded counters and county-scoped outputs",
+  "batchSize": 1,
+  "peakRss": 54247424,
+  "peakHeap": 5632360,
+  "maximumBufferedRecords": 1,
+  "fullStagingStringCreated": false,
+  "statewideRecordArrayCreated": false
+}
