@@ -1,0 +1,143 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "limitation": "Candidate files are governed outside this repository; LP162 does not activate or load them at runtime.",
+  "maximumRepresentativeCompressedBytes": 13285538,
+  "maximumRepresentativeRecordCount": 229157,
+  "measurementKind": "certification evidence; architecture unchanged",
+  "memoryBytes": null,
+  "milestone": "LP162",
+  "performanceDefectFound": false,
+  "representativeCounties": [
+    {
+      "compressedBytes": 198350,
+      "countyName": "Liberty",
+      "deterministicOrdering": true,
+      "fips": "48291",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 3424
+    },
+    {
+      "compressedBytes": 13285538,
+      "countyName": "Harris",
+      "deterministicOrdering": true,
+      "fips": "48201",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 229157
+    },
+    {
+      "compressedBytes": 7408461,
+      "countyName": "Dallas",
+      "deterministicOrdering": true,
+      "fips": "48113",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 127930
+    },
+    {
+      "compressedBytes": 5414960,
+      "countyName": "Tarrant",
+      "deterministicOrdering": true,
+      "fips": "48439",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 93118
+    },
+    {
+      "compressedBytes": 4875471,
+      "countyName": "Bexar",
+      "deterministicOrdering": true,
+      "fips": "48029",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 83737
+    },
+    {
+      "compressedBytes": 4146213,
+      "countyName": "Travis",
+      "deterministicOrdering": true,
+      "fips": "48453",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 71418
+    },
+    {
+      "compressedBytes": 1829494,
+      "countyName": "El Paso",
+      "deterministicOrdering": true,
+      "fips": "48141",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 31789
+    },
+    {
+      "compressedBytes": 970956,
+      "countyName": "Cameron",
+      "deterministicOrdering": true,
+      "fips": "48061",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 16858
+    },
+    {
+      "compressedBytes": 871336,
+      "countyName": "Lubbock",
+      "deterministicOrdering": true,
+      "fips": "48303",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 15109
+    },
+    {
+      "compressedBytes": 397477,
+      "countyName": "Potter",
+      "deterministicOrdering": true,
+      "fips": "48375",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 6891
+    },
+    {
+      "compressedBytes": 59199,
+      "countyName": "Brewster",
+      "deterministicOrdering": true,
+      "fips": "48043",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 1039
+    },
+    {
+      "compressedBytes": 1503,
+      "countyName": "Loving",
+      "deterministicOrdering": true,
+      "fips": "48301",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 20
+    },
+    {
+      "compressedBytes": 687214,
+      "countyName": "Jefferson",
+      "deterministicOrdering": true,
+      "fips": "48245",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 11784
+    },
+    {
+      "compressedBytes": 955484,
+      "countyName": "Galveston",
+      "deterministicOrdering": true,
+      "fips": "48167",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 16312
+    },
+    {
+      "compressedBytes": 1692004,
+      "countyName": "Montgomery",
+      "deterministicOrdering": true,
+      "fips": "48339",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 29047
+    },
+    {
+      "compressedBytes": 639705,
+      "countyName": "Webb",
+      "deterministicOrdering": true,
+      "fips": "48479",
+      "loadMode": "COUNTY_CANDIDATE_FILE",
+      "recordCount": 11260
+    }
+  ],
+  "schemaVersion": "gridly.lp162.searchPerformanceReport.v1",
+  "searchLatencyMilliseconds": null,
+  "status": "PASS"
+}

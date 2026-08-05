@@ -1,0 +1,16 @@
+{
+  "countiesWithGovernedCandidateEvidence": 254,
+  "evidenceBasis": "LP161 destination-search certification of governed searchAliases",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "governance": {
+    "consumerRelevantOnly": true,
+    "crossContaminationAllowed": false,
+    "destinationBound": true,
+    "deterministic": true,
+    "overBroadAliasesAllowed": false
+  },
+  "milestone": "LP162",
+  "passCount": 254,
+  "schemaVersion": "gridly.lp162.aliasSearchCertification.v1",
+  "status": "PASS"
+}

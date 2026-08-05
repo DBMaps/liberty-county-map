@@ -1,0 +1,22 @@
+{
+  "countyFips": "48291",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "protectedChecks": {
+    "businessSearchCompatible": true,
+    "destinationSearchCompatible": true,
+    "exactAddressLookup": true,
+    "interpolationIntroduced": false,
+    "nearbyNumberSubstitutionIntroduced": false,
+    "roadOnlyPromotionIntroduced": false,
+    "routingCompatible": true,
+    "truthfulNoResult": true
+  },
+  "schemaVersion": "gridly.lp162.libertySearchPreservationReport.v1",
+  "status": "PASS",
+  "unresolvedSourceConflict": {
+    "classification": "NO_VERIFIED_RESULT",
+    "query": "274 County Road 677",
+    "resultManufacturedOrInferred": false
+  }
+}

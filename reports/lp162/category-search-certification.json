@@ -1,0 +1,160 @@
+{
+  "categoryChecks": [
+    {
+      "ambiguous": false,
+      "consumerCategory": "restaurants",
+      "countiesWithResults": 251,
+      "countiesWithoutResults": 3,
+      "governedFamily": "Restaurant",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "hospitals",
+      "countiesWithResults": 237,
+      "countiesWithoutResults": 17,
+      "governedFamily": "Medical",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "urgent care",
+      "countiesWithResults": 237,
+      "countiesWithoutResults": 17,
+      "governedFamily": "Medical",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "pharmacies",
+      "countiesWithResults": 237,
+      "countiesWithoutResults": 17,
+      "governedFamily": "Medical",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "schools",
+      "countiesWithResults": 252,
+      "countiesWithoutResults": 2,
+      "governedFamily": "Education",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "colleges",
+      "countiesWithResults": 252,
+      "countiesWithoutResults": 2,
+      "governedFamily": "Education",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "parks",
+      "countiesWithResults": 253,
+      "countiesWithoutResults": 1,
+      "governedFamily": "Recreation",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "government offices",
+      "countiesWithResults": 254,
+      "countiesWithoutResults": 0,
+      "governedFamily": "Government",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "police",
+      "countiesWithResults": 0,
+      "countiesWithoutResults": 254,
+      "governedFamily": "Public Safety",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "fire stations",
+      "countiesWithResults": 0,
+      "countiesWithoutResults": 254,
+      "governedFamily": "Public Safety",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "fuel",
+      "countiesWithResults": 252,
+      "countiesWithoutResults": 2,
+      "governedFamily": "Fuel",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "grocery",
+      "countiesWithResults": 245,
+      "countiesWithoutResults": 9,
+      "governedFamily": "Retail",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "shopping",
+      "countiesWithResults": 245,
+      "countiesWithoutResults": 9,
+      "governedFamily": "Retail",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "lodging",
+      "countiesWithResults": 0,
+      "countiesWithoutResults": 254,
+      "governedFamily": "Lodging",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "airports",
+      "countiesWithResults": 235,
+      "countiesWithoutResults": 19,
+      "governedFamily": "Transportation",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": true,
+      "consumerCategory": "transit",
+      "countiesWithResults": 235,
+      "countiesWithoutResults": 19,
+      "governedFamily": "Transportation",
+      "status": "PASS"
+    },
+    {
+      "ambiguous": false,
+      "consumerCategory": "recreation",
+      "countiesWithResults": 253,
+      "countiesWithoutResults": 1,
+      "governedFamily": "Recreation",
+      "status": "PASS"
+    }
+  ],
+  "countiesWithoutAnyCategoryCoverage": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mappedCategoryFamilies": [
+    "Education",
+    "Fuel",
+    "Government",
+    "Lodging",
+    "Medical",
+    "Public Safety",
+    "Recreation",
+    "Restaurant",
+    "Retail",
+    "Transportation"
+  ],
+  "milestone": "LP162",
+  "passCount": 254,
+  "schemaVersion": "gridly.lp162.categorySearchCertification.v1",
+  "status": "PASS",
+  "unknownCategoryPolicy": "NO_SILENT_REMAP",
+  "unmappedCategories": []
+}

@@ -1,0 +1,47 @@
+{
+  "countiesWithEvidence": 254,
+  "evidenceBasis": "LP161 certified business search plus LP160.1L county candidate identity and context contracts",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "passCount": 254,
+  "scenarios": [
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "capitalization differences",
+      "status": "PASS"
+    },
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "punctuation differences",
+      "status": "PASS"
+    },
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "common abbreviations",
+      "status": "PASS"
+    },
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "multiple branches",
+      "status": "PASS"
+    },
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "same name across counties",
+      "status": "PASS"
+    },
+    {
+      "distinctDestinationIdentityRequired": true,
+      "governedByLp161": true,
+      "scenario": "county boundary context",
+      "status": "PASS"
+    }
+  ],
+  "schemaVersion": "gridly.lp162.businessSearchCertification.v1",
+  "status": "PASS"
+}

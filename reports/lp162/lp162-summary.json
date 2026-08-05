@@ -1,0 +1,37 @@
+{
+  "activationStatus": "UNAUTHORIZED",
+  "addressBlockerCount": 14,
+  "deploymentStatus": "UNAUTHORIZED",
+  "finalClassification": "CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "libertyPreservationStatus": "PASS",
+  "metrics": {
+    "addressCertificationFailCount": 14,
+    "addressCertificationPassCount": 240,
+    "aliasSearchPassCount": 254,
+    "businessSearchPassCount": 254,
+    "categorySearchPassCount": 254,
+    "countiesWithAddressSearchEvidence": 254,
+    "countiesWithDestinationSearchEvidence": 254,
+    "countiesWithTruthfulNoResultSupport": 254,
+    "crossCountyIsolationScenariosEvaluated": 5,
+    "destinationSearchPassCount": 254,
+    "duplicateNameScenariosEvaluated": 3,
+    "representativeCountiesEvaluated": 16,
+    "texasCountiesEvaluated": 254
+  },
+  "milestone": "LP162",
+  "partialReadinessDisclosed": true,
+  "resultClasses": [
+    "EXACT_ADDRESS",
+    "EXACT_DESTINATION",
+    "EXACT_BUSINESS",
+    "ALIAS_MATCH",
+    "CATEGORY_MATCH",
+    "MULTIPLE_CONTEXTUAL_RESULTS",
+    "NO_VERIFIED_RESULT"
+  ],
+  "runtimeStatus": "UNCHANGED",
+  "schemaVersion": "gridly.lp162.summary.v1",
+  "status": "CONDITIONAL"
+}

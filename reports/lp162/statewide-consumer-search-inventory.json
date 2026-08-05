@@ -1,0 +1,1538 @@
+{
+  "counties": [
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Anderson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48001"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Andrews",
+      "destinationEvidenceAvailable": true,
+      "fips": "48003"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Angelina",
+      "destinationEvidenceAvailable": true,
+      "fips": "48005"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Aransas",
+      "destinationEvidenceAvailable": true,
+      "fips": "48007"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Archer",
+      "destinationEvidenceAvailable": true,
+      "fips": "48009"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Armstrong",
+      "destinationEvidenceAvailable": true,
+      "fips": "48011"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Atascosa",
+      "destinationEvidenceAvailable": true,
+      "fips": "48013"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Austin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48015"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bailey",
+      "destinationEvidenceAvailable": true,
+      "fips": "48017"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bandera",
+      "destinationEvidenceAvailable": true,
+      "fips": "48019"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bastrop",
+      "destinationEvidenceAvailable": true,
+      "fips": "48021"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Baylor",
+      "destinationEvidenceAvailable": true,
+      "fips": "48023"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bee",
+      "destinationEvidenceAvailable": true,
+      "fips": "48025"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48027"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bexar",
+      "destinationEvidenceAvailable": true,
+      "fips": "48029"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Blanco",
+      "destinationEvidenceAvailable": true,
+      "fips": "48031"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Borden",
+      "destinationEvidenceAvailable": true,
+      "fips": "48033"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bosque",
+      "destinationEvidenceAvailable": true,
+      "fips": "48035"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Bowie",
+      "destinationEvidenceAvailable": true,
+      "fips": "48037"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Brazoria",
+      "destinationEvidenceAvailable": true,
+      "fips": "48039"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Brazos",
+      "destinationEvidenceAvailable": true,
+      "fips": "48041"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Brewster",
+      "destinationEvidenceAvailable": true,
+      "fips": "48043"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Briscoe",
+      "destinationEvidenceAvailable": true,
+      "fips": "48045"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Brooks",
+      "destinationEvidenceAvailable": true,
+      "fips": "48047"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Brown",
+      "destinationEvidenceAvailable": true,
+      "fips": "48049"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Burleson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48051"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Burnet",
+      "destinationEvidenceAvailable": true,
+      "fips": "48053"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Caldwell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48055"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Calhoun",
+      "destinationEvidenceAvailable": true,
+      "fips": "48057"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Callahan",
+      "destinationEvidenceAvailable": true,
+      "fips": "48059"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cameron",
+      "destinationEvidenceAvailable": true,
+      "fips": "48061"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Camp",
+      "destinationEvidenceAvailable": true,
+      "fips": "48063"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Carson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48065"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cass",
+      "destinationEvidenceAvailable": true,
+      "fips": "48067"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Castro",
+      "destinationEvidenceAvailable": true,
+      "fips": "48069"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Chambers",
+      "destinationEvidenceAvailable": true,
+      "fips": "48071"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cherokee",
+      "destinationEvidenceAvailable": true,
+      "fips": "48073"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Childress",
+      "destinationEvidenceAvailable": true,
+      "fips": "48075"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Clay",
+      "destinationEvidenceAvailable": true,
+      "fips": "48077"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cochran",
+      "destinationEvidenceAvailable": true,
+      "fips": "48079"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Coke",
+      "destinationEvidenceAvailable": true,
+      "fips": "48081"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Coleman",
+      "destinationEvidenceAvailable": true,
+      "fips": "48083"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Collin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48085"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Collingsworth",
+      "destinationEvidenceAvailable": true,
+      "fips": "48087"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Colorado",
+      "destinationEvidenceAvailable": true,
+      "fips": "48089"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Comal",
+      "destinationEvidenceAvailable": true,
+      "fips": "48091"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Comanche",
+      "destinationEvidenceAvailable": true,
+      "fips": "48093"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Concho",
+      "destinationEvidenceAvailable": true,
+      "fips": "48095"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cooke",
+      "destinationEvidenceAvailable": true,
+      "fips": "48097"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Coryell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48099"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Cottle",
+      "destinationEvidenceAvailable": true,
+      "fips": "48101"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Crane",
+      "destinationEvidenceAvailable": true,
+      "fips": "48103"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Crockett",
+      "destinationEvidenceAvailable": true,
+      "fips": "48105"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Crosby",
+      "destinationEvidenceAvailable": true,
+      "fips": "48107"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Culberson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48109"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Dallam",
+      "destinationEvidenceAvailable": true,
+      "fips": "48111"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Dallas",
+      "destinationEvidenceAvailable": true,
+      "fips": "48113"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Dawson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48115"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Deaf Smith",
+      "destinationEvidenceAvailable": true,
+      "fips": "48117"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Delta",
+      "destinationEvidenceAvailable": true,
+      "fips": "48119"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Denton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48121"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "DeWitt",
+      "destinationEvidenceAvailable": true,
+      "fips": "48123"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Dickens",
+      "destinationEvidenceAvailable": true,
+      "fips": "48125"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Dimmit",
+      "destinationEvidenceAvailable": true,
+      "fips": "48127"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Donley",
+      "destinationEvidenceAvailable": true,
+      "fips": "48129"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Duval",
+      "destinationEvidenceAvailable": true,
+      "fips": "48131"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Eastland",
+      "destinationEvidenceAvailable": true,
+      "fips": "48133"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Ector",
+      "destinationEvidenceAvailable": true,
+      "fips": "48135"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Edwards",
+      "destinationEvidenceAvailable": true,
+      "fips": "48137"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Ellis",
+      "destinationEvidenceAvailable": true,
+      "fips": "48139"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "El Paso",
+      "destinationEvidenceAvailable": true,
+      "fips": "48141"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Erath",
+      "destinationEvidenceAvailable": true,
+      "fips": "48143"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Falls",
+      "destinationEvidenceAvailable": true,
+      "fips": "48145"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Fannin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48147"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Fayette",
+      "destinationEvidenceAvailable": true,
+      "fips": "48149"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Fisher",
+      "destinationEvidenceAvailable": true,
+      "fips": "48151"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Floyd",
+      "destinationEvidenceAvailable": true,
+      "fips": "48153"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Foard",
+      "destinationEvidenceAvailable": true,
+      "fips": "48155"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Fort Bend",
+      "destinationEvidenceAvailable": true,
+      "fips": "48157"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Franklin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48159"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Freestone",
+      "destinationEvidenceAvailable": true,
+      "fips": "48161"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Frio",
+      "destinationEvidenceAvailable": true,
+      "fips": "48163"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Gaines",
+      "destinationEvidenceAvailable": true,
+      "fips": "48165"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Galveston",
+      "destinationEvidenceAvailable": true,
+      "fips": "48167"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Garza",
+      "destinationEvidenceAvailable": true,
+      "fips": "48169"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Gillespie",
+      "destinationEvidenceAvailable": true,
+      "fips": "48171"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Glasscock",
+      "destinationEvidenceAvailable": true,
+      "fips": "48173"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Goliad",
+      "destinationEvidenceAvailable": true,
+      "fips": "48175"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Gonzales",
+      "destinationEvidenceAvailable": true,
+      "fips": "48177"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Gray",
+      "destinationEvidenceAvailable": true,
+      "fips": "48179"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Grayson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48181"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Gregg",
+      "destinationEvidenceAvailable": true,
+      "fips": "48183"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Grimes",
+      "destinationEvidenceAvailable": true,
+      "fips": "48185"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Guadalupe",
+      "destinationEvidenceAvailable": true,
+      "fips": "48187"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hale",
+      "destinationEvidenceAvailable": true,
+      "fips": "48189"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hall",
+      "destinationEvidenceAvailable": true,
+      "fips": "48191"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hamilton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48193"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hansford",
+      "destinationEvidenceAvailable": true,
+      "fips": "48195"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hardeman",
+      "destinationEvidenceAvailable": true,
+      "fips": "48197"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hardin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48199"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Harris",
+      "destinationEvidenceAvailable": true,
+      "fips": "48201"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Harrison",
+      "destinationEvidenceAvailable": true,
+      "fips": "48203"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hartley",
+      "destinationEvidenceAvailable": true,
+      "fips": "48205"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Haskell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48207"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hays",
+      "destinationEvidenceAvailable": true,
+      "fips": "48209"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hemphill",
+      "destinationEvidenceAvailable": true,
+      "fips": "48211"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Henderson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48213"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hidalgo",
+      "destinationEvidenceAvailable": true,
+      "fips": "48215"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hill",
+      "destinationEvidenceAvailable": true,
+      "fips": "48217"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hockley",
+      "destinationEvidenceAvailable": true,
+      "fips": "48219"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hood",
+      "destinationEvidenceAvailable": true,
+      "fips": "48221"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hopkins",
+      "destinationEvidenceAvailable": true,
+      "fips": "48223"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Houston",
+      "destinationEvidenceAvailable": true,
+      "fips": "48225"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Howard",
+      "destinationEvidenceAvailable": true,
+      "fips": "48227"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hudspeth",
+      "destinationEvidenceAvailable": true,
+      "fips": "48229"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hunt",
+      "destinationEvidenceAvailable": true,
+      "fips": "48231"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Hutchinson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48233"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Irion",
+      "destinationEvidenceAvailable": true,
+      "fips": "48235"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jack",
+      "destinationEvidenceAvailable": true,
+      "fips": "48237"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jackson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48239"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jasper",
+      "destinationEvidenceAvailable": true,
+      "fips": "48241"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jeff Davis",
+      "destinationEvidenceAvailable": true,
+      "fips": "48243"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jefferson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48245"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jim Hogg",
+      "destinationEvidenceAvailable": true,
+      "fips": "48247"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jim Wells",
+      "destinationEvidenceAvailable": true,
+      "fips": "48249"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Johnson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48251"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Jones",
+      "destinationEvidenceAvailable": true,
+      "fips": "48253"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Karnes",
+      "destinationEvidenceAvailable": true,
+      "fips": "48255"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kaufman",
+      "destinationEvidenceAvailable": true,
+      "fips": "48257"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kendall",
+      "destinationEvidenceAvailable": true,
+      "fips": "48259"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kenedy",
+      "destinationEvidenceAvailable": true,
+      "fips": "48261"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kent",
+      "destinationEvidenceAvailable": true,
+      "fips": "48263"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kerr",
+      "destinationEvidenceAvailable": true,
+      "fips": "48265"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kimble",
+      "destinationEvidenceAvailable": true,
+      "fips": "48267"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "King",
+      "destinationEvidenceAvailable": true,
+      "fips": "48269"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kinney",
+      "destinationEvidenceAvailable": true,
+      "fips": "48271"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Kleberg",
+      "destinationEvidenceAvailable": true,
+      "fips": "48273"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Knox",
+      "destinationEvidenceAvailable": true,
+      "fips": "48275"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lamar",
+      "destinationEvidenceAvailable": true,
+      "fips": "48277"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lamb",
+      "destinationEvidenceAvailable": true,
+      "fips": "48279"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lampasas",
+      "destinationEvidenceAvailable": true,
+      "fips": "48281"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "La Salle",
+      "destinationEvidenceAvailable": true,
+      "fips": "48283"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lavaca",
+      "destinationEvidenceAvailable": true,
+      "fips": "48285"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lee",
+      "destinationEvidenceAvailable": true,
+      "fips": "48287"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Leon",
+      "destinationEvidenceAvailable": true,
+      "fips": "48289"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Liberty",
+      "destinationEvidenceAvailable": true,
+      "fips": "48291"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Limestone",
+      "destinationEvidenceAvailable": true,
+      "fips": "48293"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lipscomb",
+      "destinationEvidenceAvailable": true,
+      "fips": "48295"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Live Oak",
+      "destinationEvidenceAvailable": true,
+      "fips": "48297"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Llano",
+      "destinationEvidenceAvailable": true,
+      "fips": "48299"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Loving",
+      "destinationEvidenceAvailable": true,
+      "fips": "48301"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lubbock",
+      "destinationEvidenceAvailable": true,
+      "fips": "48303"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Lynn",
+      "destinationEvidenceAvailable": true,
+      "fips": "48305"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "McCulloch",
+      "destinationEvidenceAvailable": true,
+      "fips": "48307"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "McLennan",
+      "destinationEvidenceAvailable": true,
+      "fips": "48309"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "McMullen",
+      "destinationEvidenceAvailable": true,
+      "fips": "48311"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Madison",
+      "destinationEvidenceAvailable": true,
+      "fips": "48313"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Marion",
+      "destinationEvidenceAvailable": true,
+      "fips": "48315"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Martin",
+      "destinationEvidenceAvailable": true,
+      "fips": "48317"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Mason",
+      "destinationEvidenceAvailable": true,
+      "fips": "48319"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Matagorda",
+      "destinationEvidenceAvailable": true,
+      "fips": "48321"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Maverick",
+      "destinationEvidenceAvailable": true,
+      "fips": "48323"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Medina",
+      "destinationEvidenceAvailable": true,
+      "fips": "48325"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Menard",
+      "destinationEvidenceAvailable": true,
+      "fips": "48327"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Midland",
+      "destinationEvidenceAvailable": true,
+      "fips": "48329"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Milam",
+      "destinationEvidenceAvailable": true,
+      "fips": "48331"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Mills",
+      "destinationEvidenceAvailable": true,
+      "fips": "48333"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Mitchell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48335"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Montague",
+      "destinationEvidenceAvailable": true,
+      "fips": "48337"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Montgomery",
+      "destinationEvidenceAvailable": true,
+      "fips": "48339"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Moore",
+      "destinationEvidenceAvailable": true,
+      "fips": "48341"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Morris",
+      "destinationEvidenceAvailable": true,
+      "fips": "48343"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Motley",
+      "destinationEvidenceAvailable": true,
+      "fips": "48345"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Nacogdoches",
+      "destinationEvidenceAvailable": true,
+      "fips": "48347"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Navarro",
+      "destinationEvidenceAvailable": true,
+      "fips": "48349"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Newton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48351"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Nolan",
+      "destinationEvidenceAvailable": true,
+      "fips": "48353"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Nueces",
+      "destinationEvidenceAvailable": true,
+      "fips": "48355"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Ochiltree",
+      "destinationEvidenceAvailable": true,
+      "fips": "48357"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Oldham",
+      "destinationEvidenceAvailable": true,
+      "fips": "48359"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Orange",
+      "destinationEvidenceAvailable": true,
+      "fips": "48361"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Palo Pinto",
+      "destinationEvidenceAvailable": true,
+      "fips": "48363"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Panola",
+      "destinationEvidenceAvailable": true,
+      "fips": "48365"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Parker",
+      "destinationEvidenceAvailable": true,
+      "fips": "48367"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Parmer",
+      "destinationEvidenceAvailable": true,
+      "fips": "48369"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Pecos",
+      "destinationEvidenceAvailable": true,
+      "fips": "48371"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Polk",
+      "destinationEvidenceAvailable": true,
+      "fips": "48373"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Potter",
+      "destinationEvidenceAvailable": true,
+      "fips": "48375"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Presidio",
+      "destinationEvidenceAvailable": true,
+      "fips": "48377"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Rains",
+      "destinationEvidenceAvailable": true,
+      "fips": "48379"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Randall",
+      "destinationEvidenceAvailable": true,
+      "fips": "48381"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Reagan",
+      "destinationEvidenceAvailable": true,
+      "fips": "48383"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Real",
+      "destinationEvidenceAvailable": true,
+      "fips": "48385"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Red River",
+      "destinationEvidenceAvailable": true,
+      "fips": "48387"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Reeves",
+      "destinationEvidenceAvailable": true,
+      "fips": "48389"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Refugio",
+      "destinationEvidenceAvailable": true,
+      "fips": "48391"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Roberts",
+      "destinationEvidenceAvailable": true,
+      "fips": "48393"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Robertson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48395"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Rockwall",
+      "destinationEvidenceAvailable": true,
+      "fips": "48397"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Runnels",
+      "destinationEvidenceAvailable": true,
+      "fips": "48399"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Rusk",
+      "destinationEvidenceAvailable": true,
+      "fips": "48401"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Sabine",
+      "destinationEvidenceAvailable": true,
+      "fips": "48403"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "San Augustine",
+      "destinationEvidenceAvailable": true,
+      "fips": "48405"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "San Jacinto",
+      "destinationEvidenceAvailable": true,
+      "fips": "48407"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "San Patricio",
+      "destinationEvidenceAvailable": true,
+      "fips": "48409"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "San Saba",
+      "destinationEvidenceAvailable": true,
+      "fips": "48411"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Schleicher",
+      "destinationEvidenceAvailable": true,
+      "fips": "48413"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Scurry",
+      "destinationEvidenceAvailable": true,
+      "fips": "48415"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Shackelford",
+      "destinationEvidenceAvailable": true,
+      "fips": "48417"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Shelby",
+      "destinationEvidenceAvailable": true,
+      "fips": "48419"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Sherman",
+      "destinationEvidenceAvailable": true,
+      "fips": "48421"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Smith",
+      "destinationEvidenceAvailable": true,
+      "fips": "48423"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Somervell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48425"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Starr",
+      "destinationEvidenceAvailable": true,
+      "fips": "48427"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Stephens",
+      "destinationEvidenceAvailable": true,
+      "fips": "48429"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Sterling",
+      "destinationEvidenceAvailable": true,
+      "fips": "48431"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Stonewall",
+      "destinationEvidenceAvailable": true,
+      "fips": "48433"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Sutton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48435"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Swisher",
+      "destinationEvidenceAvailable": true,
+      "fips": "48437"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Tarrant",
+      "destinationEvidenceAvailable": true,
+      "fips": "48439"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Taylor",
+      "destinationEvidenceAvailable": true,
+      "fips": "48441"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Terrell",
+      "destinationEvidenceAvailable": true,
+      "fips": "48443"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Terry",
+      "destinationEvidenceAvailable": true,
+      "fips": "48445"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Throckmorton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48447"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Titus",
+      "destinationEvidenceAvailable": true,
+      "fips": "48449"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Tom Green",
+      "destinationEvidenceAvailable": true,
+      "fips": "48451"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Travis",
+      "destinationEvidenceAvailable": true,
+      "fips": "48453"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Trinity",
+      "destinationEvidenceAvailable": true,
+      "fips": "48455"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Tyler",
+      "destinationEvidenceAvailable": true,
+      "fips": "48457"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Upshur",
+      "destinationEvidenceAvailable": true,
+      "fips": "48459"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Upton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48461"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Uvalde",
+      "destinationEvidenceAvailable": true,
+      "fips": "48463"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Val Verde",
+      "destinationEvidenceAvailable": true,
+      "fips": "48465"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Van Zandt",
+      "destinationEvidenceAvailable": true,
+      "fips": "48467"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Victoria",
+      "destinationEvidenceAvailable": true,
+      "fips": "48469"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Walker",
+      "destinationEvidenceAvailable": true,
+      "fips": "48471"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Waller",
+      "destinationEvidenceAvailable": true,
+      "fips": "48473"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Ward",
+      "destinationEvidenceAvailable": true,
+      "fips": "48475"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Washington",
+      "destinationEvidenceAvailable": true,
+      "fips": "48477"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Webb",
+      "destinationEvidenceAvailable": true,
+      "fips": "48479"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wharton",
+      "destinationEvidenceAvailable": true,
+      "fips": "48481"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wheeler",
+      "destinationEvidenceAvailable": true,
+      "fips": "48483"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wichita",
+      "destinationEvidenceAvailable": true,
+      "fips": "48485"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wilbarger",
+      "destinationEvidenceAvailable": true,
+      "fips": "48487"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Willacy",
+      "destinationEvidenceAvailable": true,
+      "fips": "48489"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Williamson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48491"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wilson",
+      "destinationEvidenceAvailable": true,
+      "fips": "48493"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Winkler",
+      "destinationEvidenceAvailable": true,
+      "fips": "48495"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wise",
+      "destinationEvidenceAvailable": true,
+      "fips": "48497"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Wood",
+      "destinationEvidenceAvailable": true,
+      "fips": "48499"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Yoakum",
+      "destinationEvidenceAvailable": true,
+      "fips": "48501"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Young",
+      "destinationEvidenceAvailable": true,
+      "fips": "48503"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Zapata",
+      "destinationEvidenceAvailable": true,
+      "fips": "48505"
+    },
+    {
+      "addressEvidenceAvailable": true,
+      "countyName": "Zavala",
+      "destinationEvidenceAvailable": true,
+      "fips": "48507"
+    }
+  ],
+  "countyCount": 254,
+  "countyNameFipsReconciled": true,
+  "deterministicFipsOrdering": true,
+  "duplicateFips": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "missingFips": [],
+  "schemaVersion": "gridly.lp162.statewideConsumerSearchInventory.v1",
+  "status": "PASS",
+  "uniqueFipsCount": 254
+}
