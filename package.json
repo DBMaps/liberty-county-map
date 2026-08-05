@@ -210,6 +210,8 @@
     "verify:lp1601e": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
     "test:lp1601e": "node --test tests/lp1601e-address-array-schema-mapping.test.mjs",
     "verify:lp1601f": "node tools/lp1601f-streaming-manufacture.mjs",
-    "test:lp1601f": "node --test tests/lp1601f-streaming-manufacturing.test.mjs"
+    "test:lp1601f": "node --test tests/lp1601f-streaming-manufacturing.test.mjs",
+    "test:lp1601g": "node --test tests/lp1601g-owner-local-execution.test.mjs",
+    "verify:lp1601g": "node tools/lp1601f-streaming-manufacture.mjs"
   }
 }
