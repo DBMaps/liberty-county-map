@@ -1,0 +1,33 @@
+{
+  "sourceMetadata": {
+    "sourceId": "overture-places",
+    "sourceName": "Overture Maps Places governed local execution snapshot",
+    "release": "local-owner-snapshot-lp160",
+    "retrievalDate": "2026-01-01",
+    "license": "CDLA Permissive 2.0",
+    "attribution": "Overture Maps Foundation contributors",
+    "geographicScope": "Texas source records only for deterministic LP160 owner execution"
+  },
+  "records": [
+    {"id":"overture-place-bucees-luling","name":"Buc-ee's Luling","brand":"Buc-ee's","categories":["gas_station","convenience_store"],"latitude":29.6801,"longitude":-97.6477,"address":"10070 I-10, Luling, TX","community":"Luling","locality":"Luling","countyFips":"48055","postalCode":"78648","aliases":["Bucees","Buc ees"],"confidence":0.9},
+    {"id":"overture-place-walmart-liberty","name":"Walmart Supercenter Liberty","brand":"Walmart","categories":["department_store"],"latitude":30.0555,"longitude":-94.7877,"address":"2121 US-90, Liberty, TX","community":"Liberty","locality":"Liberty","countyFips":"48291","postalCode":"77575","aliases":["Wal mart"],"confidence":0.9},
+    {"id":"overture-place-heb-temple","name":"H-E-B Temple","brand":"H-E-B","categories":["supermarket","pharmacy"],"latitude":31.0982,"longitude":-97.3428,"address":"Temple, TX","community":"Temple","locality":"Temple","countyFips":"48027","aliases":["HEB","H E B"],"confidence":0.9},
+    {"id":"overture-place-chick-fil-a-college-station","name":"Chick-fil-A College Station","brand":"Chick-fil-A","categories":["fast_food","restaurant"],"latitude":30.6187,"longitude":-96.3388,"address":"College Station, TX","community":"College Station","locality":"College Station","countyFips":"48041","aliases":["CFA","Chick fil a"],"confidence":0.9},
+    {"id":"overture-place-hospital-temple","name":"Baylor Scott & White Medical Center Temple","brand":"Baylor Scott & White","categories":["hospital","emergency_room"],"latitude":31.0793,"longitude":-97.3656,"address":"2401 S 31st St, Temple, TX","community":"Temple","locality":"Temple","countyFips":"48027","aliases":["hospital","emergency room"],"confidence":0.9},
+    {"id":"overture-place-harris-courthouse","name":"Harris County Courthouse","categories":["courthouse"],"latitude":29.7606,"longitude":-95.3571,"address":"Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["courthouse"],"confidence":0.9},
+    {"id":"overture-place-sheriff-harris","name":"Harris County Sheriff's Office","categories":["sheriff","police"],"latitude":29.7642,"longitude":-95.3662,"address":"Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["sheriffs office","sheriff office"],"confidence":0.9},
+    {"id":"overture-place-austin-fire-station-1","name":"Austin Fire Station 1","categories":["fire_station"],"latitude":30.2682,"longitude":-97.7428,"address":"401 E 5th St, Austin, TX","community":"Austin","locality":"Austin","countyFips":"48453","aliases":["fire station"],"confidence":0.9},
+    {"id":"overture-place-texas-am","name":"Texas A&M University","brand":"Texas A&M","categories":["university"],"latitude":30.6104,"longitude":-96.3414,"address":"College Station, TX","community":"College Station","locality":"College Station","countyFips":"48041","aliases":["TAMU","Texas AM"],"confidence":0.9},
+    {"id":"overture-place-shsu","name":"Sam Houston State University","brand":"Sam Houston State","categories":["university"],"latitude":30.7139,"longitude":-95.5476,"address":"Huntsville, TX","community":"Huntsville","locality":"Huntsville","countyFips":"48471","aliases":["SHSU"],"confidence":0.9},
+    {"id":"overture-place-iah","name":"George Bush Intercontinental Airport","brand":"IAH","categories":["airport"],"latitude":29.9902,"longitude":-95.3368,"address":"2800 N Terminal Rd, Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["Bush Airport","IAH"],"confidence":0.9},
+    {"id":"overture-place-hobby","name":"William P. Hobby Airport","brand":"Hobby Airport","categories":["airport"],"latitude":29.6454,"longitude":-95.2789,"address":"7800 Airport Blvd, Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["HOU","Houston Hobby"],"confidence":0.9},
+    {"id":"overture-place-nrg","name":"NRG Stadium","brand":"NRG Stadium","categories":["stadium"],"latitude":29.6847,"longitude":-95.4107,"address":"NRG Pkwy, Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["Reliant Stadium"],"confidence":0.9},
+    {"id":"overture-place-port-houston","name":"Port of Houston","brand":"Port Houston","categories":["port"],"latitude":29.7308,"longitude":-95.2655,"address":"Houston Ship Channel, Houston, TX","community":"Houston","locality":"Houston","countyFips":"48201","aliases":["Houston Port"],"confidence":0.9},
+    {"id":"overture-place-lake-livingston","name":"Lake Livingston","categories":["lake"],"latitude":30.747,"longitude":-95.066,"address":"Lake Livingston, TX","community":"Livingston","locality":"Livingston","countyFips":"48373","aliases":["Livingston Lake"],"confidence":0.9},
+    {"id":"overture-place-galveston-beach","name":"Galveston Beach","categories":["beach"],"latitude":29.3013,"longitude":-94.7977,"address":"Seawall Blvd, Galveston, TX","community":"Galveston","locality":"Galveston","countyFips":"48167","aliases":["Galveston Beach"],"confidence":0.9},
+    {"id":"overture-place-outside","name":"Outside Texas Example","categories":["restaurant"],"latitude":40.0,"longitude":-90.0,"countyFips":"17001"},
+    {"id":"overture-place-unknown-category","name":"Mapped Later Example","categories":["future_category"],"latitude":32.7767,"longitude":-96.797,"countyFips":"48113"},
+    {"id":"overture-place-walmart-liberty-duplicate","name":"Walmart Supercenter Liberty","brand":"Walmart","categories":["department_store"],"latitude":30.0555,"longitude":-94.7877,"address":"2121 US-90, Liberty, TX","community":"Liberty","locality":"Liberty","countyFips":"48291","aliases":["Wal mart"],"confidence":0.9},
+    {"id":"overture-place-walmart-cleveland","name":"Walmart Supercenter Cleveland","brand":"Walmart","categories":["department_store"],"latitude":30.3413,"longitude":-95.0855,"address":"Cleveland, TX","community":"Cleveland","locality":"Cleveland","countyFips":"48291","aliases":["Wal mart"],"confidence":0.9}
+  ]
+}

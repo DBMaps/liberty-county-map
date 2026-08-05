@@ -1,0 +1,109 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "relationships": [
+    {
+      "community": "Livingston",
+      "countyFips": "48373",
+      "destinationId": "txdest-125616511e6fd35f",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-1e8bcd530ac781f2",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Liberty",
+      "countyFips": "48291",
+      "destinationId": "txdest-28c6cd664e1999f6",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Temple",
+      "countyFips": "48027",
+      "destinationId": "txdest-298ecfa30d660ac6",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Austin",
+      "countyFips": "48453",
+      "destinationId": "txdest-2a118f5d5cd0dc4d",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-43ba9fff38023412",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Huntsville",
+      "countyFips": "48471",
+      "destinationId": "txdest-4cba5e2fad6fca09",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Luling",
+      "countyFips": "48055",
+      "destinationId": "txdest-4e3567e3ed4c1847",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "College Station",
+      "countyFips": "48041",
+      "destinationId": "txdest-576950cd56068929",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Galveston",
+      "countyFips": "48167",
+      "destinationId": "txdest-59214a5ba26d79a9",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-6000cc492356e7f9",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-6b045e8ed875dd18",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-6e254644e19a9eb0",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Houston",
+      "countyFips": "48201",
+      "destinationId": "txdest-765371a87b7af1af",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Cleveland",
+      "countyFips": "48291",
+      "destinationId": "txdest-89b78ea1ed1836fb",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "College Station",
+      "countyFips": "48041",
+      "destinationId": "txdest-aab029b212ad7163",
+      "method": "SOURCE_PROVIDED"
+    },
+    {
+      "community": "Temple",
+      "countyFips": "48027",
+      "destinationId": "txdest-d84e5b4da13bd02e",
+      "method": "SOURCE_PROVIDED"
+    }
+  ],
+  "schemaVersion": "gridly.lp160.destinationCommunityRelationshipReport.v1"
+}

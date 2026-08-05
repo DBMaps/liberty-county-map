@@ -1,0 +1,17 @@
+{
+  "destinationCount": 17,
+  "entryCount": 151,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "indexChecksum": "0c8dc76425c87fb0647afde9c080a65e3f53d6503f980c3d2f67936957ae18b6",
+  "indexPath": "data/lp160/statewide-destination-search-index.json",
+  "milestone": "LP160",
+  "rankingPolicy": [
+    "exact name match",
+    "exact brand and locality match",
+    "prefix match",
+    "alias match",
+    "category and locality relevance",
+    "geographic proximity when provided"
+  ],
+  "schemaVersion": "gridly.lp160.destinationSearchIndexManifest.v1"
+}

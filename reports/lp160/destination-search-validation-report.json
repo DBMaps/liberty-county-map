@@ -1,0 +1,241 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160",
+  "schemaVersion": "gridly.lp160.destinationSearchValidationReport.v1",
+  "validation": [
+    {
+      "category": "Fuel",
+      "community": "Luling",
+      "coordinates": {
+        "latitude": 29.6801,
+        "longitude": -97.6477
+      },
+      "county": "Caldwell",
+      "pass": true,
+      "query": "Buc-ee’s",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Buc-ee's Luling"
+    },
+    {
+      "category": "Retail",
+      "community": "Liberty",
+      "coordinates": {
+        "latitude": 30.0555,
+        "longitude": -94.7877
+      },
+      "county": "Liberty",
+      "pass": true,
+      "query": "Walmart",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Walmart Supercenter Liberty"
+    },
+    {
+      "category": "Retail",
+      "community": "Temple",
+      "coordinates": {
+        "latitude": 31.0982,
+        "longitude": -97.3428
+      },
+      "county": "Bell",
+      "pass": true,
+      "query": "H-E-B",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "H-E-B Temple"
+    },
+    {
+      "category": "Restaurant",
+      "community": "College Station",
+      "coordinates": {
+        "latitude": 30.6187,
+        "longitude": -96.3388
+      },
+      "county": "Brazos",
+      "pass": true,
+      "query": "Chick-fil-A",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Chick-fil-A College Station"
+    },
+    {
+      "category": "Medical",
+      "community": "Temple",
+      "coordinates": {
+        "latitude": 31.0793,
+        "longitude": -97.3656
+      },
+      "county": "Bell",
+      "pass": true,
+      "query": "hospital",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Baylor Scott & White Medical Center Temple"
+    },
+    {
+      "category": "Medical",
+      "community": "Temple",
+      "coordinates": {
+        "latitude": 31.0793,
+        "longitude": -97.3656
+      },
+      "county": "Bell",
+      "pass": true,
+      "query": "emergency room",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Baylor Scott & White Medical Center Temple"
+    },
+    {
+      "category": "Retail",
+      "community": "Temple",
+      "coordinates": {
+        "latitude": 31.0982,
+        "longitude": -97.3428
+      },
+      "county": "Bell",
+      "pass": true,
+      "query": "pharmacy",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "H-E-B Temple"
+    },
+    {
+      "category": "Government",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.7606,
+        "longitude": -95.3571
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "courthouse",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Harris County Courthouse"
+    },
+    {
+      "category": "Public Safety",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.7642,
+        "longitude": -95.3662
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "sheriff’s office",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Harris County Sheriff's Office"
+    },
+    {
+      "category": "Public Safety",
+      "community": "Austin",
+      "coordinates": {
+        "latitude": 30.2682,
+        "longitude": -97.7428
+      },
+      "county": "Travis",
+      "pass": true,
+      "query": "fire station",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Austin Fire Station 1"
+    },
+    {
+      "category": "Education",
+      "community": "College Station",
+      "coordinates": {
+        "latitude": 30.6104,
+        "longitude": -96.3414
+      },
+      "county": "Brazos",
+      "pass": true,
+      "query": "Texas A&M",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Texas A&M University"
+    },
+    {
+      "category": "Education",
+      "community": "Huntsville",
+      "coordinates": {
+        "latitude": 30.7139,
+        "longitude": -95.5476
+      },
+      "county": "Walker",
+      "pass": true,
+      "query": "Sam Houston State",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Sam Houston State University"
+    },
+    {
+      "category": "Transportation",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.7308,
+        "longitude": -95.2655
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "George Bush Intercontinental Airport",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Port of Houston"
+    },
+    {
+      "category": "Transportation",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.7308,
+        "longitude": -95.2655
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "Hobby Airport",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Port of Houston"
+    },
+    {
+      "category": "Recreation",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.6847,
+        "longitude": -95.4107
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "NRG Stadium",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "NRG Stadium"
+    },
+    {
+      "category": "Transportation",
+      "community": "Houston",
+      "coordinates": {
+        "latitude": 29.7308,
+        "longitude": -95.2655
+      },
+      "county": "Harris",
+      "pass": true,
+      "query": "Port of Houston",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Port of Houston"
+    },
+    {
+      "category": "Recreation",
+      "community": "Livingston",
+      "coordinates": {
+        "latitude": 30.747,
+        "longitude": -95.066
+      },
+      "county": "Polk",
+      "pass": true,
+      "query": "Lake Livingston",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Lake Livingston"
+    },
+    {
+      "category": "Recreation",
+      "community": "Galveston",
+      "coordinates": {
+        "latitude": 29.3013,
+        "longitude": -94.7977
+      },
+      "county": "Galveston",
+      "pass": true,
+      "query": "Galveston Beach",
+      "rankingReason": "exact/prefix/alias/category deterministic match",
+      "returnedDestination": "Galveston Beach"
+    }
+  ]
+}

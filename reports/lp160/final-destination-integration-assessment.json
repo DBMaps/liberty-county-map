@@ -1,0 +1,8 @@
+{
+  "classification": "CONDITIONALLY_READY",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "integrationReadyCriteriaSatisfied": false,
+  "milestone": "LP160",
+  "reason": "Candidate-only source snapshot processed; production rollout remains unauthorized.",
+  "schemaVersion": "gridly.lp160.finalDestinationIntegrationAssessment.v1"
+}

@@ -191,6 +191,9 @@
     "verify:lp158": "node tools/lp158-build-destination-intelligence.mjs",
     "test:lp158": "node --test tests/lp158-destination-intelligence.test.mjs",
     "verify:lp159": "node tools/lp159-verify-destination-source-selection.mjs",
-    "test:lp159": "node --test tests/lp159-destination-source-selection.test.mjs"
+    "test:lp159": "node --test tests/lp159-destination-source-selection.test.mjs",
+    "build:lp160": "node tools/lp160-build-statewide-destination-integration.mjs --write",
+    "verify:lp160": "node tools/lp160-build-statewide-destination-integration.mjs",
+    "test:lp160": "node --test tests/lp160-statewide-destination-integration.test.mjs"
   }
 }
