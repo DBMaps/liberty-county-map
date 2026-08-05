@@ -1,0 +1,21 @@
+{
+  "aliasResolutionPass": true,
+  "categoryFilteringPass": true,
+  "deterministicIdentityPass": true,
+  "duplicateIds": [],
+  "duplicateNameCountyKeys": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "invalidCoordinates": [],
+  "libertyBenchmark": {
+    "libertyDestinationIds": [
+      "county-courthouse-48291",
+      "walmart-liberty-48291"
+    ],
+    "protectedLibertyRuntimeModified": false,
+    "status": "PASS",
+    "unchangedBehavior": true
+  },
+  "milestone": "LP158",
+  "schemaVersion": "gridly.lp158.destinationQualityReport.v1",
+  "status": "PASS"
+}

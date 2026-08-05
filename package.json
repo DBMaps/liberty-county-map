@@ -186,6 +186,9 @@
     "test:lp156": "node --test tests/lp156-statewide-data-acquisition-plan.test.mjs",
     "build:lp157": "node tools/lp157-build-community-intelligence.mjs --write",
     "verify:lp157": "node tools/lp157-build-community-intelligence.mjs",
-    "test:lp157": "node --test tests/lp157-community-intelligence.test.mjs"
+    "test:lp157": "node --test tests/lp157-community-intelligence.test.mjs",
+    "build:lp158": "node tools/lp158-build-destination-intelligence.mjs --write",
+    "verify:lp158": "node tools/lp158-build-destination-intelligence.mjs",
+    "test:lp158": "node --test tests/lp158-destination-intelligence.test.mjs"
   }
 }

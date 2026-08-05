@@ -1,0 +1,106 @@
+{
+  "aliasExamples": [
+    {
+      "matchedId": "heb-temple-48027",
+      "query": "HEB"
+    },
+    {
+      "matchedId": "texas-am-college-station-48041",
+      "query": "TAMU"
+    },
+    {
+      "matchedId": "iah-houston-48201",
+      "query": "IAH"
+    },
+    {
+      "matchedId": "hobby-airport-houston-48201",
+      "query": "HOU"
+    },
+    {
+      "matchedId": "chick-fil-a-college-station-48041",
+      "query": "CFA"
+    },
+    {
+      "matchedId": "bucees-luling-48055",
+      "query": "Bucees"
+    }
+  ],
+  "consumerExpectations": [
+    {
+      "matchedId": "bucees-luling-48055",
+      "query": "Buc-ee's",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "walmart-liberty-48291",
+      "query": "Walmart",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "heb-temple-48027",
+      "query": "H-E-B",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "chick-fil-a-college-station-48041",
+      "query": "Chick-fil-A",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "memorial-hermann-tmc-48201",
+      "query": "Memorial Hermann",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "texas-am-college-station-48041",
+      "query": "Texas A&M",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "sam-houston-state-huntsville-48471",
+      "query": "Sam Houston State",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "iah-houston-48201",
+      "query": "George Bush Intercontinental Airport",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "hobby-airport-houston-48201",
+      "query": "Hobby Airport",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "nrg-stadium-houston-48201",
+      "query": "NRG Stadium",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "port-of-houston-48201",
+      "query": "Port of Houston",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "lake-livingston-48373",
+      "query": "Lake Livingston",
+      "status": "PASS"
+    },
+    {
+      "matchedId": "galveston-beach-48167",
+      "query": "Galveston Beach",
+      "status": "PASS"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP158",
+  "schemaVersion": "gridly.lp158.destinationSearchReport.v1",
+  "supportedModes": [
+    "business name",
+    "destination name",
+    "brand name",
+    "alias",
+    "partial name",
+    "common abbreviation"
+  ]
+}

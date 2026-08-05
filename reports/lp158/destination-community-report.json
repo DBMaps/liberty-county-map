@@ -1,0 +1,9 @@
+{
+  "countyCount": 254,
+  "destinationCount": 268,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP158",
+  "resolvedCount": 268,
+  "schemaVersion": "gridly.lp158.destinationCommunityReport.v1",
+  "status": "PASS"
+}

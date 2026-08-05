@@ -1,0 +1,35 @@
+{
+  "categoryFamilies": [
+    "retail",
+    "fuel",
+    "restaurants",
+    "medical",
+    "government",
+    "education",
+    "transportation",
+    "recreation",
+    "public_safety",
+    "critical_infrastructure"
+  ],
+  "communitySha256": "93ce3955efb5d3dc116b564078ac4680c0fe794ebe2e97ed872589588cd0fae6",
+  "contextSha256": "291a0ea494041cb8181b36b46d0e0b984dad444d0662bf187671b54b151ce544",
+  "countyCount": 254,
+  "deliverables": [
+    "data/lp158/texas-destination-registry.json",
+    "reports/lp158/destination-search-report.json",
+    "reports/lp158/destination-routing-report.json",
+    "reports/lp158/destination-community-report.json",
+    "reports/lp158/destination-context-report.json",
+    "reports/lp158/destination-quality-report.json",
+    "reports/lp158/statewide-destination-coverage-summary.json"
+  ],
+  "destinationCount": 268,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP158",
+  "qualitySha256": "5bde2ee9d9b018646822d8d3475639463917232810ecd08d1af1b66b0d97cc7b",
+  "registrySha256": "d8eb4a5c3995f81d4edc4fe800741395cf8feeb66578989c1521a1f8bd51c31a",
+  "routingSha256": "5a54da95f36b3932c3dd1dbc75bec23b15a0da83f30b4b9f0e9652e07d0af903",
+  "schemaVersion": "gridly.lp158.statewideDestinationCoverageSummary.v1",
+  "searchSha256": "2d730e4d3982f575b02d26c94829c2fa236cf22d19ae3814f293d90bec8abd77",
+  "texasCountyCoverageComplete": true
+}
