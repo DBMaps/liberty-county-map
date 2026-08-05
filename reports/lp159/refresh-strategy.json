@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "gridly.lp159.refreshStrategy.v1",
+  "milestone": "LP159",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "strategy": [
+    "Capture immutable source release identifiers, publication dates, download URLs, license text URLs, and checksums before ingest.",
+    "Refresh Overture monthly; process within the two-release public window and archive only rights-compatible derived artifacts.",
+    "Refresh Foursquare/SafeGraph only after license confirmation and record-level provenance tagging.",
+    "Refresh Texas/federal government layers per layer metadata; force manual review for stale, archived, HIFLD Secure, FOUO, sensitive, or unclear-license layers.",
+    "Run change detection for added, removed, renamed, relocated, category-changed, and duplicate records before any downstream registry patch.",
+    "Version destination source snapshots separately from the LP158 registry; LP159 does not activate or deploy data."
+  ]
+}

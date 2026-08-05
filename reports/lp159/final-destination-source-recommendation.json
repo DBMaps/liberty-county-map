@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.lp159.finalDestinationSourceRecommendation.v1",
+  "milestone": "LP159",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "recommendation": "Approve a hybrid strategy: Overture Maps Places as primary open statewide POI source; Texas government open data/TNRIS/TxDOT/TWDB as authoritative supplements; federal provider/EPA FRS and Foursquare OS Places as conditional enrichment; SafeGraph as optional paid fallback after contract review; reject Google Places for durable stored statewide registry use.",
+  "decisions": {
+    "Approved": ["overture-places", "texas-open-data-tnris-txdot-twdb"],
+    "Conditionally Approved": ["fsq-os-places", "osm-poi", "federal-hifld-epa-frs", "safegraph-places"],
+    "Rejected": ["google-places"]
+  }
+}
