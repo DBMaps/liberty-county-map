@@ -1,4 +1,5 @@
 {
+  "addressCertificationEvidence": "evidence/lp135/statewide-certification.json",
   "counties": [
     {
       "addressEvidenceAvailable": true,

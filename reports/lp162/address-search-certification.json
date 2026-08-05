@@ -1,73 +1,59 @@
 {
-  "blockerCount": 14,
+  "authoritativeEvidence": "evidence/lp135/statewide-certification.json",
+  "blockerCount": 11,
   "blockers": [
     {
-      "certificationStatus": "FAIL",
-      "countyName": "Bandera",
-      "fips": "48019"
-    },
-    {
-      "certificationStatus": "FAIL",
-      "countyName": "Bell",
-      "fips": "48027"
-    },
-    {
-      "certificationStatus": "FAIL",
-      "countyName": "Brewster",
-      "fips": "48043"
-    },
-    {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Cameron",
       "fips": "48061"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Cherokee",
       "fips": "48073"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Dallas",
       "fips": "48113"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Denton",
       "fips": "48121"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Ector",
       "fips": "48135"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Hudspeth",
       "fips": "48229"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Midland",
       "fips": "48329"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Presidio",
       "fips": "48377"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Rusk",
       "fips": "48401"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Somervell",
       "fips": "48425"
     },
     {
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyName": "Taylor",
       "fips": "48441"
     }
@@ -76,7 +62,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/anderson-48001.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Anderson",
       "exactHouseNumberRequired": true,
@@ -92,7 +78,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/andrews-48003.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Andrews",
       "exactHouseNumberRequired": true,
@@ -108,7 +94,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/angelina-48005.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Angelina",
       "exactHouseNumberRequired": true,
@@ -124,7 +110,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/aransas-48007.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Aransas",
       "exactHouseNumberRequired": true,
@@ -140,7 +126,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/archer-48009.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Archer",
       "exactHouseNumberRequired": true,
@@ -156,7 +142,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/armstrong-48011.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Armstrong",
       "exactHouseNumberRequired": true,
@@ -172,7 +158,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/atascosa-48013.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Atascosa",
       "exactHouseNumberRequired": true,
@@ -188,7 +174,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/austin-48015.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Austin",
       "exactHouseNumberRequired": true,
@@ -204,7 +190,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bailey-48017.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bailey",
       "exactHouseNumberRequired": true,
@@ -220,7 +206,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bandera-48019.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bandera",
       "exactHouseNumberRequired": true,
@@ -230,13 +216,13 @@
       "nearbyNumberSubstitutionAllowed": false,
       "packageAvailable": true,
       "roadOnlyPromotionAllowed": false,
-      "status": "FAIL",
+      "status": "PASS",
       "truthfulNoResultSupported": true
     },
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bastrop-48021.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bastrop",
       "exactHouseNumberRequired": true,
@@ -252,7 +238,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/baylor-48023.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Baylor",
       "exactHouseNumberRequired": true,
@@ -268,7 +254,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bee-48025.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bee",
       "exactHouseNumberRequired": true,
@@ -284,7 +270,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bell-48027.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bell",
       "exactHouseNumberRequired": true,
@@ -294,13 +280,13 @@
       "nearbyNumberSubstitutionAllowed": false,
       "packageAvailable": true,
       "roadOnlyPromotionAllowed": false,
-      "status": "FAIL",
+      "status": "PASS",
       "truthfulNoResultSupported": true
     },
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bexar-48029.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bexar",
       "exactHouseNumberRequired": true,
@@ -316,7 +302,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/blanco-48031.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Blanco",
       "exactHouseNumberRequired": true,
@@ -332,7 +318,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/borden-48033.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Borden",
       "exactHouseNumberRequired": true,
@@ -348,7 +334,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bosque-48035.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bosque",
       "exactHouseNumberRequired": true,
@@ -364,7 +350,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/bowie-48037.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Bowie",
       "exactHouseNumberRequired": true,
@@ -380,7 +366,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/brazoria-48039.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Brazoria",
       "exactHouseNumberRequired": true,
@@ -396,7 +382,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/brazos-48041.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Brazos",
       "exactHouseNumberRequired": true,
@@ -412,7 +398,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/brewster-48043.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Brewster",
       "exactHouseNumberRequired": true,
@@ -422,13 +408,13 @@
       "nearbyNumberSubstitutionAllowed": false,
       "packageAvailable": true,
       "roadOnlyPromotionAllowed": false,
-      "status": "FAIL",
+      "status": "PASS",
       "truthfulNoResultSupported": true
     },
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/briscoe-48045.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Briscoe",
       "exactHouseNumberRequired": true,
@@ -444,7 +430,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/brooks-48047.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Brooks",
       "exactHouseNumberRequired": true,
@@ -460,7 +446,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/brown-48049.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Brown",
       "exactHouseNumberRequired": true,
@@ -476,7 +462,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp129-wave-3/certification/burleson-48051.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Burleson",
       "exactHouseNumberRequired": true,
@@ -492,7 +478,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/burnet-48053.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Burnet",
       "exactHouseNumberRequired": true,
@@ -508,7 +494,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/caldwell-48055.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Caldwell",
       "exactHouseNumberRequired": true,
@@ -524,7 +510,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/calhoun-48057.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Calhoun",
       "exactHouseNumberRequired": true,
@@ -540,7 +526,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-01/certification/callahan-48059.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Callahan",
       "exactHouseNumberRequired": true,
@@ -555,8 +541,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cameron-48061.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/0",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Cameron",
       "exactHouseNumberRequired": true,
@@ -572,7 +558,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/camp-48063.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Camp",
       "exactHouseNumberRequired": true,
@@ -588,7 +574,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/carson-48065.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Carson",
       "exactHouseNumberRequired": true,
@@ -604,7 +590,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cass-48067.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Cass",
       "exactHouseNumberRequired": true,
@@ -620,7 +606,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/castro-48069.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Castro",
       "exactHouseNumberRequired": true,
@@ -636,7 +622,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/chambers-48071.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Chambers",
       "exactHouseNumberRequired": true,
@@ -651,8 +637,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cherokee-48073.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/1",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Cherokee",
       "exactHouseNumberRequired": true,
@@ -668,7 +654,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/childress-48075.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Childress",
       "exactHouseNumberRequired": true,
@@ -684,7 +670,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/clay-48077.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Clay",
       "exactHouseNumberRequired": true,
@@ -700,7 +686,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cochran-48079.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Cochran",
       "exactHouseNumberRequired": true,
@@ -716,7 +702,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/coke-48081.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Coke",
       "exactHouseNumberRequired": true,
@@ -732,7 +718,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/coleman-48083.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Coleman",
       "exactHouseNumberRequired": true,
@@ -748,7 +734,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/collin-48085.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Collin",
       "exactHouseNumberRequired": true,
@@ -764,7 +750,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/collingsworth-48087.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Collingsworth",
       "exactHouseNumberRequired": true,
@@ -780,7 +766,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/colorado-48089.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Colorado",
       "exactHouseNumberRequired": true,
@@ -796,7 +782,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/comal-48091.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Comal",
       "exactHouseNumberRequired": true,
@@ -812,7 +798,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/comanche-48093.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Comanche",
       "exactHouseNumberRequired": true,
@@ -828,7 +814,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/concho-48095.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Concho",
       "exactHouseNumberRequired": true,
@@ -844,7 +830,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cooke-48097.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Cooke",
       "exactHouseNumberRequired": true,
@@ -860,7 +846,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/coryell-48099.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Coryell",
       "exactHouseNumberRequired": true,
@@ -876,7 +862,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/cottle-48101.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Cottle",
       "exactHouseNumberRequired": true,
@@ -892,7 +878,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/crane-48103.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Crane",
       "exactHouseNumberRequired": true,
@@ -908,7 +894,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/crockett-48105.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Crockett",
       "exactHouseNumberRequired": true,
@@ -924,7 +910,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/crosby-48107.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Crosby",
       "exactHouseNumberRequired": true,
@@ -940,7 +926,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/culberson-48109.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Culberson",
       "exactHouseNumberRequired": true,
@@ -956,7 +942,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/dallam-48111.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Dallam",
       "exactHouseNumberRequired": true,
@@ -971,8 +957,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-02/certification/dallas-48113.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/2",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Dallas",
       "exactHouseNumberRequired": true,
@@ -988,7 +974,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/dawson-48115.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Dawson",
       "exactHouseNumberRequired": true,
@@ -1004,7 +990,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/deaf-smith-48117.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Deaf Smith",
       "exactHouseNumberRequired": true,
@@ -1020,7 +1006,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/delta-48119.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Delta",
       "exactHouseNumberRequired": true,
@@ -1035,8 +1021,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/denton-48121.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/3",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Denton",
       "exactHouseNumberRequired": true,
@@ -1052,7 +1038,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/dewitt-48123.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "DeWitt",
       "exactHouseNumberRequired": true,
@@ -1068,7 +1054,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/dickens-48125.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Dickens",
       "exactHouseNumberRequired": true,
@@ -1084,7 +1070,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/dimmit-48127.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Dimmit",
       "exactHouseNumberRequired": true,
@@ -1100,7 +1086,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/donley-48129.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Donley",
       "exactHouseNumberRequired": true,
@@ -1116,7 +1102,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/duval-48131.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Duval",
       "exactHouseNumberRequired": true,
@@ -1132,7 +1118,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/eastland-48133.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Eastland",
       "exactHouseNumberRequired": true,
@@ -1147,8 +1133,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/ector-48135.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/4",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Ector",
       "exactHouseNumberRequired": true,
@@ -1164,7 +1150,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/edwards-48137.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Edwards",
       "exactHouseNumberRequired": true,
@@ -1180,7 +1166,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/ellis-48139.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Ellis",
       "exactHouseNumberRequired": true,
@@ -1196,7 +1182,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/el-paso-48141.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "El Paso",
       "exactHouseNumberRequired": true,
@@ -1212,7 +1198,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/erath-48143.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Erath",
       "exactHouseNumberRequired": true,
@@ -1228,7 +1214,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/falls-48145.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Falls",
       "exactHouseNumberRequired": true,
@@ -1244,7 +1230,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/fannin-48147.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Fannin",
       "exactHouseNumberRequired": true,
@@ -1260,7 +1246,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/fayette-48149.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Fayette",
       "exactHouseNumberRequired": true,
@@ -1276,7 +1262,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/fisher-48151.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Fisher",
       "exactHouseNumberRequired": true,
@@ -1292,7 +1278,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/floyd-48153.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Floyd",
       "exactHouseNumberRequired": true,
@@ -1308,7 +1294,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/foard-48155.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Foard",
       "exactHouseNumberRequired": true,
@@ -1324,7 +1310,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/fort-bend-48157.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Fort Bend",
       "exactHouseNumberRequired": true,
@@ -1340,7 +1326,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/franklin-48159.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Franklin",
       "exactHouseNumberRequired": true,
@@ -1356,7 +1342,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/freestone-48161.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Freestone",
       "exactHouseNumberRequired": true,
@@ -1372,7 +1358,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/frio-48163.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Frio",
       "exactHouseNumberRequired": true,
@@ -1388,7 +1374,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/gaines-48165.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Gaines",
       "exactHouseNumberRequired": true,
@@ -1404,7 +1390,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/galveston-48167.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Galveston",
       "exactHouseNumberRequired": true,
@@ -1420,7 +1406,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-03/certification/garza-48169.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Garza",
       "exactHouseNumberRequired": true,
@@ -1436,7 +1422,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/gillespie-48171.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Gillespie",
       "exactHouseNumberRequired": true,
@@ -1452,7 +1438,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/glasscock-48173.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Glasscock",
       "exactHouseNumberRequired": true,
@@ -1468,7 +1454,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/goliad-48175.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Goliad",
       "exactHouseNumberRequired": true,
@@ -1484,7 +1470,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/gonzales-48177.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Gonzales",
       "exactHouseNumberRequired": true,
@@ -1500,7 +1486,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/gray-48179.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Gray",
       "exactHouseNumberRequired": true,
@@ -1516,7 +1502,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/grayson-48181.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Grayson",
       "exactHouseNumberRequired": true,
@@ -1532,7 +1518,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/gregg-48183.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Gregg",
       "exactHouseNumberRequired": true,
@@ -1548,7 +1534,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/grimes-48185.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Grimes",
       "exactHouseNumberRequired": true,
@@ -1564,7 +1550,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/guadalupe-48187.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Guadalupe",
       "exactHouseNumberRequired": true,
@@ -1580,7 +1566,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hale-48189.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hale",
       "exactHouseNumberRequired": true,
@@ -1596,7 +1582,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hall-48191.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hall",
       "exactHouseNumberRequired": true,
@@ -1612,7 +1598,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hamilton-48193.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hamilton",
       "exactHouseNumberRequired": true,
@@ -1628,7 +1614,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hansford-48195.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hansford",
       "exactHouseNumberRequired": true,
@@ -1644,7 +1630,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hardeman-48197.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hardeman",
       "exactHouseNumberRequired": true,
@@ -1660,7 +1646,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/hardin-48199.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hardin",
       "exactHouseNumberRequired": true,
@@ -1676,7 +1662,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/harris-48201.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Harris",
       "exactHouseNumberRequired": true,
@@ -1692,7 +1678,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/harrison-48203.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Harrison",
       "exactHouseNumberRequired": true,
@@ -1708,7 +1694,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hartley-48205.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hartley",
       "exactHouseNumberRequired": true,
@@ -1724,7 +1710,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/haskell-48207.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Haskell",
       "exactHouseNumberRequired": true,
@@ -1740,7 +1726,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hays-48209.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hays",
       "exactHouseNumberRequired": true,
@@ -1756,7 +1742,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hemphill-48211.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hemphill",
       "exactHouseNumberRequired": true,
@@ -1772,7 +1758,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/henderson-48213.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Henderson",
       "exactHouseNumberRequired": true,
@@ -1788,7 +1774,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hidalgo-48215.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hidalgo",
       "exactHouseNumberRequired": true,
@@ -1804,7 +1790,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hill-48217.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hill",
       "exactHouseNumberRequired": true,
@@ -1820,7 +1806,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hockley-48219.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hockley",
       "exactHouseNumberRequired": true,
@@ -1836,7 +1822,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hood-48221.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hood",
       "exactHouseNumberRequired": true,
@@ -1852,7 +1838,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/hopkins-48223.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hopkins",
       "exactHouseNumberRequired": true,
@@ -1868,7 +1854,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-04/certification/houston-48225.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Houston",
       "exactHouseNumberRequired": true,
@@ -1884,7 +1870,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/howard-48227.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Howard",
       "exactHouseNumberRequired": true,
@@ -1899,8 +1885,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/hudspeth-48229.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/5",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Hudspeth",
       "exactHouseNumberRequired": true,
@@ -1916,7 +1902,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/hunt-48231.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hunt",
       "exactHouseNumberRequired": true,
@@ -1932,7 +1918,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/hutchinson-48233.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Hutchinson",
       "exactHouseNumberRequired": true,
@@ -1948,7 +1934,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/irion-48235.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Irion",
       "exactHouseNumberRequired": true,
@@ -1964,7 +1950,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/jack-48237.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jack",
       "exactHouseNumberRequired": true,
@@ -1980,7 +1966,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/jackson-48239.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jackson",
       "exactHouseNumberRequired": true,
@@ -1996,7 +1982,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/jasper-48241.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jasper",
       "exactHouseNumberRequired": true,
@@ -2012,7 +1998,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/jeff-davis-48243.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jeff Davis",
       "exactHouseNumberRequired": true,
@@ -2028,7 +2014,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/jefferson-48245.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jefferson",
       "exactHouseNumberRequired": true,
@@ -2044,7 +2030,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/jim-hogg-48247.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jim Hogg",
       "exactHouseNumberRequired": true,
@@ -2060,7 +2046,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/jim-wells-48249.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jim Wells",
       "exactHouseNumberRequired": true,
@@ -2076,7 +2062,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/johnson-48251.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Johnson",
       "exactHouseNumberRequired": true,
@@ -2092,7 +2078,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/jones-48253.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Jones",
       "exactHouseNumberRequired": true,
@@ -2108,7 +2094,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/karnes-48255.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Karnes",
       "exactHouseNumberRequired": true,
@@ -2124,7 +2110,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kaufman-48257.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kaufman",
       "exactHouseNumberRequired": true,
@@ -2140,7 +2126,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kendall-48259.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kendall",
       "exactHouseNumberRequired": true,
@@ -2156,7 +2142,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kenedy-48261.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kenedy",
       "exactHouseNumberRequired": true,
@@ -2172,7 +2158,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kent-48263.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kent",
       "exactHouseNumberRequired": true,
@@ -2188,7 +2174,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kerr-48265.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kerr",
       "exactHouseNumberRequired": true,
@@ -2204,7 +2190,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kimble-48267.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kimble",
       "exactHouseNumberRequired": true,
@@ -2220,7 +2206,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/king-48269.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "King",
       "exactHouseNumberRequired": true,
@@ -2236,7 +2222,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kinney-48271.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kinney",
       "exactHouseNumberRequired": true,
@@ -2252,7 +2238,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/kleberg-48273.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Kleberg",
       "exactHouseNumberRequired": true,
@@ -2268,7 +2254,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/knox-48275.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Knox",
       "exactHouseNumberRequired": true,
@@ -2284,7 +2270,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/lamar-48277.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lamar",
       "exactHouseNumberRequired": true,
@@ -2300,7 +2286,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/lamb-48279.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lamb",
       "exactHouseNumberRequired": true,
@@ -2316,7 +2302,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-05/certification/lampasas-48281.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lampasas",
       "exactHouseNumberRequired": true,
@@ -2332,7 +2318,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/la-salle-48283.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "La Salle",
       "exactHouseNumberRequired": true,
@@ -2348,7 +2334,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/lavaca-48285.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lavaca",
       "exactHouseNumberRequired": true,
@@ -2364,7 +2350,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp128-wave-2/certification/lee-48287.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lee",
       "exactHouseNumberRequired": true,
@@ -2380,7 +2366,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/leon-48289.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Leon",
       "exactHouseNumberRequired": true,
@@ -2396,7 +2382,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/liberty-48291.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Liberty",
       "exactHouseNumberRequired": true,
@@ -2412,7 +2398,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/limestone-48293.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Limestone",
       "exactHouseNumberRequired": true,
@@ -2428,7 +2414,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/lipscomb-48295.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lipscomb",
       "exactHouseNumberRequired": true,
@@ -2444,7 +2430,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/live-oak-48297.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Live Oak",
       "exactHouseNumberRequired": true,
@@ -2460,7 +2446,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/llano-48299.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Llano",
       "exactHouseNumberRequired": true,
@@ -2476,7 +2462,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/loving-48301.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Loving",
       "exactHouseNumberRequired": true,
@@ -2492,7 +2478,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/lubbock-48303.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lubbock",
       "exactHouseNumberRequired": true,
@@ -2508,7 +2494,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/lynn-48305.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Lynn",
       "exactHouseNumberRequired": true,
@@ -2524,7 +2510,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mcculloch-48307.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "McCulloch",
       "exactHouseNumberRequired": true,
@@ -2540,7 +2526,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mclennan-48309.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "McLennan",
       "exactHouseNumberRequired": true,
@@ -2556,7 +2542,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mcmullen-48311.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "McMullen",
       "exactHouseNumberRequired": true,
@@ -2572,7 +2558,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/madison-48313.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Madison",
       "exactHouseNumberRequired": true,
@@ -2588,7 +2574,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/marion-48315.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Marion",
       "exactHouseNumberRequired": true,
@@ -2604,7 +2590,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/martin-48317.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Martin",
       "exactHouseNumberRequired": true,
@@ -2620,7 +2606,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mason-48319.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Mason",
       "exactHouseNumberRequired": true,
@@ -2636,7 +2622,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/matagorda-48321.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Matagorda",
       "exactHouseNumberRequired": true,
@@ -2652,7 +2638,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/maverick-48323.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Maverick",
       "exactHouseNumberRequired": true,
@@ -2668,7 +2654,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/medina-48325.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Medina",
       "exactHouseNumberRequired": true,
@@ -2684,7 +2670,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/menard-48327.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Menard",
       "exactHouseNumberRequired": true,
@@ -2699,8 +2685,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/midland-48329.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/6",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Midland",
       "exactHouseNumberRequired": true,
@@ -2716,7 +2702,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp128-wave-2/certification/milam-48331.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Milam",
       "exactHouseNumberRequired": true,
@@ -2732,7 +2718,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mills-48333.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Mills",
       "exactHouseNumberRequired": true,
@@ -2748,7 +2734,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/mitchell-48335.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Mitchell",
       "exactHouseNumberRequired": true,
@@ -2764,7 +2750,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/montague-48337.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Montague",
       "exactHouseNumberRequired": true,
@@ -2780,7 +2766,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/montgomery-48339.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Montgomery",
       "exactHouseNumberRequired": true,
@@ -2796,7 +2782,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/moore-48341.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Moore",
       "exactHouseNumberRequired": true,
@@ -2812,7 +2798,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-06/certification/morris-48343.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Morris",
       "exactHouseNumberRequired": true,
@@ -2828,7 +2814,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/motley-48345.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Motley",
       "exactHouseNumberRequired": true,
@@ -2844,7 +2830,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/nacogdoches-48347.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Nacogdoches",
       "exactHouseNumberRequired": true,
@@ -2860,7 +2846,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/navarro-48349.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Navarro",
       "exactHouseNumberRequired": true,
@@ -2876,7 +2862,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/newton-48351.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Newton",
       "exactHouseNumberRequired": true,
@@ -2892,7 +2878,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/nolan-48353.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Nolan",
       "exactHouseNumberRequired": true,
@@ -2908,7 +2894,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/nueces-48355.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Nueces",
       "exactHouseNumberRequired": true,
@@ -2924,7 +2910,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/ochiltree-48357.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Ochiltree",
       "exactHouseNumberRequired": true,
@@ -2940,7 +2926,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/oldham-48359.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Oldham",
       "exactHouseNumberRequired": true,
@@ -2956,7 +2942,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/orange-48361.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Orange",
       "exactHouseNumberRequired": true,
@@ -2972,7 +2958,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/palo-pinto-48363.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Palo Pinto",
       "exactHouseNumberRequired": true,
@@ -2988,7 +2974,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/panola-48365.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Panola",
       "exactHouseNumberRequired": true,
@@ -3004,7 +2990,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/parker-48367.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Parker",
       "exactHouseNumberRequired": true,
@@ -3020,7 +3006,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/parmer-48369.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Parmer",
       "exactHouseNumberRequired": true,
@@ -3036,7 +3022,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/pecos-48371.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Pecos",
       "exactHouseNumberRequired": true,
@@ -3052,7 +3038,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/polk-48373.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Polk",
       "exactHouseNumberRequired": true,
@@ -3068,7 +3054,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/potter-48375.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Potter",
       "exactHouseNumberRequired": true,
@@ -3083,8 +3069,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/presidio-48377.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/7",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Presidio",
       "exactHouseNumberRequired": true,
@@ -3100,7 +3086,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/rains-48379.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Rains",
       "exactHouseNumberRequired": true,
@@ -3116,7 +3102,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/randall-48381.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Randall",
       "exactHouseNumberRequired": true,
@@ -3132,7 +3118,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/reagan-48383.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Reagan",
       "exactHouseNumberRequired": true,
@@ -3148,7 +3134,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/real-48385.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Real",
       "exactHouseNumberRequired": true,
@@ -3164,7 +3150,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/red-river-48387.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Red River",
       "exactHouseNumberRequired": true,
@@ -3180,7 +3166,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/reeves-48389.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Reeves",
       "exactHouseNumberRequired": true,
@@ -3196,7 +3182,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/refugio-48391.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Refugio",
       "exactHouseNumberRequired": true,
@@ -3212,7 +3198,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/roberts-48393.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Roberts",
       "exactHouseNumberRequired": true,
@@ -3228,7 +3214,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp128-wave-2/certification/robertson-48395.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Robertson",
       "exactHouseNumberRequired": true,
@@ -3244,7 +3230,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/rockwall-48397.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Rockwall",
       "exactHouseNumberRequired": true,
@@ -3260,7 +3246,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/runnels-48399.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Runnels",
       "exactHouseNumberRequired": true,
@@ -3275,8 +3261,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-07/certification/rusk-48401.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/8",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Rusk",
       "exactHouseNumberRequired": true,
@@ -3292,7 +3278,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/sabine-48403.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Sabine",
       "exactHouseNumberRequired": true,
@@ -3308,7 +3294,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/san-augustine-48405.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "San Augustine",
       "exactHouseNumberRequired": true,
@@ -3324,7 +3310,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/san-jacinto-48407.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "San Jacinto",
       "exactHouseNumberRequired": true,
@@ -3340,7 +3326,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/san-patricio-48409.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "San Patricio",
       "exactHouseNumberRequired": true,
@@ -3356,7 +3342,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/san-saba-48411.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "San Saba",
       "exactHouseNumberRequired": true,
@@ -3372,7 +3358,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/schleicher-48413.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Schleicher",
       "exactHouseNumberRequired": true,
@@ -3388,7 +3374,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/scurry-48415.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Scurry",
       "exactHouseNumberRequired": true,
@@ -3404,7 +3390,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/shackelford-48417.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Shackelford",
       "exactHouseNumberRequired": true,
@@ -3420,7 +3406,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/shelby-48419.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Shelby",
       "exactHouseNumberRequired": true,
@@ -3436,7 +3422,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/sherman-48421.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Sherman",
       "exactHouseNumberRequired": true,
@@ -3452,7 +3438,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/smith-48423.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Smith",
       "exactHouseNumberRequired": true,
@@ -3467,8 +3453,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/somervell-48425.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/9",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Somervell",
       "exactHouseNumberRequired": true,
@@ -3484,7 +3470,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/starr-48427.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Starr",
       "exactHouseNumberRequired": true,
@@ -3500,7 +3486,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/stephens-48429.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Stephens",
       "exactHouseNumberRequired": true,
@@ -3516,7 +3502,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/sterling-48431.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Sterling",
       "exactHouseNumberRequired": true,
@@ -3532,7 +3518,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/stonewall-48433.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Stonewall",
       "exactHouseNumberRequired": true,
@@ -3548,7 +3534,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/sutton-48435.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Sutton",
       "exactHouseNumberRequired": true,
@@ -3564,7 +3550,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/swisher-48437.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Swisher",
       "exactHouseNumberRequired": true,
@@ -3580,7 +3566,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/tarrant-48439.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Tarrant",
       "exactHouseNumberRequired": true,
@@ -3595,8 +3581,8 @@
     },
     {
       "authoritativeCoordinatesRequired": true,
-      "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/taylor-48441.certification.json",
-      "certificationStatus": "FAIL",
+      "certificationEvidence": "evidence/lp134/certification-results.json#/remaining/10",
+      "certificationStatus": "CERTIFICATION_BLOCKED",
       "countyContainmentRequired": true,
       "countyName": "Taylor",
       "exactHouseNumberRequired": true,
@@ -3612,7 +3598,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/terrell-48443.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Terrell",
       "exactHouseNumberRequired": true,
@@ -3628,7 +3614,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/terry-48445.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Terry",
       "exactHouseNumberRequired": true,
@@ -3644,7 +3630,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/throckmorton-48447.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Throckmorton",
       "exactHouseNumberRequired": true,
@@ -3660,7 +3646,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/titus-48449.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Titus",
       "exactHouseNumberRequired": true,
@@ -3676,7 +3662,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/tom-green-48451.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Tom Green",
       "exactHouseNumberRequired": true,
@@ -3692,7 +3678,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-08/certification/travis-48453.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Travis",
       "exactHouseNumberRequired": true,
@@ -3708,7 +3694,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp129-wave-3/certification/trinity-48455.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Trinity",
       "exactHouseNumberRequired": true,
@@ -3724,7 +3710,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/tyler-48457.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Tyler",
       "exactHouseNumberRequired": true,
@@ -3740,7 +3726,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/upshur-48459.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Upshur",
       "exactHouseNumberRequired": true,
@@ -3756,7 +3742,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/upton-48461.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Upton",
       "exactHouseNumberRequired": true,
@@ -3772,7 +3758,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/uvalde-48463.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Uvalde",
       "exactHouseNumberRequired": true,
@@ -3788,7 +3774,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/val-verde-48465.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Val Verde",
       "exactHouseNumberRequired": true,
@@ -3804,7 +3790,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/van-zandt-48467.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Van Zandt",
       "exactHouseNumberRequired": true,
@@ -3820,7 +3806,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp129-wave-3/certification/victoria-48469.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Victoria",
       "exactHouseNumberRequired": true,
@@ -3836,7 +3822,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/walker-48471.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Walker",
       "exactHouseNumberRequired": true,
@@ -3852,7 +3838,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/waller-48473.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Waller",
       "exactHouseNumberRequired": true,
@@ -3868,7 +3854,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/ward-48475.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Ward",
       "exactHouseNumberRequired": true,
@@ -3884,7 +3870,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/washington-48477.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Washington",
       "exactHouseNumberRequired": true,
@@ -3900,7 +3886,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/webb-48479.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Webb",
       "exactHouseNumberRequired": true,
@@ -3916,7 +3902,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "data/generated/lp1051/certification/wharton-48481.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wharton",
       "exactHouseNumberRequired": true,
@@ -3932,7 +3918,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wheeler-48483.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wheeler",
       "exactHouseNumberRequired": true,
@@ -3948,7 +3934,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wichita-48485.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wichita",
       "exactHouseNumberRequired": true,
@@ -3964,7 +3950,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wilbarger-48487.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wilbarger",
       "exactHouseNumberRequired": true,
@@ -3980,7 +3966,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/willacy-48489.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Willacy",
       "exactHouseNumberRequired": true,
@@ -3996,7 +3982,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/williamson-48491.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Williamson",
       "exactHouseNumberRequired": true,
@@ -4012,7 +3998,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wilson-48493.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wilson",
       "exactHouseNumberRequired": true,
@@ -4028,7 +4014,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/winkler-48495.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Winkler",
       "exactHouseNumberRequired": true,
@@ -4044,7 +4030,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wise-48497.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wise",
       "exactHouseNumberRequired": true,
@@ -4060,7 +4046,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/wood-48499.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Wood",
       "exactHouseNumberRequired": true,
@@ -4076,7 +4062,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/yoakum-48501.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Yoakum",
       "exactHouseNumberRequired": true,
@@ -4092,7 +4078,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/young-48503.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Young",
       "exactHouseNumberRequired": true,
@@ -4108,7 +4094,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/zapata-48505.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Zapata",
       "exactHouseNumberRequired": true,
@@ -4124,7 +4110,7 @@
     {
       "authoritativeCoordinatesRequired": true,
       "certificationEvidence": "reports/lp130-statewide-addresses/batch-09/certification/zavala-48507.certification.json",
-      "certificationStatus": "PASS",
+      "certificationStatus": "CERTIFIED",
       "countyContainmentRequired": true,
       "countyName": "Zavala",
       "exactHouseNumberRequired": true,
@@ -4138,10 +4124,10 @@
       "truthfulNoResultSupported": true
     }
   ],
-  "failCount": 14,
+  "failCount": 11,
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "milestone": "LP162",
-  "passCount": 240,
+  "passCount": 243,
   "schemaVersion": "gridly.lp162.addressSearchCertification.v1",
   "status": "CONDITIONAL",
   "trustContract": {
