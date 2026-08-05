@@ -195,13 +195,15 @@
     "build:lp160": "node tools/lp160-build-statewide-destination-integration.mjs --write",
     "verify:lp160": "node tools/lp160-build-statewide-destination-integration.mjs",
     "test:lp160": "node --test tests/lp160-statewide-destination-integration.test.mjs",
-    "build:lp1601": "node tools/lp1601-manufacture-overture-texas-destinations.mjs --write",
+    "build:lp1601": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
     "verify:lp1601": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
     "test:lp1601": "node --test tests/lp1601-overture-texas-destination-manufacturing.test.mjs",
     "build:lp1601a": "node tools/lp1601a-geoparquet-compatibility.mjs --write",
     "verify:lp1601a": "node tools/lp1601a-geoparquet-compatibility.mjs",
     "test:lp1601a": "node --test tests/lp1601a-geoparquet-compatibility.test.mjs",
     "verify:lp1601b": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
-    "test:lp1601b": "node --test tests/lp1601-overture-texas-destination-manufacturing.test.mjs"
+    "test:lp1601b": "node --test tests/lp1601-overture-texas-destination-manufacturing.test.mjs",
+    "verify:lp1601c": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
+    "test:lp1601c": "node --test tests/lp1601c-duckdb-extraction.test.mjs"
   }
 }
