@@ -183,6 +183,9 @@
     "test:lp155": "node --test tests/lp155-statewide-consumer-evidence-execution.test.mjs",
     "build:lp156": "node tools/lp156/build-statewide-data-acquisition-plan.mjs --write",
     "verify:lp156": "node tools/lp156/build-statewide-data-acquisition-plan.mjs",
-    "test:lp156": "node --test tests/lp156-statewide-data-acquisition-plan.test.mjs"
+    "test:lp156": "node --test tests/lp156-statewide-data-acquisition-plan.test.mjs",
+    "build:lp157": "node tools/lp157-build-community-intelligence.mjs --write",
+    "verify:lp157": "node tools/lp157-build-community-intelligence.mjs",
+    "test:lp157": "node --test tests/lp157-community-intelligence.test.mjs"
   }
 }

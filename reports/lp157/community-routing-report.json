@@ -1,0 +1,163 @@
+{
+  "destinationCount": 22,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP157",
+  "routableCommunities": [
+    {
+      "communityId": "tx-dayton-48291",
+      "lat": 30.0466,
+      "lon": -94.8852,
+      "name": "Dayton",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-cleveland-48291",
+      "lat": 30.3413,
+      "lon": -95.0855,
+      "name": "Cleveland",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-liberty-48291",
+      "lat": 30.0579,
+      "lon": -94.7955,
+      "name": "Liberty",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-ames-48291",
+      "lat": 30.0536,
+      "lon": -94.7435,
+      "name": "Ames",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-daisetta-48291",
+      "lat": 30.113,
+      "lon": -94.6424,
+      "name": "Daisetta",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-devers-48291",
+      "lat": 30.0258,
+      "lon": -94.5866,
+      "name": "Devers",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-hardin-48291",
+      "lat": 30.153,
+      "lon": -94.7399,
+      "name": "Hardin",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-kenefick-48291",
+      "lat": 30.1097,
+      "lon": -94.8563,
+      "name": "Kenefick",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-north-cleveland-48291",
+      "lat": 30.3638,
+      "lon": -95.093,
+      "name": "North Cleveland",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-plum-grove-48291",
+      "lat": 30.1972,
+      "lon": -95.0944,
+      "name": "Plum Grove",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-conroe-48339",
+      "lat": 30.3119,
+      "lon": -95.4561,
+      "name": "Conroe",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-waco-48309",
+      "lat": 31.5493,
+      "lon": -97.1467,
+      "name": "Waco",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-amarillo-48375",
+      "lat": 35.2072,
+      "lon": -101.8338,
+      "name": "Amarillo",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-laredo-48479",
+      "lat": 27.5064,
+      "lon": -99.5075,
+      "name": "Laredo",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-brownsville-48061",
+      "lat": 25.9017,
+      "lon": -97.4975,
+      "name": "Brownsville",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-fredericksburg-48171",
+      "lat": 30.2752,
+      "lon": -98.8719,
+      "name": "Fredericksburg",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-lufkin-48005",
+      "lat": 31.3382,
+      "lon": -94.7291,
+      "name": "Lufkin",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-port-arthur-48245",
+      "lat": 29.8849,
+      "lon": -93.9399,
+      "name": "Port Arthur",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-brenham-48477",
+      "lat": 30.1669,
+      "lon": -96.3977,
+      "name": "Brenham",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-the-woodlands-48339",
+      "lat": 30.1734,
+      "lon": -95.5047,
+      "name": "The Woodlands",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-new-caney-48339",
+      "lat": 30.1555,
+      "lon": -95.2172,
+      "name": "New Caney",
+      "routingDestination": true
+    },
+    {
+      "communityId": "tx-hull-48291",
+      "lat": 30.146,
+      "lon": -94.642,
+      "name": "Hull",
+      "routingDestination": true
+    }
+  ],
+  "schemaVersion": "gridly.lp157.communityRoutingReport.v1",
+  "status": "PASS"
+}
