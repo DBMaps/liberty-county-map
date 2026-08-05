@@ -5,3 +5,8 @@ data/lp150/*.json text eol=lf
 reports/lp150/*.json text eol=lf
 data/lp151/*.json text eol=lf
 reports/lp151/*.json text eol=lf
+
+# Governed generated JSON reports must be byte-stable on every platform.
+reports/**/*.json text eol=lf
+data/**/*.json text eol=lf
+evidence/**/*.json text eol=lf
