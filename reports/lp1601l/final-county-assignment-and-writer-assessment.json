@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp1601l.finalCountyAssignmentAndWriterAssessment.v1",
-  "milestone": "LP160.1L",
+  "milestone": "LP160.1M",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -8,9 +8,10 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "finalClassification": "CONDITIONALLY_COMPLETE",
+  "finalClassification": "MANUFACTURING_COMPLETE",
   "failureCode": null,
   "retainedDestinations": 1339710,
   "distinctAssignedCounties": 254,
-  "candidateFilesCreated": 254
+  "candidateFilesCreated": 254,
+  "certificationOnlyMilestone": true
 }

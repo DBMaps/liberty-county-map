@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp1601j.finalJsonlCountyManufacturingAssessment.v1",
-  "milestone": "LP160.1L",
+  "milestone": "LP160.1M",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -23,10 +23,10 @@
   "retainedDestinations": 1339710,
   "governedExclusions": 730742,
   "duplicatesRemoved": 0,
-  "elapsedMs": 1785964303481,
-  "finalClassification": "CONDITIONALLY_COMPLETE",
+  "elapsedMs": 5645145,
+  "finalClassification": "MANUFACTURING_COMPLETE",
   "failureCode": null,
-  "conditions": [
-    "County manufacturing repaired; category/community/coverage quality review may remain."
-  ]
+  "conditions": [],
+  "manufacturingStartTime": "2026-08-05T19:37:38.336Z",
+  "manufacturingEndTime": "2026-08-05T21:11:43.481Z"
 }
