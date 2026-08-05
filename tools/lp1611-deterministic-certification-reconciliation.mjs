@@ -74,7 +74,7 @@ export function verifyReconciliationReport() {
   return report;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   try {
     const report = process.argv.includes('--write') ? writeReconciliationReport() : verifyReconciliationReport();
     console.log(json(report));

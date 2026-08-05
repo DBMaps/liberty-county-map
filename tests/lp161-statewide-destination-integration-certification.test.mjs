@@ -9,6 +9,25 @@ const reports = buildReports();
 const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (p) => createHash('sha256').update(readFileSync(p)).digest('hex');
 const reportSnapshot = () => Object.fromEntries(Object.values(P).filter(existsSync).map((p) => [p, sha(p)]));
+const serializedReports = (generated) => Object.fromEntries(Object.entries(generated).map(([path, report]) => [path, JSON.stringify(report)]));
+
+test('LP161 builds and verifies byte-identically across repeated in-process call orders', () => {
+  const first = buildReports();
+  const snapshots = [serializedReports(first), serializedReports(buildReports())];
+
+  assert.deepEqual(verify(), first[P.summary]);
+  snapshots.push(serializedReports(buildReports()));
+  assert.deepEqual(verify(), first[P.summary]);
+  snapshots.push(serializedReports(buildReports()));
+
+  // Returned reports must not expose module-level certification inputs to callers.
+  first[P.category].categoryChecks[0].mappedFamilies.push('CALLER_MUTATION');
+  first[P.runtime].deterministicContract.excludedMutableOrchestrationArtifacts.pop();
+  snapshots.push(serializedReports(buildReports()));
+  assert.deepEqual(verify(), buildReports()[P.summary]);
+
+  for (const snapshot of snapshots) assert.deepEqual(snapshot, snapshots[0]);
+});
 
 test('LP161 reconciles statewide destination inventory and provider integration', () => {
   const integration = reports[P.integration];

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { buildReconciliationReport, verifyReconciliationReport } from '../tools/lp1611-deterministic-certification-reconciliation.mjs';
 
 const reportPath = 'reports/lp1611/deterministic-certification-reconciliation.json';
@@ -31,4 +31,23 @@ test('LP161.1 reconciliation report is deterministic', () => {
   assert.deepEqual(verifyReconciliationReport(), buildReconciliationReport());
   execFileSync('node', ['tools/lp1611-deterministic-certification-reconciliation.mjs'], { stdio: 'pipe' });
   assert.equal(sha(reportPath), before);
+});
+
+test('LP161 and LP161.1 verification CLIs propagate verification failures', () => {
+  const cases = [
+    ['reports/lp161/destination-integration-report.json', 'tools/lp161-certify-statewide-destination-integration.mjs', '[LP161]'],
+    [reportPath, 'tools/lp1611-deterministic-certification-reconciliation.mjs', '[LP161.1]']
+  ];
+
+  for (const [path, cli, errorPrefix] of cases) {
+    const original = readFileSync(path);
+    try {
+      writeFileSync(path, '{"corrupted":true}\n');
+      const result = spawnSync(process.execPath, [cli], { encoding: 'utf8' });
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, new RegExp(`\\${errorPrefix}`));
+    } finally {
+      writeFileSync(path, original);
+    }
+  }
 });
