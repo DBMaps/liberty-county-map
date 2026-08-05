@@ -1,6 +1,6 @@
 {
   "schemaVersion": "gridly.lp1601j.destinationExclusionExecutionSummary.v1",
-  "milestone": "LP160.1J",
+  "milestone": "LP160.1L",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -8,20 +8,7 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalExclusions": 3,
-  "byReason": {
-    "OUTSIDE_TEXAS": 1,
-    "INVALID_COORDINATES": 1,
-    "EXACT_DUPLICATE": 1
-  },
-  "byCounty": {
-    "48201": 0,
-    "48291": 0
-  },
-  "byStage": {
-    "membership": 2,
-    "county": 0,
-    "deduplication": 1
-  },
-  "byCategory": {}
+  "totalExclusions": 0,
+  "byReason": {},
+  "byStage": {}
 }

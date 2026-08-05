@@ -1,0 +1,1285 @@
+{
+  "schemaVersion": "gridly.lp1601l.countyNameResolutionReport.v1",
+  "milestone": "LP160.1L",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "authoritativeCountyNameCount": 254,
+  "placeholderCountyNameCount": 0,
+  "counties": [
+    {
+      "county": "Anderson County",
+      "countyFips": "48001",
+      "slug": "anderson"
+    },
+    {
+      "county": "Andrews County",
+      "countyFips": "48003",
+      "slug": "andrews"
+    },
+    {
+      "county": "Angelina County",
+      "countyFips": "48005",
+      "slug": "angelina"
+    },
+    {
+      "county": "Aransas County",
+      "countyFips": "48007",
+      "slug": "aransas"
+    },
+    {
+      "county": "Archer County",
+      "countyFips": "48009",
+      "slug": "archer"
+    },
+    {
+      "county": "Armstrong County",
+      "countyFips": "48011",
+      "slug": "armstrong"
+    },
+    {
+      "county": "Atascosa County",
+      "countyFips": "48013",
+      "slug": "atascosa"
+    },
+    {
+      "county": "Austin County",
+      "countyFips": "48015",
+      "slug": "austin"
+    },
+    {
+      "county": "Bailey County",
+      "countyFips": "48017",
+      "slug": "bailey"
+    },
+    {
+      "county": "Bandera County",
+      "countyFips": "48019",
+      "slug": "bandera"
+    },
+    {
+      "county": "Bastrop County",
+      "countyFips": "48021",
+      "slug": "bastrop"
+    },
+    {
+      "county": "Baylor County",
+      "countyFips": "48023",
+      "slug": "baylor"
+    },
+    {
+      "county": "Bee County",
+      "countyFips": "48025",
+      "slug": "bee"
+    },
+    {
+      "county": "Bell County",
+      "countyFips": "48027",
+      "slug": "bell"
+    },
+    {
+      "county": "Bexar County",
+      "countyFips": "48029",
+      "slug": "bexar"
+    },
+    {
+      "county": "Blanco County",
+      "countyFips": "48031",
+      "slug": "blanco"
+    },
+    {
+      "county": "Borden County",
+      "countyFips": "48033",
+      "slug": "borden"
+    },
+    {
+      "county": "Bosque County",
+      "countyFips": "48035",
+      "slug": "bosque"
+    },
+    {
+      "county": "Bowie County",
+      "countyFips": "48037",
+      "slug": "bowie"
+    },
+    {
+      "county": "Brazoria County",
+      "countyFips": "48039",
+      "slug": "brazoria"
+    },
+    {
+      "county": "Brazos County",
+      "countyFips": "48041",
+      "slug": "brazos"
+    },
+    {
+      "county": "Brewster County",
+      "countyFips": "48043",
+      "slug": "brewster"
+    },
+    {
+      "county": "Briscoe County",
+      "countyFips": "48045",
+      "slug": "briscoe"
+    },
+    {
+      "county": "Brooks County",
+      "countyFips": "48047",
+      "slug": "brooks"
+    },
+    {
+      "county": "Brown County",
+      "countyFips": "48049",
+      "slug": "brown"
+    },
+    {
+      "county": "Burleson County",
+      "countyFips": "48051",
+      "slug": "burleson"
+    },
+    {
+      "county": "Burnet County",
+      "countyFips": "48053",
+      "slug": "burnet"
+    },
+    {
+      "county": "Caldwell County",
+      "countyFips": "48055",
+      "slug": "caldwell"
+    },
+    {
+      "county": "Calhoun County",
+      "countyFips": "48057",
+      "slug": "calhoun"
+    },
+    {
+      "county": "Callahan County",
+      "countyFips": "48059",
+      "slug": "callahan"
+    },
+    {
+      "county": "Cameron County",
+      "countyFips": "48061",
+      "slug": "cameron"
+    },
+    {
+      "county": "Camp County",
+      "countyFips": "48063",
+      "slug": "camp"
+    },
+    {
+      "county": "Carson County",
+      "countyFips": "48065",
+      "slug": "carson"
+    },
+    {
+      "county": "Cass County",
+      "countyFips": "48067",
+      "slug": "cass"
+    },
+    {
+      "county": "Castro County",
+      "countyFips": "48069",
+      "slug": "castro"
+    },
+    {
+      "county": "Chambers County",
+      "countyFips": "48071",
+      "slug": "chambers"
+    },
+    {
+      "county": "Cherokee County",
+      "countyFips": "48073",
+      "slug": "cherokee"
+    },
+    {
+      "county": "Childress County",
+      "countyFips": "48075",
+      "slug": "childress"
+    },
+    {
+      "county": "Clay County",
+      "countyFips": "48077",
+      "slug": "clay"
+    },
+    {
+      "county": "Cochran County",
+      "countyFips": "48079",
+      "slug": "cochran"
+    },
+    {
+      "county": "Coke County",
+      "countyFips": "48081",
+      "slug": "coke"
+    },
+    {
+      "county": "Coleman County",
+      "countyFips": "48083",
+      "slug": "coleman"
+    },
+    {
+      "county": "Collin County",
+      "countyFips": "48085",
+      "slug": "collin"
+    },
+    {
+      "county": "Collingsworth County",
+      "countyFips": "48087",
+      "slug": "collingsworth"
+    },
+    {
+      "county": "Colorado County",
+      "countyFips": "48089",
+      "slug": "colorado"
+    },
+    {
+      "county": "Comal County",
+      "countyFips": "48091",
+      "slug": "comal"
+    },
+    {
+      "county": "Comanche County",
+      "countyFips": "48093",
+      "slug": "comanche"
+    },
+    {
+      "county": "Concho County",
+      "countyFips": "48095",
+      "slug": "concho"
+    },
+    {
+      "county": "Cooke County",
+      "countyFips": "48097",
+      "slug": "cooke"
+    },
+    {
+      "county": "Coryell County",
+      "countyFips": "48099",
+      "slug": "coryell"
+    },
+    {
+      "county": "Cottle County",
+      "countyFips": "48101",
+      "slug": "cottle"
+    },
+    {
+      "county": "Crane County",
+      "countyFips": "48103",
+      "slug": "crane"
+    },
+    {
+      "county": "Crockett County",
+      "countyFips": "48105",
+      "slug": "crockett"
+    },
+    {
+      "county": "Crosby County",
+      "countyFips": "48107",
+      "slug": "crosby"
+    },
+    {
+      "county": "Culberson County",
+      "countyFips": "48109",
+      "slug": "culberson"
+    },
+    {
+      "county": "Dallam County",
+      "countyFips": "48111",
+      "slug": "dallam"
+    },
+    {
+      "county": "Dallas County",
+      "countyFips": "48113",
+      "slug": "dallas"
+    },
+    {
+      "county": "Dawson County",
+      "countyFips": "48115",
+      "slug": "dawson"
+    },
+    {
+      "county": "Deaf Smith County",
+      "countyFips": "48117",
+      "slug": "deaf-smith"
+    },
+    {
+      "county": "Delta County",
+      "countyFips": "48119",
+      "slug": "delta"
+    },
+    {
+      "county": "Denton County",
+      "countyFips": "48121",
+      "slug": "denton"
+    },
+    {
+      "county": "DeWitt County",
+      "countyFips": "48123",
+      "slug": "dewitt"
+    },
+    {
+      "county": "Dickens County",
+      "countyFips": "48125",
+      "slug": "dickens"
+    },
+    {
+      "county": "Dimmit County",
+      "countyFips": "48127",
+      "slug": "dimmit"
+    },
+    {
+      "county": "Donley County",
+      "countyFips": "48129",
+      "slug": "donley"
+    },
+    {
+      "county": "Duval County",
+      "countyFips": "48131",
+      "slug": "duval"
+    },
+    {
+      "county": "Eastland County",
+      "countyFips": "48133",
+      "slug": "eastland"
+    },
+    {
+      "county": "Ector County",
+      "countyFips": "48135",
+      "slug": "ector"
+    },
+    {
+      "county": "Edwards County",
+      "countyFips": "48137",
+      "slug": "edwards"
+    },
+    {
+      "county": "Ellis County",
+      "countyFips": "48139",
+      "slug": "ellis"
+    },
+    {
+      "county": "El Paso County",
+      "countyFips": "48141",
+      "slug": "el-paso"
+    },
+    {
+      "county": "Erath County",
+      "countyFips": "48143",
+      "slug": "erath"
+    },
+    {
+      "county": "Falls County",
+      "countyFips": "48145",
+      "slug": "falls"
+    },
+    {
+      "county": "Fannin County",
+      "countyFips": "48147",
+      "slug": "fannin"
+    },
+    {
+      "county": "Fayette County",
+      "countyFips": "48149",
+      "slug": "fayette"
+    },
+    {
+      "county": "Fisher County",
+      "countyFips": "48151",
+      "slug": "fisher"
+    },
+    {
+      "county": "Floyd County",
+      "countyFips": "48153",
+      "slug": "floyd"
+    },
+    {
+      "county": "Foard County",
+      "countyFips": "48155",
+      "slug": "foard"
+    },
+    {
+      "county": "Fort Bend County",
+      "countyFips": "48157",
+      "slug": "fort-bend"
+    },
+    {
+      "county": "Franklin County",
+      "countyFips": "48159",
+      "slug": "franklin"
+    },
+    {
+      "county": "Freestone County",
+      "countyFips": "48161",
+      "slug": "freestone"
+    },
+    {
+      "county": "Frio County",
+      "countyFips": "48163",
+      "slug": "frio"
+    },
+    {
+      "county": "Gaines County",
+      "countyFips": "48165",
+      "slug": "gaines"
+    },
+    {
+      "county": "Galveston County",
+      "countyFips": "48167",
+      "slug": "galveston"
+    },
+    {
+      "county": "Garza County",
+      "countyFips": "48169",
+      "slug": "garza"
+    },
+    {
+      "county": "Gillespie County",
+      "countyFips": "48171",
+      "slug": "gillespie"
+    },
+    {
+      "county": "Glasscock County",
+      "countyFips": "48173",
+      "slug": "glasscock"
+    },
+    {
+      "county": "Goliad County",
+      "countyFips": "48175",
+      "slug": "goliad"
+    },
+    {
+      "county": "Gonzales County",
+      "countyFips": "48177",
+      "slug": "gonzales"
+    },
+    {
+      "county": "Gray County",
+      "countyFips": "48179",
+      "slug": "gray"
+    },
+    {
+      "county": "Grayson County",
+      "countyFips": "48181",
+      "slug": "grayson"
+    },
+    {
+      "county": "Gregg County",
+      "countyFips": "48183",
+      "slug": "gregg"
+    },
+    {
+      "county": "Grimes County",
+      "countyFips": "48185",
+      "slug": "grimes"
+    },
+    {
+      "county": "Guadalupe County",
+      "countyFips": "48187",
+      "slug": "guadalupe"
+    },
+    {
+      "county": "Hale County",
+      "countyFips": "48189",
+      "slug": "hale"
+    },
+    {
+      "county": "Hall County",
+      "countyFips": "48191",
+      "slug": "hall"
+    },
+    {
+      "county": "Hamilton County",
+      "countyFips": "48193",
+      "slug": "hamilton"
+    },
+    {
+      "county": "Hansford County",
+      "countyFips": "48195",
+      "slug": "hansford"
+    },
+    {
+      "county": "Hardeman County",
+      "countyFips": "48197",
+      "slug": "hardeman"
+    },
+    {
+      "county": "Hardin County",
+      "countyFips": "48199",
+      "slug": "hardin"
+    },
+    {
+      "county": "Harris County",
+      "countyFips": "48201",
+      "slug": "harris"
+    },
+    {
+      "county": "Harrison County",
+      "countyFips": "48203",
+      "slug": "harrison"
+    },
+    {
+      "county": "Hartley County",
+      "countyFips": "48205",
+      "slug": "hartley"
+    },
+    {
+      "county": "Haskell County",
+      "countyFips": "48207",
+      "slug": "haskell"
+    },
+    {
+      "county": "Hays County",
+      "countyFips": "48209",
+      "slug": "hays"
+    },
+    {
+      "county": "Hemphill County",
+      "countyFips": "48211",
+      "slug": "hemphill"
+    },
+    {
+      "county": "Henderson County",
+      "countyFips": "48213",
+      "slug": "henderson"
+    },
+    {
+      "county": "Hidalgo County",
+      "countyFips": "48215",
+      "slug": "hidalgo"
+    },
+    {
+      "county": "Hill County",
+      "countyFips": "48217",
+      "slug": "hill"
+    },
+    {
+      "county": "Hockley County",
+      "countyFips": "48219",
+      "slug": "hockley"
+    },
+    {
+      "county": "Hood County",
+      "countyFips": "48221",
+      "slug": "hood"
+    },
+    {
+      "county": "Hopkins County",
+      "countyFips": "48223",
+      "slug": "hopkins"
+    },
+    {
+      "county": "Houston County",
+      "countyFips": "48225",
+      "slug": "houston"
+    },
+    {
+      "county": "Howard County",
+      "countyFips": "48227",
+      "slug": "howard"
+    },
+    {
+      "county": "Hudspeth County",
+      "countyFips": "48229",
+      "slug": "hudspeth"
+    },
+    {
+      "county": "Hunt County",
+      "countyFips": "48231",
+      "slug": "hunt"
+    },
+    {
+      "county": "Hutchinson County",
+      "countyFips": "48233",
+      "slug": "hutchinson"
+    },
+    {
+      "county": "Irion County",
+      "countyFips": "48235",
+      "slug": "irion"
+    },
+    {
+      "county": "Jack County",
+      "countyFips": "48237",
+      "slug": "jack"
+    },
+    {
+      "county": "Jackson County",
+      "countyFips": "48239",
+      "slug": "jackson"
+    },
+    {
+      "county": "Jasper County",
+      "countyFips": "48241",
+      "slug": "jasper"
+    },
+    {
+      "county": "Jeff Davis County",
+      "countyFips": "48243",
+      "slug": "jeff-davis"
+    },
+    {
+      "county": "Jefferson County",
+      "countyFips": "48245",
+      "slug": "jefferson"
+    },
+    {
+      "county": "Jim Hogg County",
+      "countyFips": "48247",
+      "slug": "jim-hogg"
+    },
+    {
+      "county": "Jim Wells County",
+      "countyFips": "48249",
+      "slug": "jim-wells"
+    },
+    {
+      "county": "Johnson County",
+      "countyFips": "48251",
+      "slug": "johnson"
+    },
+    {
+      "county": "Jones County",
+      "countyFips": "48253",
+      "slug": "jones"
+    },
+    {
+      "county": "Karnes County",
+      "countyFips": "48255",
+      "slug": "karnes"
+    },
+    {
+      "county": "Kaufman County",
+      "countyFips": "48257",
+      "slug": "kaufman"
+    },
+    {
+      "county": "Kendall County",
+      "countyFips": "48259",
+      "slug": "kendall"
+    },
+    {
+      "county": "Kenedy County",
+      "countyFips": "48261",
+      "slug": "kenedy"
+    },
+    {
+      "county": "Kent County",
+      "countyFips": "48263",
+      "slug": "kent"
+    },
+    {
+      "county": "Kerr County",
+      "countyFips": "48265",
+      "slug": "kerr"
+    },
+    {
+      "county": "Kimble County",
+      "countyFips": "48267",
+      "slug": "kimble"
+    },
+    {
+      "county": "King County",
+      "countyFips": "48269",
+      "slug": "king"
+    },
+    {
+      "county": "Kinney County",
+      "countyFips": "48271",
+      "slug": "kinney"
+    },
+    {
+      "county": "Kleberg County",
+      "countyFips": "48273",
+      "slug": "kleberg"
+    },
+    {
+      "county": "Knox County",
+      "countyFips": "48275",
+      "slug": "knox"
+    },
+    {
+      "county": "Lamar County",
+      "countyFips": "48277",
+      "slug": "lamar"
+    },
+    {
+      "county": "Lamb County",
+      "countyFips": "48279",
+      "slug": "lamb"
+    },
+    {
+      "county": "Lampasas County",
+      "countyFips": "48281",
+      "slug": "lampasas"
+    },
+    {
+      "county": "La Salle County",
+      "countyFips": "48283",
+      "slug": "la-salle"
+    },
+    {
+      "county": "Lavaca County",
+      "countyFips": "48285",
+      "slug": "lavaca"
+    },
+    {
+      "county": "Lee County",
+      "countyFips": "48287",
+      "slug": "lee"
+    },
+    {
+      "county": "Leon County",
+      "countyFips": "48289",
+      "slug": "leon"
+    },
+    {
+      "county": "Liberty County",
+      "countyFips": "48291",
+      "slug": "liberty"
+    },
+    {
+      "county": "Limestone County",
+      "countyFips": "48293",
+      "slug": "limestone"
+    },
+    {
+      "county": "Lipscomb County",
+      "countyFips": "48295",
+      "slug": "lipscomb"
+    },
+    {
+      "county": "Live Oak County",
+      "countyFips": "48297",
+      "slug": "live-oak"
+    },
+    {
+      "county": "Llano County",
+      "countyFips": "48299",
+      "slug": "llano"
+    },
+    {
+      "county": "Loving County",
+      "countyFips": "48301",
+      "slug": "loving"
+    },
+    {
+      "county": "Lubbock County",
+      "countyFips": "48303",
+      "slug": "lubbock"
+    },
+    {
+      "county": "Lynn County",
+      "countyFips": "48305",
+      "slug": "lynn"
+    },
+    {
+      "county": "McCulloch County",
+      "countyFips": "48307",
+      "slug": "mcculloch"
+    },
+    {
+      "county": "McLennan County",
+      "countyFips": "48309",
+      "slug": "mclennan"
+    },
+    {
+      "county": "McMullen County",
+      "countyFips": "48311",
+      "slug": "mcmullen"
+    },
+    {
+      "county": "Madison County",
+      "countyFips": "48313",
+      "slug": "madison"
+    },
+    {
+      "county": "Marion County",
+      "countyFips": "48315",
+      "slug": "marion"
+    },
+    {
+      "county": "Martin County",
+      "countyFips": "48317",
+      "slug": "martin"
+    },
+    {
+      "county": "Mason County",
+      "countyFips": "48319",
+      "slug": "mason"
+    },
+    {
+      "county": "Matagorda County",
+      "countyFips": "48321",
+      "slug": "matagorda"
+    },
+    {
+      "county": "Maverick County",
+      "countyFips": "48323",
+      "slug": "maverick"
+    },
+    {
+      "county": "Medina County",
+      "countyFips": "48325",
+      "slug": "medina"
+    },
+    {
+      "county": "Menard County",
+      "countyFips": "48327",
+      "slug": "menard"
+    },
+    {
+      "county": "Midland County",
+      "countyFips": "48329",
+      "slug": "midland"
+    },
+    {
+      "county": "Milam County",
+      "countyFips": "48331",
+      "slug": "milam"
+    },
+    {
+      "county": "Mills County",
+      "countyFips": "48333",
+      "slug": "mills"
+    },
+    {
+      "county": "Mitchell County",
+      "countyFips": "48335",
+      "slug": "mitchell"
+    },
+    {
+      "county": "Montague County",
+      "countyFips": "48337",
+      "slug": "montague"
+    },
+    {
+      "county": "Montgomery County",
+      "countyFips": "48339",
+      "slug": "montgomery"
+    },
+    {
+      "county": "Moore County",
+      "countyFips": "48341",
+      "slug": "moore"
+    },
+    {
+      "county": "Morris County",
+      "countyFips": "48343",
+      "slug": "morris"
+    },
+    {
+      "county": "Motley County",
+      "countyFips": "48345",
+      "slug": "motley"
+    },
+    {
+      "county": "Nacogdoches County",
+      "countyFips": "48347",
+      "slug": "nacogdoches"
+    },
+    {
+      "county": "Navarro County",
+      "countyFips": "48349",
+      "slug": "navarro"
+    },
+    {
+      "county": "Newton County",
+      "countyFips": "48351",
+      "slug": "newton"
+    },
+    {
+      "county": "Nolan County",
+      "countyFips": "48353",
+      "slug": "nolan"
+    },
+    {
+      "county": "Nueces County",
+      "countyFips": "48355",
+      "slug": "nueces"
+    },
+    {
+      "county": "Ochiltree County",
+      "countyFips": "48357",
+      "slug": "ochiltree"
+    },
+    {
+      "county": "Oldham County",
+      "countyFips": "48359",
+      "slug": "oldham"
+    },
+    {
+      "county": "Orange County",
+      "countyFips": "48361",
+      "slug": "orange"
+    },
+    {
+      "county": "Palo Pinto County",
+      "countyFips": "48363",
+      "slug": "palo-pinto"
+    },
+    {
+      "county": "Panola County",
+      "countyFips": "48365",
+      "slug": "panola"
+    },
+    {
+      "county": "Parker County",
+      "countyFips": "48367",
+      "slug": "parker"
+    },
+    {
+      "county": "Parmer County",
+      "countyFips": "48369",
+      "slug": "parmer"
+    },
+    {
+      "county": "Pecos County",
+      "countyFips": "48371",
+      "slug": "pecos"
+    },
+    {
+      "county": "Polk County",
+      "countyFips": "48373",
+      "slug": "polk"
+    },
+    {
+      "county": "Potter County",
+      "countyFips": "48375",
+      "slug": "potter"
+    },
+    {
+      "county": "Presidio County",
+      "countyFips": "48377",
+      "slug": "presidio"
+    },
+    {
+      "county": "Rains County",
+      "countyFips": "48379",
+      "slug": "rains"
+    },
+    {
+      "county": "Randall County",
+      "countyFips": "48381",
+      "slug": "randall"
+    },
+    {
+      "county": "Reagan County",
+      "countyFips": "48383",
+      "slug": "reagan"
+    },
+    {
+      "county": "Real County",
+      "countyFips": "48385",
+      "slug": "real"
+    },
+    {
+      "county": "Red River County",
+      "countyFips": "48387",
+      "slug": "red-river"
+    },
+    {
+      "county": "Reeves County",
+      "countyFips": "48389",
+      "slug": "reeves"
+    },
+    {
+      "county": "Refugio County",
+      "countyFips": "48391",
+      "slug": "refugio"
+    },
+    {
+      "county": "Roberts County",
+      "countyFips": "48393",
+      "slug": "roberts"
+    },
+    {
+      "county": "Robertson County",
+      "countyFips": "48395",
+      "slug": "robertson"
+    },
+    {
+      "county": "Rockwall County",
+      "countyFips": "48397",
+      "slug": "rockwall"
+    },
+    {
+      "county": "Runnels County",
+      "countyFips": "48399",
+      "slug": "runnels"
+    },
+    {
+      "county": "Rusk County",
+      "countyFips": "48401",
+      "slug": "rusk"
+    },
+    {
+      "county": "Sabine County",
+      "countyFips": "48403",
+      "slug": "sabine"
+    },
+    {
+      "county": "San Augustine County",
+      "countyFips": "48405",
+      "slug": "san-augustine"
+    },
+    {
+      "county": "San Jacinto County",
+      "countyFips": "48407",
+      "slug": "san-jacinto"
+    },
+    {
+      "county": "San Patricio County",
+      "countyFips": "48409",
+      "slug": "san-patricio"
+    },
+    {
+      "county": "San Saba County",
+      "countyFips": "48411",
+      "slug": "san-saba"
+    },
+    {
+      "county": "Schleicher County",
+      "countyFips": "48413",
+      "slug": "schleicher"
+    },
+    {
+      "county": "Scurry County",
+      "countyFips": "48415",
+      "slug": "scurry"
+    },
+    {
+      "county": "Shackelford County",
+      "countyFips": "48417",
+      "slug": "shackelford"
+    },
+    {
+      "county": "Shelby County",
+      "countyFips": "48419",
+      "slug": "shelby"
+    },
+    {
+      "county": "Sherman County",
+      "countyFips": "48421",
+      "slug": "sherman"
+    },
+    {
+      "county": "Smith County",
+      "countyFips": "48423",
+      "slug": "smith"
+    },
+    {
+      "county": "Somervell County",
+      "countyFips": "48425",
+      "slug": "somervell"
+    },
+    {
+      "county": "Starr County",
+      "countyFips": "48427",
+      "slug": "starr"
+    },
+    {
+      "county": "Stephens County",
+      "countyFips": "48429",
+      "slug": "stephens"
+    },
+    {
+      "county": "Sterling County",
+      "countyFips": "48431",
+      "slug": "sterling"
+    },
+    {
+      "county": "Stonewall County",
+      "countyFips": "48433",
+      "slug": "stonewall"
+    },
+    {
+      "county": "Sutton County",
+      "countyFips": "48435",
+      "slug": "sutton"
+    },
+    {
+      "county": "Swisher County",
+      "countyFips": "48437",
+      "slug": "swisher"
+    },
+    {
+      "county": "Tarrant County",
+      "countyFips": "48439",
+      "slug": "tarrant"
+    },
+    {
+      "county": "Taylor County",
+      "countyFips": "48441",
+      "slug": "taylor"
+    },
+    {
+      "county": "Terrell County",
+      "countyFips": "48443",
+      "slug": "terrell"
+    },
+    {
+      "county": "Terry County",
+      "countyFips": "48445",
+      "slug": "terry"
+    },
+    {
+      "county": "Throckmorton County",
+      "countyFips": "48447",
+      "slug": "throckmorton"
+    },
+    {
+      "county": "Titus County",
+      "countyFips": "48449",
+      "slug": "titus"
+    },
+    {
+      "county": "Tom Green County",
+      "countyFips": "48451",
+      "slug": "tom-green"
+    },
+    {
+      "county": "Travis County",
+      "countyFips": "48453",
+      "slug": "travis"
+    },
+    {
+      "county": "Trinity County",
+      "countyFips": "48455",
+      "slug": "trinity"
+    },
+    {
+      "county": "Tyler County",
+      "countyFips": "48457",
+      "slug": "tyler"
+    },
+    {
+      "county": "Upshur County",
+      "countyFips": "48459",
+      "slug": "upshur"
+    },
+    {
+      "county": "Upton County",
+      "countyFips": "48461",
+      "slug": "upton"
+    },
+    {
+      "county": "Uvalde County",
+      "countyFips": "48463",
+      "slug": "uvalde"
+    },
+    {
+      "county": "Val Verde County",
+      "countyFips": "48465",
+      "slug": "val-verde"
+    },
+    {
+      "county": "Van Zandt County",
+      "countyFips": "48467",
+      "slug": "van-zandt"
+    },
+    {
+      "county": "Victoria County",
+      "countyFips": "48469",
+      "slug": "victoria"
+    },
+    {
+      "county": "Walker County",
+      "countyFips": "48471",
+      "slug": "walker"
+    },
+    {
+      "county": "Waller County",
+      "countyFips": "48473",
+      "slug": "waller"
+    },
+    {
+      "county": "Ward County",
+      "countyFips": "48475",
+      "slug": "ward"
+    },
+    {
+      "county": "Washington County",
+      "countyFips": "48477",
+      "slug": "washington"
+    },
+    {
+      "county": "Webb County",
+      "countyFips": "48479",
+      "slug": "webb"
+    },
+    {
+      "county": "Wharton County",
+      "countyFips": "48481",
+      "slug": "wharton"
+    },
+    {
+      "county": "Wheeler County",
+      "countyFips": "48483",
+      "slug": "wheeler"
+    },
+    {
+      "county": "Wichita County",
+      "countyFips": "48485",
+      "slug": "wichita"
+    },
+    {
+      "county": "Wilbarger County",
+      "countyFips": "48487",
+      "slug": "wilbarger"
+    },
+    {
+      "county": "Willacy County",
+      "countyFips": "48489",
+      "slug": "willacy"
+    },
+    {
+      "county": "Williamson County",
+      "countyFips": "48491",
+      "slug": "williamson"
+    },
+    {
+      "county": "Wilson County",
+      "countyFips": "48493",
+      "slug": "wilson"
+    },
+    {
+      "county": "Winkler County",
+      "countyFips": "48495",
+      "slug": "winkler"
+    },
+    {
+      "county": "Wise County",
+      "countyFips": "48497",
+      "slug": "wise"
+    },
+    {
+      "county": "Wood County",
+      "countyFips": "48499",
+      "slug": "wood"
+    },
+    {
+      "county": "Yoakum County",
+      "countyFips": "48501",
+      "slug": "yoakum"
+    },
+    {
+      "county": "Young County",
+      "countyFips": "48503",
+      "slug": "young"
+    },
+    {
+      "county": "Zapata County",
+      "countyFips": "48505",
+      "slug": "zapata"
+    },
+    {
+      "county": "Zavala County",
+      "countyFips": "48507",
+      "slug": "zavala"
+    }
+  ]
+}

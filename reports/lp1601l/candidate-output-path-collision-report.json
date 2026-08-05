@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp1601l.candidateOutputPathCollisionReport.v1",
+  "milestone": "LP160.1L",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "pathCollisionCount": 0,
+  "paths": [
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/bexar-tx-48029.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/cameron-tx-48061.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/dallas-tx-48113.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/el-paso-tx-48141.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/harris-tx-48201.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/liberty-tx-48291.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/lubbock-tx-48303.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/mclennan-tx-48309.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/potter-tx-48375.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/tarrant-tx-48439.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/travis-tx-48453.destinations.jsonl.gz",
+    "reports/lp1601l/controlled-fixture/lp1601l/counties/webb-tx-48479.destinations.jsonl.gz"
+  ]
+}

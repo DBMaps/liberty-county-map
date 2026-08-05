@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.lp1601j.unresolvedCommunitySummary.v1",
+  "schemaVersion": "gridly.lp1601l.finalCountyAssignmentAndWriterAssessment.v1",
   "milestone": "LP160.1L",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
@@ -8,5 +8,9 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalUnresolved": 0
+  "finalClassification": "CONDITIONALLY_COMPLETE",
+  "failureCode": null,
+  "retainedDestinations": 12,
+  "distinctAssignedCounties": 12,
+  "candidateFilesCreated": 12
 }

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "gridly.lp1601l.preWriterCountyDistribution.v1",
+  "milestone": "LP160.1L",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "distinctAssignedFipsCount": 12,
+  "distribution": {
+    "48029": 1,
+    "48061": 1,
+    "48113": 1,
+    "48141": 1,
+    "48201": 1,
+    "48291": 1,
+    "48303": 1,
+    "48309": 1,
+    "48375": 1,
+    "48439": 1,
+    "48453": 1,
+    "48479": 1
+  },
+  "sumAssignedCounts": 12,
+  "noFallbackFips": true,
+  "noNullFips": true
+}

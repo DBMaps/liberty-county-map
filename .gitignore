@@ -44,3 +44,6 @@ android/app/src/main/assets/public/assets/location-resolution/gridly-authoritati
 
 # LP118 local candidate extraction evidence
 /reports/lp118/
+
+# LP160.1L generated controlled county outputs; tests create these in temp dirs.
+reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
