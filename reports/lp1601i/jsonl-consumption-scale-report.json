@@ -1,0 +1,20 @@
+{
+  "milestone": "LP160.1I",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "classification": "SOURCE_UNAVAILABLE",
+  "ownerRunRequired": true,
+  "schemaVersion": "gridly.lp1601i.jsonlConsumptionScaleReport.v1",
+  "selectedStrategy": "DuckDB JSON reader for counts/schema; Node readline bounded streaming fallback for JSONL records",
+  "batchOrLineBufferLimit": 1,
+  "rowsRead": null,
+  "rowsParsed": null,
+  "malformedRows": null,
+  "fullFileStringCreated": false,
+  "statewideArrayCreated": false
+}

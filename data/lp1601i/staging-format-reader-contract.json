@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "gridly.lp1601i.stagingFormatReaderContract.v1",
+  "milestone": "LP160.1I",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "classification": "SOURCE_UNAVAILABLE",
+  "ownerRunRequired": true,
+  "supportedFormats": [
+    "jsonl",
+    "ndjson",
+    "json",
+    "parquet",
+    "geoparquet"
+  ],
+  "dispatchFunction": "readerExpressionForFormat",
+  "jsonlReader": "read_json_auto(<file>, format = 'newline_delimited')",
+  "parquetReader": "read_parquet(<file>)",
+  "failureCodes": [
+    "MANUFACTURING_FAILED:STAGING_FORMAT_READER_MISMATCH",
+    "MANUFACTURING_FAILED:STAGING_MANIFEST_FORMAT_MISMATCH",
+    "MANUFACTURING_FAILED:INVALID_JSONL_ROW_COUNT",
+    "MANUFACTURING_FAILED:JSONL_NOT_CONSUMED",
+    "MANUFACTURING_FAILED:UNRECONCILED_ZERO_OUTPUT"
+  ]
+}

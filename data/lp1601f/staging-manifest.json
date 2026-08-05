@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "gridly.lp1601f.stagingManifest.v2",
-  "milestone": "LP160.1H",
+  "schemaVersion": "gridly.lp1601f.stagingManifest.v3",
+  "milestone": "LP160.1I",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -8,14 +8,24 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "sourcePathIdentity": "texas-places.geoparquet",
+  "classification": "SOURCE_UNAVAILABLE",
+  "ownerRunRequired": true,
   "executionMode": "OWNER_SOURCE",
-  "partitionCount": null,
+  "partitionCount": 1,
+  "totalByteSize": 1875035097,
   "totalRowCount": null,
-  "totalByteSize": null,
-  "extractionQuerySha256": "OWNER_LOCAL_QUERY_HASH_PENDING",
-  "schemaAdapterVersion": "lp1601h-overture-staging-adapter-v1",
-  "parts": [],
-  "fixtureMetadataAllowed": false,
-  "status": "OWNER_LOCAL_PENDING_REAL_DISCOVERY"
+  "stagingFormat": "jsonl",
+  "selectedReader": "read_json_auto(<owner-staging-file>, format = 'newline_delimited')",
+  "schemaAdapterVersion": "lp1601i-jsonl-staging-adapter-v1",
+  "parts": [
+    {
+      "filename": "lp1601c-part-00000.jsonl",
+      "format": "jsonl",
+      "byteSize": 1875035097,
+      "sha256": null,
+      "rowCount": null,
+      "sourceRelease": "2026-07-22.0",
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+    }
+  ]
 }
