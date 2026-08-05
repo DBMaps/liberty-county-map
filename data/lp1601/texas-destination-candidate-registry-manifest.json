@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "gridly.lp1601.texasDestinationCandidateRegistryManifest.v2",
-  "milestone": "LP160.1F",
+  "schemaVersion": "gridly.lp1601.texasDestinationCandidateRegistryManifest.v3",
+  "milestone": "LP160.1H",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
@@ -17,11 +17,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48003",
@@ -30,11 +30,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48005",
@@ -43,11 +43,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48007",
@@ -56,11 +56,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48009",
@@ -69,11 +69,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48011",
@@ -82,11 +82,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48013",
@@ -95,11 +95,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48015",
@@ -108,11 +108,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48017",
@@ -121,11 +121,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48019",
@@ -134,11 +134,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48021",
@@ -147,11 +147,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48023",
@@ -160,11 +160,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48025",
@@ -173,11 +173,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48027",
@@ -186,11 +186,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48029",
@@ -199,11 +199,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48031",
@@ -212,11 +212,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48033",
@@ -225,11 +225,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48035",
@@ -238,11 +238,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48037",
@@ -251,11 +251,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48039",
@@ -264,11 +264,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48041",
@@ -277,11 +277,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48043",
@@ -290,11 +290,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48045",
@@ -303,11 +303,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48047",
@@ -316,11 +316,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48049",
@@ -329,11 +329,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48051",
@@ -342,11 +342,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48053",
@@ -355,11 +355,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48055",
@@ -368,11 +368,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48057",
@@ -381,11 +381,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48059",
@@ -394,11 +394,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48061",
@@ -407,11 +407,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48063",
@@ -420,11 +420,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48065",
@@ -433,11 +433,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48067",
@@ -446,11 +446,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48069",
@@ -459,11 +459,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48071",
@@ -472,11 +472,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48073",
@@ -485,11 +485,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48075",
@@ -498,11 +498,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48077",
@@ -511,11 +511,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48079",
@@ -524,11 +524,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48081",
@@ -537,11 +537,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48083",
@@ -550,11 +550,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48085",
@@ -563,11 +563,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48087",
@@ -576,11 +576,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48089",
@@ -589,11 +589,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48091",
@@ -602,11 +602,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48093",
@@ -615,11 +615,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48095",
@@ -628,11 +628,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48097",
@@ -641,11 +641,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48099",
@@ -654,11 +654,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48101",
@@ -667,11 +667,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48103",
@@ -680,11 +680,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48105",
@@ -693,11 +693,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48107",
@@ -706,11 +706,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48109",
@@ -719,11 +719,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48111",
@@ -732,11 +732,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48113",
@@ -745,11 +745,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48115",
@@ -758,11 +758,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48117",
@@ -771,11 +771,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48119",
@@ -784,11 +784,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48121",
@@ -797,11 +797,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48123",
@@ -810,11 +810,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48125",
@@ -823,11 +823,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48127",
@@ -836,11 +836,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48129",
@@ -849,11 +849,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48131",
@@ -862,11 +862,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48133",
@@ -875,11 +875,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48135",
@@ -888,11 +888,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48137",
@@ -901,11 +901,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48139",
@@ -914,11 +914,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48141",
@@ -927,11 +927,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48143",
@@ -940,11 +940,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48145",
@@ -953,11 +953,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48147",
@@ -966,11 +966,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48149",
@@ -979,11 +979,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48151",
@@ -992,11 +992,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48153",
@@ -1005,11 +1005,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48155",
@@ -1018,11 +1018,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48157",
@@ -1031,11 +1031,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48159",
@@ -1044,11 +1044,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48161",
@@ -1057,11 +1057,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48163",
@@ -1070,11 +1070,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48165",
@@ -1083,11 +1083,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48167",
@@ -1096,11 +1096,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48169",
@@ -1109,11 +1109,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48171",
@@ -1122,11 +1122,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48173",
@@ -1135,11 +1135,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48175",
@@ -1148,11 +1148,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48177",
@@ -1161,11 +1161,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48179",
@@ -1174,11 +1174,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48181",
@@ -1187,11 +1187,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48183",
@@ -1200,11 +1200,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48185",
@@ -1213,11 +1213,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48187",
@@ -1226,11 +1226,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48189",
@@ -1239,11 +1239,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48191",
@@ -1252,11 +1252,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48193",
@@ -1265,11 +1265,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48195",
@@ -1278,11 +1278,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48197",
@@ -1291,11 +1291,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48199",
@@ -1304,11 +1304,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48201",
@@ -1317,11 +1317,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48203",
@@ -1330,11 +1330,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48205",
@@ -1343,11 +1343,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48207",
@@ -1356,11 +1356,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48209",
@@ -1369,11 +1369,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48211",
@@ -1382,11 +1382,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48213",
@@ -1395,11 +1395,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48215",
@@ -1408,11 +1408,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48217",
@@ -1421,11 +1421,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48219",
@@ -1434,11 +1434,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48221",
@@ -1447,11 +1447,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48223",
@@ -1460,11 +1460,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48225",
@@ -1473,11 +1473,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48227",
@@ -1486,11 +1486,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48229",
@@ -1499,11 +1499,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48231",
@@ -1512,11 +1512,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48233",
@@ -1525,11 +1525,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48235",
@@ -1538,11 +1538,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48237",
@@ -1551,11 +1551,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48239",
@@ -1564,11 +1564,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48241",
@@ -1577,11 +1577,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48243",
@@ -1590,11 +1590,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48245",
@@ -1603,11 +1603,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48247",
@@ -1616,11 +1616,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48249",
@@ -1629,11 +1629,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48251",
@@ -1642,11 +1642,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48253",
@@ -1655,11 +1655,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48255",
@@ -1668,11 +1668,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48257",
@@ -1681,11 +1681,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48259",
@@ -1694,11 +1694,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48261",
@@ -1707,11 +1707,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48263",
@@ -1720,11 +1720,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48265",
@@ -1733,11 +1733,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48267",
@@ -1746,11 +1746,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48269",
@@ -1759,11 +1759,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48271",
@@ -1772,11 +1772,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48273",
@@ -1785,11 +1785,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48275",
@@ -1798,11 +1798,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48277",
@@ -1811,11 +1811,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48279",
@@ -1824,11 +1824,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48281",
@@ -1837,11 +1837,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48283",
@@ -1850,11 +1850,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48285",
@@ -1863,11 +1863,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48287",
@@ -1876,11 +1876,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48289",
@@ -1889,11 +1889,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Liberty County",
@@ -1902,11 +1902,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48293",
@@ -1915,11 +1915,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48295",
@@ -1928,11 +1928,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48297",
@@ -1941,11 +1941,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48299",
@@ -1954,11 +1954,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48301",
@@ -1967,11 +1967,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48303",
@@ -1980,11 +1980,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48305",
@@ -1993,11 +1993,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48307",
@@ -2006,11 +2006,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48309",
@@ -2019,11 +2019,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48311",
@@ -2032,11 +2032,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48313",
@@ -2045,11 +2045,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48315",
@@ -2058,11 +2058,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48317",
@@ -2071,11 +2071,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48319",
@@ -2084,11 +2084,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48321",
@@ -2097,11 +2097,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48323",
@@ -2110,11 +2110,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48325",
@@ -2123,11 +2123,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48327",
@@ -2136,11 +2136,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48329",
@@ -2149,11 +2149,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48331",
@@ -2162,11 +2162,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48333",
@@ -2175,11 +2175,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48335",
@@ -2188,11 +2188,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48337",
@@ -2201,11 +2201,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48339",
@@ -2214,11 +2214,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48341",
@@ -2227,11 +2227,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48343",
@@ -2240,11 +2240,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48345",
@@ -2253,11 +2253,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48347",
@@ -2266,11 +2266,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48349",
@@ -2279,11 +2279,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48351",
@@ -2292,11 +2292,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48353",
@@ -2305,11 +2305,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48355",
@@ -2318,11 +2318,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48357",
@@ -2331,11 +2331,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48359",
@@ -2344,11 +2344,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48361",
@@ -2357,11 +2357,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48363",
@@ -2370,11 +2370,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48365",
@@ -2383,11 +2383,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48367",
@@ -2396,11 +2396,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48369",
@@ -2409,11 +2409,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48371",
@@ -2422,11 +2422,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48373",
@@ -2435,11 +2435,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48375",
@@ -2448,11 +2448,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48377",
@@ -2461,11 +2461,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48379",
@@ -2474,11 +2474,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48381",
@@ -2487,11 +2487,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48383",
@@ -2500,11 +2500,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48385",
@@ -2513,11 +2513,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48387",
@@ -2526,11 +2526,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48389",
@@ -2539,11 +2539,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48391",
@@ -2552,11 +2552,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48393",
@@ -2565,11 +2565,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48395",
@@ -2578,11 +2578,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48397",
@@ -2591,11 +2591,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48399",
@@ -2604,11 +2604,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48401",
@@ -2617,11 +2617,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48403",
@@ -2630,11 +2630,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48405",
@@ -2643,11 +2643,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48407",
@@ -2656,11 +2656,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48409",
@@ -2669,11 +2669,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48411",
@@ -2682,11 +2682,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48413",
@@ -2695,11 +2695,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48415",
@@ -2708,11 +2708,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48417",
@@ -2721,11 +2721,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48419",
@@ -2734,11 +2734,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48421",
@@ -2747,11 +2747,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48423",
@@ -2760,11 +2760,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48425",
@@ -2773,11 +2773,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48427",
@@ -2786,11 +2786,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48429",
@@ -2799,11 +2799,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48431",
@@ -2812,11 +2812,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48433",
@@ -2825,11 +2825,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48435",
@@ -2838,11 +2838,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48437",
@@ -2851,11 +2851,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48439",
@@ -2864,11 +2864,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48441",
@@ -2877,11 +2877,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48443",
@@ -2890,11 +2890,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48445",
@@ -2903,11 +2903,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48447",
@@ -2916,11 +2916,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48449",
@@ -2929,11 +2929,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48451",
@@ -2942,11 +2942,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48453",
@@ -2955,11 +2955,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48455",
@@ -2968,11 +2968,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48457",
@@ -2981,11 +2981,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48459",
@@ -2994,11 +2994,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48461",
@@ -3007,11 +3007,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48463",
@@ -3020,11 +3020,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48465",
@@ -3033,11 +3033,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48467",
@@ -3046,11 +3046,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48469",
@@ -3059,11 +3059,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48471",
@@ -3072,11 +3072,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48473",
@@ -3085,11 +3085,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48475",
@@ -3098,11 +3098,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48477",
@@ -3111,11 +3111,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48479",
@@ -3124,11 +3124,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48481",
@@ -3137,11 +3137,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48483",
@@ -3150,11 +3150,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48485",
@@ -3163,11 +3163,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48487",
@@ -3176,11 +3176,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48489",
@@ -3189,11 +3189,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48491",
@@ -3202,11 +3202,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48493",
@@ -3215,11 +3215,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48495",
@@ -3228,11 +3228,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48497",
@@ -3241,11 +3241,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48499",
@@ -3254,11 +3254,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48501",
@@ -3267,11 +3267,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48503",
@@ -3280,11 +3280,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48505",
@@ -3293,11 +3293,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     },
     {
       "countyName": "Texas County 48507",
@@ -3306,11 +3306,11 @@
       "recordCount": 0,
       "byteSize": 0,
       "sha256": null,
-      "format": "jsonl",
-      "compression": null,
-      "schemaVersion": "gridly.lp1601f.destinationCandidate.v1",
+      "format": "jsonl.gz",
+      "schemaVersion": "gridly.lp1601h.destinationCandidate.v1",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "status": "OWNER_LOCAL_PENDING"
     }
   ]
 }

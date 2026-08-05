@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.lp1601g.finalOwnerLocalManufacturingAssessment.v2",
+  "schemaVersion": "gridly.lp1601h.finalStagingConsumptionAssessment.v1",
   "milestone": "LP160.1H",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
@@ -8,14 +8,12 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "selectedMode": "OWNER_SOURCE",
-  "sourceRowsProcessed": null,
-  "retainedDestinations": null,
-  "exclusions": null,
-  "duplicatesRemoved": null,
   "finalClassification": "CONDITIONALLY_COMPLETE",
-  "conditions": [
-    "Owner-local rerun required to populate real staging and candidate metrics."
-  ],
-  "fixtureMetadataRejectedInOwnerMode": true
+  "condition": "Implementation repaired; owner-local source and staging are required to populate real counts and county candidate outputs.",
+  "fixtureMetadataRejectedInOwnerMode": true,
+  "falsePartitionCountRejected": true,
+  "verificationScripts": [
+    "test:lp1601h",
+    "verify:lp1601h"
+  ]
 }
