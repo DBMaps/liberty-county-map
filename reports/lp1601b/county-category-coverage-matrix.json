@@ -1,0 +1,4078 @@
+{
+  "classification": "SOURCE_UNAVAILABLE",
+  "counties": [
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Anderson",
+      "countyFips": "48001"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Andrews",
+      "countyFips": "48003"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Angelina",
+      "countyFips": "48005"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Aransas",
+      "countyFips": "48007"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Archer",
+      "countyFips": "48009"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Armstrong",
+      "countyFips": "48011"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Atascosa",
+      "countyFips": "48013"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Austin",
+      "countyFips": "48015"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bailey",
+      "countyFips": "48017"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bandera",
+      "countyFips": "48019"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bastrop",
+      "countyFips": "48021"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Baylor",
+      "countyFips": "48023"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bee",
+      "countyFips": "48025"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bell",
+      "countyFips": "48027"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bexar",
+      "countyFips": "48029"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Blanco",
+      "countyFips": "48031"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Borden",
+      "countyFips": "48033"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bosque",
+      "countyFips": "48035"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Bowie",
+      "countyFips": "48037"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Brazoria",
+      "countyFips": "48039"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Brazos",
+      "countyFips": "48041"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Brewster",
+      "countyFips": "48043"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Briscoe",
+      "countyFips": "48045"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Brooks",
+      "countyFips": "48047"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Brown",
+      "countyFips": "48049"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Burleson",
+      "countyFips": "48051"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Burnet",
+      "countyFips": "48053"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Caldwell",
+      "countyFips": "48055"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Calhoun",
+      "countyFips": "48057"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Callahan",
+      "countyFips": "48059"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cameron",
+      "countyFips": "48061"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Camp",
+      "countyFips": "48063"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Carson",
+      "countyFips": "48065"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cass",
+      "countyFips": "48067"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Castro",
+      "countyFips": "48069"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Chambers",
+      "countyFips": "48071"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cherokee",
+      "countyFips": "48073"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Childress",
+      "countyFips": "48075"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Clay",
+      "countyFips": "48077"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cochran",
+      "countyFips": "48079"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Coke",
+      "countyFips": "48081"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Coleman",
+      "countyFips": "48083"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Collin",
+      "countyFips": "48085"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Collingsworth",
+      "countyFips": "48087"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Colorado",
+      "countyFips": "48089"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Comal",
+      "countyFips": "48091"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Comanche",
+      "countyFips": "48093"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Concho",
+      "countyFips": "48095"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cooke",
+      "countyFips": "48097"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Coryell",
+      "countyFips": "48099"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Cottle",
+      "countyFips": "48101"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Crane",
+      "countyFips": "48103"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Crockett",
+      "countyFips": "48105"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Crosby",
+      "countyFips": "48107"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Culberson",
+      "countyFips": "48109"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Dallam",
+      "countyFips": "48111"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Dallas",
+      "countyFips": "48113"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Dawson",
+      "countyFips": "48115"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Deaf Smith",
+      "countyFips": "48117"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Delta",
+      "countyFips": "48119"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Denton",
+      "countyFips": "48121"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "DeWitt",
+      "countyFips": "48123"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Dickens",
+      "countyFips": "48125"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Dimmit",
+      "countyFips": "48127"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Donley",
+      "countyFips": "48129"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Duval",
+      "countyFips": "48131"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Eastland",
+      "countyFips": "48133"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Ector",
+      "countyFips": "48135"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Edwards",
+      "countyFips": "48137"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Ellis",
+      "countyFips": "48139"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "El Paso",
+      "countyFips": "48141"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Erath",
+      "countyFips": "48143"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Falls",
+      "countyFips": "48145"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Fannin",
+      "countyFips": "48147"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Fayette",
+      "countyFips": "48149"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Fisher",
+      "countyFips": "48151"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Floyd",
+      "countyFips": "48153"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Foard",
+      "countyFips": "48155"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Fort Bend",
+      "countyFips": "48157"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Franklin",
+      "countyFips": "48159"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Freestone",
+      "countyFips": "48161"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Frio",
+      "countyFips": "48163"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Gaines",
+      "countyFips": "48165"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Galveston",
+      "countyFips": "48167"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Garza",
+      "countyFips": "48169"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Gillespie",
+      "countyFips": "48171"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Glasscock",
+      "countyFips": "48173"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Goliad",
+      "countyFips": "48175"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Gonzales",
+      "countyFips": "48177"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Gray",
+      "countyFips": "48179"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Grayson",
+      "countyFips": "48181"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Gregg",
+      "countyFips": "48183"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Grimes",
+      "countyFips": "48185"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Guadalupe",
+      "countyFips": "48187"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hale",
+      "countyFips": "48189"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hall",
+      "countyFips": "48191"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hamilton",
+      "countyFips": "48193"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hansford",
+      "countyFips": "48195"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hardeman",
+      "countyFips": "48197"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hardin",
+      "countyFips": "48199"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Harris",
+      "countyFips": "48201"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Harrison",
+      "countyFips": "48203"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hartley",
+      "countyFips": "48205"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Haskell",
+      "countyFips": "48207"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hays",
+      "countyFips": "48209"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hemphill",
+      "countyFips": "48211"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Henderson",
+      "countyFips": "48213"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hidalgo",
+      "countyFips": "48215"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hill",
+      "countyFips": "48217"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hockley",
+      "countyFips": "48219"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hood",
+      "countyFips": "48221"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hopkins",
+      "countyFips": "48223"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Houston",
+      "countyFips": "48225"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Howard",
+      "countyFips": "48227"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hudspeth",
+      "countyFips": "48229"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hunt",
+      "countyFips": "48231"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Hutchinson",
+      "countyFips": "48233"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Irion",
+      "countyFips": "48235"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jack",
+      "countyFips": "48237"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jackson",
+      "countyFips": "48239"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jasper",
+      "countyFips": "48241"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jeff Davis",
+      "countyFips": "48243"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jefferson",
+      "countyFips": "48245"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jim Hogg",
+      "countyFips": "48247"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jim Wells",
+      "countyFips": "48249"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Johnson",
+      "countyFips": "48251"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Jones",
+      "countyFips": "48253"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Karnes",
+      "countyFips": "48255"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kaufman",
+      "countyFips": "48257"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kendall",
+      "countyFips": "48259"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kenedy",
+      "countyFips": "48261"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kent",
+      "countyFips": "48263"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kerr",
+      "countyFips": "48265"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kimble",
+      "countyFips": "48267"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "King",
+      "countyFips": "48269"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kinney",
+      "countyFips": "48271"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Kleberg",
+      "countyFips": "48273"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Knox",
+      "countyFips": "48275"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lamar",
+      "countyFips": "48277"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lamb",
+      "countyFips": "48279"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lampasas",
+      "countyFips": "48281"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "La Salle",
+      "countyFips": "48283"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lavaca",
+      "countyFips": "48285"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lee",
+      "countyFips": "48287"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Leon",
+      "countyFips": "48289"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Liberty",
+      "countyFips": "48291"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Limestone",
+      "countyFips": "48293"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lipscomb",
+      "countyFips": "48295"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Live Oak",
+      "countyFips": "48297"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Llano",
+      "countyFips": "48299"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Loving",
+      "countyFips": "48301"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lubbock",
+      "countyFips": "48303"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Lynn",
+      "countyFips": "48305"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "McCulloch",
+      "countyFips": "48307"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "McLennan",
+      "countyFips": "48309"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "McMullen",
+      "countyFips": "48311"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Madison",
+      "countyFips": "48313"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Marion",
+      "countyFips": "48315"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Martin",
+      "countyFips": "48317"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Mason",
+      "countyFips": "48319"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Matagorda",
+      "countyFips": "48321"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Maverick",
+      "countyFips": "48323"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Medina",
+      "countyFips": "48325"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Menard",
+      "countyFips": "48327"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Midland",
+      "countyFips": "48329"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Milam",
+      "countyFips": "48331"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Mills",
+      "countyFips": "48333"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Mitchell",
+      "countyFips": "48335"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Montague",
+      "countyFips": "48337"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Montgomery",
+      "countyFips": "48339"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Moore",
+      "countyFips": "48341"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Morris",
+      "countyFips": "48343"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Motley",
+      "countyFips": "48345"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Nacogdoches",
+      "countyFips": "48347"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Navarro",
+      "countyFips": "48349"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Newton",
+      "countyFips": "48351"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Nolan",
+      "countyFips": "48353"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Nueces",
+      "countyFips": "48355"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Ochiltree",
+      "countyFips": "48357"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Oldham",
+      "countyFips": "48359"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Orange",
+      "countyFips": "48361"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Palo Pinto",
+      "countyFips": "48363"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Panola",
+      "countyFips": "48365"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Parker",
+      "countyFips": "48367"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Parmer",
+      "countyFips": "48369"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Pecos",
+      "countyFips": "48371"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Polk",
+      "countyFips": "48373"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Potter",
+      "countyFips": "48375"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Presidio",
+      "countyFips": "48377"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Rains",
+      "countyFips": "48379"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Randall",
+      "countyFips": "48381"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Reagan",
+      "countyFips": "48383"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Real",
+      "countyFips": "48385"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Red River",
+      "countyFips": "48387"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Reeves",
+      "countyFips": "48389"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Refugio",
+      "countyFips": "48391"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Roberts",
+      "countyFips": "48393"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Robertson",
+      "countyFips": "48395"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Rockwall",
+      "countyFips": "48397"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Runnels",
+      "countyFips": "48399"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Rusk",
+      "countyFips": "48401"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Sabine",
+      "countyFips": "48403"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "San Augustine",
+      "countyFips": "48405"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "San Jacinto",
+      "countyFips": "48407"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "San Patricio",
+      "countyFips": "48409"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "San Saba",
+      "countyFips": "48411"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Schleicher",
+      "countyFips": "48413"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Scurry",
+      "countyFips": "48415"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Shackelford",
+      "countyFips": "48417"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Shelby",
+      "countyFips": "48419"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Sherman",
+      "countyFips": "48421"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Smith",
+      "countyFips": "48423"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Somervell",
+      "countyFips": "48425"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Starr",
+      "countyFips": "48427"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Stephens",
+      "countyFips": "48429"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Sterling",
+      "countyFips": "48431"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Stonewall",
+      "countyFips": "48433"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Sutton",
+      "countyFips": "48435"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Swisher",
+      "countyFips": "48437"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Tarrant",
+      "countyFips": "48439"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Taylor",
+      "countyFips": "48441"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Terrell",
+      "countyFips": "48443"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Terry",
+      "countyFips": "48445"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Throckmorton",
+      "countyFips": "48447"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Titus",
+      "countyFips": "48449"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Tom Green",
+      "countyFips": "48451"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Travis",
+      "countyFips": "48453"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Trinity",
+      "countyFips": "48455"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Tyler",
+      "countyFips": "48457"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Upshur",
+      "countyFips": "48459"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Upton",
+      "countyFips": "48461"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Uvalde",
+      "countyFips": "48463"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Val Verde",
+      "countyFips": "48465"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Van Zandt",
+      "countyFips": "48467"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Victoria",
+      "countyFips": "48469"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Walker",
+      "countyFips": "48471"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Waller",
+      "countyFips": "48473"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Ward",
+      "countyFips": "48475"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Washington",
+      "countyFips": "48477"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Webb",
+      "countyFips": "48479"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wharton",
+      "countyFips": "48481"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wheeler",
+      "countyFips": "48483"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wichita",
+      "countyFips": "48485"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wilbarger",
+      "countyFips": "48487"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Willacy",
+      "countyFips": "48489"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Williamson",
+      "countyFips": "48491"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wilson",
+      "countyFips": "48493"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Winkler",
+      "countyFips": "48495"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wise",
+      "countyFips": "48497"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Wood",
+      "countyFips": "48499"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Yoakum",
+      "countyFips": "48501"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Young",
+      "countyFips": "48503"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Zapata",
+      "countyFips": "48505"
+    },
+    {
+      "categories": {
+        "Critical Infrastructure": null,
+        "Education": null,
+        "Fuel": null,
+        "Government": null,
+        "Medical": null,
+        "Public Safety": null,
+        "Recreation": null,
+        "Restaurant": null,
+        "Retail": null,
+        "Transportation": null
+      },
+      "county": "Zavala",
+      "countyFips": "48507"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1B",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "SOURCE_UNAVAILABLE",
+  "schemaVersion": "gridly.lp1601b.countyCategoryCoverageMatrix.v1",
+  "status": "SOURCE_UNAVAILABLE"
+}

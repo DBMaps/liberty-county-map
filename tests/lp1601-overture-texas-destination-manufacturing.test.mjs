@@ -4,10 +4,18 @@ import { mkdirSync, mkdtempSync, writeFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test, { after } from 'node:test';
-import { FAMILIES, P, buildArtifacts, json, verify, writeAll } from '../tools/lp1601-manufacture-overture-texas-destinations.mjs';
+import { FAMILIES, P, P1601B, buildArtifacts, detectSourceFormat, json, resolveDuckDb, verify, writeAll } from '../tools/lp1601-manufacture-overture-texas-destinations.mjs';
+function parquetFixture(){const dir=mkdtempSync(join(tmpdir(),'lp1601b-par1-')); const p=join(dir,'CONTROLLED_TEST_FIXTURE.geoparquet'); writeFileSync(p,Buffer.from('PAR1CONTROLLED_TEST_FIXTURE')); return p;}
 function fixture(){const dir=mkdtempSync(join(tmpdir(),'lp1601-')); const p=join(dir,'overture.json'); writeFileSync(p,json({sourceMetadata:{sourceName:'Overture Maps Places',sourceId:'overture-places',release:'2026-07-22.0',sourceFormat:'JSON',retrievalDate:'2026-08-05',license:'CDLA Permissive 2.0',attribution:'Overture Maps Foundation',geographicScope:'Owner supplied test extract'},records:[{id:'tx-1',name:'Liberty Grocery',latitude:30.05799,longitude:-94.79548,countyFips:'48291',categories:['grocery_store'],address:'100 Main St',community:'Liberty',postalCode:'77575',brand:'Local Grocer',confidence:.9},{id:'tx-1-dup',name:'Liberty Grocery',latitude:30.05799,longitude:-94.79548,countyFips:'48291',categories:['grocery_store'],address:'100 Main St',community:'Liberty',brand:'Local Grocer'},{id:'tx-2',name:'Houston Fuel',latitude:29.7604,longitude:-95.3698,countyFips:'48201',categories:['gas_station'],locality:'Houston',brand:'FuelCo'},{id:'tx-3',name:'Future Thing',latitude:30,longitude:-96,countyFips:'48015',categories:['future_category']},{id:'bad-1',name:'Oklahoma Store',latitude:35.4676,longitude:-97.5164,countyFips:'40109',categories:['restaurant']},{id:'bad-2',name:'Bad Coords',latitude:99,longitude:-95,countyFips:'48291',categories:['restaurant']},{id:'tx-4',name:'County Hospital',latitude:30.1,longitude:-94.8,countyFips:'48291',categories:['hospital']}]})); return p;}
 function sha(s){return createHash('sha256').update(s).digest('hex')}
 after(()=>{ writeAll({sourcePath:join(tmpdir(),'missing-overture-after.jsonl')}); });
+
+
+test('LP160.1B detects PAR1 GeoParquet and never routes Parquet bytes into JSON parsing',()=>{const src=parquetFixture(); const detected=detectSourceFormat(src); assert.equal(detected.format,'GeoParquet'); assert.equal(detected.detectedBy.magic,'Parquet'); assert.throws(()=>buildArtifacts({sourcePath:src}),/GEOPARQUET_REQUIRES_DUCKDB/);});
+
+test('LP160.1B rejects declared format conflicts and records source-unavailable B reports',()=>{const src=parquetFixture(); assert.equal(detectSourceFormat(src,'JSON').conflict,true); const a=buildArtifacts({sourcePath:join(tmpdir(),'missing-lp1601b.geoparquet')}); assert.equal(a[P1601B.final].finalClassification,'SOURCE_UNAVAILABLE'); assert.equal(a[P1601B.matrix].counties.length,254);});
+
+test('LP160.1B DuckDB path resolution fails clearly when executable is missing',()=>{assert.throws(()=>resolveDuckDb({duckdbPath:join(tmpdir(),'missing-duckdb'),env:{DUCKDB_PATH:''}}),/DUCKDB_UNAVAILABLE/);});
 
 test('LP160.1 returns SOURCE_UNAVAILABLE without using LP160 fixture or zero coverage claims',()=>{const a=buildArtifacts({sourcePath:join(tmpdir(),'missing-overture.jsonl')}); assert.equal(a[P.final].classification,'SOURCE_UNAVAILABLE'); assert.equal(a[P.summary].texasRecords,null); assert.equal(a[P.owner].powershell.build.includes('npm run build:lp1601'),true);});
 

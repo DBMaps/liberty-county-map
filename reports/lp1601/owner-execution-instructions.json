@@ -2,11 +2,11 @@
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "milestone": "LP160.1",
   "powershell": {
-    "build": "Set-Location C:\\GitHub\\liberty-county-map; npm run build:lp1601 -- --source \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\" --release \"<release>\" --retrieval-date \"YYYY-MM-DD\" --license \"CDLA Permissive 2.0\" --attribution \"Overture Maps Foundation\" --write",
+    "build": "Set-Location C:\\GitHub\\liberty-county-map; npm run build:lp1601 -- --source \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\" --release \"<release>\" --retrieval-date \"YYYY-MM-DD\" --license \"CDLA Permissive 2.0\" --attribution \"Overture Maps Foundation\" --expected-sha256 \"47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9\" --duckdb-path \"C:\\Users\\gulfi\\AppData\\Local\\Microsoft\\WinGet\\Packages\\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe\\duckdb.exe\" --staging-directory \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\staging\" --write",
     "test": "npm run test:lp1601a",
     "verify": "Set-Location C:\\GitHub\\liberty-county-map; npm run verify:lp1601a"
   },
-  "schemaVersion": "gridly.lp1601.ownerExecutionInstructions.v2",
+  "schemaVersion": "gridly.lp1601.ownerExecutionInstructions.v3",
   "sourceHashCommand": "Get-FileHash -Algorithm SHA256 \"C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\<release>\\texas-places.geoparquet\"",
   "status": "SOURCE_UNAVAILABLE",
   "supportedCliArguments": [
@@ -15,6 +15,8 @@
     "--retrieval-date",
     "--license",
     "--attribution",
+    "--expected-sha256",
+    "--duckdb-path",
     "--staging-directory",
     "--write"
   ]
