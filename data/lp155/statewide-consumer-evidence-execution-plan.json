@@ -1,0 +1,138 @@
+{
+  "benchmarkCounty": "Liberty",
+  "constraints": [
+    "does not expand operational runtime",
+    "does not authorize deployment",
+    "does not authorize activation",
+    "does not rebuild certified address packages",
+    "does not rebuild runtime certificates",
+    "does not modify protected infrastructure",
+    "does not introduce frameworks"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP155",
+  "passPolicy": "PASS requires captured county-specific evidence; no inferred PASS results are allowed.",
+  "philosophy": [
+    "Awareness Platform First",
+    "Route Intelligence Second",
+    "Audit First",
+    "Patch Second"
+  ],
+  "requiredFeatures": [
+    {
+      "checks": [
+        "exact address lookup",
+        "County Roads",
+        "FM Roads",
+        "State Highways",
+        "US Highways",
+        "Interstate addresses",
+        "rural addressing",
+        "apartment/unit handling where supported",
+        "truthful No Results"
+      ],
+      "id": "CEE-1",
+      "key": "address",
+      "title": "Address Search"
+    },
+    {
+      "checks": [
+        "grocery",
+        "fuel",
+        "medical",
+        "retail",
+        "restaurants",
+        "hotels",
+        "schools",
+        "government",
+        "parks",
+        "Walmart",
+        "H-E-B",
+        "Buc-ee's",
+        "Lowe's",
+        "Home Depot",
+        "Starbucks",
+        "Chick-fil-A",
+        "CVS",
+        "Walgreens"
+      ],
+      "id": "CEE-2",
+      "key": "business",
+      "title": "Business Search"
+    },
+    {
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "id": "CEE-3",
+      "key": "routing",
+      "title": "Destination Routing"
+    },
+    {
+      "checks": [
+        "hazards affecting route",
+        "railroad crossings affecting route",
+        "weather affecting route",
+        "route-aware filtering",
+        "update behavior"
+      ],
+      "id": "CEE-4",
+      "key": "routeWatch",
+      "title": "Route Watch"
+    },
+    {
+      "checks": [
+        "what happened",
+        "where",
+        "how recent",
+        "why it matters",
+        "no private/unknown/internal labels"
+      ],
+      "id": "CEE-5",
+      "key": "notifications",
+      "title": "Notification Quality"
+    },
+    {
+      "checks": [
+        "searchability",
+        "naming",
+        "placement",
+        "awareness integration",
+        "route integration"
+      ],
+      "id": "CEE-6",
+      "key": "crossings",
+      "title": "Railroad Crossing Experience"
+    },
+    {
+      "checks": [
+        "placement",
+        "wording",
+        "confidence messaging",
+        "confirmation flow",
+        "cleared state",
+        "consumer readability"
+      ],
+      "id": "CEE-7",
+      "key": "hazards",
+      "title": "Hazard Experience"
+    },
+    {
+      "checks": [
+        "reporting",
+        "Confirm Still Active",
+        "Mark Cleared",
+        "trust messaging",
+        "participation messaging"
+      ],
+      "id": "CEE-8",
+      "key": "community",
+      "title": "Community Experience"
+    }
+  ],
+  "schemaVersion": "gridly.lp155.consumerEvidenceExecutionPlan.v1"
+}

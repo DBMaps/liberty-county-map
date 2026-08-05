@@ -1,0 +1,3567 @@
+{
+  "benchmarkCounty": "Liberty",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "id": "CEE-3",
+  "milestone": "LP155",
+  "passPolicy": "PASS requires captured county-specific evidence; no inferred PASS results are allowed.",
+  "rows": [
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Anderson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48001",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Andrews County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48003",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Angelina County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48005",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Aransas County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48007",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Archer County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48009",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Armstrong County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48011",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Atascosa County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48013",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Austin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48015",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bailey County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48017",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bandera County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48019",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bastrop County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48021",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Baylor County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48023",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bee County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48025",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48027",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bexar County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48029",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Blanco County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48031",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Borden County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48033",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bosque County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48035",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Bowie County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48037",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Brazoria County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48039",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Brazos County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48041",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Brewster County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48043",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Briscoe County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48045",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Brooks County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48047",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Brown County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48049",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Burleson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48051",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Burnet County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48053",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Caldwell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48055",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Calhoun County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48057",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Callahan County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48059",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cameron County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48061",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Camp County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48063",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Carson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48065",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cass County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48067",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Castro County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48069",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Chambers County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48071",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cherokee County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48073",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Childress County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48075",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Clay County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48077",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cochran County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48079",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Coke County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48081",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Coleman County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48083",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Collin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48085",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Collingsworth County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48087",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Colorado County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48089",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Comal County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48091",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Comanche County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48093",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Concho County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48095",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cooke County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48097",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Coryell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48099",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Cottle County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48101",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Crane County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48103",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Crockett County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48105",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Crosby County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48107",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Culberson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48109",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Dallam County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48111",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Dallas County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48113",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Dawson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48115",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Deaf Smith County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48117",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Delta County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48119",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Denton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48121",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "DeWitt County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48123",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Dickens County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48125",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Dimmit County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48127",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Donley County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48129",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Duval County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48131",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Eastland County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48133",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Ector County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48135",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Edwards County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48137",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Ellis County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48139",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "El Paso County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48141",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Erath County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48143",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Falls County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48145",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Fannin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48147",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Fayette County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48149",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Fisher County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48151",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Floyd County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48153",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Foard County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48155",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Fort Bend County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48157",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Franklin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48159",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Freestone County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48161",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Frio County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48163",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Gaines County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48165",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Galveston County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48167",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Garza County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48169",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Gillespie County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48171",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Glasscock County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48173",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Goliad County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48175",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Gonzales County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48177",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Gray County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48179",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Grayson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48181",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Gregg County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48183",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Grimes County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48185",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Guadalupe County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48187",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hale County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48189",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hall County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48191",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hamilton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48193",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hansford County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48195",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hardeman County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48197",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hardin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48199",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Harris County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48201",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Harrison County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48203",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hartley County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48205",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Haskell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48207",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hays County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48209",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hemphill County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48211",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Henderson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48213",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hidalgo County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48215",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hill County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48217",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hockley County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48219",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hood County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48221",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hopkins County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48223",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Houston County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48225",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Howard County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48227",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hudspeth County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48229",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hunt County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48231",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Hutchinson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48233",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Irion County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48235",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jack County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48237",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jackson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48239",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jasper County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48241",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jeff Davis County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48243",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jefferson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48245",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jim Hogg County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48247",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jim Wells County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48249",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Johnson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48251",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Jones County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48253",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Karnes County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48255",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kaufman County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48257",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kendall County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48259",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kenedy County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48261",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kent County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48263",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kerr County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48265",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kimble County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48267",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "King County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48269",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kinney County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48271",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Kleberg County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48273",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Knox County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48275",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lamar County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48277",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lamb County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48279",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lampasas County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48281",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "La Salle County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48283",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lavaca County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48285",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lee County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48287",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Leon County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48289",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "LIBERTY_REFERENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Liberty County",
+      "evidence": "LP154 Liberty benchmark certification; LP155 does not infer parity for any other county.",
+      "fips": "48291",
+      "status": "PASS"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Limestone County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48293",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lipscomb County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48295",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Live Oak County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48297",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Llano County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48299",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Loving County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48301",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lubbock County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48303",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Lynn County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48305",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "McCulloch County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48307",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "McLennan County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48309",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "McMullen County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48311",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Madison County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48313",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Marion County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48315",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Martin County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48317",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Mason County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48319",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Matagorda County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48321",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Maverick County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48323",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Medina County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48325",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Menard County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48327",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Midland County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48329",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Milam County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48331",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Mills County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48333",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Mitchell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48335",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Montague County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48337",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Montgomery County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48339",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Moore County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48341",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Morris County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48343",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Motley County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48345",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Nacogdoches County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48347",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Navarro County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48349",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Newton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48351",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Nolan County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48353",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Nueces County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48355",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Ochiltree County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48357",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Oldham County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48359",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Orange County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48361",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Palo Pinto County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48363",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Panola County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48365",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Parker County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48367",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Parmer County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48369",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Pecos County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48371",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Polk County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48373",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Potter County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48375",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Presidio County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48377",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Rains County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48379",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Randall County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48381",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Reagan County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48383",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Real County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48385",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Red River County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48387",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Reeves County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48389",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Refugio County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48391",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Roberts County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48393",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Robertson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48395",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Rockwall County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48397",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Runnels County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48399",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Rusk County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48401",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Sabine County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48403",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "San Augustine County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48405",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "San Jacinto County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48407",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "San Patricio County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48409",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "San Saba County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48411",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Schleicher County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48413",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Scurry County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48415",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Shackelford County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48417",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Shelby County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48419",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Sherman County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48421",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Smith County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48423",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Somervell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48425",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Starr County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48427",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Stephens County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48429",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Sterling County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48431",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Stonewall County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48433",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Sutton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48435",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Swisher County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48437",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Tarrant County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48439",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Taylor County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48441",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Terrell County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48443",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Terry County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48445",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Throckmorton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48447",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Titus County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48449",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Tom Green County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48451",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Travis County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48453",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Trinity County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48455",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Tyler County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48457",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Upshur County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48459",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Upton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48461",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Uvalde County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48463",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Val Verde County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48465",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Van Zandt County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48467",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Victoria County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48469",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Walker County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48471",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Waller County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48473",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Ward County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48475",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Washington County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48477",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Webb County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48479",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wharton County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48481",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wheeler County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48483",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wichita County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48485",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wilbarger County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48487",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Willacy County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48489",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Williamson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48491",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wilson County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48493",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Winkler County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48495",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wise County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48497",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Wood County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48499",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Yoakum County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48501",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Young County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48503",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Zapata County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48505",
+      "status": "NOT TESTED"
+    },
+    {
+      "benchmarkComparison": "NOT_COMPARED_WITH_EXECUTED_EVIDENCE",
+      "checks": [
+        "destination creation",
+        "route generation",
+        "route persistence",
+        "recalculation",
+        "clearing routes"
+      ],
+      "countyName": "Zavala County",
+      "evidence": "No LP155 real-world county consumer execution evidence captured.",
+      "fips": "48507",
+      "status": "NOT TESTED"
+    }
+  ],
+  "schemaVersion": "gridly.lp155.routingEvidenceReport.v1",
+  "title": "Destination Routing"
+}

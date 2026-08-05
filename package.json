@@ -177,6 +177,9 @@
     "test:lp153": "node --test tests/lp153-statewide-operational-execution.test.mjs",
     "build:lp154": "node tools/lp154/certify-consumer-experience.mjs --write",
     "verify:lp154": "node tools/lp154/certify-consumer-experience.mjs",
-    "test:lp154": "node --test tests/lp154-consumer-experience-certification.test.mjs"
+    "test:lp154": "node --test tests/lp154-consumer-experience-certification.test.mjs",
+    "build:lp155": "node tools/lp155/execute-consumer-evidence.mjs --write",
+    "verify:lp155": "node tools/lp155/execute-consumer-evidence.mjs",
+    "test:lp155": "node --test tests/lp155-statewide-consumer-evidence-execution.test.mjs"
   }
 }
