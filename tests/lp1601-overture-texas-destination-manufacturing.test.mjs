@@ -11,7 +11,7 @@ function sha(s){return createHash('sha256').update(s).digest('hex')}
 after(()=>{ writeAll({sourcePath:join(tmpdir(),'missing-overture-after.jsonl')}); });
 
 
-test('LP160.1B detects PAR1 GeoParquet and never routes Parquet bytes into JSON parsing',()=>{const src=parquetFixture(); const detected=detectSourceFormat(src); assert.equal(detected.format,'GeoParquet'); assert.equal(detected.detectedBy.magic,'Parquet'); assert.throws(()=>buildArtifacts({sourcePath:src}),/GEOPARQUET_REQUIRES_DUCKDB/);});
+test('LP160.1B detects PAR1 GeoParquet and never routes Parquet bytes into JSON parsing',()=>{const src=parquetFixture(); const detected=detectSourceFormat(src); assert.equal(detected.format,'GeoParquet'); assert.equal(detected.detectedBy.magic,'Parquet'); assert.throws(()=>buildArtifacts({sourcePath:src,expectedSha256:createHash('sha256').update(Buffer.from('PAR1CONTROLLED_TEST_FIXTURE')).digest('hex'),duckdbPath:join(tmpdir(),'missing-duckdb')}),/DUCKDB_UNAVAILABLE/);});
 
 test('LP160.1B rejects declared format conflicts and records source-unavailable B reports',()=>{const src=parquetFixture(); assert.equal(detectSourceFormat(src,'JSON').conflict,true); const a=buildArtifacts({sourcePath:join(tmpdir(),'missing-lp1601b.geoparquet')}); assert.equal(a[P1601B.final].finalClassification,'SOURCE_UNAVAILABLE'); assert.equal(a[P1601B.matrix].counties.length,254);});
 
