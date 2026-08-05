@@ -8,8 +8,8 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "peakRss": 191827968,
-  "peakHeap": 63584320,
+  "peakRss": 1028706304,
+  "peakHeap": 400139584,
   "maximumBufferedRecords": 1,
   "fullStagingStringCreated": false,
   "statewideRecordArrayCreated": false

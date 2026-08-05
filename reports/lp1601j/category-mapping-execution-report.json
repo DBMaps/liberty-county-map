@@ -9,14 +9,14 @@
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
   "categoryTotals": {
-    "Retail": 0,
-    "Fuel": 0,
-    "Restaurant": 12,
-    "Medical": 0,
-    "Government": 0,
-    "Education": 0,
-    "Transportation": 0,
-    "Recreation": 0,
+    "Retail": 21625,
+    "Fuel": 31449,
+    "Restaurant": 60742,
+    "Medical": 45079,
+    "Government": 6160,
+    "Education": 17502,
+    "Transportation": 2516,
+    "Recreation": 19299,
     "Public Safety": 0,
     "Critical Infrastructure": 0
   }

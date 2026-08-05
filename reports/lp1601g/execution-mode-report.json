@@ -6,6 +6,6 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "selectedMode": "CONTROLLED_TEST_FIXTURE",
-  "reason": "labeled controlled test fixture"
+  "selectedMode": "OWNER_SOURCE",
+  "reason": "owner source preconditions supplied"
 }

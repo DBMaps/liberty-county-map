@@ -9,15 +9,22 @@
   "write": true,
   "source": {
     "supplied": true,
-    "fileName": "CONTROLLED_TEST_FIXTURE",
-    "absolute": false,
-    "sha256": "E790657A9FAA0720"
+    "fileName": "texas-places.geoparquet",
+    "absolute": true,
+    "sha256": "5D3DEBE70C6253FD"
   },
   "duckdbPath": {
-    "supplied": false
+    "supplied": true,
+    "fileName": "duckdb.exe",
+    "absolute": true,
+    "sha256": "1D975EB484FD15A8"
   },
   "stagingDirectory": {
-    "supplied": false
+    "supplied": true,
+    "fileName": "staging",
+    "absolute": true,
+    "sha256": "D61D0DC334D9C960"
   },
-  "expectedSha256Supplied": false
+  "release": "2026-07-22.0",
+  "expectedSha256Supplied": true
 }

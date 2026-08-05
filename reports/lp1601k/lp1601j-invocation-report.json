@@ -2,9 +2,8 @@
   "schemaVersion": "gridly.lp1601k.lp1601jInvocationReport.v1",
   "milestone": "LP160.1K",
   "generatedAt": "1970-01-01T00:00:00.000Z",
-  "controlledFixtureLabel": "CONTROLLED_TEST_FIXTURE",
   "lp1601jStarted": true,
   "lp1601jCompleted": true,
-  "stagedRows": 5,
+  "stagedRows": 2070451,
   "finalSchema": "gridly.lp1601j.finalJsonlCountyManufacturingAssessment.v1"
 }

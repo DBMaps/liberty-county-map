@@ -8,12 +8,12 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "writersOpened": 12,
-  "writersCompleted": 12,
+  "writersOpened": 254,
+  "writersCompleted": 254,
   "writersFailed": 0,
-  "temporaryFilesCreated": 12,
-  "filesPromoted": 12,
-  "filesHashed": 12,
+  "temporaryFilesCreated": 254,
+  "filesPromoted": 254,
+  "filesHashed": 254,
   "filesMissing": 0,
   "pathCollisions": 0
 }

@@ -1,31 +1,28 @@
 {
-  "schemaVersion": "gridly.lp1601f.stagingManifest.v3",
-  "milestone": "LP160.1I",
+  "schemaVersion": "gridly.lp1601f.stagingManifest.v2",
+  "milestone": "LP160.1H",
   "generatedAt": "1970-01-01T00:00:00.000Z",
-  "sourceRelease": "2026-07-22.0",
-  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
-  "performsRuntimeChange": false,
-  "performsDeploymentChange": false,
-  "performsActivationChange": false,
-  "protectedArtifactsModified": false,
-  "classification": "SOURCE_UNAVAILABLE",
-  "ownerRunRequired": true,
+  "sourcePathIdentity": "texas-places.geoparquet",
   "executionMode": "OWNER_SOURCE",
   "partitionCount": 1,
+  "totalRowCount": 2070451,
   "totalByteSize": 1875035097,
-  "totalRowCount": null,
-  "stagingFormat": "jsonl",
-  "selectedReader": "read_json_auto(<owner-staging-file>, format = 'newline_delimited')",
-  "schemaAdapterVersion": "lp1601i-jsonl-staging-adapter-v1",
+  "sourceRelease": "2026-07-22.0",
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "extractionQuerySha256": "B471C4522ED8DFE9C327264CD5C6C56A701C01564FE4D4C4A7E6AD7400B26504",
+  "schemaAdapterVersion": "lp1601h-overture-staging-adapter-v1",
   "parts": [
     {
       "filename": "lp1601c-part-00000.jsonl",
       "format": "jsonl",
       "byteSize": 1875035097,
-      "sha256": null,
-      "rowCount": null,
+      "sha256": "3F1C19EEAB2786F632633C91DABBF5FF3CCC559FBFB919715064E0D4201AE0D6",
       "sourceRelease": "2026-07-22.0",
-      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9"
+      "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+      "extractionQuerySha256": "B471C4522ED8DFE9C327264CD5C6C56A701C01564FE4D4C4A7E6AD7400B26504",
+      "modifiedTime": "2026-08-05T19:37:38.336Z",
+      "status": "DISCOVERED",
+      "rowCount": 2070451
     }
   ]
 }

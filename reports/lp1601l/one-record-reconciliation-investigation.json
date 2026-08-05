@@ -8,10 +8,10 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "duckDbStagingRows": 12,
-  "streamedRows": 12,
-  "malformedRows": 0,
+  "duckDbStagingRows": 2070452,
+  "streamedRows": 2070452,
+  "malformedRows": 2,
   "blankRows": 0,
-  "equationPass": true,
+  "equationPass": false,
   "finding": "Node readline stream accounts for every nonblank parsed JSONL row; malformed and blank rows are counted separately."
 }

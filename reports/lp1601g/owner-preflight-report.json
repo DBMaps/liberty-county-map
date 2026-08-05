@@ -6,8 +6,24 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "selectedMode": "CONTROLLED_TEST_FIXTURE",
+  "source": {
+    "exists": true,
+    "readable": true,
+    "size": 337822144,
+    "magic": "PAR1",
+    "format": "GeoParquet"
+  },
+  "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
   "checks": {
-    "fixtureIsolation": "PASS"
-  }
+    "sourceExists": "PASS",
+    "sourceReadable": "PASS",
+    "sourceFormatGeoParquet": "PASS",
+    "sourceMagicPar1": "PASS",
+    "sourceSha256Matches": "PASS",
+    "duckDbExecutableExists": "PASS",
+    "writeModeEnabled": "PASS",
+    "stagingDirectoryCreatable": "PASS",
+    "manufacturingDirectoryCreatable": "PASS"
+  },
+  "allPassed": true
 }

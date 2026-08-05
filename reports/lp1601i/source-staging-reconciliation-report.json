@@ -9,7 +9,7 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "sourceRows": 5,
-  "stagingRows": 5,
+  "sourceRows": 2070451,
+  "stagingRows": 2070451,
   "reconciliationStatus": "PASS"
 }

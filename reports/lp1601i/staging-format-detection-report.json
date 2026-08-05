@@ -10,7 +10,7 @@
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
   "stagingFormat": "jsonl",
-  "selectedReader": "read_json_auto('/tmp/lp1601k-znyvZz/staging/CONTROLLED_TEST_FIXTURE-lp1601k.jsonl', format = 'newline_delimited')",
+  "selectedReader": "read_json_auto('C:\\GitHub\\Gridly-Source-Data\\Overture-Places\\2026-07-22.0\\staging\\lp1601c-part-00000.jsonl', format = 'newline_delimited')",
   "formatDetectionStatus": "PASS",
   "sourceUnavailable": false,
   "pendingOwnerRun": false

@@ -8,7 +8,10 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalExclusions": 0,
-  "byReason": {},
+  "totalExclusions": 730742,
+  "byReason": {
+    "OUTSIDE_TEXAS": 730740,
+    "MALFORMED_JSON": 2
+  },
   "byStage": {}
 }
