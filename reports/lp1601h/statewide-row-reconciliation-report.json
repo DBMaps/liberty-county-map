@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "gridly.lp1601g.sourceRowCountReport.v2",
+  "schemaVersion": "gridly.lp1601h.statewideRowReconciliationReport.v1",
   "milestone": "LP160.1H",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
@@ -8,10 +8,5 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "selectedMode": "OWNER_SOURCE",
-  "totalSourceRows": null,
-  "rowCountAttempted": false,
-  "rowCountParser": "duckdb -csv -noheader scalar",
-  "configuredPartitionCount": 64,
-  "partitionCountMayPopulateSourceRows": false
+  "status": "OWNER_LOCAL_PENDING"
 }
