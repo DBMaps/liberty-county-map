@@ -1,20 +1,17 @@
 {
+  "schemaVersion": "gridly.lp1601i.stagingFormatDetectionReport.v1",
   "milestone": "LP160.1I",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "sourceRelease": "2026-07-22.0",
   "sourceSha256": "47065C7511F744B3856142B3D03D285674837E68C9FDE914A96539198A1C49E9",
+  "executionMode": "OWNER_SOURCE",
   "performsRuntimeChange": false,
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "classification": "SOURCE_UNAVAILABLE",
-  "ownerRunRequired": true,
-  "schemaVersion": "gridly.lp1601i.stagingFormatDetectionReport.v1",
-  "filename": "lp1601c-part-00000.jsonl",
-  "extension": ".jsonl",
-  "detectedFormat": "jsonl",
-  "initialByteSignature": "{\"id",
-  "declaredFormat": "jsonl",
-  "conflictStatus": "NONE",
-  "selectedReader": "read_json_auto(<owner-staging-file>, format = 'newline_delimited')"
+  "stagingFormat": "jsonl",
+  "selectedReader": "read_json_auto('/tmp/lp1601k-znyvZz/staging/CONTROLLED_TEST_FIXTURE-lp1601k.jsonl', format = 'newline_delimited')",
+  "formatDetectionStatus": "PASS",
+  "sourceUnavailable": false,
+  "pendingOwnerRun": false
 }

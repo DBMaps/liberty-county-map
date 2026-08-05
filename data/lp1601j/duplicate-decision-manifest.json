@@ -8,6 +8,6 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalDuplicates": 0,
+  "totalDuplicates": 1,
   "partitions": []
 }

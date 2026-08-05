@@ -8,18 +8,20 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalExclusions": 1,
+  "totalExclusions": 3,
   "byReason": {
-    "OUTSIDE_TEXAS": 1
+    "OUTSIDE_TEXAS": 1,
+    "INVALID_COORDINATES": 1,
+    "EXACT_DUPLICATE": 1
   },
   "byCounty": {
     "48201": 0,
     "48291": 0
   },
   "byStage": {
-    "membership": 1,
+    "membership": 2,
     "county": 0,
-    "deduplication": 0
+    "deduplication": 1
   },
   "byCategory": {}
 }

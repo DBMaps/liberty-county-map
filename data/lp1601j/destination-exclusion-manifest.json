@@ -8,9 +8,11 @@
   "performsDeploymentChange": false,
   "performsActivationChange": false,
   "protectedArtifactsModified": false,
-  "totalExclusions": 1,
+  "totalExclusions": 3,
   "reasonTotals": {
-    "OUTSIDE_TEXAS": 1
+    "OUTSIDE_TEXAS": 1,
+    "INVALID_COORDINATES": 1,
+    "EXACT_DUPLICATE": 1
   },
   "partitions": []
 }

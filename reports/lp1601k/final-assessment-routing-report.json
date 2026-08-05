@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "gridly.lp1601k.finalAssessmentRoutingReport.v1",
+  "milestone": "LP160.1K",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "successfulDownstreamSchema": "gridly.lp1601j.finalJsonlCountyManufacturingAssessment.v1",
+  "lp1601gFinalAllowedAsIntermediate": true,
+  "lp1601gFinalAllowedAsOwnerReturnAfterStaging": false
+}

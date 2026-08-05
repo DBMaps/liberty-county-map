@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp1601k.orchestratedOwnerPipelineReport.v1",
+  "milestone": "LP160.1K",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "steps": [
+    "parse arguments",
+    "select OWNER_SOURCE",
+    "run preflight",
+    "validate source identity",
+    "validate DuckDB",
+    "count source rows",
+    "discover/reuse staging",
+    "detect staging format",
+    "validate JSONL",
+    "count staging rows",
+    "reconcile source and staging",
+    "invoke LP160.1J processor",
+    "validate LP160.1J result",
+    "write LP160.1J final assessment",
+    "return LP160.1J final result"
+  ],
+  "parallelOwnerPathSkippingDownstream": false
+}
