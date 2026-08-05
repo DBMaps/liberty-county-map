@@ -1,0 +1,19 @@
+{
+  "communicates": [
+    "destination or business name",
+    "meaningful location",
+    "city or community where available",
+    "county context where needed",
+    "consumer category",
+    "exact or multiple-result state",
+    "truthful no-result wording"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "interfaceRedesigned": false,
+  "milestone": "LP162",
+  "mode": "AUDIT_ONLY",
+  "prohibitedFieldsExposed": [],
+  "schemaVersion": "gridly.lp162.mobileSearchPresentationReport.v1",
+  "status": "PASS",
+  "technicalResultClassesConsumerVisible": false
+}

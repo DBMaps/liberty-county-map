@@ -1,0 +1,2566 @@
+{
+  "counties": [
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Anderson",
+      "evidenceAvailable": true,
+      "fips": "48001",
+      "recordCount": 2690,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Andrews",
+      "evidenceAvailable": true,
+      "fips": "48003",
+      "recordCount": 714,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Angelina",
+      "evidenceAvailable": true,
+      "fips": "48005",
+      "recordCount": 4065,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Aransas",
+      "evidenceAvailable": true,
+      "fips": "48007",
+      "recordCount": 1869,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Archer",
+      "evidenceAvailable": true,
+      "fips": "48009",
+      "recordCount": 380,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Armstrong",
+      "evidenceAvailable": true,
+      "fips": "48011",
+      "recordCount": 115,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Atascosa",
+      "evidenceAvailable": true,
+      "fips": "48013",
+      "recordCount": 2020,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Austin",
+      "evidenceAvailable": true,
+      "fips": "48015",
+      "recordCount": 1615,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bailey",
+      "evidenceAvailable": true,
+      "fips": "48017",
+      "recordCount": 348,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bandera",
+      "evidenceAvailable": true,
+      "fips": "48019",
+      "recordCount": 1127,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bastrop",
+      "evidenceAvailable": true,
+      "fips": "48021",
+      "recordCount": 4101,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Baylor",
+      "evidenceAvailable": true,
+      "fips": "48023",
+      "recordCount": 234,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bee",
+      "evidenceAvailable": true,
+      "fips": "48025",
+      "recordCount": 1179,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bell",
+      "evidenceAvailable": true,
+      "fips": "48027",
+      "recordCount": 14724,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bexar",
+      "evidenceAvailable": true,
+      "fips": "48029",
+      "recordCount": 83737,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Blanco",
+      "evidenceAvailable": true,
+      "fips": "48031",
+      "recordCount": 946,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Borden",
+      "evidenceAvailable": true,
+      "fips": "48033",
+      "recordCount": 32,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bosque",
+      "evidenceAvailable": true,
+      "fips": "48035",
+      "recordCount": 1025,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Bowie",
+      "evidenceAvailable": true,
+      "fips": "48037",
+      "recordCount": 5101,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Brazoria",
+      "evidenceAvailable": true,
+      "fips": "48039",
+      "recordCount": 14821,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Brazos",
+      "evidenceAvailable": true,
+      "fips": "48041",
+      "recordCount": 9855,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Brewster",
+      "evidenceAvailable": true,
+      "fips": "48043",
+      "recordCount": 1039,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Briscoe",
+      "evidenceAvailable": true,
+      "fips": "48045",
+      "recordCount": 110,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Brooks",
+      "evidenceAvailable": true,
+      "fips": "48047",
+      "recordCount": 328,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Brown",
+      "evidenceAvailable": true,
+      "fips": "48049",
+      "recordCount": 2121,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Burleson",
+      "evidenceAvailable": true,
+      "fips": "48051",
+      "recordCount": 850,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Burnet",
+      "evidenceAvailable": true,
+      "fips": "48053",
+      "recordCount": 3377,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Caldwell",
+      "evidenceAvailable": true,
+      "fips": "48055",
+      "recordCount": 1852,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Calhoun",
+      "evidenceAvailable": true,
+      "fips": "48057",
+      "recordCount": 1123,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Callahan",
+      "evidenceAvailable": true,
+      "fips": "48059",
+      "recordCount": 627,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cameron",
+      "evidenceAvailable": true,
+      "fips": "48061",
+      "recordCount": 16858,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Camp",
+      "evidenceAvailable": true,
+      "fips": "48063",
+      "recordCount": 577,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Carson",
+      "evidenceAvailable": true,
+      "fips": "48065",
+      "recordCount": 288,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cass",
+      "evidenceAvailable": true,
+      "fips": "48067",
+      "recordCount": 1278,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Castro",
+      "evidenceAvailable": true,
+      "fips": "48069",
+      "recordCount": 265,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Chambers",
+      "evidenceAvailable": true,
+      "fips": "48071",
+      "recordCount": 1966,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cherokee",
+      "evidenceAvailable": true,
+      "fips": "48073",
+      "recordCount": 2185,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Childress",
+      "evidenceAvailable": true,
+      "fips": "48075",
+      "recordCount": 411,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Clay",
+      "evidenceAvailable": true,
+      "fips": "48077",
+      "recordCount": 432,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cochran",
+      "evidenceAvailable": true,
+      "fips": "48079",
+      "recordCount": 97,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Coke",
+      "evidenceAvailable": true,
+      "fips": "48081",
+      "recordCount": 164,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Coleman",
+      "evidenceAvailable": true,
+      "fips": "48083",
+      "recordCount": 533,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Collin",
+      "evidenceAvailable": true,
+      "fips": "48085",
+      "recordCount": 51493,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Collingsworth",
+      "evidenceAvailable": true,
+      "fips": "48087",
+      "recordCount": 134,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Colorado",
+      "evidenceAvailable": true,
+      "fips": "48089",
+      "recordCount": 1275,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Comal",
+      "evidenceAvailable": true,
+      "fips": "48091",
+      "recordCount": 9588,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Comanche",
+      "evidenceAvailable": true,
+      "fips": "48093",
+      "recordCount": 762,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Concho",
+      "evidenceAvailable": true,
+      "fips": "48095",
+      "recordCount": 164,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cooke",
+      "evidenceAvailable": true,
+      "fips": "48097",
+      "recordCount": 2301,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Coryell",
+      "evidenceAvailable": true,
+      "fips": "48099",
+      "recordCount": 2259,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Cottle",
+      "evidenceAvailable": true,
+      "fips": "48101",
+      "recordCount": 92,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Crane",
+      "evidenceAvailable": true,
+      "fips": "48103",
+      "recordCount": 195,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Crockett",
+      "evidenceAvailable": true,
+      "fips": "48105",
+      "recordCount": 218,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Crosby",
+      "evidenceAvailable": true,
+      "fips": "48107",
+      "recordCount": 242,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Culberson",
+      "evidenceAvailable": true,
+      "fips": "48109",
+      "recordCount": 242,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Dallam",
+      "evidenceAvailable": true,
+      "fips": "48111",
+      "recordCount": 459,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Dallas",
+      "evidenceAvailable": true,
+      "fips": "48113",
+      "recordCount": 127930,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Dawson",
+      "evidenceAvailable": true,
+      "fips": "48115",
+      "recordCount": 501,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Deaf Smith",
+      "evidenceAvailable": true,
+      "fips": "48117",
+      "recordCount": 748,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Delta",
+      "evidenceAvailable": true,
+      "fips": "48119",
+      "recordCount": 243,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Denton",
+      "evidenceAvailable": true,
+      "fips": "48121",
+      "recordCount": 33734,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "DeWitt",
+      "evidenceAvailable": true,
+      "fips": "48123",
+      "recordCount": 1019,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Dickens",
+      "evidenceAvailable": true,
+      "fips": "48125",
+      "recordCount": 127,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Dimmit",
+      "evidenceAvailable": true,
+      "fips": "48127",
+      "recordCount": 507,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Donley",
+      "evidenceAvailable": true,
+      "fips": "48129",
+      "recordCount": 213,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Duval",
+      "evidenceAvailable": true,
+      "fips": "48131",
+      "recordCount": 355,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Eastland",
+      "evidenceAvailable": true,
+      "fips": "48133",
+      "recordCount": 1160,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Ector",
+      "evidenceAvailable": true,
+      "fips": "48135",
+      "recordCount": 7261,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Edwards",
+      "evidenceAvailable": true,
+      "fips": "48137",
+      "recordCount": 159,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Ellis",
+      "evidenceAvailable": true,
+      "fips": "48139",
+      "recordCount": 7975,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "El Paso",
+      "evidenceAvailable": true,
+      "fips": "48141",
+      "recordCount": 31789,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Erath",
+      "evidenceAvailable": true,
+      "fips": "48143",
+      "recordCount": 2459,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Falls",
+      "evidenceAvailable": true,
+      "fips": "48145",
+      "recordCount": 665,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Fannin",
+      "evidenceAvailable": true,
+      "fips": "48147",
+      "recordCount": 1556,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Fayette",
+      "evidenceAvailable": true,
+      "fips": "48149",
+      "recordCount": 1828,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Fisher",
+      "evidenceAvailable": true,
+      "fips": "48151",
+      "recordCount": 173,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Floyd",
+      "evidenceAvailable": true,
+      "fips": "48153",
+      "recordCount": 280,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Foard",
+      "evidenceAvailable": true,
+      "fips": "48155",
+      "recordCount": 75,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Fort Bend",
+      "evidenceAvailable": true,
+      "fips": "48157",
+      "recordCount": 27782,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Franklin",
+      "evidenceAvailable": true,
+      "fips": "48159",
+      "recordCount": 524,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Freestone",
+      "evidenceAvailable": true,
+      "fips": "48161",
+      "recordCount": 997,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Frio",
+      "evidenceAvailable": true,
+      "fips": "48163",
+      "recordCount": 808,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Gaines",
+      "evidenceAvailable": true,
+      "fips": "48165",
+      "recordCount": 822,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Galveston",
+      "evidenceAvailable": true,
+      "fips": "48167",
+      "recordCount": 16312,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Garza",
+      "evidenceAvailable": true,
+      "fips": "48169",
+      "recordCount": 267,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Gillespie",
+      "evidenceAvailable": true,
+      "fips": "48171",
+      "recordCount": 2640,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Glasscock",
+      "evidenceAvailable": true,
+      "fips": "48173",
+      "recordCount": 49,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Goliad",
+      "evidenceAvailable": true,
+      "fips": "48175",
+      "recordCount": 378,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Gonzales",
+      "evidenceAvailable": true,
+      "fips": "48177",
+      "recordCount": 1074,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Gray",
+      "evidenceAvailable": true,
+      "fips": "48179",
+      "recordCount": 1081,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Grayson",
+      "evidenceAvailable": true,
+      "fips": "48181",
+      "recordCount": 7373,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Gregg",
+      "evidenceAvailable": true,
+      "fips": "48183",
+      "recordCount": 8253,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Grimes",
+      "evidenceAvailable": true,
+      "fips": "48185",
+      "recordCount": 1303,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Guadalupe",
+      "evidenceAvailable": true,
+      "fips": "48187",
+      "recordCount": 5666,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hale",
+      "evidenceAvailable": true,
+      "fips": "48189",
+      "recordCount": 1394,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hall",
+      "evidenceAvailable": true,
+      "fips": "48191",
+      "recordCount": 194,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hamilton",
+      "evidenceAvailable": true,
+      "fips": "48193",
+      "recordCount": 612,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hansford",
+      "evidenceAvailable": true,
+      "fips": "48195",
+      "recordCount": 266,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hardeman",
+      "evidenceAvailable": true,
+      "fips": "48197",
+      "recordCount": 255,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hardin",
+      "evidenceAvailable": true,
+      "fips": "48199",
+      "recordCount": 2253,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Harris",
+      "evidenceAvailable": true,
+      "fips": "48201",
+      "recordCount": 229157,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Harrison",
+      "evidenceAvailable": true,
+      "fips": "48203",
+      "recordCount": 2899,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hartley",
+      "evidenceAvailable": true,
+      "fips": "48205",
+      "recordCount": 194,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Haskell",
+      "evidenceAvailable": true,
+      "fips": "48207",
+      "recordCount": 360,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hays",
+      "evidenceAvailable": true,
+      "fips": "48209",
+      "recordCount": 11043,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hemphill",
+      "evidenceAvailable": true,
+      "fips": "48211",
+      "recordCount": 272,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Henderson",
+      "evidenceAvailable": true,
+      "fips": "48213",
+      "recordCount": 4065,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hidalgo",
+      "evidenceAvailable": true,
+      "fips": "48215",
+      "recordCount": 34318,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hill",
+      "evidenceAvailable": true,
+      "fips": "48217",
+      "recordCount": 1914,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hockley",
+      "evidenceAvailable": true,
+      "fips": "48219",
+      "recordCount": 883,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hood",
+      "evidenceAvailable": true,
+      "fips": "48221",
+      "recordCount": 3413,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hopkins",
+      "evidenceAvailable": true,
+      "fips": "48223",
+      "recordCount": 1951,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Houston",
+      "evidenceAvailable": true,
+      "fips": "48225",
+      "recordCount": 1066,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Howard",
+      "evidenceAvailable": true,
+      "fips": "48227",
+      "recordCount": 1381,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hudspeth",
+      "evidenceAvailable": true,
+      "fips": "48229",
+      "recordCount": 148,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hunt",
+      "evidenceAvailable": true,
+      "fips": "48231",
+      "recordCount": 4670,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Hutchinson",
+      "evidenceAvailable": true,
+      "fips": "48233",
+      "recordCount": 918,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Irion",
+      "evidenceAvailable": true,
+      "fips": "48235",
+      "recordCount": 88,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jack",
+      "evidenceAvailable": true,
+      "fips": "48237",
+      "recordCount": 474,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jackson",
+      "evidenceAvailable": true,
+      "fips": "48239",
+      "recordCount": 651,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jasper",
+      "evidenceAvailable": true,
+      "fips": "48241",
+      "recordCount": 1623,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jeff Davis",
+      "evidenceAvailable": true,
+      "fips": "48243",
+      "recordCount": 194,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jefferson",
+      "evidenceAvailable": true,
+      "fips": "48245",
+      "recordCount": 11784,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jim Hogg",
+      "evidenceAvailable": true,
+      "fips": "48247",
+      "recordCount": 219,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jim Wells",
+      "evidenceAvailable": true,
+      "fips": "48249",
+      "recordCount": 1704,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Johnson",
+      "evidenceAvailable": true,
+      "fips": "48251",
+      "recordCount": 7395,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Jones",
+      "evidenceAvailable": true,
+      "fips": "48253",
+      "recordCount": 693,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Karnes",
+      "evidenceAvailable": true,
+      "fips": "48255",
+      "recordCount": 725,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kaufman",
+      "evidenceAvailable": true,
+      "fips": "48257",
+      "recordCount": 5396,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kendall",
+      "evidenceAvailable": true,
+      "fips": "48259",
+      "recordCount": 3019,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kenedy",
+      "evidenceAvailable": true,
+      "fips": "48261",
+      "recordCount": 56,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kent",
+      "evidenceAvailable": true,
+      "fips": "48263",
+      "recordCount": 38,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kerr",
+      "evidenceAvailable": true,
+      "fips": "48265",
+      "recordCount": 3156,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kimble",
+      "evidenceAvailable": true,
+      "fips": "48267",
+      "recordCount": 399,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "King",
+      "evidenceAvailable": true,
+      "fips": "48269",
+      "recordCount": 12,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kinney",
+      "evidenceAvailable": true,
+      "fips": "48271",
+      "recordCount": 156,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Kleberg",
+      "evidenceAvailable": true,
+      "fips": "48273",
+      "recordCount": 1458,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Knox",
+      "evidenceAvailable": true,
+      "fips": "48275",
+      "recordCount": 215,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lamar",
+      "evidenceAvailable": true,
+      "fips": "48277",
+      "recordCount": 2759,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lamb",
+      "evidenceAvailable": true,
+      "fips": "48279",
+      "recordCount": 527,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lampasas",
+      "evidenceAvailable": true,
+      "fips": "48281",
+      "recordCount": 1064,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "La Salle",
+      "evidenceAvailable": true,
+      "fips": "48283",
+      "recordCount": 431,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lavaca",
+      "evidenceAvailable": true,
+      "fips": "48285",
+      "recordCount": 949,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lee",
+      "evidenceAvailable": true,
+      "fips": "48287",
+      "recordCount": 838,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Leon",
+      "evidenceAvailable": true,
+      "fips": "48289",
+      "recordCount": 878,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Liberty",
+      "evidenceAvailable": true,
+      "fips": "48291",
+      "recordCount": 3424,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Limestone",
+      "evidenceAvailable": true,
+      "fips": "48293",
+      "recordCount": 1158,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lipscomb",
+      "evidenceAvailable": true,
+      "fips": "48295",
+      "recordCount": 144,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Live Oak",
+      "evidenceAvailable": true,
+      "fips": "48297",
+      "recordCount": 637,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Llano",
+      "evidenceAvailable": true,
+      "fips": "48299",
+      "recordCount": 1356,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Loving",
+      "evidenceAvailable": true,
+      "fips": "48301",
+      "recordCount": 20,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lubbock",
+      "evidenceAvailable": true,
+      "fips": "48303",
+      "recordCount": 15109,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Lynn",
+      "evidenceAvailable": true,
+      "fips": "48305",
+      "recordCount": 216,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "McCulloch",
+      "evidenceAvailable": true,
+      "fips": "48307",
+      "recordCount": 527,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "McLennan",
+      "evidenceAvailable": true,
+      "fips": "48309",
+      "recordCount": 12480,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "McMullen",
+      "evidenceAvailable": true,
+      "fips": "48311",
+      "recordCount": 99,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Madison",
+      "evidenceAvailable": true,
+      "fips": "48313",
+      "recordCount": 637,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Marion",
+      "evidenceAvailable": true,
+      "fips": "48315",
+      "recordCount": 575,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Martin",
+      "evidenceAvailable": true,
+      "fips": "48317",
+      "recordCount": 203,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Mason",
+      "evidenceAvailable": true,
+      "fips": "48319",
+      "recordCount": 352,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Matagorda",
+      "evidenceAvailable": true,
+      "fips": "48321",
+      "recordCount": 1896,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Maverick",
+      "evidenceAvailable": true,
+      "fips": "48323",
+      "recordCount": 2106,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Medina",
+      "evidenceAvailable": true,
+      "fips": "48325",
+      "recordCount": 1921,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Menard",
+      "evidenceAvailable": true,
+      "fips": "48327",
+      "recordCount": 163,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Midland",
+      "evidenceAvailable": true,
+      "fips": "48329",
+      "recordCount": 8454,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Milam",
+      "evidenceAvailable": true,
+      "fips": "48331",
+      "recordCount": 1150,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Mills",
+      "evidenceAvailable": true,
+      "fips": "48333",
+      "recordCount": 302,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Mitchell",
+      "evidenceAvailable": true,
+      "fips": "48335",
+      "recordCount": 378,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Montague",
+      "evidenceAvailable": true,
+      "fips": "48337",
+      "recordCount": 1164,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Montgomery",
+      "evidenceAvailable": true,
+      "fips": "48339",
+      "recordCount": 29047,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Moore",
+      "evidenceAvailable": true,
+      "fips": "48341",
+      "recordCount": 860,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Morris",
+      "evidenceAvailable": true,
+      "fips": "48343",
+      "recordCount": 542,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Motley",
+      "evidenceAvailable": true,
+      "fips": "48345",
+      "recordCount": 76,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Nacogdoches",
+      "evidenceAvailable": true,
+      "fips": "48347",
+      "recordCount": 3169,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Navarro",
+      "evidenceAvailable": true,
+      "fips": "48349",
+      "recordCount": 2481,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Newton",
+      "evidenceAvailable": true,
+      "fips": "48351",
+      "recordCount": 347,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Nolan",
+      "evidenceAvailable": true,
+      "fips": "48353",
+      "recordCount": 835,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Nueces",
+      "evidenceAvailable": true,
+      "fips": "48355",
+      "recordCount": 17455,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Ochiltree",
+      "evidenceAvailable": true,
+      "fips": "48357",
+      "recordCount": 502,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Oldham",
+      "evidenceAvailable": true,
+      "fips": "48359",
+      "recordCount": 157,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Orange",
+      "evidenceAvailable": true,
+      "fips": "48361",
+      "recordCount": 3316,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Palo Pinto",
+      "evidenceAvailable": true,
+      "fips": "48363",
+      "recordCount": 1747,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Panola",
+      "evidenceAvailable": true,
+      "fips": "48365",
+      "recordCount": 1099,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Parker",
+      "evidenceAvailable": true,
+      "fips": "48367",
+      "recordCount": 7255,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Parmer",
+      "evidenceAvailable": true,
+      "fips": "48369",
+      "recordCount": 354,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Pecos",
+      "evidenceAvailable": true,
+      "fips": "48371",
+      "recordCount": 783,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Polk",
+      "evidenceAvailable": true,
+      "fips": "48373",
+      "recordCount": 2123,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Potter",
+      "evidenceAvailable": true,
+      "fips": "48375",
+      "recordCount": 6891,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Presidio",
+      "evidenceAvailable": true,
+      "fips": "48377",
+      "recordCount": 417,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Rains",
+      "evidenceAvailable": true,
+      "fips": "48379",
+      "recordCount": 583,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Randall",
+      "evidenceAvailable": true,
+      "fips": "48381",
+      "recordCount": 5382,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Reagan",
+      "evidenceAvailable": true,
+      "fips": "48383",
+      "recordCount": 205,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Real",
+      "evidenceAvailable": true,
+      "fips": "48385",
+      "recordCount": 304,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Red River",
+      "evidenceAvailable": true,
+      "fips": "48387",
+      "recordCount": 555,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Reeves",
+      "evidenceAvailable": true,
+      "fips": "48389",
+      "recordCount": 757,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Refugio",
+      "evidenceAvailable": true,
+      "fips": "48391",
+      "recordCount": 391,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Roberts",
+      "evidenceAvailable": true,
+      "fips": "48393",
+      "recordCount": 39,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Robertson",
+      "evidenceAvailable": true,
+      "fips": "48395",
+      "recordCount": 837,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Rockwall",
+      "evidenceAvailable": true,
+      "fips": "48397",
+      "recordCount": 5450,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Runnels",
+      "evidenceAvailable": true,
+      "fips": "48399",
+      "recordCount": 516,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Rusk",
+      "evidenceAvailable": true,
+      "fips": "48401",
+      "recordCount": 1886,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Sabine",
+      "evidenceAvailable": true,
+      "fips": "48403",
+      "recordCount": 573,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "San Augustine",
+      "evidenceAvailable": true,
+      "fips": "48405",
+      "recordCount": 369,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "San Jacinto",
+      "evidenceAvailable": true,
+      "fips": "48407",
+      "recordCount": 843,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "San Patricio",
+      "evidenceAvailable": true,
+      "fips": "48409",
+      "recordCount": 2807,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "San Saba",
+      "evidenceAvailable": true,
+      "fips": "48411",
+      "recordCount": 412,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Schleicher",
+      "evidenceAvailable": true,
+      "fips": "48413",
+      "recordCount": 118,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Scurry",
+      "evidenceAvailable": true,
+      "fips": "48415",
+      "recordCount": 806,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Shackelford",
+      "evidenceAvailable": true,
+      "fips": "48417",
+      "recordCount": 244,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Shelby",
+      "evidenceAvailable": true,
+      "fips": "48419",
+      "recordCount": 1125,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Sherman",
+      "evidenceAvailable": true,
+      "fips": "48421",
+      "recordCount": 125,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Smith",
+      "evidenceAvailable": true,
+      "fips": "48423",
+      "recordCount": 13026,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Somervell",
+      "evidenceAvailable": true,
+      "fips": "48425",
+      "recordCount": 679,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Starr",
+      "evidenceAvailable": true,
+      "fips": "48427",
+      "recordCount": 2116,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Stephens",
+      "evidenceAvailable": true,
+      "fips": "48429",
+      "recordCount": 555,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Sterling",
+      "evidenceAvailable": true,
+      "fips": "48431",
+      "recordCount": 79,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Stonewall",
+      "evidenceAvailable": true,
+      "fips": "48433",
+      "recordCount": 81,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Sutton",
+      "evidenceAvailable": true,
+      "fips": "48435",
+      "recordCount": 254,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Swisher",
+      "evidenceAvailable": true,
+      "fips": "48437",
+      "recordCount": 305,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Tarrant",
+      "evidenceAvailable": true,
+      "fips": "48439",
+      "recordCount": 93118,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Taylor",
+      "evidenceAvailable": true,
+      "fips": "48441",
+      "recordCount": 7503,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Terrell",
+      "evidenceAvailable": true,
+      "fips": "48443",
+      "recordCount": 73,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Terry",
+      "evidenceAvailable": true,
+      "fips": "48445",
+      "recordCount": 471,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Throckmorton",
+      "evidenceAvailable": true,
+      "fips": "48447",
+      "recordCount": 108,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Titus",
+      "evidenceAvailable": true,
+      "fips": "48449",
+      "recordCount": 1649,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Tom Green",
+      "evidenceAvailable": true,
+      "fips": "48451",
+      "recordCount": 5608,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Travis",
+      "evidenceAvailable": true,
+      "fips": "48453",
+      "recordCount": 71418,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Trinity",
+      "evidenceAvailable": true,
+      "fips": "48455",
+      "recordCount": 575,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Tyler",
+      "evidenceAvailable": true,
+      "fips": "48457",
+      "recordCount": 788,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Upshur",
+      "evidenceAvailable": true,
+      "fips": "48459",
+      "recordCount": 1534,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Upton",
+      "evidenceAvailable": true,
+      "fips": "48461",
+      "recordCount": 187,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Uvalde",
+      "evidenceAvailable": true,
+      "fips": "48463",
+      "recordCount": 1553,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Val Verde",
+      "evidenceAvailable": true,
+      "fips": "48465",
+      "recordCount": 1829,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Van Zandt",
+      "evidenceAvailable": true,
+      "fips": "48467",
+      "recordCount": 2927,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Victoria",
+      "evidenceAvailable": true,
+      "fips": "48469",
+      "recordCount": 4776,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Walker",
+      "evidenceAvailable": true,
+      "fips": "48471",
+      "recordCount": 2944,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Waller",
+      "evidenceAvailable": true,
+      "fips": "48473",
+      "recordCount": 2132,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Ward",
+      "evidenceAvailable": true,
+      "fips": "48475",
+      "recordCount": 639,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Washington",
+      "evidenceAvailable": true,
+      "fips": "48477",
+      "recordCount": 2292,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Webb",
+      "evidenceAvailable": true,
+      "fips": "48479",
+      "recordCount": 11260,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wharton",
+      "evidenceAvailable": true,
+      "fips": "48481",
+      "recordCount": 2131,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wheeler",
+      "evidenceAvailable": true,
+      "fips": "48483",
+      "recordCount": 396,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wichita",
+      "evidenceAvailable": true,
+      "fips": "48485",
+      "recordCount": 6143,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wilbarger",
+      "evidenceAvailable": true,
+      "fips": "48487",
+      "recordCount": 684,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Willacy",
+      "evidenceAvailable": true,
+      "fips": "48489",
+      "recordCount": 663,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Williamson",
+      "evidenceAvailable": true,
+      "fips": "48491",
+      "recordCount": 27240,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wilson",
+      "evidenceAvailable": true,
+      "fips": "48493",
+      "recordCount": 1824,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Winkler",
+      "evidenceAvailable": true,
+      "fips": "48495",
+      "recordCount": 358,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wise",
+      "evidenceAvailable": true,
+      "fips": "48497",
+      "recordCount": 3587,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Wood",
+      "evidenceAvailable": true,
+      "fips": "48499",
+      "recordCount": 2374,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Yoakum",
+      "evidenceAvailable": true,
+      "fips": "48501",
+      "recordCount": 356,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Young",
+      "evidenceAvailable": true,
+      "fips": "48503",
+      "recordCount": 1094,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Zapata",
+      "evidenceAvailable": true,
+      "fips": "48505",
+      "recordCount": 558,
+      "status": "PASS"
+    },
+    {
+      "categoryEvidenceAvailable": true,
+      "coordinatesGoverned": true,
+      "countyContextGoverned": true,
+      "countyName": "Zavala",
+      "evidenceAvailable": true,
+      "fips": "48507",
+      "recordCount": 353,
+      "status": "PASS"
+    }
+  ],
+  "failCount": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "passCount": 254,
+  "runtimeActivationAuthorized": false,
+  "schemaVersion": "gridly.lp162.destinationSearchCertification.v1",
+  "sourceEvidence": [
+    "LP160",
+    "LP160.1M",
+    "LP161"
+  ],
+  "status": "PASS",
+  "supportedContracts": [
+    "exact destination name",
+    "business name",
+    "normalized name",
+    "governed alias",
+    "governed category",
+    "destination type",
+    "county context",
+    "authoritative coordinates"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "activation": "UNAUTHORIZED",
+  "deployment": "UNAUTHORIZED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "protectedHashes": {
+    "data/generated/lp104/txgio-addresses/runtime-manifest.json": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a",
+    "data/lp1601/texas-destination-candidate-registry-manifest.json": "596f70a0e21876607d5398f370ba4583b1faa591254217308cb72ef97477a275",
+    "data/roadway-runtime-manifest.json": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a"
+  },
+  "runtime": "UNCHANGED",
+  "schemaVersion": "gridly.lp162.runtimePreservationReport.v1",
+  "status": "PASS"
+}

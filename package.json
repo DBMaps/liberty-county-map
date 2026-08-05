@@ -229,6 +229,9 @@
     "test:lp161": "node --test tests/lp161-statewide-destination-integration-certification.test.mjs",
     "verify:lp1611": "node tools/lp1611-deterministic-certification-reconciliation.mjs",
     "build:lp1611": "node tools/lp1611-deterministic-certification-reconciliation.mjs --write",
-    "test:lp1611": "node --test tests/lp1611-deterministic-certification-reconciliation.test.mjs"
+    "test:lp1611": "node --test tests/lp1611-deterministic-certification-reconciliation.test.mjs",
+    "build:lp162": "node tools/lp162-certify-statewide-consumer-search.mjs --write",
+    "verify:lp162": "node tools/lp162-certify-statewide-consumer-search.mjs",
+    "test:lp162": "node --test tests/lp162-statewide-consumer-search-certification.test.mjs"
   }
 }

@@ -1,0 +1,170 @@
+{
+  "counties": [
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Liberty",
+      "destinationStatus": "PASS",
+      "fips": "48291",
+      "selectionReason": "protected benchmark",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Harris",
+      "destinationStatus": "PASS",
+      "fips": "48201",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "FAIL",
+      "countyContext": true,
+      "countyName": "Dallas",
+      "destinationStatus": "PASS",
+      "fips": "48113",
+      "selectionReason": "required representative cohort",
+      "status": "CONDITIONAL",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Tarrant",
+      "destinationStatus": "PASS",
+      "fips": "48439",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Bexar",
+      "destinationStatus": "PASS",
+      "fips": "48029",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Travis",
+      "destinationStatus": "PASS",
+      "fips": "48453",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "El Paso",
+      "destinationStatus": "PASS",
+      "fips": "48141",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "FAIL",
+      "countyContext": true,
+      "countyName": "Cameron",
+      "destinationStatus": "PASS",
+      "fips": "48061",
+      "selectionReason": "required representative cohort",
+      "status": "CONDITIONAL",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Lubbock",
+      "destinationStatus": "PASS",
+      "fips": "48303",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Potter",
+      "destinationStatus": "PASS",
+      "fips": "48375",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "FAIL",
+      "countyContext": true,
+      "countyName": "Brewster",
+      "destinationStatus": "PASS",
+      "fips": "48043",
+      "selectionReason": "required representative cohort",
+      "status": "CONDITIONAL",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Loving",
+      "destinationStatus": "PASS",
+      "fips": "48301",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Jefferson",
+      "destinationStatus": "PASS",
+      "fips": "48245",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Galveston",
+      "destinationStatus": "PASS",
+      "fips": "48167",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Montgomery",
+      "destinationStatus": "PASS",
+      "fips": "48339",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    },
+    {
+      "addressStatus": "PASS",
+      "countyContext": true,
+      "countyName": "Webb",
+      "destinationStatus": "PASS",
+      "fips": "48479",
+      "selectionReason": "required representative cohort",
+      "status": "PASS",
+      "truthfulNoResult": true
+    }
+  ],
+  "countiesEvaluated": 16,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "schemaVersion": "gridly.lp162.representativeCountySearchReport.v1",
+  "selectionMethod": "Required cohort in specification order; no pass-biased selection.",
+  "status": "CONDITIONAL"
+}

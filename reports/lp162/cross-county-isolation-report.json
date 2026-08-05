@@ -1,0 +1,40 @@
+{
+  "countyQualifiedSearchRule": "Filter by governed county FIPS before promotion; never silently substitute another county.",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP162",
+  "scenarios": [
+    {
+      "countyContextExplicit": true,
+      "id": "ISO-01",
+      "status": "PASS",
+      "type": "same-name adjacent-county branches"
+    },
+    {
+      "countyContextExplicit": true,
+      "id": "ISO-02",
+      "status": "PASS",
+      "type": "similar community names"
+    },
+    {
+      "countyContextExplicit": true,
+      "id": "ISO-03",
+      "status": "PASS",
+      "type": "border destination"
+    },
+    {
+      "countyContextExplicit": true,
+      "id": "ISO-04",
+      "status": "PASS",
+      "type": "repeated city name"
+    },
+    {
+      "countyContextExplicit": true,
+      "id": "ISO-05",
+      "status": "PASS",
+      "type": "county-qualified exact search"
+    }
+  ],
+  "scenariosEvaluated": 5,
+  "schemaVersion": "gridly.lp162.crossCountyIsolationReport.v1",
+  "status": "PASS"
+}

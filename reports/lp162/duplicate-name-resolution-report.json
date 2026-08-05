@@ -1,0 +1,30 @@
+{
+  "contextFields": [
+    "city or community",
+    "county",
+    "physical address or road where available"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "identityRule": "Never deduplicate solely by normalized name; preserve stable destination identity and branch context.",
+  "milestone": "LP162",
+  "scenarios": [
+    {
+      "id": "DUP-01",
+      "status": "PASS",
+      "type": "multiple branches"
+    },
+    {
+      "id": "DUP-02",
+      "status": "PASS",
+      "type": "same name across counties"
+    },
+    {
+      "id": "DUP-03",
+      "status": "PASS",
+      "type": "county boundary context"
+    }
+  ],
+  "scenariosEvaluated": 3,
+  "schemaVersion": "gridly.lp162.duplicateNameResolutionReport.v1",
+  "status": "PASS"
+}
