@@ -1,0 +1,47 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP156",
+  "rows": [
+    {
+      "classification": "Critical Before Launch",
+      "dataset": "addresses",
+      "rationale": "Ready with Monitoring"
+    },
+    {
+      "classification": "Critical Before Launch",
+      "dataset": "businesses",
+      "rationale": "Requires Acquisition"
+    },
+    {
+      "classification": "Critical Before Launch",
+      "dataset": "communities",
+      "rationale": "Requires Acquisition"
+    },
+    {
+      "classification": "Recommended Before Launch",
+      "dataset": "crossings",
+      "rationale": "Requires Enrichment"
+    },
+    {
+      "classification": "Recommended Before Launch",
+      "dataset": "hazards",
+      "rationale": "Requires Enrichment"
+    },
+    {
+      "classification": "Recommended Before Launch",
+      "dataset": "routes",
+      "rationale": "Requires Enrichment"
+    },
+    {
+      "classification": "Critical Before Launch",
+      "dataset": "notifications",
+      "rationale": "Requires Acquisition"
+    },
+    {
+      "classification": "Critical Before Launch",
+      "dataset": "search",
+      "rationale": "Requires Acquisition"
+    }
+  ],
+  "schemaVersion": "gridly.lp156.launchDependencyMatrix.v1"
+}

@@ -1,0 +1,68 @@
+{
+  "constraints": [
+    "does not expand runtime",
+    "does not modify deployment",
+    "does not modify activation",
+    "does not rebuild certified packages",
+    "does not replace authoritative sources without evidence",
+    "does not introduce frameworks"
+  ],
+  "evidenceSources": [
+    "evidence/lp131/statewide-readiness-audit.json",
+    "reports/lp155/final-statewide-consumer-readiness-assessment.json"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP156",
+  "principles": [
+    "Awareness Platform First",
+    "Route Intelligence Second",
+    "Audit First",
+    "Patch Second",
+    "No speculative acquisitions",
+    "No duplicate datasets"
+  ],
+  "question": "What information must Gridly possess in order to confidently serve every community in Texas?",
+  "requiredInformation": [
+    {
+      "authoritativeOrCurrentSource": "TXGIO Texas statewide address packages",
+      "deliverable": "Statewide Address Coverage Assessment",
+      "domain": "addresses"
+    },
+    {
+      "authoritativeOrCurrentSource": "Curated destination/business search datasets",
+      "deliverable": "Statewide Business Coverage Assessment",
+      "domain": "businesses"
+    },
+    {
+      "authoritativeOrCurrentSource": "Runtime community manifest plus governed place labels",
+      "deliverable": "Texas Community Coverage Assessment",
+      "domain": "communities"
+    },
+    {
+      "authoritativeOrCurrentSource": "FRA crossing source and production crossing packages",
+      "deliverable": "Railroad Crossing Coverage Assessment",
+      "domain": "crossings"
+    },
+    {
+      "authoritativeOrCurrentSource": "Gridly hazard reports, weather association, road-event/community report inputs",
+      "deliverable": "Hazard Intelligence Assessment",
+      "domain": "hazards"
+    },
+    {
+      "authoritativeOrCurrentSource": "Route generation/persistence with hazard, crossing, and weather association",
+      "deliverable": "Route Intelligence Assessment",
+      "domain": "routes"
+    },
+    {
+      "authoritativeOrCurrentSource": "Road, community, county, landmark, crossing, hazard, and route context",
+      "deliverable": "Notification Context Assessment",
+      "domain": "notifications"
+    },
+    {
+      "authoritativeOrCurrentSource": "Address, business, community, landmark, alias, and misspelling indexes",
+      "deliverable": "Search Intelligence Assessment",
+      "domain": "search"
+    }
+  ],
+  "schemaVersion": "gridly.lp156.statewideDataAcquisitionPlan.v1"
+}

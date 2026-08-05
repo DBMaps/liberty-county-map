@@ -1,0 +1,38 @@
+{
+  "conclusion": "Railroad Crossing Coverage Assessment: Requires Enrichment. LP131 reports 3,771 production crossings and missing production crossing packages in 226 counties.",
+  "coverageCompleteness": "PARTIAL_EVIDENCE_ONLY",
+  "currentSource": "FRA crossing source and production crossing packages",
+  "dataQualityClassification": "Requires Enrichment",
+  "evidence": {
+    "lp131": "evidence/lp131/statewide-readiness-audit.json",
+    "lp131Gaps": {
+      "candidateOnlyCounties": 239,
+      "certificationBlockedCounties": 14,
+      "countiesMissingCommunities": 251,
+      "countiesMissingCrossings": 226,
+      "countiesMissingDestinations": 226,
+      "runtimeEligibleCounties": 1
+    },
+    "lp131Totals": {
+      "addressPackages": 254,
+      "candidateOnly": 239,
+      "certificationBlocked": 14,
+      "certifiedPackages": 240,
+      "communities": 12,
+      "countiesAudited": 254,
+      "crossings": 3771,
+      "destinations": 153,
+      "runtimeReadyCounties": 1
+    },
+    "lp155": "reports/lp155/final-statewide-consumer-readiness-assessment.json",
+    "lp155Recommendation": "NO_GO"
+  },
+  "findings": [
+    "LP131 reports 3,771 production crossings and missing production crossing packages in 226 counties."
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "launchDependency": "Recommended Before Launch",
+  "milestone": "LP156",
+  "schemaVersion": "gridly.lp156.crossingsAssessment.v1",
+  "title": "Railroad Crossing Coverage Assessment"
+}

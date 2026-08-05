@@ -1,0 +1,67 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP156",
+  "rows": [
+    {
+      "authoritativeSource": "Authoritative statewide government/Census place source plus governed local aliases",
+      "dataset": "Governed Texas community inventory",
+      "geographicScope": "Texas statewide",
+      "license": "Verify before ingestion",
+      "priority": "P0",
+      "purpose": "Cities, towns, CDPs, unincorporated communities, and applicable neighborhoods",
+      "refreshStrategy": "Scheduled source refresh plus governed alias review",
+      "requiredBeforeLaunch": "YES"
+    },
+    {
+      "authoritativeSource": "Authoritative/licensed POI provider or governed public-source compilation",
+      "dataset": "Statewide curated business/destination dataset",
+      "geographicScope": "Texas statewide",
+      "license": "Verify before acquisition",
+      "priority": "P0",
+      "purpose": "Consumer destination search and meaningful landmarks",
+      "refreshStrategy": "Provider/public-source refresh cadence with deterministic diff review",
+      "requiredBeforeLaunch": "YES"
+    },
+    {
+      "authoritativeSource": "Combination of governed roadway/community/landmark/crossing sources",
+      "dataset": "Notification context enrichment dataset",
+      "geographicScope": "Texas statewide",
+      "license": "Verify each component before ingestion",
+      "priority": "P0",
+      "purpose": "Highway names, cross streets, communities, counties, landmarks; reject private/unknown labels",
+      "refreshStrategy": "Refresh with source updates and notification wording audits",
+      "requiredBeforeLaunch": "YES"
+    },
+    {
+      "authoritativeSource": "FRA crossing inventory with governed county production packages",
+      "dataset": "Statewide production crossing package completion",
+      "geographicScope": "Texas statewide",
+      "license": "Verify FRA/public-source terms",
+      "priority": "P1",
+      "purpose": "Rail crossing awareness and route context outside currently evidenced counties",
+      "refreshStrategy": "Periodic FRA refresh and county package verification",
+      "requiredBeforeLaunch": "NO"
+    },
+    {
+      "authoritativeSource": "Existing Gridly reports plus authoritative weather/road event sources where licensed",
+      "dataset": "Hazard/weather/road-event intelligence feeds",
+      "geographicScope": "Texas statewide",
+      "license": "Verify before live use",
+      "priority": "P1",
+      "purpose": "Awareness map and route-watch confidence outside Liberty evidence",
+      "refreshStrategy": "Live/feed cadence plus confidence monitoring",
+      "requiredBeforeLaunch": "NO"
+    },
+    {
+      "authoritativeSource": "Derived governed aliases from acquired community/business/road datasets",
+      "dataset": "Search alias and misspelling enrichment",
+      "geographicScope": "Texas statewide",
+      "license": "Internal derivative policy after license review",
+      "priority": "P1",
+      "purpose": "Address, business, community, and landmark search quality",
+      "refreshStrategy": "Deterministic synonym/misspelling review per refresh",
+      "requiredBeforeLaunch": "NO"
+    }
+  ],
+  "schemaVersion": "gridly.lp156.dataAcquisitionRegister.v1"
+}
