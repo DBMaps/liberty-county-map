@@ -1,0 +1,48 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP161",
+  "queries": [
+    {
+      "county": "Liberty",
+      "expectedNoResult": false,
+      "firstResult": "Walmart Supercenter Liberty",
+      "query": "Walmart",
+      "resultCount": 2,
+      "stableDestinationId": "txdest-28c6cd664e1999f6"
+    },
+    {
+      "county": "Bell",
+      "expectedNoResult": false,
+      "firstResult": "H-E-B Temple",
+      "query": "H-E-B",
+      "resultCount": 1,
+      "stableDestinationId": "txdest-298ecfa30d660ac6"
+    },
+    {
+      "county": "Caldwell",
+      "expectedNoResult": false,
+      "firstResult": "Buc-ee's Luling",
+      "query": "Buc-ee’s",
+      "resultCount": 1,
+      "stableDestinationId": "txdest-4e3567e3ed4c1847"
+    },
+    {
+      "county": "Brazos",
+      "expectedNoResult": false,
+      "firstResult": "Chick-fil-A College Station",
+      "query": "Chick-fil-A",
+      "resultCount": 1,
+      "stableDestinationId": "txdest-aab029b212ad7163"
+    },
+    {
+      "county": null,
+      "expectedNoResult": true,
+      "firstResult": null,
+      "query": "not a valid statewide business lookup",
+      "resultCount": 0,
+      "stableDestinationId": null
+    }
+  ],
+  "schemaVersion": "gridly.lp161.businessSearchCertification.v1",
+  "status": "PASS"
+}
