@@ -1,0 +1,14 @@
+{
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "geometryAuthority": "not executed without owner source",
+  "milestone": "LP160.1E",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "reason": "Governed owner GeoParquet source is not readable in this execution environment; address-array adapter is recorded for owner execution.",
+  "records": [],
+  "schemaVersion": "gridly.lp1601e.addressGeometryConflictReport.v1",
+  "status": "SOURCE_UNAVAILABLE"
+}

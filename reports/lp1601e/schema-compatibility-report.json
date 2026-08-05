@@ -1,0 +1,19 @@
+{
+  "activationUnauthorized": true,
+  "addressesFieldType": "STRUCT(freeform VARCHAR, locality VARCHAR, postcode VARCHAR, region VARCHAR, country VARCHAR)[]",
+  "classification": "SOURCE_UNAVAILABLE",
+  "deploymentUnauthorized": true,
+  "directAddressArrayAccessAbsent": true,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP160.1E",
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "protectedArtifactsUnchanged": true,
+  "reason": "Governed owner GeoParquet source is not readable in this execution environment; address-array adapter is recorded for owner execution.",
+  "runtimeUnchanged": true,
+  "schemaVersion": "gridly.lp1601e.schemaCompatibilityReport.v1",
+  "selectedAddressSqlDeterministic": true,
+  "status": "SOURCE_UNAVAILABLE"
+}
