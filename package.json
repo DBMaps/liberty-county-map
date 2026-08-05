@@ -204,6 +204,8 @@
     "verify:lp1601b": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
     "test:lp1601b": "node --test tests/lp1601-overture-texas-destination-manufacturing.test.mjs",
     "verify:lp1601c": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
-    "test:lp1601c": "node --test tests/lp1601c-duckdb-extraction.test.mjs"
+    "test:lp1601c": "node --test tests/lp1601c-duckdb-extraction.test.mjs",
+    "verify:lp1601d": "node tools/lp1601-manufacture-overture-texas-destinations.mjs",
+    "test:lp1601d": "node --test tests/lp1601d-overture-schema-mapping.test.mjs"
   }
 }
