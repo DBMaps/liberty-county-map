@@ -1,0 +1,121 @@
+{
+  "counties": [
+    {
+      "countyFips": "48043",
+      "countyName": "Brewster",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "West Texas and border, sparse"
+    },
+    {
+      "countyFips": "48061",
+      "countyName": "Cameron",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "South Texas and border"
+    },
+    {
+      "countyFips": "48113",
+      "countyName": "Dallas",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "North Texas major urban density"
+    },
+    {
+      "countyFips": "48141",
+      "countyName": "El Paso",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "West Texas border metro"
+    },
+    {
+      "countyFips": "48157",
+      "countyName": "Fort Bend",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "large metropolitan county"
+    },
+    {
+      "countyFips": "48167",
+      "countyName": "Galveston",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 1,
+      "selectionReason": "Gulf Coast"
+    },
+    {
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 6,
+      "selectionReason": "highest destination density metro"
+    },
+    {
+      "countyFips": "48245",
+      "countyName": "Jefferson",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "Gulf Coast and East Texas"
+    },
+    {
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 2,
+      "selectionReason": "mandatory preserved benchmark"
+    },
+    {
+      "countyFips": "48301",
+      "countyName": "Loving",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "low destination count rural"
+    },
+    {
+      "countyFips": "48303",
+      "countyName": "Lubbock",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "South Plains regional center"
+    },
+    {
+      "countyFips": "48339",
+      "countyName": "Montgomery",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "medium/large county"
+    },
+    {
+      "countyFips": "48375",
+      "countyName": "Potter",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "Panhandle"
+    },
+    {
+      "countyFips": "48439",
+      "countyName": "Tarrant",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "North Texas urban"
+    },
+    {
+      "countyFips": "48453",
+      "countyName": "Travis",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 1,
+      "selectionReason": "Central Texas urban"
+    },
+    {
+      "countyFips": "48479",
+      "countyName": "Webb",
+      "countyPackageExecution": "SOURCE_UNAVAILABLE_IN_REPOSITORY",
+      "localCandidateFixtureCount": 0,
+      "selectionReason": "South Texas border"
+    }
+  ],
+  "countyCount": 16,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP163",
+  "schemaVersion": "gridly.lp163.representativeCountyRoutingResults.v1",
+  "selectionRule": "Governed geographic and density roles; ascending FIPS final ordering"
+}
