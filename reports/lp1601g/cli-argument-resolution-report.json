@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp1601g.cliArgumentResolutionReport.v1",
+  "milestone": "LP160.1G",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "write": true,
+  "source": {
+    "supplied": true,
+    "fileName": "CONTROLLED_TEST_FIXTURE",
+    "absolute": false,
+    "sha256": "E790657A9FAA0720"
+  },
+  "duckdbPath": {
+    "supplied": false
+  },
+  "stagingDirectory": {
+    "supplied": false
+  },
+  "expectedSha256Supplied": false
+}

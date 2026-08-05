@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "gridly.lp1601g.finalOwnerLocalManufacturingAssessment.v1",
+  "milestone": "LP160.1G",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "protectedArtifactsModified": false,
+  "selectedMode": "CONTROLLED_TEST_FIXTURE",
+  "sourceSize": null,
+  "sourceSha256": null,
+  "duckDbVersion": null,
+  "sourceRowsProcessed": 0,
+  "texasConfirmedRows": 0,
+  "retainedDestinations": 0,
+  "exclusions": 0,
+  "duplicatesRemoved": 0,
+  "countiesRepresented": 254,
+  "finalClassification": "SOURCE_UNAVAILABLE",
+  "conditions": [
+    "CONTROLLED_TEST_FIXTURE cannot produce statewide completion."
+  ]
+}
