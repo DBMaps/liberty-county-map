@@ -3,6 +3,16 @@
   "expectedSchemaCompatibility": "SOURCE_UNAVAILABLE",
   "generatedAt": "NOT_RECORDED_DETERMINISTIC",
   "indexes": "SOURCE_UNAVAILABLE",
+  "metadataCategories": {
+    "columns": "SOURCE_UNAVAILABLE",
+    "constraints": "SOURCE_UNAVAILABLE",
+    "indexes": "SOURCE_UNAVAILABLE",
+    "policyInventory": "SOURCE_UNAVAILABLE",
+    "routines": "SOURCE_UNAVAILABLE",
+    "schemas": "SOURCE_UNAVAILABLE",
+    "tables": "SOURCE_UNAVAILABLE",
+    "triggers": "SOURCE_UNAVAILABLE"
+  },
   "milestone": "LP169",
   "objects": [
     {
@@ -33,6 +43,7 @@
   ],
   "policies": "SOURCE_UNAVAILABLE",
   "remoteWrites": 0,
+  "sourceSystem": "SOURCE_UNAVAILABLE",
   "status": "SOURCE_UNAVAILABLE",
   "triggers": "SOURCE_UNAVAILABLE"
 }
