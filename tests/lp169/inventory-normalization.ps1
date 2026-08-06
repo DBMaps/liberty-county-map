@@ -1,18 +1,11 @@
-param([Parameter(Mandatory=$true)][string]$CaptureScriptPath)
+param([Parameter(Mandatory=$true)][string]$NormalizationHelperPath)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-$Tokens = $null
-$ParseErrors = $null
-$Ast = [System.Management.Automation.Language.Parser]::ParseFile($CaptureScriptPath, [ref]$Tokens, [ref]$ParseErrors)
-$ParseErrors = @($ParseErrors)
-if ($ParseErrors.Count -ne 0) { throw 'Capture script is not valid Windows PowerShell syntax.' }
-$FunctionAst = $Ast.Find({ param($Node) $Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq 'Get-NormalizedInventoryNames' }, $true)
-if ($null -eq $FunctionAst) { throw 'Normalization helper was not found.' }
-& ([scriptblock]::Create($FunctionAst.Extent.Text))
 
-# Exercise diagnostic construction through the normalizer so its nested helper
-# runs within the lexical parent context used by the capture script.
+. (Resolve-Path $NormalizationHelperPath)
+
+# Exercise diagnostic construction through the shared production normalizer.
 $DiagnosticCaught = $null
 try {
   Get-NormalizedInventoryNames `
@@ -23,16 +16,16 @@ try {
 } catch {
   $DiagnosticCaught = $_
 }
-if ($null -eq $DiagnosticCaught) { throw 'Parent-path diagnostic construction did not terminate.' }
+if ($null -eq $DiagnosticCaught) { throw 'Shared-helper diagnostic construction did not terminate.' }
 $DiagnosticMessage = $DiagnosticCaught.Exception.Message
-if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryBlankOutput')) { throw 'Parent-path diagnostic lost its governed identifier.' }
-if ($DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw 'Parent-path diagnostic did not preserve System.ArgumentException.' }
-if ($DiagnosticCaught.Exception.GetType().Name -eq 'CommandNotFoundException') { throw 'Parent-path diagnostic escaped as CommandNotFoundException.' }
-if (-not $DiagnosticMessage.Contains('diagnostic source')) { throw 'Parent-path diagnostic omitted the safe source-command label.' }
-if (-not $DiagnosticMessage.Contains('expected record properties: [name]')) { throw 'Parent-path diagnostic omitted the expected schema.' }
-if (-not $DiagnosticMessage.Contains('observed properties only: []')) { throw 'Parent-path diagnostic omitted the observed property names.' }
+if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryBlankOutput')) { throw 'Shared-helper diagnostic lost its governed identifier.' }
+if ($DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw 'Shared-helper diagnostic did not preserve System.ArgumentException.' }
+if ($DiagnosticCaught.Exception.GetType().Name -eq 'CommandNotFoundException') { throw 'Shared-helper diagnostic escaped as CommandNotFoundException.' }
+if (-not $DiagnosticMessage.Contains('diagnostic source')) { throw 'Shared-helper diagnostic omitted the safe source-command label.' }
+if (-not $DiagnosticMessage.Contains('expected record properties: [name]')) { throw 'Shared-helper diagnostic omitted the expected schema.' }
+if (-not $DiagnosticMessage.Contains('observed properties only: []')) { throw 'Shared-helper diagnostic omitted the observed property names.' }
 foreach ($ForbiddenDiagnosticValue in @('SECRET_DIAGNOSTIC_VALUE', 'CAPTURED_DIAGNOSTIC_VALUE')) {
-  if ($DiagnosticMessage.Contains($ForbiddenDiagnosticValue)) { throw 'A captured value escaped into the parent-path diagnostic.' }
+  if ($DiagnosticMessage.Contains($ForbiddenDiagnosticValue)) { throw 'A captured value escaped into the shared-helper diagnostic.' }
 }
 
 function Assert-StableResult([string]$JsonText, [int]$ExpectedCount, [string]$ExpectedNames, [switch]$AllowEmpty) {
