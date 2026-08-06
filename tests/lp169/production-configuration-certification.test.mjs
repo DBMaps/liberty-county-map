@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenceContentIdentity, reconcileEvidence, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
+import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenceContentIdentity, loadSqlEditorEvidence, reconcileEvidence, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
 
 const captureScriptPath = path.join(ROOT, 'tools/lp169/capture-owner-production-evidence.ps1');
 const captureScript = fs.readFileSync(captureScriptPath, 'utf8');
@@ -39,12 +39,19 @@ test('certification is read-only and cannot authorize operations',()=>{
   assert.equal(reports['storage-policy-certification.json'].policiesChanged,0);
 });
 
-test('missing credentials and owner evidence fail closed',()=>{
-  const reports=certify();
+test('missing credentials and governed owner SQL evidence state fail closed',()=>{
+  const ownerSqlEvidence=loadSqlEditorEvidence();
+  const reports=certify(), summary=reports['certification-summary.json'];
+  const expectedStorageClassification=ownerSqlEvidence?'PARTIAL_EVIDENCE':'SOURCE_UNAVAILABLE';
   assert.equal(reports['supabase-project-certification.json'].status,'SOURCE_UNAVAILABLE');
-  assert.equal(reports['storage-inventory-certification.json'].status,'SOURCE_UNAVAILABLE');
-  assert.notEqual(reports['certification-summary.json'].overallClassification,'PRODUCTION_CONFIGURATION_CERTIFIED');
-  assert.equal(reports['certification-summary.json'].overallClassification,'OWNER_EXECUTION_REQUIRED');
+  assert.equal(reports['storage-inventory-certification.json'].status,expectedStorageClassification);
+  assert.notEqual(expectedStorageClassification,'PASS');
+  assert.notEqual(expectedStorageClassification,'COMPLETE');
+  assert.notEqual(summary.overallClassification,'PRODUCTION_CONFIGURATION_CERTIFIED');
+  assert.equal(summary.overallClassification,ownerSqlEvidence?'NOT_READY_CONFIGURATION_GAPS_REMAIN':'OWNER_EXECUTION_REQUIRED');
+  assert.equal(summary.deploymentAuthorized,false);
+  assert.equal(summary.activationAuthorized,false);
+  assert.equal(summary.publicLaunchAuthorized,false);
 });
 
 test('evidence validation detects duplicate identities and partial evidence stays partial',()=>{
