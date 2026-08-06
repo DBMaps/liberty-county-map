@@ -52,3 +52,6 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /evidence/lp173/owner-evidence.local.json
 # LP173.1 sanitized provider metadata export remains local.
 /evidence/lp1731/production-metadata.local.json
+# LP175 sanitized authoritative provider capture remains local; its SHA-256 is
+# propagated into governed evidence by the deterministic capture command.
+/evidence/lp175/supabase-production-metadata.capture.json

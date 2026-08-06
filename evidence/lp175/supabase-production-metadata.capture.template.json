@@ -1,0 +1,26 @@
+{
+  "backup": {
+    "latestSuccessfulBackupMetadata": "COPY EXACT SANITIZED PROVIDER VALUE",
+    "managedScheduledBackups": true,
+    "pointInTimeRecoveryEnabled": false,
+    "schedule": "daily"
+  },
+  "environment": "production",
+  "monitoring": {
+    "active": true,
+    "product": "Supabase Observability / Unified Logs",
+    "services": [
+      "API Gateway",
+      "Auth",
+      "Database",
+      "Edge Functions",
+      "PostgREST",
+      "Realtime",
+      "Storage"
+    ]
+  },
+  "provider": "Supabase",
+  "schemaVersion": "gridly.lp175.supabaseProductionMetadataCapture.v1",
+  "source": "COPY EXACT AUTHORITATIVE SOURCE DESCRIPTION",
+  "sourceReportedTime": "COPY EXACT PROVIDER TIMESTAMP"
+}
