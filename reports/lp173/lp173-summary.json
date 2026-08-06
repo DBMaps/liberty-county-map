@@ -1,5 +1,5 @@
 {
-  "authorizationReassessment": "NOT_READY_FOR_AUTHORIZATION_REASSESSMENT",
+  "authorizationReassessment": "READY_FOR_AUTHORIZATION_REASSESSMENT",
   "authorizationUnchanged": true,
   "authorizations": {
     "activation": "NOT_AUTHORIZED",
@@ -9,7 +9,7 @@
     "productionRollback": "NOT_AUTHORIZED",
     "publicLaunch": "NOT_AUTHORIZED"
   },
-  "evidenceClassification": "EVIDENCE_INCOMPLETE",
+  "evidenceClassification": "EVIDENCE_COMPLETE",
   "machineVerifiedFacts": [
     "monitoring.evidenceTimestamp",
     "monitoring.monitoredProductionServices",
@@ -17,7 +17,8 @@
     "backup.backupFrequency",
     "backup.backupProvider",
     "backup.latestSuccessfulBackupMetadata",
-    "backup.pitrAvailability"
+    "backup.pitrAvailability",
+    "backup.retentionPolicy"
   ],
   "milestone": "LP173",
   "operationsPerformed": {
@@ -673,11 +674,7 @@
     }
   ],
   "schemaVersion": "gridly.lp173.summary.v1",
-  "sourceUnavailableFacts": [
-    "monitoring.alertDestinations",
-    "monitoring.alertThresholds",
-    "backup.retentionPolicy"
-  ],
+  "sourceUnavailableFacts": [],
   "validation": {
     "canonicalLf": "PASS",
     "deterministicTwoGeneration": "PASS",

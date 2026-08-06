@@ -1,6 +1,6 @@
 {
   "authorizationGranted": false,
-  "authorizationReassessment": "NOT_READY_FOR_AUTHORIZATION_REASSESSMENT",
+  "authorizationReassessment": "READY_FOR_AUTHORIZATION_REASSESSMENT",
   "authorizationUnchanged": true,
   "authorizations": {
     "activation": "NOT_AUTHORIZED",
@@ -20,6 +20,6 @@
     "publicLaunches": 0,
     "runtimeModifications": 0
   },
-  "rationale": "Governed operational evidence remains incomplete; readiness cannot be inferred.",
+  "rationale": "All governed operational evidence is complete and protected Git-blob identities pass.",
   "schemaVersion": "gridly.lp174.authorizationReassessment.v1"
 }

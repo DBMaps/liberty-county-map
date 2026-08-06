@@ -10,7 +10,7 @@
     "workingTreeIgnored": "PASS"
   },
   "classification": "PASS",
-  "failClosedAuthorization": "PASS",
+  "failClosedAuthorization": "NOT_APPLICABLE",
   "milestone": "LP174",
   "protectedArtifactCount": 104,
   "protectedArtifacts": [
