@@ -17,7 +17,7 @@ const evidence = records => ({
   schemaVersion: 2,
   provenance: {
     evidenceIdentifier: 'LP169.1-OWNER-EVIDENCE', sourceSystem: 'OWNER_WINDOWS', captureMethod: 'SAFE_READ_ONLY_COMMANDS',
-    commandFamily: 'SUPABASE_GH_PSQL', authentication: 'OWNER_AUTHENTICATED', readOnly: true, redactionStatus: 'SANITIZED',
+    commandFamily: 'SUPABASE_GH_SQL_EDITOR', authentication: 'OWNER_AUTHENTICATED', readOnly: true, redactionStatus: 'SANITIZED',
     schemaVersion: 2, deterministicContentIdentity: evidenceContentIdentity(records), completeness: 'PARTIAL', status: 'OWNER_REVIEWED'
   }, records
 });
@@ -71,7 +71,7 @@ test('secret-like evidence is rejected without accepting partial unsafe content'
 test('ingester atomically accepts safe drafts and never echoes rejected material',()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'lp169-ingest-'));
   try {
-    const provenance={evidenceIdentifier:'LP169.1-OWNER-EVIDENCE',sourceSystem:'OWNER_WINDOWS',captureMethod:'SAFE_READ_ONLY_COMMANDS',commandFamily:'SUPABASE_GH_PSQL',authentication:'OWNER_AUTHENTICATED',readOnly:true,redactionStatus:'SANITIZED',completeness:'PARTIAL',status:'OWNER_REVIEWED'};
+    const provenance={evidenceIdentifier:'LP169.1-OWNER-EVIDENCE',sourceSystem:'OWNER_WINDOWS',captureMethod:'SAFE_READ_ONLY_COMMANDS',commandFamily:'SUPABASE_GH_SQL_EDITOR',authentication:'OWNER_AUTHENTICATED',readOnly:true,redactionStatus:'SANITIZED',completeness:'PARTIAL',status:'OWNER_REVIEWED'};
     const safePath=path.join(temp,'safe.json'), unsafePath=path.join(temp,'unsafe.json'), output=path.join(temp,'owner-evidence.json');
     fs.writeFileSync(safePath,JSON.stringify({schemaVersion:2,provenance,records:[{identifier:'SUPABASE_PROJECT',status:'SOURCE_UNAVAILABLE'}]}));
     const accepted=spawnSync(process.execPath,['tools/lp169/ingest-owner-evidence.mjs',safePath,output],{cwd:ROOT,encoding:'utf8'});
@@ -189,6 +189,8 @@ test('owner capture publishes atomically, cleans staging, and supports command s
 
 test('owner capture remains secret-safe and metadata-only',()=>{
   for (const marker of ['authorization','bearer','PRIVATE KEY','postgresql','password','sb_']) assert.ok(captureScript.toLowerCase().includes(marker.toLowerCase()));
+  assert.doesNotMatch(captureScript,/\bpsql\b/i);
+  assert.match(captureScript,/OWNER_SQL_EDITOR_EXPORT_INGESTION_REQUIRED/);
   assert.match(captureScript,/access\[_-\]\?token/);
   assert.match(captureScript,/Evidence capture rejected unsafe content; no captured content was displayed/);
   assert.doesNotMatch(captureScript,/supabase[^\n]*(?:db push|migration|functions deploy|storage|link)|gh[^\n]*(?:secret set|workflow run)/i);
@@ -202,7 +204,7 @@ test('capture and Windows matrix share the side-effect-free normalization helper
   assert.doesNotMatch(inventoryMatrix,/Parser::ParseFile|FunctionDefinitionAst|Extent\.Text|ScriptBlock::Create/);
   assert.doesNotMatch(captureScript,/function\s+Get-NormalizedInventoryNames|function\s+Stop-InventoryNormalization/);
   assert.equal([...normalizationHelper.matchAll(/^function\s+/gm)].length,2);
-  assert.doesNotMatch(normalizationHelper,/\b(?:gh|supabase|psql|Invoke-WebRequest|Invoke-RestMethod|Set-Content|Out-File|Add-Content|New-Item|Move-Item|Remove-Item|Copy-Item|deploy|upload|activate)\b|\$env:/i);
+  assert.doesNotMatch(normalizationHelper,/\b(?:gh|supabase|Invoke-WebRequest|Invoke-RestMethod|Set-Content|Out-File|Add-Content|New-Item|Move-Item|Remove-Item|Copy-Item|deploy|upload|activate)\b|\$env:/i);
 });
 
 test('owner inventories use schema-aware PowerShell 5.1-safe normalization',()=>{

@@ -1,6 +1,17 @@
 {
+  "aggregateCountDoesNotProve": [
+    "EXACT_PACKAGE_NAMES",
+    "EXACT_CERTIFICATE_NAMES",
+    "OBJECT_HASHES",
+    "MIME_TYPES"
+  ],
   "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
   "categories": [
+    {
+      "category": "CERTIFIED_ADDRESS_BUCKET_IDENTITY",
+      "delivery": "SUPABASE_STORAGE",
+      "status": "SOURCE_UNAVAILABLE"
+    },
     {
       "category": "COUNTY_ADDRESS_PACKAGES",
       "delivery": "SUPABASE_STORAGE",
@@ -26,5 +37,7 @@
   "milestone": "LP169",
   "objectsRead": 0,
   "objectsWritten": 0,
+  "observedAggregateCount": null,
+  "sourceSystem": "SOURCE_UNAVAILABLE",
   "status": "SOURCE_UNAVAILABLE"
 }

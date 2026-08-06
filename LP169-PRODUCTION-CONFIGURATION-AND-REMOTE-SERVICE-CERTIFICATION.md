@@ -34,7 +34,7 @@ The governed repository-pattern scan does not report committed secret material, 
 
 ## Owner-assisted evidence process
 
-Prerequisites: Windows PowerShell 7, Git, Node/npm, Supabase CLI authenticated to the intended project, `psql` with a read-only account if database metadata is captured, and GitHub CLI authenticated with repository-metadata access. Run from a clean clone. Review all intermediate output on screen; never redirect raw CLI output into the repository. Commands below emit names/status/counts only.
+Prerequisites: Windows PowerShell 7, Git, Node/npm, Supabase CLI authenticated to the intended project, the authenticated Supabase Dashboard SQL Editor for database metadata, and GitHub CLI authenticated with repository-metadata access. Run from a clean clone. Review all intermediate output on screen; never redirect raw CLI output into the repository. Commands below emit names/status/counts only.
 
 ```powershell
 Set-StrictMode -Version Latest
@@ -72,11 +72,10 @@ $Required | ForEach-Object {
 } | ConvertTo-Json -Depth 3
 ```
 
-Database and Storage metadata should be captured only with an owner-approved read-only account. Use the supplied SQL through `psql` interactively so the connection string is neither written to a file nor placed on the command line:
+Database and Storage metadata should be captured only with an owner-approved read-only account. Use the governed LP169.3 SQL file in Supabase SQL Editor, export its single result as CSV, and ingest it with the Node command:
 
 ```powershell
-# In psql, after interactive authentication, run metadata-only queries:
-psql
+# In Supabase SQL Editor, run tools/lp169/lp169-owner-metadata-query.sql
 \pset tuples_only on
 \pset format unaligned
 SELECT table_schema || '.' || table_name FROM information_schema.tables WHERE table_schema IN ('public','history_capture') ORDER BY 1;

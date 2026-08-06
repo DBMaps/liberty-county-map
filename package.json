@@ -255,6 +255,7 @@
     "audit:lp169": "node tools/lp169/certify-production-configuration.mjs audit",
     "certify:lp169": "node tools/lp169/certify-production-configuration.mjs certify",
     "verify:lp169": "node tools/lp169/certify-production-configuration.mjs verify",
-    "test:lp169": "node --test tests/lp169/*.test.mjs"
+    "test:lp169": "node --test tests/lp169/*.test.mjs",
+    "ingest:lp169:sql-editor": "node tools/lp169/ingest-sql-editor-evidence.mjs"
   }
 }

@@ -100,26 +100,12 @@ foreach ($Environment in $Environments) {
   Write-SafeJson ("github-environment-{0}-secret-names-safe.json" -f ($Environment.name -replace '[^A-Za-z0-9_.-]','_')) $EnvironmentSecrets
 }
 
-# Requires an already configured read-only psql session (for example, owner-set
-# PG* environment variables). Queries inspect metadata and aggregates only.
-$Sql = @'
-SELECT json_build_object('schemas',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT schema_name AS x FROM information_schema.schemata WHERE schema_name IN ('public','storage','history_capture')) q;
-SELECT json_build_object('objects',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT table_schema||'.'||table_name AS x FROM information_schema.tables WHERE table_schema IN ('public','storage','history_capture')) q;
-SELECT json_build_object('columns',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT table_schema||'.'||table_name||':'||column_name||':'||data_type AS x FROM information_schema.columns WHERE table_schema IN ('public','storage','history_capture')) q;
-SELECT json_build_object('routines',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT routine_schema||'.'||routine_name||':'||routine_type AS x FROM information_schema.routines WHERE routine_schema IN ('public','storage','history_capture')) q;
-SELECT json_build_object('constraints',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT constraint_schema||'.'||table_name||':'||constraint_name||':'||constraint_type AS x FROM information_schema.table_constraints WHERE constraint_schema IN ('public','storage','history_capture')) q;
-SELECT json_build_object('indexes',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT schemaname||'.'||tablename||':'||indexname AS x FROM pg_indexes WHERE schemaname IN ('public','storage','history_capture')) q;
-SELECT json_build_object('triggers',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT trigger_schema||'.'||event_object_table||':'||trigger_name||':'||event_manipulation AS x FROM information_schema.triggers WHERE trigger_schema IN ('public','storage','history_capture')) q;
-SELECT json_build_object('rowSecurity',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT n.nspname||'.'||c.relname||':'||c.relrowsecurity::text AS x FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind IN ('r','p') AND n.nspname IN ('public','storage','history_capture')) q;
-SELECT json_build_object('policies',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT schemaname||'.'||tablename||':'||policyname||':'||cmd AS x FROM pg_policies WHERE schemaname IN ('public','storage','history_capture')) q;
-SELECT json_build_object('buckets',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT id||':'||public::text AS x FROM storage.buckets) q;
-SELECT json_build_object('objectCounts',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT bucket_id||':'||count(*)::text AS x FROM storage.objects GROUP BY bucket_id) q;
-SELECT json_build_object('certifiedAddressObjects',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT bucket_id||':'||name||':'||coalesce((metadata->>'size'),'UNKNOWN')||':'||coalesce((metadata->>'mimetype'),'UNKNOWN') AS x FROM storage.objects WHERE bucket_id='certified-addresses') q;
-'@
-$global:LASTEXITCODE = 0
-$DatabaseMetadata = $Sql | & psql --no-psqlrc --quiet --tuples-only --no-align | Out-String
-if ($LASTEXITCODE -ne 0) { throw 'psql metadata command failed; captured output was not displayed.' }
-Write-Utf8NoBomFile (Join-Path $CaptureDirectory 'database-storage-metadata-safe.jsonl') $DatabaseMetadata
+# Database and Storage catalog evidence is captured separately in the authenticated
+# Supabase Dashboard. This script never requests a database password or invokes a
+# database client. Run tools/lp169/lp169-owner-metadata-query.sql in SQL Editor,
+# export its single result as CSV, then ingest it with:
+# npm run ingest:lp169:sql-editor -- "C:\full\path\to\Supabase Snippet Untitled query (4).csv"
+Write-Host 'OWNER_SQL_EDITOR_EXPORT_INGESTION_REQUIRED: run tools/lp169/lp169-owner-metadata-query.sql in Supabase SQL Editor, export the single CSV result, and run npm run ingest:lp169:sql-editor -- <full-csv-path>.'
 
 $Manifest = Get-ChildItem $CaptureDirectory -File | Sort-Object Name |
   Select-Object Name,Length,@{Name='Sha256';Expression={(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()}} |
