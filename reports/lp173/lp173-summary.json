@@ -10,7 +10,15 @@
     "publicLaunch": "NOT_AUTHORIZED"
   },
   "evidenceClassification": "EVIDENCE_INCOMPLETE",
-  "machineVerifiedFacts": [],
+  "machineVerifiedFacts": [
+    "monitoring.evidenceTimestamp",
+    "monitoring.monitoredProductionServices",
+    "monitoring.monitoringProviders",
+    "backup.backupFrequency",
+    "backup.backupProvider",
+    "backup.latestSuccessfulBackupMetadata",
+    "backup.pitrAvailability"
+  ],
   "milestone": "LP173",
   "operationsPerformed": {
     "activations": 0,
@@ -668,13 +676,6 @@
   "sourceUnavailableFacts": [
     "monitoring.alertDestinations",
     "monitoring.alertThresholds",
-    "monitoring.evidenceTimestamp",
-    "monitoring.monitoredProductionServices",
-    "monitoring.monitoringProviders",
-    "backup.backupFrequency",
-    "backup.backupProvider",
-    "backup.latestSuccessfulBackupMetadata",
-    "backup.pitrAvailability",
     "backup.retentionPolicy"
   ],
   "validation": {

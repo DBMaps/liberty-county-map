@@ -1,44 +1,44 @@
 {
   "backup": {
     "backupFrequency": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 backup authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record backup.backupFrequency was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "daily",
+      "verificationMethod": "exact comparison of backup.schedule in the identified Supabase capture artifact"
     },
     "backupProvider": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 backup authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record backup.backupProvider was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "Supabase managed scheduled backups",
+      "verificationMethod": "exact comparison of backup.managedScheduledBackups in the identified Supabase capture artifact"
     },
     "latestSuccessfulBackupMetadata": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 backup authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record backup.latestSuccessfulBackupMetadata was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "2026-08-06 04:45:55 (+0000) — Physical scheduled backup",
+      "verificationMethod": "exact comparison of backup.latestSuccessfulBackupMetadata in the identified Supabase capture artifact"
     },
     "pitrAvailability": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 backup authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record backup.pitrAvailability was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "disabled",
+      "verificationMethod": "exact comparison of backup.pointInTimeRecoveryEnabled in the identified Supabase capture artifact"
     },
     "retentionPolicy": {
       "classification": "SOURCE_UNAVAILABLE",
@@ -115,24 +115,24 @@
       "verificationMethod": "required source record monitoring.alertThresholds was unavailable"
     },
     "evidenceTimestamp": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 monitoring authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record monitoring.evidenceTimestamp was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "2026-08-06 04:45:55 (+0000)",
+      "verificationMethod": "exact comparison of sourceReportedTime in the identified Supabase capture artifact"
     },
     "monitoredProductionServices": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 monitoring authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record monitoring.monitoredProductionServices was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "API Gateway, Auth, Database, Edge Functions, PostgREST, Realtime, Storage",
+      "verificationMethod": "exact comparison of monitoring.services in the identified Supabase capture artifact"
     },
     "monitoringOwnership": {
       "classification": "OWNER_ATTESTED",
@@ -145,14 +145,14 @@
       "verificationMethod": "recorded directly from the supplied owner attestation without inference"
     },
     "monitoringProviders": {
-      "classification": "SOURCE_UNAVAILABLE",
-      "collectionMethod": "metadata-only local export lookup",
-      "evidenceType": "production platform metadata",
-      "source": "LP173.1 monitoring authoritative metadata export",
-      "sourceArtifactIdentity": null,
-      "sourceReportedTime": null,
-      "value": null,
-      "verificationMethod": "required source record monitoring.monitoringProviders was unavailable"
+      "classification": "MACHINE_VERIFIED",
+      "collectionMethod": "deterministic ingestion of sanitized Supabase production metadata capture",
+      "evidenceType": "authoritative Supabase project metadata",
+      "source": "Supabase production project dashboard — Database Backups and Observability / Unified Logs",
+      "sourceArtifactIdentity": "sha256:428bdc1e9d81989b5632c7da4cb215aa5725a629086fff2722923033808ce16a",
+      "sourceReportedTime": "2026-08-06 04:45:55 (+0000)",
+      "value": "Supabase Observability / Unified Logs",
+      "verificationMethod": "exact comparison of monitoring.product and monitoring.active in the identified Supabase capture artifact"
     }
   },
   "operationalOwnership": {

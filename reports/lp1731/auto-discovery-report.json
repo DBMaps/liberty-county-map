@@ -9,9 +9,17 @@
     "publicLaunch": "NOT_AUTHORIZED"
   },
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_AUTO_DISCOVERY",
-  "classification": "AUTO_DISCOVERY_NO_EVIDENCE",
+  "classification": "AUTO_DISCOVERY_PARTIAL",
   "fieldsByClassification": {
-    "MACHINE_VERIFIED": [],
+    "MACHINE_VERIFIED": [
+      "monitoring.evidenceTimestamp",
+      "monitoring.monitoredProductionServices",
+      "monitoring.monitoringProviders",
+      "backup.backupFrequency",
+      "backup.backupProvider",
+      "backup.latestSuccessfulBackupMetadata",
+      "backup.pitrAvailability"
+    ],
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
     "OWNER_ACTION_REQUIRED": [],
@@ -34,13 +42,6 @@
     "SOURCE_UNAVAILABLE": [
       "monitoring.alertDestinations",
       "monitoring.alertThresholds",
-      "monitoring.evidenceTimestamp",
-      "monitoring.monitoredProductionServices",
-      "monitoring.monitoringProviders",
-      "backup.backupFrequency",
-      "backup.backupProvider",
-      "backup.latestSuccessfulBackupMetadata",
-      "backup.pitrAvailability",
       "backup.retentionPolicy"
     ]
   },

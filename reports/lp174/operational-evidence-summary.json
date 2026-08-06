@@ -1,8 +1,8 @@
 {
   "blockerCounts": {
     "ownerActionRequired": 0,
-    "sourceUnavailable": 10,
-    "total": 10
+    "sourceUnavailable": 3,
+    "total": 3
   },
   "blockers": [
     {
@@ -15,41 +15,21 @@
     },
     {
       "classification": "SOURCE_UNAVAILABLE",
-      "fact": "monitoring.evidenceTimestamp"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "monitoring.monitoredProductionServices"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "monitoring.monitoringProviders"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "backup.backupFrequency"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "backup.backupProvider"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "backup.latestSuccessfulBackupMetadata"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "backup.pitrAvailability"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
       "fact": "backup.retentionPolicy"
     }
   ],
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_OPERATIONAL_REASSESSMENT",
   "classification": "EVIDENCE_INCOMPLETE",
-  "discoveryClassification": "AUTO_DISCOVERY_NO_EVIDENCE",
-  "machineVerifiedFacts": [],
+  "discoveryClassification": "AUTO_DISCOVERY_PARTIAL",
+  "machineVerifiedFacts": [
+    "monitoring.evidenceTimestamp",
+    "monitoring.monitoredProductionServices",
+    "monitoring.monitoringProviders",
+    "backup.backupFrequency",
+    "backup.backupProvider",
+    "backup.latestSuccessfulBackupMetadata",
+    "backup.pitrAvailability"
+  ],
   "metadataOnly": true,
   "milestone": "LP174",
   "ownerAttestedFacts": [
