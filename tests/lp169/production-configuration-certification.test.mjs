@@ -6,6 +6,9 @@ import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenceContentIdentity, reconcileEvidence, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
 
+const captureScriptPath = path.join(ROOT, 'tools/lp169/capture-owner-production-evidence.ps1');
+const captureScript = fs.readFileSync(captureScriptPath, 'utf8');
+
 const evidence = records => ({
   schemaVersion: 2,
   provenance: {
@@ -143,4 +146,46 @@ test('two isolated runs are byte-identical canonical LF',()=>{
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'lp169-test-'));
   try {const a=path.join(temp,'a'),b=path.join(temp,'b');writeReports(a);writeReports(b);for(const n of REPORT_NAMES){const x=fs.readFileSync(path.join(a,n)),y=fs.readFileSync(path.join(b,n));assert.deepEqual(x,y);assert.equal(x.includes(13),false);assert.equal(x.toString(),encode(JSON.parse(x)));}}
   finally{fs.rmSync(temp,{recursive:true,force:true});}
+});
+
+test('owner capture uses the Windows PowerShell 5.1 UTF-8-no-BOM path',()=>{
+  assert.doesNotMatch(captureScript, /-Encoding\s+utf8NoBOM/i);
+  assert.doesNotMatch(captureScript, /\[System\.Text\.UTF8Encoding\]::new/i);
+  assert.match(captureScript, /New-Object System\.Text\.UTF8Encoding\(\$false\)/);
+  assert.match(captureScript, /\[System\.IO\.File\]::WriteAllText/);
+  assert.doesNotMatch(captureScript, /\b(?:Set-Content|Out-File|Add-Content)\b|(?:^|\s)(?:>|>>)\s*[^&]/m);
+});
+
+test('capture encoding contract is deterministic UTF-8 without BOM and canonical LF',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'lp169-ps51-bytes-'));
+  try {
+    const content='{\r\n  "name": "Gridly Platform"\r\n}\r\n'.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    const first=path.join(temp,'first.json'), second=path.join(temp,'second.json');
+    fs.writeFileSync(first,content,{encoding:'utf8'}); fs.writeFileSync(second,content,{encoding:'utf8'});
+    for (const file of [first,second]) {
+      const bytes=fs.readFileSync(file);
+      assert.notDeepEqual([...bytes.subarray(0,3)],[0xef,0xbb,0xbf]);
+      assert.equal(new TextDecoder('utf-8',{fatal:true}).decode(bytes),content);
+      assert.equal(bytes.includes(13),false);
+    }
+    assert.deepEqual(fs.readFileSync(first),fs.readFileSync(second));
+  } finally { fs.rmSync(temp,{recursive:true,force:true}); }
+});
+
+test('owner capture publishes atomically, cleans staging, and supports command shims',()=>{
+  assert.match(captureScript,/\.lp169-capture-/);
+  assert.match(captureScript,/finally\s*\{[\s\S]*Remove-Item[^\n]*\$CaptureDirectory/);
+  assert.match(captureScript,/\.lp169-previous-/);
+  assert.match(captureScript,/Move-Item[^\n]*\$BackupDirectory[^\n]*\$ReviewDirectory/);
+  assert.match(captureScript,/& \$CommandName @Arguments/);
+  assert.doesNotMatch(captureScript,/CommandType\s+(?:-eq\s+)?['"]?Application/i);
+  assert.match(captureScript,/if \(\$LASTEXITCODE -ne 0\).*captured output was not displayed/);
+});
+
+test('owner capture remains secret-safe and metadata-only',()=>{
+  for (const marker of ['authorization','bearer','PRIVATE KEY','postgresql','password','sb_']) assert.ok(captureScript.toLowerCase().includes(marker.toLowerCase()));
+  assert.match(captureScript,/access\[_-\]\?token/);
+  assert.match(captureScript,/Evidence capture rejected unsafe content; no captured content was displayed/);
+  assert.doesNotMatch(captureScript,/supabase[^\n]*(?:db push|migration|functions deploy|storage|link)|gh[^\n]*(?:secret set|workflow run)/i);
+  assert.doesNotMatch(captureScript,/\b(?:deploy|activate|upload|insert|update|delete)\b/i);
 });
