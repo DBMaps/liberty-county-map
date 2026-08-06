@@ -1,0 +1,14 @@
+{
+  "boundary": "METADATA_ONLY_EVIDENCE_COLLECTION",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "evidence": {
+    "backupFrequency": "OWNER_ACTION_REQUIRED",
+    "backupProvider": "OWNER_ACTION_REQUIRED",
+    "latestSuccessfulBackupMetadata": "OWNER_ACTION_REQUIRED",
+    "pitrAvailability": "OWNER_ACTION_REQUIRED",
+    "retentionPolicy": "OWNER_ACTION_REQUIRED"
+  },
+  "metadataOnly": true,
+  "milestone": "LP172",
+  "schemaVersion": "gridly.lp172.backupEvidence.v1"
+}

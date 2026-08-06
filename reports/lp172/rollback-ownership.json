@@ -1,0 +1,13 @@
+{
+  "boundary": "METADATA_ONLY_EVIDENCE_COLLECTION",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "evidence": {
+    "productionValidationAuthority": "OWNER_ACTION_REQUIRED",
+    "releaseApprovalAuthority": "OWNER_ACTION_REQUIRED",
+    "releaseOwner": "OWNER_ACTION_REQUIRED",
+    "rollbackAuthority": "OWNER_ACTION_REQUIRED"
+  },
+  "metadataOnly": true,
+  "milestone": "LP172",
+  "schemaVersion": "gridly.lp172.rollbackOwnership.v1"
+}
