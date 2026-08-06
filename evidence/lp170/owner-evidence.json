@@ -1,0 +1,23 @@
+{
+    "schemaVersion":  1,
+    "records":  [
+                    {
+                        "identifier":  "HEALTH:EDGE_FUNCTIONS",
+                        "classification":  "PARTIAL_EVIDENCE",
+                        "sourceSystem":  "SUPABASE_CLI",
+                        "method":  "READ_ONLY_FUNCTION_METADATA",
+                        "readOnly":  true,
+                        "metadataOnly":  true,
+                        "attestation":  "OWNER_CAPTURE_REQUIRED_FOR_COMPLETE_REQUIREMENT"
+                    },
+                    {
+                        "identifier":  "HEALTH:GITHUB_DEPLOYMENTS",
+                        "classification":  "PARTIAL_EVIDENCE",
+                        "sourceSystem":  "GITHUB_CLI",
+                        "method":  "READ_ONLY_WORKFLOW_METADATA",
+                        "readOnly":  true,
+                        "metadataOnly":  true,
+                        "attestation":  "OWNER_CAPTURE_REQUIRED_FOR_COMPLETE_REQUIREMENT"
+                    }
+                ]
+}

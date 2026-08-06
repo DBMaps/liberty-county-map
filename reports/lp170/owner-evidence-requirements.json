@@ -7,7 +7,7 @@
     "secretValuesAllowed": false,
     "windowsPowerShellVersion": "5.1"
   },
-  "classification": "OWNER_ACTION_REQUIRED",
+  "classification": "PARTIAL_EVIDENCE",
   "generatedAt": "NOT_RECORDED_DETERMINISTIC",
   "milestone": "LP170",
   "requirements": [

@@ -151,8 +151,8 @@
   ],
   "serviceHealth": {
     "database": "SOURCE_UNAVAILABLE",
-    "edgeFunctions": "SOURCE_UNAVAILABLE",
-    "githubDeployments": "SOURCE_UNAVAILABLE",
+    "edgeFunctions": "PARTIAL_EVIDENCE",
+    "githubDeployments": "PARTIAL_EVIDENCE",
     "storage": "SOURCE_UNAVAILABLE",
     "supabaseProject": "SOURCE_UNAVAILABLE"
   }
