@@ -247,9 +247,21 @@ test('inventory normalization rejects every unsafe response family without value
     '[string]::IsNullOrWhiteSpace($Value)'
   ]) assert.ok(captureScript.includes(guard), `missing fail-closed guard: ${guard}`);
   assert.match(captureScript,/observed properties only:/);
-  const diagnosticLines=captureScript.split('\n').filter(line=>line.includes('throw "$SourceCommand'));
-  assert.ok(diagnosticLines.length >= 5);
+  assert.match(captureScript,/New-Object System\.Management\.Automation\.ErrorRecord/);
+  for (const identifier of [
+    'LP169InventorySchemaMismatch',
+    'LP169InventoryBlankOutput',
+    'LP169InventoryNullOutput',
+    'LP169InventoryMalformedJson',
+    'LP169InventoryScalarRoot',
+    'LP169InventoryAmbiguousProperty',
+    'LP169InventoryEmptyNotAllowed'
+  ]) assert.ok(captureScript.includes(`'${identifier}'`), `missing governed diagnostic: ${identifier}`);
+  const diagnosticLines=captureScript.split('\n').filter(line=>line.includes('Stop-InventoryNormalization '));
+  assert.ok(diagnosticLines.length >= 10);
   assert.ok(diagnosticLines.every(line=>!line.includes('$Value')), 'failure diagnostics must never interpolate captured values');
+  assert.ok(diagnosticLines.every(line=>line.includes('expected record properties:')),
+    'every governed diagnostic must describe the expected record schema');
   assert.match(captureScript,/\$Names \| Sort-Object -Unique/);
 });
 
