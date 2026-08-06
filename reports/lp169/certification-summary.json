@@ -20,7 +20,7 @@
   "deployments": 0,
   "generatedAt": "NOT_RECORDED_DETERMINISTIC",
   "milestone": "LP169",
-  "overallClassification": "SOURCE_UNAVAILABLE_REMOTE_VERIFICATION_REQUIRED",
+  "overallClassification": "OWNER_EXECUTION_REQUIRED",
   "productionWrites": 0,
   "publicLaunchAuthorized": false,
   "relationshipToLp168": "Remote evidence gaps remain fail-closed; LP168 NOT_READY is not advanced.",
