@@ -1,0 +1,888 @@
+{
+  "schemaVersion": "gridly.lp176.authorizationDecision.v1",
+  "milestone": "LP176",
+  "boundary": "AUTHORIZATION_DECISION_ONLY_NO_EXECUTION",
+  "governedEvidenceBaseline": {
+    "blockers": 0,
+    "machineVerified": 8,
+    "notConfigured": 2,
+    "ownerAttested": 14,
+    "lp173": "EVIDENCE_COMPLETE",
+    "lp174": "EVIDENCE_COMPLETE",
+    "readiness": "READY_FOR_AUTHORIZATION_REASSESSMENT"
+  },
+  "policySource": "LP167",
+  "priorEvidencePrerequisites": [
+    {
+      "actualClassification": null,
+      "evidence": "reports/lp130-statewide-addresses/statewide-progress.json",
+      "expectedClassification": null,
+      "milestone": "LP130",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "evidence/lp134/certification-results.json",
+      "expectedClassification": null,
+      "milestone": "LP135",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "reports/lp160/statewide-destination-integration-summary.json",
+      "expectedClassification": null,
+      "milestone": "LP160",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "MANUFACTURING_COMPLETE",
+      "evidence": "reports/lp1601m/final-statewide-destination-manufacturing-certification.json",
+      "expectedClassification": null,
+      "milestone": "LP160.1M",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "INTEGRATION_CERTIFIED",
+      "evidence": "reports/lp161/lp161-summary.json",
+      "expectedClassification": "INTEGRATION_CERTIFIED",
+      "milestone": "LP161",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "DETERMINISTIC_CERTIFICATION_RECONCILED",
+      "evidence": "reports/lp1611/deterministic-certification-reconciliation.json",
+      "expectedClassification": null,
+      "milestone": "LP161.1",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN",
+      "evidence": "reports/lp162/lp162-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN",
+      "milestone": "LP162",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_NETWORK_VALIDATION_REQUIRED",
+      "evidence": "reports/lp163/lp163-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_NETWORK_VALIDATION_REQUIRED",
+      "milestone": "LP163",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+      "evidence": "reports/lp164/lp164-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+      "milestone": "LP164",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "tools/lp164/verify-lp164-determinism.mjs",
+      "expectedClassification": null,
+      "milestone": "LP164.1",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_DELIVERY_NOT_IMPLEMENTED",
+      "evidence": "reports/lp165/lp165-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_DELIVERY_NOT_IMPLEMENTED",
+      "milestone": "LP165",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+      "evidence": "reports/lp166/lp166-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+      "milestone": "LP166",
+      "present": true,
+      "status": "PASS"
+    }
+  ],
+  "productionReadinessChecklistAudit": [
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Search",
+      "order": 1,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Routing",
+      "order": 2,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Awareness",
+      "order": 3,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Notifications",
+      "order": 4,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Route Watch",
+      "order": 5,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Reporting",
+      "order": 6,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Settings",
+      "order": 7,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Mobile portrait",
+      "order": 8,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Liberty benchmark",
+      "order": 9,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Truthful failure behavior",
+      "order": 10,
+      "section": "Product",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Address packages",
+      "order": 1,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Destination packages",
+      "order": 2,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Crossing packages",
+      "order": 3,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "County geometry",
+      "order": 4,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Runtime manifests",
+      "order": 5,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Storage inventory",
+      "order": 6,
+      "section": "Data",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Certification inventory",
+      "order": 7,
+      "section": "Data",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Supabase production project",
+      "order": 1,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Storage permissions",
+      "order": 2,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Database policies",
+      "order": 3,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Edge functions",
+      "order": 4,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Environment variables",
+      "order": 5,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Secrets",
+      "order": 6,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Monitoring",
+      "order": 7,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Backups",
+      "order": 8,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rollback",
+      "order": 9,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rate limits",
+      "order": 10,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Error logging",
+      "order": 11,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "PWA readiness",
+      "order": 1,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Domain",
+      "order": 2,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Website",
+      "order": 3,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "App icons",
+      "order": 4,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Splash screen",
+      "order": 5,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Capacitor",
+      "order": 6,
+      "section": "Distribution",
+      "status": "PASS",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Android build",
+      "order": 7,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "iOS build",
+      "order": 8,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "TestFlight",
+      "order": 9,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Play closed testing",
+      "order": 10,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Store accounts",
+      "order": 11,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Store assets",
+      "order": 12,
+      "section": "Distribution",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Privacy Policy",
+      "order": 1,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Terms of Service",
+      "order": 2,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Community reporting disclaimer",
+      "order": 3,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Support contact",
+      "order": 4,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "FAQ",
+      "order": 5,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Pricing configuration",
+      "order": 6,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Subscription terms",
+      "order": 7,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Refund policy where required",
+      "order": 8,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Business entity and account ownership",
+      "order": 9,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Data-use disclosures",
+      "order": 10,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Owner launch approval",
+      "order": 1,
+      "section": "LaunchOperations",
+      "status": "OWNER_REQUIRED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Launch date",
+      "order": 2,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Support plan",
+      "order": 3,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Incident response plan",
+      "order": 4,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rollback owner",
+      "order": 5,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Monitoring owner",
+      "order": 6,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Beta migration plan",
+      "order": 7,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Marketing readiness",
+      "order": 8,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Release notes",
+      "order": 9,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Known limitations",
+      "order": 10,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Launch-day validation script",
+      "order": 11,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED",
+      "reassessment": "PRESERVED_UNLESS_EXPLICITLY_RESOLVED_BY_A_GOVERNED_PREREQUISITE_EVALUATION"
+    }
+  ],
+  "prerequisiteEvaluations": [
+    {
+      "prerequisiteId": "LP167-B001",
+      "title": "Eleven counties retain address certification failures",
+      "lp167Classification": "ACTIVATION_BLOCKER",
+      "supportingEvidence": "reports/lp162/lp162-summary.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Certify each county without weakening exact-match rules.",
+      "applicability": {
+        "deployment": false,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": false
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B002",
+      "title": "Live routing owner evidence is not recorded",
+      "lp167Classification": "LIVE_VALIDATION_REQUIRED",
+      "supportingEvidence": "reports/lp163/lp163-summary.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Record the Talco route attestation and perform a launch-window smoke test.",
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": true
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B003",
+      "title": "Live awareness sources lack governed production validation",
+      "lp167Classification": "LIVE_VALIDATION_REQUIRED",
+      "supportingEvidence": "reports/lp164/lp164-summary.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Validate quiet, active, and cleared states against configured live sources.",
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": true
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B004",
+      "title": "Operating-system notification delivery is not implemented",
+      "lp167Classification": "KNOWN_ACCEPTED_LIMITATION",
+      "supportingEvidence": "reports/lp165/lp165-summary.json",
+      "classification": "SATISFIED_ACCEPTED_LIMITATION",
+      "authorizationDecision": "GATE_SATISFIED",
+      "remainingBlocker": null,
+      "applicability": {
+        "deployment": false,
+        "activation": false,
+        "distribution": false,
+        "publicLaunch": false
+      },
+      "rationale": "Existing LP167 policy expressly permits launch with claims limited to in-app notifications."
+    },
+    {
+      "prerequisiteId": "LP167-B005",
+      "title": "Physical Android and iPhone evidence is not recorded",
+      "lp167Classification": "LIVE_VALIDATION_REQUIRED",
+      "supportingEvidence": "reports/lp166/lp166-summary.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Record real-device browser validation; use closed testing for packaged apps.",
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": true,
+        "publicLaunch": true
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B006",
+      "title": "Production environment and secret review is not recorded",
+      "lp167Classification": "DEPLOYMENT_BLOCKER",
+      "supportingEvidence": "reports/lp169/certification-summary.json; reports/lp174/operational-evidence-summary.json",
+      "classification": "SATISFIED",
+      "authorizationDecision": "GATE_SATISFIED",
+      "remainingBlocker": null,
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": true
+      },
+      "rationale": "Production configuration evidence and the completed operational baseline satisfy this grouped gate."
+    },
+    {
+      "prerequisiteId": "LP167-B007",
+      "title": "Monitoring and error logging readiness is not recorded",
+      "lp167Classification": "DEPLOYMENT_BLOCKER",
+      "supportingEvidence": "reports/lp173/lp173-summary.json; evidence/lp173/owner-evidence.autodiscovered.json",
+      "classification": "SATISFIED",
+      "authorizationDecision": "GATE_SATISFIED",
+      "remainingBlocker": null,
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": true
+      },
+      "rationale": "Monitoring services, provider, evidence time, and owner are truthfully classified; unavailable project alert configuration remains NOT_CONFIGURED rather than inferred PASS."
+    },
+    {
+      "prerequisiteId": "LP167-B008",
+      "title": "Backup and rollback rehearsal is not recorded",
+      "lp167Classification": "DEPLOYMENT_BLOCKER",
+      "supportingEvidence": "reports/lp171/rollback-rehearsal.json; reports/lp173/lp173-summary.json",
+      "classification": "SATISFIED",
+      "authorizationDecision": "GATE_SATISFIED",
+      "remainingBlocker": null,
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": false,
+        "publicLaunch": true
+      },
+      "rationale": "Backup metadata and rollback ownership/rehearsal evidence are complete."
+    },
+    {
+      "prerequisiteId": "LP167-B009",
+      "title": "PWA installability evidence is incomplete",
+      "lp167Classification": "APP_DISTRIBUTION_BLOCKER",
+      "supportingEvidence": "reports/lp167/blocker-register.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Validate manifest, service worker, icons, splash behavior, and installability.",
+      "applicability": {
+        "deployment": false,
+        "activation": false,
+        "distribution": true,
+        "publicLaunch": false
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B010",
+      "title": "Native builds and closed testing are not evidenced",
+      "lp167Classification": "APP_DISTRIBUTION_BLOCKER",
+      "supportingEvidence": "reports/lp167/blocker-register.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Produce governed Android/iOS builds and complete Play closed testing and TestFlight.",
+      "applicability": {
+        "deployment": false,
+        "activation": false,
+        "distribution": true,
+        "publicLaunch": false
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B011",
+      "title": "Store accounts, metadata, screenshots, and support assets are not evidenced",
+      "lp167Classification": "APP_DISTRIBUTION_BLOCKER",
+      "supportingEvidence": "reports/lp167/blocker-register.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Confirm account ownership and complete store and support assets.",
+      "applicability": {
+        "deployment": false,
+        "activation": false,
+        "distribution": true,
+        "publicLaunch": false
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B012",
+      "title": "Legal and paid-product readiness is not recorded",
+      "lp167Classification": "RELEASE_BLOCKER",
+      "supportingEvidence": "reports/lp167/blocker-register.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": true,
+        "publicLaunch": true
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    },
+    {
+      "prerequisiteId": "LP167-B013",
+      "title": "Launch operations ownership and launch window are not approved",
+      "lp167Classification": "OWNER_APPROVAL_REQUIRED",
+      "supportingEvidence": "evidence/lp173/owner-evidence.autodiscovered.json; reports/lp167/blocker-register.json",
+      "classification": "UNSATISFIED",
+      "authorizationDecision": "GATE_BLOCKS_APPLICABLE_OPERATIONS",
+      "remainingBlocker": "Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script.",
+      "applicability": {
+        "deployment": true,
+        "activation": true,
+        "distribution": true,
+        "publicLaunch": true
+      },
+      "rationale": "No completed LP173/LP174/LP175 evidence changes this separately governed LP167 prerequisite."
+    }
+  ],
+  "decisions": {
+    "deployment": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "activation": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B001: Certify each county without weakening exact-match rules.",
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "distribution": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B009: Validate manifest, service worker, icons, splash behavior, and installability.",
+        "LP167-B010: Produce governed Android/iOS builds and complete Play closed testing and TestFlight.",
+        "LP167-B011: Confirm account ownership and complete store and support assets.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "publicLaunch": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "productionRestore": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167 does not grant standing production restore or rollback authority; preserve independent, incident-specific governance."
+      ]
+    },
+    "productionRollback": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167 does not grant standing production restore or rollback authority; preserve independent, incident-specific governance."
+      ]
+    }
+  },
+  "remainingBlockerCount": 9,
+  "protectedIdentityResult": "PASS",
+  "deterministicGeneration": "PASS",
+  "operationsPerformed": {
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "productionRestores": 0,
+    "productionRollbacks": 0,
+    "runtimeModifications": 0
+  },
+  "nextStep": "Resolve the remaining operation-specific LP167 prerequisites, then run a new governed authorization reassessment; do not execute any production operation under LP176."
+}
