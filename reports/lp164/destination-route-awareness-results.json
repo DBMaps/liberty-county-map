@@ -1,0 +1,15 @@
+{
+  "communityPulsePassCount": 48,
+  "destinationCases": 8,
+  "destinationPassCount": 8,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "knowBeforeYouGoPassCount": 48,
+  "lp163TruthfulProviderFailure": "PRESERVED",
+  "milestone": "LP164",
+  "routeCases": 8,
+  "routePassCount": 8,
+  "routeWatch": "COMPATIBLE",
+  "schemaVersion": "gridly.lp164.destinationRouteAwarenessResults.v1",
+  "status": "PASS",
+  "unrelatedRoutePromotionCount": 0
+}

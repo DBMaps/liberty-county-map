@@ -1,0 +1,105 @@
+{
+  "counties": [
+    {
+      "caseCount": 3,
+      "countyFips": "48043",
+      "countyName": "Brewster",
+      "selectionReason": "West Texas, border, sparse destinations"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48061",
+      "countyName": "Cameron",
+      "selectionReason": "South Texas border"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48113",
+      "countyName": "Dallas",
+      "selectionReason": "North Texas dense urban"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48141",
+      "countyName": "El Paso",
+      "selectionReason": "West Texas border metro"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48157",
+      "countyName": "Fort Bend",
+      "selectionReason": "large metropolitan"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48167",
+      "countyName": "Galveston",
+      "selectionReason": "Gulf Coast"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "selectionReason": "highest destination density"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48245",
+      "countyName": "Jefferson",
+      "selectionReason": "Gulf Coast and East Texas"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "selectionReason": "mandatory benchmark and crossing density"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48301",
+      "countyName": "Loving",
+      "selectionReason": "small rural and low destination density"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48303",
+      "countyName": "Lubbock",
+      "selectionReason": "South Plains regional center"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48339",
+      "countyName": "Montgomery",
+      "selectionReason": "medium/large county"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48375",
+      "countyName": "Potter",
+      "selectionReason": "Panhandle"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48439",
+      "countyName": "Tarrant",
+      "selectionReason": "North Texas urban"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48453",
+      "countyName": "Travis",
+      "selectionReason": "Central Texas urban"
+    },
+    {
+      "caseCount": 3,
+      "countyFips": "48479",
+      "countyName": "Webb",
+      "selectionReason": "South Texas border"
+    }
+  ],
+  "countyCount": 16,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP164",
+  "schemaVersion": "gridly.lp164.representativeCountyAwarenessResults.v1",
+  "selectionRule": "Governed geographic, density, crossing and address-status variation; ascending FIPS final tie-breaker"
+}

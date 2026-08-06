@@ -1,0 +1,43 @@
+{
+  "activeStateCaseCount": 16,
+  "awarenessCaseCount": 48,
+  "clearedLifecyclePassCount": 16,
+  "clearedRehydrationFailureCount": 0,
+  "clearedStateCaseCount": 16,
+  "communityPulseCaseCount": 48,
+  "confidenceLanguagePassCount": 48,
+  "consumerLanguagePassCount": 48,
+  "crossAreaContaminationFailureCount": 0,
+  "destinationAwarenessCaseCount": 8,
+  "failures": [],
+  "finalClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+  "freshnessPassCount": 48,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "geographicRelevancePassCount": 48,
+  "knowBeforeYouGoCaseCount": 48,
+  "libertyPreservation": "PASS",
+  "liveValidationRequired": true,
+  "milestone": "LP164",
+  "ownerRunRequired": true,
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsManufacturingChange": false,
+  "performsRuntimeChange": false,
+  "protectedArtifactsModified": false,
+  "quietStateCaseCount": 16,
+  "reportCountPassCount": 48,
+  "representativeCountyCount": 16,
+  "routeAwarenessCaseCount": 8,
+  "schemaVersion": "gridly.lp164.statewideAwarenessHazardCertification.v1",
+  "sourceIdentitiesUsed": [
+    "js/app.js production consumer contract",
+    "LP160-LP163 governed evidence",
+    "controlled LP164 offline certification fixtures"
+  ],
+  "technicalMetadataFailureCount": 0,
+  "truthfulActiveStatePassCount": 16,
+  "truthfulQuietStatePassCount": 16,
+  "warnings": [
+    "Live Supabase, TxDOT, weather, and community-report execution was not performed. Deterministic certification does not claim live statewide incident coverage."
+  ]
+}
