@@ -7,51 +7,90 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-if (Test-Path $ReviewDirectory) { Remove-Item $ReviewDirectory -Recurse -Force }
-New-Item -ItemType Directory -Path $ReviewDirectory | Out-Null
+$ReviewDirectory = [System.IO.Path]::GetFullPath($ReviewDirectory)
+$ReviewParent = Split-Path -Parent $ReviewDirectory
+if (-not (Test-Path -LiteralPath $ReviewParent)) { New-Item -ItemType Directory -Path $ReviewParent -Force | Out-Null }
+$CaptureDirectory = Join-Path $ReviewParent ('.lp169-capture-{0}' -f ([Guid]::NewGuid().ToString('N')))
+New-Item -ItemType Directory -Path $CaptureDirectory | Out-Null
+
+# Windows PowerShell 5.1's UTF8 cmdlet encoding emits a BOM and does not know
+# utf8NoBOM. Use the .NET constructor available on .NET Framework instead.
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+function Assert-SafeContent([string]$Content) {
+  $SecretPattern = '(eyJ[a-zA-Z0-9_-]{20,}\.|sb_(?:secret|service)_[a-zA-Z0-9_-]+|(?:postgres|postgresql|mysql|mongodb(?:\+srv)?):\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+[a-z0-9._~+\/-]{8,}|authorization["'']?\s*:|cookie["'']?\s*:|["'']?(?:password|access[_-]?token|refresh[_-]?token)["'']?\s*[:=]\s*["'']?[^"'']{8,})'
+  if ($Content -match $SecretPattern) { throw 'Evidence capture rejected unsafe content; no captured content was displayed.' }
+}
+
+function Write-Utf8NoBomFile([string]$Path, [string]$Content) {
+  # All capture artifacts are governed inputs: canonicalize newlines explicitly.
+  $CanonicalContent = ($Content -replace "`r`n", "`n") -replace "`r", "`n"
+  Assert-SafeContent $CanonicalContent
+  $Parent = Split-Path -Parent $Path
+  if (-not (Test-Path -LiteralPath $Parent)) { New-Item -ItemType Directory -Path $Parent -Force | Out-Null }
+  $TemporaryPath = Join-Path $Parent ('.{0}.{1}.tmp' -f ([System.IO.Path]::GetFileName($Path), [Guid]::NewGuid().ToString('N')))
+  try {
+    [System.IO.File]::WriteAllText($TemporaryPath, $CanonicalContent, $Utf8NoBom)
+    Move-Item -LiteralPath $TemporaryPath -Destination $Path -Force
+  } finally {
+    if (Test-Path -LiteralPath $TemporaryPath) { Remove-Item -LiteralPath $TemporaryPath -Force }
+  }
+}
+
+function Invoke-CapturedCommand([string]$CommandName, [object[]]$Arguments) {
+  # Invocation by name deliberately permits Applications, Functions, Aliases,
+  # and owner-provided command shims. Native nonzero exits remain fail-closed.
+  $global:LASTEXITCODE = 0
+  $Output = & $CommandName @Arguments | Out-String
+  if ($LASTEXITCODE -ne 0) { throw "$CommandName metadata command failed; captured output was not displayed." }
+  return $Output
+}
 
 function Write-SafeJson([string]$Name, $Data) {
-  $Data | ConvertTo-Json -Depth 8 | Set-Content -Encoding utf8NoBOM (Join-Path $ReviewDirectory $Name)
+  $Json = $Data | ConvertTo-Json -Depth 8
+  Write-Utf8NoBomFile (Join-Path $CaptureDirectory $Name) ($Json + "`n")
 }
+
+try {
 
 # Requires an existing `supabase login` session. Every projection intentionally
 # drops token, key, connection, URL, and secret-value fields.
-$Projects = @(supabase projects list --output json | ConvertFrom-Json |
+$Projects = @(Invoke-CapturedCommand 'supabase' @('projects','list','--output','json') | ConvertFrom-Json |
   Where-Object { $_.id -eq $ProjectRef } |
   Select-Object id,name,region,status)
 Write-SafeJson 'supabase-project-safe.json' $Projects
 
-$SecretNames = @(supabase secrets list --project-ref $ProjectRef --output json |
+$SecretNames = @(Invoke-CapturedCommand 'supabase' @('secrets','list','--project-ref',$ProjectRef,'--output','json') |
   ConvertFrom-Json | ForEach-Object { $_.name } | Where-Object { $_ } |
   Sort-Object -Unique | ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
 Write-SafeJson 'supabase-secret-names-safe.json' $SecretNames
 
-$Functions = @(supabase functions list --project-ref $ProjectRef --output json |
+$Functions = @(Invoke-CapturedCommand 'supabase' @('functions','list','--project-ref',$ProjectRef,'--output','json') |
   ConvertFrom-Json | Select-Object name,slug,status,version | Sort-Object name,slug)
 Write-SafeJson 'supabase-functions-safe.json' $Functions
 
 # Requires an existing `gh auth login` session with read access. GitHub never
 # returns Actions secret values through these list commands.
-$RepoMetadata = gh repo view $Repository --json nameWithOwner,isPrivate,defaultBranchRef | ConvertFrom-Json
+$RepoMetadata = Invoke-CapturedCommand 'gh' @('repo','view',$Repository,'--json','nameWithOwner,isPrivate,defaultBranchRef') | ConvertFrom-Json
 Write-SafeJson 'github-repository-safe.json' ([pscustomobject]@{
   nameWithOwner = $RepoMetadata.nameWithOwner
   isPrivate = $RepoMetadata.isPrivate
   defaultBranch = $RepoMetadata.defaultBranchRef.name
 })
-$RepoSecrets = @(gh secret list --repo $Repository --app actions --json name | ConvertFrom-Json |
+$RepoSecrets = @(Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--app','actions','--json','name') | ConvertFrom-Json |
   Select-Object -ExpandProperty name | Sort-Object -Unique |
   ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
 Write-SafeJson 'github-secret-names-safe.json' $RepoSecrets
-$Workflows = @(gh workflow list --repo $Repository --json name,state,path | ConvertFrom-Json | Sort-Object path)
+$Workflows = @(Invoke-CapturedCommand 'gh' @('workflow','list','--repo',$Repository,'--json','name,state,path') | ConvertFrom-Json | Sort-Object path)
 Write-SafeJson 'github-workflows-safe.json' $Workflows
-$ActionsPermissions = gh api "repos/$Repository/actions/permissions" | ConvertFrom-Json |
+$ActionsPermissions = Invoke-CapturedCommand 'gh' @('api',"repos/$Repository/actions/permissions") | ConvertFrom-Json |
   Select-Object enabled,allowed_actions,sha_pinning_required
 Write-SafeJson 'github-actions-permissions-safe.json' $ActionsPermissions
-$Environments = @(gh api --paginate "repos/$Repository/environments" --jq '.environments[] | {name: .name, protection_rule_count: (.protection_rules | length)}' |
+$Environments = @(Invoke-CapturedCommand 'gh' @('api','--paginate',"repos/$Repository/environments",'--jq','.environments[] | {name: .name, protection_rule_count: (.protection_rules | length)}') |
   ForEach-Object { $_ | ConvertFrom-Json } | Sort-Object name)
 Write-SafeJson 'github-environments-safe.json' $Environments
 foreach ($Environment in $Environments) {
-  $EnvironmentSecrets = @(gh secret list --repo $Repository --env $Environment.name --app actions --json name | ConvertFrom-Json |
+  $EnvironmentSecrets = @(Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--env',$Environment.name,'--app','actions','--json','name') | ConvertFrom-Json |
     Select-Object -ExpandProperty name | Sort-Object -Unique |
     ForEach-Object { [pscustomobject]@{ environment = $Environment.name; name = $_; status = 'PRESENT' } })
   Write-SafeJson ("github-environment-{0}-secret-names-safe.json" -f ($Environment.name -replace '[^A-Za-z0-9_.-]','_')) $EnvironmentSecrets
@@ -73,11 +112,35 @@ SELECT json_build_object('buckets',coalesce(json_agg(x ORDER BY x), '[]'::json))
 SELECT json_build_object('objectCounts',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT bucket_id||':'||count(*)::text AS x FROM storage.objects GROUP BY bucket_id) q;
 SELECT json_build_object('certifiedAddressObjects',coalesce(json_agg(x ORDER BY x), '[]'::json)) FROM (SELECT bucket_id||':'||name||':'||coalesce((metadata->>'size'),'UNKNOWN')||':'||coalesce((metadata->>'mimetype'),'UNKNOWN') AS x FROM storage.objects WHERE bucket_id='certified-addresses') q;
 '@
-$Sql | psql --no-psqlrc --quiet --tuples-only --no-align | Set-Content -Encoding utf8NoBOM (Join-Path $ReviewDirectory 'database-storage-metadata-safe.jsonl')
+$global:LASTEXITCODE = 0
+$DatabaseMetadata = $Sql | & psql --no-psqlrc --quiet --tuples-only --no-align | Out-String
+if ($LASTEXITCODE -ne 0) { throw 'psql metadata command failed; captured output was not displayed.' }
+Write-Utf8NoBomFile (Join-Path $CaptureDirectory 'database-storage-metadata-safe.jsonl') $DatabaseMetadata
 
-Get-ChildItem $ReviewDirectory -File | Sort-Object Name |
+$Manifest = Get-ChildItem $CaptureDirectory -File | Sort-Object Name |
   Select-Object Name,Length,@{Name='Sha256';Expression={(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()}} |
-  ConvertTo-Json -Depth 3 | Set-Content -Encoding utf8NoBOM (Join-Path $ReviewDirectory 'capture-manifest-safe.json')
+  ConvertTo-Json -Depth 3
+Write-Utf8NoBomFile (Join-Path $CaptureDirectory 'capture-manifest-safe.json') ($Manifest + "`n")
+
+# Publish only after every command, safety check, and write succeeds. Preserve an
+# existing review bundle and restore it if the directory swap cannot complete.
+$BackupDirectory = $null
+if (Test-Path -LiteralPath $ReviewDirectory) {
+  $BackupDirectory = Join-Path $ReviewParent ('.lp169-previous-{0}' -f ([Guid]::NewGuid().ToString('N')))
+  Move-Item -LiteralPath $ReviewDirectory -Destination $BackupDirectory
+}
+try {
+  Move-Item -LiteralPath $CaptureDirectory -Destination $ReviewDirectory
+  if ($BackupDirectory) { Remove-Item -LiteralPath $BackupDirectory -Recurse -Force }
+} catch {
+  if ((-not (Test-Path -LiteralPath $ReviewDirectory)) -and $BackupDirectory -and (Test-Path -LiteralPath $BackupDirectory)) {
+    Move-Item -LiteralPath $BackupDirectory -Destination $ReviewDirectory
+  }
+  throw
+}
 
 Write-Host "Safe review bundle created at $ReviewDirectory"
 Write-Host 'Review it, create the governed draft described in evidence/lp169/README.md, then run the sanitizer. Raw or unreviewed output must never be copied into the repository.'
+} finally {
+  if (Test-Path -LiteralPath $CaptureDirectory) { Remove-Item -LiteralPath $CaptureDirectory -Recurse -Force }
+}
