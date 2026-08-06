@@ -20,9 +20,9 @@
   "deployments": 0,
   "generatedAt": "NOT_RECORDED_DETERMINISTIC",
   "milestone": "LP169",
-  "overallClassification": "NOT_READY_CONFIGURATION_GAPS_REMAIN",
+  "overallClassification": "REMAINING_PRODUCTION_CONFIGURATION_EVIDENCE_READY",
   "productionWrites": 0,
   "publicLaunchAuthorized": false,
-  "relationshipToLp168": "Remote evidence gaps remain fail-closed; LP168 NOT_READY is not advanced.",
+  "relationshipToLp168": "Configuration evidence does not authorize operations; a future LP167 reassessment is required.",
   "secretValuesRead": 0
 }

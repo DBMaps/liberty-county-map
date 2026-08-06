@@ -4,52 +4,21 @@
   "milestone": "LP169",
   "rawCommandOutputAccepted": false,
   "requirements": [
-    "SUPABASE_PROJECT",
     "SUPABASE_PROJECT_IDENTITY",
-    "SUPABASE_PROJECT_AVAILABILITY",
-    "SUPABASE_REGION",
-    "SUPABASE_API",
-    "SUPABASE_AUTH",
     "FUNCTION:gridly-geocode",
-    "DATABASE_OBJECTS",
-    "DATABASE_SCHEMA_COMPATIBILITY",
-    "DATABASE_POLICIES",
-    "DATABASE_INDEXES",
-    "DATABASE_TRIGGERS",
-    "STORAGE_OBJECTS",
-    "STORAGE:ADDRESS_PACKAGES",
-    "STORAGE:ADDRESS_CERTIFICATES",
-    "STORAGE:STATEWIDE_COUNTS",
-    "STORAGE_POLICIES",
-    "POLICY:ANONYMOUS_WRITE_DISABLED",
-    "POLICY:PUBLIC_WRITE_DISABLED",
-    "POLICY:RUNTIME_READ",
-    "ORIGINS_REDIRECTS"
+    "SECRET_NAME_INVENTORIES",
+    "EXACT_STORAGE_OBJECT_INVENTORY",
+    "STORAGE_POLICY_BEHAVIOR",
+    "PRODUCTION_ORIGIN_ATTESTATION",
+    "RUNTIME_ALIGNMENT",
+    "APP_DISTRIBUTION_ATTESTATION"
   ],
   "schema": {
-    "provenance": [
-      "evidenceIdentifier",
-      "sourceSystem",
-      "captureMethod",
-      "commandFamily",
-      "authentication",
-      "readOnly",
-      "redactionStatus",
-      "schemaVersion",
-      "deterministicContentIdentity",
-      "completeness",
-      "status"
-    ],
-    "records": [
-      {
-        "attestation": "OWNER_ATTESTED_OR_TOOL_VERIFIED",
-        "identifier": "UPPERCASE_SAFE_IDENTIFIER",
-        "method": "SAFE_READ_ONLY_COMMAND_ID",
-        "status": "PRESENT|ABSENT|UNVERIFIED|INVALID_FORMAT|SOURCE_UNAVAILABLE|PASS|FAIL|OWNER_ACTION_REQUIRED"
-      }
-    ],
+    "generatedByWorkflow": true,
+    "records": "REDACTED_NAME_STATUS_AND_HASH_METADATA_ONLY",
     "schemaVersion": 2
   },
   "sqlEditorEvidence": "COMPLETE_METADATA_EXPORT",
-  "status": "PARTIAL_EVIDENCE_INGESTED"
+  "status": "PARTIAL_EVIDENCE_INGESTED",
+  "workflow": "npm run capture:lp169:remaining-evidence -- -ProjectRef <ref> -Repository <owner/repo>"
 }
