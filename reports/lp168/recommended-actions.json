@@ -1,0 +1,73 @@
+{
+  "actions": [
+    {
+      "action": "Record presence and ownership of every required variable without recording values.",
+      "prerequisiteId": "LP168-P001",
+      "priority": 1,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Validate the production project against repository configuration and migration inventory read-only.",
+      "prerequisiteId": "LP168-P002",
+      "priority": 2,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Record bucket existence, permissions, CORS, retention, and certified object checks.",
+      "prerequisiteId": "LP168-P003",
+      "priority": 3,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Configure and exercise alerts, then record owners and escalation paths.",
+      "prerequisiteId": "LP168-P004",
+      "priority": 4,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Verify backups and complete a non-production restore rehearsal.",
+      "prerequisiteId": "LP168-P005",
+      "priority": 5,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Approve and rehearse an application and database rollback procedure.",
+      "prerequisiteId": "LP168-P006",
+      "priority": 6,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Record production endpoint security validation.",
+      "prerequisiteId": "LP168-P007",
+      "priority": 7,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Exercise governed failure modes without modifying production data.",
+      "prerequisiteId": "LP168-P008",
+      "priority": 8,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Run clean, pinned builds on two isolated workers and compare artifacts.",
+      "prerequisiteId": "LP168-P009",
+      "priority": 9,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Run a governed dependency/security scan and disposition findings.",
+      "prerequisiteId": "LP168-P010",
+      "priority": 10,
+      "productionChangeAuthorizedByThisAudit": false
+    },
+    {
+      "action": "Resolve LP167 blockers and obtain explicit owner authorization.",
+      "prerequisiteId": "LP168-P011",
+      "priority": 11,
+      "productionChangeAuthorizedByThisAudit": false
+    }
+  ],
+  "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP168"
+}

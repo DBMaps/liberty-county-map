@@ -1,0 +1,166 @@
+{
+  "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
+  "collectionBoundary": "REPOSITORY_ONLY_NO_ENVIRONMENT_VALUES_READ",
+  "dependencyInventory": {
+    "development": {
+      "@capacitor/cli": "8.3.4"
+    },
+    "lockfilePresent": false,
+    "packageRegenerationPerformed": false,
+    "runtime": {
+      "@capacitor/android": "8.3.4",
+      "@capacitor/core": "8.3.4",
+      "@capacitor/ios": "8.3.4"
+    }
+  },
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "items": [
+    {
+      "evidence": "supabase/config.toml",
+      "name": "SUPABASE_PROJECT",
+      "purpose": "Repository Supabase project configuration",
+      "scope": "REPOSITORY",
+      "sensitive": false,
+      "status": "PRESENT",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "SUPABASE_URL",
+      "purpose": "Required Edge Function secret; value intentionally not read",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "purpose": "Required server-only Edge Function secret; value intentionally not read",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_CERTIFIED_ADDRESS_BUCKET",
+      "purpose": "Certified address storage bucket selector",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_GEOCODE_ALLOWED_ORIGINS",
+      "purpose": "Production CORS allowlist",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_GEOCODE_USER_AGENT",
+      "purpose": "Provider identification",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_GEOCODE_PROVIDER",
+      "purpose": "Primary geocoding provider selection",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_GEOCODE_PROVIDER_URL",
+      "purpose": "Primary provider endpoint",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_AUTHORITATIVE_RURAL_PROVIDER",
+      "purpose": "Authoritative rural provider selection",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_AUTHORITATIVE_RURAL_URL",
+      "purpose": "Authoritative rural endpoint",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_AUTHORITATIVE_RURAL_API_KEY",
+      "purpose": "Authoritative rural provider secret",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_AUTHORITATIVE_RURAL_TIMEOUT_MS",
+      "purpose": "Authoritative provider timeout",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_RURAL_FALLBACK_ENABLED",
+      "purpose": "Fallback activation boundary",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_RURAL_FALLBACK_URL",
+      "purpose": "Fallback endpoint",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": true,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    },
+    {
+      "evidence": "No governed production attestation in repository",
+      "name": "GRIDLY_RURAL_FALLBACK_TIMEOUT_MS",
+      "purpose": "Fallback timeout",
+      "scope": "PRODUCTION_SECRET_OR_CONFIG",
+      "sensitive": false,
+      "status": "UNVERIFIED",
+      "valueExposed": false
+    }
+  ],
+  "milestone": "LP168",
+  "storage": {
+    "productionBucketsQueried": false,
+    "repositoryAdaptersPresent": true,
+    "status": "UNVERIFIED"
+  },
+  "supabase": {
+    "configPresent": true,
+    "edgeFunctionPresent": true,
+    "migrationCount": 11,
+    "remoteProjectQueried": false
+  }
+}

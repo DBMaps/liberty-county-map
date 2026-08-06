@@ -1,0 +1,98 @@
+{
+  "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
+  "classification": "NOT_READY",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP168",
+  "missingCount": 11,
+  "partialCount": 0,
+  "prerequisites": [
+    {
+      "action": "Record presence and ownership of every required variable without recording values.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P001",
+      "name": "Production environment and secrets completeness attestation",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Validate the production project against repository configuration and migration inventory read-only.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P002",
+      "name": "Supabase production project, migrations, RLS, functions, and auth validation",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Record bucket existence, permissions, CORS, retention, and certified object checks.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P003",
+      "name": "Storage buckets, object inventory, access policy, and retention validation",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Configure and exercise alerts, then record owners and escalation paths.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P004",
+      "name": "Monitoring, structured logging, alert routing, and on-call ownership",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Verify backups and complete a non-production restore rehearsal.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P005",
+      "name": "Backup coverage, restore point, retention, and restore rehearsal",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Approve and rehearse an application and database rollback procedure.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P006",
+      "name": "Rollback runbook, release identity, authority, and rehearsal",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Record production endpoint security validation.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P007",
+      "name": "Production domain, TLS, headers, CORS, and rate-limit validation",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Exercise governed failure modes without modifying production data.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P008",
+      "name": "Error handling and degraded-provider production smoke evidence",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Run clean, pinned builds on two isolated workers and compare artifacts.",
+      "evidence": "package-lock.json present; independent build identity absent",
+      "id": "LP168-P009",
+      "name": "Locked dependency install and reproducible build evidence",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Run a governed dependency/security scan and disposition findings.",
+      "evidence": "No governed production evidence in repository",
+      "id": "LP168-P010",
+      "name": "Production dependency vulnerability review and disposition",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    },
+    {
+      "action": "Resolve LP167 blockers and obtain explicit owner authorization.",
+      "evidence": "reports/lp167/lp167-summary.json: deployment and launch NOT_AUTHORIZED",
+      "id": "LP168-P011",
+      "name": "LP167 launch authorization",
+      "requiredForLaunch": true,
+      "status": "MISSING"
+    }
+  ]
+}

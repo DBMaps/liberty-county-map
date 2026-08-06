@@ -248,6 +248,9 @@
     "assess:lp167": "node tools/lp167/assess-launch-readiness.mjs",
     "certify:lp167": "node tools/lp167/assess-launch-readiness.mjs",
     "verify:lp167": "node tools/lp167/verify-lp167-determinism.mjs",
-    "test:lp167": "node --test tests/lp167/*.test.mjs"
+    "test:lp167": "node --test tests/lp167/*.test.mjs",
+    "audit:lp168": "node tools/lp168/audit-production-readiness.mjs",
+    "verify:lp168": "node tools/lp168/verify-lp168-determinism.mjs",
+    "test:lp168": "node --test tests/lp168/*.test.mjs"
   }
 }

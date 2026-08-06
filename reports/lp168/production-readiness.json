@@ -1,0 +1,17 @@
+{
+  "activations": 0,
+  "auditBoundary": "READ_ONLY_REPOSITORY_EVIDENCE",
+  "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
+  "certificationDecision": "STATEWIDE_LAUNCH_NOT_CERTIFIED",
+  "classification": "NOT_READY",
+  "deployments": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mergeRecommendation": "MERGE_AUDIT_ARTIFACTS_ONLY_DO_NOT_DEPLOY",
+  "milestone": "LP168",
+  "packageRegenerations": 0,
+  "productionWrites": 0,
+  "protectedArtifactsModified": false,
+  "rationale": "Required production, monitoring, backup, rollback, security, and owner evidence is absent; fail-closed classification is required.",
+  "runtimeChanges": 0,
+  "secretValuesRead": 0
+}
