@@ -1,0 +1,98 @@
+{
+  "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
+  "classification": "NOT_READY",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "highRiskCount": 11,
+  "milestone": "LP168",
+  "openRiskCount": 11,
+  "risks": [
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P001",
+      "riskId": "LP168-R001",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Production environment and secrets completeness attestation"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P002",
+      "riskId": "LP168-R002",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Supabase production project, migrations, RLS, functions, and auth validation"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P003",
+      "riskId": "LP168-R003",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Storage buckets, object inventory, access policy, and retention validation"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P004",
+      "riskId": "LP168-R004",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Monitoring, structured logging, alert routing, and on-call ownership"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P005",
+      "riskId": "LP168-R005",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Backup coverage, restore point, retention, and restore rehearsal"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P006",
+      "riskId": "LP168-R006",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Rollback runbook, release identity, authority, and rehearsal"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P007",
+      "riskId": "LP168-R007",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Production domain, TLS, headers, CORS, and rate-limit validation"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P008",
+      "riskId": "LP168-R008",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Error handling and degraded-provider production smoke evidence"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P009",
+      "riskId": "LP168-R009",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Locked dependency install and reproducible build evidence"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P010",
+      "riskId": "LP168-R010",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "Production dependency vulnerability review and disposition"
+    },
+    {
+      "launchImpact": "BLOCKS_STATEWIDE_LAUNCH",
+      "prerequisiteId": "LP168-P011",
+      "riskId": "LP168-R011",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "summary": "LP167 launch authorization"
+    }
+  ]
+}
