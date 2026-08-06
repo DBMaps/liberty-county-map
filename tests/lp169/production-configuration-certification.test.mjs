@@ -276,11 +276,26 @@ test('inventory normalization rejects every unsafe response family without value
     'LP169InventoryAmbiguousProperty',
     'LP169InventoryEmptyNotAllowed'
   ]) assert.ok(normalizationHelper.includes(`'${identifier}'`), `missing governed diagnostic: ${identifier}`);
-  const diagnosticCalls=[...normalizationHelper.matchAll(/^\s*Stop-InventoryNormalization `\n\s+-ErrorId [^\n]+ `\n\s+-Message ([^\n]+) `\n\s+-TargetObject \$SourceCommand/gm)];
-  assert.ok(diagnosticCalls.length >= 10);
-  assert.ok(diagnosticCalls.every(([,message])=>!message.includes('$Value')), 'failure diagnostics must never interpolate captured values');
-  assert.ok(diagnosticCalls.every(([,message])=>message.includes('expected record properties:')),
-    'every governed diagnostic must describe the expected record schema');
+  // Fold PowerShell line continuations before inspecting command statements so
+  // this contract is independent of same-line versus multiline formatting.
+  const unfoldedHelper=normalizationHelper.replace(/`\s*\r?\n\s*/g,' ');
+  const diagnosticCalls=[...unfoldedHelper.matchAll(/^\s*Stop-InventoryNormalization\b[^\r\n]*/gm)]
+    .map(([call])=>call.trim());
+  assert.ok(diagnosticCalls.length > 0, 'the normalizer must invoke the shared diagnostic helper');
+  for (const call of diagnosticCalls) {
+    for (const parameter of ['ErrorId','Message','TargetObject']) {
+      assert.match(call,new RegExp(`(?:^|\\s)-${parameter}(?:\\s|$)`),
+        `diagnostic invocation must supply -${parameter}: ${call}`);
+    }
+    const message=call.match(/(?:^|\s)-Message\s+([\s\S]*?)(?=\s+-(?:ErrorId|TargetObject)\b|$)/)?.[1];
+    assert.ok(message, `diagnostic invocation must have an inspectable message: ${call}`);
+    assert.ok(message.includes('expected record properties:'),
+      'every governed diagnostic must describe the expected record schema');
+    assert.ok(message.includes('observed properties only:'),
+      'every governed diagnostic must restrict observations to property names');
+    assert.doesNotMatch(message,/\$(?:Value|JsonText|Parsed|Record|Records|WrappedRecords)\b/,
+      'failure diagnostics must never interpolate captured JSON values or secret-bearing variables');
+  }
   assert.match(normalizationHelper,/\$Names \| Sort-Object -Unique/);
 });
 
