@@ -1,8 +1,8 @@
 {
   "blockerCounts": {
-    "ownerActionRequired": 14,
+    "ownerActionRequired": 1,
     "sourceUnavailable": 10,
-    "total": 24
+    "total": 11
   },
   "blockers": [
     {
@@ -48,58 +48,6 @@
     {
       "classification": "OWNER_ACTION_REQUIRED",
       "fact": "monitoring.monitoringOwnership"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "operationalOwnership.backupOperationalOwner"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "operationalOwnership.primaryOperationalOwner"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "operationalOwnership.productionAuthority"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "operationalOwnership.supportContact"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "operationalOwnership.technicalEscalation"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "rollbackOwnership.productionValidationAuthority"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "rollbackOwnership.releaseApprovalAuthority"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "rollbackOwnership.releaseOwner"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "rollbackOwnership.rollbackAuthority"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "launchOperations.communicationReadiness"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "launchOperations.launchDayOwnerAvailability"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "launchOperations.operationalSupportReadiness"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "launchOperations.productionReadinessAcknowledgement"
     }
   ],
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_OPERATIONAL_REASSESSMENT",
@@ -108,6 +56,20 @@
   "machineVerifiedFacts": [],
   "metadataOnly": true,
   "milestone": "LP174",
-  "ownerAttestedFacts": [],
+  "ownerAttestedFacts": [
+    "operationalOwnership.backupOperationalOwner",
+    "operationalOwnership.primaryOperationalOwner",
+    "operationalOwnership.productionAuthority",
+    "operationalOwnership.supportContact",
+    "operationalOwnership.technicalEscalation",
+    "rollbackOwnership.productionValidationAuthority",
+    "rollbackOwnership.releaseApprovalAuthority",
+    "rollbackOwnership.releaseOwner",
+    "rollbackOwnership.rollbackAuthority",
+    "launchOperations.communicationReadiness",
+    "launchOperations.launchDayOwnerAvailability",
+    "launchOperations.operationalSupportReadiness",
+    "launchOperations.productionReadinessAcknowledgement"
+  ],
   "schemaVersion": "gridly.lp174.operationalEvidenceSummary.v1"
 }

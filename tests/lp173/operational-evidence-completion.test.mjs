@@ -6,21 +6,22 @@ import template from '../../evidence/lp173/owner-evidence.template.json' with { 
 
 const fact = (classification, value = 'metadata value') => ({ classification, collectionMethod: 'metadata-only collection', evidenceType: 'governed operational metadata', source: 'owner-supplied source description', sourceArtifactIdentity: null, sourceReportedTime: null, value, verificationMethod: classification === 'OWNER_ATTESTED' ? 'owner attestation review' : 'machine metadata comparison' });
 
-test('missing evidence fails closed field-by-field', () => {
+test('remaining evidence gaps fail closed field-by-field', () => {
   const reports = build(undefined, structuredClone(template));
   const summary = reports['lp173-summary.json'];
   assert.equal(summary.evidenceClassification, 'EVIDENCE_INCOMPLETE');
   assert.equal(summary.authorizationReassessment, 'NOT_READY_FOR_AUTHORIZATION_REASSESSMENT');
-  assert.equal(summary.ownerActionRequiredFacts.length, 24);
+  assert.equal(summary.ownerActionRequiredFacts.length, 11);
+  assert.equal(summary.ownerAttestedFacts.length, 13);
 });
 
 test('partial evidence completes only supported fields and preserves provenance distinctions', () => {
   const input = structuredClone(template);
   input.monitoring.monitoringProviders = fact('MACHINE_VERIFIED');
-  input.operationalOwnership.primaryOperationalOwner = fact('OWNER_ATTESTED', 'role: primary operations owner');
+  input.monitoring.monitoringOwnership = fact('OWNER_ATTESTED', 'role: monitoring owner');
   const summary = build(undefined, input)['lp173-summary.json'];
   assert.deepEqual(summary.machineVerifiedFacts, ['monitoring.monitoringProviders']);
-  assert.deepEqual(summary.ownerAttestedFacts, ['operationalOwnership.primaryOperationalOwner']);
+  assert.ok(summary.ownerAttestedFacts.includes('monitoring.monitoringOwnership'));
   assert.ok(summary.ownerActionRequiredFacts.includes('backup.backupProvider'));
   assert.equal(summary.evidenceClassification, 'EVIDENCE_INCOMPLETE');
 });

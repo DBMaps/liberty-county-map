@@ -21,12 +21,13 @@ test('uncertain and ambiguous metadata never proves configuration or absence', (
   assert.equal(result.backup.latestSuccessfulBackupMetadata.classification, 'NOT_VERIFIED');
 });
 
-test('missing sources are unavailable while governance stays owner-required and identities are not inferred', () => {
+test('missing sources are unavailable while collected attestations are preserved and identities are not inferred', () => {
   const result = discover(undefined, source({}));
   assert.equal(result.backup.backupProvider.classification, 'SOURCE_UNAVAILABLE');
-  assert.equal(result.operationalOwnership.primaryOperationalOwner.classification, 'OWNER_ACTION_REQUIRED');
-  assert.equal(result.rollbackOwnership.rollbackAuthority.classification, 'OWNER_ACTION_REQUIRED');
-  assert.equal(result.launchOperations.communicationReadiness.classification, 'OWNER_ACTION_REQUIRED');
+  assert.equal(result.operationalOwnership.primaryOperationalOwner.classification, 'OWNER_ATTESTED');
+  assert.equal(result.rollbackOwnership.rollbackAuthority.classification, 'OWNER_ATTESTED');
+  assert.equal(result.launchOperations.communicationReadiness.classification, 'OWNER_ATTESTED');
+  assert.equal(result.monitoring.monitoringOwnership.classification, 'OWNER_ACTION_REQUIRED');
   assert.equal(JSON.stringify(result).includes('git author'), false);
 });
 
