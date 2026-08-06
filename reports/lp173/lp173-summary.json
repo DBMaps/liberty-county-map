@@ -21,10 +21,9 @@
     "publicLaunches": 0,
     "runtimeModifications": 0
   },
-  "ownerActionRequiredFacts": [
-    "monitoring.monitoringOwnership"
-  ],
+  "ownerActionRequiredFacts": [],
   "ownerAttestedFacts": [
+    "monitoring.monitoringOwnership",
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",

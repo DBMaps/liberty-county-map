@@ -27,7 +27,8 @@ test('missing sources are unavailable while collected attestations are preserved
   assert.equal(result.operationalOwnership.primaryOperationalOwner.classification, 'OWNER_ATTESTED');
   assert.equal(result.rollbackOwnership.rollbackAuthority.classification, 'OWNER_ATTESTED');
   assert.equal(result.launchOperations.communicationReadiness.classification, 'OWNER_ATTESTED');
-  assert.equal(result.monitoring.monitoringOwnership.classification, 'OWNER_ACTION_REQUIRED');
+  assert.equal(result.monitoring.monitoringOwnership.classification, 'OWNER_ATTESTED');
+  assert.equal(result.monitoring.monitoringOwnership.value, 'Denise Burns');
   assert.equal(JSON.stringify(result).includes('git author'), false);
 });
 

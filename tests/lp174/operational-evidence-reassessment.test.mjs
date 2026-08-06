@@ -9,8 +9,9 @@ test('LP174 truthfully remains fail closed when authoritative evidence is absent
   const summary = reports['operational-evidence-summary.json'];
   const reassessment = reports['authorization-reassessment-report.json'];
   assert.equal(summary.classification, 'EVIDENCE_INCOMPLETE');
-  assert.equal(summary.blockerCounts.total, 11);
-  assert.equal(summary.ownerAttestedFacts.length, 13);
+  assert.equal(summary.blockerCounts.total, 10);
+  assert.equal(summary.blockerCounts.ownerActionRequired, 0);
+  assert.equal(summary.ownerAttestedFacts.length, 14);
   assert.equal(reassessment.authorizationReassessment, 'NOT_READY_FOR_AUTHORIZATION_REASSESSMENT');
   assert.equal(reassessment.authorizationGranted, false);
   assert.ok(Object.values(reassessment.authorizations).every(value => value === 'NOT_AUTHORIZED'));

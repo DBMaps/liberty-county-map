@@ -148,14 +148,14 @@
           "verificationMethod": "required source record monitoring.monitoredProductionServices was unavailable"
         },
         "monitoringOwnership": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174.1",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.2 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "monitoringProviders": {
           "classification": "SOURCE_UNAVAILABLE",
@@ -168,9 +168,7 @@
           "verificationMethod": "required source record monitoring.monitoringProviders was unavailable"
         }
       },
-      "ownerActionRequired": [
-        "monitoringOwnership"
-      ]
+      "ownerActionRequired": []
     },
     "operationalOwnership": {
       "classification": "EVIDENCE_COMPLETE",
@@ -279,10 +277,9 @@
     "MACHINE_VERIFIED": [],
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
-    "OWNER_ACTION_REQUIRED": [
-      "monitoring.monitoringOwnership"
-    ],
+    "OWNER_ACTION_REQUIRED": [],
     "OWNER_ATTESTED": [
+      "monitoring.monitoringOwnership",
       "operationalOwnership.backupOperationalOwner",
       "operationalOwnership.primaryOperationalOwner",
       "operationalOwnership.productionAuthority",
