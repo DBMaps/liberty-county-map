@@ -18,38 +18,47 @@ function Assert-StableResult([string]$JsonText, [int]$ExpectedCount, [string]$Ex
   if (($Actual -join ',') -cne $ExpectedNames) { throw 'Stable result value assertion failed.' }
 }
 
-function Assert-Rejected([AllowNull()][AllowEmptyString()][string]$JsonText, [string[]]$AllowedProperties, [string[]]$WrapperProperties, [string]$ForbiddenValue, [switch]$AllowEmpty) {
+function Assert-Rejected([string]$Case, [AllowNull()][AllowEmptyString()][string]$JsonText, [string[]]$AllowedProperties, [string[]]$WrapperProperties, [string]$ExpectedErrorId, [string[]]$ExpectedObservedProperties, [string[]]$ForbiddenValues, [switch]$AllowEmpty) {
+  $Caught = $null
   try {
     Get-NormalizedInventoryNames -SourceCommand 'test source command' -JsonText $JsonText -AllowedProperties $AllowedProperties -WrapperProperties $WrapperProperties -AllowEmpty:$AllowEmpty | Out-Null
-    throw 'Malformed inventory was accepted.'
   } catch {
-    if ($_.Exception.Message -eq 'Malformed inventory was accepted.') { throw }
-    if ($_.Exception.GetType().Name -eq 'PropertyNotFoundException') { throw 'PropertyNotFoundStrict escaped the normalizer.' }
-    if (-not $_.Exception.Message.Contains('test source command') -or -not $_.Exception.Message.Contains('observed properties only')) { throw 'Safe schema diagnostic was not emitted.' }
-    if ($ForbiddenValue -and $_.Exception.Message.Contains($ForbiddenValue)) { throw 'A captured value escaped into a diagnostic.' }
+    $Caught = $_
+  }
+  if ($null -eq $Caught) { throw "$Case`: malformed inventory was accepted." }
+  $ActualErrorId = @($Caught.FullyQualifiedErrorId -split ',')[0]
+  $Message = $Caught.Exception.Message
+  if ($Caught.Exception.GetType().Name -eq 'PropertyNotFoundException') { throw "$Case`: PropertyNotFoundStrict escaped the normalizer." }
+  if ($ActualErrorId -cne $ExpectedErrorId) { throw "$Case`: expected governed error identifier $ExpectedErrorId but received $ActualErrorId." }
+  if (-not $Message.Contains('test source command')) { throw "$Case`: source command label was absent from the diagnostic." }
+  if (-not $Message.Contains("expected record properties: [$($AllowedProperties -join ',')]")) { throw "$Case`: expected schema was absent from the diagnostic." }
+  $ExpectedObserved = "observed properties only: [$($ExpectedObservedProperties -join ',')]"
+  if (-not $Message.Contains($ExpectedObserved)) { throw "$Case`: observed schema was absent from the diagnostic." }
+  foreach ($ForbiddenValue in @($ForbiddenValues)) {
+    if ($ForbiddenValue -and $Message.Contains($ForbiddenValue)) { throw "$Case`: a captured value escaped into a diagnostic." }
   }
 }
 
 # Complete PS 5.1 strict-mode response/return-cardinality matrix.
-Assert-Rejected '' @('name') @() '' -AllowEmpty                         # 1 blank
-Assert-Rejected " `t`r`n" @('name') @() '' -AllowEmpty                 # 2 whitespace
-Assert-Rejected 'null' @('name') @() '' -AllowEmpty                     # 3 JSON null
+Assert-Rejected 'blank text' '' @('name') @() 'LP169InventoryBlankOutput' @() @() -AllowEmpty
+Assert-Rejected 'whitespace' " `t`r`n" @('name') @() 'LP169InventoryBlankOutput' @() @() -AllowEmpty
+Assert-Rejected 'JSON null' 'null' @('name') @() 'LP169InventoryNullOutput' @() @()
 Assert-StableResult '[]' 0 '' -AllowEmpty                               # 4 empty array / 14 zero result
-Assert-Rejected '[]' @('name') @() ''                                  # empty without opt-in
-Assert-Rejected '[{}]' @('name') @() '' -AllowEmpty                     # 5 invalid object
+Assert-Rejected 'rejected empty array' '[]' @('name') @() 'LP169InventoryEmptyNotAllowed' @() @()
+Assert-Rejected 'empty object record' '[{}]' @('name') @() 'LP169InventorySchemaMismatch' @() @() -AllowEmpty
 Assert-StableResult '[{"name":"ONLY"}]' 1 'ONLY'                       # 6 / 13 one result
 Assert-StableResult '[{"name":"ZETA"},{"name":"ALPHA"},{"name":"ALPHA"}]' 2 'ALPHA,ZETA' # 7 / 15 many, sorted/deduped
-Assert-Rejected '"SECRET_SCALAR"' @('name') @() 'SECRET_SCALAR'          # 8 string scalar
-Assert-Rejected '42' @('name') @() '42'                                 # 9 numeric scalar
-Assert-Rejected '{"status":"SECRET_VALUE"}' @('name') @() 'SECRET_VALUE' # 10 wrapper
-Assert-Rejected '[{"name":"VALID"},{"status":"SECRET_INVALID"}]' @('name') @() 'SECRET_INVALID' # 11 atomic mixed array
-Assert-Rejected '[{"name":"ONE","slug":"TWO"}]' @('name','slug') @() 'ONE' # 12 conflicts
-Assert-Rejected '{not-json}' @('name') @() 'not-json'                   # malformed
+Assert-Rejected 'string scalar' '"SECRET_SCALAR"' @('name') @() 'LP169InventoryScalarRoot' @() @('SECRET_SCALAR')
+Assert-Rejected 'numeric scalar' '42' @('name') @() 'LP169InventoryScalarRoot' @() @('42')
+Assert-Rejected 'unsupported wrapper' '{"status":"SECRET_VALUE"}' @('name') @() 'LP169InventorySchemaMismatch' @('status') @('SECRET_VALUE')
+Assert-Rejected 'mixed valid and invalid array' '[{"name":"VALID"},{"status":"SECRET_INVALID"}]' @('name') @() 'LP169InventorySchemaMismatch' @('status') @('VALID','SECRET_INVALID')
+Assert-Rejected 'conflicting properties' '[{"name":"ONE","slug":"TWO"}]' @('name','slug') @() 'LP169InventoryAmbiguousProperty' @('name','slug') @('ONE','TWO')
+Assert-Rejected 'malformed JSON' '{not-json}' @('name') @() 'LP169InventoryMalformedJson' @() @('not-json')
 
 # Explicitly supported wrappers must themselves contain JSON arrays.
 [object[]]$Wrapped = Get-NormalizedInventoryNames -SourceCommand 'wrapper result' -JsonText '{"secrets":[{"name":"SECOND"},{"name":"FIRST"}]}' -AllowedProperties @('name') -WrapperProperties @('secrets')
 if ($Wrapped.GetType() -ne [object[]] -or $Wrapped.Count -ne 2 -or ($Wrapped -join ',') -cne 'FIRST,SECOND') { throw 'Supported wrapper array assertion failed.' }
-Assert-Rejected '{"secrets":null}' @('name') @('secrets') '' -AllowEmpty
-Assert-Rejected '{"secrets":{"name":"VALUE"}}' @('name') @('secrets') 'VALUE'
+Assert-Rejected 'null wrapper array' '{"secrets":null}' @('name') @('secrets') 'LP169InventorySchemaMismatch' @('secrets') @() -AllowEmpty
+Assert-Rejected 'object wrapper array' '{"secrets":{"name":"VALUE"}}' @('name') @('secrets') 'LP169InventorySchemaMismatch' @('secrets') @('VALUE')
 
 Write-Output 'inventory normalization regression tests passed'
