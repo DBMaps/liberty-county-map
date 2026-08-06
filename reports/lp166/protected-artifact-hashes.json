@@ -1,0 +1,23 @@
+{
+  "activation": "UNAUTHORIZED",
+  "artifacts": {
+    "Crossing-Packages/production-crossing-manifest.json": "01c3765ebdaf47224c91e045a84ecffa68e52cf7eb481aec483efd3d1a5ba438",
+    "data/roadway-runtime-manifest.json": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a",
+    "index.html": "6db8310a009971ef3c2af8a8cfd92c6de662eb651867b92d28b4980dbe6a8fee",
+    "js/app.js": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+    "reports/lp161/lp161-summary.json": "f14fd6a44a6144d70989074399c5544fabc4a584095de4177bdabecebda2686a",
+    "reports/lp162/lp162-summary.json": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
+    "reports/lp163/lp163-summary.json": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
+    "reports/lp164/lp164-summary.json": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
+    "reports/lp165/lp165-summary.json": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
+    "service-worker.js": "112321f5e22964a8551d805d106bd2f0445e6fa9f854a671732cd357b5e26d58"
+  },
+  "deployment": "UNAUTHORIZED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hashAlgorithm": "SHA-256",
+  "identity": "CANONICAL_GIT_BLOB_BYTES",
+  "milestone": "LP166",
+  "runtime": "UNCHANGED",
+  "schemaVersion": "gridly.lp166.protectedArtifactHashes.v1",
+  "status": "PASS"
+}

@@ -1,0 +1,20 @@
+{
+  "addressCase": {
+    "classification": "NO_VERIFIED_RESULT",
+    "inferredMatch": false,
+    "interpolation": false,
+    "nearbyNumberSubstitution": false,
+    "query": "274 County Road 677",
+    "roadOnlyPromotion": false
+  },
+  "awareness": "LP164_BEHAVIOR_PRESERVED",
+  "benchmark": "PRESERVED",
+  "county": "Liberty",
+  "countyFips": "48291",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP166",
+  "notificationWording": "LP165_WORDING_PRESERVED",
+  "routing": "LP163_TRUTHFUL_ROUTING_PRESERVED",
+  "schemaVersion": "gridly.lp166.libertyPreservationResults.v1",
+  "status": "PASS"
+}

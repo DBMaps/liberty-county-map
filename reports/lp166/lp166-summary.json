@@ -1,0 +1,26 @@
+{
+  "activation": "UNAUTHORIZED",
+  "canonicalGitBlobIdentity": "PASS",
+  "defectFound": false,
+  "deployment": "UNAUTHORIZED",
+  "determinism": "PASS",
+  "finalClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "inventory": [
+    "onboarding/start",
+    "search",
+    "routing",
+    "awareness",
+    "notifications",
+    "reporting",
+    "Route Watch",
+    "destinations",
+    "settings"
+  ],
+  "milestone": "LP166",
+  "patchRequired": false,
+  "repositoryCleanliness": "PASS_AFTER_COMMIT",
+  "runtime": "UNCHANGED",
+  "scenarioCount": 24,
+  "schemaVersion": "gridly.lp166.summary.v1"
+}

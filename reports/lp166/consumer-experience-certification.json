@@ -1,0 +1,27 @@
+{
+  "activation": "UNAUTHORIZED",
+  "auditFirst": true,
+  "consumerFlows": "PASS",
+  "consumerLanguage": "PASS",
+  "deployment": "UNAUTHORIZED",
+  "finalClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "libertyPreservation": "PASS",
+  "milestone": "LP166",
+  "mobilePortrait": "PASS_WITH_LIVE_VALIDATION_REQUIRED",
+  "priorConditionalBoundaries": [
+    "LP162_ADDRESS_BLOCKERS_REMAIN",
+    "LP163_LIVE_NETWORK_VALIDATION_REQUIRED",
+    "LP164_LIVE_AWARENESS_VALIDATION_REQUIRED",
+    "LP165_LIVE_DELIVERY_NOT_IMPLEMENTED"
+  ],
+  "productionPatchRequired": false,
+  "runtime": "UNCHANGED",
+  "scenarioCount": 24,
+  "scenarioFailureCount": 0,
+  "scenarioPassCount": 24,
+  "schemaVersion": "gridly.lp166.consumerExperienceCertification.v1",
+  "warnings": [
+    "Live network, live awareness, notification delivery, and physical mobile-device validation were not performed."
+  ]
+}
