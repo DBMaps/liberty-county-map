@@ -1,0 +1,102 @@
+{
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP167",
+  "prerequisites": [
+    {
+      "actualClassification": null,
+      "evidence": "reports/lp130-statewide-addresses/statewide-progress.json",
+      "expectedClassification": null,
+      "milestone": "LP130",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "evidence/lp134/certification-results.json",
+      "expectedClassification": null,
+      "milestone": "LP135",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "reports/lp160/statewide-destination-integration-summary.json",
+      "expectedClassification": null,
+      "milestone": "LP160",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "MANUFACTURING_COMPLETE",
+      "evidence": "reports/lp1601m/final-statewide-destination-manufacturing-certification.json",
+      "expectedClassification": null,
+      "milestone": "LP160.1M",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "INTEGRATION_CERTIFIED",
+      "evidence": "reports/lp161/lp161-summary.json",
+      "expectedClassification": "INTEGRATION_CERTIFIED",
+      "milestone": "LP161",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "DETERMINISTIC_CERTIFICATION_RECONCILED",
+      "evidence": "reports/lp1611/deterministic-certification-reconciliation.json",
+      "expectedClassification": null,
+      "milestone": "LP161.1",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN",
+      "evidence": "reports/lp162/lp162-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_ADDRESS_BLOCKERS_REMAIN",
+      "milestone": "LP162",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_NETWORK_VALIDATION_REQUIRED",
+      "evidence": "reports/lp163/lp163-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_NETWORK_VALIDATION_REQUIRED",
+      "milestone": "LP163",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+      "evidence": "reports/lp164/lp164-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+      "milestone": "LP164",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": null,
+      "evidence": "tools/lp164/verify-lp164-determinism.mjs",
+      "expectedClassification": null,
+      "milestone": "LP164.1",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_LIVE_DELIVERY_NOT_IMPLEMENTED",
+      "evidence": "reports/lp165/lp165-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_LIVE_DELIVERY_NOT_IMPLEMENTED",
+      "milestone": "LP165",
+      "present": true,
+      "status": "PASS"
+    },
+    {
+      "actualClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+      "evidence": "reports/lp166/lp166-summary.json",
+      "expectedClassification": "CONDITIONALLY_CERTIFIED_FINAL_LIVE_VALIDATION_REQUIRED",
+      "milestone": "LP166",
+      "present": true,
+      "status": "PASS"
+    }
+  ]
+}

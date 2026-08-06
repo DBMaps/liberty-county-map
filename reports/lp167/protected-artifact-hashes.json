@@ -1,0 +1,47 @@
+{
+  "artifacts": [
+    {
+      "identity": "git-blob",
+      "path": "js/app.js",
+      "sha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf"
+    },
+    {
+      "identity": "git-blob",
+      "path": "package.json",
+      "sha256": "7225ab2067c4d917d3c3e97eaae498e0e4b294a7101352937d70e3db66fdebb9"
+    },
+    {
+      "identity": "git-blob",
+      "path": "reports/lp162/lp162-summary.json",
+      "sha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04"
+    },
+    {
+      "identity": "git-blob",
+      "path": "reports/lp163/lp163-summary.json",
+      "sha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d"
+    },
+    {
+      "identity": "git-blob",
+      "path": "reports/lp164/lp164-summary.json",
+      "sha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305"
+    },
+    {
+      "identity": "git-blob",
+      "path": "reports/lp165/lp165-summary.json",
+      "sha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258"
+    },
+    {
+      "identity": "git-blob",
+      "path": "reports/lp166/lp166-summary.json",
+      "sha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d"
+    },
+    {
+      "identity": "git-blob",
+      "path": "tools/lp164/verify-lp164-determinism.mjs",
+      "sha256": "2fdf5cce65e05af3c5a3dd1c01ebc2beb9c1a46a73515eb600e9e8168a1a35c6"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hashMode": "CANONICAL_GIT_BLOB",
+  "milestone": "LP167"
+}

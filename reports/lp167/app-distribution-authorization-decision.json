@@ -1,0 +1,24 @@
+{
+  "blockers": [
+    "LP167-B005",
+    "LP167-B009",
+    "LP167-B010",
+    "LP167-B011",
+    "LP167-B012",
+    "LP167-B013"
+  ],
+  "conditions": [
+    "Complete platform, store, legal, device, and owner validation."
+  ],
+  "decision": "NOT_AUTHORIZED",
+  "expirationOrRevalidationTrigger": "Any protected-artifact, production-configuration, runtime-membership, or evidence change",
+  "milestone": "LP167",
+  "ownerApprovalRequired": true,
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "reasons": [
+    "Deterministic product evidence is preserved; unresolved governed gates fail closed."
+  ],
+  "surface": "APP_DISTRIBUTION"
+}

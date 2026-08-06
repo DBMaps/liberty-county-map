@@ -1,0 +1,441 @@
+{
+  "allowedStatuses": [
+    "PASS",
+    "FAIL",
+    "NOT_STARTED",
+    "NOT_APPLICABLE",
+    "OWNER_REQUIRED",
+    "LIVE_VALIDATION_REQUIRED"
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "items": [
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Search",
+      "order": 1,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Routing",
+      "order": 2,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Awareness",
+      "order": 3,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Notifications",
+      "order": 4,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Route Watch",
+      "order": 5,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Reporting",
+      "order": 6,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Settings",
+      "order": 7,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Mobile portrait",
+      "order": 8,
+      "section": "Product",
+      "status": "LIVE_VALIDATION_REQUIRED"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Liberty benchmark",
+      "order": 9,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Truthful failure behavior",
+      "order": 10,
+      "section": "Product",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Address packages",
+      "order": 1,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Destination packages",
+      "order": 2,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Crossing packages",
+      "order": 3,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "County geometry",
+      "order": 4,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Runtime manifests",
+      "order": 5,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Storage inventory",
+      "order": 6,
+      "section": "Data",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Certification inventory",
+      "order": 7,
+      "section": "Data",
+      "status": "PASS"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Supabase production project",
+      "order": 1,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Storage permissions",
+      "order": 2,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Database policies",
+      "order": 3,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Edge functions",
+      "order": 4,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Environment variables",
+      "order": 5,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Secrets",
+      "order": 6,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Monitoring",
+      "order": 7,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Backups",
+      "order": 8,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rollback",
+      "order": 9,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rate limits",
+      "order": 10,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Error logging",
+      "order": 11,
+      "section": "Infrastructure",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "PWA readiness",
+      "order": 1,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Domain",
+      "order": 2,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Website",
+      "order": 3,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "App icons",
+      "order": 4,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Splash screen",
+      "order": 5,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "governed prior milestone evidence",
+      "name": "Capacitor",
+      "order": 6,
+      "section": "Distribution",
+      "status": "PASS"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Android build",
+      "order": 7,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "iOS build",
+      "order": 8,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "TestFlight",
+      "order": 9,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Play closed testing",
+      "order": 10,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Store accounts",
+      "order": 11,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Store assets",
+      "order": 12,
+      "section": "Distribution",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Privacy Policy",
+      "order": 1,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Terms of Service",
+      "order": 2,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Community reporting disclaimer",
+      "order": 3,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Support contact",
+      "order": 4,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "FAQ",
+      "order": 5,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Pricing configuration",
+      "order": 6,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Subscription terms",
+      "order": 7,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Refund policy where required",
+      "order": 8,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Business entity and account ownership",
+      "order": 9,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Data-use disclosures",
+      "order": 10,
+      "section": "LegalAndBusiness",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Owner launch approval",
+      "order": 1,
+      "section": "LaunchOperations",
+      "status": "OWNER_REQUIRED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Launch date",
+      "order": 2,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Support plan",
+      "order": 3,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Incident response plan",
+      "order": 4,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Rollback owner",
+      "order": 5,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Monitoring owner",
+      "order": 6,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Beta migration plan",
+      "order": 7,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Marketing readiness",
+      "order": 8,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Release notes",
+      "order": 9,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Known limitations",
+      "order": 10,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    },
+    {
+      "evidence": "repository evidence not sufficient",
+      "name": "Launch-day validation script",
+      "order": 11,
+      "section": "LaunchOperations",
+      "status": "NOT_STARTED"
+    }
+  ],
+  "milestone": "LP167"
+}

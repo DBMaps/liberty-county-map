@@ -1,0 +1,25 @@
+{
+  "milestone": "LP167",
+  "requirements": [
+    {
+      "action": "Record the Talco route attestation and perform a launch-window smoke test.",
+      "blockerId": "LP167-B002",
+      "status": "OWNER_REQUIRED"
+    },
+    {
+      "action": "Validate quiet, active, and cleared states against configured live sources.",
+      "blockerId": "LP167-B003",
+      "status": "OWNER_REQUIRED"
+    },
+    {
+      "action": "Record real-device browser validation; use closed testing for packaged apps.",
+      "blockerId": "LP167-B005",
+      "status": "OWNER_REQUIRED"
+    },
+    {
+      "action": "Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script.",
+      "blockerId": "LP167-B013",
+      "status": "OWNER_REQUIRED"
+    }
+  ]
+}
