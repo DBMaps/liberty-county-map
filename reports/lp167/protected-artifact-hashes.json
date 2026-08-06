@@ -1,14 +1,21 @@
 {
-  "artifacts": [
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "intentionalMilestoneChanges": [
+    {
+      "identity": "git-blob",
+      "path": "package.json",
+      "reason": "LP167 npm command registration",
+      "sha256": "c9e363f4820bc385060e085414f249a9533941968186e776857d47afc7cf217a"
+    }
+  ],
+  "milestone": "LP167",
+  "protectedArtifactStrategy": "CANONICAL_GIT_BLOB_BYTES",
+  "schemaVersion": "gridly.lp167.protected-artifacts.v2",
+  "unchangedProtectedArtifacts": [
     {
       "identity": "git-blob",
       "path": "js/app.js",
       "sha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf"
-    },
-    {
-      "identity": "git-blob",
-      "path": "package.json",
-      "sha256": "7225ab2067c4d917d3c3e97eaae498e0e4b294a7101352937d70e3db66fdebb9"
     },
     {
       "identity": "git-blob",
@@ -40,8 +47,5 @@
       "path": "tools/lp164/verify-lp164-determinism.mjs",
       "sha256": "2fdf5cce65e05af3c5a3dd1c01ebc2beb9c1a46a73515eb600e9e8168a1a35c6"
     }
-  ],
-  "generatedAt": "1970-01-01T00:00:00.000Z",
-  "hashMode": "CANONICAL_GIT_BLOB",
-  "milestone": "LP167"
+  ]
 }
