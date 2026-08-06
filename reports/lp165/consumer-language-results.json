@@ -1,0 +1,13 @@
+{
+  "bodyPassCount": 34,
+  "duplicateLocationFailureCount": 0,
+  "freshnessPassCount": 34,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP165",
+  "schemaVersion": "gridly.lp165.consumerLanguageResults.v1",
+  "status": "PASS",
+  "technicalMetadataFailureCount": 0,
+  "titlePassCount": 34,
+  "trustLanguagePassCount": 34,
+  "unsupportedDirectionalLabelFailureCount": 0
+}
