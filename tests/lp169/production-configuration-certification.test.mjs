@@ -8,6 +8,10 @@ import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenc
 
 const captureScriptPath = path.join(ROOT, 'tools/lp169/capture-owner-production-evidence.ps1');
 const captureScript = fs.readFileSync(captureScriptPath, 'utf8');
+const normalizationHelperPath = path.join(ROOT, 'tools/lp169/owner-evidence-normalization.ps1');
+const normalizationHelper = fs.readFileSync(normalizationHelperPath, 'utf8');
+const inventoryMatrixPath = path.join(ROOT, 'tests/lp169/inventory-normalization.ps1');
+const inventoryMatrix = fs.readFileSync(inventoryMatrixPath, 'utf8');
 
 const evidence = records => ({
   schemaVersion: 2,
@@ -191,33 +195,43 @@ test('owner capture remains secret-safe and metadata-only',()=>{
   assert.doesNotMatch(captureScript,/\b(?:deploy|activate|upload|insert|update|delete)\b/i);
 });
 
+test('capture and Windows matrix share the side-effect-free normalization helper',()=>{
+  assert.equal(fs.existsSync(normalizationHelperPath),true);
+  assert.match(captureScript,/^\. \(Join-Path \$PSScriptRoot 'owner-evidence-normalization\.ps1'\)$/m);
+  assert.match(inventoryMatrix,/^\. \(Resolve-Path \$NormalizationHelperPath\)$/m);
+  assert.doesNotMatch(inventoryMatrix,/Parser::ParseFile|FunctionDefinitionAst|Extent\.Text|ScriptBlock::Create/);
+  assert.doesNotMatch(captureScript,/function\s+Get-NormalizedInventoryNames|function\s+Stop-InventoryNormalization/);
+  assert.equal([...normalizationHelper.matchAll(/^function\s+/gm)].length,2);
+  assert.doesNotMatch(normalizationHelper,/\b(?:gh|supabase|psql|Invoke-WebRequest|Invoke-RestMethod|Set-Content|Out-File|Add-Content|New-Item|Move-Item|Remove-Item|Copy-Item|deploy|upload|activate)\b|\$env:/i);
+});
+
 test('owner inventories use schema-aware PowerShell 5.1-safe normalization',()=>{
-  assert.match(captureScript,/function Get-NormalizedInventoryNames/);
-  assert.match(captureScript,/\.PSObject\.Properties\[\$_\]/);
-  assert.match(captureScript,/\.PSObject\.Properties\[\$Supported\[0\]\]\.Value/);
-  assert.doesNotMatch(captureScript,/Select-Object\s+-ExpandProperty\s+name/i);
+  assert.match(normalizationHelper,/function Get-NormalizedInventoryNames/);
+  assert.match(normalizationHelper,/\.PSObject\.Properties\[\$_\]/);
+  assert.match(normalizationHelper,/\.PSObject\.Properties\[\$Supported\[0\]\]\.Value/);
+  assert.doesNotMatch(normalizationHelper,/Select-Object\s+-ExpandProperty\s+name/i);
   for (const source of [
     'supabase secrets list --output json',
     'gh secret list --repo --app actions --json name',
     'gh secret list --repo --env --app actions --json name'
   ]) assert.ok(captureScript.includes(`-SourceCommand '${source}'`));
-  assert.match(captureScript,/\[string\[\]\]\$AllowedProperties/);
-  assert.match(captureScript,/\[string\[\]\]\$WrapperProperties/);
-  assert.match(captureScript,/\[switch\]\$AllowEmpty/);
-  assert.match(captureScript,/ConvertFrom-Json -InputObject \$JsonText/);
-  assert.match(captureScript,/\$JsonText -notmatch '\^\\s\*\\\[\\s\*\\\]\\s\*\$'/);
-  assert.match(captureScript,/\[object\[\]\]\$Records = @\(\)/);
+  assert.match(normalizationHelper,/\[string\[\]\]\$AllowedProperties/);
+  assert.match(normalizationHelper,/\[string\[\]\]\$WrapperProperties/);
+  assert.match(normalizationHelper,/\[switch\]\$AllowEmpty/);
+  assert.match(normalizationHelper,/ConvertFrom-Json -InputObject \$JsonText/);
+  assert.match(normalizationHelper,/\$JsonText -notmatch '\^\\s\*\\\[\\s\*\\\]\\s\*\$'/);
+  assert.match(normalizationHelper,/\[object\[\]\]\$Records = @\(\)/);
 });
 
 test('owner capture has no unnormalized cardinality checks',()=>{
-  assert.doesNotMatch(captureScript,/\([^\n]*(?:\||ConvertFrom-Json|Select-Object|Where-Object|ForEach-Object)[^\n]*\)\.Count/);
-  assert.doesNotMatch(captureScript,/\(ConvertFrom-Json[^\n]*\)\.(?:Count|Length)/i);
-  const countReceivers=[...captureScript.matchAll(/\$([A-Za-z][A-Za-z0-9]*)\.Count\b/g)].map(match=>match[1]);
+  assert.doesNotMatch(normalizationHelper,/\([^\n]*(?:\||ConvertFrom-Json|Select-Object|Where-Object|ForEach-Object)[^\n]*\)\.Count/);
+  assert.doesNotMatch(normalizationHelper,/\(ConvertFrom-Json[^\n]*\)\.(?:Count|Length)/i);
+  const countReceivers=[...normalizationHelper.matchAll(/\$([A-Za-z][A-Za-z0-9]*)\.Count\b/g)].map(match=>match[1]);
   assert.deepEqual([...new Set(countReceivers)].sort(),['Records','Supported','WrapperMatches']);
-  assert.match(captureScript,/\[object\[\]\]\$Records = @\(\)/);
-  assert.match(captureScript,/\$WrapperMatches = @\([^\n]*Where-Object/);
-  assert.match(captureScript,/\$Supported = @\([^\n]*Where-Object/);
-  assert.doesNotMatch(captureScript,/\$JsonText\.(?:Count|Length)\b/);
+  assert.match(normalizationHelper,/\[object\[\]\]\$Records = @\(\)/);
+  assert.match(normalizationHelper,/\$WrapperMatches = @\([^\n]*Where-Object/);
+  assert.match(normalizationHelper,/\$Supported = @\([^\n]*Where-Object/);
+  assert.doesNotMatch(normalizationHelper,/\$JsonText\.(?:Count|Length)\b/);
 });
 
 test('secret inventory callers explicitly accept valid zero-record observations',()=>{
@@ -229,11 +243,11 @@ test('secret inventory callers explicitly accept valid zero-record observations'
     const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     assert.match(captureScript,new RegExp(`-SourceCommand '${escaped}'[^\\n]*-AllowEmpty`));
   }
-  assert.match(captureScript,/if \(\$AllowEmpty\) \{ return ,\(\[object\[\]\]@\(\)\) \}/);
-  assert.match(captureScript,/return ,\$NormalizedNames/);
+  assert.match(normalizationHelper,/if \(\$AllowEmpty\) \{ return ,\(\[object\[\]\]@\(\)\) \}/);
+  assert.match(normalizationHelper,/return ,\$NormalizedNames/);
   assert.match(captureScript,/ConvertTo-Json -InputObject \$Data -Depth 8/);
-  assert.match(captureScript,/SOURCE_UNAVAILABLE; command returned (?:no|null) JSON/);
-  assert.match(captureScript,/CAPTURE_FAILED; command returned invalid JSON/);
+  assert.match(normalizationHelper,/SOURCE_UNAVAILABLE; command returned (?:no|null) JSON/);
+  assert.match(normalizationHelper,/CAPTURE_FAILED; command returned invalid JSON/);
   assert.match(captureScript,/status = 'PRESENT'/);
   assert.doesNotMatch(captureScript,/AllowEmpty[\s\S]{0,80}status = 'PASS'/);
 });
@@ -246,13 +260,13 @@ test('inventory normalization rejects every unsafe response family without value
     '$Supported.Count -ne 1',
     '-not ($Value -is [string])',
     '[string]::IsNullOrWhiteSpace($Value)'
-  ]) assert.ok(captureScript.includes(guard), `missing fail-closed guard: ${guard}`);
-  assert.match(captureScript,/observed properties only:/);
-  assert.match(captureScript,/function Stop-InventoryNormalization\s*\{\s*\[CmdletBinding\(\)\]\s*param\(/);
-  assert.match(captureScript,/\[System\.ArgumentException\]::new\(\$Message\)/);
-  assert.match(captureScript,/\[System\.Management\.Automation\.ErrorRecord\]::new\(\s*\$Exception,\s*\$ErrorId,\s*\[System\.Management\.Automation\.ErrorCategory\]::InvalidData,\s*\$TargetObject\s*\)/);
-  assert.equal([...captureScript.matchAll(/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/g)].length,1,
-    'the nested diagnostic helper must terminate through its local PSCmdlet exactly once');
+  ]) assert.ok(normalizationHelper.includes(guard), `missing fail-closed guard: ${guard}`);
+  assert.match(normalizationHelper,/observed properties only:/);
+  assert.match(normalizationHelper,/function Stop-InventoryNormalization\s*\{\s*\[CmdletBinding\(\)\]\s*param\(/);
+  assert.match(normalizationHelper,/\[System\.ArgumentException\]::new\(\$Message\)/);
+  assert.match(normalizationHelper,/\[System\.Management\.Automation\.ErrorRecord\]::new\(\s*\$Exception,\s*\$ErrorId,\s*\[System\.Management\.Automation\.ErrorCategory\]::InvalidData,\s*\$TargetObject\s*\)/);
+  assert.equal([...normalizationHelper.matchAll(/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/g)].length,1,
+    'the shared diagnostic helper must terminate through its local PSCmdlet exactly once');
   for (const identifier of [
     'LP169InventorySchemaMismatch',
     'LP169InventoryBlankOutput',
@@ -261,17 +275,17 @@ test('inventory normalization rejects every unsafe response family without value
     'LP169InventoryScalarRoot',
     'LP169InventoryAmbiguousProperty',
     'LP169InventoryEmptyNotAllowed'
-  ]) assert.ok(captureScript.includes(`'${identifier}'`), `missing governed diagnostic: ${identifier}`);
-  const diagnosticCalls=[...captureScript.matchAll(/(?m)^\s*Stop-InventoryNormalization `\n\s+-ErrorId [^\n]+ `\n\s+-Message ([^\n]+) `\n\s+-TargetObject \$SourceCommand/g)];
+  ]) assert.ok(normalizationHelper.includes(`'${identifier}'`), `missing governed diagnostic: ${identifier}`);
+  const diagnosticCalls=[...normalizationHelper.matchAll(/^\s*Stop-InventoryNormalization `\n\s+-ErrorId [^\n]+ `\n\s+-Message ([^\n]+) `\n\s+-TargetObject \$SourceCommand/gm)];
   assert.ok(diagnosticCalls.length >= 10);
   assert.ok(diagnosticCalls.every(([,message])=>!message.includes('$Value')), 'failure diagnostics must never interpolate captured values');
   assert.ok(diagnosticCalls.every(([,message])=>message.includes('expected record properties:')),
     'every governed diagnostic must describe the expected record schema');
-  assert.match(captureScript,/\$Names \| Sort-Object -Unique/);
+  assert.match(normalizationHelper,/\$Names \| Sort-Object -Unique/);
 });
 
 test('PowerShell inventory response-shape regression matrix passes when PowerShell is available', { skip: process.platform !== 'win32' }, ()=>{
-  const result=spawnSync('powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',path.join(ROOT,'tests/lp169/inventory-normalization.ps1'),'-CaptureScriptPath',captureScriptPath],{cwd:ROOT,encoding:'utf8'});
+  const result=spawnSync('powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',path.join(ROOT,'tests/lp169/inventory-normalization.ps1'),'-NormalizationHelperPath',normalizationHelperPath],{cwd:ROOT,encoding:'utf8'});
   assert.equal(result.status,0,`${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout,/inventory normalization regression tests passed/);
 });
