@@ -1,0 +1,38 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "expectedSchemaCompatibility": "SOURCE_UNAVAILABLE",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "indexes": "SOURCE_UNAVAILABLE",
+  "milestone": "LP169",
+  "objects": [
+    {
+      "identifier": "gridly_feedback",
+      "remoteRowsInspected": false,
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "gridly_geocode_cache",
+      "remoteRowsInspected": false,
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "gridly_verified_rural_addresses",
+      "remoteRowsInspected": false,
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "gridly_texas_address_foundation",
+      "remoteRowsInspected": false,
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "history_capture.events",
+      "remoteRowsInspected": false,
+      "status": "SOURCE_UNAVAILABLE"
+    }
+  ],
+  "policies": "SOURCE_UNAVAILABLE",
+  "remoteWrites": 0,
+  "status": "SOURCE_UNAVAILABLE",
+  "triggers": "SOURCE_UNAVAILABLE"
+}

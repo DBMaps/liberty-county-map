@@ -1,0 +1,30 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "categories": [
+    {
+      "category": "COUNTY_ADDRESS_PACKAGES",
+      "delivery": "SUPABASE_STORAGE",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "category": "ADDRESS_RUNTIME_CERTIFICATES",
+      "delivery": "SUPABASE_STORAGE",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "category": "RUNTIME_MANIFESTS_AND_DESTINATION_CROSSING_ASSETS",
+      "delivery": "REPOSITORY_HOSTED_STATIC_ASSETS",
+      "status": "NOT_APPLICABLE"
+    }
+  ],
+  "expectedBaseline": {
+    "addressPackages": 254,
+    "addressRuntimeCertificates": 254,
+    "bucket": "certified-addresses"
+  },
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169",
+  "objectsRead": 0,
+  "objectsWritten": 0,
+  "status": "SOURCE_UNAVAILABLE"
+}

@@ -1,0 +1,44 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "items": [
+    {
+      "identifier": "PRODUCTION_ORIGIN",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "CANONICAL_DOMAIN",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "SUPABASE_REDIRECT_URLS",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "AUTH_CALLBACK_URLS",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "CORS_ORIGINS",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "DEEP_LINKS",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "SUPPORT_URL",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    },
+    {
+      "identifier": "LEGAL_URL",
+      "status": "UNVERIFIED_OWNER_INPUT_REQUIRED"
+    }
+  ],
+  "milestone": "LP169",
+  "pwaStartUrl": {
+    "source": "manifest.webmanifest",
+    "status": "ABSENT"
+  },
+  "status": "SOURCE_UNAVAILABLE"
+}

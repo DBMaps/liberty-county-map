@@ -1,0 +1,34 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169",
+  "rawCommandOutputAccepted": false,
+  "requirements": [
+    "SUPABASE_PROJECT",
+    "SUPABASE_PROJECT_IDENTITY",
+    "SUPABASE_PROJECT_AVAILABILITY",
+    "SUPABASE_REGION",
+    "SUPABASE_API",
+    "SUPABASE_AUTH",
+    "DATABASE_OBJECTS",
+    "DATABASE_SCHEMA_COMPATIBILITY",
+    "DATABASE_POLICIES",
+    "DATABASE_INDEXES",
+    "DATABASE_TRIGGERS",
+    "STORAGE_OBJECTS",
+    "STORAGE_POLICIES",
+    "ORIGINS_REDIRECTS"
+  ],
+  "schema": {
+    "records": [
+      {
+        "attestation": "OWNER_ATTESTED_OR_TOOL_VERIFIED",
+        "identifier": "UPPERCASE_SAFE_IDENTIFIER",
+        "method": "SAFE_READ_ONLY_COMMAND_ID",
+        "status": "PRESENT|ABSENT|UNVERIFIED|INVALID_FORMAT|SOURCE_UNAVAILABLE|PASS|FAIL|OWNER_ACTION_REQUIRED"
+      }
+    ],
+    "schemaVersion": 1
+  },
+  "status": "SOURCE_UNAVAILABLE"
+}

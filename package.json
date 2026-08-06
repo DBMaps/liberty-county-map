@@ -251,6 +251,10 @@
     "test:lp167": "node --test tests/lp167/*.test.mjs",
     "audit:lp168": "node tools/lp168/audit-production-readiness.mjs",
     "verify:lp168": "node tools/lp168/verify-lp168-determinism.mjs",
-    "test:lp168": "node --test tests/lp168/*.test.mjs"
+    "test:lp168": "node --test tests/lp168/*.test.mjs",
+    "audit:lp169": "node tools/lp169/certify-production-configuration.mjs audit",
+    "certify:lp169": "node tools/lp169/certify-production-configuration.mjs certify",
+    "verify:lp169": "node tools/lp169/certify-production-configuration.mjs verify",
+    "test:lp169": "node --test tests/lp169/*.test.mjs"
   }
 }

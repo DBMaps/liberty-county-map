@@ -1,0 +1,32 @@
+{
+  "apiReachability": "SOURCE_UNAVAILABLE",
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "authenticationConfiguration": "SOURCE_UNAVAILABLE",
+  "availability": "SOURCE_UNAVAILABLE",
+  "edgeFunctions": [
+    {
+      "identifier": "gridly-geocode",
+      "status": "SOURCE_UNAVAILABLE"
+    }
+  ],
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169",
+  "projectIdentity": "SOURCE_UNAVAILABLE",
+  "region": "SOURCE_UNAVAILABLE",
+  "remoteMutationPerformed": false,
+  "repositoryMigrationCount": 11,
+  "repositoryMigrations": [
+    "202606070001_create_gridly_feedback.sql",
+    "202606110001_add_county_metadata_columns.sql",
+    "202606160001_add_historical_incident_tables_draft.sql",
+    "202606160002_rollback_historical_incident_tables_draft.sql",
+    "202606170410_history_capture_storage.sql",
+    "202606170411_rollback_history_capture_storage.sql",
+    "202606170425_history_capture_schema_exposure.sql",
+    "202606170426_rollback_history_capture_schema_exposure.sql",
+    "202607280100_lp100_geocoding_governance.sql",
+    "202607290100_lp103_verified_rural_address_registry.sql",
+    "202607290200_lp1041_texas_address_foundation.sql"
+  ],
+  "status": "SOURCE_UNAVAILABLE"
+}

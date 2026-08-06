@@ -1,0 +1,128 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "blockers": [
+    {
+      "area": "productionConfigurationReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B001",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "OWNER_ACTION_REQUIRED"
+    },
+    {
+      "area": "supabaseReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B002",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "area": "databaseObjectReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B003",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "area": "storageReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B004",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "area": "storagePolicyReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B005",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "area": "productionOriginReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B006",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "area": "runtimeAlignmentReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B007",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "OWNER_ACTION_REQUIRED"
+    },
+    {
+      "area": "securityConfigurationReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B008",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "OWNER_ACTION_REQUIRED"
+    },
+    {
+      "area": "deploymentConfigurationReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B009",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "NOT_READY"
+    },
+    {
+      "area": "statewideActivationConfigurationReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B010",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "NOT_READY"
+    },
+    {
+      "area": "appDistributionConfigurationReadiness",
+      "blocks": [
+        "DEPLOYMENT",
+        "ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "id": "LP169-B011",
+      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
+      "status": "OWNER_ACTION_REQUIRED"
+    }
+  ],
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169"
+}
