@@ -151,7 +151,11 @@ test('two isolated runs are byte-identical canonical LF',()=>{
 test('owner capture uses the Windows PowerShell 5.1 UTF-8-no-BOM path',()=>{
   assert.doesNotMatch(captureScript, /-Encoding\s+utf8NoBOM/i);
   assert.doesNotMatch(captureScript, /\[System\.Text\.UTF8Encoding\]::new/i);
-  assert.match(captureScript, /New-Object System\.Text\.UTF8Encoding\(\$false\)/);
+  assert.match(captureScript, /New-Object -TypeName System\.Text\.UTF8Encoding -ArgumentList \$false/);
+  assert.doesNotMatch(captureScript, /\bNew-Object\b(?!\s*(?:`\s*)?-TypeName)/,
+    'PowerShell 5.1 constructor calls must use explicit New-Object -TypeName syntax');
+  assert.doesNotMatch(captureScript, /\bNew-Object\s+(?!-TypeName\b)[\w.]+\s*\(/,
+    'New-Object TypeName(arguments) is not valid Windows PowerShell 5.1 syntax');
   assert.match(captureScript, /\[System\.IO\.File\]::WriteAllText/);
   assert.doesNotMatch(captureScript, /\b(?:Set-Content|Out-File|Add-Content)\b|(?:^|\s)(?:>|>>)\s*[^&]/m);
 });
@@ -247,7 +251,11 @@ test('inventory normalization rejects every unsafe response family without value
     '[string]::IsNullOrWhiteSpace($Value)'
   ]) assert.ok(captureScript.includes(guard), `missing fail-closed guard: ${guard}`);
   assert.match(captureScript,/observed properties only:/);
-  assert.match(captureScript,/New-Object System\.Management\.Automation\.ErrorRecord/);
+  assert.match(captureScript,/function Stop-InventoryNormalization\s*\{\s*\[CmdletBinding\(\)\]\s*param\(/);
+  assert.match(captureScript,/New-Object `\s*-TypeName System\.ArgumentException `\s*-ArgumentList \$Message/);
+  assert.match(captureScript,/\$ErrorRecordArguments = @\([\s\S]*?\$Exception,[\s\S]*?\$ErrorId,[\s\S]*?ErrorCategory\]::InvalidData,[\s\S]*?\$TargetObject[\s\S]*?\)/);
+  assert.match(captureScript,/New-Object `\s*-TypeName System\.Management\.Automation\.ErrorRecord `\s*-ArgumentList \$ErrorRecordArguments/);
+  assert.match(captureScript,/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/);
   for (const identifier of [
     'LP169InventorySchemaMismatch',
     'LP169InventoryBlankOutput',
@@ -257,10 +265,10 @@ test('inventory normalization rejects every unsafe response family without value
     'LP169InventoryAmbiguousProperty',
     'LP169InventoryEmptyNotAllowed'
   ]) assert.ok(captureScript.includes(`'${identifier}'`), `missing governed diagnostic: ${identifier}`);
-  const diagnosticLines=captureScript.split('\n').filter(line=>line.includes('Stop-InventoryNormalization '));
-  assert.ok(diagnosticLines.length >= 10);
-  assert.ok(diagnosticLines.every(line=>!line.includes('$Value')), 'failure diagnostics must never interpolate captured values');
-  assert.ok(diagnosticLines.every(line=>line.includes('expected record properties:')),
+  const diagnosticCalls=[...captureScript.matchAll(/(?m)^\s*Stop-InventoryNormalization `\n\s+-ErrorId [^\n]+ `\n\s+-Message ([^\n]+) `\n\s+-TargetObject \$SourceCommand/g)];
+  assert.ok(diagnosticCalls.length >= 10);
+  assert.ok(diagnosticCalls.every(([,message])=>!message.includes('$Value')), 'failure diagnostics must never interpolate captured values');
+  assert.ok(diagnosticCalls.every(([,message])=>message.includes('expected record properties:')),
     'every governed diagnostic must describe the expected record schema');
   assert.match(captureScript,/\$Names \| Sort-Object -Unique/);
 });

@@ -15,7 +15,7 @@ New-Item -ItemType Directory -Path $CaptureDirectory | Out-Null
 
 # Windows PowerShell 5.1's UTF8 cmdlet encoding emits a BOM and does not know
 # utf8NoBOM. Use the .NET constructor available on .NET Framework instead.
-$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$Utf8NoBom = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $false
 
 function Assert-SafeContent([string]$Content) {
   $SecretPattern = '(eyJ[a-zA-Z0-9_-]{20,}\.|sb_(?:secret|service)_[a-zA-Z0-9_-]+|(?:postgres|postgresql|mysql|mongodb(?:\+srv)?):\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+[a-z0-9._~+\/-]{8,}|authorization["'']?\s*:|cookie["'']?\s*:|["'']?(?:password|access[_-]?token|refresh[_-]?token)["'']?\s*[:=]\s*["'']?[^"'']{8,})'
@@ -56,16 +56,36 @@ function Get-NormalizedInventoryNames {
     [switch]$AllowEmpty
   )
 
-  function Stop-InventoryNormalization([string]$ErrorId, [string]$Message) {
+  function Stop-InventoryNormalization {
+    [CmdletBinding()]
+    param(
+      [Parameter(Mandatory=$true)]
+      [string]$ErrorId,
+
+      [Parameter(Mandatory=$true)]
+      [string]$Message,
+
+      [Parameter(Mandatory=$true)]
+      [string]$TargetObject
+    )
+
     # ThrowTerminatingError preserves ErrorRecord.FullyQualifiedErrorId on
     # Windows PowerShell 5.1; throwing a string makes that field prose-derived.
-    $Exception = New-Object System.ArgumentException($Message)
-    $ErrorRecord = New-Object System.Management.Automation.ErrorRecord(
+    $Exception = New-Object `
+      -TypeName System.ArgumentException `
+      -ArgumentList $Message
+
+    $ErrorRecordArguments = @(
       $Exception,
       $ErrorId,
       [System.Management.Automation.ErrorCategory]::InvalidData,
-      $SourceCommand
+      $TargetObject
     )
+
+    $ErrorRecord = New-Object `
+      -TypeName System.Management.Automation.ErrorRecord `
+      -ArgumentList $ErrorRecordArguments
+
     $PSCmdlet.ThrowTerminatingError($ErrorRecord)
   }
 
@@ -73,15 +93,24 @@ function Get-NormalizedInventoryNames {
   # error, status object, or wrapper into inventory evidence. Diagnostics name
   # schemas only; captured values are never included.
   if ([string]::IsNullOrWhiteSpace($JsonText)) {
-    Stop-InventoryNormalization 'LP169InventoryBlankOutput' "$SourceCommand SOURCE_UNAVAILABLE; command returned no JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+    Stop-InventoryNormalization `
+      -ErrorId 'LP169InventoryBlankOutput' `
+      -Message "$SourceCommand SOURCE_UNAVAILABLE; command returned no JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+      -TargetObject $SourceCommand
   }
   try {
     $Parsed = ConvertFrom-Json -InputObject $JsonText
   } catch {
-    Stop-InventoryNormalization 'LP169InventoryMalformedJson' "$SourceCommand CAPTURE_FAILED; command returned invalid JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+    Stop-InventoryNormalization `
+      -ErrorId 'LP169InventoryMalformedJson' `
+      -Message "$SourceCommand CAPTURE_FAILED; command returned invalid JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+      -TargetObject $SourceCommand
   }
   if ($null -eq $Parsed -and $JsonText -notmatch '^\s*\[\s*\]\s*$') {
-    Stop-InventoryNormalization 'LP169InventoryNullOutput' "$SourceCommand SOURCE_UNAVAILABLE; command returned null JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+    Stop-InventoryNormalization `
+      -ErrorId 'LP169InventoryNullOutput' `
+      -Message "$SourceCommand SOURCE_UNAVAILABLE; command returned null JSON; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+      -TargetObject $SourceCommand
   }
   # Inspect the JSON root before normalization. Windows PowerShell 5.1
   # enumerates JSON arrays at the pipeline boundary: [], [x], and [x,y] can
@@ -89,7 +118,10 @@ function Get-NormalizedInventoryNames {
   $IsArrayRoot = $JsonText -match '^\s*\['
   $IsObjectRoot = $JsonText -match '^\s*\{'
   if (-not $IsArrayRoot -and -not $IsObjectRoot) {
-    Stop-InventoryNormalization 'LP169InventoryScalarRoot' "$SourceCommand returned a scalar JSON root; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+    Stop-InventoryNormalization `
+      -ErrorId 'LP169InventoryScalarRoot' `
+      -Message "$SourceCommand returned a scalar JSON root; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+      -TargetObject $SourceCommand
   }
 
   [object[]]$Records = @()
@@ -101,38 +133,59 @@ function Get-NormalizedInventoryNames {
     $WrapperMatches = @($WrapperProperties | Where-Object { $null -ne $Parsed.PSObject.Properties[$_] })
     if ($WrapperMatches.Count -gt 1) {
       $Observed = @($Parsed.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique) -join ','
-      Stop-InventoryNormalization 'LP169InventoryAmbiguousProperty' "$SourceCommand returned an ambiguous wrapper; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$Observed]."
+      Stop-InventoryNormalization `
+        -ErrorId 'LP169InventoryAmbiguousProperty' `
+        -Message "$SourceCommand returned an ambiguous wrapper; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$Observed]." `
+        -TargetObject $SourceCommand
     }
     if ($WrapperMatches.Count -eq 0) {
       $Observed = @($Parsed.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique) -join ','
-      Stop-InventoryNormalization 'LP169InventorySchemaMismatch' "$SourceCommand returned an unsupported wrapper; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$Observed]."
+      Stop-InventoryNormalization `
+        -ErrorId 'LP169InventorySchemaMismatch' `
+        -Message "$SourceCommand returned an unsupported wrapper; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$Observed]." `
+        -TargetObject $SourceCommand
     }
     $WrappedRecords = $Parsed.PSObject.Properties[$WrapperMatches[0]].Value
     if ($null -eq $WrappedRecords -or -not ($WrappedRecords -is [System.Array])) {
-      Stop-InventoryNormalization 'LP169InventorySchemaMismatch' "$SourceCommand returned an invalid wrapper inventory; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($WrapperMatches -join ',')]."
+      Stop-InventoryNormalization `
+        -ErrorId 'LP169InventorySchemaMismatch' `
+        -Message "$SourceCommand returned an invalid wrapper inventory; expected wrapper properties: [$($WrapperProperties -join ',')]; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($WrapperMatches -join ',')]." `
+        -TargetObject $SourceCommand
     }
     $Records = @($WrappedRecords)
   }
   if ($Records.Count -eq 0) {
     if ($AllowEmpty) { return ,([object[]]@()) }
-    Stop-InventoryNormalization 'LP169InventoryEmptyNotAllowed' "$SourceCommand returned an empty inventory; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+    Stop-InventoryNormalization `
+      -ErrorId 'LP169InventoryEmptyNotAllowed' `
+      -Message "$SourceCommand returned an empty inventory; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+      -TargetObject $SourceCommand
   }
 
   $Names = @()
   foreach ($Record in $Records) {
     if ($null -eq $Record -or $Record -is [string] -or $Record.GetType().IsPrimitive) {
-      Stop-InventoryNormalization 'LP169InventorySchemaMismatch' "$SourceCommand returned a scalar inventory record; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []."
+      Stop-InventoryNormalization `
+        -ErrorId 'LP169InventorySchemaMismatch' `
+        -Message "$SourceCommand returned a scalar inventory record; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: []." `
+        -TargetObject $SourceCommand
     }
     $ObservedProperties = @($Record.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique)
     $Supported = @($AllowedProperties | Where-Object { $null -ne $Record.PSObject.Properties[$_] })
     if ($Supported.Count -ne 1) {
       $Reason = if ($Supported.Count -eq 0) { 'unsupported' } else { 'ambiguous' }
       $Identifier = if ($Reason -eq 'ambiguous') { 'LP169InventoryAmbiguousProperty' } else { 'LP169InventorySchemaMismatch' }
-      Stop-InventoryNormalization $Identifier "$SourceCommand returned an $Reason inventory record; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($ObservedProperties -join ',')]."
+      Stop-InventoryNormalization `
+        -ErrorId $Identifier `
+        -Message "$SourceCommand returned an $Reason inventory record; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($ObservedProperties -join ',')]." `
+        -TargetObject $SourceCommand
     }
     $Value = $Record.PSObject.Properties[$Supported[0]].Value
     if ($null -eq $Value -or -not ($Value -is [string]) -or [string]::IsNullOrWhiteSpace($Value)) {
-      Stop-InventoryNormalization 'LP169InventorySchemaMismatch' "$SourceCommand returned an invalid inventory name; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($ObservedProperties -join ',')]."
+      Stop-InventoryNormalization `
+        -ErrorId 'LP169InventorySchemaMismatch' `
+        -Message "$SourceCommand returned an invalid inventory name; expected record properties: [$($AllowedProperties -join ',')]; observed properties only: [$($ObservedProperties -join ',')]." `
+        -TargetObject $SourceCommand
     }
     $Names += $Value.Trim()
   }
