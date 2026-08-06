@@ -256,6 +256,8 @@
     "certify:lp169": "node tools/lp169/certify-production-configuration.mjs certify",
     "verify:lp169": "node tools/lp169/certify-production-configuration.mjs verify",
     "test:lp169": "node --test tests/lp169/*.test.mjs",
-    "ingest:lp169:sql-editor": "node tools/lp169/ingest-sql-editor-evidence.mjs"
+    "ingest:lp169:sql-editor": "node tools/lp169/ingest-sql-editor-evidence.mjs",
+    "capture:lp169:remaining-evidence": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp169/capture-remaining-production-evidence.ps1",
+    "ingest:lp169:remaining-evidence": "node tools/lp169/build-remaining-production-evidence.mjs"
   }
 }

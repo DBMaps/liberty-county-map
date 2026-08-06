@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenceContentIdentity, loadSqlEditorEvidence, reconcileEvidence, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
+import { ATTESTATION_FIELDS, build, template, validateAttestation } from '../../tools/lp169/build-remaining-production-evidence.mjs';
 
 const captureScriptPath = path.join(ROOT, 'tools/lp169/capture-owner-production-evidence.ps1');
 const captureScript = fs.readFileSync(captureScriptPath, 'utf8');
@@ -48,10 +49,42 @@ test('missing credentials and governed owner SQL evidence state fail closed',()=
   assert.notEqual(expectedStorageClassification,'PASS');
   assert.notEqual(expectedStorageClassification,'COMPLETE');
   assert.notEqual(summary.overallClassification,'PRODUCTION_CONFIGURATION_CERTIFIED');
-  assert.equal(summary.overallClassification,ownerSqlEvidence?'NOT_READY_CONFIGURATION_GAPS_REMAIN':'OWNER_EXECUTION_REQUIRED');
+  assert.equal(summary.overallClassification,'REMAINING_PRODUCTION_CONFIGURATION_EVIDENCE_READY');
   assert.equal(summary.deploymentAuthorized,false);
   assert.equal(summary.activationAuthorized,false);
   assert.equal(summary.publicLaunchAuthorized,false);
+});
+
+test('remaining attestation requires every explicit field and rejects development origins',()=>{
+  const ref='abcdefghijklmnopqrst', safe=template(ref);
+  assert.doesNotThrow(()=>validateAttestation(safe,ref));
+  assert.throws(()=>validateAttestation({...safe,productionOrigin:'http://localhost:3000'},ref),/unsafe/);
+  assert.throws(()=>validateAttestation({...safe,supportUrl:'https://example.com/support'},ref),/unsafe/);
+  assert.throws(()=>validateAttestation({...safe,intendedProjectRef:'zyxwvutsrqponmlkjihg'},ref),/mismatch/);
+  const missing={...safe}; delete missing.termsUrl;
+  assert.throws(()=>validateAttestation(missing,ref),/required/);
+  assert.deepEqual(Object.keys(template(ref)).sort(),['schemaVersion','intendedProjectRef',...ATTESTATION_FIELDS].sort());
+});
+
+test('remaining workflow reconciles project, function, empty inventories, and identities',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'lp169-remaining-'));
+  try {
+    const ref='abcdefghijklmnopqrst';
+    const files={
+      'supabase-project-safe.json':[{id:ref,name:'Gridly',region:'us-east-1',status:'ACTIVE_HEALTHY'}],
+      'supabase-functions-safe.json':[{name:'gridly-geocode',status:'ACTIVE'}],
+      'supabase-secret-names-safe.json':[],
+      'github-secret-names-safe.json':[]
+    };
+    for(const [name,value] of Object.entries(files))fs.writeFileSync(path.join(temp,name),JSON.stringify(value));
+    const a={...template(ref),productionOrigin:'https://gridly.app/',supportUrl:'https://gridly.app/support',privacyPolicyUrl:'https://gridly.app/privacy',termsUrl:'https://gridly.app/terms',reportingDisclaimerUrl:'https://gridly.app/disclaimer',refundPolicyUrl:'https://gridly.app/refunds',authCallbackUrls:['https://gridly.app/auth'],redirectUrls:['https://gridly.app/'],corsAllowedOrigins:['https://gridly.app/']};
+    const result=build(temp,a,ref);
+    assert.equal(result.records.find(x=>x.identifier==='SUPABASE_PROJECT_IDENTITY').status,'PASS');
+    assert.equal(result.records.find(x=>x.identifier==='FUNCTION:gridly-geocode').status,'PASS');
+    assert.ok(result.records.filter(x=>x.identifier.startsWith('SECRET:')).every(x=>x.status==='ABSENT'));
+    files['supabase-functions-safe.json']=[]; fs.writeFileSync(path.join(temp,'supabase-functions-safe.json'),'[]');
+    assert.equal(build(temp,a,ref).records.find(x=>x.identifier==='FUNCTION:gridly-geocode').status,'ABSENT');
+  } finally {fs.rmSync(temp,{recursive:true,force:true});}
 });
 
 test('evidence validation detects duplicate identities and partial evidence stays partial',()=>{

@@ -12,4 +12,4 @@ The ingester accepts BOM or BOM-free UTF-8, correctly parses quoted CSV, require
 
 ## Other owner evidence
 
-The capture script continues to collect redacted GitHub CLI and Supabase CLI names/status metadata into `%TEMP%`. Review its bundle and ingest a schema-v2 draft with `node tools/lp169/ingest-owner-evidence.mjs <draft>`. Never place raw output, environment files, tokens, credentials, user records, object bodies, or private authentication data here. Partial evidence remains partial.
+Run `npm run capture:lp169:remaining-evidence` as documented in `LP169.4-REMAINING-PRODUCTION-CONFIGURATION-EVIDENCE-CLOSURE.md`. The workflow collects redacted GitHub CLI and Supabase CLI name/status metadata into `%TEMP%`, generates the schema-v2 records itself, validates explicit owner attestations, and atomically ingests only canonical sanitized evidence. Never place raw output, environment files, tokens, credentials, user records, object bodies, or private authentication data here. Partial evidence remains partial.
