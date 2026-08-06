@@ -1,0 +1,253 @@
+{
+  "backup": {
+    "backupFrequency": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 backup authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record backup.backupFrequency was unavailable"
+    },
+    "backupProvider": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 backup authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record backup.backupProvider was unavailable"
+    },
+    "latestSuccessfulBackupMetadata": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 backup authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record backup.latestSuccessfulBackupMetadata was unavailable"
+    },
+    "pitrAvailability": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 backup authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record backup.pitrAvailability was unavailable"
+    },
+    "retentionPolicy": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 backup authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record backup.retentionPolicy was unavailable"
+    }
+  },
+  "launchOperations": {
+    "communicationReadiness": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "launchDayOwnerAvailability": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "operationalSupportReadiness": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "productionReadinessAcknowledgement": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "monitoring": {
+    "alertDestinations": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 monitoring authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record monitoring.alertDestinations was unavailable"
+    },
+    "alertThresholds": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 monitoring authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record monitoring.alertThresholds was unavailable"
+    },
+    "evidenceTimestamp": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 monitoring authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record monitoring.evidenceTimestamp was unavailable"
+    },
+    "monitoredProductionServices": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 monitoring authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record monitoring.monitoredProductionServices was unavailable"
+    },
+    "monitoringOwnership": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "monitoringProviders": {
+      "classification": "SOURCE_UNAVAILABLE",
+      "collectionMethod": "metadata-only local export lookup",
+      "evidenceType": "production platform metadata",
+      "source": "LP173.1 monitoring authoritative metadata export",
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": "required source record monitoring.monitoringProviders was unavailable"
+    }
+  },
+  "operationalOwnership": {
+    "backupOperationalOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "primaryOperationalOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "productionAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "supportContact": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "technicalEscalation": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "rollbackOwnership": {
+    "productionValidationAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "releaseApprovalAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "releaseOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "rollbackAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "schemaVersion": "gridly.lp173.ownerOperationalEvidenceInput.v1"
+}

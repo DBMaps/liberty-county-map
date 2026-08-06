@@ -274,6 +274,10 @@
     "test:lp172": "node --test tests/lp172/*.test.mjs",
     "build:lp173": "node tools/lp173/complete-operational-evidence.mjs build",
     "verify:lp173": "node tools/lp173/complete-operational-evidence.mjs verify",
-    "test:lp173": "node --test tests/lp173/*.test.mjs"
+    "test:lp173": "node --test tests/lp173/*.test.mjs",
+    "discover:lp1731": "node tools/lp1731/discover-operational-evidence.mjs discover",
+    "prefill:lp1731": "node tools/lp1731/discover-operational-evidence.mjs prefill",
+    "verify:lp1731": "node tools/lp1731/discover-operational-evidence.mjs verify",
+    "test:lp1731": "node --test tests/lp1731/*.test.mjs"
   }
 }
