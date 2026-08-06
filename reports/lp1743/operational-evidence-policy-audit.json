@@ -1,0 +1,95 @@
+{
+  "authorizationReassessment": "NOT_READY_FOR_AUTHORIZATION_REASSESSMENT",
+  "authorizationUnchanged": true,
+  "authorizations": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "productionRestore": "NOT_AUTHORIZED",
+    "productionRollback": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "blockerCounts": {
+    "ownerActionRequired": 0,
+    "sourceUnavailable": 10,
+    "total": 10
+  },
+  "boundary": "AUDIT_ONLY_METADATA_ONLY_NON_AUTHORIZING",
+  "fields": [
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.alertDestinations",
+      "policyKind": "CONFIGURABLE_OPERATIONAL_CAPABILITY",
+      "reason": "Active monitoring does not establish configured alert routing or authoritative absence."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.alertThresholds",
+      "policyKind": "CONFIGURABLE_OPERATIONAL_CAPABILITY",
+      "reason": "Active monitoring does not establish configured thresholds or authoritative absence."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.evidenceTimestamp",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "No source-reported timestamp record is present."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.monitoredProductionServices",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "The described service list lacks a governed source record and canonical source identity."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.monitoringProviders",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "The described provider lacks a governed source record and canonical source identity."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.backupFrequency",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "The described schedule lacks a governed source record and canonical source identity."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.backupProvider",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "The described managed provider lacks a governed source record and canonical source identity."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.latestSuccessfulBackupMetadata",
+      "policyKind": "REQUIRED_MACHINE_VERIFIABLE_FACT",
+      "reason": "The exact sanitized backup metadata value and source identity are not present."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.pitrAvailability",
+      "policyKind": "CONFIGURABLE_CAPABILITY_CURRENT_STATE_FACT",
+      "reason": "The collected status value is not stated or committed, so presence and absence are both unverified."
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.retentionPolicy",
+      "policyKind": "CONFIGURABLE_OPERATIONAL_CAPABILITY",
+      "reason": "Backup frequency does not establish retention configuration or authoritative absence."
+    }
+  ],
+  "metadataOnly": true,
+  "milestone": "LP174.3",
+  "operationsPerformed": {
+    "activations": 0,
+    "deployments": 0,
+    "distributions": 0,
+    "productionRestores": 0,
+    "productionRollbacks": 0,
+    "publicLaunches": 0,
+    "runtimeModifications": 0
+  },
+  "protectedArtifactsChanged": false,
+  "rootCause": "Authoritative observations have not been ingested as governed metadata records with complete provenance and canonical source identity; verified absence is not established.",
+  "schemaVersion": "gridly.lp1743.operationalEvidencePolicyAudit.v1",
+  "truthfulBlockersRemoved": 0
+}
