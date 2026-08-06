@@ -22,17 +22,7 @@
     "runtimeModifications": 0
   },
   "ownerActionRequiredFacts": [
-    "monitoring.alertDestinations",
-    "monitoring.alertThresholds",
-    "monitoring.evidenceTimestamp",
-    "monitoring.monitoredProductionServices",
     "monitoring.monitoringOwnership",
-    "monitoring.monitoringProviders",
-    "backup.backupFrequency",
-    "backup.backupProvider",
-    "backup.latestSuccessfulBackupMetadata",
-    "backup.pitrAvailability",
-    "backup.retentionPolicy",
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",
@@ -675,7 +665,18 @@
     }
   ],
   "schemaVersion": "gridly.lp173.summary.v1",
-  "sourceUnavailableFacts": [],
+  "sourceUnavailableFacts": [
+    "monitoring.alertDestinations",
+    "monitoring.alertThresholds",
+    "monitoring.evidenceTimestamp",
+    "monitoring.monitoredProductionServices",
+    "monitoring.monitoringProviders",
+    "backup.backupFrequency",
+    "backup.backupProvider",
+    "backup.latestSuccessfulBackupMetadata",
+    "backup.pitrAvailability",
+    "backup.retentionPolicy"
+  ],
   "validation": {
     "canonicalLf": "PASS",
     "deterministicTwoGeneration": "PASS",

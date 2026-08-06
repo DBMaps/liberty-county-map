@@ -6,63 +6,57 @@
       "classification": "EVIDENCE_INCOMPLETE",
       "facts": {
         "backupFrequency": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 backup authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record backup.backupFrequency was unavailable"
         },
         "backupProvider": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 backup authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record backup.backupProvider was unavailable"
         },
         "latestSuccessfulBackupMetadata": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 backup authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record backup.latestSuccessfulBackupMetadata was unavailable"
         },
         "pitrAvailability": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 backup authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record backup.pitrAvailability was unavailable"
         },
         "retentionPolicy": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 backup authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record backup.retentionPolicy was unavailable"
         }
       },
-      "ownerActionRequired": [
-        "backupFrequency",
-        "backupProvider",
-        "latestSuccessfulBackupMetadata",
-        "pitrAvailability",
-        "retentionPolicy"
-      ]
+      "ownerActionRequired": []
     },
     "launchOperations": {
       "classification": "EVIDENCE_INCOMPLETE",
@@ -119,44 +113,44 @@
       "classification": "EVIDENCE_INCOMPLETE",
       "facts": {
         "alertDestinations": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 monitoring authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record monitoring.alertDestinations was unavailable"
         },
         "alertThresholds": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 monitoring authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record monitoring.alertThresholds was unavailable"
         },
         "evidenceTimestamp": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 monitoring authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record monitoring.evidenceTimestamp was unavailable"
         },
         "monitoredProductionServices": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 monitoring authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record monitoring.monitoredProductionServices was unavailable"
         },
         "monitoringOwnership": {
           "classification": "OWNER_ACTION_REQUIRED",
@@ -169,23 +163,18 @@
           "verificationMethod": null
         },
         "monitoringProviders": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "SOURCE_UNAVAILABLE",
+          "collectionMethod": "metadata-only local export lookup",
+          "evidenceType": "production platform metadata",
+          "source": "LP173.1 monitoring authoritative metadata export",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
           "value": null,
-          "verificationMethod": null
+          "verificationMethod": "required source record monitoring.monitoringProviders was unavailable"
         }
       },
       "ownerActionRequired": [
-        "alertDestinations",
-        "alertThresholds",
-        "evidenceTimestamp",
-        "monitoredProductionServices",
-        "monitoringOwnership",
-        "monitoringProviders"
+        "monitoringOwnership"
       ]
     },
     "operationalOwnership": {
@@ -307,17 +296,7 @@
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
     "OWNER_ACTION_REQUIRED": [
-      "monitoring.alertDestinations",
-      "monitoring.alertThresholds",
-      "monitoring.evidenceTimestamp",
-      "monitoring.monitoredProductionServices",
       "monitoring.monitoringOwnership",
-      "monitoring.monitoringProviders",
-      "backup.backupFrequency",
-      "backup.backupProvider",
-      "backup.latestSuccessfulBackupMetadata",
-      "backup.pitrAvailability",
-      "backup.retentionPolicy",
       "operationalOwnership.backupOperationalOwner",
       "operationalOwnership.primaryOperationalOwner",
       "operationalOwnership.productionAuthority",
@@ -333,7 +312,18 @@
       "launchOperations.productionReadinessAcknowledgement"
     ],
     "OWNER_ATTESTED": [],
-    "SOURCE_UNAVAILABLE": []
+    "SOURCE_UNAVAILABLE": [
+      "monitoring.alertDestinations",
+      "monitoring.alertThresholds",
+      "monitoring.evidenceTimestamp",
+      "monitoring.monitoredProductionServices",
+      "monitoring.monitoringProviders",
+      "backup.backupFrequency",
+      "backup.backupProvider",
+      "backup.latestSuccessfulBackupMetadata",
+      "backup.pitrAvailability",
+      "backup.retentionPolicy"
+    ]
   },
   "metadataOnly": true,
   "milestone": "LP173",

@@ -8,6 +8,7 @@ import { build as buildLp172, encode, ROOT, OWNER_ACTION_REQUIRED } from '../lp1
 export const NAMES = ['operational-evidence-completion-report.json', 'launch-authorization-readiness-report.json', 'lp173-summary.json'];
 export const TEMPLATE = 'evidence/lp173/owner-evidence.template.json';
 export const LOCAL = 'evidence/lp173/owner-evidence.local.json';
+export const AUTODISCOVERED = 'evidence/lp173/owner-evidence.autodiscovered.json';
 export const CLASSIFICATIONS = ['MACHINE_VERIFIED', 'NOT_CONFIGURED', 'NOT_VERIFIED', 'OWNER_ACTION_REQUIRED', 'OWNER_ATTESTED', 'SOURCE_UNAVAILABLE'];
 export const FIELDS = {
   monitoring: ['alertDestinations', 'alertThresholds', 'evidenceTimestamp', 'monitoredProductionServices', 'monitoringOwnership', 'monitoringProviders'],
@@ -40,7 +41,7 @@ export function validate(value) {
 }
 
 export function build(root = ROOT, supplied) {
-  const selected = fs.existsSync(path.join(root, LOCAL)) ? LOCAL : TEMPLATE;
+  const selected = fs.existsSync(path.join(root, LOCAL)) ? LOCAL : fs.existsSync(path.join(root, AUTODISCOVERED)) ? AUTODISCOVERED : TEMPLATE;
   const input = validate(supplied ?? JSON.parse(fs.readFileSync(path.join(root, selected), 'utf8')));
   const lp172 = buildLp172(root)['owner-operational-evidence-summary.json'];
   const domains = {};
@@ -62,5 +63,5 @@ export function build(root = ROOT, supplied) {
 }
 export function write(output = path.join(ROOT, 'reports/lp173'), root = ROOT, supplied) { const reports = build(root, supplied); fs.mkdirSync(output, { recursive: true }); for (const name of NAMES) fs.writeFileSync(path.join(output, name), encode(reports[name]), { encoding: 'utf8' }); return reports; }
 function mismatch(a, b) { const limit = Math.min(a.length, b.length); for (let i = 0; i < limit; i += 1) if (a[i] !== b[i]) return i; return a.length === b.length ? -1 : limit; }
-export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp173-')); try { const supplied = JSON.parse(fs.readFileSync(path.join(root, TEMPLATE), 'utf8')); const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); write(a, root, supplied); write(b, root, supplied); for (const name of NAMES) { const expected = fs.readFileSync(path.join(a, name)); const actual = fs.readFileSync(path.join(b, name)); const committed = fs.readFileSync(path.join(root, 'reports/lp173', name)); for (const [label, candidate] of [['second generation', actual], ['committed report', committed]]) { const offset = mismatch(expected, candidate); if (offset !== -1) throw Error(`LP173 deterministic mismatch: ${name}; ${label}; first differing byte ${offset}; expected sha256 ${hash(expected)}; actual sha256 ${hash(candidate)}`); } if (expected[0] === 0xef || expected.includes(13)) throw Error(`LP173 canonical format failure: ${name}`); } } finally { fs.rmSync(temp, { recursive: true, force: true }); } return true; }
+export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp173-')); try { const supplied = JSON.parse(fs.readFileSync(path.join(root, AUTODISCOVERED), 'utf8')); const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); write(a, root, supplied); write(b, root, supplied); for (const name of NAMES) { const expected = fs.readFileSync(path.join(a, name)); const actual = fs.readFileSync(path.join(b, name)); const committed = fs.readFileSync(path.join(root, 'reports/lp173', name)); for (const [label, candidate] of [['second generation', actual], ['committed report', committed]]) { const offset = mismatch(expected, candidate); if (offset !== -1) throw Error(`LP173 deterministic mismatch: ${name}; ${label}; first differing byte ${offset}; expected sha256 ${hash(expected)}; actual sha256 ${hash(candidate)}`); } if (expected[0] === 0xef || expected.includes(13)) throw Error(`LP173 canonical format failure: ${name}`); } } finally { fs.rmSync(temp, { recursive: true, force: true }); } return true; }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const mode = process.argv[2] || 'build'; if (mode === 'verify') { verify(); console.log('LP173 deterministic, canonical-format, protected-identity verification: PASS'); } else { const reports = write(); console.log(`LP173 evidence completion: ${reports[NAMES[2]].evidenceClassification}`); } }
