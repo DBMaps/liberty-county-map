@@ -1,0 +1,19 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "SOURCE_UNAVAILABLE",
+  "configuredBackupDoesNotCertifyRestoration": true,
+  "dashboardAttestationRequired": true,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171",
+  "requirements": {
+    "access_path": "SOURCE_UNAVAILABLE",
+    "frequency": "SOURCE_UNAVAILABLE",
+    "latest_status": "SOURCE_UNAVAILABLE",
+    "limitations": "SOURCE_UNAVAILABLE",
+    "owner": "SOURCE_UNAVAILABLE",
+    "pitr": "SOURCE_UNAVAILABLE",
+    "plan_capability": "SOURCE_UNAVAILABLE",
+    "retention": "SOURCE_UNAVAILABLE",
+    "verification_method": "SOURCE_UNAVAILABLE"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "artifactPreserved": true,
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "REHEARSAL_PASS",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "identityValidation": "SHA256_AND_GIT_BLOB",
+  "milestone": "LP171",
+  "mutationOccurred": false,
+  "priorReleaseIdentity": "git:68c30eb",
+  "productionContacted": false,
+  "productionRollbackStatus": "NOT_TESTED",
+  "target": "LOCAL_FIXTURE_RELEASE_ARTIFACT",
+  "workflowTriggered": false
+}

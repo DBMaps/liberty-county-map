@@ -1,0 +1,67 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "items": [
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "PRIMARY_OPERATIONAL_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "BACKUP_OPERATIONAL_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "TECHNICAL_ESCALATION_CONTACT"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SUPPORT_CONTACT"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SEVERITY_MODEL"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "INITIAL_TRIAGE"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "CONTAINMENT_OPTIONS"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ROLLBACK_DECISION_AUTHORITY"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "RESTORATION_DECISION_AUTHORITY"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "USER_COMMUNICATION_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "EVIDENCE_PRESERVATION_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "POST_INCIDENT_REVIEW_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ESCALATION_TIMELINE"
+    }
+  ],
+  "milestone": "LP171",
+  "severityModel": [
+    "SEV1_CRITICAL",
+    "SEV2_MAJOR",
+    "SEV3_DEGRADED",
+    "SEV4_INFORMATIONAL"
+  ],
+  "unknownOwnersFailClosed": true
+}

@@ -1,0 +1,35 @@
+{
+  "authorization": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "productionRestore": "NOT_AUTHORIZED",
+    "productionRollback": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "findings": {
+    "backup": "SOURCE_UNAVAILABLE",
+    "incidentResponse": "OWNER_ACTION_REQUIRED",
+    "launchDay": "OWNER_ACTION_REQUIRED",
+    "monitoring": "SOURCE_UNAVAILABLE",
+    "productionRestoration": "NOT_TESTED",
+    "productionRollback": "NOT_TESTED",
+    "restorationRehearsal": "REHEARSAL_PASS",
+    "rollbackClosure": "OWNER_ACTION_REQUIRED",
+    "rollbackRehearsal": "REHEARSAL_PASS"
+  },
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171",
+  "operationsPerformed": {
+    "activations": 0,
+    "deployments": 0,
+    "distributionChanges": 0,
+    "productionMutations": 0,
+    "publicLaunches": 0,
+    "restores": 0,
+    "rollbacks": 0,
+    "workflowTriggers": 0
+  },
+  "overallClassification": "NOT_READY"
+}

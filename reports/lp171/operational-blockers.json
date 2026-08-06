@@ -1,0 +1,57 @@
+{
+  "blockers": [
+    {
+      "area": "monitoring",
+      "classification": "SOURCE_UNAVAILABLE",
+      "id": "LP171-B001",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "backup",
+      "classification": "SOURCE_UNAVAILABLE",
+      "id": "LP171-B002",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "incidentResponse",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "id": "LP171-B003",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "operationalOwnership",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "id": "LP171-B004",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "productionRestoration",
+      "classification": "NOT_TESTED",
+      "id": "LP171-B005",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "productionRollback",
+      "classification": "NOT_TESTED",
+      "id": "LP171-B006",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    },
+    {
+      "area": "launchDay",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "id": "LP171-B007",
+      "owner": "UNKNOWN",
+      "remediation": "Complete explicit owner attestation and validate; no production operation is authorized."
+    }
+  ],
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "NOT_READY",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171"
+}
