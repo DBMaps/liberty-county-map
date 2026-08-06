@@ -222,9 +222,40 @@ test('owner capture publishes atomically, cleans staging, and supports command s
   assert.match(captureScript,/finally\s*\{[\s\S]*Remove-Item[^\n]*\$CaptureDirectory/);
   assert.match(captureScript,/\.lp169-previous-/);
   assert.match(captureScript,/Move-Item[^\n]*\$BackupDirectory[^\n]*\$ReviewDirectory/);
-  assert.match(captureScript,/& \$CommandName @Arguments/);
+  assert.match(captureScript,/& \$CommandName @Arguments 2>&1 \| Out-String/);
   assert.doesNotMatch(captureScript,/CommandType\s+(?:-eq\s+)?['"]?Application/i);
   assert.match(captureScript,/if \(\$LASTEXITCODE -ne 0\).*captured output was not displayed/);
+});
+
+test('owner capture resolves Supabase directly before the repository-local npx fallback',()=>{
+  assert.match(captureScript,/function Resolve-SupabaseCommand/);
+  const direct=captureScript.indexOf("Get-Command 'supabase' -ErrorAction SilentlyContinue");
+  const fallback=captureScript.indexOf("Get-Command 'npx' -ErrorAction SilentlyContinue");
+  assert.ok(direct >= 0 && fallback > direct);
+  assert.match(captureScript,/Executable = 'supabase'; ArgumentPrefix = @\(\)/);
+  assert.match(captureScript,/Executable = 'npx'; ArgumentPrefix = @\('--yes', 'supabase'\)/);
+  assert.match(captureScript,/throw 'Supabase CLI unavailable; install repository npm dependencies or provide a supabase command\.'/);
+  assert.doesNotMatch(captureScript,/Get-Command[^\n]*CommandType/,
+    'functions, aliases, applications, and owner command shims must all remain resolvable');
+});
+
+test('all Supabase metadata calls share the resolved prefix in deterministic argument order',()=>{
+  assert.match(captureScript,/\[object\[\]\]\$EffectiveArguments = @\(\$CommandSpecification\.ArgumentPrefix\) \+ @\(\$Arguments\)/);
+  assert.match(captureScript,/Invoke-CapturedCommand \$CommandSpecification\.Executable \$EffectiveArguments/);
+  assert.match(captureScript,/\$SupabaseCommand = Resolve-SupabaseCommand/);
+  assert.equal((captureScript.match(/Invoke-SupabaseCapturedCommand \$SupabaseCommand @\(/g) || []).length,3);
+  assert.doesNotMatch(captureScript,/Invoke-CapturedCommand 'supabase'/);
+  assert.match(captureScript,/Invoke-SupabaseCapturedCommand \$SupabaseCommand @\('projects','list','--output','json'\)/);
+  assert.match(captureScript,/Invoke-SupabaseCapturedCommand \$SupabaseCommand @\('secrets','list','--project-ref',\$ProjectRef,'--output','json'\)/);
+  assert.match(captureScript,/Invoke-SupabaseCapturedCommand \$SupabaseCommand @\('functions','list','--project-ref',\$ProjectRef,'--output','json'\)/);
+});
+
+test('Supabase fallback preserves captured-command failure and output-suppression safety',()=>{
+  assert.match(captureScript,/\$Output = & \$CommandName @Arguments 2>&1 \| Out-String/);
+  assert.match(captureScript,/if \(\$LASTEXITCODE -ne 0\) \{ throw "\$CommandName metadata command failed; captured output was not displayed\." \}/);
+  assert.doesNotMatch(captureScript,/Write-(?:Host|Output)[^\n]*(?:\$Output|\$SupabaseSecretJson)/);
+  assert.match(captureScript,/Write-SafeJson 'supabase-secret-names-safe\.json' \$SecretNames/);
+  assert.doesNotMatch(captureScript,/Write-SafeJson[^\n]*\$SupabaseSecretJson/);
 });
 
 test('owner capture remains secret-safe and metadata-only',()=>{
