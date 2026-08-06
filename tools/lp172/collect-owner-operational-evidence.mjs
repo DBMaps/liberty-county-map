@@ -6,6 +6,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+// The authoritative protected-artifact state is the mainline commit immediately
+// before LP172 was merged.  Do not derive this from the moving HEAD or from the
+// checkout, since either makes the generated report branch/line-ending dependent.
+export const BASELINE = '0322552bc3c56c0c1e3fb5fd2e2ebbfc0ea3483c';
 export const NAMES = ['monitoring-evidence.json', 'backup-evidence.json', 'operational-ownership.json', 'rollback-ownership.json', 'launch-operations.json', 'owner-operational-evidence-summary.json'];
 export const OWNER_ACTION_REQUIRED = 'OWNER_ACTION_REQUIRED';
 const stable = value => Array.isArray(value) ? value.map(stable) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])])) : value;
@@ -36,11 +40,11 @@ export function validateEvidence(value) {
 const classification = record => Object.values(record).every(value => value !== OWNER_ACTION_REQUIRED) ? 'PASS' : OWNER_ACTION_REQUIRED;
 function protectedArtifacts(root) {
   const prefixes = ['js/app.js', ...[162, 163, 164, 165, 166, 167, 168, 169, 170, 171].map(n => `reports/lp${n}`)];
-  const names = execFileSync('git', ['ls-tree', '-r', '--name-only', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(name => prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}/`))).sort();
+  const names = execFileSync('git', ['ls-tree', '-r', '--name-only', BASELINE], { cwd: root, encoding: 'utf8' }).trim().split('\n').filter(name => prefixes.some(prefix => name === prefix || name.startsWith(`${prefix}/`))).sort();
   return names.map(name => {
-    const expected = execFileSync('git', ['show', `HEAD:${name}`], { cwd: root, maxBuffer: 128e6 });
-    const actual = fs.readFileSync(path.join(root, name));
-    return { path: name, gitBlobSha256: sha256(expected), workingTreeSha256: sha256(actual), classification: expected.equals(actual) ? 'PASS' : 'CHANGED' };
+    const expected = execFileSync('git', ['show', `${BASELINE}:${name}`], { cwd: root, maxBuffer: 128e6 });
+    const actual = execFileSync('git', ['show', `HEAD:${name}`], { cwd: root, maxBuffer: 128e6 });
+    return { path: name, expectedGitBlobSha256: sha256(expected), actualGitBlobSha256: sha256(actual), classification: expected.equals(actual) ? 'PASS' : 'CHANGED' };
   });
 }
 export function build(root = ROOT, supplied) {
@@ -55,7 +59,7 @@ export function build(root = ROOT, supplied) {
   }
   const artifacts = protectedArtifacts(root);
   const ownerActionRequired = Object.values(classifications).some(value => value !== 'PASS');
-  reports[NAMES[5]] = { schemaVersion: 'gridly.lp172.ownerOperationalEvidenceSummary.v1', ...classifications, overallClassification: ownerActionRequired ? OWNER_ACTION_REQUIRED : 'PASS', ownerActionRequired, metadataOnly: true, secretSafe: true, validation: { canonicalLf: true, utf8WithoutBom: true, deterministicOrdering: true, protectedGitBlobIdentities: artifacts.every(item => item.classification === 'PASS') ? 'PASS' : 'CHANGED', protectedRuntime: 'UNCHANGED', deployment: 'NOT_AUTHORIZED', activation: 'NOT_AUTHORIZED', launchAuthorization: 'NOT_AUTHORIZED' }, protectedArtifacts: artifacts, operationsPerformed: { deployments: 0, activations: 0, launchAuthorizations: 0, restorations: 0, rollbacks: 0, runtimeModifications: 0, productionConfigurationChanges: 0 } };
+  reports[NAMES[5]] = { schemaVersion: 'gridly.lp172.ownerOperationalEvidenceSummary.v1', ...classifications, overallClassification: ownerActionRequired ? OWNER_ACTION_REQUIRED : 'PASS', ownerActionRequired, metadataOnly: true, secretSafe: true, validation: { canonicalLf: true, utf8WithoutBom: true, deterministicOrdering: true, protectedGitBlobIdentities: artifacts.every(item => item.classification === 'PASS') ? 'PASS' : 'CHANGED', protectedRuntime: 'UNCHANGED', deployment: 'NOT_AUTHORIZED', activation: 'NOT_AUTHORIZED', launchAuthorization: 'NOT_AUTHORIZED' }, protectedArtifactVerification: { baselineCommit: BASELINE, comparisonCommit: 'HEAD', identitySource: 'CANONICAL_GIT_BLOB', workingTreeIgnored: true }, protectedArtifacts: artifacts, operationsPerformed: { deployments: 0, activations: 0, launchAuthorizations: 0, restorations: 0, rollbacks: 0, runtimeModifications: 0, productionConfigurationChanges: 0 } };
   return reports;
 }
 export function write(output = path.join(ROOT, 'reports/lp172'), root = ROOT, supplied) { const reports = build(root, supplied); fs.mkdirSync(output, { recursive: true }); for (const name of NAMES) fs.writeFileSync(path.join(output, name), encode(reports[name])); return reports; }

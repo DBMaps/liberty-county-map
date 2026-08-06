@@ -15,630 +15,636 @@
   "overallClassification": "OWNER_ACTION_REQUIRED",
   "ownerActionRequired": true,
   "ownership": "OWNER_ACTION_REQUIRED",
+  "protectedArtifactVerification": {
+    "baselineCommit": "0322552bc3c56c0c1e3fb5fd2e2ebbfc0ea3483c",
+    "comparisonCommit": "HEAD",
+    "identitySource": "CANONICAL_GIT_BLOB",
+    "workingTreeIgnored": true
+  },
   "protectedArtifacts": [
     {
+      "actualGitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
       "classification": "PASS",
-      "gitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
-      "path": "js/app.js",
-      "workingTreeSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf"
+      "expectedGitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "path": "js/app.js"
     },
     {
+      "actualGitBlobSha256": "5a6256b5f353eb7cf612f4747e31add73ea42d289d8324d4cbdfd9183137ce60",
       "classification": "PASS",
-      "gitBlobSha256": "5a6256b5f353eb7cf612f4747e31add73ea42d289d8324d4cbdfd9183137ce60",
-      "path": "reports/lp162/address-search-certification.json",
-      "workingTreeSha256": "5a6256b5f353eb7cf612f4747e31add73ea42d289d8324d4cbdfd9183137ce60"
+      "expectedGitBlobSha256": "5a6256b5f353eb7cf612f4747e31add73ea42d289d8324d4cbdfd9183137ce60",
+      "path": "reports/lp162/address-search-certification.json"
     },
     {
+      "actualGitBlobSha256": "e3860e8a60ad60f2ca1a3a82de16e2d69e28f8f570c3c2e5f3a92e0fe60c5e6f",
       "classification": "PASS",
-      "gitBlobSha256": "e3860e8a60ad60f2ca1a3a82de16e2d69e28f8f570c3c2e5f3a92e0fe60c5e6f",
-      "path": "reports/lp162/alias-search-certification.json",
-      "workingTreeSha256": "e3860e8a60ad60f2ca1a3a82de16e2d69e28f8f570c3c2e5f3a92e0fe60c5e6f"
+      "expectedGitBlobSha256": "e3860e8a60ad60f2ca1a3a82de16e2d69e28f8f570c3c2e5f3a92e0fe60c5e6f",
+      "path": "reports/lp162/alias-search-certification.json"
     },
     {
+      "actualGitBlobSha256": "779e65427807d18ceb2f7d232605d2b7197b0547deba61f90e77c7400d94921c",
       "classification": "PASS",
-      "gitBlobSha256": "779e65427807d18ceb2f7d232605d2b7197b0547deba61f90e77c7400d94921c",
-      "path": "reports/lp162/business-search-certification.json",
-      "workingTreeSha256": "779e65427807d18ceb2f7d232605d2b7197b0547deba61f90e77c7400d94921c"
+      "expectedGitBlobSha256": "779e65427807d18ceb2f7d232605d2b7197b0547deba61f90e77c7400d94921c",
+      "path": "reports/lp162/business-search-certification.json"
     },
     {
+      "actualGitBlobSha256": "a0e6f5575573b00d6b93782f548d18f4008027968f94ab53862f650d595a82b1",
       "classification": "PASS",
-      "gitBlobSha256": "a0e6f5575573b00d6b93782f548d18f4008027968f94ab53862f650d595a82b1",
-      "path": "reports/lp162/category-search-certification.json",
-      "workingTreeSha256": "a0e6f5575573b00d6b93782f548d18f4008027968f94ab53862f650d595a82b1"
+      "expectedGitBlobSha256": "a0e6f5575573b00d6b93782f548d18f4008027968f94ab53862f650d595a82b1",
+      "path": "reports/lp162/category-search-certification.json"
     },
     {
+      "actualGitBlobSha256": "53e096e9dd44eff7ff56c520d21716dffcb1c6af35d4b3a5f00a672039a243e3",
       "classification": "PASS",
-      "gitBlobSha256": "53e096e9dd44eff7ff56c520d21716dffcb1c6af35d4b3a5f00a672039a243e3",
-      "path": "reports/lp162/cross-county-isolation-report.json",
-      "workingTreeSha256": "53e096e9dd44eff7ff56c520d21716dffcb1c6af35d4b3a5f00a672039a243e3"
+      "expectedGitBlobSha256": "53e096e9dd44eff7ff56c520d21716dffcb1c6af35d4b3a5f00a672039a243e3",
+      "path": "reports/lp162/cross-county-isolation-report.json"
     },
     {
+      "actualGitBlobSha256": "cf30c6d9a448b899976de20914dc4c9f1bbb74949ea710025176d34e33635b3d",
       "classification": "PASS",
-      "gitBlobSha256": "cf30c6d9a448b899976de20914dc4c9f1bbb74949ea710025176d34e33635b3d",
-      "path": "reports/lp162/destination-search-certification.json",
-      "workingTreeSha256": "cf30c6d9a448b899976de20914dc4c9f1bbb74949ea710025176d34e33635b3d"
+      "expectedGitBlobSha256": "cf30c6d9a448b899976de20914dc4c9f1bbb74949ea710025176d34e33635b3d",
+      "path": "reports/lp162/destination-search-certification.json"
     },
     {
+      "actualGitBlobSha256": "13c3b31486a7463a4ee98b2de13490fffd3ff856c0fbe887110a0822b4c16452",
       "classification": "PASS",
-      "gitBlobSha256": "13c3b31486a7463a4ee98b2de13490fffd3ff856c0fbe887110a0822b4c16452",
-      "path": "reports/lp162/duplicate-name-resolution-report.json",
-      "workingTreeSha256": "13c3b31486a7463a4ee98b2de13490fffd3ff856c0fbe887110a0822b4c16452"
+      "expectedGitBlobSha256": "13c3b31486a7463a4ee98b2de13490fffd3ff856c0fbe887110a0822b4c16452",
+      "path": "reports/lp162/duplicate-name-resolution-report.json"
     },
     {
+      "actualGitBlobSha256": "cc516173767eee36d014dfd432484716ec085bf2f6e9d2ec069000e85d5672c2",
       "classification": "PASS",
-      "gitBlobSha256": "cc516173767eee36d014dfd432484716ec085bf2f6e9d2ec069000e85d5672c2",
-      "path": "reports/lp162/liberty-search-preservation-report.json",
-      "workingTreeSha256": "cc516173767eee36d014dfd432484716ec085bf2f6e9d2ec069000e85d5672c2"
+      "expectedGitBlobSha256": "cc516173767eee36d014dfd432484716ec085bf2f6e9d2ec069000e85d5672c2",
+      "path": "reports/lp162/liberty-search-preservation-report.json"
     },
     {
+      "actualGitBlobSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
       "classification": "PASS",
-      "gitBlobSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
-      "path": "reports/lp162/lp162-summary.json",
-      "workingTreeSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04"
+      "expectedGitBlobSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
+      "path": "reports/lp162/lp162-summary.json"
     },
     {
+      "actualGitBlobSha256": "4e8c21ea8a5f81f0937ba04b453ab3e5179c622c774db9b24ac3f9eed3c79793",
       "classification": "PASS",
-      "gitBlobSha256": "4e8c21ea8a5f81f0937ba04b453ab3e5179c622c774db9b24ac3f9eed3c79793",
-      "path": "reports/lp162/mobile-search-presentation-report.json",
-      "workingTreeSha256": "4e8c21ea8a5f81f0937ba04b453ab3e5179c622c774db9b24ac3f9eed3c79793"
+      "expectedGitBlobSha256": "4e8c21ea8a5f81f0937ba04b453ab3e5179c622c774db9b24ac3f9eed3c79793",
+      "path": "reports/lp162/mobile-search-presentation-report.json"
     },
     {
+      "actualGitBlobSha256": "f2ab108197a5ad20849d17a577390f011881daa70e757f533c8c96257bb31cd0",
       "classification": "PASS",
-      "gitBlobSha256": "f2ab108197a5ad20849d17a577390f011881daa70e757f533c8c96257bb31cd0",
-      "path": "reports/lp162/representative-county-search-report.json",
-      "workingTreeSha256": "f2ab108197a5ad20849d17a577390f011881daa70e757f533c8c96257bb31cd0"
+      "expectedGitBlobSha256": "f2ab108197a5ad20849d17a577390f011881daa70e757f533c8c96257bb31cd0",
+      "path": "reports/lp162/representative-county-search-report.json"
     },
     {
+      "actualGitBlobSha256": "bac9610b1fdce5fc5a291221f714fadb42a8bf31d140f7b007ed7decd828a93f",
       "classification": "PASS",
-      "gitBlobSha256": "bac9610b1fdce5fc5a291221f714fadb42a8bf31d140f7b007ed7decd828a93f",
-      "path": "reports/lp162/runtime-preservation-report.json",
-      "workingTreeSha256": "bac9610b1fdce5fc5a291221f714fadb42a8bf31d140f7b007ed7decd828a93f"
+      "expectedGitBlobSha256": "bac9610b1fdce5fc5a291221f714fadb42a8bf31d140f7b007ed7decd828a93f",
+      "path": "reports/lp162/runtime-preservation-report.json"
     },
     {
+      "actualGitBlobSha256": "f54a1cb09c080b69c9f97765950ac52b52997655f049473aedf22a9d37b42f9c",
       "classification": "PASS",
-      "gitBlobSha256": "f54a1cb09c080b69c9f97765950ac52b52997655f049473aedf22a9d37b42f9c",
-      "path": "reports/lp162/search-performance-report.json",
-      "workingTreeSha256": "f54a1cb09c080b69c9f97765950ac52b52997655f049473aedf22a9d37b42f9c"
+      "expectedGitBlobSha256": "f54a1cb09c080b69c9f97765950ac52b52997655f049473aedf22a9d37b42f9c",
+      "path": "reports/lp162/search-performance-report.json"
     },
     {
+      "actualGitBlobSha256": "20e5ce1d8ef6a9b0c6114dc95abcd0849203255106ae1f1763e4e8b2cbc1b960",
       "classification": "PASS",
-      "gitBlobSha256": "20e5ce1d8ef6a9b0c6114dc95abcd0849203255106ae1f1763e4e8b2cbc1b960",
-      "path": "reports/lp162/statewide-consumer-search-inventory.json",
-      "workingTreeSha256": "20e5ce1d8ef6a9b0c6114dc95abcd0849203255106ae1f1763e4e8b2cbc1b960"
+      "expectedGitBlobSha256": "20e5ce1d8ef6a9b0c6114dc95abcd0849203255106ae1f1763e4e8b2cbc1b960",
+      "path": "reports/lp162/statewide-consumer-search-inventory.json"
     },
     {
+      "actualGitBlobSha256": "05d8a4ce08b810586ccc50c51820d011a83d8948941ee780377440bd4c9a42cf",
       "classification": "PASS",
-      "gitBlobSha256": "05d8a4ce08b810586ccc50c51820d011a83d8948941ee780377440bd4c9a42cf",
-      "path": "reports/lp163/destination-route-case-results.json",
-      "workingTreeSha256": "05d8a4ce08b810586ccc50c51820d011a83d8948941ee780377440bd4c9a42cf"
+      "expectedGitBlobSha256": "05d8a4ce08b810586ccc50c51820d011a83d8948941ee780377440bd4c9a42cf",
+      "path": "reports/lp163/destination-route-case-results.json"
     },
     {
+      "actualGitBlobSha256": "440ee15c62a61cd59b98fe2f081e2ad78b02dceb2d125fdbf6bdbde7b9821dab",
       "classification": "PASS",
-      "gitBlobSha256": "440ee15c62a61cd59b98fe2f081e2ad78b02dceb2d125fdbf6bdbde7b9821dab",
-      "path": "reports/lp163/liberty-preservation-results.json",
-      "workingTreeSha256": "440ee15c62a61cd59b98fe2f081e2ad78b02dceb2d125fdbf6bdbde7b9821dab"
+      "expectedGitBlobSha256": "440ee15c62a61cd59b98fe2f081e2ad78b02dceb2d125fdbf6bdbde7b9821dab",
+      "path": "reports/lp163/liberty-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
       "classification": "PASS",
-      "gitBlobSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
-      "path": "reports/lp163/lp163-summary.json",
-      "workingTreeSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d"
+      "expectedGitBlobSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
+      "path": "reports/lp163/lp163-summary.json"
     },
     {
+      "actualGitBlobSha256": "00033d64f4a87ba8ecf29815a92b9f91b80e0276e72b425f365c5e3a52803988",
       "classification": "PASS",
-      "gitBlobSha256": "00033d64f4a87ba8ecf29815a92b9f91b80e0276e72b425f365c5e3a52803988",
-      "path": "reports/lp163/protected-artifact-hashes.json",
-      "workingTreeSha256": "00033d64f4a87ba8ecf29815a92b9f91b80e0276e72b425f365c5e3a52803988"
+      "expectedGitBlobSha256": "00033d64f4a87ba8ecf29815a92b9f91b80e0276e72b425f365c5e3a52803988",
+      "path": "reports/lp163/protected-artifact-hashes.json"
     },
     {
+      "actualGitBlobSha256": "c4a651954c9728e8a2656d9a0d7f12258862a23fcc080557a33644cc95a0ba5f",
       "classification": "PASS",
-      "gitBlobSha256": "c4a651954c9728e8a2656d9a0d7f12258862a23fcc080557a33644cc95a0ba5f",
-      "path": "reports/lp163/representative-county-routing-results.json",
-      "workingTreeSha256": "c4a651954c9728e8a2656d9a0d7f12258862a23fcc080557a33644cc95a0ba5f"
+      "expectedGitBlobSha256": "c4a651954c9728e8a2656d9a0d7f12258862a23fcc080557a33644cc95a0ba5f",
+      "path": "reports/lp163/representative-county-routing-results.json"
     },
     {
+      "actualGitBlobSha256": "9f0a2595b98df4a5f5407bdde5e1fb84d521c7e7b43920afba91d295e27b5bf9",
       "classification": "PASS",
-      "gitBlobSha256": "9f0a2595b98df4a5f5407bdde5e1fb84d521c7e7b43920afba91d295e27b5bf9",
-      "path": "reports/lp163/routing-integration-results.json",
-      "workingTreeSha256": "9f0a2595b98df4a5f5407bdde5e1fb84d521c7e7b43920afba91d295e27b5bf9"
+      "expectedGitBlobSha256": "9f0a2595b98df4a5f5407bdde5e1fb84d521c7e7b43920afba91d295e27b5bf9",
+      "path": "reports/lp163/routing-integration-results.json"
     },
     {
+      "actualGitBlobSha256": "a38ade796fcadb7e06200ae403b6af4e3df5c63484d326caa4d9e2e3cce8e540",
       "classification": "PASS",
-      "gitBlobSha256": "a38ade796fcadb7e06200ae403b6af4e3df5c63484d326caa4d9e2e3cce8e540",
-      "path": "reports/lp163/statewide-destination-routing-certification.json",
-      "workingTreeSha256": "a38ade796fcadb7e06200ae403b6af4e3df5c63484d326caa4d9e2e3cce8e540"
+      "expectedGitBlobSha256": "a38ade796fcadb7e06200ae403b6af4e3df5c63484d326caa4d9e2e3cce8e540",
+      "path": "reports/lp163/statewide-destination-routing-certification.json"
     },
     {
+      "actualGitBlobSha256": "f7e8a1372e43f39d1fa907b6428e43ea0fa74f2ae81423dbe79f4d9198901bf4",
       "classification": "PASS",
-      "gitBlobSha256": "f7e8a1372e43f39d1fa907b6428e43ea0fa74f2ae81423dbe79f4d9198901bf4",
-      "path": "reports/lp164/awareness-case-results.json",
-      "workingTreeSha256": "f7e8a1372e43f39d1fa907b6428e43ea0fa74f2ae81423dbe79f4d9198901bf4"
+      "expectedGitBlobSha256": "f7e8a1372e43f39d1fa907b6428e43ea0fa74f2ae81423dbe79f4d9198901bf4",
+      "path": "reports/lp164/awareness-case-results.json"
     },
     {
+      "actualGitBlobSha256": "cfb2915e033e6115f4881ee630038a9568ef3688de969d943a4255f3d1e65831",
       "classification": "PASS",
-      "gitBlobSha256": "cfb2915e033e6115f4881ee630038a9568ef3688de969d943a4255f3d1e65831",
-      "path": "reports/lp164/consumer-language-results.json",
-      "workingTreeSha256": "cfb2915e033e6115f4881ee630038a9568ef3688de969d943a4255f3d1e65831"
+      "expectedGitBlobSha256": "cfb2915e033e6115f4881ee630038a9568ef3688de969d943a4255f3d1e65831",
+      "path": "reports/lp164/consumer-language-results.json"
     },
     {
+      "actualGitBlobSha256": "e4adbd7a88be429168381f21a161a4e0f34987e30dd5b902c740d6f3eb4aae0f",
       "classification": "PASS",
-      "gitBlobSha256": "e4adbd7a88be429168381f21a161a4e0f34987e30dd5b902c740d6f3eb4aae0f",
-      "path": "reports/lp164/destination-route-awareness-results.json",
-      "workingTreeSha256": "e4adbd7a88be429168381f21a161a4e0f34987e30dd5b902c740d6f3eb4aae0f"
+      "expectedGitBlobSha256": "e4adbd7a88be429168381f21a161a4e0f34987e30dd5b902c740d6f3eb4aae0f",
+      "path": "reports/lp164/destination-route-awareness-results.json"
     },
     {
+      "actualGitBlobSha256": "e0bf94766e0996dc9035433afbf0f2da336999c1d403092b807124196da8412d",
       "classification": "PASS",
-      "gitBlobSha256": "e0bf94766e0996dc9035433afbf0f2da336999c1d403092b807124196da8412d",
-      "path": "reports/lp164/geographic-relevance-results.json",
-      "workingTreeSha256": "e0bf94766e0996dc9035433afbf0f2da336999c1d403092b807124196da8412d"
+      "expectedGitBlobSha256": "e0bf94766e0996dc9035433afbf0f2da336999c1d403092b807124196da8412d",
+      "path": "reports/lp164/geographic-relevance-results.json"
     },
     {
+      "actualGitBlobSha256": "bfd19af85fae05d27c2075c180eb412d764680d22a7b68313efb303b19c62e72",
       "classification": "PASS",
-      "gitBlobSha256": "bfd19af85fae05d27c2075c180eb412d764680d22a7b68313efb303b19c62e72",
-      "path": "reports/lp164/liberty-preservation-results.json",
-      "workingTreeSha256": "bfd19af85fae05d27c2075c180eb412d764680d22a7b68313efb303b19c62e72"
+      "expectedGitBlobSha256": "bfd19af85fae05d27c2075c180eb412d764680d22a7b68313efb303b19c62e72",
+      "path": "reports/lp164/liberty-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "5102761363fa372abdfe00467518b0975e3888bf4bafa35c59846fd0295593ea",
       "classification": "PASS",
-      "gitBlobSha256": "5102761363fa372abdfe00467518b0975e3888bf4bafa35c59846fd0295593ea",
-      "path": "reports/lp164/lifecycle-preservation-results.json",
-      "workingTreeSha256": "5102761363fa372abdfe00467518b0975e3888bf4bafa35c59846fd0295593ea"
+      "expectedGitBlobSha256": "5102761363fa372abdfe00467518b0975e3888bf4bafa35c59846fd0295593ea",
+      "path": "reports/lp164/lifecycle-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
       "classification": "PASS",
-      "gitBlobSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
-      "path": "reports/lp164/lp164-summary.json",
-      "workingTreeSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305"
+      "expectedGitBlobSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
+      "path": "reports/lp164/lp164-summary.json"
     },
     {
+      "actualGitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
       "classification": "PASS",
-      "gitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
-      "path": "reports/lp164/protected-artifact-hashes.json",
-      "workingTreeSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572"
+      "expectedGitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
+      "path": "reports/lp164/protected-artifact-hashes.json"
     },
     {
+      "actualGitBlobSha256": "2adffe9757e549772c5fa6cf6be06d1be1550cd921330d95b8d1aaf792da78bf",
       "classification": "PASS",
-      "gitBlobSha256": "2adffe9757e549772c5fa6cf6be06d1be1550cd921330d95b8d1aaf792da78bf",
-      "path": "reports/lp164/representative-county-awareness-results.json",
-      "workingTreeSha256": "2adffe9757e549772c5fa6cf6be06d1be1550cd921330d95b8d1aaf792da78bf"
+      "expectedGitBlobSha256": "2adffe9757e549772c5fa6cf6be06d1be1550cd921330d95b8d1aaf792da78bf",
+      "path": "reports/lp164/representative-county-awareness-results.json"
     },
     {
+      "actualGitBlobSha256": "8587893bc635ddaafae08d88ab4a929593c42728282ed21d4b516a2764b2fcb4",
       "classification": "PASS",
-      "gitBlobSha256": "8587893bc635ddaafae08d88ab4a929593c42728282ed21d4b516a2764b2fcb4",
-      "path": "reports/lp164/statewide-awareness-hazard-certification.json",
-      "workingTreeSha256": "8587893bc635ddaafae08d88ab4a929593c42728282ed21d4b516a2764b2fcb4"
+      "expectedGitBlobSha256": "8587893bc635ddaafae08d88ab4a929593c42728282ed21d4b516a2764b2fcb4",
+      "path": "reports/lp164/statewide-awareness-hazard-certification.json"
     },
     {
+      "actualGitBlobSha256": "6aff308339f4e754fe7a547c0cf6c7821a8d8d9e29b3e484691bad5f89124552",
       "classification": "PASS",
-      "gitBlobSha256": "6aff308339f4e754fe7a547c0cf6c7821a8d8d9e29b3e484691bad5f89124552",
-      "path": "reports/lp165/consumer-language-results.json",
-      "workingTreeSha256": "6aff308339f4e754fe7a547c0cf6c7821a8d8d9e29b3e484691bad5f89124552"
+      "expectedGitBlobSha256": "6aff308339f4e754fe7a547c0cf6c7821a8d8d9e29b3e484691bad5f89124552",
+      "path": "reports/lp165/consumer-language-results.json"
     },
     {
+      "actualGitBlobSha256": "920c3930aa04b470009fac9f6481cc47365954ee9784a8e63719237605866602",
       "classification": "PASS",
-      "gitBlobSha256": "920c3930aa04b470009fac9f6481cc47365954ee9784a8e63719237605866602",
-      "path": "reports/lp165/liberty-preservation-results.json",
-      "workingTreeSha256": "920c3930aa04b470009fac9f6481cc47365954ee9784a8e63719237605866602"
+      "expectedGitBlobSha256": "920c3930aa04b470009fac9f6481cc47365954ee9784a8e63719237605866602",
+      "path": "reports/lp165/liberty-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "f79cb58586b10ebd8f9f0c3d584735c07d09ea7b8e1ab30d42753a0e90cf3415",
       "classification": "PASS",
-      "gitBlobSha256": "f79cb58586b10ebd8f9f0c3d584735c07d09ea7b8e1ab30d42753a0e90cf3415",
-      "path": "reports/lp165/lifecycle-notification-results.json",
-      "workingTreeSha256": "f79cb58586b10ebd8f9f0c3d584735c07d09ea7b8e1ab30d42753a0e90cf3415"
+      "expectedGitBlobSha256": "f79cb58586b10ebd8f9f0c3d584735c07d09ea7b8e1ab30d42753a0e90cf3415",
+      "path": "reports/lp165/lifecycle-notification-results.json"
     },
     {
+      "actualGitBlobSha256": "b305d69c1931a13bacaf4a9908f461a4bdaacb6403a038f1a5799a91bd66daa9",
       "classification": "PASS",
-      "gitBlobSha256": "b305d69c1931a13bacaf4a9908f461a4bdaacb6403a038f1a5799a91bd66daa9",
-      "path": "reports/lp165/location-quality-results.json",
-      "workingTreeSha256": "b305d69c1931a13bacaf4a9908f461a4bdaacb6403a038f1a5799a91bd66daa9"
+      "expectedGitBlobSha256": "b305d69c1931a13bacaf4a9908f461a4bdaacb6403a038f1a5799a91bd66daa9",
+      "path": "reports/lp165/location-quality-results.json"
     },
     {
+      "actualGitBlobSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
       "classification": "PASS",
-      "gitBlobSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
-      "path": "reports/lp165/lp165-summary.json",
-      "workingTreeSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258"
+      "expectedGitBlobSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
+      "path": "reports/lp165/lp165-summary.json"
     },
     {
+      "actualGitBlobSha256": "4bd4a7c85ed962efc2b89bdbf07be0a426f56f4545b480670b8b4ecbaa706b56",
       "classification": "PASS",
-      "gitBlobSha256": "4bd4a7c85ed962efc2b89bdbf07be0a426f56f4545b480670b8b4ecbaa706b56",
-      "path": "reports/lp165/notification-case-results.json",
-      "workingTreeSha256": "4bd4a7c85ed962efc2b89bdbf07be0a426f56f4545b480670b8b4ecbaa706b56"
+      "expectedGitBlobSha256": "4bd4a7c85ed962efc2b89bdbf07be0a426f56f4545b480670b8b4ecbaa706b56",
+      "path": "reports/lp165/notification-case-results.json"
     },
     {
+      "actualGitBlobSha256": "9b58026dabd8138e72e8f9391aab1e2014fb303687788e21bfb34fb734695aa3",
       "classification": "PASS",
-      "gitBlobSha256": "9b58026dabd8138e72e8f9391aab1e2014fb303687788e21bfb34fb734695aa3",
-      "path": "reports/lp165/protected-artifact-hashes.json",
-      "workingTreeSha256": "9b58026dabd8138e72e8f9391aab1e2014fb303687788e21bfb34fb734695aa3"
+      "expectedGitBlobSha256": "9b58026dabd8138e72e8f9391aab1e2014fb303687788e21bfb34fb734695aa3",
+      "path": "reports/lp165/protected-artifact-hashes.json"
     },
     {
+      "actualGitBlobSha256": "b50348a9d9df0b8932aa5df7878f3bcd72a3ed351c7b86a21afe7ad27e5bb567",
       "classification": "PASS",
-      "gitBlobSha256": "b50348a9d9df0b8932aa5df7878f3bcd72a3ed351c7b86a21afe7ad27e5bb567",
-      "path": "reports/lp165/representative-county-notification-results.json",
-      "workingTreeSha256": "b50348a9d9df0b8932aa5df7878f3bcd72a3ed351c7b86a21afe7ad27e5bb567"
+      "expectedGitBlobSha256": "b50348a9d9df0b8932aa5df7878f3bcd72a3ed351c7b86a21afe7ad27e5bb567",
+      "path": "reports/lp165/representative-county-notification-results.json"
     },
     {
+      "actualGitBlobSha256": "f962bd54aed7243097432a052c4538f4e1e9a02ff484d50f42597e63c9ca4290",
       "classification": "PASS",
-      "gitBlobSha256": "f962bd54aed7243097432a052c4538f4e1e9a02ff484d50f42597e63c9ca4290",
-      "path": "reports/lp165/route-watch-notification-results.json",
-      "workingTreeSha256": "f962bd54aed7243097432a052c4538f4e1e9a02ff484d50f42597e63c9ca4290"
+      "expectedGitBlobSha256": "f962bd54aed7243097432a052c4538f4e1e9a02ff484d50f42597e63c9ca4290",
+      "path": "reports/lp165/route-watch-notification-results.json"
     },
     {
+      "actualGitBlobSha256": "e9465c3fec2fed80a54ed2b3adeedff8cf8adec674877135ccbbe32fb04db78b",
       "classification": "PASS",
-      "gitBlobSha256": "e9465c3fec2fed80a54ed2b3adeedff8cf8adec674877135ccbbe32fb04db78b",
-      "path": "reports/lp165/statewide-notification-certification.json",
-      "workingTreeSha256": "e9465c3fec2fed80a54ed2b3adeedff8cf8adec674877135ccbbe32fb04db78b"
+      "expectedGitBlobSha256": "e9465c3fec2fed80a54ed2b3adeedff8cf8adec674877135ccbbe32fb04db78b",
+      "path": "reports/lp165/statewide-notification-certification.json"
     },
     {
+      "actualGitBlobSha256": "d508bcd926a9255f05964610db499e50c46766f686e7aa7e18d262d6de1b2805",
       "classification": "PASS",
-      "gitBlobSha256": "d508bcd926a9255f05964610db499e50c46766f686e7aa7e18d262d6de1b2805",
-      "path": "reports/lp166/consumer-experience-certification.json",
-      "workingTreeSha256": "d508bcd926a9255f05964610db499e50c46766f686e7aa7e18d262d6de1b2805"
+      "expectedGitBlobSha256": "d508bcd926a9255f05964610db499e50c46766f686e7aa7e18d262d6de1b2805",
+      "path": "reports/lp166/consumer-experience-certification.json"
     },
     {
+      "actualGitBlobSha256": "9691263b8a6b9a678d7d82ab981523a17f16f8e6ca604255e5bd4d52fe984c17",
       "classification": "PASS",
-      "gitBlobSha256": "9691263b8a6b9a678d7d82ab981523a17f16f8e6ca604255e5bd4d52fe984c17",
-      "path": "reports/lp166/consumer-flow-results.json",
-      "workingTreeSha256": "9691263b8a6b9a678d7d82ab981523a17f16f8e6ca604255e5bd4d52fe984c17"
+      "expectedGitBlobSha256": "9691263b8a6b9a678d7d82ab981523a17f16f8e6ca604255e5bd4d52fe984c17",
+      "path": "reports/lp166/consumer-flow-results.json"
     },
     {
+      "actualGitBlobSha256": "027061908ace2b08aeeca26c8d65a46e2b7f2bf753f39bd99f7867cbf4e67bde",
       "classification": "PASS",
-      "gitBlobSha256": "027061908ace2b08aeeca26c8d65a46e2b7f2bf753f39bd99f7867cbf4e67bde",
-      "path": "reports/lp166/consumer-language-results.json",
-      "workingTreeSha256": "027061908ace2b08aeeca26c8d65a46e2b7f2bf753f39bd99f7867cbf4e67bde"
+      "expectedGitBlobSha256": "027061908ace2b08aeeca26c8d65a46e2b7f2bf753f39bd99f7867cbf4e67bde",
+      "path": "reports/lp166/consumer-language-results.json"
     },
     {
+      "actualGitBlobSha256": "6e780c2b1f2cdda937914fad87d339d0635cd0d3771ad167abf9714006aa1847",
       "classification": "PASS",
-      "gitBlobSha256": "6e780c2b1f2cdda937914fad87d339d0635cd0d3771ad167abf9714006aa1847",
-      "path": "reports/lp166/consumer-scenarios.json",
-      "workingTreeSha256": "6e780c2b1f2cdda937914fad87d339d0635cd0d3771ad167abf9714006aa1847"
+      "expectedGitBlobSha256": "6e780c2b1f2cdda937914fad87d339d0635cd0d3771ad167abf9714006aa1847",
+      "path": "reports/lp166/consumer-scenarios.json"
     },
     {
+      "actualGitBlobSha256": "19183074a48fd75d6171c4bc38585c70db51d968d691b3186168c4d186c3104a",
       "classification": "PASS",
-      "gitBlobSha256": "19183074a48fd75d6171c4bc38585c70db51d968d691b3186168c4d186c3104a",
-      "path": "reports/lp166/liberty-preservation-results.json",
-      "workingTreeSha256": "19183074a48fd75d6171c4bc38585c70db51d968d691b3186168c4d186c3104a"
+      "expectedGitBlobSha256": "19183074a48fd75d6171c4bc38585c70db51d968d691b3186168c4d186c3104a",
+      "path": "reports/lp166/liberty-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d",
       "classification": "PASS",
-      "gitBlobSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d",
-      "path": "reports/lp166/lp166-summary.json",
-      "workingTreeSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d"
+      "expectedGitBlobSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d",
+      "path": "reports/lp166/lp166-summary.json"
     },
     {
+      "actualGitBlobSha256": "3495ede9fbe0c9201046d73f2677a4965ad25b77743b310317e10e160d3bb6d2",
       "classification": "PASS",
-      "gitBlobSha256": "3495ede9fbe0c9201046d73f2677a4965ad25b77743b310317e10e160d3bb6d2",
-      "path": "reports/lp166/mobile-portrait-results.json",
-      "workingTreeSha256": "3495ede9fbe0c9201046d73f2677a4965ad25b77743b310317e10e160d3bb6d2"
+      "expectedGitBlobSha256": "3495ede9fbe0c9201046d73f2677a4965ad25b77743b310317e10e160d3bb6d2",
+      "path": "reports/lp166/mobile-portrait-results.json"
     },
     {
+      "actualGitBlobSha256": "c6a2988252025b9b38412b0a6ea98970f43d6a4d17fb3834a3f8a1530c7a3834",
       "classification": "PASS",
-      "gitBlobSha256": "c6a2988252025b9b38412b0a6ea98970f43d6a4d17fb3834a3f8a1530c7a3834",
-      "path": "reports/lp166/protected-artifact-hashes.json",
-      "workingTreeSha256": "c6a2988252025b9b38412b0a6ea98970f43d6a4d17fb3834a3f8a1530c7a3834"
+      "expectedGitBlobSha256": "c6a2988252025b9b38412b0a6ea98970f43d6a4d17fb3834a3f8a1530c7a3834",
+      "path": "reports/lp166/protected-artifact-hashes.json"
     },
     {
+      "actualGitBlobSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
       "classification": "PASS",
-      "gitBlobSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
-      "path": "reports/lp167/activation-authorization-decision.json",
-      "workingTreeSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee"
+      "expectedGitBlobSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
+      "path": "reports/lp167/activation-authorization-decision.json"
     },
     {
+      "actualGitBlobSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
       "classification": "PASS",
-      "gitBlobSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
-      "path": "reports/lp167/app-distribution-authorization-decision.json",
-      "workingTreeSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd"
+      "expectedGitBlobSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
+      "path": "reports/lp167/app-distribution-authorization-decision.json"
     },
     {
+      "actualGitBlobSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
       "classification": "PASS",
-      "gitBlobSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
-      "path": "reports/lp167/blocker-register.json",
-      "workingTreeSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a"
+      "expectedGitBlobSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
+      "path": "reports/lp167/blocker-register.json"
     },
     {
+      "actualGitBlobSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
       "classification": "PASS",
-      "gitBlobSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
-      "path": "reports/lp167/deployment-authorization-decision.json",
-      "workingTreeSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860"
+      "expectedGitBlobSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
+      "path": "reports/lp167/deployment-authorization-decision.json"
     },
     {
+      "actualGitBlobSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
       "classification": "PASS",
-      "gitBlobSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
-      "path": "reports/lp167/launch-readiness-assessment.json",
-      "workingTreeSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c"
+      "expectedGitBlobSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
+      "path": "reports/lp167/launch-readiness-assessment.json"
     },
     {
+      "actualGitBlobSha256": "edd72c17003f9596863bad2333c95b8ac063301be16a5ff08d875d7aa504eb6c",
       "classification": "PASS",
-      "gitBlobSha256": "edd72c17003f9596863bad2333c95b8ac063301be16a5ff08d875d7aa504eb6c",
-      "path": "reports/lp167/liberty-preservation-results.json",
-      "workingTreeSha256": "edd72c17003f9596863bad2333c95b8ac063301be16a5ff08d875d7aa504eb6c"
+      "expectedGitBlobSha256": "edd72c17003f9596863bad2333c95b8ac063301be16a5ff08d875d7aa504eb6c",
+      "path": "reports/lp167/liberty-preservation-results.json"
     },
     {
+      "actualGitBlobSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
       "classification": "PASS",
-      "gitBlobSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
-      "path": "reports/lp167/lp167-summary.json",
-      "workingTreeSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b"
+      "expectedGitBlobSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
+      "path": "reports/lp167/lp167-summary.json"
     },
     {
+      "actualGitBlobSha256": "278a94e8fbb4e83e1c5aeb31be14d1e7f53ce05f6a50b6c9c5189567a60b97e2",
       "classification": "PASS",
-      "gitBlobSha256": "278a94e8fbb4e83e1c5aeb31be14d1e7f53ce05f6a50b6c9c5189567a60b97e2",
-      "path": "reports/lp167/owner-validation-requirements.json",
-      "workingTreeSha256": "278a94e8fbb4e83e1c5aeb31be14d1e7f53ce05f6a50b6c9c5189567a60b97e2"
+      "expectedGitBlobSha256": "278a94e8fbb4e83e1c5aeb31be14d1e7f53ce05f6a50b6c9c5189567a60b97e2",
+      "path": "reports/lp167/owner-validation-requirements.json"
     },
     {
+      "actualGitBlobSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71",
       "classification": "PASS",
-      "gitBlobSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71",
-      "path": "reports/lp167/prerequisite-reconciliation.json",
-      "workingTreeSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71"
+      "expectedGitBlobSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71",
+      "path": "reports/lp167/prerequisite-reconciliation.json"
     },
     {
+      "actualGitBlobSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be",
       "classification": "PASS",
-      "gitBlobSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be",
-      "path": "reports/lp167/production-readiness-checklist.json",
-      "workingTreeSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be"
+      "expectedGitBlobSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be",
+      "path": "reports/lp167/production-readiness-checklist.json"
     },
     {
+      "actualGitBlobSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a",
       "classification": "PASS",
-      "gitBlobSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a",
-      "path": "reports/lp167/protected-artifact-hashes.json",
-      "workingTreeSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a"
+      "expectedGitBlobSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a",
+      "path": "reports/lp167/protected-artifact-hashes.json"
     },
     {
+      "actualGitBlobSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
       "classification": "PASS",
-      "gitBlobSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
-      "path": "reports/lp167/public-launch-authorization-decision.json",
-      "workingTreeSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9"
+      "expectedGitBlobSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
+      "path": "reports/lp167/public-launch-authorization-decision.json"
     },
     {
+      "actualGitBlobSha256": "3559fe16ff22983109fc119745b5567653c23e82dceb50a8f3b2c330ff23a3db",
       "classification": "PASS",
-      "gitBlobSha256": "3559fe16ff22983109fc119745b5567653c23e82dceb50a8f3b2c330ff23a3db",
-      "path": "reports/lp168/configuration-inventory.json",
-      "workingTreeSha256": "3559fe16ff22983109fc119745b5567653c23e82dceb50a8f3b2c330ff23a3db"
+      "expectedGitBlobSha256": "3559fe16ff22983109fc119745b5567653c23e82dceb50a8f3b2c330ff23a3db",
+      "path": "reports/lp168/configuration-inventory.json"
     },
     {
+      "actualGitBlobSha256": "4f54ea7aafcec90eda998411a315a987cdc7722840a70a82b207555096ebcef6",
       "classification": "PASS",
-      "gitBlobSha256": "4f54ea7aafcec90eda998411a315a987cdc7722840a70a82b207555096ebcef6",
-      "path": "reports/lp168/missing-prerequisites.json",
-      "workingTreeSha256": "4f54ea7aafcec90eda998411a315a987cdc7722840a70a82b207555096ebcef6"
+      "expectedGitBlobSha256": "4f54ea7aafcec90eda998411a315a987cdc7722840a70a82b207555096ebcef6",
+      "path": "reports/lp168/missing-prerequisites.json"
     },
     {
+      "actualGitBlobSha256": "c06ef14b5a2ca0b568e9233717b03679fa79d9fa9a1c2bf67db1319d6d673a6f",
       "classification": "PASS",
-      "gitBlobSha256": "c06ef14b5a2ca0b568e9233717b03679fa79d9fa9a1c2bf67db1319d6d673a6f",
-      "path": "reports/lp168/production-readiness.json",
-      "workingTreeSha256": "c06ef14b5a2ca0b568e9233717b03679fa79d9fa9a1c2bf67db1319d6d673a6f"
+      "expectedGitBlobSha256": "c06ef14b5a2ca0b568e9233717b03679fa79d9fa9a1c2bf67db1319d6d673a6f",
+      "path": "reports/lp168/production-readiness.json"
     },
     {
+      "actualGitBlobSha256": "22e33e0fdf2b338c4335e07cf29faeb83be9b952005bc9eba3fd5caf7e828842",
       "classification": "PASS",
-      "gitBlobSha256": "22e33e0fdf2b338c4335e07cf29faeb83be9b952005bc9eba3fd5caf7e828842",
-      "path": "reports/lp168/protected-artifact-identities.json",
-      "workingTreeSha256": "22e33e0fdf2b338c4335e07cf29faeb83be9b952005bc9eba3fd5caf7e828842"
+      "expectedGitBlobSha256": "22e33e0fdf2b338c4335e07cf29faeb83be9b952005bc9eba3fd5caf7e828842",
+      "path": "reports/lp168/protected-artifact-identities.json"
     },
     {
+      "actualGitBlobSha256": "cbcd1b3443a840ef560ef40e99822fbe6a2d5b3572c5bbd1bc8a4ec0f218478b",
       "classification": "PASS",
-      "gitBlobSha256": "cbcd1b3443a840ef560ef40e99822fbe6a2d5b3572c5bbd1bc8a4ec0f218478b",
-      "path": "reports/lp168/recommended-actions.json",
-      "workingTreeSha256": "cbcd1b3443a840ef560ef40e99822fbe6a2d5b3572c5bbd1bc8a4ec0f218478b"
+      "expectedGitBlobSha256": "cbcd1b3443a840ef560ef40e99822fbe6a2d5b3572c5bbd1bc8a4ec0f218478b",
+      "path": "reports/lp168/recommended-actions.json"
     },
     {
+      "actualGitBlobSha256": "f8f029d57a0684a6dde56d1a1d2c95f260d9d104fea9da7f98fd85b94f820b63",
       "classification": "PASS",
-      "gitBlobSha256": "f8f029d57a0684a6dde56d1a1d2c95f260d9d104fea9da7f98fd85b94f820b63",
-      "path": "reports/lp168/risk-summary.json",
-      "workingTreeSha256": "f8f029d57a0684a6dde56d1a1d2c95f260d9d104fea9da7f98fd85b94f820b63"
+      "expectedGitBlobSha256": "f8f029d57a0684a6dde56d1a1d2c95f260d9d104fea9da7f98fd85b94f820b63",
+      "path": "reports/lp168/risk-summary.json"
     },
     {
+      "actualGitBlobSha256": "81fcd3ced112a2cd773dbbbd230a308d2e5fc2488d4560308203f837ad777e3a",
       "classification": "PASS",
-      "gitBlobSha256": "81fcd3ced112a2cd773dbbbd230a308d2e5fc2488d4560308203f837ad777e3a",
-      "path": "reports/lp169/certification-summary.json",
-      "workingTreeSha256": "81fcd3ced112a2cd773dbbbd230a308d2e5fc2488d4560308203f837ad777e3a"
+      "expectedGitBlobSha256": "81fcd3ced112a2cd773dbbbd230a308d2e5fc2488d4560308203f837ad777e3a",
+      "path": "reports/lp169/certification-summary.json"
     },
     {
+      "actualGitBlobSha256": "995e36ab203bf5f4be55860e51a9b0145d6ad4ed5ad66b98d5e6f6cd711f0a87",
       "classification": "PASS",
-      "gitBlobSha256": "995e36ab203bf5f4be55860e51a9b0145d6ad4ed5ad66b98d5e6f6cd711f0a87",
-      "path": "reports/lp169/configuration-blockers.json",
-      "workingTreeSha256": "995e36ab203bf5f4be55860e51a9b0145d6ad4ed5ad66b98d5e6f6cd711f0a87"
+      "expectedGitBlobSha256": "995e36ab203bf5f4be55860e51a9b0145d6ad4ed5ad66b98d5e6f6cd711f0a87",
+      "path": "reports/lp169/configuration-blockers.json"
     },
     {
+      "actualGitBlobSha256": "0ff3c16194202b4464a09c7eb83ff9bdea8daf9b1f24a9afb9e0788db71d6cfd",
       "classification": "PASS",
-      "gitBlobSha256": "0ff3c16194202b4464a09c7eb83ff9bdea8daf9b1f24a9afb9e0788db71d6cfd",
-      "path": "reports/lp169/database-object-certification.json",
-      "workingTreeSha256": "0ff3c16194202b4464a09c7eb83ff9bdea8daf9b1f24a9afb9e0788db71d6cfd"
+      "expectedGitBlobSha256": "0ff3c16194202b4464a09c7eb83ff9bdea8daf9b1f24a9afb9e0788db71d6cfd",
+      "path": "reports/lp169/database-object-certification.json"
     },
     {
+      "actualGitBlobSha256": "fd671f408bc42cadff50da38659d3ca5cfb63ea22f34089d5b53cb1b9a34b4d0",
       "classification": "PASS",
-      "gitBlobSha256": "fd671f408bc42cadff50da38659d3ca5cfb63ea22f34089d5b53cb1b9a34b4d0",
-      "path": "reports/lp169/environment-source-inventory.json",
-      "workingTreeSha256": "fd671f408bc42cadff50da38659d3ca5cfb63ea22f34089d5b53cb1b9a34b4d0"
+      "expectedGitBlobSha256": "fd671f408bc42cadff50da38659d3ca5cfb63ea22f34089d5b53cb1b9a34b4d0",
+      "path": "reports/lp169/environment-source-inventory.json"
     },
     {
+      "actualGitBlobSha256": "50d2204729b03381b7a320bb1cd475200b3dea18e01d1ede71e2737ed23094a9",
       "classification": "PASS",
-      "gitBlobSha256": "50d2204729b03381b7a320bb1cd475200b3dea18e01d1ede71e2737ed23094a9",
-      "path": "reports/lp169/origin-and-redirect-certification.json",
-      "workingTreeSha256": "50d2204729b03381b7a320bb1cd475200b3dea18e01d1ede71e2737ed23094a9"
+      "expectedGitBlobSha256": "50d2204729b03381b7a320bb1cd475200b3dea18e01d1ede71e2737ed23094a9",
+      "path": "reports/lp169/origin-and-redirect-certification.json"
     },
     {
+      "actualGitBlobSha256": "e7c8fe1942670a71e01d31fc5ffe2291f36f167b7df872af900fdd1f362683cb",
       "classification": "PASS",
-      "gitBlobSha256": "e7c8fe1942670a71e01d31fc5ffe2291f36f167b7df872af900fdd1f362683cb",
-      "path": "reports/lp169/owner-evidence-requirements.json",
-      "workingTreeSha256": "e7c8fe1942670a71e01d31fc5ffe2291f36f167b7df872af900fdd1f362683cb"
+      "expectedGitBlobSha256": "e7c8fe1942670a71e01d31fc5ffe2291f36f167b7df872af900fdd1f362683cb",
+      "path": "reports/lp169/owner-evidence-requirements.json"
     },
     {
+      "actualGitBlobSha256": "ba20439fde5e74d265bb95d3dbe4dbf9a83dd68dfbace06704baf880a050037a",
       "classification": "PASS",
-      "gitBlobSha256": "ba20439fde5e74d265bb95d3dbe4dbf9a83dd68dfbace06704baf880a050037a",
-      "path": "reports/lp169/production-configuration-contract.json",
-      "workingTreeSha256": "ba20439fde5e74d265bb95d3dbe4dbf9a83dd68dfbace06704baf880a050037a"
+      "expectedGitBlobSha256": "ba20439fde5e74d265bb95d3dbe4dbf9a83dd68dfbace06704baf880a050037a",
+      "path": "reports/lp169/production-configuration-contract.json"
     },
     {
+      "actualGitBlobSha256": "e2786dcccf88b9df8a93b3795a176f4d257d172cb712725c448aba29b8dd9a10",
       "classification": "PASS",
-      "gitBlobSha256": "e2786dcccf88b9df8a93b3795a176f4d257d172cb712725c448aba29b8dd9a10",
-      "path": "reports/lp169/protected-artifact-identities.json",
-      "workingTreeSha256": "e2786dcccf88b9df8a93b3795a176f4d257d172cb712725c448aba29b8dd9a10"
+      "expectedGitBlobSha256": "e2786dcccf88b9df8a93b3795a176f4d257d172cb712725c448aba29b8dd9a10",
+      "path": "reports/lp169/protected-artifact-identities.json"
     },
     {
+      "actualGitBlobSha256": "94762dfe562876730e830cfd56ee860f5b55509cc487918e33ca1301cac1ccfe",
       "classification": "PASS",
-      "gitBlobSha256": "94762dfe562876730e830cfd56ee860f5b55509cc487918e33ca1301cac1ccfe",
-      "path": "reports/lp169/runtime-configuration-alignment.json",
-      "workingTreeSha256": "94762dfe562876730e830cfd56ee860f5b55509cc487918e33ca1301cac1ccfe"
+      "expectedGitBlobSha256": "94762dfe562876730e830cfd56ee860f5b55509cc487918e33ca1301cac1ccfe",
+      "path": "reports/lp169/runtime-configuration-alignment.json"
     },
     {
+      "actualGitBlobSha256": "40d7a6590f0a518833ff4aa7e0d6e0901c2393f4899cd6041cb03220d0c4b86a",
       "classification": "PASS",
-      "gitBlobSha256": "40d7a6590f0a518833ff4aa7e0d6e0901c2393f4899cd6041cb03220d0c4b86a",
-      "path": "reports/lp169/secret-presence-certification.json",
-      "workingTreeSha256": "40d7a6590f0a518833ff4aa7e0d6e0901c2393f4899cd6041cb03220d0c4b86a"
+      "expectedGitBlobSha256": "40d7a6590f0a518833ff4aa7e0d6e0901c2393f4899cd6041cb03220d0c4b86a",
+      "path": "reports/lp169/secret-presence-certification.json"
     },
     {
+      "actualGitBlobSha256": "c84c9c20b9c02993b370510b8bf7ad9303c6cded614c948d199e8bf03db5b34b",
       "classification": "PASS",
-      "gitBlobSha256": "c84c9c20b9c02993b370510b8bf7ad9303c6cded614c948d199e8bf03db5b34b",
-      "path": "reports/lp169/security-configuration-review.json",
-      "workingTreeSha256": "c84c9c20b9c02993b370510b8bf7ad9303c6cded614c948d199e8bf03db5b34b"
+      "expectedGitBlobSha256": "c84c9c20b9c02993b370510b8bf7ad9303c6cded614c948d199e8bf03db5b34b",
+      "path": "reports/lp169/security-configuration-review.json"
     },
     {
+      "actualGitBlobSha256": "0a89e02a5b3526f39f2a1d5b18d55c47371aee6fe47cda5d996101bf634f2097",
       "classification": "PASS",
-      "gitBlobSha256": "0a89e02a5b3526f39f2a1d5b18d55c47371aee6fe47cda5d996101bf634f2097",
-      "path": "reports/lp169/storage-inventory-certification.json",
-      "workingTreeSha256": "0a89e02a5b3526f39f2a1d5b18d55c47371aee6fe47cda5d996101bf634f2097"
+      "expectedGitBlobSha256": "0a89e02a5b3526f39f2a1d5b18d55c47371aee6fe47cda5d996101bf634f2097",
+      "path": "reports/lp169/storage-inventory-certification.json"
     },
     {
+      "actualGitBlobSha256": "c8b4247376356c6023a8444ea9aea0d3eeeab09c732d295a898d323a8999ac26",
       "classification": "PASS",
-      "gitBlobSha256": "c8b4247376356c6023a8444ea9aea0d3eeeab09c732d295a898d323a8999ac26",
-      "path": "reports/lp169/storage-policy-certification.json",
-      "workingTreeSha256": "c8b4247376356c6023a8444ea9aea0d3eeeab09c732d295a898d323a8999ac26"
+      "expectedGitBlobSha256": "c8b4247376356c6023a8444ea9aea0d3eeeab09c732d295a898d323a8999ac26",
+      "path": "reports/lp169/storage-policy-certification.json"
     },
     {
+      "actualGitBlobSha256": "ecb11a1d9650f326a8f8802aec510c9622d53a2ff4926fd8b20b01edbf880688",
       "classification": "PASS",
-      "gitBlobSha256": "ecb11a1d9650f326a8f8802aec510c9622d53a2ff4926fd8b20b01edbf880688",
-      "path": "reports/lp169/supabase-project-certification.json",
-      "workingTreeSha256": "ecb11a1d9650f326a8f8802aec510c9622d53a2ff4926fd8b20b01edbf880688"
+      "expectedGitBlobSha256": "ecb11a1d9650f326a8f8802aec510c9622d53a2ff4926fd8b20b01edbf880688",
+      "path": "reports/lp169/supabase-project-certification.json"
     },
     {
+      "actualGitBlobSha256": "9e9ad80ab8359d02ef6a9bda1ef862d17279a97faba9805b2d916a97c2645416",
       "classification": "PASS",
-      "gitBlobSha256": "9e9ad80ab8359d02ef6a9bda1ef862d17279a97faba9805b2d916a97c2645416",
-      "path": "reports/lp170/backup-readiness.json",
-      "workingTreeSha256": "9e9ad80ab8359d02ef6a9bda1ef862d17279a97faba9805b2d916a97c2645416"
+      "expectedGitBlobSha256": "9e9ad80ab8359d02ef6a9bda1ef862d17279a97faba9805b2d916a97c2645416",
+      "path": "reports/lp170/backup-readiness.json"
     },
     {
+      "actualGitBlobSha256": "4a601538dcd3ef67af9747df23315add93d0d03c19f8afd868cae57e6ae388e0",
       "classification": "PASS",
-      "gitBlobSha256": "4a601538dcd3ef67af9747df23315add93d0d03c19f8afd868cae57e6ae388e0",
-      "path": "reports/lp170/incident-response-readiness.json",
-      "workingTreeSha256": "4a601538dcd3ef67af9747df23315add93d0d03c19f8afd868cae57e6ae388e0"
+      "expectedGitBlobSha256": "4a601538dcd3ef67af9747df23315add93d0d03c19f8afd868cae57e6ae388e0",
+      "path": "reports/lp170/incident-response-readiness.json"
     },
     {
+      "actualGitBlobSha256": "2353b052ec22816ce1e645cc412c5fb1b4f965f95cc8a444f63862603bfd699d",
       "classification": "PASS",
-      "gitBlobSha256": "2353b052ec22816ce1e645cc412c5fb1b4f965f95cc8a444f63862603bfd699d",
-      "path": "reports/lp170/monitoring-readiness.json",
-      "workingTreeSha256": "2353b052ec22816ce1e645cc412c5fb1b4f965f95cc8a444f63862603bfd699d"
+      "expectedGitBlobSha256": "2353b052ec22816ce1e645cc412c5fb1b4f965f95cc8a444f63862603bfd699d",
+      "path": "reports/lp170/monitoring-readiness.json"
     },
     {
+      "actualGitBlobSha256": "30e5e0ac4d9b52f466770100b4b4b64c41468f919a30329e0538aa056eba7ff3",
       "classification": "PASS",
-      "gitBlobSha256": "30e5e0ac4d9b52f466770100b4b4b64c41468f919a30329e0538aa056eba7ff3",
-      "path": "reports/lp170/operational-blockers.json",
-      "workingTreeSha256": "30e5e0ac4d9b52f466770100b4b4b64c41468f919a30329e0538aa056eba7ff3"
+      "expectedGitBlobSha256": "30e5e0ac4d9b52f466770100b4b4b64c41468f919a30329e0538aa056eba7ff3",
+      "path": "reports/lp170/operational-blockers.json"
     },
     {
+      "actualGitBlobSha256": "f7b68d7923d7ec32b0ba6952096f8c1f6f6913e74626dda5523c15794d8e887c",
       "classification": "PASS",
-      "gitBlobSha256": "f7b68d7923d7ec32b0ba6952096f8c1f6f6913e74626dda5523c15794d8e887c",
-      "path": "reports/lp170/operational-readiness-summary.json",
-      "workingTreeSha256": "f7b68d7923d7ec32b0ba6952096f8c1f6f6913e74626dda5523c15794d8e887c"
+      "expectedGitBlobSha256": "f7b68d7923d7ec32b0ba6952096f8c1f6f6913e74626dda5523c15794d8e887c",
+      "path": "reports/lp170/operational-readiness-summary.json"
     },
     {
+      "actualGitBlobSha256": "3097ccf53c68369ed3c3f2d640417ff54f0f9e6d9dbd2c86b99fa5def5b0cb4a",
       "classification": "PASS",
-      "gitBlobSha256": "3097ccf53c68369ed3c3f2d640417ff54f0f9e6d9dbd2c86b99fa5def5b0cb4a",
-      "path": "reports/lp170/owner-evidence-requirements.json",
-      "workingTreeSha256": "3097ccf53c68369ed3c3f2d640417ff54f0f9e6d9dbd2c86b99fa5def5b0cb4a"
+      "expectedGitBlobSha256": "3097ccf53c68369ed3c3f2d640417ff54f0f9e6d9dbd2c86b99fa5def5b0cb4a",
+      "path": "reports/lp170/owner-evidence-requirements.json"
     },
     {
+      "actualGitBlobSha256": "511306642f50bcd62a17e6c374c8e23ea696d9e38379e4d25a9bf4b357a2c846",
       "classification": "PASS",
-      "gitBlobSha256": "511306642f50bcd62a17e6c374c8e23ea696d9e38379e4d25a9bf4b357a2c846",
-      "path": "reports/lp170/protected-artifact-verification.json",
-      "workingTreeSha256": "511306642f50bcd62a17e6c374c8e23ea696d9e38379e4d25a9bf4b357a2c846"
+      "expectedGitBlobSha256": "511306642f50bcd62a17e6c374c8e23ea696d9e38379e4d25a9bf4b357a2c846",
+      "path": "reports/lp170/protected-artifact-verification.json"
     },
     {
+      "actualGitBlobSha256": "c4355e6d3e277b5cd3d00891aa68a85f8dce74675fa59b213900c50dec6b5b4f",
       "classification": "PASS",
-      "gitBlobSha256": "c4355e6d3e277b5cd3d00891aa68a85f8dce74675fa59b213900c50dec6b5b4f",
-      "path": "reports/lp170/restoration-readiness.json",
-      "workingTreeSha256": "c4355e6d3e277b5cd3d00891aa68a85f8dce74675fa59b213900c50dec6b5b4f"
+      "expectedGitBlobSha256": "c4355e6d3e277b5cd3d00891aa68a85f8dce74675fa59b213900c50dec6b5b4f",
+      "path": "reports/lp170/restoration-readiness.json"
     },
     {
+      "actualGitBlobSha256": "907cc758b1e938201e4153db51df263db29a654a024f48dd3b63e902bce94157",
       "classification": "PASS",
-      "gitBlobSha256": "907cc758b1e938201e4153db51df263db29a654a024f48dd3b63e902bce94157",
-      "path": "reports/lp170/rollback-readiness.json",
-      "workingTreeSha256": "907cc758b1e938201e4153db51df263db29a654a024f48dd3b63e902bce94157"
+      "expectedGitBlobSha256": "907cc758b1e938201e4153db51df263db29a654a024f48dd3b63e902bce94157",
+      "path": "reports/lp170/rollback-readiness.json"
     },
     {
+      "actualGitBlobSha256": "e68698931a2c0c9ef680f8123e29e28e99bf31e616bcc8dd6e82729f06ca5147",
       "classification": "PASS",
-      "gitBlobSha256": "e68698931a2c0c9ef680f8123e29e28e99bf31e616bcc8dd6e82729f06ca5147",
-      "path": "reports/lp171/authorization-state.json",
-      "workingTreeSha256": "e68698931a2c0c9ef680f8123e29e28e99bf31e616bcc8dd6e82729f06ca5147"
+      "expectedGitBlobSha256": "e68698931a2c0c9ef680f8123e29e28e99bf31e616bcc8dd6e82729f06ca5147",
+      "path": "reports/lp171/authorization-state.json"
     },
     {
+      "actualGitBlobSha256": "b4cb89a93ea7af58a8edc62450f245cdd701c2506551ebbf1792217cb7ca1ab5",
       "classification": "PASS",
-      "gitBlobSha256": "b4cb89a93ea7af58a8edc62450f245cdd701c2506551ebbf1792217cb7ca1ab5",
-      "path": "reports/lp171/backup-evidence-closure.json",
-      "workingTreeSha256": "b4cb89a93ea7af58a8edc62450f245cdd701c2506551ebbf1792217cb7ca1ab5"
+      "expectedGitBlobSha256": "b4cb89a93ea7af58a8edc62450f245cdd701c2506551ebbf1792217cb7ca1ab5",
+      "path": "reports/lp171/backup-evidence-closure.json"
     },
     {
+      "actualGitBlobSha256": "a5f9d863a35d000b5e158e5a860b4b8f228d4a0d8cd4a7c78f3b55e3f0f03264",
       "classification": "PASS",
-      "gitBlobSha256": "a5f9d863a35d000b5e158e5a860b4b8f228d4a0d8cd4a7c78f3b55e3f0f03264",
-      "path": "reports/lp171/incident-response-closure.json",
-      "workingTreeSha256": "a5f9d863a35d000b5e158e5a860b4b8f228d4a0d8cd4a7c78f3b55e3f0f03264"
+      "expectedGitBlobSha256": "a5f9d863a35d000b5e158e5a860b4b8f228d4a0d8cd4a7c78f3b55e3f0f03264",
+      "path": "reports/lp171/incident-response-closure.json"
     },
     {
+      "actualGitBlobSha256": "b6a37a37daa52ae63442fe7d3adbb6b9240e499a48c73a3c89537034df01abbe",
       "classification": "PASS",
-      "gitBlobSha256": "b6a37a37daa52ae63442fe7d3adbb6b9240e499a48c73a3c89537034df01abbe",
-      "path": "reports/lp171/launch-day-runbook-readiness.json",
-      "workingTreeSha256": "b6a37a37daa52ae63442fe7d3adbb6b9240e499a48c73a3c89537034df01abbe"
+      "expectedGitBlobSha256": "b6a37a37daa52ae63442fe7d3adbb6b9240e499a48c73a3c89537034df01abbe",
+      "path": "reports/lp171/launch-day-runbook-readiness.json"
     },
     {
+      "actualGitBlobSha256": "40d03bfe95e18fe6599c0cfcededeb7eef4ef54abe3027672cdac96df346817a",
       "classification": "PASS",
-      "gitBlobSha256": "40d03bfe95e18fe6599c0cfcededeb7eef4ef54abe3027672cdac96df346817a",
-      "path": "reports/lp171/lp170-reconciliation.json",
-      "workingTreeSha256": "40d03bfe95e18fe6599c0cfcededeb7eef4ef54abe3027672cdac96df346817a"
+      "expectedGitBlobSha256": "40d03bfe95e18fe6599c0cfcededeb7eef4ef54abe3027672cdac96df346817a",
+      "path": "reports/lp171/lp170-reconciliation.json"
     },
     {
+      "actualGitBlobSha256": "03fe47254902f1e30d5f3dafbdb3835b7528ac536cd8ee5d9b35d97d37c5e509",
       "classification": "PASS",
-      "gitBlobSha256": "03fe47254902f1e30d5f3dafbdb3835b7528ac536cd8ee5d9b35d97d37c5e509",
-      "path": "reports/lp171/monitoring-evidence-closure.json",
-      "workingTreeSha256": "03fe47254902f1e30d5f3dafbdb3835b7528ac536cd8ee5d9b35d97d37c5e509"
+      "expectedGitBlobSha256": "03fe47254902f1e30d5f3dafbdb3835b7528ac536cd8ee5d9b35d97d37c5e509",
+      "path": "reports/lp171/monitoring-evidence-closure.json"
     },
     {
+      "actualGitBlobSha256": "3695395d4d7fea76463f8b3ae14ca3bb567af805631b57ac52df220b2abdfb4b",
       "classification": "PASS",
-      "gitBlobSha256": "3695395d4d7fea76463f8b3ae14ca3bb567af805631b57ac52df220b2abdfb4b",
-      "path": "reports/lp171/operational-blockers.json",
-      "workingTreeSha256": "3695395d4d7fea76463f8b3ae14ca3bb567af805631b57ac52df220b2abdfb4b"
+      "expectedGitBlobSha256": "3695395d4d7fea76463f8b3ae14ca3bb567af805631b57ac52df220b2abdfb4b",
+      "path": "reports/lp171/operational-blockers.json"
     },
     {
+      "actualGitBlobSha256": "adce557e0eb47b454550996bc47759d556da021b1b1be1736bf674c0ee149900",
       "classification": "PASS",
-      "gitBlobSha256": "adce557e0eb47b454550996bc47759d556da021b1b1be1736bf674c0ee149900",
-      "path": "reports/lp171/operational-evidence-closure-summary.json",
-      "workingTreeSha256": "adce557e0eb47b454550996bc47759d556da021b1b1be1736bf674c0ee149900"
+      "expectedGitBlobSha256": "adce557e0eb47b454550996bc47759d556da021b1b1be1736bf674c0ee149900",
+      "path": "reports/lp171/operational-evidence-closure-summary.json"
     },
     {
+      "actualGitBlobSha256": "535b1736446fec670829533ce33b6c8e74854311caa9411457886d8c78551c57",
       "classification": "PASS",
-      "gitBlobSha256": "535b1736446fec670829533ce33b6c8e74854311caa9411457886d8c78551c57",
-      "path": "reports/lp171/owner-evidence-requirements.json",
-      "workingTreeSha256": "535b1736446fec670829533ce33b6c8e74854311caa9411457886d8c78551c57"
+      "expectedGitBlobSha256": "535b1736446fec670829533ce33b6c8e74854311caa9411457886d8c78551c57",
+      "path": "reports/lp171/owner-evidence-requirements.json"
     },
     {
+      "actualGitBlobSha256": "f586072ba3315ce5852b244b86f4c6997cf29a9db0b97bb5b45e39f97933427e",
       "classification": "PASS",
-      "gitBlobSha256": "f586072ba3315ce5852b244b86f4c6997cf29a9db0b97bb5b45e39f97933427e",
-      "path": "reports/lp171/protected-artifact-verification.json",
-      "workingTreeSha256": "f586072ba3315ce5852b244b86f4c6997cf29a9db0b97bb5b45e39f97933427e"
+      "expectedGitBlobSha256": "f586072ba3315ce5852b244b86f4c6997cf29a9db0b97bb5b45e39f97933427e",
+      "path": "reports/lp171/protected-artifact-verification.json"
     },
     {
+      "actualGitBlobSha256": "9fbbb405ad133ba6a3e8794fc6479d6e240c804c946981490da01ca6e2bcb090",
       "classification": "PASS",
-      "gitBlobSha256": "9fbbb405ad133ba6a3e8794fc6479d6e240c804c946981490da01ca6e2bcb090",
-      "path": "reports/lp171/restoration-rehearsal.json",
-      "workingTreeSha256": "9fbbb405ad133ba6a3e8794fc6479d6e240c804c946981490da01ca6e2bcb090"
+      "expectedGitBlobSha256": "9fbbb405ad133ba6a3e8794fc6479d6e240c804c946981490da01ca6e2bcb090",
+      "path": "reports/lp171/restoration-rehearsal.json"
     },
     {
+      "actualGitBlobSha256": "cfb79376f60eef4dec2a2c35f967e383e5fb06d2843aea8ceb2527d2486c3c5c",
       "classification": "PASS",
-      "gitBlobSha256": "cfb79376f60eef4dec2a2c35f967e383e5fb06d2843aea8ceb2527d2486c3c5c",
-      "path": "reports/lp171/rollback-evidence-closure.json",
-      "workingTreeSha256": "cfb79376f60eef4dec2a2c35f967e383e5fb06d2843aea8ceb2527d2486c3c5c"
+      "expectedGitBlobSha256": "cfb79376f60eef4dec2a2c35f967e383e5fb06d2843aea8ceb2527d2486c3c5c",
+      "path": "reports/lp171/rollback-evidence-closure.json"
     },
     {
+      "actualGitBlobSha256": "63fd66ec837983b8c6014dea6fade78bf7eec578c1c87a6a0833ca90ba641999",
       "classification": "PASS",
-      "gitBlobSha256": "63fd66ec837983b8c6014dea6fade78bf7eec578c1c87a6a0833ca90ba641999",
-      "path": "reports/lp171/rollback-rehearsal.json",
-      "workingTreeSha256": "63fd66ec837983b8c6014dea6fade78bf7eec578c1c87a6a0833ca90ba641999"
+      "expectedGitBlobSha256": "63fd66ec837983b8c6014dea6fade78bf7eec578c1c87a6a0833ca90ba641999",
+      "path": "reports/lp171/rollback-rehearsal.json"
     }
   ],
   "rollback": "OWNER_ACTION_REQUIRED",
