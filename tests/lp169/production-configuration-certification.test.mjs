@@ -204,8 +204,19 @@ test('owner inventories use schema-aware PowerShell 5.1-safe normalization',()=>
   assert.match(captureScript,/\[string\[\]\]\$WrapperProperties/);
   assert.match(captureScript,/\[switch\]\$AllowEmpty/);
   assert.match(captureScript,/ConvertFrom-Json -InputObject \$JsonText/);
-  assert.match(captureScript,/\$JsonText -match '\^\\s\*\\\[\\s\*\\\]\\s\*\$'/);
-  assert.match(captureScript,/if \(\$WrapperMatches\.Count -eq 1\)/);
+  assert.match(captureScript,/\$JsonText -notmatch '\^\\s\*\\\[\\s\*\\\]\\s\*\$'/);
+  assert.match(captureScript,/\[object\[\]\]\$Records = @\(\)/);
+});
+
+test('owner capture has no unnormalized cardinality checks',()=>{
+  assert.doesNotMatch(captureScript,/\([^\n]*(?:\||ConvertFrom-Json|Select-Object|Where-Object|ForEach-Object)[^\n]*\)\.Count/);
+  assert.doesNotMatch(captureScript,/\(ConvertFrom-Json[^\n]*\)\.(?:Count|Length)/i);
+  const countReceivers=[...captureScript.matchAll(/\$([A-Za-z][A-Za-z0-9]*)\.Count\b/g)].map(match=>match[1]);
+  assert.deepEqual([...new Set(countReceivers)].sort(),['Records','Supported','WrapperMatches']);
+  assert.match(captureScript,/\[object\[\]\]\$Records = @\(\)/);
+  assert.match(captureScript,/\$WrapperMatches = @\([^\n]*Where-Object/);
+  assert.match(captureScript,/\$Supported = @\([^\n]*Where-Object/);
+  assert.doesNotMatch(captureScript,/\$JsonText\.(?:Count|Length)\b/);
 });
 
 test('secret inventory callers explicitly accept valid zero-record observations',()=>{
@@ -217,7 +228,8 @@ test('secret inventory callers explicitly accept valid zero-record observations'
     const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
     assert.match(captureScript,new RegExp(`-SourceCommand '${escaped}'[^\\n]*-AllowEmpty`));
   }
-  assert.match(captureScript,/if \(\$AllowEmpty\) \{ return @\(\) \}/);
+  assert.match(captureScript,/if \(\$AllowEmpty\) \{ return ,\(\[object\[\]\]@\(\)\) \}/);
+  assert.match(captureScript,/return ,\$NormalizedNames/);
   assert.match(captureScript,/ConvertTo-Json -InputObject \$Data -Depth 8/);
   assert.match(captureScript,/SOURCE_UNAVAILABLE; command returned (?:no|null) JSON/);
   assert.match(captureScript,/CAPTURE_FAILED; command returned invalid JSON/);

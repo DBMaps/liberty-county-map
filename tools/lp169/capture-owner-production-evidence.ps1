@@ -62,27 +62,45 @@ function Get-NormalizedInventoryNames {
     throw "$SourceCommand SOURCE_UNAVAILABLE; command returned no JSON; observed properties only: []."
   }
   try {
-    $InputObject = ConvertFrom-Json -InputObject $JsonText
+    $Parsed = ConvertFrom-Json -InputObject $JsonText
   } catch {
     throw "$SourceCommand CAPTURE_FAILED; command returned invalid JSON; observed properties only: []."
   }
-  if ($null -eq $InputObject -and $JsonText -notmatch '^\s*\[\s*\]\s*$') {
+  if ($null -eq $Parsed -and $JsonText -notmatch '^\s*\[\s*\]\s*$') {
     throw "$SourceCommand SOURCE_UNAVAILABLE; command returned null JSON; observed properties only: []."
   }
-  # Windows PowerShell emits no pipeline object for JSON `[]`, just as it does
-  # for no output. Inspect the successfully parsed source text before creating
-  # the record collection so these two states remain distinguishable.
-  $Records = if ($JsonText -match '^\s*\[\s*\]\s*$') { @() } else { @($InputObject) }
-  if ($Records.Count -eq 1 -and $null -ne $Records[0] -and -not ($Records[0] -is [string])) {
-    $WrapperMatches = @($WrapperProperties | Where-Object { $null -ne $Records[0].PSObject.Properties[$_] })
+  # Inspect the JSON root before normalization. Windows PowerShell 5.1
+  # enumerates JSON arrays at the pipeline boundary: [], [x], and [x,y] can
+  # otherwise become null, a scalar, and an array respectively.
+  $IsArrayRoot = $JsonText -match '^\s*\['
+  $IsObjectRoot = $JsonText -match '^\s*\{'
+  if (-not $IsArrayRoot -and -not $IsObjectRoot) {
+    throw "$SourceCommand returned a scalar JSON root; expected an array inventory; observed properties only: []."
+  }
+
+  [object[]]$Records = @()
+  if ($IsArrayRoot) {
+    # The empty-array spelling must be recognized from raw text because PS 5.1
+    # gives ConvertFrom-Json no output object for it.
+    if ($JsonText -notmatch '^\s*\[\s*\]\s*$') { $Records = @($Parsed) }
+  } else {
+    $WrapperMatches = @($WrapperProperties | Where-Object { $null -ne $Parsed.PSObject.Properties[$_] })
     if ($WrapperMatches.Count -gt 1) {
-      $Observed = @($Records[0].PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique) -join ','
+      $Observed = @($Parsed.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique) -join ','
       throw "$SourceCommand returned an ambiguous wrapper; expected exactly one of [$($WrapperProperties -join ',')]; observed properties only: [$Observed]."
     }
-    if ($WrapperMatches.Count -eq 1) { $Records = @($Records[0].PSObject.Properties[$WrapperMatches[0]].Value) }
+    if ($WrapperMatches.Count -eq 0) {
+      $Observed = @($Parsed.PSObject.Properties | ForEach-Object { $_.Name } | Sort-Object -Unique) -join ','
+      throw "$SourceCommand returned an unsupported wrapper; expected exactly one of [$($WrapperProperties -join ',')]; observed properties only: [$Observed]."
+    }
+    $WrappedRecords = $Parsed.PSObject.Properties[$WrapperMatches[0]].Value
+    if ($null -eq $WrappedRecords -or -not ($WrappedRecords -is [System.Array])) {
+      throw "$SourceCommand returned an invalid wrapper inventory; expected an array property [$($WrapperProperties -join ',')]; observed properties only: [$($WrapperMatches -join ',')]."
+    }
+    $Records = @($WrappedRecords)
   }
   if ($Records.Count -eq 0) {
-    if ($AllowEmpty) { return @() }
+    if ($AllowEmpty) { return ,([object[]]@()) }
     throw "$SourceCommand returned an empty inventory; expected record property [$($AllowedProperties -join ',')]; observed properties only: []."
   }
 
@@ -103,7 +121,10 @@ function Get-NormalizedInventoryNames {
     }
     $Names += $Value.Trim()
   }
-  return @($Names | Sort-Object -Unique)
+  [object[]]$NormalizedNames = @($Names | Sort-Object -Unique)
+  # Unary comma prevents PowerShell's return pipeline from unrolling zero, one,
+  # or many names. Callers therefore receive an Object[] in every valid case.
+  return ,$NormalizedNames
 }
 
 function Write-SafeJson([string]$Name, $Data) {
@@ -123,8 +144,8 @@ $Projects = @(Invoke-CapturedCommand 'supabase' @('projects','list','--output','
 Write-SafeJson 'supabase-project-safe.json' $Projects
 
 $SupabaseSecretJson = Invoke-CapturedCommand 'supabase' @('secrets','list','--project-ref',$ProjectRef,'--output','json')
-$SecretNames = @(Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list --output json' -JsonText $SupabaseSecretJson -AllowedProperties @('name') -AllowEmpty |
-  ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
+[object[]]$NormalizedSecretNames = Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list --output json' -JsonText $SupabaseSecretJson -AllowedProperties @('name') -AllowEmpty
+$SecretNames = @(foreach ($SecretName in $NormalizedSecretNames) { [pscustomobject]@{ name = $SecretName; status = 'PRESENT' } })
 Write-SafeJson 'supabase-secret-names-safe.json' $SecretNames
 
 $Functions = @(Invoke-CapturedCommand 'supabase' @('functions','list','--project-ref',$ProjectRef,'--output','json') |
@@ -140,8 +161,8 @@ Write-SafeJson 'github-repository-safe.json' ([pscustomobject]@{
   defaultBranch = $RepoMetadata.defaultBranchRef.name
 })
 $GitHubRepositorySecretJson = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--app','actions','--json','name')
-$RepoSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --app actions --json name' -JsonText $GitHubRepositorySecretJson -AllowedProperties @('name') -AllowEmpty |
-  ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
+[object[]]$NormalizedRepoSecretNames = Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --app actions --json name' -JsonText $GitHubRepositorySecretJson -AllowedProperties @('name') -AllowEmpty
+$RepoSecrets = @(foreach ($SecretName in $NormalizedRepoSecretNames) { [pscustomobject]@{ name = $SecretName; status = 'PRESENT' } })
 Write-SafeJson 'github-secret-names-safe.json' $RepoSecrets
 $Workflows = @(Invoke-CapturedCommand 'gh' @('workflow','list','--repo',$Repository,'--json','name,state,path') | ConvertFrom-Json | Sort-Object path)
 Write-SafeJson 'github-workflows-safe.json' $Workflows
@@ -153,8 +174,8 @@ $Environments = @(Invoke-CapturedCommand 'gh' @('api','--paginate',"repos/$Repos
 Write-SafeJson 'github-environments-safe.json' $Environments
 foreach ($Environment in $Environments) {
   $GitHubEnvironmentSecretJson = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--env',$Environment.name,'--app','actions','--json','name')
-  $EnvironmentSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --env --app actions --json name' -JsonText $GitHubEnvironmentSecretJson -AllowedProperties @('name') -AllowEmpty |
-    ForEach-Object { [pscustomobject]@{ environment = $Environment.name; name = $_; status = 'PRESENT' } })
+  [object[]]$NormalizedEnvironmentSecretNames = Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --env --app actions --json name' -JsonText $GitHubEnvironmentSecretJson -AllowedProperties @('name') -AllowEmpty
+  $EnvironmentSecrets = @(foreach ($SecretName in $NormalizedEnvironmentSecretNames) { [pscustomobject]@{ environment = $Environment.name; name = $SecretName; status = 'PRESENT' } })
   Write-SafeJson ("github-environment-{0}-secret-names-safe.json" -f ($Environment.name -replace '[^A-Za-z0-9_.-]','_')) $EnvironmentSecrets
 }
 
