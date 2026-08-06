@@ -14,10 +14,9 @@
     "MACHINE_VERIFIED": [],
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
-    "OWNER_ACTION_REQUIRED": [
-      "monitoring.monitoringOwnership"
-    ],
+    "OWNER_ACTION_REQUIRED": [],
     "OWNER_ATTESTED": [
+      "monitoring.monitoringOwnership",
       "operationalOwnership.backupOperationalOwner",
       "operationalOwnership.primaryOperationalOwner",
       "operationalOwnership.productionAuthority",

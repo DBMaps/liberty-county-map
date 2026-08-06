@@ -1,8 +1,8 @@
 {
   "blockerCounts": {
-    "ownerActionRequired": 1,
+    "ownerActionRequired": 0,
     "sourceUnavailable": 10,
-    "total": 11
+    "total": 10
   },
   "blockers": [
     {
@@ -44,10 +44,6 @@
     {
       "classification": "SOURCE_UNAVAILABLE",
       "fact": "backup.retentionPolicy"
-    },
-    {
-      "classification": "OWNER_ACTION_REQUIRED",
-      "fact": "monitoring.monitoringOwnership"
     }
   ],
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_OPERATIONAL_REASSESSMENT",
@@ -57,6 +53,7 @@
   "metadataOnly": true,
   "milestone": "LP174",
   "ownerAttestedFacts": [
+    "monitoring.monitoringOwnership",
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",

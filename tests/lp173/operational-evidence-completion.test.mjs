@@ -11,8 +11,8 @@ test('remaining evidence gaps fail closed field-by-field', () => {
   const summary = reports['lp173-summary.json'];
   assert.equal(summary.evidenceClassification, 'EVIDENCE_INCOMPLETE');
   assert.equal(summary.authorizationReassessment, 'NOT_READY_FOR_AUTHORIZATION_REASSESSMENT');
-  assert.equal(summary.ownerActionRequiredFacts.length, 11);
-  assert.equal(summary.ownerAttestedFacts.length, 13);
+  assert.equal(summary.ownerActionRequiredFacts.length, 10);
+  assert.equal(summary.ownerAttestedFacts.length, 14);
 });
 
 test('partial evidence completes only supported fields and preserves provenance distinctions', () => {

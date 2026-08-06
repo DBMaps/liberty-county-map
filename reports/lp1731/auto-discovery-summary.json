@@ -13,10 +13,9 @@
   "milestone": "LP173.1",
   "notConfiguredFields": [],
   "notVerifiedFields": [],
-  "ownerActionRequiredFields": [
-    "monitoring.monitoringOwnership"
-  ],
+  "ownerActionRequiredFields": [],
   "ownerAttestedFields": [
+    "monitoring.monitoringOwnership",
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",
