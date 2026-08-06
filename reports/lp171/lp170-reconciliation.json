@@ -1,0 +1,32 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "NOT_READY",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "lp170HistoryModified": false,
+  "lp170Overall": "NOT_READY",
+  "mapping": [
+    {
+      "lp170Area": "monitoring",
+      "lp171Result": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "lp170Area": "backup",
+      "lp171Result": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "lp170Area": "restoration",
+      "lp171Result": "REHEARSAL_PASS",
+      "productionStatus": "NOT_TESTED"
+    },
+    {
+      "lp170Area": "rollback",
+      "lp171Result": "REHEARSAL_PASS",
+      "productionStatus": "NOT_TESTED"
+    },
+    {
+      "lp170Area": "incidentResponse",
+      "lp171Result": "OWNER_ACTION_REQUIRED"
+    }
+  ],
+  "milestone": "LP171"
+}

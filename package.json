@@ -263,6 +263,11 @@
     "certify:lp170": "node tools/lp170/operational-readiness.mjs certify",
     "verify:lp170": "node tools/lp170/operational-readiness.mjs verify",
     "test:lp170": "node --test tests/lp170/*.test.mjs",
-    "capture:lp170:owner-evidence": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp170/capture-owner-operational-evidence.ps1"
+    "capture:lp170:owner-evidence": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp170/capture-owner-operational-evidence.ps1",
+    "audit:lp171": "node tools/lp171/operational-closure.mjs audit",
+    "certify:lp171": "node tools/lp171/operational-closure.mjs certify",
+    "verify:lp171": "node tools/lp171/operational-closure.mjs verify",
+    "test:lp171": "node --test tests/lp171/*.test.mjs",
+    "capture:lp171:owner-evidence": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp171/capture-owner-evidence.ps1"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "authorization": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "productionRestore": "NOT_AUTHORIZED",
+    "productionRollback": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "automaticAuthorizationMechanism": false,
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "NOT_READY",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171"
+}

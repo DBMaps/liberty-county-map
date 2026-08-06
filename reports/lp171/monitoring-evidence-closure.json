@@ -1,0 +1,249 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "logsDoNotCertifyAlerting": true,
+  "milestone": "LP171",
+  "signals": [
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "APPLICATION_AVAILABILITY",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "CLIENT_STARTUP_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "CRITICAL_JAVASCRIPT_ERRORS",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SEARCH_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ADDRESS_LOOKUP_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "DESTINATION_LOOKUP_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ROUTING_PROVIDER_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SUPABASE_SERVICE_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "STORAGE_ACCESS_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "EDGE_FUNCTION_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "INCIDENT_INGESTION_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "REPORT_SUBMISSION_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "AUTHENTICATION_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "GITHUB_DEPLOYMENT_FAILURES",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "PUBLIC_ORIGIN_AVAILABILITY",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "UNEXPECTED_CONFIGURATION_DRIFT",
+      "requirements": {
+        "accessMethod": "SOURCE_UNAVAILABLE",
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertTrigger": "SOURCE_UNAVAILABLE",
+        "latestValidationResult": "SOURCE_UNAVAILABLE",
+        "owner": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalIdentity": "SOURCE_UNAVAILABLE",
+        "signalSource": "SOURCE_UNAVAILABLE",
+        "validationMethod": "SOURCE_UNAVAILABLE"
+      }
+    }
+  ]
+}

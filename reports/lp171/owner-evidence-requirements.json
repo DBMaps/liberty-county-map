@@ -1,0 +1,21 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171",
+  "requirements": [
+    "MONITORING_SIGNAL_MATRIX",
+    "BACKUP_DASHBOARD_ATTESTATION",
+    "ROLLBACK_DOMAIN_OWNERS_AND_RELEASES",
+    "INCIDENT_AND_SUPPORT_OWNERS",
+    "LAUNCH_DAY_OWNER_AVAILABILITY"
+  ],
+  "rules": {
+    "atomic": true,
+    "metadataOnly": true,
+    "powerShell": "5.1",
+    "readOnly": true,
+    "secretValuesAllowed": false
+  },
+  "workflow": "npm run capture:lp171:owner-evidence -- -Repository <owner/repo> -ProjectRef <ref>"
+}

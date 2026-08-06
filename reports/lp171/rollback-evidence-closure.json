@@ -1,0 +1,162 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "domains": [
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "STATIC_WEB_RUNTIME",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "GITHUB_DEPLOYMENT",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "SUPABASE_EDGE_FUNCTIONS",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "PRODUCTION_CONFIGURATION",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "UNDETERMINED_REQUIRES_REVERSIBLE_FORWARD_FIX_RESTORE_MANUAL_OR_UNSUPPORTED_CLASSIFICATION",
+      "identifier": "DATABASE_SCHEMA_OR_MIGRATION",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "STORAGE_METADATA_CONFIGURATION",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "COUNTY_ACTIVATION_STATE",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "APP_DISTRIBUTION_RELEASE",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "dataChangeMode": "NOT_APPLICABLE",
+      "identifier": "PUBLIC_LAUNCH_REVERSAL",
+      "requirements": {
+        "abortCriteria": "SOURCE_UNAVAILABLE",
+        "artifactPreservation": "SOURCE_UNAVAILABLE",
+        "currentReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "forwardFixAlternative": "SOURCE_UNAVAILABLE",
+        "priorKnownGoodReleaseIdentity": "SOURCE_UNAVAILABLE",
+        "productionExecutionStatus": "SOURCE_UNAVAILABLE",
+        "rehearsalEvidence": "SOURCE_UNAVAILABLE",
+        "rollbackOwner": "SOURCE_UNAVAILABLE",
+        "rollbackProcedure": "SOURCE_UNAVAILABLE",
+        "validationProcedure": "SOURCE_UNAVAILABLE"
+      }
+    }
+  ],
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171",
+  "productionRollbackExecuted": false
+}

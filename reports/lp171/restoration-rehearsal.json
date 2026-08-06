@@ -1,0 +1,32 @@
+{
+  "boundary": "EVIDENCE_AND_NON_PRODUCTION_REHEARSAL_ONLY",
+  "classification": "REHEARSAL_PASS",
+  "form": "DETERMINISTIC_TABLETOP_AND_LOCAL_FIXTURE",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP171",
+  "productionRestorationStatus": "NOT_TESTED",
+  "proof": {
+    "abortConditionsDefined": true,
+    "mutationOccurred": false,
+    "procedureComplete": true,
+    "productionTargetContacted": false,
+    "requiredInputsIdentified": true,
+    "unknownOwnershipExplicit": true,
+    "validationDefined": true
+  },
+  "runbookSections": [
+    "INCIDENT_QUALIFICATION",
+    "AUTHORIZATION",
+    "BACKUP_SELECTION",
+    "ISOLATED_TARGET",
+    "EVIDENCE_PRESERVATION",
+    "DOWNTIME",
+    "DATABASE_CONSISTENCY",
+    "STORAGE_CONSISTENCY",
+    "EDGE_AND_CONFIGURATION_DEPENDENCIES",
+    "VALIDATION",
+    "ABORT",
+    "ESCALATION",
+    "USER_COMMUNICATION"
+  ]
+}
