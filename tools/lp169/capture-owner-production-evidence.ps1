@@ -43,9 +43,28 @@ function Invoke-CapturedCommand([string]$CommandName, [object[]]$Arguments) {
   # Invocation by name deliberately permits Applications, Functions, Aliases,
   # and owner-provided command shims. Native nonzero exits remain fail-closed.
   $global:LASTEXITCODE = 0
-  $Output = & $CommandName @Arguments | Out-String
+  # Merge native stderr into the captured stream. A failing CLI must never echo
+  # unsafe response material before the concise failure is raised.
+  $Output = & $CommandName @Arguments 2>&1 | Out-String
   if ($LASTEXITCODE -ne 0) { throw "$CommandName metadata command failed; captured output was not displayed." }
   return $Output
+}
+
+function Resolve-SupabaseCommand {
+  # Resolve without invoking either command so command shims remain supported and
+  # no probe output can enter the console or the governed capture bundle.
+  if (Get-Command 'supabase' -ErrorAction SilentlyContinue) {
+    return [pscustomobject]@{ Executable = 'supabase'; ArgumentPrefix = @() }
+  }
+  if (Get-Command 'npx' -ErrorAction SilentlyContinue) {
+    return [pscustomobject]@{ Executable = 'npx'; ArgumentPrefix = @('--yes', 'supabase') }
+  }
+  throw 'Supabase CLI unavailable; install repository npm dependencies or provide a supabase command.'
+}
+
+function Invoke-SupabaseCapturedCommand($CommandSpecification, [object[]]$Arguments) {
+  [object[]]$EffectiveArguments = @($CommandSpecification.ArgumentPrefix) + @($Arguments)
+  return Invoke-CapturedCommand $CommandSpecification.Executable $EffectiveArguments
 }
 
 function Write-SafeJson([string]$Name, $Data) {
@@ -59,17 +78,18 @@ try {
 
 # Requires an existing `supabase login` session. Every projection intentionally
 # drops token, key, connection, URL, and secret-value fields.
-$Projects = @(Invoke-CapturedCommand 'supabase' @('projects','list','--output','json') | ConvertFrom-Json |
+$SupabaseCommand = Resolve-SupabaseCommand
+$Projects = @(Invoke-SupabaseCapturedCommand $SupabaseCommand @('projects','list','--output','json') | ConvertFrom-Json |
   Where-Object { $_.id -eq $ProjectRef } |
   Select-Object id,name,region,status)
 Write-SafeJson 'supabase-project-safe.json' $Projects
 
-$SupabaseSecretJson = Invoke-CapturedCommand 'supabase' @('secrets','list','--project-ref',$ProjectRef,'--output','json')
+$SupabaseSecretJson = Invoke-SupabaseCapturedCommand $SupabaseCommand @('secrets','list','--project-ref',$ProjectRef,'--output','json')
 [object[]]$NormalizedSecretNames = Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list --output json' -JsonText $SupabaseSecretJson -AllowedProperties @('name') -AllowEmpty
 $SecretNames = @(foreach ($SecretName in $NormalizedSecretNames) { [pscustomobject]@{ name = $SecretName; status = 'PRESENT' } })
 Write-SafeJson 'supabase-secret-names-safe.json' $SecretNames
 
-$Functions = @(Invoke-CapturedCommand 'supabase' @('functions','list','--project-ref',$ProjectRef,'--output','json') |
+$Functions = @(Invoke-SupabaseCapturedCommand $SupabaseCommand @('functions','list','--project-ref',$ProjectRef,'--output','json') |
   ConvertFrom-Json | Select-Object name,slug,status,version | Sort-Object name,slug)
 Write-SafeJson 'supabase-functions-safe.json' $Functions
 
