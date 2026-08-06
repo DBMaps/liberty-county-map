@@ -15,7 +15,7 @@ New-Item -ItemType Directory -Path $CaptureDirectory | Out-Null
 
 # Windows PowerShell 5.1's UTF8 cmdlet encoding emits a BOM and does not know
 # utf8NoBOM. Use the .NET constructor available on .NET Framework instead.
-$Utf8NoBom = New-Object -TypeName System.Text.UTF8Encoding -ArgumentList $false
+$Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
 function Assert-SafeContent([string]$Content) {
   $SecretPattern = '(eyJ[a-zA-Z0-9_-]{20,}\.|sb_(?:secret|service)_[a-zA-Z0-9_-]+|(?:postgres|postgresql|mysql|mongodb(?:\+srv)?):\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+[a-z0-9._~+\/-]{8,}|authorization["'']?\s*:|cookie["'']?\s*:|["'']?(?:password|access[_-]?token|refresh[_-]?token)["'']?\s*[:=]\s*["'']?[^"'']{8,})'
@@ -71,20 +71,16 @@ function Get-NormalizedInventoryNames {
 
     # ThrowTerminatingError preserves ErrorRecord.FullyQualifiedErrorId on
     # Windows PowerShell 5.1; throwing a string makes that field prose-derived.
-    $Exception = New-Object `
-      -TypeName System.ArgumentException `
-      -ArgumentList $Message
+    [System.ArgumentException]$Exception =
+      [System.ArgumentException]::new($Message)
 
-    $ErrorRecordArguments = @(
+    [System.Management.Automation.ErrorRecord]$ErrorRecord =
+      [System.Management.Automation.ErrorRecord]::new(
       $Exception,
       $ErrorId,
       [System.Management.Automation.ErrorCategory]::InvalidData,
       $TargetObject
     )
-
-    $ErrorRecord = New-Object `
-      -TypeName System.Management.Automation.ErrorRecord `
-      -ArgumentList $ErrorRecordArguments
 
     $PSCmdlet.ThrowTerminatingError($ErrorRecord)
   }

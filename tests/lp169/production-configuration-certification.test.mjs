@@ -150,12 +150,9 @@ test('two isolated runs are byte-identical canonical LF',()=>{
 
 test('owner capture uses the Windows PowerShell 5.1 UTF-8-no-BOM path',()=>{
   assert.doesNotMatch(captureScript, /-Encoding\s+utf8NoBOM/i);
-  assert.doesNotMatch(captureScript, /\[System\.Text\.UTF8Encoding\]::new/i);
-  assert.match(captureScript, /New-Object -TypeName System\.Text\.UTF8Encoding -ArgumentList \$false/);
-  assert.doesNotMatch(captureScript, /\bNew-Object\b(?!\s*(?:`\s*)?-TypeName)/,
-    'PowerShell 5.1 constructor calls must use explicit New-Object -TypeName syntax');
-  assert.doesNotMatch(captureScript, /\bNew-Object\s+(?!-TypeName\b)[\w.]+\s*\(/,
-    'New-Object TypeName(arguments) is not valid Windows PowerShell 5.1 syntax');
+  assert.match(captureScript, /\[System\.Text\.UTF8Encoding\]::new\(\$false\)/);
+  assert.doesNotMatch(captureScript, /\bNew-Object\b/,
+    'the owner capture must use direct .NET constructors supported by Windows PowerShell 5.1');
   assert.match(captureScript, /\[System\.IO\.File\]::WriteAllText/);
   assert.doesNotMatch(captureScript, /\b(?:Set-Content|Out-File|Add-Content)\b|(?:^|\s)(?:>|>>)\s*[^&]/m);
 });
@@ -252,9 +249,8 @@ test('inventory normalization rejects every unsafe response family without value
   ]) assert.ok(captureScript.includes(guard), `missing fail-closed guard: ${guard}`);
   assert.match(captureScript,/observed properties only:/);
   assert.match(captureScript,/function Stop-InventoryNormalization\s*\{\s*\[CmdletBinding\(\)\]\s*param\(/);
-  assert.match(captureScript,/New-Object `\s*-TypeName System\.ArgumentException `\s*-ArgumentList \$Message/);
-  assert.match(captureScript,/\$ErrorRecordArguments = @\([\s\S]*?\$Exception,[\s\S]*?\$ErrorId,[\s\S]*?ErrorCategory\]::InvalidData,[\s\S]*?\$TargetObject[\s\S]*?\)/);
-  assert.match(captureScript,/New-Object `\s*-TypeName System\.Management\.Automation\.ErrorRecord `\s*-ArgumentList \$ErrorRecordArguments/);
+  assert.match(captureScript,/\[System\.ArgumentException\]::new\(\$Message\)/);
+  assert.match(captureScript,/\[System\.Management\.Automation\.ErrorRecord\]::new\(\s*\$Exception,\s*\$ErrorId,\s*\[System\.Management\.Automation\.ErrorCategory\]::InvalidData,\s*\$TargetObject\s*\)/);
   assert.match(captureScript,/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/);
   for (const identifier of [
     'LP169InventorySchemaMismatch',

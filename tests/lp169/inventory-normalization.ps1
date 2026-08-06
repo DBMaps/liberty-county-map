@@ -23,8 +23,10 @@ try {
   $DiagnosticCaught = $_
 }
 if ($null -eq $DiagnosticCaught) { throw 'Direct diagnostic construction did not terminate.' }
-if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryDiagnosticConstruction')) { throw 'Direct diagnostic construction lost its governed identifier.' }
-if ($DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw 'Direct diagnostic construction did not preserve ArgumentException.' }
+if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryDiagnosticConstruction') -or
+    $DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') {
+  throw "Direct diagnostic construction mismatch; FullyQualifiedErrorId=[$($DiagnosticCaught.FullyQualifiedErrorId)]; ExceptionType=[$($DiagnosticCaught.Exception.GetType().FullName)]."
+}
 
 function Assert-StableResult([string]$JsonText, [int]$ExpectedCount, [string]$ExpectedNames, [switch]$AllowEmpty) {
   [object[]]$Actual = Get-NormalizedInventoryNames -SourceCommand 'stable result' -JsonText $JsonText -AllowedProperties @('name') -AllowEmpty:$AllowEmpty
