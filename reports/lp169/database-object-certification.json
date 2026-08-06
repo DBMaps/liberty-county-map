@@ -1,17 +1,17 @@
 {
   "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
-  "expectedSchemaCompatibility": "SOURCE_UNAVAILABLE",
+  "expectedSchemaCompatibility": "OBSERVED_METADATA",
   "generatedAt": "NOT_RECORDED_DETERMINISTIC",
-  "indexes": "SOURCE_UNAVAILABLE",
+  "indexes": "PASS",
   "metadataCategories": {
-    "columns": "SOURCE_UNAVAILABLE",
-    "constraints": "SOURCE_UNAVAILABLE",
-    "indexes": "SOURCE_UNAVAILABLE",
-    "policyInventory": "SOURCE_UNAVAILABLE",
-    "routines": "SOURCE_UNAVAILABLE",
-    "schemas": "SOURCE_UNAVAILABLE",
-    "tables": "SOURCE_UNAVAILABLE",
-    "triggers": "SOURCE_UNAVAILABLE"
+    "columns": "PASS",
+    "constraints": "PASS",
+    "indexes": "PASS",
+    "policyInventory": "PASS",
+    "routines": "PASS",
+    "schemas": "PASS",
+    "tables": "PASS",
+    "triggers": "PASS"
   },
   "milestone": "LP169",
   "objects": [
@@ -41,9 +41,9 @@
       "status": "SOURCE_UNAVAILABLE"
     }
   ],
-  "policies": "SOURCE_UNAVAILABLE",
+  "policies": "INVENTORY_OBSERVED",
   "remoteWrites": 0,
-  "sourceSystem": "SOURCE_UNAVAILABLE",
-  "status": "SOURCE_UNAVAILABLE",
-  "triggers": "SOURCE_UNAVAILABLE"
+  "sourceSystem": "SUPABASE_SQL_EDITOR",
+  "status": "PASS",
+  "triggers": "PASS"
 }

@@ -10,7 +10,7 @@
     {
       "category": "CERTIFIED_ADDRESS_BUCKET_IDENTITY",
       "delivery": "SUPABASE_STORAGE",
-      "status": "SOURCE_UNAVAILABLE"
+      "status": "PASS"
     },
     {
       "category": "COUNTY_ADDRESS_PACKAGES",
@@ -37,7 +37,7 @@
   "milestone": "LP169",
   "objectsRead": 0,
   "objectsWritten": 0,
-  "observedAggregateCount": null,
-  "sourceSystem": "SOURCE_UNAVAILABLE",
-  "status": "SOURCE_UNAVAILABLE"
+  "observedAggregateCount": 767,
+  "sourceSystem": "SUPABASE_SQL_EDITOR",
+  "status": "PARTIAL_EVIDENCE"
 }

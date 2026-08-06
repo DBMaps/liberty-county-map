@@ -24,7 +24,7 @@
       "status": "SOURCE_UNAVAILABLE"
     },
     {
-      "area": "databaseObjectReadiness",
+      "area": "storageReadiness",
       "blocks": [
         "DEPLOYMENT",
         "ACTIVATION",
@@ -32,10 +32,10 @@
       ],
       "id": "LP169-B003",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
-      "status": "SOURCE_UNAVAILABLE"
+      "status": "PARTIAL_EVIDENCE"
     },
     {
-      "area": "storageReadiness",
+      "area": "storagePolicyReadiness",
       "blocks": [
         "DEPLOYMENT",
         "ACTIVATION",
@@ -46,7 +46,7 @@
       "status": "SOURCE_UNAVAILABLE"
     },
     {
-      "area": "storagePolicyReadiness",
+      "area": "productionOriginReadiness",
       "blocks": [
         "DEPLOYMENT",
         "ACTIVATION",
@@ -57,24 +57,13 @@
       "status": "SOURCE_UNAVAILABLE"
     },
     {
-      "area": "productionOriginReadiness",
-      "blocks": [
-        "DEPLOYMENT",
-        "ACTIVATION",
-        "PUBLIC_LAUNCH"
-      ],
-      "id": "LP169-B006",
-      "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
-      "status": "SOURCE_UNAVAILABLE"
-    },
-    {
       "area": "runtimeAlignmentReadiness",
       "blocks": [
         "DEPLOYMENT",
         "ACTIVATION",
         "PUBLIC_LAUNCH"
       ],
-      "id": "LP169-B007",
+      "id": "LP169-B006",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
       "status": "OWNER_ACTION_REQUIRED"
     },
@@ -85,7 +74,7 @@
         "ACTIVATION",
         "PUBLIC_LAUNCH"
       ],
-      "id": "LP169-B008",
+      "id": "LP169-B007",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
       "status": "OWNER_ACTION_REQUIRED"
     },
@@ -96,7 +85,7 @@
         "ACTIVATION",
         "PUBLIC_LAUNCH"
       ],
-      "id": "LP169-B009",
+      "id": "LP169-B008",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
       "status": "NOT_READY"
     },
@@ -107,7 +96,7 @@
         "ACTIVATION",
         "PUBLIC_LAUNCH"
       ],
-      "id": "LP169-B010",
+      "id": "LP169-B009",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
       "status": "NOT_READY"
     },
@@ -118,7 +107,7 @@
         "ACTIVATION",
         "PUBLIC_LAUNCH"
       ],
-      "id": "LP169-B011",
+      "id": "LP169-B010",
       "remediation": "Capture complete redacted owner evidence; reassess without production mutation.",
       "status": "OWNER_ACTION_REQUIRED"
     }

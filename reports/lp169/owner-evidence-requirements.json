@@ -50,6 +50,6 @@
     ],
     "schemaVersion": 2
   },
-  "sqlEditorEvidence": "OWNER_SQL_EDITOR_EXPORT_INGESTION_REQUIRED",
-  "status": "OWNER_EXECUTION_REQUIRED"
+  "sqlEditorEvidence": "COMPLETE_METADATA_EXPORT",
+  "status": "PARTIAL_EVIDENCE_INGESTED"
 }

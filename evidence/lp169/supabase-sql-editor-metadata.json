@@ -1,0 +1,1774 @@
+{
+  "authenticated": true,
+  "captureMethod": "DASHBOARD_READ_ONLY_SQL_EXPORT",
+  "contentSha256": "8480e57332e57b09198f29a3c6ff13567b8dc356a2216c73131c99cb03527d1b",
+  "evidenceIdentifier": "LP169.3-SUPABASE-SQL-EDITOR-METADATA",
+  "evidenceStatus": "COMPLETE_METADATA_EXPORT",
+  "metadata": {
+    "columns": [
+      {
+        "dataType": "ARRAY",
+        "name": "allowed_mime_types",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "ARRAY",
+        "name": "path_tokens",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "bigint",
+        "name": "file_size_limit",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "bigint",
+        "name": "in_progress_size",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "bigint",
+        "name": "size",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "boolean",
+        "name": "avif_autodetection",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "boolean",
+        "name": "public",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "character varying",
+        "name": "hash",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "dataType": "character varying",
+        "name": "name",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "dataType": "double precision",
+        "name": "lat",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "double precision",
+        "name": "lng",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "integer",
+        "name": "deleted_historical_event_count",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "integer",
+        "name": "dimension",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "integer",
+        "name": "id",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "dataType": "integer",
+        "name": "part_number",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "interval",
+        "name": "retention_target",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "detail",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "detail",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "envelope",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "metadata_configuration",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "metadata",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "metadata",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "metadata",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "payload",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "response",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "user_metadata",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "jsonb",
+        "name": "user_metadata",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "awareness_area",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "bucket_id",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "text",
+        "name": "bucket_id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "bucket_id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "bucket_id",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "text",
+        "name": "cache_key",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "text",
+        "name": "category",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "confidence",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "crossing_id",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "crossing_name",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "data_type",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "text",
+        "name": "detail",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "device_id",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "distance_metric",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "text",
+        "name": "etag",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "event_type",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "event_type",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "text",
+        "name": "format",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "text",
+        "name": "gridly_version",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "hook_name",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "id",
+        "schema": "storage",
+        "table": "buckets_vectors"
+      },
+      {
+        "dataType": "text",
+        "name": "id",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "text",
+        "name": "id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "id",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "text",
+        "name": "idempotency_key",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "idempotency_key",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "text",
+        "name": "key",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "key",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "message",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "name",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "text",
+        "name": "name",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "text",
+        "name": "name",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "text",
+        "name": "name",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "text",
+        "name": "owner_id",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "text",
+        "name": "owner_id",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "text",
+        "name": "owner_id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "owner_id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "page_url",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "phase",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "platform",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "provider_namespace",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "text",
+        "name": "provider_namespace",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state"
+      },
+      {
+        "dataType": "text",
+        "name": "railroad",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "reason",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "text",
+        "name": "report_type",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "schema_version",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "severity",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "source_kind",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "source_report_id",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "text",
+        "name": "source",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "text",
+        "name": "status",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "text",
+        "name": "status",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "status",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "text",
+        "name": "upload_id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "upload_signature",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "text",
+        "name": "user_agent",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "text",
+        "name": "version",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "text",
+        "name": "version",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "text",
+        "name": "version",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "completed_at",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "cooldown_until",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "buckets_vectors"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "created_at",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "deleted_at",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "expires_at",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "expires_at",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "last_accessed_at",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "next_allowed_at",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "observed_at",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "received_at",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "retained_until",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "started_at",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "updated_at",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "updated_at",
+        "schema": "storage",
+        "table": "buckets_vectors"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "updated_at",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "updated_at",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "timestamp with time zone",
+        "name": "updated_at",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "dataType": "timestamp without time zone",
+        "name": "executed_at",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "dataType": "USER-DEFINED",
+        "name": "type",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "USER-DEFINED",
+        "name": "type",
+        "schema": "storage",
+        "table": "buckets_vectors"
+      },
+      {
+        "dataType": "USER-DEFINED",
+        "name": "type",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "dataType": "uuid",
+        "name": "id",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "dataType": "uuid",
+        "name": "owner",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "dataType": "uuid",
+        "name": "owner",
+        "schema": "storage",
+        "table": "objects"
+      }
+    ],
+    "constraints": [
+      {
+        "name": "16546_17180_1_not_null",
+        "schema": "storage",
+        "table": "buckets",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17180_11_not_null",
+        "schema": "storage",
+        "table": "buckets",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17180_2_not_null",
+        "schema": "storage",
+        "table": "buckets",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17190_1_not_null",
+        "schema": "storage",
+        "table": "objects",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_1_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_2_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_3_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_4_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_5_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_6_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17239_8_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_1_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_10_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_2_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_3_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_4_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_5_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_6_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_7_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17253_9_not_null",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_1_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_2_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_3_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_4_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_5_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "16546_17300_6_not_null",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_1_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_11_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_12_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_13_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_14_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_2_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_3_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_4_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_7_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_8_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18788_9_not_null",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18803_1_not_null",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18803_2_not_null",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18803_5_not_null",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18803_6_not_null",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_1_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_2_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_4_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_5_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_6_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "18787_18813_7_not_null",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_1_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_2_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_3_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_5_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_6_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_7_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_17663_8_not_null",
+        "schema": "public",
+        "table": "reports",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_18503_1_not_null",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_18503_10_not_null",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_18503_2_not_null",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_18503_3_not_null",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_18503_4_not_null",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_1_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_2_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_3_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_4_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_5_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19826_6_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19835_1_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19835_2_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state",
+        "type": "CHECK"
+      },
+      {
+        "name": "2200_19835_3_not_null",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state",
+        "type": "CHECK"
+      },
+      {
+        "name": "buckets_analytics_pkey",
+        "schema": "storage",
+        "table": "buckets_analytics",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "buckets_pkey",
+        "schema": "storage",
+        "table": "buckets",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "gridly_feedback_category_length",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "gridly_feedback_message_length",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "gridly_feedback_pkey",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "gridly_feedback_status_allowed",
+        "schema": "public",
+        "table": "gridly_feedback",
+        "type": "CHECK"
+      },
+      {
+        "name": "gridly_geocode_cache_cache_key_check",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "CHECK"
+      },
+      {
+        "name": "gridly_geocode_cache_pkey",
+        "schema": "public",
+        "table": "gridly_geocode_cache",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "gridly_geocode_provider_state_pkey",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "historical_events_event_type_check",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "CHECK"
+      },
+      {
+        "name": "historical_events_idempotency_key_key",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "UNIQUE"
+      },
+      {
+        "name": "historical_events_pkey",
+        "schema": "history_capture",
+        "table": "historical_events",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "objects_bucketId_fkey",
+        "schema": "storage",
+        "table": "objects",
+        "type": "FOREIGN KEY"
+      },
+      {
+        "name": "objects_pkey",
+        "schema": "storage",
+        "table": "objects",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "reports_pkey",
+        "schema": "public",
+        "table": "reports",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "retention_runs_pkey",
+        "schema": "history_capture",
+        "table": "retention_runs",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "s3_multipart_uploads_bucket_id_fkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "FOREIGN KEY"
+      },
+      {
+        "name": "s3_multipart_uploads_parts_bucket_id_fkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "FOREIGN KEY"
+      },
+      {
+        "name": "s3_multipart_uploads_parts_pkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "s3_multipart_uploads_parts_upload_id_fkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts",
+        "type": "FOREIGN KEY"
+      },
+      {
+        "name": "s3_multipart_uploads_pkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads",
+        "type": "PRIMARY KEY"
+      },
+      {
+        "name": "writer_monitoring_events_pkey",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events",
+        "type": "PRIMARY KEY"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "bname",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "name": "bucketid_objname",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "name": "buckets_analytics_pkey",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "name": "buckets_analytics_unique_name_idx",
+        "schema": "storage",
+        "table": "buckets_analytics"
+      },
+      {
+        "name": "buckets_pkey",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "name": "buckets_vectors_pkey",
+        "schema": "storage",
+        "table": "buckets_vectors"
+      },
+      {
+        "name": "gridly_feedback_pkey",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "name": "gridly_geocode_cache_expiry_idx",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "name": "gridly_geocode_cache_pkey",
+        "schema": "public",
+        "table": "gridly_geocode_cache"
+      },
+      {
+        "name": "gridly_geocode_provider_state_pkey",
+        "schema": "public",
+        "table": "gridly_geocode_provider_state"
+      },
+      {
+        "name": "historical_events_event_type_observed_at_idx",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "name": "historical_events_idempotency_key_key",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "name": "historical_events_pkey",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "name": "historical_events_retained_until_idx",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "name": "historical_events_source_report_id_idx",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "name": "idx_multipart_uploads_list",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "name": "idx_objects_bucket_id_name_lower",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "name": "idx_objects_bucket_id_name",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "name": "migrations_name_key",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "name": "migrations_pkey",
+        "schema": "storage",
+        "table": "migrations"
+      },
+      {
+        "name": "name_prefix_search",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "name": "objects_pkey",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "name": "reports_created_at_idx",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "name": "reports_crossing_id_idx",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "name": "reports_expires_at_idx",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "name": "reports_pkey",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "name": "retention_runs_pkey",
+        "schema": "history_capture",
+        "table": "retention_runs"
+      },
+      {
+        "name": "s3_multipart_uploads_parts_pkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads_parts"
+      },
+      {
+        "name": "s3_multipart_uploads_pkey",
+        "schema": "storage",
+        "table": "s3_multipart_uploads"
+      },
+      {
+        "name": "vector_indexes_name_bucket_id_idx",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "name": "vector_indexes_pkey",
+        "schema": "storage",
+        "table": "vector_indexes"
+      },
+      {
+        "name": "writer_monitoring_events_created_at_idx",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      },
+      {
+        "name": "writer_monitoring_events_pkey",
+        "schema": "history_capture",
+        "table": "writer_monitoring_events"
+      }
+    ],
+    "policies": [
+      {
+        "command": "INSERT",
+        "name": "Allow anonymous feedback inserts",
+        "roles": "anon",
+        "schema": "public",
+        "table": "gridly_feedback"
+      },
+      {
+        "command": "INSERT",
+        "name": "Anyone can insert reports",
+        "roles": "public",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "command": "INSERT",
+        "name": "history_capture_anon_insert_phase1a_events",
+        "roles": "anon",
+        "schema": "history_capture",
+        "table": "historical_events"
+      },
+      {
+        "command": "INSERT",
+        "name": "Public can insert reports",
+        "roles": "anon,authenticated",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "command": "SELECT",
+        "name": "Anyone can read reports",
+        "roles": "public",
+        "schema": "public",
+        "table": "reports"
+      },
+      {
+        "command": "SELECT",
+        "name": "Public can read reports",
+        "roles": "anon,authenticated",
+        "schema": "public",
+        "table": "reports"
+      }
+    ],
+    "routines": [
+      {
+        "name": "allow_any_operation",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "allow_only_operation",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "can_insert_object",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "enforce_bucket_name_length",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "extension",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "filename",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "foldername",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "get_common_prefix",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "get_size_by_bucket",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "gridly_cooldown_geocode_provider",
+        "schema": "public",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "gridly_reserve_geocode_provider_slot",
+        "schema": "public",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "list_multipart_uploads_with_delimiter",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "list_objects_with_delimiter",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "operation",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "protect_delete",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "rls_auto_enable",
+        "schema": "public",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "search_by_timestamp",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "search_v2",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "search",
+        "schema": "storage",
+        "type": "FUNCTION"
+      },
+      {
+        "name": "update_updated_at_column",
+        "schema": "storage",
+        "type": "FUNCTION"
+      }
+    ],
+    "schemas": [
+      {
+        "name": "history_capture"
+      },
+      {
+        "name": "public"
+      },
+      {
+        "name": "storage"
+      }
+    ],
+    "storageBuckets": [
+      {
+        "id": "certified-addresses",
+        "public": false
+      },
+      {
+        "id": "gridly-roadways",
+        "public": true
+      }
+    ],
+    "storageCounts": [
+      {
+        "bucketId": "certified-addresses",
+        "objectCount": 767
+      },
+      {
+        "bucketId": "gridly-roadways",
+        "objectCount": 30
+      }
+    ],
+    "tables": [
+      {
+        "name": "buckets_analytics",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "buckets_vectors",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "buckets",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "gridly_feedback",
+        "schema": "public",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "gridly_geocode_cache",
+        "schema": "public",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "gridly_geocode_provider_state",
+        "schema": "public",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "historical_events",
+        "schema": "history_capture",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "migrations",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "objects",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "reports",
+        "schema": "public",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "retention_runs",
+        "schema": "history_capture",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "s3_multipart_uploads_parts",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "s3_multipart_uploads",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "vector_indexes",
+        "schema": "storage",
+        "type": "BASE TABLE"
+      },
+      {
+        "name": "writer_monitoring_events",
+        "schema": "history_capture",
+        "type": "BASE TABLE"
+      }
+    ],
+    "triggers": [
+      {
+        "event": "DELETE",
+        "name": "protect_buckets_delete",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "event": "DELETE",
+        "name": "protect_objects_delete",
+        "schema": "storage",
+        "table": "objects"
+      },
+      {
+        "event": "INSERT",
+        "name": "enforce_bucket_name_length_trigger",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "event": "UPDATE",
+        "name": "enforce_bucket_name_length_trigger",
+        "schema": "storage",
+        "table": "buckets"
+      },
+      {
+        "event": "UPDATE",
+        "name": "update_objects_updated_at",
+        "schema": "storage",
+        "table": "objects"
+      }
+    ]
+  },
+  "ownerSupplied": true,
+  "readOnly": true,
+  "redactionStatus": "SANITIZED",
+  "schemaVersion": 1,
+  "sourceFormat": "CSV",
+  "sourceSystem": "SUPABASE_SQL_EDITOR"
+}
