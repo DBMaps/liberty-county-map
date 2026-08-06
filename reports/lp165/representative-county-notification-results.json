@@ -1,0 +1,105 @@
+{
+  "counties": [
+    {
+      "caseCount": 2,
+      "countyFips": "48043",
+      "countyName": "Brewster",
+      "selectionReason": "West Texas border; rural and sparse"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48061",
+      "countyName": "Cameron",
+      "selectionReason": "South Texas border and urban/rural mix"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48113",
+      "countyName": "Dallas",
+      "selectionReason": "North Texas dense metro"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48141",
+      "countyName": "El Paso",
+      "selectionReason": "West Texas border metro"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48157",
+      "countyName": "Fort Bend",
+      "selectionReason": "large metro and high destination density"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48167",
+      "countyName": "Galveston",
+      "selectionReason": "Gulf Coast"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48201",
+      "countyName": "Harris",
+      "selectionReason": "largest metro and high crossing/destination density"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48245",
+      "countyName": "Jefferson",
+      "selectionReason": "Gulf Coast and East Texas"
+    },
+    {
+      "caseCount": 12,
+      "countyFips": "48291",
+      "countyName": "Liberty",
+      "selectionReason": "mandatory benchmark; public/private crossing variation"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48301",
+      "countyName": "Loving",
+      "selectionReason": "lowest-density rural county"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48303",
+      "countyName": "Lubbock",
+      "selectionReason": "South Plains regional center"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48339",
+      "countyName": "Montgomery",
+      "selectionReason": "named roads and metro/rural variation"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48375",
+      "countyName": "Potter",
+      "selectionReason": "Panhandle"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48439",
+      "countyName": "Tarrant",
+      "selectionReason": "North Texas dense metro"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48453",
+      "countyName": "Travis",
+      "selectionReason": "Central Texas metro"
+    },
+    {
+      "caseCount": 2,
+      "countyFips": "48479",
+      "countyName": "Webb",
+      "selectionReason": "South Texas border"
+    }
+  ],
+  "countyCount": 16,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP165",
+  "schemaVersion": "gridly.lp165.representativeCountyNotificationResults.v1",
+  "selectionRule": "Governed statewide geographic, metro/rural, crossing and destination-density variation; ascending FIPS tie-breaker"
+}

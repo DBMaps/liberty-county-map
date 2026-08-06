@@ -1,0 +1,13 @@
+{
+  "activeCaseCount": 18,
+  "clearedActiveNotificationCount": 0,
+  "clearedCaseCount": 16,
+  "clearedQueueRetentionCount": 0,
+  "clearedRehydrationCount": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP165",
+  "newEvidenceRequiredForReactivation": true,
+  "schemaVersion": "gridly.lp165.lifecycleNotificationResults.v1",
+  "status": "PASS",
+  "suppressedCaseCount": 8
+}

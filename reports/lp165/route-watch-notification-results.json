@@ -1,0 +1,13 @@
+{
+  "destinationCaseCount": 17,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "invalidRouteNotificationSuppressed": true,
+  "milestone": "LP165",
+  "routeCaseCount": 1,
+  "routeWatchCaseCount": 1,
+  "schemaVersion": "gridly.lp165.routeWatchNotificationResults.v1",
+  "status": "PASS",
+  "straightLineFallbackBlocked": true,
+  "unrelatedHazardSuppressed": true,
+  "validGeometryRequired": true
+}

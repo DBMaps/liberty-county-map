@@ -1,0 +1,17 @@
+{
+  "casesEvaluated": 42,
+  "countyCentroidFallback": false,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "localityCentroidFallback": false,
+  "milestone": "LP165",
+  "passCount": 34,
+  "privateRoadCaseCount": 1,
+  "privateRoadLeakageFailureCount": 0,
+  "publicRoadCaseCount": 23,
+  "roadMidpointFallback": false,
+  "schemaVersion": "gridly.lp165.locationQualityResults.v1",
+  "status": "PASS",
+  "truthfulSuppressionPassCount": 8,
+  "unnamedRoadCaseCount": 1,
+  "unnamedRoadLeakageFailureCount": 0
+}
