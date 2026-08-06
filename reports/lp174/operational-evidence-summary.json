@@ -1,0 +1,113 @@
+{
+  "blockerCounts": {
+    "ownerActionRequired": 14,
+    "sourceUnavailable": 10,
+    "total": 24
+  },
+  "blockers": [
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.alertDestinations"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.alertThresholds"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.evidenceTimestamp"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.monitoredProductionServices"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "monitoring.monitoringProviders"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.backupFrequency"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.backupProvider"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.latestSuccessfulBackupMetadata"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.pitrAvailability"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "fact": "backup.retentionPolicy"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "monitoring.monitoringOwnership"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "operationalOwnership.backupOperationalOwner"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "operationalOwnership.primaryOperationalOwner"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "operationalOwnership.productionAuthority"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "operationalOwnership.supportContact"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "operationalOwnership.technicalEscalation"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "rollbackOwnership.productionValidationAuthority"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "rollbackOwnership.releaseApprovalAuthority"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "rollbackOwnership.releaseOwner"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "rollbackOwnership.rollbackAuthority"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "launchOperations.communicationReadiness"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "launchOperations.launchDayOwnerAvailability"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "launchOperations.operationalSupportReadiness"
+    },
+    {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "fact": "launchOperations.productionReadinessAcknowledgement"
+    }
+  ],
+  "boundary": "METADATA_ONLY_NON_AUTHORIZING_OPERATIONAL_REASSESSMENT",
+  "classification": "EVIDENCE_INCOMPLETE",
+  "discoveryClassification": "AUTO_DISCOVERY_NO_EVIDENCE",
+  "machineVerifiedFacts": [],
+  "metadataOnly": true,
+  "milestone": "LP174",
+  "ownerAttestedFacts": [],
+  "schemaVersion": "gridly.lp174.operationalEvidenceSummary.v1"
+}
