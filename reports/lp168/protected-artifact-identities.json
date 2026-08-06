@@ -5,60 +5,67 @@
   "milestone": "LP168",
   "protectedArtifacts": [
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
       "path": "js/app.js",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04",
       "path": "reports/lp162/lp162-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "0008b282dfab151dbb663cc6a7e6177bb67d60e8c4a7241bff25505684b7eb04"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d",
       "path": "reports/lp163/lp163-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "b03e81e7c7ca261cacd5144b9e7711f9950287725aa3a380771faa4d5e4e5f0d"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305",
       "path": "reports/lp164/lp164-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "d08b5c150df6e91a15fd90047441deb663ae005921df1d9f5aa084a61ed2b305"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258",
       "path": "reports/lp165/lp165-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "67ed7183dce05cd0171251a404a8ba74d91fcc64e423aa1fc7162241e8e22258"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d",
       "path": "reports/lp166/lp166-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "9aebdcbc958b3b38bdb550f8a95cbaa391d793a1956a4825f198cca59279c91d"
+      "status": "UNCHANGED"
     },
     {
+      "authoritativeIdentitySource": "GIT_BLOB",
       "baselineCommit": "9fce6301eb2ec106dd7dfd217cb96ad892c6102f",
       "baselineSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
-      "identitySource": "BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES",
+      "currentCommit": "HEAD",
+      "currentSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
       "path": "reports/lp167/lp167-summary.json",
-      "status": "UNCHANGED",
-      "workingTreeSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b"
+      "status": "UNCHANGED"
     }
   ]
 }
