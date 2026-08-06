@@ -1,4 +1,10 @@
-import assert from 'node:assert/strict';import test from 'node:test';
+import assert from 'node:assert/strict';import { createHash } from 'node:crypto';import test from 'node:test';
+import { buildReports,protectedArtifactSha256 } from '../../tools/lp164/certify-statewide-awareness-hazards.mjs';
+import { gitBlobBytes } from '../../tools/lp151/validate-statewide-operations.mjs';
 import { compareBytes,verifyDeterminism } from '../../tools/lp164/verify-lp164-determinism.mjs';
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 test('two isolated runs match governed bytes without mutable state leakage',()=>{const r=verifyDeterminism();assert.equal(r.status,'PASS');assert.equal(r.runsCompared,2);assert.equal(r.repositoryArtifactsRewritten,false);assert.equal(r.mutableStateLeakage,false);});
 test('controlled drift reports hashes and the first differing byte',()=>{const x=compareBytes('x.json',Buffer.from('abc\n'),Buffer.from('axc\n'));assert.equal(x.firstDifferingByte,1);assert.match(x.expectedSha256,/^[a-f0-9]{64}$/);assert.match(x.actualSha256,/^[a-f0-9]{64}$/);});
+test('protected identities use canonical Git blobs for JSON, JavaScript, manifests, and reports',()=>{const artifacts=buildReports()['reports/lp164/protected-artifact-hashes.json'].artifacts;for(const path of ['js/app.js','Crossing-Packages/production-crossing-manifest.json','data/roadway-runtime-manifest.json','reports/lp163/lp163-summary.json']){const blob=gitBlobBytes(path);assert.equal(artifacts[path],sha(blob));assert.equal(protectedArtifactSha256(path),sha(blob));}});
+test('Windows CRLF working-tree conversion cannot alter protected Git blob identity',()=>{for(const path of ['js/app.js','Crossing-Packages/production-crossing-manifest.json']){const blob=gitBlobBytes(path);const lf=blob.toString('utf8').replace(/\r\n/g,'\n').replace(/\r/g,'\n');const crlf=Buffer.from(lf.replace(/\n/g,'\r\n'));assert.equal(protectedArtifactSha256(path),sha(Buffer.from(lf)));assert.notEqual(sha(crlf),protectedArtifactSha256(path));}});
+test('canonical LF normalization preserves tracked blob identity',()=>{const blob=gitBlobBytes('js/app.js');assert.equal(sha(Buffer.from(blob.toString('utf8').replace(/\r\n/g,'\n').replace(/\r/g,'\n'))),sha(blob));});
