@@ -14,6 +14,24 @@ export const encode = value => `${JSON.stringify(stable(value), null, 2)}\n`;
 const present = (root, relativePath) => fs.existsSync(path.join(root, relativePath));
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
+export function canonicalGitBlob(root, revision, relativePath) {
+  return execFileSync('git', ['show', `${revision}:${relativePath}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
+}
+
+export function protectedArtifactIdentity(root, relativePath, baselineCommit = BASELINE, currentCommit = 'HEAD') {
+  const baselineSha256 = sha256(canonicalGitBlob(root, baselineCommit, relativePath));
+  const currentSha256 = sha256(canonicalGitBlob(root, currentCommit, relativePath));
+  return {
+    path: relativePath,
+    baselineCommit,
+    baselineSha256,
+    currentCommit,
+    currentSha256,
+    authoritativeIdentitySource: 'GIT_BLOB',
+    status: baselineSha256 === currentSha256 ? 'UNCHANGED' : 'CHANGED'
+  };
+}
+
 export function classify(prerequisites) {
   if (prerequisites.some(item => item.requiredForLaunch && item.status === 'MISSING')) return 'NOT_READY';
   if (prerequisites.some(item => item.status !== 'PRESENT')) return 'CONDITIONALLY_READY';
@@ -54,11 +72,7 @@ export function audit(root = ROOT) {
   ].map(([id, name, status, requiredForLaunch, action]) => ({ id, name, status, requiredForLaunch, action, evidence: id === 'LP168-P009' ? 'package-lock.json present; independent build identity absent' : id === 'LP168-P011' ? 'reports/lp167/lp167-summary.json: deployment and launch NOT_AUTHORIZED' : 'No governed production evidence in repository' }));
   const classification = classify(prerequisites);
   const dependencies = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  const protectedArtifacts = PROTECTED_PATHS.map(relativePath => {
-    const workingTreeHash = sha256(fs.readFileSync(path.join(root, relativePath)));
-    const baselineHash = sha256(execFileSync('git', ['show', `${BASELINE}:${relativePath}`], { cwd: root, maxBuffer: 64 * 1024 * 1024 }));
-    return { path: relativePath, baselineCommit: BASELINE, baselineSha256: baselineHash, workingTreeSha256: workingTreeHash, identitySource: 'BASELINE_GIT_BLOB_AND_WORKING_TREE_BYTES', status: baselineHash === workingTreeHash ? 'UNCHANGED' : 'CHANGED' };
-  });
+  const protectedArtifacts = PROTECTED_PATHS.map(relativePath => protectedArtifactIdentity(root, relativePath));
   const risks = prerequisites.filter(item => item.status !== 'PRESENT').map((item, index) => ({ riskId: `LP168-R${String(index + 1).padStart(3, '0')}`, prerequisiteId: item.id, severity: item.requiredForLaunch ? 'HIGH' : 'MEDIUM', status: 'OPEN', launchImpact: item.requiredForLaunch ? 'BLOCKS_STATEWIDE_LAUNCH' : 'CONDITIONAL', summary: item.name }));
   const common = { milestone: 'LP168', generatedAt: GENERATED_AT, baselineCommit: BASELINE };
   return {
