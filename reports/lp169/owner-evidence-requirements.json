@@ -10,16 +10,36 @@
     "SUPABASE_REGION",
     "SUPABASE_API",
     "SUPABASE_AUTH",
+    "FUNCTION:gridly-geocode",
     "DATABASE_OBJECTS",
     "DATABASE_SCHEMA_COMPATIBILITY",
     "DATABASE_POLICIES",
     "DATABASE_INDEXES",
     "DATABASE_TRIGGERS",
     "STORAGE_OBJECTS",
+    "STORAGE:ADDRESS_PACKAGES",
+    "STORAGE:ADDRESS_CERTIFICATES",
+    "STORAGE:STATEWIDE_COUNTS",
     "STORAGE_POLICIES",
+    "POLICY:ANONYMOUS_WRITE_DISABLED",
+    "POLICY:PUBLIC_WRITE_DISABLED",
+    "POLICY:RUNTIME_READ",
     "ORIGINS_REDIRECTS"
   ],
   "schema": {
+    "provenance": [
+      "evidenceIdentifier",
+      "sourceSystem",
+      "captureMethod",
+      "commandFamily",
+      "authentication",
+      "readOnly",
+      "redactionStatus",
+      "schemaVersion",
+      "deterministicContentIdentity",
+      "completeness",
+      "status"
+    ],
     "records": [
       {
         "attestation": "OWNER_ATTESTED_OR_TOOL_VERIFIED",
@@ -28,7 +48,7 @@
         "status": "PRESENT|ABSENT|UNVERIFIED|INVALID_FORMAT|SOURCE_UNAVAILABLE|PASS|FAIL|OWNER_ACTION_REQUIRED"
       }
     ],
-    "schemaVersion": 1
+    "schemaVersion": 2
   },
-  "status": "SOURCE_UNAVAILABLE"
+  "status": "OWNER_EXECUTION_REQUIRED"
 }

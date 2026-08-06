@@ -26,6 +26,7 @@ const stable = value => Array.isArray(value) ? value.map(stable) : value && type
   ? Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])])) : value;
 export const encode = value => `${JSON.stringify(stable(value), null, 2)}\n`;
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+export const evidenceContentIdentity = records => sha(encode([...records].sort((a,b) => a.identifier.localeCompare(b.identifier))));
 const exists = (root, p) => fs.existsSync(path.join(root, p));
 const common = { milestone: 'LP169', auditBoundary: 'READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION', generatedAt: 'NOT_RECORDED_DETERMINISTIC' };
 
@@ -54,19 +55,58 @@ const requirements = [
 ];
 
 export function validateEvidence(input) {
-  if (!input || input.schemaVersion !== 1 || !Array.isArray(input.records)) throw new Error('owner evidence schema is invalid');
-  const forbiddenKeys = /^(value|secret|token|password|key|raw|output|connectionString)$/i;
+  if (!input || ![1,2].includes(input.schemaVersion) || !Array.isArray(input.records)) throw new Error('owner evidence schema is invalid');
+  const topLevel = new Set(['schemaVersion','provenance','records']);
+  if (Object.keys(input).some(key => !topLevel.has(key))) throw new Error('owner evidence contains an unknown top-level field');
+  const allowedRecordFields = new Set(['identifier','status','method','attestation','sourceSystem','readOnly','redactionStatus','completeness','safeCount','safeSha256','classification']);
+  const forbiddenKeys = /(?:value|secret|token|password|credential|authorization|cookie|raw|output|connection|string|private.?key)/i;
   const allowedStatus = new Set(['PRESENT','ABSENT','UNVERIFIED','INVALID_FORMAT','SOURCE_UNAVAILABLE','PASS','FAIL','OWNER_ACTION_REQUIRED']);
   const seen = new Set();
   for (const record of input.records) {
     if (!record || Object.keys(record).some(k => forbiddenKeys.test(k))) throw new Error('owner evidence contains a forbidden value-bearing field');
+    if (Object.keys(record).some(k => !allowedRecordFields.has(k))) throw new Error('owner evidence contains an unknown record field');
     if (!/^[A-Z0-9_.:-]+$/.test(record.identifier || '') || !allowedStatus.has(record.status)) throw new Error('owner evidence record is invalid');
     if (seen.has(record.identifier)) throw new Error('duplicate owner evidence identifier');
     seen.add(record.identifier);
   }
   const serialized = JSON.stringify(input);
-  if (/(eyJ[a-zA-Z0-9_-]{20,}\.|sb_(?:secret|service)_|postgres(?:ql)?:\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----)/.test(serialized)) throw new Error('owner evidence resembles secret material');
+  if (/(eyJ[a-zA-Z0-9_-]{20,}\.|sb_(?:secret|service)_|(?:postgres|postgresql|mysql|mongodb(?:\+srv)?):\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+[a-z0-9._~+\/-]{8,}|authorization\s*:|(?:refresh|access)[_-]?token\s*[:=]|(?:api[_-]?key|password)\s*[:=]|cookie\s*:)/i.test(serialized)) throw new Error('owner evidence resembles secret material');
+  if (input.schemaVersion === 2) {
+    const allowedProvenance = new Set(['evidenceIdentifier','sourceSystem','captureMethod','commandFamily','authentication','readOnly','redactionStatus','schemaVersion','deterministicContentIdentity','completeness','status']);
+    const p = input.provenance;
+    if (!p || Object.keys(p).some(k => !allowedProvenance.has(k)) || p.schemaVersion !== 2 || p.readOnly !== true || p.redactionStatus !== 'SANITIZED' || !/^[a-f0-9]{64}$/.test(p.deterministicContentIdentity || '')) throw new Error('owner evidence provenance is invalid');
+    if (p.deterministicContentIdentity !== evidenceContentIdentity(input.records)) throw new Error('owner evidence content identity mismatch');
+  }
   return input;
+}
+
+export function reconcileEvidence(input, options = {}) {
+  const evidence = validateEvidence(input);
+  const byId = new Map(evidence.records.map(record => [record.identifier, record]));
+  const status = id => byId.get(id)?.status || 'SOURCE_UNAVAILABLE';
+  const requiredPass = ids => ids.every(id => status(id) === 'PASS') ? 'PASS' : ids.some(id => status(id) === 'FAIL') ? 'FAIL' : 'SOURCE_UNAVAILABLE';
+  const projectIdentity = options.expectedProjectSha256
+    ? (byId.get('SUPABASE_PROJECT_IDENTITY')?.safeSha256 === options.expectedProjectSha256 ? 'PASS' : 'FAIL')
+    : status('SUPABASE_PROJECT_IDENTITY');
+  const packageCount = byId.get('STORAGE:ADDRESS_PACKAGES')?.safeCount;
+  const certificateCount = byId.get('STORAGE:ADDRESS_CERTIFICATES')?.safeCount;
+  const storageCountStatus = packageCount === undefined || certificateCount === undefined ? 'SOURCE_UNAVAILABLE'
+    : packageCount === 254 && certificateCount === 254 ? 'PASS' : 'FAIL';
+  const originIdentity = options.expectedOriginSha256
+    ? (byId.get('PRODUCTION_ORIGIN')?.safeSha256 === options.expectedOriginSha256 ? 'PASS' : 'FAIL')
+    : status('PRODUCTION_ORIGIN');
+  const policyAttestations = ['POLICY:ANONYMOUS_WRITE_DISABLED','POLICY:PUBLIC_WRITE_DISABLED','POLICY:RUNTIME_READ'].map(id => byId.get(id)?.attestation).filter(Boolean);
+  return {
+    projectIdentity,
+    supabase: projectIdentity === 'FAIL' ? 'FAIL' : requiredPass(['SUPABASE_PROJECT','SUPABASE_PROJECT_AVAILABILITY','SUPABASE_REGION','SUPABASE_API','SUPABASE_AUTH','FUNCTION:gridly-geocode']),
+    database: requiredPass(['DATABASE_OBJECTS','DATABASE_SCHEMA_COMPATIBILITY','DATABASE_POLICIES','DATABASE_INDEXES','DATABASE_TRIGGERS']),
+    storage: storageCountStatus === 'FAIL' ? 'FAIL' : storageCountStatus === 'SOURCE_UNAVAILABLE' ? 'SOURCE_UNAVAILABLE' : requiredPass(['STORAGE_OBJECTS','STORAGE:ADDRESS_PACKAGES','STORAGE:ADDRESS_CERTIFICATES','STORAGE:STATEWIDE_COUNTS']),
+    storagePolicies: requiredPass(['STORAGE_POLICIES','POLICY:ANONYMOUS_WRITE_DISABLED','POLICY:PUBLIC_WRITE_DISABLED','POLICY:RUNTIME_READ']),
+    policyEvidenceClassification: policyAttestations.length === 3 && policyAttestations.every(x => x === 'TOOL_VERIFIED') ? 'TOOL_VERIFIED' : policyAttestations.length ? 'OWNER_ATTESTED' : 'SOURCE_UNAVAILABLE',
+    origins: originIdentity === 'FAIL' || byId.get('PRODUCTION_ORIGIN')?.classification === 'LOCALHOST_ONLY' ? 'FAIL' : requiredPass(['ORIGINS_REDIRECTS','PRODUCTION_ORIGIN','CANONICAL_DOMAIN','SUPABASE_REDIRECT_URLS','AUTH_CALLBACK_URLS','CORS_ORIGINS']),
+    legal: requiredPass(['SUPPORT_URL','LEGAL_URL']),
+    mobile: requiredPass(['ANDROID_APPLICATION_ID','IOS_BUNDLE_ID'])
+  };
 }
 
 export function loadEvidence(root) {
@@ -79,6 +119,7 @@ const decision = (evidence, id) => recordStatus(evidence, id) === 'PASS' ? 'PASS
 
 export function certify(root = ROOT) {
   const evidence = loadEvidence(root);
+  const reconciled = evidence ? reconcileEvidence(evidence) : null;
   const contract = requirements.map(([identifier,category,purpose,requiredFor,secretClassification,expectedEvidenceType,validationMethod]) => ({
     identifier, category, purpose, requiredFor, secretClassification, expectedEvidenceType, validationMethod,
     failClosedBehavior: 'DO_NOT_CERTIFY_OR_AUTHORIZE', valueDisclosureAllowed: false,
@@ -102,9 +143,9 @@ export function certify(root = ROOT) {
     return { path:p, baselineCommit:BASELINE, currentCommit:'HEAD', baselineSha256:sha(baseline), currentSha256:sha(current), authoritativeIdentitySource:'GIT_BLOB', status:sha(baseline)===sha(current)?'UNCHANGED':'CHANGED' };
   });
   const decisions = {
-    productionConfigurationReadiness:'OWNER_ACTION_REQUIRED', supabaseReadiness:decision(evidence,'SUPABASE_PROJECT'),
-    databaseObjectReadiness:decision(evidence,'DATABASE_OBJECTS'), storageReadiness:decision(evidence,'STORAGE_OBJECTS'),
-    storagePolicyReadiness:decision(evidence,'STORAGE_POLICIES'), productionOriginReadiness:decision(evidence,'ORIGINS_REDIRECTS'),
+    productionConfigurationReadiness:'OWNER_ACTION_REQUIRED', supabaseReadiness:reconciled?.supabase || 'SOURCE_UNAVAILABLE',
+    databaseObjectReadiness:reconciled?.database || 'SOURCE_UNAVAILABLE', storageReadiness:reconciled?.storage || 'SOURCE_UNAVAILABLE',
+    storagePolicyReadiness:reconciled?.storagePolicies || 'SOURCE_UNAVAILABLE', productionOriginReadiness:reconciled?.origins || 'SOURCE_UNAVAILABLE',
     runtimeAlignmentReadiness:'OWNER_ACTION_REQUIRED', securityConfigurationReadiness:'OWNER_ACTION_REQUIRED',
     deploymentConfigurationReadiness:'NOT_READY', statewideActivationConfigurationReadiness:'NOT_READY',
     appDistributionConfigurationReadiness:'OWNER_ACTION_REQUIRED'
@@ -114,16 +155,16 @@ export function certify(root = ROOT) {
     'production-configuration-contract.json': {...common, items:contract},
     'environment-source-inventory.json': {...common, sources},
     'secret-presence-certification.json': {...common, valueFieldsPermitted:false, secretValuesRead:0, items:contract.filter(x=>x.secretClassification.includes('SECRET')).map(x=>({identifier:x.identifier,status:x.status,evidence:'NAME_AND_STATUS_ONLY'}))},
-    'supabase-project-certification.json': {...common, status:decision(evidence,'SUPABASE_PROJECT'), projectIdentity:recordStatus(evidence,'SUPABASE_PROJECT_IDENTITY'), availability:recordStatus(evidence,'SUPABASE_PROJECT_AVAILABILITY'), region:recordStatus(evidence,'SUPABASE_REGION'), apiReachability:recordStatus(evidence,'SUPABASE_API'), authenticationConfiguration:recordStatus(evidence,'SUPABASE_AUTH'), edgeFunctions:[{identifier:'gridly-geocode',status:recordStatus(evidence,'FUNCTION:gridly-geocode')}], repositoryMigrationCount:migrations.length, repositoryMigrations:migrations, remoteMutationPerformed:false},
-    'database-object-certification.json': {...common,status:decision(evidence,'DATABASE_OBJECTS'),objects:dbObjects,expectedSchemaCompatibility:recordStatus(evidence,'DATABASE_SCHEMA_COMPATIBILITY'),policies:recordStatus(evidence,'DATABASE_POLICIES'),indexes:recordStatus(evidence,'DATABASE_INDEXES'),triggers:recordStatus(evidence,'DATABASE_TRIGGERS'),remoteWrites:0},
-    'storage-inventory-certification.json': {...common,status:decision(evidence,'STORAGE_OBJECTS'),expectedBaseline:{addressPackages:254,addressRuntimeCertificates:254,bucket:'certified-addresses'},categories:[{category:'COUNTY_ADDRESS_PACKAGES',delivery:'SUPABASE_STORAGE',status:recordStatus(evidence,'STORAGE:ADDRESS_PACKAGES')},{category:'ADDRESS_RUNTIME_CERTIFICATES',delivery:'SUPABASE_STORAGE',status:recordStatus(evidence,'STORAGE:ADDRESS_CERTIFICATES')},{category:'RUNTIME_MANIFESTS_AND_DESTINATION_CROSSING_ASSETS',delivery:'REPOSITORY_HOSTED_STATIC_ASSETS',status:'NOT_APPLICABLE'}],objectsRead:0,objectsWritten:0},
-    'storage-policy-certification.json': {...common,status:decision(evidence,'STORAGE_POLICIES'),intendedAccess:{read:'SERVICE_AUTHENTICATED',write:'SERVICE_OR_OWNER_MANAGED_ONLY'},anonymousWrite:recordStatus(evidence,'POLICY:ANONYMOUS_WRITE_DISABLED'),publicWrite:recordStatus(evidence,'POLICY:PUBLIC_WRITE_DISABLED'),runtimeRead:recordStatus(evidence,'POLICY:RUNTIME_READ'),policiesChanged:0},
-    'origin-and-redirect-certification.json': {...common,status:decision(evidence,'ORIGINS_REDIRECTS'),items:['PRODUCTION_ORIGIN','CANONICAL_DOMAIN','SUPABASE_REDIRECT_URLS','AUTH_CALLBACK_URLS','CORS_ORIGINS','DEEP_LINKS','SUPPORT_URL','LEGAL_URL'].map(identifier=>({identifier,status:recordStatus(evidence,identifier)==='SOURCE_UNAVAILABLE'?'UNVERIFIED_OWNER_INPUT_REQUIRED':recordStatus(evidence,identifier)})),pwaStartUrl:{source:'manifest.webmanifest',status:exists(root,'manifest.webmanifest')?'PRESENT':'ABSENT'}},
+    'supabase-project-certification.json': {...common, status:reconciled?.supabase || 'SOURCE_UNAVAILABLE', projectIdentity:reconciled?.projectIdentity || 'SOURCE_UNAVAILABLE', availability:recordStatus(evidence,'SUPABASE_PROJECT_AVAILABILITY'), region:recordStatus(evidence,'SUPABASE_REGION'), apiReachability:recordStatus(evidence,'SUPABASE_API'), authenticationConfiguration:recordStatus(evidence,'SUPABASE_AUTH'), edgeFunctions:[{identifier:'gridly-geocode',status:recordStatus(evidence,'FUNCTION:gridly-geocode')}], repositoryMigrationCount:migrations.length, repositoryMigrations:migrations, remoteMutationPerformed:false},
+    'database-object-certification.json': {...common,status:reconciled?.database || 'SOURCE_UNAVAILABLE',objects:dbObjects,expectedSchemaCompatibility:recordStatus(evidence,'DATABASE_SCHEMA_COMPATIBILITY'),policies:recordStatus(evidence,'DATABASE_POLICIES'),indexes:recordStatus(evidence,'DATABASE_INDEXES'),triggers:recordStatus(evidence,'DATABASE_TRIGGERS'),remoteWrites:0},
+    'storage-inventory-certification.json': {...common,status:reconciled?.storage || 'SOURCE_UNAVAILABLE',expectedBaseline:{addressPackages:254,addressRuntimeCertificates:254,bucket:'certified-addresses'},categories:[{category:'COUNTY_ADDRESS_PACKAGES',delivery:'SUPABASE_STORAGE',status:recordStatus(evidence,'STORAGE:ADDRESS_PACKAGES')},{category:'ADDRESS_RUNTIME_CERTIFICATES',delivery:'SUPABASE_STORAGE',status:recordStatus(evidence,'STORAGE:ADDRESS_CERTIFICATES')},{category:'RUNTIME_MANIFESTS_AND_DESTINATION_CROSSING_ASSETS',delivery:'REPOSITORY_HOSTED_STATIC_ASSETS',status:'NOT_APPLICABLE'}],objectsRead:0,objectsWritten:0},
+    'storage-policy-certification.json': {...common,status:reconciled?.storagePolicies || 'SOURCE_UNAVAILABLE',intendedAccess:{read:'SERVICE_AUTHENTICATED',write:'SERVICE_OR_OWNER_MANAGED_ONLY'},anonymousWrite:recordStatus(evidence,'POLICY:ANONYMOUS_WRITE_DISABLED'),publicWrite:recordStatus(evidence,'POLICY:PUBLIC_WRITE_DISABLED'),runtimeRead:recordStatus(evidence,'POLICY:RUNTIME_READ'),policiesChanged:0},
+    'origin-and-redirect-certification.json': {...common,status:reconciled?.origins || 'SOURCE_UNAVAILABLE',items:['PRODUCTION_ORIGIN','CANONICAL_DOMAIN','SUPABASE_REDIRECT_URLS','AUTH_CALLBACK_URLS','CORS_ORIGINS','DEEP_LINKS','SUPPORT_URL','LEGAL_URL'].map(identifier=>({identifier,status:recordStatus(evidence,identifier)==='SOURCE_UNAVAILABLE'?'UNVERIFIED_OWNER_INPUT_REQUIRED':recordStatus(evidence,identifier)})),pwaStartUrl:{source:'manifest.webmanifest',status:exists(root,'manifest.webmanifest')?'PRESENT':'ABSENT'}},
     'runtime-configuration-alignment.json': {...common,status:'OWNER_ACTION_REQUIRED',repositoryFindings:[{identifier:'SUPABASE_RUNTIME_SOURCE',status:'UNVERIFIED'},{identifier:'EDGE_FUNCTION_LOCALHOST_CORS_FALLBACK',status:'FAIL',source:'supabase/functions/gridly-geocode/index.ts'},{identifier:'CERTIFIED_STORAGE_BUCKET_DEFAULT',status:'PRESENT',source:'supabase/functions/gridly-geocode/index.ts'},{identifier:'PWA_ASSET_PATHS',status:'PRESENT'}],remoteProductionValuesCompared:false,runtimeModified:false},
     'security-configuration-review.json': {...common,status:'OWNER_ACTION_REQUIRED',committedSecretValues:{status:'PASS',method:'governed-pattern-scan',valuesReported:false},serviceRoleInBrowser:{status:'PASS'},permissiveCors:{status:'OWNER_ACTION_REQUIRED',finding:'Repository fallback includes local development origins; deployed allowlist presence is unavailable.'},storageWritePolicies:{status:recordStatus(evidence,'STORAGE_POLICIES')},gitignoreProtection:{status:exists(root,'.gitignore')?'PRESENT':'ABSENT'},penetrationTestingPerformed:false,credentialsRotated:0},
-    'owner-evidence-requirements.json': {...common,status:evidence?'PARTIAL_EVIDENCE_INGESTED':'SOURCE_UNAVAILABLE',schema:{schemaVersion:1,records:[{identifier:'UPPERCASE_SAFE_IDENTIFIER',status:'PRESENT|ABSENT|UNVERIFIED|INVALID_FORMAT|SOURCE_UNAVAILABLE|PASS|FAIL|OWNER_ACTION_REQUIRED',method:'SAFE_READ_ONLY_COMMAND_ID',attestation:'OWNER_ATTESTED_OR_TOOL_VERIFIED'}]},requirements:['SUPABASE_PROJECT','SUPABASE_PROJECT_IDENTITY','SUPABASE_PROJECT_AVAILABILITY','SUPABASE_REGION','SUPABASE_API','SUPABASE_AUTH','DATABASE_OBJECTS','DATABASE_SCHEMA_COMPATIBILITY','DATABASE_POLICIES','DATABASE_INDEXES','DATABASE_TRIGGERS','STORAGE_OBJECTS','STORAGE_POLICIES','ORIGINS_REDIRECTS'],rawCommandOutputAccepted:false},
+    'owner-evidence-requirements.json': {...common,status:evidence?'PARTIAL_EVIDENCE_INGESTED':'OWNER_EXECUTION_REQUIRED',schema:{schemaVersion:2,provenance:['evidenceIdentifier','sourceSystem','captureMethod','commandFamily','authentication','readOnly','redactionStatus','schemaVersion','deterministicContentIdentity','completeness','status'],records:[{identifier:'UPPERCASE_SAFE_IDENTIFIER',status:'PRESENT|ABSENT|UNVERIFIED|INVALID_FORMAT|SOURCE_UNAVAILABLE|PASS|FAIL|OWNER_ACTION_REQUIRED',method:'SAFE_READ_ONLY_COMMAND_ID',attestation:'OWNER_ATTESTED_OR_TOOL_VERIFIED'}]},requirements:['SUPABASE_PROJECT','SUPABASE_PROJECT_IDENTITY','SUPABASE_PROJECT_AVAILABILITY','SUPABASE_REGION','SUPABASE_API','SUPABASE_AUTH','FUNCTION:gridly-geocode','DATABASE_OBJECTS','DATABASE_SCHEMA_COMPATIBILITY','DATABASE_POLICIES','DATABASE_INDEXES','DATABASE_TRIGGERS','STORAGE_OBJECTS','STORAGE:ADDRESS_PACKAGES','STORAGE:ADDRESS_CERTIFICATES','STORAGE:STATEWIDE_COUNTS','STORAGE_POLICIES','POLICY:ANONYMOUS_WRITE_DISABLED','POLICY:PUBLIC_WRITE_DISABLED','POLICY:RUNTIME_READ','ORIGINS_REDIRECTS'],rawCommandOutputAccepted:false},
     'configuration-blockers.json': {...common,blockers},
-    'certification-summary.json': {...common,overallClassification:evidence?'NOT_READY_CONFIGURATION_GAPS_REMAIN':'SOURCE_UNAVAILABLE_REMOTE_VERIFICATION_REQUIRED',decisions,deploymentAuthorized:false,activationAuthorized:false,appDistributionAuthorized:false,publicLaunchAuthorized:false,productionWrites:0,deployments:0,activations:0,secretValuesRead:0,relationshipToLp168:'Remote evidence gaps remain fail-closed; LP168 NOT_READY is not advanced.'},
+    'certification-summary.json': {...common,overallClassification:evidence?'NOT_READY_CONFIGURATION_GAPS_REMAIN':'OWNER_EXECUTION_REQUIRED',decisions,deploymentAuthorized:false,activationAuthorized:false,appDistributionAuthorized:false,publicLaunchAuthorized:false,productionWrites:0,deployments:0,activations:0,secretValuesRead:0,relationshipToLp168:'Remote evidence gaps remain fail-closed; LP168 NOT_READY is not advanced.'},
     'protected-artifact-identities.json': {...common,algorithm:'SHA-256',identitySource:'CANONICAL_GIT_BLOB_EXCLUSIVELY',protectedArtifacts}
   };
 }

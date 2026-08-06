@@ -3,8 +3,17 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
-import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { BASELINE, PROTECTED_PATHS, REPORT_NAMES, ROOT, certify, encode, evidenceContentIdentity, reconcileEvidence, validateEvidence, writeReports } from '../../tools/lp169/certify-production-configuration.mjs';
+
+const evidence = records => ({
+  schemaVersion: 2,
+  provenance: {
+    evidenceIdentifier: 'LP169.1-OWNER-EVIDENCE', sourceSystem: 'OWNER_WINDOWS', captureMethod: 'SAFE_READ_ONLY_COMMANDS',
+    commandFamily: 'SUPABASE_GH_PSQL', authentication: 'OWNER_AUTHENTICATED', readOnly: true, redactionStatus: 'SANITIZED',
+    schemaVersion: 2, deterministicContentIdentity: evidenceContentIdentity(records), completeness: 'PARTIAL', status: 'OWNER_REVIEWED'
+  }, records
+});
 
 test('reports disclose no secret values and accept statuses only', () => {
   const text=REPORT_NAMES.map(n=>fs.readFileSync(path.join(ROOT,'reports/lp169',n),'utf8')).join('\n');
@@ -28,11 +37,84 @@ test('missing credentials and owner evidence fail closed',()=>{
   assert.equal(reports['supabase-project-certification.json'].status,'SOURCE_UNAVAILABLE');
   assert.equal(reports['storage-inventory-certification.json'].status,'SOURCE_UNAVAILABLE');
   assert.notEqual(reports['certification-summary.json'].overallClassification,'PRODUCTION_CONFIGURATION_CERTIFIED');
+  assert.equal(reports['certification-summary.json'].overallClassification,'OWNER_EXECUTION_REQUIRED');
 });
 
 test('evidence validation detects duplicate identities and partial evidence stays partial',()=>{
   assert.throws(()=>validateEvidence({schemaVersion:1,records:[{identifier:'A',status:'PASS'},{identifier:'A',status:'PASS'}]}),/duplicate/);
   assert.doesNotThrow(()=>validateEvidence({schemaVersion:1,records:[{identifier:'SUPABASE_PROJECT',status:'PASS',method:'SAFE',attestation:'OWNER_ATTESTED'}]}));
+});
+
+test('schema v2 accepts sanitized provenance and rejects unknown fields',()=>{
+  const safe=evidence([{identifier:'SUPABASE_PROJECT',status:'PASS',method:'SAFE_READ_ONLY',attestation:'TOOL_VERIFIED',readOnly:true,redactionStatus:'SANITIZED',completeness:'COMPLETE'}]);
+  assert.doesNotThrow(()=>validateEvidence(safe));
+  assert.throws(()=>validateEvidence({...safe, surprise:true}),/unknown top-level/);
+  const records=[{...safe.records[0],surprise:true}];
+  assert.throws(()=>validateEvidence(evidence(records)),/unknown record/);
+});
+
+test('secret-like evidence is rejected without accepting partial unsafe content',()=>{
+  for (const record of [
+    {identifier:'X',status:'PRESENT',attestation:'Bearer abcdefghijklmnopqrstuvwxyz'},
+    {identifier:'X',status:'PRESENT',attestation:'Authorization: redacted'},
+    {identifier:'X',status:'PRESENT',attestation:'sb_service_abcdefghijklmnopqrstuvwxyz'}
+  ]) assert.throws(()=>validateEvidence({schemaVersion:1,records:[record]}),/secret|forbidden/);
+});
+
+test('ingester atomically accepts safe drafts and never echoes rejected material',()=>{
+  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'lp169-ingest-'));
+  try {
+    const provenance={evidenceIdentifier:'LP169.1-OWNER-EVIDENCE',sourceSystem:'OWNER_WINDOWS',captureMethod:'SAFE_READ_ONLY_COMMANDS',commandFamily:'SUPABASE_GH_PSQL',authentication:'OWNER_AUTHENTICATED',readOnly:true,redactionStatus:'SANITIZED',completeness:'PARTIAL',status:'OWNER_REVIEWED'};
+    const safePath=path.join(temp,'safe.json'), unsafePath=path.join(temp,'unsafe.json'), output=path.join(temp,'owner-evidence.json');
+    fs.writeFileSync(safePath,JSON.stringify({schemaVersion:2,provenance,records:[{identifier:'SUPABASE_PROJECT',status:'SOURCE_UNAVAILABLE'}]}));
+    const accepted=spawnSync(process.execPath,['tools/lp169/ingest-owner-evidence.mjs',safePath,output],{cwd:ROOT,encoding:'utf8'});
+    assert.equal(accepted.status,0); assert.equal(validateEvidence(JSON.parse(fs.readFileSync(output,'utf8'))).schemaVersion,2);
+    const marker='Bearer abcdefghijklmnopqrstuvwxyz';
+    fs.writeFileSync(unsafePath,JSON.stringify({schemaVersion:2,provenance,records:[{identifier:'SUPABASE_PROJECT',status:'PASS',attestation:marker}]}));
+    const before=fs.readFileSync(output);
+    const rejected=spawnSync(process.execPath,['tools/lp169/ingest-owner-evidence.mjs',unsafePath,output],{cwd:ROOT,encoding:'utf8'});
+    assert.notEqual(rejected.status,0); assert.doesNotMatch(`${rejected.stdout}${rejected.stderr}`,/abcdefghijklmnopqrstuvwxyz/); assert.deepEqual(fs.readFileSync(output),before);
+  } finally { fs.rmSync(temp,{recursive:true,force:true}); }
+});
+
+test('remote reconciliation fails closed for partial, mismatched, and missing evidence',()=>{
+  const partial=reconcileEvidence({schemaVersion:1,records:[{identifier:'SUPABASE_PROJECT',status:'PASS'}]});
+  assert.equal(partial.supabase,'SOURCE_UNAVAILABLE');
+  const mismatch=reconcileEvidence({schemaVersion:1,records:[{identifier:'SUPABASE_PROJECT_IDENTITY',status:'PASS',safeSha256:'a'.repeat(64)}]},{expectedProjectSha256:'b'.repeat(64)});
+  assert.equal(mismatch.projectIdentity,'FAIL'); assert.equal(mismatch.supabase,'FAIL');
+  assert.equal(reconcileEvidence({schemaVersion:1,records:[{identifier:'SUPABASE_PROJECT_IDENTITY',status:'PASS',safeSha256:'a'.repeat(64)}]},{expectedProjectSha256:'a'.repeat(64)}).projectIdentity,'PASS');
+  assert.equal(partial.database,'SOURCE_UNAVAILABLE'); assert.equal(partial.storage,'SOURCE_UNAVAILABLE');
+});
+
+test('statewide object counts and policy access require every detailed PASS',()=>{
+  const records=['STORAGE_OBJECTS','STORAGE:ADDRESS_PACKAGES','STORAGE:ADDRESS_CERTIFICATES','STORAGE:STATEWIDE_COUNTS','STORAGE_POLICIES','POLICY:ANONYMOUS_WRITE_DISABLED','POLICY:PUBLIC_WRITE_DISABLED','POLICY:RUNTIME_READ'].map(identifier=>({identifier,status:'PASS',...(identifier.startsWith('POLICY:')?{attestation:'TOOL_VERIFIED'}:{})}));
+  records.find(x=>x.identifier==='STORAGE:ADDRESS_PACKAGES').safeCount=254;
+  records.find(x=>x.identifier==='STORAGE:ADDRESS_CERTIFICATES').safeCount=254;
+  const reconciled=reconcileEvidence({schemaVersion:1,records});
+  assert.equal(reconciled.storage,'PASS'); assert.equal(reconciled.storagePolicies,'PASS'); assert.equal(reconciled.policyEvidenceClassification,'TOOL_VERIFIED');
+  records.find(x=>x.identifier==='STORAGE:ADDRESS_PACKAGES').safeCount=253;
+  assert.equal(reconcileEvidence({schemaVersion:1,records}).storage,'FAIL');
+  records.find(x=>x.identifier==='STORAGE:ADDRESS_PACKAGES').safeCount=254;
+  records.find(x=>x.identifier==='POLICY:ANONYMOUS_WRITE_DISABLED').status='FAIL';
+  assert.equal(reconcileEvidence({schemaVersion:1,records}).storagePolicies,'FAIL');
+  records.filter(x=>x.identifier.startsWith('POLICY:')).forEach(x=>x.attestation='OWNER_ATTESTED');
+  assert.equal(reconcileEvidence({schemaVersion:1,records}).policyEvidenceClassification,'OWNER_ATTESTED');
+});
+
+test('origin, legal, and mobile evidence reconcile independently',()=>{
+  const originIds=['ORIGINS_REDIRECTS','PRODUCTION_ORIGIN','CANONICAL_DOMAIN','SUPABASE_REDIRECT_URLS','AUTH_CALLBACK_URLS','CORS_ORIGINS'];
+  const records=[...originIds.map(identifier=>({identifier,status:'PASS'})),{identifier:'SUPPORT_URL',status:'OWNER_ACTION_REQUIRED'},{identifier:'LEGAL_URL',status:'SOURCE_UNAVAILABLE'},{identifier:'ANDROID_APPLICATION_ID',status:'PASS'},{identifier:'IOS_BUNDLE_ID',status:'PASS'}];
+  const result=reconcileEvidence({schemaVersion:1,records});
+  assert.equal(result.origins,'PASS'); assert.equal(result.legal,'SOURCE_UNAVAILABLE'); assert.equal(result.mobile,'PASS');
+  const localhost=records.map(x=>x.identifier==='PRODUCTION_ORIGIN'?{...x,classification:'LOCALHOST_ONLY'}:x);
+  assert.equal(reconcileEvidence({schemaVersion:1,records:localhost}).origins,'FAIL');
+  const mismatched=records.map(x=>x.identifier==='PRODUCTION_ORIGIN'?{...x,safeSha256:'a'.repeat(64)}:x);
+  assert.equal(reconcileEvidence({schemaVersion:1,records:mismatched},{expectedOriginSha256:'b'.repeat(64)}).origins,'FAIL');
+});
+
+test('record ordering does not change governed content identity',()=>{
+  const a=[{identifier:'B',status:'PASS'},{identifier:'A',status:'PASS'}], b=[...a].reverse();
+  assert.equal(evidenceContentIdentity(a),evidenceContentIdentity(b));
 });
 
 test('storage baseline and runtime risks are governed',()=>{
