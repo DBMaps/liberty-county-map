@@ -1,0 +1,303 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "items": [
+    {
+      "category": "PUBLIC_RUNTIME_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_REDACTED_PRESENCE",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "SUPABASE_URL",
+      "purpose": "Edge Function project endpoint",
+      "requiredFor": [
+        "DEPLOYMENT",
+        "RUNTIME"
+      ],
+      "secretClassification": "PUBLIC_IDENTIFIER",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "owner evidence plus project-reference reconciliation",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "PUBLIC_RUNTIME_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_REDACTED_PRESENCE",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "SUPABASE_ANON_KEY",
+      "purpose": "Browser-safe Supabase authorization key",
+      "requiredFor": [
+        "RUNTIME"
+      ],
+      "secretClassification": "PUBLIC_CLIENT_CREDENTIAL",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "presence and intended-project attestation",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SERVER_SECRET",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "SUPABASE_SERVICE_ROLE_KEY",
+      "purpose": "Server-only Supabase credential",
+      "requiredFor": [
+        "EDGE_FUNCTION"
+      ],
+      "secretClassification": "HIGH_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "STORAGE_CONFIGURATION",
+      "expectedEvidenceType": "REMOTE_BUCKET_INVENTORY",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_CERTIFIED_ADDRESS_BUCKET",
+      "purpose": "Certified county artifact bucket",
+      "requiredFor": [
+        "STATEWIDE_RUNTIME"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "bucket identity reconciliation",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "REDACTED_CONFIGURATION_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_GEOCODE_ALLOWED_ORIGINS",
+      "purpose": "Edge Function CORS allowlist",
+      "requiredFor": [
+        "PUBLIC_LAUNCH"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "owner allowlist attestation",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_GEOCODE_USER_AGENT",
+      "purpose": "Upstream provider identification",
+      "requiredFor": [
+        "GEOCODING"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_GEOCODE_PROVIDER",
+      "purpose": "Primary geocoder selection",
+      "requiredFor": [
+        "GEOCODING"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_GEOCODE_PROVIDER_URL",
+      "purpose": "Primary geocoder endpoint",
+      "requiredFor": [
+        "GEOCODING"
+      ],
+      "secretClassification": "SENSITIVE_CONFIGURATION",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_AUTHORITATIVE_RURAL_PROVIDER",
+      "purpose": "Rural provider selection",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_AUTHORITATIVE_RURAL_URL",
+      "purpose": "Rural provider endpoint",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "SENSITIVE_CONFIGURATION",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SERVER_SECRET",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_AUTHORITATIVE_RURAL_API_KEY",
+      "purpose": "Rural provider credential",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "HIGH_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_AUTHORITATIVE_RURAL_TIMEOUT_MS",
+      "purpose": "Rural request timeout",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "OWNER_GOVERNED_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_ATTESTATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_RURAL_FALLBACK_ENABLED",
+      "purpose": "Fallback governance switch",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "owner evidence",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_RURAL_FALLBACK_URL",
+      "purpose": "Fallback endpoint",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "SENSITIVE_CONFIGURATION",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "SUPABASE_CONFIGURATION",
+      "expectedEvidenceType": "SECRET_NAME_STATUS",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "GRIDLY_RURAL_FALLBACK_TIMEOUT_MS",
+      "purpose": "Fallback timeout",
+      "requiredFor": [
+        "RURAL_ADDRESS"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "Supabase secret-name inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "OWNER_GOVERNED_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_ATTESTATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "PRODUCTION_ORIGIN",
+      "purpose": "Canonical web origin",
+      "requiredFor": [
+        "PUBLIC_LAUNCH",
+        "CORS"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "origin and redirect inventory",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "APP_DISTRIBUTION_CONFIGURATION",
+      "expectedEvidenceType": "REPOSITORY_CONFIGURATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "ANDROID_APPLICATION_ID",
+      "purpose": "Android package identity",
+      "requiredFor": [
+        "ANDROID_DISTRIBUTION"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "PRESENT",
+      "validationMethod": "Capacitor configuration inspection",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "APP_DISTRIBUTION_CONFIGURATION",
+      "expectedEvidenceType": "REPOSITORY_CONFIGURATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "IOS_BUNDLE_ID",
+      "purpose": "iOS bundle identity",
+      "requiredFor": [
+        "IOS_DISTRIBUTION"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "PRESENT",
+      "validationMethod": "Capacitor configuration inspection",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "APP_DISTRIBUTION_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_ATTESTATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "APP_SUPPORT_URL",
+      "purpose": "Store support URL",
+      "requiredFor": [
+        "APP_DISTRIBUTION"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "owner evidence",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "APP_DISTRIBUTION_CONFIGURATION",
+      "expectedEvidenceType": "OWNER_ATTESTATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "APP_PRIVACY_URL",
+      "purpose": "Store privacy URL",
+      "requiredFor": [
+        "APP_DISTRIBUTION"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "SOURCE_UNAVAILABLE",
+      "validationMethod": "owner evidence",
+      "valueDisclosureAllowed": false
+    },
+    {
+      "category": "BUILD_CONFIGURATION",
+      "expectedEvidenceType": "REPOSITORY_CONFIGURATION",
+      "failClosedBehavior": "DO_NOT_CERTIFY_OR_AUTHORIZE",
+      "identifier": "LOCKED_NODE_BUILD",
+      "purpose": "Reproducible dependency installation",
+      "requiredFor": [
+        "DEPLOYMENT"
+      ],
+      "secretClassification": "NON_SECRET",
+      "status": "PRESENT",
+      "validationMethod": "lockfile presence",
+      "valueDisclosureAllowed": false
+    }
+  ],
+  "milestone": "LP169"
+}

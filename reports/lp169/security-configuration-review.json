@@ -1,0 +1,26 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "committedSecretValues": {
+    "method": "governed-pattern-scan",
+    "status": "PASS",
+    "valuesReported": false
+  },
+  "credentialsRotated": 0,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "gitignoreProtection": {
+    "status": "PRESENT"
+  },
+  "milestone": "LP169",
+  "penetrationTestingPerformed": false,
+  "permissiveCors": {
+    "finding": "Repository fallback includes local development origins; deployed allowlist presence is unavailable.",
+    "status": "OWNER_ACTION_REQUIRED"
+  },
+  "serviceRoleInBrowser": {
+    "status": "PASS"
+  },
+  "status": "OWNER_ACTION_REQUIRED",
+  "storageWritePolicies": {
+    "status": "SOURCE_UNAVAILABLE"
+  }
+}

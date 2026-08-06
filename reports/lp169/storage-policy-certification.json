@@ -1,0 +1,14 @@
+{
+  "anonymousWrite": "SOURCE_UNAVAILABLE",
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "intendedAccess": {
+    "read": "SERVICE_AUTHENTICATED",
+    "write": "SERVICE_OR_OWNER_MANAGED_ONLY"
+  },
+  "milestone": "LP169",
+  "policiesChanged": 0,
+  "publicWrite": "SOURCE_UNAVAILABLE",
+  "runtimeRead": "SOURCE_UNAVAILABLE",
+  "status": "SOURCE_UNAVAILABLE"
+}

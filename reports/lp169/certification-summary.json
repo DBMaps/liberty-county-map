@@ -1,0 +1,28 @@
+{
+  "activationAuthorized": false,
+  "activations": 0,
+  "appDistributionAuthorized": false,
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "decisions": {
+    "appDistributionConfigurationReadiness": "OWNER_ACTION_REQUIRED",
+    "databaseObjectReadiness": "SOURCE_UNAVAILABLE",
+    "deploymentConfigurationReadiness": "NOT_READY",
+    "productionConfigurationReadiness": "OWNER_ACTION_REQUIRED",
+    "productionOriginReadiness": "SOURCE_UNAVAILABLE",
+    "runtimeAlignmentReadiness": "OWNER_ACTION_REQUIRED",
+    "securityConfigurationReadiness": "OWNER_ACTION_REQUIRED",
+    "statewideActivationConfigurationReadiness": "NOT_READY",
+    "storagePolicyReadiness": "SOURCE_UNAVAILABLE",
+    "storageReadiness": "SOURCE_UNAVAILABLE",
+    "supabaseReadiness": "SOURCE_UNAVAILABLE"
+  },
+  "deploymentAuthorized": false,
+  "deployments": 0,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169",
+  "overallClassification": "SOURCE_UNAVAILABLE_REMOTE_VERIFICATION_REQUIRED",
+  "productionWrites": 0,
+  "publicLaunchAuthorized": false,
+  "relationshipToLp168": "Remote evidence gaps remain fail-closed; LP168 NOT_READY is not advanced.",
+  "secretValuesRead": 0
+}

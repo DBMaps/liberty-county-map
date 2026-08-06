@@ -1,0 +1,67 @@
+{
+  "auditBoundary": "READ_ONLY_REDACTED_CONFIGURATION_CERTIFICATION",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP169",
+  "sources": [
+    {
+      "identifier": "ENVIRONMENT_FILES",
+      "requirement": "REQUIRED",
+      "source": ".env*.example",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "GITHUB_ACTIONS",
+      "requirement": "REQUIRED",
+      "source": ".github/workflows",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "SUPABASE_CONFIG",
+      "requirement": "REQUIRED",
+      "source": "supabase/config.toml",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "SUPABASE_LINK",
+      "requirement": "REQUIRED",
+      "source": "supabase/.temp/project-ref",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "CAPACITOR_CONFIG",
+      "requirement": "REQUIRED",
+      "source": "capacitor.config.json",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "PWA_CONFIG",
+      "requirement": "REQUIRED",
+      "source": "manifest.webmanifest",
+      "status": "ABSENT"
+    },
+    {
+      "identifier": "ANDROID_CONFIG",
+      "requirement": "REQUIRED",
+      "source": "android",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "IOS_CONFIG",
+      "requirement": "REQUIRED",
+      "source": "ios",
+      "status": "PRESENT"
+    },
+    {
+      "identifier": "GITHUB_SECRET_NAMES",
+      "requirement": "REQUIRED",
+      "source": "OWNER_AUTHENTICATED_GITHUB_CLI",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    {
+      "identifier": "SUPABASE_SECRET_NAMES",
+      "requirement": "REQUIRED",
+      "source": "OWNER_AUTHENTICATED_SUPABASE_CLI",
+      "status": "SOURCE_UNAVAILABLE"
+    }
+  ]
+}
