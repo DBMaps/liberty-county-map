@@ -1,0 +1,17 @@
+{
+  "activationBlockerCount": 1,
+  "appDistributionBlockerCount": 3,
+  "authorization": {
+    "activation": "NOT_AUTHORIZED",
+    "appDistribution": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "blockerCount": 13,
+  "deploymentBlockerCount": 3,
+  "finalClassification": "CONDITIONALLY_READY_BLOCKERS_REMAIN",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP167",
+  "releaseBlockerCount": 1,
+  "runtimeStatus": "UNCHANGED"
+}

@@ -1,0 +1,27 @@
+{
+  "blockers": [
+    "LP167-B001",
+    "LP167-B002",
+    "LP167-B003",
+    "LP167-B005",
+    "LP167-B006",
+    "LP167-B007",
+    "LP167-B008",
+    "LP167-B012",
+    "LP167-B013"
+  ],
+  "conditions": [
+    "Do not activate the 11 blocked counties; satisfy live, deployment, legal, and owner gates."
+  ],
+  "decision": "NOT_AUTHORIZED",
+  "expirationOrRevalidationTrigger": "Any protected-artifact, production-configuration, runtime-membership, or evidence change",
+  "milestone": "LP167",
+  "ownerApprovalRequired": true,
+  "performsActivationChange": false,
+  "performsDeploymentChange": false,
+  "performsRuntimeChange": false,
+  "reasons": [
+    "Deterministic product evidence is preserved; unresolved governed gates fail closed."
+  ],
+  "surface": "ACTIVATION"
+}

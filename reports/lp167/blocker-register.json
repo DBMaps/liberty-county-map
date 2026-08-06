@@ -1,0 +1,251 @@
+{
+  "blockerCount": 13,
+  "blockers": [
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "Cameron",
+        "Cherokee",
+        "Dallas",
+        "Denton",
+        "Ector",
+        "Hudspeth",
+        "Midland",
+        "Presidio",
+        "Rusk",
+        "Somervell",
+        "Taylor"
+      ],
+      "affectedLaunchSurface": "statewide address activation",
+      "blockerId": "LP167-B001",
+      "classification": "ACTIVATION_BLOCKER",
+      "deploymentMayProceed": true,
+      "evidence": "reports/lp162",
+      "launchMayProceed": true,
+      "ownerActionRequired": "Certify each county without weakening exact-match rules.",
+      "patchRequired": false,
+      "resolutionCriteria": "Certify each county without weakening exact-match rules.",
+      "severity": "HIGH",
+      "sourceMilestone": "LP162",
+      "title": "Eleven counties retain address certification failures"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "public web routing",
+      "blockerId": "LP167-B002",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp163",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Record the Talco route attestation and perform a launch-window smoke test.",
+      "patchRequired": false,
+      "resolutionCriteria": "Record the Talco route attestation and perform a launch-window smoke test.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP163",
+      "title": "Live routing owner evidence is not recorded"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "public awareness",
+      "blockerId": "LP167-B003",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp164",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Validate quiet, active, and cleared states against configured live sources.",
+      "patchRequired": false,
+      "resolutionCriteria": "Validate quiet, active, and cleared states against configured live sources.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP164",
+      "title": "Live awareness sources lack governed production validation"
+    },
+    {
+      "activationMayProceed": true,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "OS push and notification marketing",
+      "blockerId": "LP167-B004",
+      "classification": "KNOWN_ACCEPTED_LIMITATION",
+      "deploymentMayProceed": true,
+      "evidence": "reports/lp165",
+      "launchMayProceed": true,
+      "ownerActionRequired": "Keep claims limited to in-app notifications or implement and certify delivery later.",
+      "patchRequired": false,
+      "resolutionCriteria": "Keep claims limited to in-app notifications or implement and certify delivery later.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP165",
+      "title": "Operating-system notification delivery is not implemented"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "mobile web and native distribution",
+      "blockerId": "LP167-B005",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp166",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Record real-device browser validation; use closed testing for packaged apps.",
+      "patchRequired": false,
+      "resolutionCriteria": "Record real-device browser validation; use closed testing for packaged apps.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP166",
+      "title": "Physical Android and iPhone evidence is not recorded"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "production deployment",
+      "blockerId": "LP167-B006",
+      "classification": "DEPLOYMENT_BLOCKER",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp152",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Owner must validate production environment variables, secrets, policies, functions, storage permissions, hosting, domain, and rate limits.",
+      "patchRequired": false,
+      "resolutionCriteria": "Owner must validate production environment variables, secrets, policies, functions, storage permissions, hosting, domain, and rate limits.",
+      "severity": "HIGH",
+      "sourceMilestone": "LP152",
+      "title": "Production environment and secret review is not recorded"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "production operations",
+      "blockerId": "LP167-B007",
+      "classification": "DEPLOYMENT_BLOCKER",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp152",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Assign monitoring ownership and validate alerts and error capture.",
+      "patchRequired": false,
+      "resolutionCriteria": "Assign monitoring ownership and validate alerts and error capture.",
+      "severity": "HIGH",
+      "sourceMilestone": "LP152",
+      "title": "Monitoring and error logging readiness is not recorded"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "production operations",
+      "blockerId": "LP167-B008",
+      "classification": "DEPLOYMENT_BLOCKER",
+      "deploymentMayProceed": false,
+      "evidence": "reports/lp152",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Record backup verification, rollback procedure, authority, and rehearsal.",
+      "patchRequired": false,
+      "resolutionCriteria": "Record backup verification, rollback procedure, authority, and rehearsal.",
+      "severity": "HIGH",
+      "sourceMilestone": "LP152",
+      "title": "Backup and rollback rehearsal is not recorded"
+    },
+    {
+      "activationMayProceed": true,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "PWA distribution",
+      "blockerId": "LP167-B009",
+      "classification": "APP_DISTRIBUTION_BLOCKER",
+      "deploymentMayProceed": true,
+      "evidence": "repository inventory: evidence absent",
+      "launchMayProceed": true,
+      "ownerActionRequired": "Validate manifest, service worker, icons, splash behavior, and installability.",
+      "patchRequired": false,
+      "resolutionCriteria": "Validate manifest, service worker, icons, splash behavior, and installability.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP167",
+      "title": "PWA installability evidence is incomplete"
+    },
+    {
+      "activationMayProceed": true,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "Android and iOS distribution",
+      "blockerId": "LP167-B010",
+      "classification": "APP_DISTRIBUTION_BLOCKER",
+      "deploymentMayProceed": true,
+      "evidence": "repository inventory: evidence absent",
+      "launchMayProceed": true,
+      "ownerActionRequired": "Produce governed Android/iOS builds and complete Play closed testing and TestFlight.",
+      "patchRequired": false,
+      "resolutionCriteria": "Produce governed Android/iOS builds and complete Play closed testing and TestFlight.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP167",
+      "title": "Native builds and closed testing are not evidenced"
+    },
+    {
+      "activationMayProceed": true,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "app stores",
+      "blockerId": "LP167-B011",
+      "classification": "APP_DISTRIBUTION_BLOCKER",
+      "deploymentMayProceed": true,
+      "evidence": "repository inventory: evidence absent",
+      "launchMayProceed": true,
+      "ownerActionRequired": "Confirm account ownership and complete store and support assets.",
+      "patchRequired": false,
+      "resolutionCriteria": "Confirm account ownership and complete store and support assets.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP167",
+      "title": "Store accounts, metadata, screenshots, and support assets are not evidenced"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "public and paid launch",
+      "blockerId": "LP167-B012",
+      "classification": "RELEASE_BLOCKER",
+      "deploymentMayProceed": false,
+      "evidence": "repository inventory: evidence absent",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+      "patchRequired": false,
+      "resolutionCriteria": "Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+      "severity": "HIGH",
+      "sourceMilestone": "LP167",
+      "title": "Legal and paid-product readiness is not recorded"
+    },
+    {
+      "activationMayProceed": false,
+      "affectedCounties": [
+        "STATEWIDE"
+      ],
+      "affectedLaunchSurface": "all launch surfaces",
+      "blockerId": "LP167-B013",
+      "classification": "OWNER_APPROVAL_REQUIRED",
+      "deploymentMayProceed": false,
+      "evidence": "repository inventory: evidence absent",
+      "launchMayProceed": false,
+      "ownerActionRequired": "Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script.",
+      "patchRequired": false,
+      "resolutionCriteria": "Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script.",
+      "severity": "MEDIUM",
+      "sourceMilestone": "LP167",
+      "title": "Launch operations ownership and launch window are not approved"
+    }
+  ],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP167"
+}

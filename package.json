@@ -244,6 +244,10 @@
     "test:lp165": "node --test tests/lp165/*.test.mjs",
     "certify:lp166": "node tools/lp166/certify-statewide-consumer-experience.mjs --write",
     "verify:lp166": "node tools/lp166/verify-lp166-determinism.mjs",
-    "test:lp166": "node --test tests/lp166/*.test.mjs"
+    "test:lp166": "node --test tests/lp166/*.test.mjs",
+    "assess:lp167": "node tools/lp167/assess-launch-readiness.mjs",
+    "certify:lp167": "node tools/lp167/assess-launch-readiness.mjs",
+    "verify:lp167": "node tools/lp167/verify-lp167-determinism.mjs",
+    "test:lp167": "node --test tests/lp167/*.test.mjs"
   }
 }
