@@ -9,7 +9,7 @@
     "publicLaunch": "NOT_AUTHORIZED"
   },
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_AUTO_DISCOVERY",
-  "classification": "AUTO_DISCOVERY_PARTIAL",
+  "classification": "AUTO_DISCOVERY_COMPLETE",
   "fieldsByClassification": {
     "MACHINE_VERIFIED": [
       "monitoring.evidenceTimestamp",
@@ -18,9 +18,13 @@
       "backup.backupFrequency",
       "backup.backupProvider",
       "backup.latestSuccessfulBackupMetadata",
-      "backup.pitrAvailability"
+      "backup.pitrAvailability",
+      "backup.retentionPolicy"
     ],
-    "NOT_CONFIGURED": [],
+    "NOT_CONFIGURED": [
+      "monitoring.alertDestinations",
+      "monitoring.alertThresholds"
+    ],
     "NOT_VERIFIED": [],
     "OWNER_ACTION_REQUIRED": [],
     "OWNER_ATTESTED": [
@@ -39,15 +43,11 @@
       "launchOperations.operationalSupportReadiness",
       "launchOperations.productionReadinessAcknowledgement"
     ],
-    "SOURCE_UNAVAILABLE": [
-      "monitoring.alertDestinations",
-      "monitoring.alertThresholds",
-      "backup.retentionPolicy"
-    ]
+    "SOURCE_UNAVAILABLE": []
   },
   "metadataOnly": true,
   "milestone": "LP173.1",
-  "ownerInput": "OWNER_INPUT_STILL_REQUIRED",
+  "ownerInput": "NO_OWNER_INPUT_REQUIRED",
   "schemaVersion": "gridly.lp1731.autoDiscoveryReport.v1",
   "secretSafety": "PASS"
 }

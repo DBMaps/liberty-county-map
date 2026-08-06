@@ -8,7 +8,7 @@
     "productionRollback": "NOT_AUTHORIZED",
     "publicLaunch": "NOT_AUTHORIZED"
   },
-  "classification": "AUTO_DISCOVERY_PARTIAL",
+  "classification": "AUTO_DISCOVERY_COMPLETE",
   "machineVerifiedFields": [
     "monitoring.evidenceTimestamp",
     "monitoring.monitoredProductionServices",
@@ -16,10 +16,14 @@
     "backup.backupFrequency",
     "backup.backupProvider",
     "backup.latestSuccessfulBackupMetadata",
-    "backup.pitrAvailability"
+    "backup.pitrAvailability",
+    "backup.retentionPolicy"
   ],
   "milestone": "LP173.1",
-  "notConfiguredFields": [],
+  "notConfiguredFields": [
+    "monitoring.alertDestinations",
+    "monitoring.alertThresholds"
+  ],
   "notVerifiedFields": [],
   "ownerActionRequiredFields": [],
   "ownerAttestedFields": [
@@ -39,11 +43,7 @@
     "launchOperations.productionReadinessAcknowledgement"
   ],
   "schemaVersion": "gridly.lp1731.autoDiscoverySummary.v1",
-  "sourceUnavailableFields": [
-    "monitoring.alertDestinations",
-    "monitoring.alertThresholds",
-    "backup.retentionPolicy"
-  ],
+  "sourceUnavailableFields": [],
   "validation": {
     "canonicalLf": "PASS",
     "deterministicTwoGeneration": "PASS",

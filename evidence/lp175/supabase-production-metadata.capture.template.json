@@ -3,11 +3,21 @@
     "latestSuccessfulBackupMetadata": "COPY EXACT SANITIZED PROVIDER VALUE",
     "managedScheduledBackups": true,
     "pointInTimeRecoveryEnabled": false,
+    "retentionPolicy": {
+      "dailyBackupRetentionDays": 7,
+      "plan": "Pro",
+      "planEvidenceSource": "COPY EXACT PRODUCTION PROJECT PLAN EVIDENCE SOURCE",
+      "policyEvidenceSource": "Supabase authoritative backups documentation — Pro projects can access the last 7 days of daily backups"
+    },
     "schedule": "daily"
   },
   "environment": "production",
   "monitoring": {
     "active": true,
+    "alertDestinationsConfigured": false,
+    "alertThresholdsConfigured": false,
+    "projectAlertConfigurationSurfaceExposed": false,
+    "projectConfigurationEvidenceSource": "COPY EXACT AUTHORITATIVE PROJECT/PROVIDER EVIDENCE THAT NO PROJECT-LEVEL ALERT CONFIGURATION SURFACE IS EXPOSED",
     "product": "Supabase Observability / Unified Logs",
     "services": [
       "API Gateway",

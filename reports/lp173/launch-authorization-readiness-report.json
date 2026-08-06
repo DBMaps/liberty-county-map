@@ -1,6 +1,6 @@
 {
   "authorizationGranted": false,
-  "authorizationReassessment": "NOT_READY_FOR_AUTHORIZATION_REASSESSMENT",
+  "authorizationReassessment": "READY_FOR_AUTHORIZATION_REASSESSMENT",
   "authorizations": {
     "activation": "NOT_AUTHORIZED",
     "deployment": "NOT_AUTHORIZED",

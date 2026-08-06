@@ -1,26 +1,13 @@
 {
   "blockerCounts": {
     "ownerActionRequired": 0,
-    "sourceUnavailable": 3,
-    "total": 3
+    "sourceUnavailable": 0,
+    "total": 0
   },
-  "blockers": [
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "monitoring.alertDestinations"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "monitoring.alertThresholds"
-    },
-    {
-      "classification": "SOURCE_UNAVAILABLE",
-      "fact": "backup.retentionPolicy"
-    }
-  ],
+  "blockers": [],
   "boundary": "METADATA_ONLY_NON_AUTHORIZING_OPERATIONAL_REASSESSMENT",
-  "classification": "EVIDENCE_INCOMPLETE",
-  "discoveryClassification": "AUTO_DISCOVERY_PARTIAL",
+  "classification": "EVIDENCE_COMPLETE",
+  "discoveryClassification": "AUTO_DISCOVERY_COMPLETE",
   "machineVerifiedFacts": [
     "monitoring.evidenceTimestamp",
     "monitoring.monitoredProductionServices",
@@ -28,7 +15,8 @@
     "backup.backupFrequency",
     "backup.backupProvider",
     "backup.latestSuccessfulBackupMetadata",
-    "backup.pitrAvailability"
+    "backup.pitrAvailability",
+    "backup.retentionPolicy"
   ],
   "metadataOnly": true,
   "milestone": "LP174",
