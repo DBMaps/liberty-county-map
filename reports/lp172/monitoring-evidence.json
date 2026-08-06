@@ -1,0 +1,15 @@
+{
+  "boundary": "METADATA_ONLY_EVIDENCE_COLLECTION",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "evidence": {
+    "alertDestinations": "OWNER_ACTION_REQUIRED",
+    "alertThresholds": "OWNER_ACTION_REQUIRED",
+    "evidenceTimestamp": "OWNER_ACTION_REQUIRED",
+    "monitoredProductionServices": "OWNER_ACTION_REQUIRED",
+    "monitoringOwnership": "OWNER_ACTION_REQUIRED",
+    "monitoringProviders": "OWNER_ACTION_REQUIRED"
+  },
+  "metadataOnly": true,
+  "milestone": "LP172",
+  "schemaVersion": "gridly.lp172.monitoringEvidence.v1"
+}

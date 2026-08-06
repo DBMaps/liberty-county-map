@@ -1,0 +1,14 @@
+{
+  "boundary": "METADATA_ONLY_EVIDENCE_COLLECTION",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "evidence": {
+    "backupOperationalOwner": "OWNER_ACTION_REQUIRED",
+    "primaryOperationalOwner": "OWNER_ACTION_REQUIRED",
+    "productionAuthority": "OWNER_ACTION_REQUIRED",
+    "supportContact": "OWNER_ACTION_REQUIRED",
+    "technicalEscalation": "OWNER_ACTION_REQUIRED"
+  },
+  "metadataOnly": true,
+  "milestone": "LP172",
+  "schemaVersion": "gridly.lp172.operationalOwnership.v1"
+}

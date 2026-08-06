@@ -1,0 +1,37 @@
+{
+  "backup": {
+    "backupFrequency": "OWNER_ACTION_REQUIRED",
+    "backupProvider": "OWNER_ACTION_REQUIRED",
+    "latestSuccessfulBackupMetadata": "OWNER_ACTION_REQUIRED",
+    "pitrAvailability": "OWNER_ACTION_REQUIRED",
+    "retentionPolicy": "OWNER_ACTION_REQUIRED"
+  },
+  "launchOperations": {
+    "communicationReadiness": "OWNER_ACTION_REQUIRED",
+    "launchDayOwnerAvailability": "OWNER_ACTION_REQUIRED",
+    "operationalSupportReadiness": "OWNER_ACTION_REQUIRED",
+    "productionReadinessAcknowledgement": "OWNER_ACTION_REQUIRED"
+  },
+  "monitoring": {
+    "alertDestinations": "OWNER_ACTION_REQUIRED",
+    "alertThresholds": "OWNER_ACTION_REQUIRED",
+    "evidenceTimestamp": "OWNER_ACTION_REQUIRED",
+    "monitoredProductionServices": "OWNER_ACTION_REQUIRED",
+    "monitoringOwnership": "OWNER_ACTION_REQUIRED",
+    "monitoringProviders": "OWNER_ACTION_REQUIRED"
+  },
+  "operationalOwnership": {
+    "backupOperationalOwner": "OWNER_ACTION_REQUIRED",
+    "primaryOperationalOwner": "OWNER_ACTION_REQUIRED",
+    "productionAuthority": "OWNER_ACTION_REQUIRED",
+    "supportContact": "OWNER_ACTION_REQUIRED",
+    "technicalEscalation": "OWNER_ACTION_REQUIRED"
+  },
+  "rollbackOwnership": {
+    "productionValidationAuthority": "OWNER_ACTION_REQUIRED",
+    "releaseApprovalAuthority": "OWNER_ACTION_REQUIRED",
+    "releaseOwner": "OWNER_ACTION_REQUIRED",
+    "rollbackAuthority": "OWNER_ACTION_REQUIRED"
+  },
+  "schemaVersion": "gridly.lp172.ownerOperationalEvidenceInput.v1"
+}

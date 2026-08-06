@@ -1,0 +1,13 @@
+{
+  "boundary": "METADATA_ONLY_EVIDENCE_COLLECTION",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "evidence": {
+    "communicationReadiness": "OWNER_ACTION_REQUIRED",
+    "launchDayOwnerAvailability": "OWNER_ACTION_REQUIRED",
+    "operationalSupportReadiness": "OWNER_ACTION_REQUIRED",
+    "productionReadinessAcknowledgement": "OWNER_ACTION_REQUIRED"
+  },
+  "metadataOnly": true,
+  "milestone": "LP172",
+  "schemaVersion": "gridly.lp172.launchOperations.v1"
+}
