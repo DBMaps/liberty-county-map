@@ -49,6 +49,6 @@ android/app/src/main/assets/public/assets/location-resolution/gridly-authoritati
 reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 
 # LP173 owner-supplied operational metadata remains local.
-evidence/lp173/owner-evidence.local.json
+/evidence/lp173/owner-evidence.local.json
 # LP173.1 sanitized provider metadata export remains local.
-evidence/lp1731/production-metadata.local.json
+/evidence/lp1731/production-metadata.local.json
