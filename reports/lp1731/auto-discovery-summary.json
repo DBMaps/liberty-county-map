@@ -14,7 +14,9 @@
   "notConfiguredFields": [],
   "notVerifiedFields": [],
   "ownerActionRequiredFields": [
-    "monitoring.monitoringOwnership",
+    "monitoring.monitoringOwnership"
+  ],
+  "ownerAttestedFields": [
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",

@@ -59,55 +59,50 @@
       "ownerActionRequired": []
     },
     "launchOperations": {
-      "classification": "EVIDENCE_INCOMPLETE",
+      "classification": "EVIDENCE_COMPLETE",
       "facts": {
         "communicationReadiness": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Facebook page has been created. Public website remains in preparation.",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "launchDayOwnerAvailability": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Yes",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "operationalSupportReadiness": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Ready",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "productionReadinessAcknowledgement": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Yes",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         }
       },
-      "ownerActionRequired": [
-        "communicationReadiness",
-        "launchDayOwnerAvailability",
-        "operationalSupportReadiness",
-        "productionReadinessAcknowledgement"
-      ]
+      "ownerActionRequired": []
     },
     "monitoring": {
       "classification": "EVIDENCE_INCOMPLETE",
@@ -178,117 +173,106 @@
       ]
     },
     "operationalOwnership": {
-      "classification": "EVIDENCE_INCOMPLETE",
+      "classification": "EVIDENCE_COMPLETE",
       "facts": {
         "backupOperationalOwner": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Joseph Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "primaryOperationalOwner": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "productionAuthority": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "supportContact": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Production support will be provided through a dedicated email address hosted on the Gridlygo.com domain. The mailbox will be established before public launch.",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "technicalEscalation": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         }
       },
-      "ownerActionRequired": [
-        "backupOperationalOwner",
-        "primaryOperationalOwner",
-        "productionAuthority",
-        "supportContact",
-        "technicalEscalation"
-      ]
+      "ownerActionRequired": []
     },
     "rollbackOwnership": {
-      "classification": "EVIDENCE_INCOMPLETE",
+      "classification": "EVIDENCE_COMPLETE",
       "facts": {
         "productionValidationAuthority": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "releaseApprovalAuthority": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "releaseOwner": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         },
         "rollbackAuthority": {
-          "classification": "OWNER_ACTION_REQUIRED",
-          "collectionMethod": null,
-          "evidenceType": null,
-          "source": null,
+          "classification": "OWNER_ATTESTED",
+          "collectionMethod": "explicit owner attestation collected after LP174",
+          "evidenceType": "owner attestation metadata",
+          "source": "LP174.1 owner attestation",
           "sourceArtifactIdentity": null,
           "sourceReportedTime": null,
-          "value": null,
-          "verificationMethod": null
+          "value": "Denise Burns",
+          "verificationMethod": "recorded directly from the supplied owner attestation without inference"
         }
       },
-      "ownerActionRequired": [
-        "productionValidationAuthority",
-        "releaseApprovalAuthority",
-        "releaseOwner",
-        "rollbackAuthority"
-      ]
+      "ownerActionRequired": []
     }
   },
   "factsByClassification": {
@@ -296,7 +280,9 @@
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
     "OWNER_ACTION_REQUIRED": [
-      "monitoring.monitoringOwnership",
+      "monitoring.monitoringOwnership"
+    ],
+    "OWNER_ATTESTED": [
       "operationalOwnership.backupOperationalOwner",
       "operationalOwnership.primaryOperationalOwner",
       "operationalOwnership.productionAuthority",
@@ -311,7 +297,6 @@
       "launchOperations.operationalSupportReadiness",
       "launchOperations.productionReadinessAcknowledgement"
     ],
-    "OWNER_ATTESTED": [],
     "SOURCE_UNAVAILABLE": [
       "monitoring.alertDestinations",
       "monitoring.alertThresholds",

@@ -2,13 +2,13 @@
 
 ## Boundary and current result
 
-LP173 is a metadata-only, non-authorizing extension of LP172. It consumes LP172's protected-artifact reconciliation and adds a strict owner-evidence intake contract. No production facts were available in this checkout, so every fact truthfully remains `OWNER_ACTION_REQUIRED`, evidence remains `EVIDENCE_INCOMPLETE`, and the result is `NOT_READY_FOR_AUTHORIZATION_REASSESSMENT`.
+LP173 is a metadata-only, non-authorizing extension of LP172. It consumes LP172's protected-artifact reconciliation and adds a strict owner-evidence intake contract. The thirteen explicit owner attestations collected after LP174 are recorded as `OWNER_ATTESTED` without inference. Ten production metadata facts remain `SOURCE_UNAVAILABLE`, monitoring ownership remains `OWNER_ACTION_REQUIRED`, evidence remains `EVIDENCE_INCOMPLETE`, and the result is `NOT_READY_FOR_AUTHORIZATION_REASSESSMENT`.
 
 LP173 never deploys, activates, distributes, publicly launches, restores, rolls back, or changes production/runtime configuration. Deployment, activation, distribution, public launch, production restore, and production rollback all remain `NOT_AUTHORIZED`. `READY_FOR_AUTHORIZATION_REASSESSMENT`, if eventually reached, is not authorization.
 
 ## Evidence model
 
-The sanitized contract is `evidence/lp173/owner-evidence.template.json`. Each monitoring, backup, operational-ownership, rollback-ownership, and launch-operations fact has a value, classification, evidence type, source, collection method, verification method, optional source-reported time, and optional SHA-256 source identity.
+The sanitized committed evidence contract is `evidence/lp173/owner-evidence.template.json`. Each monitoring, backup, operational-ownership, rollback-ownership, and launch-operations fact has a value, classification, evidence type, source, collection method, verification method, optional source-reported time, and optional SHA-256 source identity.
 
 Allowed classifications are:
 
@@ -43,4 +43,4 @@ The local file is ignored by Git. Review generated reports before intentionally 
 
 Protected runtime identity is inherited from LP172.1: canonical Git blobs at baseline commit `0322552bc3c56c0c1e3fb5fd2e2ebbfc0ea3483c` are compared with canonical Git blobs at `HEAD`. Working-tree bytes and CRLF checkout materialization are ignored. LP173 does not modify protected runtime systems or the authoritative LP172 reports.
 
-Before a future authorization reassessment, every fact must have supported completion provenance, all protected identities and deterministic checks must pass, and a separate governed milestone must reassess authorization. LP173 itself cannot grant authorization.
+Before a future authorization reassessment, the ten unavailable production metadata facts and monitoring ownership must gain supported completion provenance, all protected identities and deterministic checks must pass, and a separate governed milestone must reassess authorization. LP173 itself cannot grant authorization.

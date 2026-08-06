@@ -22,7 +22,9 @@
     "runtimeModifications": 0
   },
   "ownerActionRequiredFacts": [
-    "monitoring.monitoringOwnership",
+    "monitoring.monitoringOwnership"
+  ],
+  "ownerAttestedFacts": [
     "operationalOwnership.backupOperationalOwner",
     "operationalOwnership.primaryOperationalOwner",
     "operationalOwnership.productionAuthority",
@@ -37,7 +39,6 @@
     "launchOperations.operationalSupportReadiness",
     "launchOperations.productionReadinessAcknowledgement"
   ],
-  "ownerAttestedFacts": [],
   "protectedArtifacts": [
     {
       "actualGitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",

@@ -15,7 +15,9 @@
     "NOT_CONFIGURED": [],
     "NOT_VERIFIED": [],
     "OWNER_ACTION_REQUIRED": [
-      "monitoring.monitoringOwnership",
+      "monitoring.monitoringOwnership"
+    ],
+    "OWNER_ATTESTED": [
       "operationalOwnership.backupOperationalOwner",
       "operationalOwnership.primaryOperationalOwner",
       "operationalOwnership.productionAuthority",

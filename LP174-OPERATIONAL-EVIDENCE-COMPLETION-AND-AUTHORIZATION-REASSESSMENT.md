@@ -2,7 +2,7 @@
 
 ## Truthful result
 
-LP174 reassessed only whether Gridly reaches `READY_FOR_AUTHORIZATION_REASSESSMENT`. No authoritative production metadata export or explicit owner attestation was available in this checkout. The ten production metadata facts therefore remain `SOURCE_UNAVAILABLE`, and the fourteen owner-governed facts remain `OWNER_ACTION_REQUIRED`. The truthful result is `NOT_READY_FOR_AUTHORIZATION_REASSESSMENT`.
+LP174 reassessed only whether Gridly reaches `READY_FOR_AUTHORIZATION_REASSESSMENT`. Thirteen explicit owner attestations collected after LP174 now complete the operational-ownership, rollback-ownership, and launch-operations facts without inference. No authoritative production metadata export or monitoring-ownership attestation is available, so ten production metadata facts remain `SOURCE_UNAVAILABLE` and monitoring ownership remains `OWNER_ACTION_REQUIRED`. The blocker count is eleven, and the truthful result is `NOT_READY_FOR_AUTHORIZATION_REASSESSMENT`.
 
 This milestone does not authorize deployment, activation, distribution, public launch, production restore, or production rollback. It performs no runtime or production-configuration modification and changes no protected artifact.
 
@@ -18,4 +18,4 @@ This milestone does not authorize deployment, activation, distribution, public l
 
 ## Remaining blockers
 
-Before a governed launch-authorization decision, an owner must provide sanitized authoritative metadata for monitoring and backup facts, including `sourceArtifactIdentity`, and explicitly attest the operational-ownership, rollback-ownership, monitoring-ownership, and launch-operations facts. Evidence must pass the existing LP173/LP173.1 schema, provenance, secret-safety, canonical-format, and deterministic checks. Readiness for reassessment remains distinct from authorization.
+Before a governed launch-authorization decision, an owner must provide sanitized authoritative metadata for the ten unresolved monitoring and backup facts, including `sourceArtifactIdentity`, and explicitly attest monitoring ownership. Evidence must pass the existing LP173/LP173.1 schema, provenance, secret-safety, canonical-format, and deterministic checks. Readiness for reassessment remains distinct from authorization.
