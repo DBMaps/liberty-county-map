@@ -189,3 +189,40 @@ test('owner capture remains secret-safe and metadata-only',()=>{
   assert.doesNotMatch(captureScript,/supabase[^\n]*(?:db push|migration|functions deploy|storage|link)|gh[^\n]*(?:secret set|workflow run)/i);
   assert.doesNotMatch(captureScript,/\b(?:deploy|activate|upload|insert|update|delete)\b/i);
 });
+
+test('owner inventories use schema-aware PowerShell 5.1-safe normalization',()=>{
+  assert.match(captureScript,/function Get-NormalizedInventoryNames/);
+  assert.match(captureScript,/\.PSObject\.Properties\[\$_\]/);
+  assert.match(captureScript,/\.PSObject\.Properties\[\$Supported\[0\]\]\.Value/);
+  assert.doesNotMatch(captureScript,/Select-Object\s+-ExpandProperty\s+name/i);
+  for (const source of [
+    'supabase secrets list --output json',
+    'gh secret list --repo --app actions --json name',
+    'gh secret list --repo --env --app actions --json name'
+  ]) assert.ok(captureScript.includes(`-SourceCommand '${source}'`));
+  assert.match(captureScript,/\[string\[\]\]\$AllowedProperties/);
+  assert.match(captureScript,/\[string\[\]\]\$WrapperProperties/);
+  assert.match(captureScript,/if \(\$WrapperMatches\.Count -eq 1\)/);
+});
+
+test('inventory normalization rejects every unsafe response family without values in diagnostics',()=>{
+  for (const guard of [
+    '$Records.Count -eq 0',
+    '$Record -is [string]',
+    '$Record.GetType().IsPrimitive',
+    '$Supported.Count -ne 1',
+    '-not ($Value -is [string])',
+    '[string]::IsNullOrWhiteSpace($Value)'
+  ]) assert.ok(captureScript.includes(guard), `missing fail-closed guard: ${guard}`);
+  assert.match(captureScript,/observed properties only:/);
+  const diagnosticLines=captureScript.split('\n').filter(line=>line.includes('throw "$SourceCommand'));
+  assert.ok(diagnosticLines.length >= 5);
+  assert.ok(diagnosticLines.every(line=>!line.includes('$Value')), 'failure diagnostics must never interpolate captured values');
+  assert.match(captureScript,/\$Names \| Sort-Object -Unique/);
+});
+
+test('PowerShell inventory response-shape regression matrix passes when PowerShell is available', { skip: process.platform !== 'win32' }, ()=>{
+  const result=spawnSync('powershell.exe',['-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',path.join(ROOT,'tests/lp169/inventory-normalization.ps1'),'-CaptureScriptPath',captureScriptPath],{cwd:ROOT,encoding:'utf8'});
+  assert.equal(result.status,0,`${result.stdout}\n${result.stderr}`);
+  assert.match(result.stdout,/inventory normalization regression tests passed/);
+});
