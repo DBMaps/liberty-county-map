@@ -271,6 +271,9 @@
     "capture:lp171:owner-evidence": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/lp171/capture-owner-evidence.ps1",
     "build:lp172": "node tools/lp172/collect-owner-operational-evidence.mjs build",
     "verify:lp172": "node tools/lp172/collect-owner-operational-evidence.mjs verify",
-    "test:lp172": "node --test tests/lp172/*.test.mjs"
+    "test:lp172": "node --test tests/lp172/*.test.mjs",
+    "build:lp173": "node tools/lp173/complete-operational-evidence.mjs build",
+    "verify:lp173": "node tools/lp173/complete-operational-evidence.mjs verify",
+    "test:lp173": "node --test tests/lp173/*.test.mjs"
   }
 }

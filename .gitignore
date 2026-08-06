@@ -47,3 +47,6 @@ android/app/src/main/assets/public/assets/location-resolution/gridly-authoritati
 
 # LP160.1L generated controlled county outputs; tests create these in temp dirs.
 reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
+
+# LP173 owner-supplied operational metadata remains local.
+evidence/lp173/owner-evidence.local.json

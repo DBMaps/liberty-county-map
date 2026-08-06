@@ -1,0 +1,253 @@
+{
+  "backup": {
+    "backupFrequency": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "backupProvider": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "latestSuccessfulBackupMetadata": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "pitrAvailability": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "retentionPolicy": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "launchOperations": {
+    "communicationReadiness": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "launchDayOwnerAvailability": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "operationalSupportReadiness": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "productionReadinessAcknowledgement": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "monitoring": {
+    "alertDestinations": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "alertThresholds": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "evidenceTimestamp": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "monitoredProductionServices": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "monitoringOwnership": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "monitoringProviders": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "operationalOwnership": {
+    "backupOperationalOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "primaryOperationalOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "productionAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "supportContact": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "technicalEscalation": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "rollbackOwnership": {
+    "productionValidationAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "releaseApprovalAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "releaseOwner": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    },
+    "rollbackAuthority": {
+      "classification": "OWNER_ACTION_REQUIRED",
+      "collectionMethod": null,
+      "evidenceType": null,
+      "source": null,
+      "sourceArtifactIdentity": null,
+      "sourceReportedTime": null,
+      "value": null,
+      "verificationMethod": null
+    }
+  },
+  "schemaVersion": "gridly.lp173.ownerOperationalEvidenceInput.v1"
+}
