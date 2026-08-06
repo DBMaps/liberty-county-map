@@ -1,0 +1,30 @@
+{
+  "activeState": "PASS",
+  "alertCard": "PASS",
+  "awarenessAreaFiltering": "PASS",
+  "awarenessBrief": "PASS",
+  "caseCount": 3,
+  "clearedState": "PASS",
+  "communityPulse": "PASS",
+  "countyFips": "48291",
+  "crossingPopup": "PASS",
+  "destinationAwareness": "PASS",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hazardPopup": "PASS",
+  "knowBeforeYouGo": "PASS",
+  "milestone": "LP164",
+  "quietState": "PASS",
+  "routeAwareness": "PASS",
+  "routeWatch": "PASS",
+  "schemaVersion": "gridly.lp164.libertyPreservationResults.v1",
+  "status": "PASS",
+  "technicalMetadataHidden": true,
+  "unresolvedAddress": {
+    "classification": "NO_VERIFIED_RESULT",
+    "inferredMatch": false,
+    "interpolation": false,
+    "nearbyNumberSubstitution": false,
+    "query": "274 County Road 677",
+    "roadOnlyPromotion": false
+  }
+}

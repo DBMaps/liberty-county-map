@@ -235,6 +235,9 @@
     "test:lp162": "node --test tests/lp162-statewide-consumer-search-certification.test.mjs",
     "certify:lp163": "node tools/lp163/certify-statewide-destination-routing.mjs --write",
     "verify:lp163": "node tools/lp163/verify-lp163-determinism.mjs",
-    "test:lp163": "node --test tests/lp163/*.test.mjs"
+    "test:lp163": "node --test tests/lp163/*.test.mjs",
+    "certify:lp164": "node tools/lp164/certify-statewide-awareness-hazards.mjs --write",
+    "verify:lp164": "node tools/lp164/verify-lp164-determinism.mjs",
+    "test:lp164": "node --test tests/lp164/*.test.mjs"
   }
 }

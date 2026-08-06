@@ -1,0 +1,14 @@
+{
+  "activeCaseCount": 16,
+  "clearedActiveCount": 0,
+  "clearedCaseCount": 16,
+  "clearedRehydrationAfterAreaChangeCount": 0,
+  "clearedRehydrationAfterRefreshCount": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "hazardLifecycleRuntime": "UNCHANGED",
+  "milestone": "LP164",
+  "quietCaseCount": 16,
+  "recentlyClearedPresentation": "PASS",
+  "schemaVersion": "gridly.lp164.lifecyclePreservationResults.v1",
+  "status": "PASS"
+}

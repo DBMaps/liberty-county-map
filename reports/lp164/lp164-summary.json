@@ -1,0 +1,56 @@
+{
+  "activation": "UNAUTHORIZED",
+  "activeStateResult": "PASS",
+  "architectureAudit": {
+    "clearedGuard": true,
+    "consumerSurfaces": [
+      "Awareness Brief",
+      "Know Before You Go",
+      "Community Pulse",
+      "alert cards",
+      "hazard and crossing popups",
+      "destination awareness",
+      "route intelligence",
+      "Route Watch"
+    ],
+    "freshnessContract": true,
+    "helpers": {
+      "gridlyAwarenessAreaContextAudit": true,
+      "gridlyAwarenessIntelligenceAudit": true,
+      "gridlyClearedHazardPersistenceAudit": true,
+      "gridlyCommunityPulseIntelligenceAudit": true,
+      "gridlyCrossingRenderAudit": true,
+      "gridlyDestinationAwarenessAudit": true,
+      "gridlyHazardLifecycleAudit": true,
+      "gridlyHazardPopupAudit": true,
+      "gridlyKnowBeforeYouGoAudit": true,
+      "gridlyRouteIntelligenceAudit": true,
+      "gridlyRouteWatchDisplayAudit": true
+    },
+    "liveIncidentSources": [
+      "Supabase community reports",
+      "TxDOT/DriveTexas roadway observations",
+      "runtime weather/public APIs"
+    ],
+    "offlineBoundary": "Governed synthetic certification fixtures execute consumer evidence and selection contracts without network calls",
+    "productionPath": "js/app.js governed runtime state -> normalized active hazards/reports -> awareness-area selection -> consumer surfaces",
+    "quietContract": true,
+    "trustContract": true
+  },
+  "awarenessCaseCount": 48,
+  "clearedStateResult": "PASS",
+  "consumerLanguage": "PASS",
+  "defectFound": false,
+  "deployment": "UNAUTHORIZED",
+  "determinism": "PASS",
+  "finalClassification": "CONDITIONALLY_CERTIFIED_LIVE_AWARENESS_VALIDATION_REQUIRED",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "geographicRelevance": "PASS",
+  "libertyPreservation": "PASS",
+  "milestone": "LP164",
+  "patchRequired": false,
+  "quietStateResult": "PASS",
+  "representativeCountyCount": 16,
+  "runtime": "UNCHANGED",
+  "schemaVersion": "gridly.lp164.summary.v1"
+}

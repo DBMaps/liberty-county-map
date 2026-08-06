@@ -1,0 +1,15 @@
+{
+  "casesEvaluated": 48,
+  "duplicateLocationFailureCount": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "invalidFixtureChecks": {
+    "missingFreshness": "EVIDENCE_UNAVAILABLE",
+    "missingIncident": "INVALID_INCIDENT",
+    "vagueLocation": "LOCATION_UNRESOLVED"
+  },
+  "milestone": "LP164",
+  "passCount": 48,
+  "schemaVersion": "gridly.lp164.consumerLanguageResults.v1",
+  "status": "PASS",
+  "technicalMetadataFailureCount": 0
+}
