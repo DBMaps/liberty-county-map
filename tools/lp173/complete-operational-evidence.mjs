@@ -9,30 +9,30 @@ export const NAMES = ['operational-evidence-completion-report.json', 'launch-aut
 export const TEMPLATE = 'evidence/lp173/owner-evidence.template.json';
 export const LOCAL = 'evidence/lp173/owner-evidence.local.json';
 export const CLASSIFICATIONS = ['MACHINE_VERIFIED', 'NOT_CONFIGURED', 'NOT_VERIFIED', 'OWNER_ACTION_REQUIRED', 'OWNER_ATTESTED', 'SOURCE_UNAVAILABLE'];
-const fields = {
+export const FIELDS = {
   monitoring: ['alertDestinations', 'alertThresholds', 'evidenceTimestamp', 'monitoredProductionServices', 'monitoringOwnership', 'monitoringProviders'],
   backup: ['backupFrequency', 'backupProvider', 'latestSuccessfulBackupMetadata', 'pitrAvailability', 'retentionPolicy'],
   operationalOwnership: ['backupOperationalOwner', 'primaryOperationalOwner', 'productionAuthority', 'supportContact', 'technicalEscalation'],
   rollbackOwnership: ['productionValidationAuthority', 'releaseApprovalAuthority', 'releaseOwner', 'rollbackAuthority'],
   launchOperations: ['communicationReadiness', 'launchDayOwnerAvailability', 'operationalSupportReadiness', 'productionReadinessAcknowledgement']
 };
-const factKeys = ['classification', 'collectionMethod', 'evidenceType', 'source', 'sourceArtifactIdentity', 'sourceReportedTime', 'value', 'verificationMethod'];
-const secret = /(?:eyJ[A-Za-z0-9_-]{20,}\.|sb_(?:secret|service|publishable)_|(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+\S+|authorization\s*:|cookie\s*:|(?:refresh|access)[_-]?token\s*[:=]|(?:anon[_-]?key|api[_-]?key|password|service[_-]?role|webhook[_-]?secret|signing[_-]?key)\s*[:=])/i;
+export const FACT_KEYS = ['classification', 'collectionMethod', 'evidenceType', 'source', 'sourceArtifactIdentity', 'sourceReportedTime', 'value', 'verificationMethod'];
+export const SECRET_PATTERN = /(?:eyJ[A-Za-z0-9_-]{20,}\.|gh[oprsu]_[A-Za-z0-9]{20,}|sb_(?:secret|service|publishable)_|(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?):\/\/|(?:https?|wss?):\/\/[^\s/:]+:[^\s/@]+@|-----BEGIN [A-Z ]*PRIVATE KEY-----|bearer\s+\S+|authorization\s*:|cookie\s*:|(?:refresh|access)[_-]?token\s*[:=]|(?:anon[_-]?key|api[_-]?key|password|service[_-]?role|webhook[_-]?secret|signing[_-]?key)\s*[:=])/i;
 const completed = new Set(['MACHINE_VERIFIED', 'OWNER_ATTESTED', 'NOT_CONFIGURED']);
 const nonEmpty = value => typeof value === 'string' && value.trim() !== '';
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
 export function validate(value) {
-  if (!value || value.schemaVersion !== 'gridly.lp173.ownerOperationalEvidenceInput.v1' || secret.test(JSON.stringify(value))) throw Error('LP173 evidence is invalid or contains secret-shaped material');
-  if (Object.keys(value).sort().join('|') !== [...Object.keys(fields), 'schemaVersion'].sort().join('|')) throw Error('LP173 top-level schema is invalid');
-  for (const [domain, names] of Object.entries(fields)) {
+  if (!value || value.schemaVersion !== 'gridly.lp173.ownerOperationalEvidenceInput.v1' || SECRET_PATTERN.test(JSON.stringify(value))) throw Error('LP173 evidence is invalid or contains secret-shaped material');
+  if (Object.keys(value).sort().join('|') !== [...Object.keys(FIELDS), 'schemaVersion'].sort().join('|')) throw Error('LP173 top-level schema is invalid');
+  for (const [domain, names] of Object.entries(FIELDS)) {
     if (!value[domain] || Object.keys(value[domain]).sort().join('|') !== names.slice().sort().join('|')) throw Error(`LP173 ${domain} schema is invalid`);
     for (const name of names) {
       const fact = value[domain][name];
-      if (!fact || Object.keys(fact).sort().join('|') !== factKeys.slice().sort().join('|') || !CLASSIFICATIONS.includes(fact.classification)) throw Error(`LP173 ${domain}.${name} schema is invalid`);
-      for (const key of factKeys) if (key !== 'classification' && fact[key] !== null && typeof fact[key] !== 'string') throw Error(`LP173 ${domain}.${name} schema is invalid`);
+      if (!fact || Object.keys(fact).sort().join('|') !== FACT_KEYS.slice().sort().join('|') || !CLASSIFICATIONS.includes(fact.classification)) throw Error(`LP173 ${domain}.${name} schema is invalid`);
+      for (const key of FACT_KEYS) if (key !== 'classification' && fact[key] !== null && typeof fact[key] !== 'string') throw Error(`LP173 ${domain}.${name} schema is invalid`);
       if (completed.has(fact.classification) && !['value', 'source', 'collectionMethod', 'verificationMethod', 'evidenceType'].every(key => nonEmpty(fact[key]))) throw Error(`LP173 ${domain}.${name} completed evidence lacks provenance`);
-      if (fact.classification === OWNER_ACTION_REQUIRED && factKeys.some(key => key !== 'classification' && fact[key] !== null)) throw Error(`LP173 ${domain}.${name} unsupported evidence must remain empty`);
+      if (fact.classification === OWNER_ACTION_REQUIRED && FACT_KEYS.some(key => key !== 'classification' && fact[key] !== null)) throw Error(`LP173 ${domain}.${name} unsupported evidence must remain empty`);
       if (fact.sourceArtifactIdentity !== null && !/^(?:git-blob-sha256|sha256):[a-f0-9]{64}$/.test(fact.sourceArtifactIdentity)) throw Error(`LP173 ${domain}.${name} source identity is invalid`);
     }
   }
@@ -45,7 +45,7 @@ export function build(root = ROOT, supplied) {
   const lp172 = buildLp172(root)['owner-operational-evidence-summary.json'];
   const domains = {};
   const factsByClassification = Object.fromEntries(CLASSIFICATIONS.map(value => [value, []]));
-  for (const [domain, names] of Object.entries(fields)) {
+  for (const [domain, names] of Object.entries(FIELDS)) {
     const facts = {};
     for (const name of names) { facts[name] = input[domain][name]; factsByClassification[facts[name].classification].push(`${domain}.${name}`); }
     const unresolved = names.filter(name => !completed.has(facts[name].classification));

@@ -1,0 +1,7 @@
+{
+  "facts": {
+    "backup": {},
+    "monitoring": {}
+  },
+  "schemaVersion": "gridly.lp1731.productionMetadata.v1"
+}

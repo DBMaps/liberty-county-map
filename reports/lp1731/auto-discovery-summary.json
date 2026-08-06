@@ -1,0 +1,54 @@
+{
+  "authorizationUnchanged": true,
+  "authorizations": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "productionRestore": "NOT_AUTHORIZED",
+    "productionRollback": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "classification": "AUTO_DISCOVERY_NO_EVIDENCE",
+  "machineVerifiedFields": [],
+  "milestone": "LP173.1",
+  "notConfiguredFields": [],
+  "notVerifiedFields": [],
+  "ownerActionRequiredFields": [
+    "monitoring.monitoringOwnership",
+    "operationalOwnership.backupOperationalOwner",
+    "operationalOwnership.primaryOperationalOwner",
+    "operationalOwnership.productionAuthority",
+    "operationalOwnership.supportContact",
+    "operationalOwnership.technicalEscalation",
+    "rollbackOwnership.productionValidationAuthority",
+    "rollbackOwnership.releaseApprovalAuthority",
+    "rollbackOwnership.releaseOwner",
+    "rollbackOwnership.rollbackAuthority",
+    "launchOperations.communicationReadiness",
+    "launchOperations.launchDayOwnerAvailability",
+    "launchOperations.operationalSupportReadiness",
+    "launchOperations.productionReadinessAcknowledgement"
+  ],
+  "schemaVersion": "gridly.lp1731.autoDiscoverySummary.v1",
+  "sourceUnavailableFields": [
+    "monitoring.alertDestinations",
+    "monitoring.alertThresholds",
+    "monitoring.evidenceTimestamp",
+    "monitoring.monitoredProductionServices",
+    "monitoring.monitoringProviders",
+    "backup.backupFrequency",
+    "backup.backupProvider",
+    "backup.latestSuccessfulBackupMetadata",
+    "backup.pitrAvailability",
+    "backup.retentionPolicy"
+  ],
+  "validation": {
+    "canonicalLf": "PASS",
+    "deterministicTwoGeneration": "PASS",
+    "protectedGitBlobIdentities": "PASS",
+    "protectedIdentitySource": "CANONICAL_GIT_BLOB",
+    "secretSafety": "PASS",
+    "utf8WithoutBom": "PASS",
+    "workingTreeIgnored": true
+  }
+}
