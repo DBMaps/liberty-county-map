@@ -1,0 +1,14 @@
+{
+  "alertsAvailable": true,
+  "destinationAndRouteActionsAvailable": true,
+  "failures": [],
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "liveDeviceValidationRequired": true,
+  "mapAvailable": true,
+  "method": "Static repository contract audit plus existing deterministic consumer-flow evidence; no live device execution",
+  "milestone": "LP166",
+  "schemaVersion": "gridly.lp166.mobilePortraitResults.v1",
+  "searchAvailable": true,
+  "status": "PASS_WITH_LIVE_VALIDATION_REQUIRED",
+  "viewport": "PORTRAIT_CONTRACT"
+}

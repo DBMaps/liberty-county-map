@@ -241,6 +241,9 @@
     "test:lp164": "node --test tests/lp164/*.test.mjs",
     "certify:lp165": "node tools/lp165/certify-statewide-notifications.mjs --write",
     "verify:lp165": "node tools/lp165/verify-lp165-determinism.mjs",
-    "test:lp165": "node --test tests/lp165/*.test.mjs"
+    "test:lp165": "node --test tests/lp165/*.test.mjs",
+    "certify:lp166": "node tools/lp166/certify-statewide-consumer-experience.mjs --write",
+    "verify:lp166": "node tools/lp166/verify-lp166-determinism.mjs",
+    "test:lp166": "node --test tests/lp166/*.test.mjs"
   }
 }

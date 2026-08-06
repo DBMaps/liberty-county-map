@@ -1,0 +1,250 @@
+{
+  "count": 24,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP166",
+  "minimumRequired": 20,
+  "ordering": "id ascending",
+  "scenarios": [
+    {
+      "action": "Review the initial map and controls",
+      "area": "onboarding",
+      "entryPoint": "application start",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Map-first awareness entry is available",
+      "id": "CX-001",
+      "result": "PASS",
+      "state": "QUIET"
+    },
+    {
+      "action": "Search a verified Texas street address",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "A verified result is selectable",
+      "id": "CX-002",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Search a manufactured destination",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "The named destination is selectable",
+      "id": "CX-003",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Search a business name",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "A governed business result is selectable",
+      "id": "CX-004",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Search an emergency-services category",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Relevant governed destinations are returned",
+      "id": "CX-005",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Search a governed destination alias",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "The canonical destination is returned",
+      "id": "CX-006",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Search 274 County Road 677",
+      "area": "search",
+      "entryPoint": "Search",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "NO_VERIFIED_RESULT is shown without substitution",
+      "id": "CX-007",
+      "result": "PASS",
+      "state": "EMPTY"
+    },
+    {
+      "action": "Select a destination",
+      "area": "destination",
+      "entryPoint": "Search result",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Destination context and awareness are available",
+      "id": "CX-008",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Generate a route with governed geometry",
+      "area": "routing",
+      "entryPoint": "Destination action",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Route preview and route intelligence are shown",
+      "id": "CX-009",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Attempt routing without valid geometry",
+      "area": "routing",
+      "entryPoint": "Destination action",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Failure is truthful; no straight-line route appears",
+      "id": "CX-010",
+      "result": "PASS",
+      "state": "EMPTY"
+    },
+    {
+      "action": "Enable Route Watch for a valid route",
+      "area": "route_watch",
+      "entryPoint": "Route preview",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Watch is tied to governed route identity",
+      "id": "CX-011",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Review a quiet area",
+      "area": "awareness",
+      "entryPoint": "Map",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Quiet state does not claim all-clear",
+      "id": "CX-012",
+      "result": "PASS",
+      "state": "QUIET"
+    },
+    {
+      "action": "Review an active hazard",
+      "area": "awareness",
+      "entryPoint": "Map alert",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Event, place, freshness, reports and confidence are visible",
+      "id": "CX-013",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Review a cleared hazard",
+      "area": "awareness",
+      "entryPoint": "Map alert",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Recently cleared is distinct from active",
+      "id": "CX-014",
+      "result": "PASS",
+      "state": "CLEARED"
+    },
+    {
+      "action": "Review community evidence",
+      "area": "community_pulse",
+      "entryPoint": "Community Pulse",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Reports are presented as evidence, not proof",
+      "id": "CX-015",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Open Know Before You Go",
+      "area": "know_before_you_go",
+      "entryPoint": "Destination or route",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Relevant awareness is summarized consistently",
+      "id": "CX-016",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Review the brief",
+      "area": "awareness_brief",
+      "entryPoint": "Awareness Brief",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Active and quiet meaning is understandable",
+      "id": "CX-017",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Open a public crossing",
+      "area": "crossing",
+      "entryPoint": "Crossing popup",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Named crossing status uses consumer language",
+      "id": "CX-018",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Open a hazard",
+      "area": "hazard",
+      "entryPoint": "Hazard popup",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Location, freshness, reports and reliability are visible",
+      "id": "CX-019",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Review active and cleared wording",
+      "area": "notifications",
+      "entryPoint": "Alert card",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "LP165 wording and delivery boundary remain explicit",
+      "id": "CX-020",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Submit consumer hazard details",
+      "area": "reporting",
+      "entryPoint": "Report hazard",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Flow requests meaningful type and location",
+      "id": "CX-021",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Review consumer preferences",
+      "area": "settings",
+      "entryPoint": "Settings",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Route, rail, hazard and community choices are understandable",
+      "id": "CX-022",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Use primary map, search and alert flows",
+      "area": "mobile",
+      "entryPoint": "Portrait viewport",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Primary controls remain available without desktop dependency",
+      "id": "CX-023",
+      "result": "PASS",
+      "state": "ACTIVE"
+    },
+    {
+      "action": "Exercise Liberty benchmark",
+      "area": "liberty",
+      "entryPoint": "Search, map and route",
+      "evidenceClass": "DETERMINISTIC_REPOSITORY_CONTRACT",
+      "expectedOutcome": "Public assets remain available and protected boundaries hold",
+      "id": "CX-024",
+      "result": "PASS",
+      "state": "ACTIVE"
+    }
+  ],
+  "schemaVersion": "gridly.lp166.consumerScenarios.v1"
+}

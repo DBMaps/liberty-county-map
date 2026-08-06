@@ -1,0 +1,41 @@
+{
+  "areas": [
+    "awareness",
+    "awareness_brief",
+    "community_pulse",
+    "crossing",
+    "destination",
+    "hazard",
+    "know_before_you_go",
+    "liberty",
+    "mobile",
+    "notifications",
+    "onboarding",
+    "reporting",
+    "route_watch",
+    "routing",
+    "search",
+    "settings"
+  ],
+  "entryPoints": [
+    "application start",
+    "Search",
+    "Map",
+    "Destination",
+    "Route preview",
+    "Alert cards",
+    "Settings",
+    "Report hazard"
+  ],
+  "failed": 0,
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "milestone": "LP166",
+  "noInterpolation": true,
+  "noNearbyNumberSubstitution": true,
+  "passed": 24,
+  "scenarioCount": 24,
+  "schemaVersion": "gridly.lp166.consumerFlowResults.v1",
+  "status": "PASS",
+  "truthfulRouteFailure": true,
+  "truthfulSearchFailure": true
+}
