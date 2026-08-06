@@ -1,0 +1,22 @@
+{
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "captureRules": {
+    "atomic": true,
+    "metadataOnly": true,
+    "readOnly": true,
+    "secretValuesAllowed": false,
+    "windowsPowerShellVersion": "5.1"
+  },
+  "classification": "OWNER_ACTION_REQUIRED",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "requirements": [
+    "MONITORING_SIGNAL_DIMENSIONS",
+    "SUPABASE_SERVICE_HEALTH",
+    "BACKUP_PLAN_AND_LATEST_SUCCESS",
+    "RESTORE_OWNERSHIP_AND_REHEARSAL",
+    "ROLLBACK_ARTIFACTS_OWNERSHIP_AND_REHEARSAL",
+    "INCIDENT_CONTACTS_AND_ESCALATION"
+  ],
+  "workflow": "npm run capture:lp170:owner-evidence -- -Repository <owner/repo> -ProjectRef <ref>"
+}

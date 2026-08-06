@@ -1,0 +1,53 @@
+{
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "classification": "OWNER_ACTION_REQUIRED",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "items": [
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "PRIMARY_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "BACKUP_OWNER"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SUPPORT_CONTACT"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SEVERITY_LEVELS"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "INITIAL_TRIAGE"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SERVICE_CONTAINMENT"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ROLLBACK_DECISION"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "USER_COMMUNICATION"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "EVIDENCE_PRESERVATION"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "POST_INCIDENT_REVIEW"
+    },
+    {
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ESCALATION_PATH"
+    }
+  ],
+  "milestone": "LP170",
+  "unknownContactsRemainOwnerActionRequired": true
+}

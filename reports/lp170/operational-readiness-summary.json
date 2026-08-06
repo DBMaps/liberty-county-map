@@ -1,0 +1,27 @@
+{
+  "authorization": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "findings": {
+    "backup": "SOURCE_UNAVAILABLE",
+    "incidentResponse": "OWNER_ACTION_REQUIRED",
+    "monitoring": "SOURCE_UNAVAILABLE",
+    "restoration": "OWNER_ACTION_REQUIRED",
+    "rollback": "SOURCE_UNAVAILABLE"
+  },
+  "futureLp167ReassessmentOnly": true,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "operationsPerformed": {
+    "deployments": 0,
+    "productionMutations": 0,
+    "restores": 0,
+    "rollbacks": 0,
+    "workflowTriggers": 0
+  },
+  "overallClassification": "NOT_READY"
+}

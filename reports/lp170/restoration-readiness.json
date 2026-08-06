@@ -1,0 +1,15 @@
+{
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "checks": {
+    "ownerAssigned": "SOURCE_UNAVAILABLE",
+    "prerequisitesDocumented": "SOURCE_UNAVAILABLE",
+    "procedureDocumented": "SOURCE_UNAVAILABLE",
+    "productionRehearsal": "SOURCE_UNAVAILABLE",
+    "validationDefined": "SOURCE_UNAVAILABLE"
+  },
+  "classification": "OWNER_ACTION_REQUIRED",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "productionRestorationRemainsUntested": true,
+  "productionRestoreExecuted": false
+}

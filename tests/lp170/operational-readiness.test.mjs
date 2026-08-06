@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ROOT, REPORT_NAMES, build, encode, evidenceIdentity, validateEvidence } from '../../tools/lp170/operational-readiness.mjs';
+const record=(identifier,classification='PASS')=>({identifier,classification,sourceSystem:'OWNER',method:'ATTESTATION',readOnly:true,metadataOnly:true,attestation:'EXPLICIT'});
+test('missing evidence fails closed and authorizes nothing',()=>{const r=build(ROOT,{schemaVersion:1,records:[]});const s=r['operational-readiness-summary.json'];assert.equal(s.overallClassification,'NOT_READY');assert.deepEqual(new Set(Object.values(s.authorization)),new Set(['NOT_AUTHORIZED']));assert.deepEqual(s.operationsPerformed,{deployments:0,productionMutations:0,restores:0,rollbacks:0,workflowTriggers:0});});
+test('logs alone cannot certify monitoring or alerting',()=>{const e={schemaVersion:1,records:[record('MONITORING:APPLICATION_AVAILABILITY:SIGNALEXISTS')]};const m=build(ROOT,e)['monitoring-readiness.json'];assert.notEqual(m.classification,'PASS');assert.equal(m.requiredSignals[0].checks.alertDestination,'SOURCE_UNAVAILABLE');});
+test('configured backups do not certify restoration',()=>{const e={schemaVersion:1,records:[record('BACKUP:CONFIGURED')]};const r=build(ROOT,e);assert.notEqual(r['backup-readiness.json'].classification,'PASS');assert.notEqual(r['restoration-readiness.json'].classification,'PASS');});
+test('rollback documentation alone does not certify rehearsal',()=>{const e={schemaVersion:1,records:[record('ROLLBACK:APPLICATION_RUNTIME:PROCESS')]};const r=build(ROOT,e)['rollback-readiness.json'];assert.notEqual(r.classification,'PASS');assert.equal(r.areas[0].checks.rehearsed,'SOURCE_UNAVAILABLE');});
+test('unknown contacts require owner action',()=>assert.equal(build(ROOT,{schemaVersion:1,records:[]})['incident-response-readiness.json'].classification,'OWNER_ACTION_REQUIRED'));
+test('secret-shaped evidence is rejected without echo',()=>assert.throws(()=>validateEvidence({schemaVersion:1,records:[{...record('BAD'),attestation:'password=hunter2'}]}),/resembles secret material/));
+test('record order does not affect governed identity',()=>{const a=[record('B'),record('A')];assert.equal(evidenceIdentity(a),evidenceIdentity([...a].reverse()));});
+test('reports are canonical and protected artifacts pass',()=>{const reports=build(ROOT,{schemaVersion:1,records:[]});for(const n of REPORT_NAMES){const bytes=Buffer.from(encode(reports[n]));assert.equal(bytes[0]===0xef&&bytes[1]===0xbb,false);assert.equal(bytes.includes(13),false);}assert.equal(reports['protected-artifact-verification.json'].classification,'PASS');});
+test('governed reports are byte deterministic',()=>{const a=build(ROOT,{schemaVersion:1,records:[]}),b=build(ROOT,{schemaVersion:1,records:[]});for(const n of REPORT_NAMES)assert.equal(encode(a[n]),encode(b[n]));});
+test('capture workflow contains no mutating commands',()=>{const p=fs.readFileSync(path.join(ROOT,'tools/lp170/capture-owner-operational-evidence.ps1'),'utf8');assert.doesNotMatch(p,/\b(?:deploy|restore|rollback|push|workflow\s+run|secrets?\s+set|db\s+(?:push|reset))\b/i);});

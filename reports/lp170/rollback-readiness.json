@@ -1,0 +1,107 @@
+{
+  "areas": [
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "APPLICATION_RUNTIME"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "GITHUB_RELEASE"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "DEPLOYMENT_ARTIFACT"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SUPABASE_EDGE_FUNCTION"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "CONFIGURATION"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "DATA_SCHEMA"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "COUNTY_ACTIVATION"
+    },
+    {
+      "checks": {
+        "artifactIdentityPreserved": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "priorReleaseIdentifiable": "SOURCE_UNAVAILABLE",
+        "processDocumented": "SOURCE_UNAVAILABLE",
+        "rehearsed": "SOURCE_UNAVAILABLE",
+        "validationDefined": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "PUBLIC_LAUNCH"
+    }
+  ],
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "classification": "SOURCE_UNAVAILABLE",
+  "dataSchemaBoundary": "NO_DATA_OR_SCHEMA_ROLLBACK_AUTHORIZED",
+  "documentationAloneDoesNotCertifyRehearsal": true,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "productionRollbackExecuted": false
+}
