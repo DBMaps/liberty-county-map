@@ -1,0 +1,23 @@
+{
+  "authorizationGranted": false,
+  "authorizationReassessment": "NOT_READY_FOR_AUTHORIZATION_REASSESSMENT",
+  "authorizations": {
+    "activation": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "productionRestore": "NOT_AUTHORIZED",
+    "productionRollback": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED"
+  },
+  "milestone": "LP173",
+  "operationsPerformed": {
+    "activations": 0,
+    "deployments": 0,
+    "distributions": 0,
+    "productionRestores": 0,
+    "productionRollbacks": 0,
+    "publicLaunches": 0,
+    "runtimeModifications": 0
+  },
+  "schemaVersion": "gridly.lp173.launchAuthorizationReadiness.v1"
+}
