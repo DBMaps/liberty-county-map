@@ -1,0 +1,38 @@
+{
+  "blockers": [
+    {
+      "area": "monitoring",
+      "classification": "SOURCE_UNAVAILABLE",
+      "id": "LP170-B001",
+      "remediation": "Capture complete read-only owner evidence and reassess; do not perform a production operation."
+    },
+    {
+      "area": "backup",
+      "classification": "SOURCE_UNAVAILABLE",
+      "id": "LP170-B002",
+      "remediation": "Capture complete read-only owner evidence and reassess; do not perform a production operation."
+    },
+    {
+      "area": "restoration",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "id": "LP170-B003",
+      "remediation": "Capture complete read-only owner evidence and reassess; do not perform a production operation."
+    },
+    {
+      "area": "rollback",
+      "classification": "SOURCE_UNAVAILABLE",
+      "id": "LP170-B004",
+      "remediation": "Capture complete read-only owner evidence and reassess; do not perform a production operation."
+    },
+    {
+      "area": "incidentResponse",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "id": "LP170-B005",
+      "remediation": "Capture complete read-only owner evidence and reassess; do not perform a production operation."
+    }
+  ],
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "classification": "NOT_READY",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170"
+}

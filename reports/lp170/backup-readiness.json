@@ -1,0 +1,16 @@
+{
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "checks": {
+    "configured": "SOURCE_UNAVAILABLE",
+    "frequency": "SOURCE_UNAVAILABLE",
+    "latestSuccessfulBackup": "SOURCE_UNAVAILABLE",
+    "ownerAssigned": "SOURCE_UNAVAILABLE",
+    "pointInTimeRecovery": "SOURCE_UNAVAILABLE",
+    "retention": "SOURCE_UNAVAILABLE"
+  },
+  "classification": "SOURCE_UNAVAILABLE",
+  "configuredBackupDoesNotCertifyRestoration": true,
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "productionRestoreExecuted": false
+}

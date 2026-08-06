@@ -1,0 +1,159 @@
+{
+  "boundary": "READ_ONLY_OPERATIONAL_EVIDENCE_AUDIT",
+  "classification": "SOURCE_UNAVAILABLE",
+  "generatedAt": "NOT_RECORDED_DETERMINISTIC",
+  "milestone": "LP170",
+  "principle": "LOG_PRESENCE_ALONE_DOES_NOT_CERTIFY_ALERTING",
+  "requiredSignals": [
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "APPLICATION_AVAILABILITY"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SEARCH_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "ROUTING_PROVIDER_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "EDGE_FUNCTION_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "SUPABASE_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "STORAGE_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "INCIDENT_INGESTION_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "REPORT_SUBMISSION_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "UNEXPECTED_AUTHENTICATION_FAILURES"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "CRITICAL_CLIENT_ERRORS"
+    },
+    {
+      "checks": {
+        "alertDestination": "SOURCE_UNAVAILABLE",
+        "alertThreshold": "SOURCE_UNAVAILABLE",
+        "behaviorValidated": "SOURCE_UNAVAILABLE",
+        "ownerAssigned": "SOURCE_UNAVAILABLE",
+        "responseProcedure": "SOURCE_UNAVAILABLE",
+        "signalAccessible": "SOURCE_UNAVAILABLE",
+        "signalExists": "SOURCE_UNAVAILABLE"
+      },
+      "classification": "SOURCE_UNAVAILABLE",
+      "identifier": "DEPLOYMENT_FAILURES"
+    }
+  ],
+  "serviceHealth": {
+    "database": "SOURCE_UNAVAILABLE",
+    "edgeFunctions": "SOURCE_UNAVAILABLE",
+    "githubDeployments": "SOURCE_UNAVAILABLE",
+    "storage": "SOURCE_UNAVAILABLE",
+    "supabaseProject": "SOURCE_UNAVAILABLE"
+  }
+}
