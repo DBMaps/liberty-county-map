@@ -10,22 +10,29 @@ if ($ParseErrors.Count -ne 0) { throw 'Capture script is not valid Windows Power
 $FunctionAst = $Ast.Find({ param($Node) $Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq 'Get-NormalizedInventoryNames' }, $true)
 if ($null -eq $FunctionAst) { throw 'Normalization helper was not found.' }
 & ([scriptblock]::Create($FunctionAst.Extent.Text))
-$DiagnosticFunctionAst = $FunctionAst.Find({ param($Node) $Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq 'Stop-InventoryNormalization' }, $true)
-if ($null -eq $DiagnosticFunctionAst) { throw 'Diagnostic helper was not found.' }
-& ([scriptblock]::Create($DiagnosticFunctionAst.Extent.Text))
 
-# Exercise ErrorRecord construction directly, independently of JSON parsing, so
-# invalid constructor syntax or reliance on a parent's dynamic $PSCmdlet fails.
+# Exercise diagnostic construction through the normalizer so its nested helper
+# runs within the lexical parent context used by the capture script.
 $DiagnosticCaught = $null
 try {
-  Stop-InventoryNormalization -ErrorId 'LP169InventoryDiagnosticConstruction' -Message 'diagnostic source expected record properties: [name]; observed properties only: [].' -TargetObject 'diagnostic source'
+  Get-NormalizedInventoryNames `
+    -SourceCommand 'diagnostic source' `
+    -JsonText '' `
+    -AllowedProperties @('name') `
+    -AllowEmpty | Out-Null
 } catch {
   $DiagnosticCaught = $_
 }
-if ($null -eq $DiagnosticCaught) { throw 'Direct diagnostic construction did not terminate.' }
-if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryDiagnosticConstruction') -or
-    $DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') {
-  throw "Direct diagnostic construction mismatch; FullyQualifiedErrorId=[$($DiagnosticCaught.FullyQualifiedErrorId)]; ExceptionType=[$($DiagnosticCaught.Exception.GetType().FullName)]."
+if ($null -eq $DiagnosticCaught) { throw 'Parent-path diagnostic construction did not terminate.' }
+$DiagnosticMessage = $DiagnosticCaught.Exception.Message
+if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryBlankOutput')) { throw 'Parent-path diagnostic lost its governed identifier.' }
+if ($DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw 'Parent-path diagnostic did not preserve System.ArgumentException.' }
+if ($DiagnosticCaught.Exception.GetType().Name -eq 'CommandNotFoundException') { throw 'Parent-path diagnostic escaped as CommandNotFoundException.' }
+if (-not $DiagnosticMessage.Contains('diagnostic source')) { throw 'Parent-path diagnostic omitted the safe source-command label.' }
+if (-not $DiagnosticMessage.Contains('expected record properties: [name]')) { throw 'Parent-path diagnostic omitted the expected schema.' }
+if (-not $DiagnosticMessage.Contains('observed properties only: []')) { throw 'Parent-path diagnostic omitted the observed property names.' }
+foreach ($ForbiddenDiagnosticValue in @('SECRET_DIAGNOSTIC_VALUE', 'CAPTURED_DIAGNOSTIC_VALUE')) {
+  if ($DiagnosticMessage.Contains($ForbiddenDiagnosticValue)) { throw 'A captured value escaped into the parent-path diagnostic.' }
 }
 
 function Assert-StableResult([string]$JsonText, [int]$ExpectedCount, [string]$ExpectedNames, [switch]$AllowEmpty) {

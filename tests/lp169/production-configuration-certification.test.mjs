@@ -251,7 +251,8 @@ test('inventory normalization rejects every unsafe response family without value
   assert.match(captureScript,/function Stop-InventoryNormalization\s*\{\s*\[CmdletBinding\(\)\]\s*param\(/);
   assert.match(captureScript,/\[System\.ArgumentException\]::new\(\$Message\)/);
   assert.match(captureScript,/\[System\.Management\.Automation\.ErrorRecord\]::new\(\s*\$Exception,\s*\$ErrorId,\s*\[System\.Management\.Automation\.ErrorCategory\]::InvalidData,\s*\$TargetObject\s*\)/);
-  assert.match(captureScript,/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/);
+  assert.equal([...captureScript.matchAll(/\$PSCmdlet\.ThrowTerminatingError\(\$ErrorRecord\)/g)].length,1,
+    'the nested diagnostic helper must terminate through its local PSCmdlet exactly once');
   for (const identifier of [
     'LP169InventorySchemaMismatch',
     'LP169InventoryBlankOutput',
