@@ -49,16 +49,30 @@ function Invoke-CapturedCommand([string]$CommandName, [object[]]$Arguments) {
 function Get-NormalizedInventoryNames {
   param(
     [Parameter(Mandatory=$true)][string]$SourceCommand,
-    [Parameter(Mandatory=$true)][AllowNull()]$InputObject,
+    [Parameter(Mandatory=$true)][AllowNull()][AllowEmptyString()][string]$JsonText,
     [Parameter(Mandatory=$true)][string[]]$AllowedProperties,
-    [string[]]$WrapperProperties = @()
+    [string[]]$WrapperProperties = @(),
+    [switch]$AllowEmpty
   )
 
   # Do not let PowerShell's convenient scalar/property coercions turn a CLI
   # error, status object, or wrapper into inventory evidence. Diagnostics name
   # schemas only; captured values are never included.
-  if ($null -eq $InputObject) { throw "$SourceCommand returned an empty inventory; expected record property [$($AllowedProperties -join ',')]; observed properties only: []." }
-  $Records = @($InputObject)
+  if ([string]::IsNullOrWhiteSpace($JsonText)) {
+    throw "$SourceCommand SOURCE_UNAVAILABLE; command returned no JSON; observed properties only: []."
+  }
+  try {
+    $InputObject = ConvertFrom-Json -InputObject $JsonText
+  } catch {
+    throw "$SourceCommand CAPTURE_FAILED; command returned invalid JSON; observed properties only: []."
+  }
+  if ($null -eq $InputObject -and $JsonText -notmatch '^\s*\[\s*\]\s*$') {
+    throw "$SourceCommand SOURCE_UNAVAILABLE; command returned null JSON; observed properties only: []."
+  }
+  # Windows PowerShell emits no pipeline object for JSON `[]`, just as it does
+  # for no output. Inspect the successfully parsed source text before creating
+  # the record collection so these two states remain distinguishable.
+  $Records = if ($JsonText -match '^\s*\[\s*\]\s*$') { @() } else { @($InputObject) }
   if ($Records.Count -eq 1 -and $null -ne $Records[0] -and -not ($Records[0] -is [string])) {
     $WrapperMatches = @($WrapperProperties | Where-Object { $null -ne $Records[0].PSObject.Properties[$_] })
     if ($WrapperMatches.Count -gt 1) {
@@ -67,7 +81,10 @@ function Get-NormalizedInventoryNames {
     }
     if ($WrapperMatches.Count -eq 1) { $Records = @($Records[0].PSObject.Properties[$WrapperMatches[0]].Value) }
   }
-  if ($Records.Count -eq 0) { throw "$SourceCommand returned an empty inventory; expected record property [$($AllowedProperties -join ',')]; observed properties only: []." }
+  if ($Records.Count -eq 0) {
+    if ($AllowEmpty) { return @() }
+    throw "$SourceCommand returned an empty inventory; expected record property [$($AllowedProperties -join ',')]; observed properties only: []."
+  }
 
   $Names = @()
   foreach ($Record in $Records) {
@@ -90,7 +107,9 @@ function Get-NormalizedInventoryNames {
 }
 
 function Write-SafeJson([string]$Name, $Data) {
-  $Json = $Data | ConvertTo-Json -Depth 8
+  # Parameter binding preserves an empty Object[] as JSON `[]`; pipeline input
+  # would enumerate it into no output and could publish only a newline.
+  $Json = ConvertTo-Json -InputObject $Data -Depth 8
   Write-Utf8NoBomFile (Join-Path $CaptureDirectory $Name) ($Json + "`n")
 }
 
@@ -103,8 +122,8 @@ $Projects = @(Invoke-CapturedCommand 'supabase' @('projects','list','--output','
   Select-Object id,name,region,status)
 Write-SafeJson 'supabase-project-safe.json' $Projects
 
-$SupabaseSecretResult = Invoke-CapturedCommand 'supabase' @('secrets','list','--project-ref',$ProjectRef,'--output','json') | ConvertFrom-Json
-$SecretNames = @(Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list --output json' -InputObject $SupabaseSecretResult -AllowedProperties @('name') |
+$SupabaseSecretJson = Invoke-CapturedCommand 'supabase' @('secrets','list','--project-ref',$ProjectRef,'--output','json')
+$SecretNames = @(Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list --output json' -JsonText $SupabaseSecretJson -AllowedProperties @('name') -AllowEmpty |
   ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
 Write-SafeJson 'supabase-secret-names-safe.json' $SecretNames
 
@@ -120,8 +139,8 @@ Write-SafeJson 'github-repository-safe.json' ([pscustomobject]@{
   isPrivate = $RepoMetadata.isPrivate
   defaultBranch = $RepoMetadata.defaultBranchRef.name
 })
-$GitHubRepositorySecretResult = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--app','actions','--json','name') | ConvertFrom-Json
-$RepoSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --app actions --json name' -InputObject $GitHubRepositorySecretResult -AllowedProperties @('name') |
+$GitHubRepositorySecretJson = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--app','actions','--json','name')
+$RepoSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --app actions --json name' -JsonText $GitHubRepositorySecretJson -AllowedProperties @('name') -AllowEmpty |
   ForEach-Object { [pscustomobject]@{ name = $_; status = 'PRESENT' } })
 Write-SafeJson 'github-secret-names-safe.json' $RepoSecrets
 $Workflows = @(Invoke-CapturedCommand 'gh' @('workflow','list','--repo',$Repository,'--json','name,state,path') | ConvertFrom-Json | Sort-Object path)
@@ -133,8 +152,8 @@ $Environments = @(Invoke-CapturedCommand 'gh' @('api','--paginate',"repos/$Repos
   ForEach-Object { $_ | ConvertFrom-Json } | Sort-Object name)
 Write-SafeJson 'github-environments-safe.json' $Environments
 foreach ($Environment in $Environments) {
-  $GitHubEnvironmentSecretResult = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--env',$Environment.name,'--app','actions','--json','name') | ConvertFrom-Json
-  $EnvironmentSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --env --app actions --json name' -InputObject $GitHubEnvironmentSecretResult -AllowedProperties @('name') |
+  $GitHubEnvironmentSecretJson = Invoke-CapturedCommand 'gh' @('secret','list','--repo',$Repository,'--env',$Environment.name,'--app','actions','--json','name')
+  $EnvironmentSecrets = @(Get-NormalizedInventoryNames -SourceCommand 'gh secret list --repo --env --app actions --json name' -JsonText $GitHubEnvironmentSecretJson -AllowedProperties @('name') -AllowEmpty |
     ForEach-Object { [pscustomobject]@{ environment = $Environment.name; name = $_; status = 'PRESENT' } })
   Write-SafeJson ("github-environment-{0}-secret-names-safe.json" -f ($Environment.name -replace '[^A-Za-z0-9_.-]','_')) $EnvironmentSecrets
 }

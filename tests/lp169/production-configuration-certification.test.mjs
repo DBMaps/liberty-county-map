@@ -202,7 +202,27 @@ test('owner inventories use schema-aware PowerShell 5.1-safe normalization',()=>
   ]) assert.ok(captureScript.includes(`-SourceCommand '${source}'`));
   assert.match(captureScript,/\[string\[\]\]\$AllowedProperties/);
   assert.match(captureScript,/\[string\[\]\]\$WrapperProperties/);
+  assert.match(captureScript,/\[switch\]\$AllowEmpty/);
+  assert.match(captureScript,/ConvertFrom-Json -InputObject \$JsonText/);
+  assert.match(captureScript,/\$JsonText -match '\^\\s\*\\\[\\s\*\\\]\\s\*\$'/);
   assert.match(captureScript,/if \(\$WrapperMatches\.Count -eq 1\)/);
+});
+
+test('secret inventory callers explicitly accept valid zero-record observations',()=>{
+  for (const source of [
+    'supabase secrets list --output json',
+    'gh secret list --repo --app actions --json name',
+    'gh secret list --repo --env --app actions --json name'
+  ]) {
+    const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    assert.match(captureScript,new RegExp(`-SourceCommand '${escaped}'[^\\n]*-AllowEmpty`));
+  }
+  assert.match(captureScript,/if \(\$AllowEmpty\) \{ return @\(\) \}/);
+  assert.match(captureScript,/ConvertTo-Json -InputObject \$Data -Depth 8/);
+  assert.match(captureScript,/SOURCE_UNAVAILABLE; command returned (?:no|null) JSON/);
+  assert.match(captureScript,/CAPTURE_FAILED; command returned invalid JSON/);
+  assert.match(captureScript,/status = 'PRESENT'/);
+  assert.doesNotMatch(captureScript,/AllowEmpty[\s\S]{0,80}status = 'PASS'/);
 });
 
 test('inventory normalization rejects every unsafe response family without values in diagnostics',()=>{

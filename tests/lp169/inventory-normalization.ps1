@@ -13,9 +13,9 @@ if ($null -eq $FunctionAst) { throw 'Normalization helper was not found.' }
 function Assert-Equal([string]$Expected, [string]$Actual, [string]$Label) {
   if ($Expected -cne $Actual) { throw "$Label assertion failed." }
 }
-function Assert-Rejected($InputObject, [string[]]$AllowedProperties, [string[]]$WrapperProperties, [string]$ForbiddenValue) {
+function Assert-Rejected([AllowNull()][AllowEmptyString()][string]$JsonText, [string[]]$AllowedProperties, [string[]]$WrapperProperties, [string]$ForbiddenValue, [switch]$AllowEmpty) {
   try {
-    Get-NormalizedInventoryNames -SourceCommand 'test source command' -InputObject $InputObject -AllowedProperties $AllowedProperties -WrapperProperties $WrapperProperties | Out-Null
+    Get-NormalizedInventoryNames -SourceCommand 'test source command' -JsonText $JsonText -AllowedProperties $AllowedProperties -WrapperProperties $WrapperProperties -AllowEmpty:$AllowEmpty | Out-Null
     throw 'Malformed inventory was accepted.'
   } catch {
     if ($_.Exception.Message -eq 'Malformed inventory was accepted.') { throw }
@@ -24,14 +24,18 @@ function Assert-Rejected($InputObject, [string[]]$AllowedProperties, [string[]]$
   }
 }
 
-$GitHub = @([pscustomobject]@{ name = 'ZETA' }, [pscustomobject]@{ name = 'ALPHA' }, [pscustomobject]@{ name = 'ALPHA' })
-Assert-Equal 'ALPHA,ZETA' ((Get-NormalizedInventoryNames -SourceCommand 'gh secret list' -InputObject $GitHub -AllowedProperties @('name')) -join ',') 'GitHub name array'
-$Supabase = [pscustomobject]@{ secrets = @([pscustomobject]@{ name = 'SECOND' }, [pscustomobject]@{ name = 'FIRST' }) }
-Assert-Equal 'FIRST,SECOND' ((Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list' -InputObject $Supabase -AllowedProperties @('name') -WrapperProperties @('secrets')) -join ',') 'explicit Supabase wrapper'
-Assert-Rejected ([pscustomobject]@{ secrets = @([pscustomobject]@{ name = 'VALUE' }) }) @('name') @() 'VALUE'
-Assert-Rejected ([pscustomobject]@{ status = 'SECRET_VALUE' }) @('name') @() 'SECRET_VALUE'
-Assert-Rejected 'SECRET_SCALAR' @('name') @() 'SECRET_SCALAR'
-Assert-Rejected @([pscustomobject]@{ name = 'VALID' }, [pscustomobject]@{ status = 'SECRET_INVALID' }) @('name') @() 'SECRET_INVALID'
-Assert-Rejected ([pscustomobject]@{ name = 'ONE'; slug = 'TWO' }) @('name','slug') @() 'ONE'
+Assert-Equal '' ((Get-NormalizedInventoryNames -SourceCommand 'allowed empty' -JsonText '[]' -AllowedProperties @('name') -AllowEmpty) -join ',') 'allowed empty array'
+Assert-Rejected '[]' @('name') @() ''
+Assert-Rejected '' @('name') @() '' -AllowEmpty
+Assert-Rejected $null @('name') @() '' -AllowEmpty
+Assert-Rejected 'null' @('name') @() '' -AllowEmpty
+Assert-Rejected '[{}]' @('name') @() '' -AllowEmpty
+Assert-Equal 'ALPHA,ZETA' ((Get-NormalizedInventoryNames -SourceCommand 'gh secret list' -JsonText '[{"name":"ZETA"},{"name":"ALPHA"},{"name":"ALPHA"}]' -AllowedProperties @('name')) -join ',') 'GitHub name array'
+Assert-Equal 'FIRST,SECOND' ((Get-NormalizedInventoryNames -SourceCommand 'supabase secrets list' -JsonText '{"secrets":[{"name":"SECOND"},{"name":"FIRST"}]}' -AllowedProperties @('name') -WrapperProperties @('secrets')) -join ',') 'explicit Supabase wrapper'
+Assert-Rejected '{"secrets":[{"name":"VALUE"}]}' @('name') @() 'VALUE'
+Assert-Rejected '{"status":"SECRET_VALUE"}' @('name') @() 'SECRET_VALUE'
+Assert-Rejected '"SECRET_SCALAR"' @('name') @() 'SECRET_SCALAR'
+Assert-Rejected '[{"name":"VALID"},{"status":"SECRET_INVALID"}]' @('name') @() 'SECRET_INVALID'
+Assert-Rejected '{"name":"ONE","slug":"TWO"}' @('name','slug') @() 'ONE'
 
 Write-Output 'inventory normalization regression tests passed'
