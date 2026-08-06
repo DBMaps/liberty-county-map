@@ -10,6 +10,21 @@ if ($ParseErrors.Count -ne 0) { throw 'Capture script is not valid Windows Power
 $FunctionAst = $Ast.Find({ param($Node) $Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq 'Get-NormalizedInventoryNames' }, $true)
 if ($null -eq $FunctionAst) { throw 'Normalization helper was not found.' }
 & ([scriptblock]::Create($FunctionAst.Extent.Text))
+$DiagnosticFunctionAst = $FunctionAst.Find({ param($Node) $Node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $Node.Name -eq 'Stop-InventoryNormalization' }, $true)
+if ($null -eq $DiagnosticFunctionAst) { throw 'Diagnostic helper was not found.' }
+& ([scriptblock]::Create($DiagnosticFunctionAst.Extent.Text))
+
+# Exercise ErrorRecord construction directly, independently of JSON parsing, so
+# invalid constructor syntax or reliance on a parent's dynamic $PSCmdlet fails.
+$DiagnosticCaught = $null
+try {
+  Stop-InventoryNormalization -ErrorId 'LP169InventoryDiagnosticConstruction' -Message 'diagnostic source expected record properties: [name]; observed properties only: [].' -TargetObject 'diagnostic source'
+} catch {
+  $DiagnosticCaught = $_
+}
+if ($null -eq $DiagnosticCaught) { throw 'Direct diagnostic construction did not terminate.' }
+if (-not $DiagnosticCaught.FullyQualifiedErrorId.StartsWith('LP169InventoryDiagnosticConstruction')) { throw 'Direct diagnostic construction lost its governed identifier.' }
+if ($DiagnosticCaught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw 'Direct diagnostic construction did not preserve ArgumentException.' }
 
 function Assert-StableResult([string]$JsonText, [int]$ExpectedCount, [string]$ExpectedNames, [switch]$AllowEmpty) {
   [object[]]$Actual = Get-NormalizedInventoryNames -SourceCommand 'stable result' -JsonText $JsonText -AllowedProperties @('name') -AllowEmpty:$AllowEmpty
@@ -26,10 +41,11 @@ function Assert-Rejected([string]$Case, [AllowNull()][AllowEmptyString()][string
     $Caught = $_
   }
   if ($null -eq $Caught) { throw "$Case`: malformed inventory was accepted." }
-  $ActualErrorId = @($Caught.FullyQualifiedErrorId -split ',')[0]
   $Message = $Caught.Exception.Message
+  if (-not $Caught.FullyQualifiedErrorId.StartsWith($ExpectedErrorId)) { throw "$Case`: expected governed error identifier $ExpectedErrorId but received $($Caught.FullyQualifiedErrorId)." }
+  if ($Caught.Exception.GetType().FullName -cne 'System.ArgumentException') { throw "$Case`: governed rejection did not preserve System.ArgumentException." }
+  if ($Caught.Exception.GetType().Name -eq 'CommandNotFoundException') { throw "$Case`: invalid constructor syntax escaped as CommandNotFoundException." }
   if ($Caught.Exception.GetType().Name -eq 'PropertyNotFoundException') { throw "$Case`: PropertyNotFoundStrict escaped the normalizer." }
-  if ($ActualErrorId -cne $ExpectedErrorId) { throw "$Case`: expected governed error identifier $ExpectedErrorId but received $ActualErrorId." }
   if (-not $Message.Contains('test source command')) { throw "$Case`: source command label was absent from the diagnostic." }
   if (-not $Message.Contains("expected record properties: [$($AllowedProperties -join ',')]")) { throw "$Case`: expected schema was absent from the diagnostic." }
   $ExpectedObserved = "observed properties only: [$($ExpectedObservedProperties -join ',')]"
