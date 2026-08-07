@@ -2920,6 +2920,9 @@ if (typeof window !== "undefined") window.gridlyInvalidatePortraitAlertsCanonica
 
 function gridlyLp0534cInvalidateCurrentStateModels(reason = "immediate-clear-convergence") {
   gridlyRefreshCycleCache = createGridlyRefreshCycleCache();
+  // Destination Intelligence consumes the same lifecycle-reduced Route Watch
+  // incidents. A clear must invalidate its snapshots along with Awareness.
+  if (typeof invalidateGridlyDestinationRouteIntelligenceCache === "function") invalidateGridlyDestinationRouteIntelligenceCache();
   if (typeof gridlyAuthoritativeIncidentSnapshotState !== "undefined") gridlyAuthoritativeIncidentSnapshotState.snapshot = null;
   if (typeof gridlyInvalidatePortraitAlertsCanonicalRenderCaches === "function") gridlyInvalidatePortraitAlertsCanonicalRenderCaches(reason);
   if (typeof gridlyV734RefreshReuseState !== "undefined") {
@@ -37763,8 +37766,11 @@ function renderGridlyDestinationImpactPane() {
     ];
     const railCount = records.filter((record) => isGridlyDestinationRouteActiveRailReason(record)).length;
     const weatherCount = records.filter((record) => /weather|rain|storm|flood|wind|fog|ice/i.test(getGridlyDestinationRouteReasonInspectionText(record))).length;
-    const communityCount = Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports.length : 0;
-    const officialCount = Math.max(0, records.length - railCount - weatherCount - communityCount);
+    const communityCount = records.filter((record) => {
+      const source = String(record?.sourceType || record?.source || "").toLowerCase();
+      return source === "community" || (!source && (Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : []).includes(record));
+    }).length;
+    const officialCount = records.filter((record) => isGridlyDestinationRouteOfficialRoadwayEvidence(record)).length;
     paneEls.why.textContent = "";
     paneEls.why.hidden = false;
     renderGridlyUnifiedEvidence(paneEls.why, buildGridlyUnifiedEvidencePresentation({
@@ -40803,6 +40809,7 @@ function buildGridlyDestinationRouteMatch(record = {}, routePoints = [], fallbac
       severity: pickGridlyDestinationRouteFirstText(record?.severity, record?.priority, record?.impactLevel, record?.raw?.severity, record?.latestReport?.severity),
       status: pickGridlyDestinationRouteFirstText(record?.status, record?.state, record?.lifecycle, record?.raw?.status, record?.latestReport?.status),
       sourceType: pickGridlyDestinationRouteFirstText(record?.sourceType, record?.source, record?.provider, record?.raw?.source),
+      providerId: pickGridlyDestinationRouteFirstText(record?.providerId, record?.provider_id, record?.raw?.providerId, record?.raw?.provider_id),
       impactText: pickGridlyDestinationRouteFirstText(
         record?.routeImpact,
         record?.description,
@@ -40937,7 +40944,10 @@ function getGridlyDestinationRouteSourceSignature() {
     hazards: buildSignature(getGridlyDestinationRouteHazardSource()),
     reports: buildSignature(getGridlyDestinationRouteReportSource()),
     crossings: buildSignature(getGridlyDestinationRouteCrossingSource()),
-    alerts: buildSignature(getGridlyDestinationRouteAlertSource())
+    alerts: buildSignature(getGridlyDestinationRouteAlertSource()),
+    // Remote Route Watch incidents are intentionally absent from selected-area
+    // activeHazards, so they need their own cache identity.
+    routeWatch: buildSignature(getRouteWatchCommunitySourceIncidents())
   };
 }
 
@@ -41115,6 +41125,19 @@ function isGridlyDestinationRouteClosureMatch(item = {}) {
   return /road[_\s-]*(closed|closure)|\bclosure\b|\bclosed\b|impassable|all lanes/.test(getGridlyDestinationRouteImpactInspectionText(item));
 }
 
+function isGridlyDestinationRouteFloodingMatch(item = {}) {
+  return /flood|high water|standing water/.test(getGridlyDestinationRouteImpactInspectionText(item));
+}
+
+function isGridlyDestinationRouteOfficialRoadwayEvidence(item = {}) {
+  if (String(item?.status || "active").toLowerCase() !== "active") return false;
+  const source = String(item?.sourceType || item?.source || "").toLowerCase().trim();
+  const providerId = String(item?.providerId || item?.provider_id || "").toLowerCase().trim();
+  // Only normalized current-provider identity qualifies. Descriptions, raw
+  // categories, and future_source hints are deliberately not inspected.
+  return [source, providerId].some((identity) => ["txdot", "drivetexas", "drive_texas"].includes(identity));
+}
+
 function isGridlyDestinationRouteHighImpactRailMatch(item = {}) {
   return isGridlyDestinationRouteActiveRailReason(item);
 }
@@ -41133,11 +41156,13 @@ function getGridlyDestinationRoutePrimaryImpactReason(impactLevel = "none", matc
   const railMatches = Array.isArray(matches.railMatches) ? matches.railMatches : [];
   const closureMatches = Array.isArray(matches.closureMatches) ? matches.closureMatches : [];
   const constructionMatches = Array.isArray(matches.constructionMatches) ? matches.constructionMatches : [];
+  const floodingMatches = Array.isArray(matches.floodingMatches) ? matches.floodingMatches : [];
   const hazardMatches = Array.isArray(matches.hazardMatches) ? matches.hazardMatches : [];
   const alertMatches = Array.isArray(matches.alertMatches) ? matches.alertMatches : [];
   const reportMatches = Array.isArray(matches.reportMatches) ? matches.reportMatches : [];
   if (String(impactLevel || "none") === "high" && railMatches.length > 0) return getGridlyDestinationRouteActiveRailReasonCopy(railMatches);
   if (closureMatches.length > 0) return "Road closure reported near this route";
+  if (floodingMatches.length > 0) return "Flooding reported near this route";
   if (constructionMatches.length > 0) return "Construction activity reported near this route";
   if (hazardMatches.length > 0 || alertMatches.length > 0) return "Active hazard reported near this route";
   if (reportMatches.length > 0) return "Community report near this route";
@@ -41226,6 +41251,7 @@ function buildGridlyDestinationRouteImpactAudit(options = {}) {
   const railImpactMatches = signalMatches.filter((item) => isGridlyDestinationRouteHighImpactRailMatch(item));
   const closureMatches = [...matchedHazards, ...matchedAlerts].filter((item) => isGridlyDestinationRouteClosureMatch(item));
   const constructionMatches = [...matchedHazards, ...matchedAlerts].filter((item) => isGridlyDestinationRouteConstructionMatch(item));
+  const floodingMatches = [...matchedHazards, ...matchedAlerts].filter((item) => isGridlyDestinationRouteFloodingMatch(item));
   const highImpactHazards = matchedHazards.filter((item) => isGridlyDestinationRouteHighImpactMatch(item));
   const highImpactAlerts = matchedAlerts.filter((item) => isGridlyDestinationRouteHighImpactMatch(item));
   const reasoning = [];
@@ -41259,6 +41285,7 @@ function buildGridlyDestinationRouteImpactAudit(options = {}) {
     railMatches: railImpactMatches,
     closureMatches,
     constructionMatches,
+    floodingMatches,
     hazardMatches: matchedHazards,
     alertMatches: matchedAlerts,
     reportMatches: matchedReports
