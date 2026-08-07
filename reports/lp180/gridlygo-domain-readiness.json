@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "gridly.lp180.gridlygoDomainReadiness.v1",
+  "milestone": "LP180",
+  "domain": "gridlygo.com",
+  "canonicalHost": "gridlygo.com",
+  "redirectHost": "www.gridlygo.com",
+  "validationHost": "preview.gridlygo.com",
+  "gridlygoReadiness": {
+    "classification": "BLOCKED_BY_AUTHORIZATION",
+    "evidence": "Repository host gate and origin-relative PWA configuration are prepared, but no host, custom domain, DNS, certificate, or deployment is configured.",
+    "remainingAction": "Complete owner/platform setup only after the required authorizations.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "dnsRequirements": {
+    "classification": "OWNER_ACTION_REQUIRED",
+    "evidence": "For the recommended GitHub Pages architecture, apex record categories are A and optionally AAAA; www and preview use CNAME when configured as platform custom domains. A TXT record may be required for domain verification. Exact targets must come from the current GitHub Pages repository/account setup and platform documentation; the repository contains no supported account-specific values. MX is out of scope.",
+    "remainingAction": "Owner obtains the exact current targets from the configured platform, verifies ownership, removes conflicts if instructed, then changes DNS only under separate authorization.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "httpsReadiness": {
+    "classification": "PLATFORM_ACTION_REQUIRED",
+    "evidence": "No certificate or custom-domain evidence exists. GitHub Pages/platform is expected to own certificate issuance after DNS/custom-domain verification; this has not been executed or proven.",
+    "remainingAction": "Platform provisions HTTPS and owner enables/enforces it only after authorization.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "customDomainReadiness": {
+    "classification": "PLATFORM_ACTION_REQUIRED",
+    "evidence": "No CNAME file or repository custom-domain configuration is present. No unsupported value was added.",
+    "remainingAction": "Configure the domain through the selected host UI/workflow after verifying current platform requirements.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "originSensitiveIntegrations": {
+    "supabaseAuthRedirects": {
+      "classification": "NOT_APPLICABLE",
+      "evidence": "Runtime creates a data client but no Supabase Auth, OAuth, or auth callback flow was found.",
+      "remainingAction": "Re-audit if authentication is introduced.",
+      "ownerDependency": false,
+      "platformDependency": false,
+      "repositoryDependency": false
+    },
+    "corsAndApiAllowlists": {
+      "classification": "READY",
+      "evidence": "No repository-managed browser-origin allowlist or CSP was found. Supabase data APIs and external connectors use browser HTTPS/CORS; live acceptance still requires authorized device validation.",
+      "remainingAction": "Confirm project/platform logs and connector behavior on the authorized origin; do not change security settings without failure evidence.",
+      "ownerDependency": true,
+      "platformDependency": true,
+      "repositoryDependency": false
+    },
+    "storageOriginChecks": {
+      "classification": "NOT_APPLICABLE",
+      "evidence": "No hostname-bound storage check was found; browser local storage/cache/service workers remain origin isolated.",
+      "remainingAction": "No repository action.",
+      "ownerDependency": false,
+      "platformDependency": false,
+      "repositoryDependency": false
+    },
+    "referrerPolicy": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No explicit referrer-policy metadata/header configuration was found.",
+      "remainingAction": "Choose a reviewed host-level policy before launch.",
+      "ownerDependency": false,
+      "platformDependency": true,
+      "repositoryDependency": true
+    }
+  },
+  "appStoreFutureCompatibility": {
+    "classification": "REPOSITORY_ACTION_REQUIRED",
+    "evidence": "gridlygo.com can be a future marketing/PWA origin, but approved privacy, terms, and support URLs do not yet exist and HTTPS ownership is unproven.",
+    "remainingAction": "Close legal/support and HTTPS/custom-domain blockers before store metadata submission.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": true
+  },
+  "ownerActions": [
+    "Authorize deployment/distribution before any reachable validation origin",
+    "Select/configure host",
+    "Obtain platform-generated DNS targets",
+    "Perform domain verification and later DNS changes",
+    "Provide legal/support approvals",
+    "Configure support email separately if desired"
+  ],
+  "repositoryActions": [
+    "No web publisher enabled under LP180",
+    "After authorization, add a manual fail-closed Pages publishing workflow/custom-domain configuration",
+    "After legal approval, implement privacy/terms/support routes",
+    "After launch authorization, add canonical/share metadata and reviewed discoverability policy"
+  ],
+  "authorizations": {
+    "deployment": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "operationsPerformed": {
+    "dnsChanges": 0,
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "restores": 0,
+    "rollbacks": 0
+  }
+}

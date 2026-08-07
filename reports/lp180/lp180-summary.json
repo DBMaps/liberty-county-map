@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "gridly.lp180.summary.v1",
+  "milestone": "LP180",
+  "classification": "PASS",
+  "mergeRecommendation": "READY_TO_MERGE",
+  "foundationPrepared": true,
+  "physicalDeviceValidationExecuted": false,
+  "sameArtifactSuitable": true,
+  "oldBetaCanRemainClosed": true,
+  "recommendedHost": "GitHub Pages",
+  "recommendedCanonicalHost": "gridlygo.com",
+  "recommendedValidationHost": "preview.gridlygo.com",
+  "gridlygoReadiness": "BLOCKED_BY_AUTHORIZATION",
+  "physicalDeviceValidationAccessReadiness": "BLOCKED_BY_AUTHORIZATION",
+  "privacyRouteReadiness": "NOT_CONFIGURED",
+  "termsRouteReadiness": "NOT_CONFIGURED",
+  "supportRouteReadiness": "NOT_CONFIGURED",
+  "protectedRuntimeBusinessLogicChanged": false,
+  "lp179ConclusionsChanged": false,
+  "authorizations": {
+    "deployment": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "operationsPerformed": {
+    "dnsChanges": 0,
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "restores": 0,
+    "rollbacks": 0
+  },
+  "canonicalLf": "PASS",
+  "utf8WithoutBom": "PASS",
+  "deterministicTwoGeneration": "PASS",
+  "secretSafety": "PASS"
+}

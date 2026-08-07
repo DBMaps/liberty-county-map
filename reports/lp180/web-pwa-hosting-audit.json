@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "gridly.lp180.webPwaHostingAudit.v1",
+  "milestone": "LP180",
+  "auditOnly": true,
+  "currentHost": {
+    "classification": "NOT_CONFIGURED",
+    "evidence": "No CNAME, Pages publication workflow, Pages source configuration, or Vercel/Netlify/Cloudflare/Firebase hosting configuration is present. The repository does not identify the external historical beta provider or URL.",
+    "remainingAction": "Owner must identify the historical beta hostname/provider and confirm its platform mapping before any hosting action.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "currentBetaUrlClassification": {
+    "classification": "NOT_CONFIGURED",
+    "evidence": "The URL itself is not stored in the repository. Every non-local, non-allowlisted hostname is treated as historical/closed.",
+    "remainingAction": "Record the old beta hostname as owner evidence without reopening it.",
+    "ownerDependency": true,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "betaClosureMechanism": {
+    "classification": "READY",
+    "evidence": "index.html gridlyHostnameGate executes at runtime before app paint. It lowercases location.hostname; localhost, 127.0.0.1, gridlygo.com, www.gridlygo.com, and preview.gridlygo.com may continue. Every other/unknown hostname redirects to ./beta-closed.html. Query strings are preserved except redirect-like parameters. beta-closed.html registers ./service-worker.js at ./ scope and removes recognized old Gridly caches.",
+    "remainingAction": "Keep the historical hostname outside the explicit production-candidate allowlist.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "hostDifferentiation": {
+    "classification": "READY",
+    "evidence": "One static artifact behaves differently by exact runtime hostname; unknown hosts fail closed and local development remains available.",
+    "remainingAction": "Add any future candidate hostname only through governed review and deterministic tests.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "recommendedProductionHost": {
+    "classification": "PLATFORM_ACTION_REQUIRED",
+    "evidence": "GitHub Pages is the smallest repository-aligned option: the application is static, uses relative paths, includes an explicit GitHub Pages compatibility audit, and needs no server-side SPA rewrite for the current single-page root entry. No Pages publisher is currently configured.",
+    "remainingAction": "Owner must select/configure GitHub Pages and obtain current account/repository-specific custom-domain instructions before DNS or deployment.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "recommendedValidationHost": {
+    "classification": "BLOCKED_BY_AUTHORIZATION",
+    "evidence": "preview.gridlygo.com is allowlisted as the distinct validation candidate and keeps gridlygo.com reserved for eventual launch. It must serve the same artifact. A reachable URL is distribution under the unchanged governance boundary; noindex or obscurity is not access control.",
+    "remainingAction": "Obtain explicit Deployment and Distribution authorization before publishing the preview origin.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "hostingDecision": {
+    "recommendedHost": "GitHub Pages",
+    "currentHost": "NOT_EVIDENCED_IN_REPOSITORY",
+    "why": "Static relative-path PWA plus existing GitHub Pages compatibility logic; avoids an unsupported migration.",
+    "migrationRequired": false
+  },
+  "deploymentWorkflow": {
+    "trigger": "NOT_CONFIGURED_FOR_WEB; only Capacitor Validation runs on pull_request and workflow_dispatch",
+    "source": "Repository-root static assets; no publishing artifact is currently produced",
+    "productionBranch": "main (authoritative policy; no web publisher configured)",
+    "rollbackMethod": "NOT_CONFIGURED; after authorization, prefer redeploying a reviewed prior main commit/artifact. Rollback remains NOT_AUTHORIZED."
+  },
+  "manifest": {
+    "classification": "READY",
+    "evidence": "manifest.json uses Gridly/Gridly, standalone, relative ./ start_url and scope, relative 192/512 icons, #020812 background and #06101f theme. These values are origin-portable.",
+    "remainingAction": "Validate installability on authorized HTTPS origins.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "serviceWorker": {
+    "classification": "READY",
+    "evidence": "js/app.js registers ./service-worker.js with ./ scope. The worker is same-origin only, navigation network-first with no-store and cached ./index.html fallback; listed closure shell assets are cache-first.",
+    "remainingAction": "Do not broaden scope. Validate the production candidate online; full offline app operation is not claimed.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "cacheSafety": {
+    "classification": "READY",
+    "evidence": "Cache name gridly-pwa-shell-lp1011-v1 and version lp101.1-runtime-recovery are unchanged. Service-worker storage is origin-scoped, so old-beta caches cannot cross into gridlygo.com or preview.gridlygo.com. A fresh candidate origin requires no cache-version bump. On the old origin, activation deletes other gridly-pwa-shell-* and gridly-beta-closure-* caches; navigation refreshes index from network when available.",
+    "remainingAction": "If the worker bytes or precache contract later change, issue a reviewed deterministic version/cache-name increment; no global cache clearing is required now.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "metadata": {
+    "classification": "REPOSITORY_ACTION_REQUIRED",
+    "evidence": "Description/theme/mobile metadata exist, but canonical URL, Open Graph URL/image metadata, social metadata, robots policy, and sitemap are absent. The visible shell still contains Liberty County Beta branding.",
+    "remainingAction": "After launch/legal authorization, add reviewed canonical/share/SEO metadata and remove beta branding in a separately authorized presentation change.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": true
+  },
+  "absoluteUrls": {
+    "classification": "READY",
+    "evidence": "Core PWA files and local assets use relative URLs. External runtime dependencies/API endpoints are HTTPS. No old beta URL or host-specific redirect target is stored.",
+    "remainingAction": "Re-audit third-party availability and policy before deployment.",
+    "ownerDependency": false,
+    "platformDependency": false,
+    "repositoryDependency": false
+  },
+  "legalRoutes": {
+    "privacy": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No /privacy route or approved privacy-policy file exists.",
+      "remainingAction": "Owner/legal approval and repository implementation are launch blockers.",
+      "ownerDependency": true,
+      "platformDependency": false,
+      "repositoryDependency": true
+    },
+    "terms": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No /terms route or approved terms file exists.",
+      "remainingAction": "Owner/legal approval and repository implementation are launch blockers.",
+      "ownerDependency": true,
+      "platformDependency": false,
+      "repositoryDependency": true
+    },
+    "support": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No /support route exists; support@gridlygo.com is only a future possibility and no MX/email configuration was performed.",
+      "remainingAction": "Create approved support content and configure email separately; do not add MX under LP180.",
+      "ownerDependency": true,
+      "platformDependency": true,
+      "repositoryDependency": true
+    },
+    "communityReportingDisclaimer": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No standalone approved legal route was found.",
+      "remainingAction": "Obtain legal approval and publish only under later authorization.",
+      "ownerDependency": true,
+      "platformDependency": false,
+      "repositoryDependency": true
+    },
+    "subscriptionRefundTerms": {
+      "classification": "NOT_CONFIGURED",
+      "evidence": "No standalone approved terms were found.",
+      "remainingAction": "Determine applicability and obtain legal approval.",
+      "ownerDependency": true,
+      "platformDependency": false,
+      "repositoryDependency": true
+    }
+  }
+}
