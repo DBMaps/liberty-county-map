@@ -1,0 +1,497 @@
+{
+  "schemaVersion": "LP184.1B-1",
+  "milestone": "LP184.1B",
+  "sourceAudit": "LP184.1A",
+  "draftOnly": true,
+  "generatedAt": null,
+  "status": "DRAFT_COMPLETE_GOOGLE_POLICY_REVIEW_REQUIRED",
+  "policyDecision": "GOOGLE_POLICY_REVIEW_REQUIRED",
+  "backgroundLocationCollected": "NO_IMPLEMENTATION_PROVEN",
+  "categories": [
+    {
+      "dataCategory": "Location",
+      "dataType": "Precise location — Supabase community report coordinates",
+      "collected": "YES",
+      "shared": "UNKNOWN",
+      "ephemeral": "NO",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NO",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        }
+      ],
+      "platformReviewRequired": true
+    },
+    {
+      "dataCategory": "Location",
+      "dataType": "Precise location — transient OSRM/Nominatim requests",
+      "collected": "YES",
+      "shared": "UNKNOWN",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        }
+      ],
+      "platformReviewRequired": true
+    },
+    {
+      "dataCategory": "Location",
+      "dataType": "Approximate location",
+      "collected": "UNKNOWN",
+      "shared": "UNKNOWN",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        }
+      ],
+      "platformReviewRequired": true
+    },
+    {
+      "dataCategory": "Personal Info",
+      "dataType": "Name/email/address/phone/user IDs",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Financial Info",
+      "dataType": "Payment and purchase information",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Health and Fitness",
+      "dataType": "Health and fitness information",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Messages",
+      "dataType": "Emails/SMS/other in-app messages",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Photos and Videos",
+      "dataType": "Photos/videos",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Audio",
+      "dataType": "Voice/music/other audio",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Files and Documents",
+      "dataType": "Files/documents",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Calendar",
+      "dataType": "Calendar events",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Contacts",
+      "dataType": "Contacts",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "App Activity",
+      "dataType": "Other user-generated content / community report activity",
+      "collected": "YES",
+      "shared": "UNKNOWN",
+      "ephemeral": "NO",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NO",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        }
+      ],
+      "platformReviewRequired": true
+    },
+    {
+      "dataCategory": "App Activity",
+      "dataType": "App interactions / searches",
+      "collected": "UNKNOWN",
+      "shared": "UNKNOWN",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[saved_places_and_preferences]/localStorage",
+          "finding": "Saved places and preferences stay local; searches may be transmitted to Nominatim but server persistence is unknown."
+        }
+      ],
+      "platformReviewRequired": true
+    },
+    {
+      "dataCategory": "Web Browsing",
+      "dataType": "Web browsing history",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "App Info and Performance",
+      "dataType": "Crash logs/diagnostics/performance",
+      "collected": "NO",
+      "shared": "NO",
+      "ephemeral": "UNKNOWN",
+      "requiredOrOptional": "UNKNOWN",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NOT_APPLICABLE",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "platformReviewRequired": false
+    },
+    {
+      "dataCategory": "Device or Other IDs",
+      "dataType": "Persistent pseudonymous device_id",
+      "collected": "YES",
+      "shared": "UNKNOWN",
+      "ephemeral": "NO",
+      "requiredOrOptional": "OPTIONAL",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "encryptedInTransit": "UNKNOWN",
+      "deletionRequestSupported": "NO",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "platformReviewRequired": true
+    }
+  ],
+  "thirdPartyDataFlows": [
+    {
+      "provider": "Supabase",
+      "dataCategory": [
+        "Location",
+        "User Content",
+        "Device or Other IDs"
+      ],
+      "dataSent": [
+        "community report fields including coordinates and device_id",
+        "database queries"
+      ],
+      "purpose": "Shared reports, realtime changes, public roadway assets",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "HIGH_FLOW_CONFIDENCE_POLICY_CLASSIFICATION_UNRESOLVED"
+    },
+    {
+      "provider": "OSRM public demo server",
+      "dataCategory": [
+        "Location"
+      ],
+      "dataSent": [
+        "origin/destination coordinates",
+        "tap/report candidate coordinates"
+      ],
+      "purpose": "Routing and nearest-road snapping",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "HIGH_FLOW_CONFIDENCE_POLICY_CLASSIFICATION_UNRESOLVED"
+    },
+    {
+      "provider": "OpenStreetMap Nominatim",
+      "dataCategory": [
+        "Location"
+      ],
+      "dataSent": [
+        "latitude/longitude for reverse lookup",
+        "search query for forward lookup"
+      ],
+      "purpose": "Reverse geocoding/search",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "HIGH_FLOW_CONFIDENCE_POLICY_CLASSIFICATION_UNRESOLVED"
+    },
+    {
+      "provider": "OpenStreetMap/Carto/Esri",
+      "dataCategory": [
+        "Ordinary request metadata / inbound official data"
+      ],
+      "dataSent": [
+        "tile coordinates, IP and ordinary HTTP metadata"
+      ],
+      "purpose": "Map tiles and labels",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "MEDIUM_OR_UNKNOWN"
+    },
+    {
+      "provider": "DriveTexas/TxDOT",
+      "dataCategory": [
+        "Ordinary request metadata / inbound official data"
+      ],
+      "dataSent": [
+        "provider request and ordinary HTTP metadata"
+      ],
+      "purpose": "Official roadway situations",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "DO_NOT_LABEL_INBOUND_OFFICIAL_OR_WEATHER_DATA_AS_USER_DATA_SHARING; review only actual request parameters",
+      "classificationConfidence": "MEDIUM_OR_UNKNOWN"
+    },
+    {
+      "provider": "Weather provider configured by runtime",
+      "dataCategory": [
+        "Ordinary request metadata / inbound official data"
+      ],
+      "dataSent": [
+        "selected awareness location or provider query parameters"
+      ],
+      "purpose": "Weather awareness",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "DO_NOT_LABEL_INBOUND_OFFICIAL_OR_WEATHER_DATA_AS_USER_DATA_SHARING; review only actual request parameters",
+      "classificationConfidence": "MEDIUM_OR_UNKNOWN"
+    },
+    {
+      "provider": "Zippopotam.us",
+      "dataCategory": [
+        "Ordinary request metadata / inbound official data"
+      ],
+      "dataSent": [
+        "ZIP code"
+      ],
+      "purpose": "ZIP lookup",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "MEDIUM_OR_UNKNOWN"
+    },
+    {
+      "provider": "data.transportation.gov",
+      "dataCategory": [
+        "Ordinary request metadata / inbound official data"
+      ],
+      "dataSent": [
+        "Texas/Liberty query and ordinary HTTP metadata"
+      ],
+      "purpose": "FRA crossing fallback inventory",
+      "serverPersistenceKnown": "UNKNOWN",
+      "storeDisclosureImplication": "GOOGLE_POLICY_REVIEW_REQUIRED_FOR_SHARED; APPLE_POLICY_REVIEW_REQUIRED_FOR_COLLECTED",
+      "classificationConfidence": "MEDIUM_OR_UNKNOWN"
+    }
+  ]
+}

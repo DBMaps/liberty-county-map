@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "LP184.1B-1",
+  "milestone": "LP184.1B",
+  "sourceAudit": "LP184.1A",
+  "draftOnly": true,
+  "generatedAt": null,
+  "classification": "NATIVE_PERMISSION_DISCLOSURE_MISMATCH_REVIEW_REQUIRED",
+  "android": {
+    "finding": "ANDROID_LOCATION_DECLARATION_REVIEW_REQUIRED",
+    "disposition": "UNKNOWN_REQUIRES_NATIVE_ENGINEERING_REVIEW",
+    "candidateImpacts": [
+      "BLOCKS_NATIVE_BUILD_VALIDATION",
+      "BLOCKS_STORE_SUBMISSION"
+    ],
+    "evidence": [
+      {
+        "sourceAudit": "LP184.1A",
+        "report": "reports/lp1841a/native-permission-audit.json",
+        "path": "android",
+        "finding": "No permissions declared; foreground web geolocation use is proven."
+      }
+    ]
+  },
+  "ios": {
+    "finding": "IOS_LOCATION_USAGE_DESCRIPTION_REVIEW_REQUIRED",
+    "disposition": "UNKNOWN_REQUIRES_NATIVE_ENGINEERING_REVIEW",
+    "candidateImpacts": [
+      "BLOCKS_NATIVE_BUILD_VALIDATION",
+      "BLOCKS_STORE_SUBMISSION"
+    ],
+    "evidence": [
+      {
+        "sourceAudit": "LP184.1A",
+        "report": "reports/lp1841a/native-permission-audit.json",
+        "path": "ios",
+        "finding": "No native permission usage descriptions declared; foreground web geolocation use is proven."
+      }
+    ]
+  },
+  "nativeProjectsModified": false
+}
