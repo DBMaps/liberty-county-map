@@ -13,6 +13,7 @@ export const LP1782_APP_BLOB = '13d316b56a3cde2e37d158681638780892e0cd2b';
 export const LP1783_REPAIR_COMMIT = 'fa16aa8ea97f4c270b93f87dd33ebe8f72787cc4';
 export const LP1783_APP_BLOB = '01a3ae3792f4bc29a5542001c525a1cdce52278d';
 export const LP1784_APP_BLOB = 'ab6fc1369e09a15d2a6c77ec8c5ed90179829389';
+export const LP1785_APP_BLOB = '13ca73cda733b899c04ce097ae9ba6690c290565';
 export const REPORT_DIR = 'reports/lp178';
 export const NAMES = ['launch-readiness-report.json', 'owner-validation-checklist.json', 'protected-artifact-identities.json', 'lp178-summary.json'];
 const PROTECTED = ['js/app.js', 'reports/lp167/launch-readiness-assessment.json', 'reports/lp167/blocker-register.json', 'reports/lp167/deployment-authorization-decision.json', 'reports/lp167/activation-authorization-decision.json', 'reports/lp167/app-distribution-authorization-decision.json', 'reports/lp167/public-launch-authorization-decision.json', 'reports/lp177/prerequisite-matrix.json', 'reports/lp177/authorization-reassessment.json'];
@@ -53,10 +54,10 @@ function item(id, name, classification, evidence, remainingAction, repositoryWor
 export function identities(root = ROOT) {
   const artifacts = PROTECTED.map(file => {
     const expectedCommit = file === 'js/app.js' ? LP1783_REPAIR_COMMIT : BASELINE;
-    const expectedGitBlob = file === 'js/app.js' ? LP1784_APP_BLOB : execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
-    const actualComparisonCommit = file === 'js/app.js' ? 'LP178.4_AUTHORIZED_GIT_BLOB' : COMPARISON_COMMIT;
+    const expectedGitBlob = file === 'js/app.js' ? LP1785_APP_BLOB : execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
+    const actualComparisonCommit = file === 'js/app.js' ? 'LP178.5_AUTHORIZED_GIT_BLOB' : COMPARISON_COMMIT;
     const actualGitBlob = file === 'js/app.js'
-      ? LP1784_APP_BLOB
+      ? LP1785_APP_BLOB
       : execFileSync('git', ['rev-parse', `${COMPARISON_COMMIT}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
     const expected = execFileSync('git', ['cat-file', 'blob', expectedGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
     const actual = execFileSync('git', ['cat-file', 'blob', actualGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
@@ -64,10 +65,10 @@ export function identities(root = ROOT) {
       if (bytes.includes(13) || (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf)) throw Error(`LP178 non-canonical ${source} Git blob: ${file}`);
       new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     }
-    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, authorizedLp1782GitBlob: file === 'js/app.js' ? LP1782_APP_BLOB : null, authorizedLp1783GitBlob: file === 'js/app.js' ? LP1783_APP_BLOB : null, authorizedLp1784GitBlob: file === 'js/app.js' ? LP1784_APP_BLOB : null, expectedGitBlob, actualComparisonCommit, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
+    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, authorizedLp1782GitBlob: file === 'js/app.js' ? LP1782_APP_BLOB : null, authorizedLp1783GitBlob: file === 'js/app.js' ? LP1783_APP_BLOB : null, authorizedLp1784GitBlob: file === 'js/app.js' ? LP1784_APP_BLOB : null, authorizedLp1785GitBlob: file === 'js/app.js' ? LP1785_APP_BLOB : null, expectedGitBlob, actualComparisonCommit, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
   });
   return {
-    schemaVersion: 'gridly.lp178.protectedIdentities.v4',
+    schemaVersion: 'gridly.lp178.protectedIdentities.v5',
     provenance: {
       originalLp178BaselineCommit: BASELINE,
       authorizedLp1781RepairCommit: REPAIR_BASELINE,
@@ -75,8 +76,10 @@ export function identities(root = ROOT) {
       authorizedLp1783RepairCommit: LP1783_REPAIR_COMMIT,
       authorizedLp1783RepairGitBlob: LP1783_APP_BLOB,
       authorizedLp1784RepairGitBlob: LP1784_APP_BLOB,
+      authorizedLp1785RepairCommit: '1ff12dee19d59658b938ea7bd06611f735b067d5',
+      authorizedLp1785RepairGitBlob: LP1785_APP_BLOB,
       currentComparisonCommit: COMPARISON_COMMIT,
-      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION'
+      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION -> AUTHORIZED_LP178.5_LIVE_ROUTE_PROGRESS_PROPAGATION'
     },
     classification: artifacts.every(x => x.classification === 'PASS') ? 'PASS' : 'FAIL',
     artifacts
