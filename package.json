@@ -281,6 +281,9 @@
     "test:lp1731": "node --test tests/lp1731/*.test.mjs",
     "capture:lp175": "node tools/lp175/capture-production-metadata.mjs",
     "test:lp175": "node --test tests/lp175/*.test.mjs",
+    "build:lp176": "node tools/lp176/reassess-launch-authorization.mjs build",
+    "verify:lp176": "node tools/lp176/reassess-launch-authorization.mjs verify",
+    "test:lp176": "node --test tests/lp176/*.test.mjs",
     "build:lp174": "node tools/lp174/reassess-operational-readiness.mjs build",
     "verify:lp174": "node tools/lp174/reassess-operational-readiness.mjs verify",
     "test:lp174": "node --test tests/lp174/*.test.mjs"

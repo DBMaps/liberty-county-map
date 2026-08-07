@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "gridly.lp176.summary.v1",
+  "milestone": "LP176",
+  "decisions": {
+    "deployment": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "activation": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B001: Certify each county without weakening exact-match rules.",
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "distribution": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B009: Validate manifest, service worker, icons, splash behavior, and installability.",
+        "LP167-B010: Produce governed Android/iOS builds and complete Play closed testing and TestFlight.",
+        "LP167-B011: Confirm account ownership and complete store and support assets.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "publicLaunch": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167-B002: Record the Talco route attestation and perform a launch-window smoke test.",
+        "LP167-B003: Validate quiet, active, and cleared states against configured live sources.",
+        "LP167-B005: Record real-device browser validation; use closed testing for packaged apps.",
+        "LP167-B012: Approve privacy policy, terms, reporting disclaimer, data-use disclosures, subscription/refund terms, and support contact.",
+        "LP167-B013: Owner must approve launch date, incident/support plan, release notes, limitations, and launch-day script."
+      ]
+    },
+    "productionRestore": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167 does not grant standing production restore or rollback authority; preserve independent, incident-specific governance."
+      ]
+    },
+    "productionRollback": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingBlockers": [
+        "LP167 does not grant standing production restore or rollback authority; preserve independent, incident-specific governance."
+      ]
+    }
+  },
+  "authorizationGranted": {
+    "deployment": false,
+    "activation": false,
+    "distribution": false,
+    "publicLaunch": false,
+    "productionRestore": false,
+    "productionRollback": false
+  },
+  "remainingBlockerCount": 9,
+  "protectedIdentityResult": "PASS",
+  "deterministicGeneration": "PASS",
+  "operationsPerformed": {
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "productionRestores": 0,
+    "productionRollbacks": 0,
+    "runtimeModifications": 0
+  },
+  "launchExecutionStatement": "NO_PRODUCTION_OPERATION_PERFORMED",
+  "nextStep": "Resolve the remaining operation-specific LP167 prerequisites, then run a new governed authorization reassessment; do not execute any production operation under LP176."
+}

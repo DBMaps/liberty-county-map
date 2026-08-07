@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "gridly.lp176.protectedArtifactIdentities.v1",
+  "milestone": "LP176",
+  "identitySource": "CANONICAL_GIT_BLOB",
+  "baselineCommit": "3b41cd7e3fe3163c9d67054e1efeddd6d82f7c26",
+  "comparisonCommit": "HEAD",
+  "workingTreeIgnored": true,
+  "classification": "PASS",
+  "artifacts": [
+    {
+      "path": "js/app.js",
+      "identity": "git-blob",
+      "expectedSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "actualSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/activation-authorization-decision.json",
+      "identity": "git-blob",
+      "expectedSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
+      "actualSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/app-distribution-authorization-decision.json",
+      "identity": "git-blob",
+      "expectedSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
+      "actualSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/blocker-register.json",
+      "identity": "git-blob",
+      "expectedSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
+      "actualSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/deployment-authorization-decision.json",
+      "identity": "git-blob",
+      "expectedSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
+      "actualSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/launch-readiness-assessment.json",
+      "identity": "git-blob",
+      "expectedSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
+      "actualSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/lp167-summary.json",
+      "identity": "git-blob",
+      "expectedSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
+      "actualSha256": "3c9a989eb92f86875c172519d839c5588da0c9991ea81033f0b976b55f95283b",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/prerequisite-reconciliation.json",
+      "identity": "git-blob",
+      "expectedSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71",
+      "actualSha256": "f5a66aa388e77889795833f708ae5db4e9863c5d09041487edb0cd757474bd71",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/production-readiness-checklist.json",
+      "identity": "git-blob",
+      "expectedSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be",
+      "actualSha256": "6894530272cddca16ec06c5d383f7a8b570bc57d2e234633dace3941caa342be",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/protected-artifact-hashes.json",
+      "identity": "git-blob",
+      "expectedSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a",
+      "actualSha256": "2172e6af91280b7df3ddb664abadbe3742c1e0c0e0960e9f6b78ed33b7c38d5a",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/public-launch-authorization-decision.json",
+      "identity": "git-blob",
+      "expectedSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
+      "actualSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp173/launch-authorization-readiness-report.json",
+      "identity": "git-blob",
+      "expectedSha256": "9e5a903d9eb8fb9cc9367f6c15a672383a88592015adab7838dd292ef5afe77a",
+      "actualSha256": "9e5a903d9eb8fb9cc9367f6c15a672383a88592015adab7838dd292ef5afe77a",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp173/lp173-summary.json",
+      "identity": "git-blob",
+      "expectedSha256": "1a3c8d6d3ec4957cc532940471a6ed377dc423ca16233dc0b841cd8406874963",
+      "actualSha256": "1a3c8d6d3ec4957cc532940471a6ed377dc423ca16233dc0b841cd8406874963",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp173/operational-evidence-completion-report.json",
+      "identity": "git-blob",
+      "expectedSha256": "4e171abc970443341d12b0b38fd800a7413f3da30f648ed6615762f0e44b996f",
+      "actualSha256": "4e171abc970443341d12b0b38fd800a7413f3da30f648ed6615762f0e44b996f",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp174/authorization-reassessment-report.json",
+      "identity": "git-blob",
+      "expectedSha256": "15f61cae940da6f8a5eaa42aa5c74092c49dccec8b4253fb9f1138e12b680e8f",
+      "actualSha256": "15f61cae940da6f8a5eaa42aa5c74092c49dccec8b4253fb9f1138e12b680e8f",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp174/deterministic-validation-report.json",
+      "identity": "git-blob",
+      "expectedSha256": "297ba50821e1451aa6ab4b4580f66747c05eb3260d25bc96b73c8f9f9a2c39b9",
+      "actualSha256": "297ba50821e1451aa6ab4b4580f66747c05eb3260d25bc96b73c8f9f9a2c39b9",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp174/operational-evidence-summary.json",
+      "identity": "git-blob",
+      "expectedSha256": "dd34133df9d9f0a1f88d0b98a2c41e84361aafd5b0d2284261c656037feca520",
+      "actualSha256": "dd34133df9d9f0a1f88d0b98a2c41e84361aafd5b0d2284261c656037feca520",
+      "classification": "PASS"
+    },
+    {
+      "path": "evidence/lp173/owner-evidence.autodiscovered.json",
+      "identity": "git-blob",
+      "expectedSha256": "4a308de54ef94106638cbfd62c146cd5d839452b0a62f0f6362f15c7dfea31f2",
+      "actualSha256": "4a308de54ef94106638cbfd62c146cd5d839452b0a62f0f6362f15c7dfea31f2",
+      "classification": "PASS"
+    }
+  ]
+}
