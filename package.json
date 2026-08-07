@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp178": "node tools/lp178/close-launch-execution-readiness.mjs build",
+    "verify:lp178": "node tools/lp178/close-launch-execution-readiness.mjs verify",
+    "test:lp178": "node --test tests/lp178/*.test.mjs",
     "build:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs build",
     "verify:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs verify-local",
     "upload:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs upload",

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "gridly.lp178.protectedIdentities.v1",
+  "baselineCommit": "121b249",
+  "classification": "PASS",
+  "artifacts": [
+    {
+      "path": "js/app.js",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "actualSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/launch-readiness-assessment.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
+      "actualSha256": "db0742b2f54655d0d74d4cf019769e710bcd4bc44ac3e0cb4650f08b3359403c",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/blocker-register.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
+      "actualSha256": "fd859d206bfe4e8487c00a3d9ea705777bf7251acd1b6b65e5e00aee73bb2e8a",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/deployment-authorization-decision.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
+      "actualSha256": "8ea01acd78a29f3cac9453ddfe1c56bb2da7ed4a55b69ec56aa4cf2811080860",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/activation-authorization-decision.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
+      "actualSha256": "a1aafdfc41e91b1795f91cff2dd6364d4b216ac677c3697b99dbd6a66988e0ee",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/app-distribution-authorization-decision.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
+      "actualSha256": "f7281f68ed2a5c397ec834bf9dd482e98c6ad3fc9cb4c6c2dc4bb6b2107dfbcd",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp167/public-launch-authorization-decision.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
+      "actualSha256": "c1e1a30e1edadd7da8ee1ae5e615ef85de91c12df919d3d952cede76d76b58d9",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp177/prerequisite-matrix.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "12a24eb6439a7f4875744ea8eb11435c15d81abca1720eb7bb95dfde41471214",
+      "actualSha256": "12a24eb6439a7f4875744ea8eb11435c15d81abca1720eb7bb95dfde41471214",
+      "classification": "PASS"
+    },
+    {
+      "path": "reports/lp177/authorization-reassessment.json",
+      "identity": "CANONICAL_GIT_BLOB",
+      "expectedSha256": "94af7c54c537814fabc19575c24d9ec00f92b76f6b45dd7054b7388ccfac1e81",
+      "actualSha256": "94af7c54c537814fabc19575c24d9ec00f92b76f6b45dd7054b7388ccfac1e81",
+      "classification": "PASS"
+    }
+  ]
+}

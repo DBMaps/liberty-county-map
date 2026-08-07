@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "gridly.lp178.ownerChecklist.v1",
+  "instructions": "Record actual observations, timestamps, production URL/build identity, device/platform, tester, and screenshots or screen recording. Do not mark PASS from this blank checklist.",
+  "live": [
+    {
+      "id": "LP167-B002",
+      "procedure": "On the public production network, select Talco, choose a governed destination, request the route, and confirm destination identity, route geometry, turn/preview output, route intelligence and Route Watch remain tied to that route; record truthful failure if the provider fails.",
+      "requiredEvidence": [
+        "UTC timestamp",
+        "production URL and release identity",
+        "origin and selected destination",
+        "route-provider result",
+        "screenshots/recording of selection, route, preview, intelligence and Route Watch",
+        "owner attestation"
+      ]
+    },
+    {
+      "id": "LP167-B003-Q",
+      "procedure": "With configured production Supabase, roadway and weather/public sources, select the governed awareness area during a genuinely quiet observation and confirm zero invented active hazards, local scope, current-check wording, retained context, no all-clear claim and no stale active remnant.",
+      "requiredEvidence": [
+        "UTC timestamp and area",
+        "source/config identity",
+        "screenshots/recording",
+        "observed counts and consumer wording",
+        "owner attestation"
+      ]
+    },
+    {
+      "id": "LP167-B003-A",
+      "procedure": "Observe a genuine active production-source item and confirm correct area/relevance, situation, road or crossing, freshness, report count, qualified confidence and consistent active presentation.",
+      "requiredEvidence": [
+        "UTC timestamp and area",
+        "source record/reference without secrets",
+        "screenshots/recording of all affected surfaces",
+        "observed counts/freshness",
+        "owner attestation"
+      ]
+    },
+    {
+      "id": "LP167-B003-C",
+      "procedure": "Observe the same genuine item transition to cleared and refresh/change area; confirm zero active count, recently-cleared uncertainty, no active presentation and no rehydration without new active evidence.",
+      "requiredEvidence": [
+        "active and cleared UTC timestamps",
+        "same source record/reference without secrets",
+        "before/after screenshots or recording",
+        "refresh/area-change result",
+        "owner attestation"
+      ]
+    }
+  ],
+  "physicalDevices": {
+    "procedure": "Use at least one real supported Android device and one real iPhone. On each, validate portrait public-site load, install/open path, search/select, route success and truthful failure, awareness quiet/active/cleared as available, refresh/relaunch, offline shell, links and readable controls. Repeat packaged-app smoke coverage through Play closed testing and TestFlight when builds exist.",
+    "requiredEvidence": [
+      "device model and OS version",
+      "browser/app and version/build identity",
+      "UTC timestamp and network",
+      "screenshots/recording",
+      "step results and defects",
+      "tester attestation"
+    ],
+    "consolidation": "One evidence bundle may cover web and packaged-app checks and all states, but must identify each device/platform and must not substitute simulator/browser emulation."
+  },
+  "approvals": {
+    "legal": [
+      "Privacy Policy",
+      "Terms",
+      "community-reporting disclaimer",
+      "data-use disclosures",
+      "support terms",
+      "pricing/subscription/refund terms if offered",
+      "entity and account ownership"
+    ],
+    "finalOwner": [
+      "launch window",
+      "support/incident/rollback/monitoring owners",
+      "beta migration",
+      "release notes",
+      "known limitations",
+      "launch-day validation script"
+    ]
+  }
+}

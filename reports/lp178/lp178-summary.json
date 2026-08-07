@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly.lp178.summary.v1",
+  "repositoryCompletableWork": "COMPLETE",
+  "remainingBlockerCount": 12,
+  "remainingClasses": [
+    "BLOCKED_BY_ENVIRONMENT",
+    "LIVE_VALIDATION_REQUIRED",
+    "OWNER_ACTION_REQUIRED",
+    "PLATFORM_ACTION_REQUIRED"
+  ],
+  "protectedIdentity": "PASS",
+  "deterministicVerification": "PASS",
+  "authorizationReassessmentReady": true,
+  "unsupportedAuthorizationGranted": false
+}
