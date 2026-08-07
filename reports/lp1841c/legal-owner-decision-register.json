@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "LP184.1C-1",
+  "milestone": "LP184.1C",
+  "generatedAt": null,
+  "draftOnly": true,
+  "sources": [
+    "reports/lp1841a/*",
+    "reports/lp1841b/*"
+  ],
+  "classification": "OPEN_OWNER_AND_LEGAL_DECISIONS",
+  "records": [
+    {
+      "id": "LEGAL_OPERATOR",
+      "currentEvidence": "No governed legal operator identity is present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SUPPORT_CONTACT",
+      "currentEvidence": "No governed consumer support contact is present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "PRIVACY_CONTACT",
+      "currentEvidence": "No governed privacy contact is present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "MINIMUM_AGE",
+      "currentEvidence": "No governed minimum-age decision is present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SERVER_RETENTION",
+      "currentEvidence": "LP184.1A says server deletion after report expiry and provider retention are unknown.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "PRIVACY_REQUEST_PROCESS",
+      "currentEvidence": "LP184.1A proves no operational consumer privacy-request/deletion mechanism.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "REPORT_REMOVAL",
+      "currentEvidence": "LP184.1A proves no consumer self-service report-removal mechanism.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SUBSCRIPTION_TERMS",
+      "currentEvidence": "LP184.1A finds billing absent; no commercial terms are governed.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "GOVERNING_LAW",
+      "currentEvidence": "No governed-law selection is present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "DISPUTE_TERMS",
+      "currentEvidence": "No governed venue or dispute terms are present.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "LIABILITY_REVIEW",
+      "currentEvidence": "Consumer limitations and disclaimers have not received legal approval.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "FUTURE_AGGREGATED_DATA_POLICY",
+      "currentEvidence": "No current user-specific data-sale implementation was found; future aggregated-data treatment is not governed.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": false,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "FINAL_EFFECTIVE_DATE",
+      "currentEvidence": "Legal approval has not occurred, so no effective date is set.",
+      "ownerDecisionRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "blocksScopedPreviewValidation": false
+    }
+  ]
+}
