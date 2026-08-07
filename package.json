@@ -284,6 +284,9 @@
     "build:lp176": "node tools/lp176/reassess-launch-authorization.mjs build",
     "verify:lp176": "node tools/lp176/reassess-launch-authorization.mjs verify",
     "test:lp176": "node --test tests/lp176/*.test.mjs",
+    "build:lp177": "node tools/lp177/close-launch-prerequisites.mjs build",
+    "verify:lp177": "node tools/lp177/close-launch-prerequisites.mjs verify",
+    "test:lp177": "node --test tests/lp177/*.test.mjs",
     "build:lp174": "node tools/lp174/reassess-operational-readiness.mjs build",
     "verify:lp174": "node tools/lp174/reassess-operational-readiness.mjs verify",
     "test:lp174": "node --test tests/lp174/*.test.mjs"

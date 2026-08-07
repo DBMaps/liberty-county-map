@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "gridly.lp177.authorizationReassessment.v1",
+  "boundary": "AUTHORIZATION_ONLY_NO_EXECUTION",
+  "authorization": {
+    "deployment": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        {
+          "id": "LP167-B002",
+          "reason": "A launch-window Talco route attestation and smoke test must be performed against the live route."
+        },
+        {
+          "id": "LP167-B003-Q",
+          "reason": "Observe and attest the quiet state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-A",
+          "reason": "Observe and attest an active state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-C",
+          "reason": "Observe and attest a cleared transition against configured production sources."
+        },
+        {
+          "id": "LP167-B005",
+          "reason": "Record real Android and iPhone browser evidence; packaged apps additionally require closed-platform testing."
+        },
+        {
+          "id": "LP167-B012",
+          "reason": "Legal must approve the privacy, terms, disclaimer, data-use, refund/subscription, and support materials."
+        },
+        {
+          "id": "LP167-B013",
+          "reason": "Owner must approve the launch window, incident/support plan, release notes, limitations, and launch-day script."
+        }
+      ]
+    },
+    "activation": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        {
+          "id": "LP167-B001",
+          "reason": "The eleven byte-identical LP130 packages are absent; restore/mount and certify them through LP134 without weakening exact-match rules."
+        },
+        {
+          "id": "LP167-B002",
+          "reason": "A launch-window Talco route attestation and smoke test must be performed against the live route."
+        },
+        {
+          "id": "LP167-B003-Q",
+          "reason": "Observe and attest the quiet state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-A",
+          "reason": "Observe and attest an active state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-C",
+          "reason": "Observe and attest a cleared transition against configured production sources."
+        },
+        {
+          "id": "LP167-B005",
+          "reason": "Record real Android and iPhone browser evidence; packaged apps additionally require closed-platform testing."
+        },
+        {
+          "id": "LP167-B012",
+          "reason": "Legal must approve the privacy, terms, disclaimer, data-use, refund/subscription, and support materials."
+        },
+        {
+          "id": "LP167-B013",
+          "reason": "Owner must approve the launch window, incident/support plan, release notes, limitations, and launch-day script."
+        }
+      ]
+    },
+    "distribution": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        {
+          "id": "LP167-B005",
+          "reason": "Record real Android and iPhone browser evidence; packaged apps additionally require closed-platform testing."
+        },
+        {
+          "id": "LP167-B010-A",
+          "reason": "Produce a governed signed build under release credentials and platform governance."
+        },
+        {
+          "id": "LP167-B010-I",
+          "reason": "Produce a governed signed build with Xcode, Apple credentials, and platform governance."
+        },
+        {
+          "id": "LP167-B010-C",
+          "reason": "Complete Google Play closed testing and TestFlight with governed accounts and physical testers."
+        },
+        {
+          "id": "LP167-B011",
+          "reason": "Complete store metadata, screenshots, support assets, and confirm store-account ownership."
+        },
+        {
+          "id": "LP167-B012",
+          "reason": "Legal must approve the privacy, terms, disclaimer, data-use, refund/subscription, and support materials."
+        },
+        {
+          "id": "LP167-B013",
+          "reason": "Owner must approve the launch window, incident/support plan, release notes, limitations, and launch-day script."
+        }
+      ]
+    },
+    "publicLaunch": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        {
+          "id": "LP167-B002",
+          "reason": "A launch-window Talco route attestation and smoke test must be performed against the live route."
+        },
+        {
+          "id": "LP167-B003-Q",
+          "reason": "Observe and attest the quiet state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-A",
+          "reason": "Observe and attest an active state against configured production sources."
+        },
+        {
+          "id": "LP167-B003-C",
+          "reason": "Observe and attest a cleared transition against configured production sources."
+        },
+        {
+          "id": "LP167-B005",
+          "reason": "Record real Android and iPhone browser evidence; packaged apps additionally require closed-platform testing."
+        },
+        {
+          "id": "LP167-B012",
+          "reason": "Legal must approve the privacy, terms, disclaimer, data-use, refund/subscription, and support materials."
+        },
+        {
+          "id": "LP167-B013",
+          "reason": "Owner must approve the launch window, incident/support plan, release notes, limitations, and launch-day script."
+        }
+      ]
+    }
+  },
+  "operationsPerformed": {
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "runtimeModifications": 0
+  },
+  "failClosed": true
+}
