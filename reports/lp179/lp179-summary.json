@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "gridly.lp179.summary.v1",
+  "milestone": "LP179",
+  "classification": "PASS",
+  "evidenceClosure": "PASS",
+  "authorizationReassessment": "FAIL_CLOSED_NOT_AUTHORIZED",
+  "remainingBlockerCount": 8,
+  "protectedIdentity": "PASS",
+  "protectedIdentitySource": "LP178_CANONICAL_GIT_BLOBS",
+  "runtimeFilesChanged": false,
+  "canonicalLf": "PASS",
+  "utf8WithoutBom": "PASS",
+  "deterministicTwoGeneration": "PASS",
+  "secretSafety": "PASS"
+}

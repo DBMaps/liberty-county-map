@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "gridly.lp179.ownerLiveValidationEvidence.v1",
+  "milestone": "LP179",
+  "evidenceCapturedAtUtc": "2026-08-07T17:36:45.157Z",
+  "currentLocation": {
+    "latitude": 30.13067525,
+    "longitude": -94.93132075,
+    "accuracy": 381
+  },
+  "locationEvidenceBoundary": "SUPPORTING_OWNER_SESSION_EVIDENCE_ONLY; geographic precision is limited to the recorded browser accuracy.",
+  "validation": {
+    "talcoRouting": "PASS",
+    "quietAwareness": "PASS",
+    "activeAwareness": "PASS",
+    "clearedAwareness": "PASS"
+  },
+  "liveProof": {
+    "routeWatchProgressionVerified": true,
+    "currentLocationRoutingVerified": true,
+    "routeRelevantHazardFilteringVerified": true,
+    "livePositionPropagationVerified": true,
+    "selectiveHazardClearVerified": true,
+    "clearedHazardPersistenceVerified": true,
+    "communitySourceTruthVerified": true,
+    "officialSourceTruthVerified": true,
+    "weatherSourceTruthVerified": true
+  },
+  "authorizationChanged": false,
+  "historicalLimitation": "The abbreviated Talco address did not resolve reliably; the exact successful form was 400 West Broad Street, Talco, TX 75487.",
+  "hazardExpirationBoundary": "The remaining flooding hazard later appeared inactive; exact expiration timing is not inferred.",
+  "screenshotEvidence": {
+    "classification": "OWNER_CAPTURED / EXTERNAL_OWNER_EVIDENCE",
+    "gitIdentityClaimed": false,
+    "repositoryPaths": [],
+    "captures": [
+      "Current Location to Talco route",
+      "Quiet Destination Intelligence",
+      "Active route condition",
+      "Expanded active evidence",
+      "Cleared/selective remaining condition state",
+      "Final flooding-only consumer truth",
+      "Final return to quiet after the remaining condition was no longer active"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "LP167-B002",
+      "name": "Talco routing",
+      "finalStatus": "PASS",
+      "basis": "OWNER_LIVE_VALIDATION",
+      "history": [
+        "OPEN",
+        "OWNER_LIVE_VALIDATED",
+        "PASS"
+      ]
+    },
+    {
+      "id": "LP167-B003-Q",
+      "name": "Quiet awareness",
+      "finalStatus": "PASS",
+      "basis": "OWNER_LIVE_VALIDATION",
+      "history": [
+        "OPEN",
+        "OWNER_LIVE_VALIDATED",
+        "PASS"
+      ]
+    },
+    {
+      "id": "LP167-B003-A",
+      "name": "Active awareness",
+      "finalStatus": "PASS",
+      "basis": "OWNER_LIVE_VALIDATION",
+      "history": [
+        "OPEN",
+        "OWNER_LIVE_VALIDATED",
+        "PASS"
+      ]
+    },
+    {
+      "id": "LP167-B003-C",
+      "name": "Cleared awareness",
+      "finalStatus": "PASS",
+      "basis": "OWNER_LIVE_VALIDATION",
+      "history": [
+        "OPEN",
+        "OWNER_LIVE_VALIDATED",
+        "PASS"
+      ]
+    }
+  ]
+}

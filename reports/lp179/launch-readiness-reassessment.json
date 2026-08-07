@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "gridly.lp179.launchReadinessReassessment.v1",
+  "milestone": "LP179",
+  "closedRequirements": [
+    "LP167-B002",
+    "LP167-B003-Q",
+    "LP167-B003-A",
+    "LP167-B003-C"
+  ],
+  "remainingBlockers": [
+    {
+      "id": "LP167-B005",
+      "classification": "OWNER_AND_PLATFORM_ACTION_REQUIRED",
+      "requirement": "Physical-device validation on one real Android and one real iPhone, including model, OS, screenshots, timestamps and tester attestation; simulators do not qualify."
+    },
+    {
+      "id": "LP167-B010-A",
+      "classification": "BLOCKED_BY_ENVIRONMENT",
+      "requirement": "Governed Android SDK, signing material and signed release build evidence."
+    },
+    {
+      "id": "LP167-B010-I",
+      "classification": "BLOCKED_BY_ENVIRONMENT",
+      "requirement": "Governed macOS, Xcode, Apple signing and signed release build evidence."
+    },
+    {
+      "id": "LP167-B010-C",
+      "classification": "PLATFORM_ACTION_REQUIRED",
+      "requirement": "Google Play Closed Test and TestFlight evidence."
+    },
+    {
+      "id": "LP167-B011-ACCOUNT",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "requirement": "Store account ownership and readiness evidence."
+    },
+    {
+      "id": "LP167-B011-ASSET",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "requirement": "Store screenshots/assets, metadata, icons, listing readiness and applicable subscription configuration."
+    },
+    {
+      "id": "LP167-B012",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "requirement": "Dated legal approval for privacy, terms, reporting disclaimer, data use, support, applicable subscription/refund terms, and entity/account ownership."
+    },
+    {
+      "id": "LP167-B013",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "requirement": "Final owner approval covering launch window, monitoring/support/rollback/incident owners, release notes, known limitations and launch-day validation."
+    }
+  ],
+  "authorizations": {
+    "deployment": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "authorizationGranted": false,
+  "authorizationChanged": false,
+  "rationale": "Owner live-awareness evidence is closed, but physical-device, build, closed-testing, store, legal and final-owner prerequisites remain open.",
+  "operationsPerformed": {
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0,
+    "restores": 0,
+    "rollbacks": 0,
+    "runtimeModifications": 0
+  }
+}

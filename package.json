@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp179": "node tools/lp179/close-owner-live-validation.mjs build",
+    "verify:lp179": "node tools/lp179/close-owner-live-validation.mjs verify",
+    "test:lp179": "node --test tests/lp179/*.test.mjs",
     "build:lp178": "node tools/lp178/close-launch-execution-readiness.mjs build",
     "verify:lp178": "node tools/lp178/close-launch-execution-readiness.mjs verify",
     "test:lp178": "node --test tests/lp178/*.test.mjs tests/lp1781-talco-route-watch-start-repair.test.mjs tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs tests/lp1783-route-aware-incident-hydration.test.mjs tests/lp1784-live-proximity-route-intelligence.test.mjs tests/lp1785-live-route-progress-propagation.test.mjs tests/lp1786-cleared-route-convergence.test.mjs tests/lp1787-weather-evidence-provenance.test.mjs",
