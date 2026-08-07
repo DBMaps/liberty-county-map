@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+import { auditCandidate, build, evaluateReadiness, validateAccessControl, verify } from '../../tools/lp183/build-preview-execution-readiness.mjs';
+
+const made = build();
+const { approval, access, readiness } = made;
+const valid = { hostname: readiness.validationHostname, purpose: approval.purpose, candidateCommit: readiness.candidateCommit, candidateIdentity: readiness.candidateIdentity, ownerApproval: true, accessControlReady: true, rollbackReady: true };
+
+test('1 owner approval cannot authorize another hostname', () => assert.equal(evaluateReadiness({ ...valid, hostname: 'gridlygo.com' }).reason, 'HOSTNAME_MISMATCH'));
+test('2 owner approval cannot authorize another purpose', () => assert.equal(evaluateReadiness({ ...valid, purpose: 'PUBLIC_LAUNCH' }).reason, 'PURPOSE_MISMATCH'));
+test('3 owner approval cannot authorize public launch', () => assert.equal(approval.publicLaunchApproved, false));
+test('4 owner approval cannot authorize gridlygo.com promotion', () => assert.equal(approval.canonicalPromotionApproved, false));
+test('5 owner approval cannot authorize app stores', () => assert.equal(approval.appStoreDistributionApproved, false));
+test('6 noindex is not access control', () => assert.equal(validateAccessControl('NOINDEX'), false));
+test('7 URL obscurity is not access control', () => assert.equal(validateAccessControl('URL_OBSCURITY'), false));
+test('8 embedded client credentials fail', () => assert.equal(validateAccessControl({ class: 'IDENTITY_AWARE_REVERSE_PROXY', embeddedClientCredential: true, anonymousAccessAllowed: false, failClosed: true }), false));
+test('9 anonymous public preview fails', () => assert.equal(validateAccessControl({ class: 'IDENTITY_AWARE_REVERSE_PROXY', embeddedClientCredential: false, anonymousAccessAllowed: true, failClosed: true }), false));
+test('10 rollback is preview-only', () => { assert.equal(access.rollbackScope, 'preview.gridlygo.com ONLY'); assert.doesNotMatch(access.rollbackScope, /^gridlygo\.com/); });
+test('11 global Rollback remains NOT_AUTHORIZED', () => assert.equal(readiness.globalAuthorizationStates.rollback, 'NOT_AUTHORIZED'));
+test('12 first-deployment rollback is explicit and does not invent prior artifact', () => { assert.equal(access.firstDeploymentState, 'NO_PRIOR_PREVIEW_DEPLOYMENT'); assert.match(access.firstDeploymentRollback, /DISABLE/); });
+test('13 candidate identity drift invalidates readiness', () => assert.equal(evaluateReadiness({ ...valid, candidateIdentity: 'sha256:drift' }).reason, 'CANDIDATE_IDENTITY_DRIFT'));
+test('14 owner revocation invalidates readiness', () => assert.equal(evaluateReadiness({ ...valid, revoked: true }).reason, 'OWNER_REVOCATION'));
+test('15 missing access-control readiness fails closed', () => assert.equal(evaluateReadiness({ ...valid, accessControlReady: false }).reason, 'ACCESS_CONTROL_NOT_CONFIGURED'));
+test('16 missing rollback readiness fails closed', () => assert.equal(evaluateReadiness({ ...valid, rollbackReady: false }).reason, 'ROLLBACK_NOT_OPERATIONAL'));
+test('17 LP183 performs zero execution', () => { for (const key of ['performsDnsChange', 'performsHostingConfiguration', 'performsDeployment', 'performsDistribution', 'performsActivation', 'performsPublicLaunch', 'performsRollback']) assert.equal(readiness[key], false); });
+test('18 output is deterministic and canonical', () => assert.equal(verify(), true));
+test('19 reports are secret-safe and store no tester identities', () => { assert.match(readiness.secretSafety, /^PASS/); assert.match(access.approvedTesterAdmissionMethod, /INITIAL_LIST_MAY_BE_EMPTY/); });
+test('20 runtime protected files are unchanged from exact LP182 candidate', () => { const audit = auditCandidate(); assert.equal(audit.artifactsUnchanged, true); assert.equal(audit.status, 'LP182_EXACT_CANDIDATE_RETAINED_GOVERNANCE_ONLY_HEAD_ADVANCE'); for (const item of audit.protectedArtifacts) assert.equal(item.gitBlob, item.currentGitBlob); });
+test('LP182 strict commit policy prevents silent substitution despite identical blobs', () => { assert.equal(readiness.candidateAudit.bindingPolicy, 'LP182_BINDS_COMMIT_AND_PROTECTED_ARTIFACT_IDENTITY'); assert.equal(readiness.candidateAudit.candidateCommitIsHead, false); assert.equal(readiness.candidateCommit, '6a1489aebd7cb8ad9e730ca87d08247a421747cf'); });
+test('GitHub Pages is rejected and selected infrastructure access is fail closed', () => { assert.equal(access.githubPagesCompatibility, 'GITHUB_PAGES_NOT_SUITABLE_FOR_SCOPED_PREVIEW_ACCESS_CONTROL'); assert.equal(validateAccessControl({ class: access.accessControlClass, embeddedClientCredential: access.embeddedClientCredential, anonymousAccessAllowed: access.anonymousAccessAllowed, failClosed: access.failClosed }), true); });
+test('LP183 did not modify protected runtime paths', () => { for (const file of ['index.html', 'js/app.js', 'manifest.json', 'service-worker.js']) assert.equal(fs.existsSync(file), true); assert.equal(made.reports['lp183-summary.json'].runtimeModified, false); });

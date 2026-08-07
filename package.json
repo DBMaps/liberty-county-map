@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp183": "node tools/lp183/build-preview-execution-readiness.mjs build",
+    "verify:lp183": "node tools/lp183/build-preview-execution-readiness.mjs verify",
+    "test:lp183": "node --test tests/lp183/*.test.mjs",
     "build:lp182": "node tools/lp182/build-scope-aware-validation-policy.mjs build",
     "verify:lp182": "node tools/lp182/build-scope-aware-validation-policy.mjs verify",
     "test:lp182": "node --test tests/lp182/*.test.mjs",
