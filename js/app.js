@@ -17528,6 +17528,8 @@ let gridlyCrossingAreaFilterState = {
 let unifiedIncidentLayer;
 let userLocation = null;
 let userMarker = null;
+let gridlyRouteWatchPositionWatchId = null;
+let gridlyRouteWatchPositionUpdatedAt = null;
 
 const GRIDLY_USER_TRUST_BLUEPRINT_VERSION = "V186";
 const GRIDLY_FIRST_RUN_ONBOARDING_VERSION = "V197";
@@ -48354,6 +48356,10 @@ function setGridlyUserLocation(candidate) {
     window.__gridlyUserLocation = { ...userLocation };
     window.gridlyCurrentLocation = { ...userLocation };
     window.__gridlyCurrentLocation = { ...userLocation };
+    if (routeWatchActivated) {
+      window.__gridlyRouteWatchCurrentLocation = Object.freeze({ ...userLocation });
+      gridlyRouteWatchPositionUpdatedAt = Date.now();
+    }
   }
   renderUserLocationDot();
   if (typeof updateGridlyRouteOwnershipSurface === "function") updateGridlyRouteOwnershipSurface();
@@ -48374,6 +48380,30 @@ function setGridlyUserLocation(candidate) {
   if (typeof updateRouteIntelligence === "function") updateRouteIntelligence();
   if (typeof renderGridlyDestinationImpactPane === "function") renderGridlyDestinationImpactPane();
   return true;
+}
+
+function startGridlyRouteWatchPositionUpdates() {
+  if (!routeWatchActivated || gridlyRouteWatchPositionWatchId !== null) return gridlyRouteWatchPositionWatchId;
+  if (typeof navigator === "undefined" || typeof navigator.geolocation?.watchPosition !== "function") return null;
+  gridlyRouteWatchPositionWatchId = navigator.geolocation.watchPosition(
+    (position) => {
+      if (!routeWatchActivated) return;
+      const coords = getValidGridlyUserLocationCoordinates(position);
+      if (coords) setGridlyUserLocation({ ...coords, suppressRouteOriginRefresh: true });
+    },
+    () => {},
+    { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
+  );
+  return gridlyRouteWatchPositionWatchId;
+}
+
+function stopGridlyRouteWatchPositionUpdates() {
+  if (gridlyRouteWatchPositionWatchId !== null && typeof navigator !== "undefined" && typeof navigator.geolocation?.clearWatch === "function") {
+    navigator.geolocation.clearWatch(gridlyRouteWatchPositionWatchId);
+  }
+  gridlyRouteWatchPositionWatchId = null;
+  gridlyRouteWatchPositionUpdatedAt = null;
+  if (typeof window !== "undefined") window.__gridlyRouteWatchCurrentLocation = null;
 }
 
 function renderUserLocationDot() {
@@ -90346,6 +90376,7 @@ function removeGridlyRoutePreviewLayers() {
 function stopGridlyRouteWatch(source = "stop_route_watch") {
   routeWatchActivated = false;
   window.__gridlyRouteWatchActive = false;
+  stopGridlyRouteWatchPositionUpdates();
   safeText("routeWatchSetupHint", "Route Watch is off. Your saved route is still saved.");
   safeText("desktopRouteStatus", activeRouteOriginLabel && activeRouteDestinationLabel ? `Route Watch is off · Previewing ${activeRouteOriginLabel} → ${activeRouteDestinationLabel}.` : "Preview Only.");
   updateRouteWatchBadge(activeRouteDestinationLabel || "Route");
@@ -94937,6 +94968,7 @@ function computeRouteConfidenceModel({ routeRelevantHazards = [], routeHazard = 
 }
 
 function updateRouteIntelligence(nearest = []) {
+  if (routeWatchActivated) startGridlyRouteWatchPositionUpdates();
   const routeLabelParts = buildRouteWatchLabelParts();
 
   const unifiedActive = getRouteIntelligenceSourceIncidents().filter((incident) => incident.status === "active");
