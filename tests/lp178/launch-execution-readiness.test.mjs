@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { BASELINE, COMPARISON_COMMIT, LP1782_APP_BLOB, LP1783_APP_BLOB, LP1783_REPAIR_COMMIT, REPAIR_BASELINE, build, verify } from '../../tools/lp178/close-launch-execution-readiness.mjs';
+import { BASELINE, COMPARISON_COMMIT, LP1782_APP_BLOB, LP1783_APP_BLOB, LP1783_REPAIR_COMMIT, LP1784_APP_BLOB, REPAIR_BASELINE, build, verify } from '../../tools/lp178/close-launch-execution-readiness.mjs';
 
 test('LP178 closes repository work without inferring external evidence', () => {
   const reports = build();
@@ -33,16 +33,18 @@ test('LP178 governs the authorized Route Watch protected-identity transition', (
     authorizedLp1782RepairGitBlob: LP1782_APP_BLOB,
     authorizedLp1783RepairCommit: LP1783_REPAIR_COMMIT,
     authorizedLp1783RepairGitBlob: LP1783_APP_BLOB,
+    authorizedLp1784RepairGitBlob: LP1784_APP_BLOB,
     currentComparisonCommit: COMPARISON_COMMIT,
-    transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> RECONCILED_PROTECTED_IDENTITY'
+    transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION'
   });
 
   const app = identities.artifacts.find(artifact => artifact.path === 'js/app.js');
   assert.equal(app.expectedBaselineCommit, LP1783_REPAIR_COMMIT);
   assert.equal(app.authorizedLp1782GitBlob, LP1782_APP_BLOB);
   assert.equal(app.authorizedLp1783GitBlob, LP1783_APP_BLOB);
-  assert.equal(app.expectedGitBlob, LP1783_APP_BLOB);
-  assert.equal(app.actualComparisonCommit, LP1783_REPAIR_COMMIT);
+  assert.equal(app.authorizedLp1784GitBlob, LP1784_APP_BLOB);
+  assert.equal(app.expectedGitBlob, LP1784_APP_BLOB);
+  assert.equal(app.actualComparisonCommit, 'LP178.4_AUTHORIZED_GIT_BLOB');
   assert.equal(app.actualGitBlob, app.expectedGitBlob);
   assert.equal(app.classification, 'PASS');
 
