@@ -37589,6 +37589,39 @@ function isGridlyDestinationRouteActiveRailReason(item = {}) {
   return /rail[_\s-]*(blockage|delay|issue)|blocked[_\s-]*crossing|train[_\s-]*(blocking|blocked|stopped|delay)|\b(blocked|blocking|active|issue|problem|delay|stopped)\b/.test(text);
 }
 
+// LP178.7: Destination weather corroboration is evidence, not a hazard-type
+// inference.  Only the governed weather consumer selector may supply it; route
+// records are used solely to establish condition relevance and locality.
+function gridlyQualifyDestinationWeatherEvidence({ records = [], weatherSelection = null, selectedArea = null } = {}) {
+  const routeRecords = Array.isArray(records) ? records.filter(Boolean) : [];
+  if (!routeRecords.length) return null;
+  const selection = weatherSelection || (typeof window.gridlySelectConsumerVisibleWeatherSituations === "function"
+    ? window.gridlySelectConsumerVisibleWeatherSituations()
+    : null);
+  const situations = Array.isArray(selection?.consumerVisibleSituations) ? selection.consumerVisibleSituations : [];
+  if (!situations.length) return null;
+  const awarenessArea = selectedArea || (typeof getGridlySelectedAwarenessArea === "function" ? getGridlySelectedAwarenessArea() : null);
+  if (!awarenessArea || typeof isGridlyRecordInAwarenessArea !== "function") return null;
+  const localRecords = routeRecords.filter((record) => {
+    try { return isGridlyRecordInAwarenessArea(record, awarenessArea) === true; } catch (_error) { return false; }
+  });
+  if (!localRecords.length) return null;
+  const structuredCondition = localRecords.map((record) => [record?.type, record?.category, record?.hazardType, record?.report_type].filter(Boolean).join(" ").toLowerCase()).join(" ");
+  const relevant = situations.find((situation) => {
+    const impact = gridlyStoryWeatherMeaningfulImpact(situation);
+    if (!impact) return false;
+    if (impact.kind === "flooding" || impact.kind === "heavy_rain" || impact.kind === "storm") return /flood|high water|water over|weather[_\s-]?hazard/.test(structuredCondition);
+    if (impact.kind === "freezing") return /ice|icy|freez|winter|weather[_\s-]?hazard/.test(structuredCondition);
+    if (impact.kind === "fog") return /fog|visibility|weather[_\s-]?hazard/.test(structuredCondition);
+    if (impact.kind === "wind") return /wind|debris|weather[_\s-]?hazard/.test(structuredCondition);
+    if (impact.kind === "heat") return /heat|weather[_\s-]?hazard/.test(structuredCondition);
+    return false;
+  });
+  return relevant ? Object.freeze({ situation: relevant, authorityBacked: true, consumerEligible: true, localityValid: true }) : null;
+}
+
+if (typeof window !== "undefined") window.gridlyQualifyDestinationWeatherEvidence = gridlyQualifyDestinationWeatherEvidence;
+
 function getGridlyDestinationRouteActiveRailReasonCopy(matches = []) {
   const text = (Array.isArray(matches) ? matches : [])
     .map((item) => getGridlyDestinationRouteReasonInspectionText(item))
@@ -37765,7 +37798,7 @@ function renderGridlyDestinationImpactPane() {
       ...(Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : [])
     ];
     const railCount = records.filter((record) => isGridlyDestinationRouteActiveRailReason(record)).length;
-    const weatherCount = records.filter((record) => /weather|rain|storm|flood|wind|fog|ice/i.test(getGridlyDestinationRouteReasonInspectionText(record))).length;
+    const weatherEvidence = gridlyQualifyDestinationWeatherEvidence({ records });
     const communityCount = records.filter((record) => {
       const source = String(record?.sourceType || record?.source || "").toLowerCase();
       return source === "community" || (!source && (Array.isArray(intelligence?.matchedReports) ? intelligence.matchedReports : []).includes(record));
@@ -37774,7 +37807,7 @@ function renderGridlyDestinationImpactPane() {
     paneEls.why.textContent = "";
     paneEls.why.hidden = false;
     renderGridlyUnifiedEvidence(paneEls.why, buildGridlyUnifiedEvidencePresentation({
-      quiet: model.quiet, communityCount, officialCount, weatherActive: weatherCount > 0, railCount,
+      quiet: model.quiet, communityCount, officialCount, weatherActive: Boolean(weatherEvidence), railCount,
       confidence: `${decision.confidence}.`, freshness: `${decision.freshness}.`
     }), { surface: "destination-intelligence" });
   }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { BASELINE, COMPARISON_COMMIT, LP1782_APP_BLOB, LP1783_APP_BLOB, LP1783_REPAIR_COMMIT, LP1784_APP_BLOB, LP1785_APP_BLOB, LP1786_APP_BLOB, LP1786_REPAIR_COMMIT, REPAIR_BASELINE, build, verify } from '../../tools/lp178/close-launch-execution-readiness.mjs';
+import { BASELINE, COMPARISON_COMMIT, LP1782_APP_BLOB, LP1783_APP_BLOB, LP1783_REPAIR_COMMIT, LP1784_APP_BLOB, LP1785_APP_BLOB, LP1786_APP_BLOB, LP1786_REPAIR_COMMIT, LP1787_APP_BLOB, LP1787_REPAIR_COMMIT, REPAIR_BASELINE, build, verify } from '../../tools/lp178/close-launch-execution-readiness.mjs';
 
 test('LP178 closes repository work without inferring external evidence', () => {
   const reports = build();
@@ -38,19 +38,22 @@ test('LP178 governs the authorized Route Watch protected-identity transition', (
     authorizedLp1785RepairGitBlob: LP1785_APP_BLOB,
     authorizedLp1786RepairCommit: LP1786_REPAIR_COMMIT,
     authorizedLp1786RepairGitBlob: LP1786_APP_BLOB,
+    authorizedLp1787RepairCommit: LP1787_REPAIR_COMMIT,
+    authorizedLp1787RepairGitBlob: LP1787_APP_BLOB,
     currentComparisonCommit: COMPARISON_COMMIT,
-    transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION -> AUTHORIZED_LP178.5_LIVE_ROUTE_PROGRESS_PROPAGATION -> AUTHORIZED_LP178.6_CLEARED_ROUTE_CONVERGENCE_AND_OFFICIAL_SOURCE_TRUTHFULNESS'
+    transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION -> AUTHORIZED_LP178.5_LIVE_ROUTE_PROGRESS_PROPAGATION -> AUTHORIZED_LP178.6_CLEARED_ROUTE_CONVERGENCE_AND_OFFICIAL_SOURCE_TRUTHFULNESS -> AUTHORIZED_LP178.7_WEATHER_EVIDENCE_PROVENANCE_TRUTHFULNESS'
   });
 
   const app = identities.artifacts.find(artifact => artifact.path === 'js/app.js');
-  assert.equal(app.expectedBaselineCommit, LP1786_REPAIR_COMMIT);
+  assert.equal(app.expectedBaselineCommit, LP1787_REPAIR_COMMIT);
   assert.equal(app.authorizedLp1782GitBlob, LP1782_APP_BLOB);
   assert.equal(app.authorizedLp1783GitBlob, LP1783_APP_BLOB);
   assert.equal(app.authorizedLp1784GitBlob, LP1784_APP_BLOB);
   assert.equal(app.authorizedLp1785GitBlob, LP1785_APP_BLOB);
   assert.equal(app.authorizedLp1786GitBlob, LP1786_APP_BLOB);
-  assert.equal(app.expectedGitBlob, LP1786_APP_BLOB);
-  assert.equal(app.actualComparisonCommit, 'LP178.6_AUTHORIZED_GIT_BLOB');
+  assert.equal(app.authorizedLp1787GitBlob, LP1787_APP_BLOB);
+  assert.equal(app.expectedGitBlob, LP1787_APP_BLOB);
+  assert.equal(app.actualComparisonCommit, 'LP178.7_AUTHORIZED_GIT_BLOB');
   assert.equal(app.actualGitBlob, app.expectedGitBlob);
   assert.equal(app.classification, 'PASS');
 
