@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "PSEUDONYMOUS_SHARED_COMMUNITY_REPORTING",
+  "table": "reports",
+  "publicSharedVisibility": true,
+  "submittedFields": [
+    "crossing_id",
+    "crossing_name",
+    "railroad",
+    "lat",
+    "lng",
+    "report_type",
+    "severity",
+    "detail",
+    "source",
+    "confidence",
+    "device_id",
+    "expires_at"
+  ],
+  "serverGeneratedOrObservedFields": [
+    "id",
+    "created_at"
+  ],
+  "categories": {
+    "hazards": [
+      "flooding",
+      "ice",
+      "debris",
+      "crash",
+      "construction",
+      "road_closed",
+      "disabled_vehicle",
+      "traffic_backup",
+      "other_hazard"
+    ],
+    "crossingReports": "report_type selected by crossing workflow",
+    "clearing": "hazard_cleared rows; crossing lifecycle includes clear/confirmation report types"
+  },
+  "lifecycle": {
+    "expiration": "LIFECYCLE_DERIVED from expires_at (hazards use configured minutes; clear rows 30 minutes)",
+    "expiredRowDeletion": "unknown",
+    "historicalPersistence": "HISTORICAL_STORAGE is implemented in client-side history capture; server deletion after expiry is not proven",
+    "userRemoval": "No consumer self-service removal mechanism proven; development/admin purge helpers are not consumer mechanisms"
+  },
+  "evidence": [
+    {
+      "file": "js/app.js",
+      "lines": "79891-79976",
+      "finding": "Report writes are inserted into Supabase."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "81087-81103",
+      "finding": "Road hazard row exact shape."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "81673-81689",
+      "finding": "Clear event is a new pseudonymous report row with coordinates and expiry."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "84469-84530",
+      "finding": "Crossing reports calculate expiry and submit shared report fields."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "42499-42520",
+      "finding": "Realtime changes cause all shared reports to reload."
+    }
+  ]
+}

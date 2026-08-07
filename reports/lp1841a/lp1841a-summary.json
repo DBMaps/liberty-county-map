@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "PRIVACY_ARCHITECTURE_AUDIT_COMPLETE_WITH_UNKNOWNS",
+  "executionAuthorized": false,
+  "executionOccurred": false,
+  "deploymentOccurred": false,
+  "runtimeChanged": false,
+  "cloudflareChanged": false,
+  "authorizationsChanged": false,
+  "findings": {
+    "preciseLocation": true,
+    "routeWatchLiveForegroundLocation": true,
+    "backgroundLocation": false,
+    "currentLocationSentToSupabase": false,
+    "reportCoordinatesSentToSupabase": true,
+    "reportsPseudonymous": true,
+    "accounts": false,
+    "emailCollection": false,
+    "payments": "ABSENT",
+    "notifications": "PREFERENCE_UI_ONLY",
+    "analytics": "ABSENT",
+    "advertisingTracking": "ABSENT",
+    "dataSaleSharing": "NO_IMPLEMENTATION_PROVEN",
+    "serverRetentionAfterExpiry": "UNKNOWN",
+    "consumerDeletionRequestMechanism": false
+  },
+  "protectedArtifactSha256": {
+    "index.html": "439f9edf6d81159c46dae339b269b0e33ca7b9c48028b2621dade835bcac3842",
+    "js/app.js": "e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285",
+    "manifest.json": "4af4612435de51747dcd47d0da46ec3631d2c683ca37ef00e6e991d7e53d7394",
+    "service-worker.js": "112321f5e22964a8551d805d106bd2f0445e6fa9f854a671732cd357b5e26d58",
+    "android/app/src/main/AndroidManifest.xml": "bf1fe4c3c5ee24a378cc03748a1f9aef03e197b972237d5b1e571e1505031d06",
+    "ios/App/App/Info.plist": "cf081b6f11fc1e18381d0cb514ee3c34c41b782a40a97994a50f07821ba1437a"
+  },
+  "sourceReports": [
+    "data-inventory.json",
+    "location-privacy-audit.json",
+    "community-reporting-privacy-audit.json",
+    "third-party-service-inventory.json",
+    "native-permission-audit.json"
+  ]
+}

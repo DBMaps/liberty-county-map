@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "CURRENT_RUNTIME_NETWORK_INVENTORY",
+  "services": [
+    {
+      "provider": "Supabase",
+      "purpose": "Shared reports, realtime changes, public roadway assets",
+      "dataSent": [
+        "community report fields including coordinates and device_id",
+        "database queries"
+      ],
+      "dataReceived": [
+        "shared reports",
+        "realtime change events",
+        "public storage assets"
+      ],
+      "locationSent": true,
+      "userGeneratedContentSent": true,
+      "deviceIdentifierSent": true,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "79891-79976",
+          "finding": "Report writes are inserted into Supabase."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81087-81103",
+          "finding": "Road hazard row exact shape."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81673-81689",
+          "finding": "Clear event is a new pseudonymous report row with coordinates and expiry."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "84469-84530",
+          "finding": "Crossing reports calculate expiry and submit shared report fields."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "42499-42520",
+          "finding": "Realtime changes cause all shared reports to reload."
+        }
+      ]
+    },
+    {
+      "provider": "OSRM public demo server",
+      "purpose": "Routing and nearest-road snapping",
+      "dataSent": [
+        "origin/destination coordinates",
+        "tap/report candidate coordinates"
+      ],
+      "dataReceived": [
+        "route geometry/duration/distance",
+        "nearest road candidates"
+      ],
+      "locationSent": true,
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "16856-16857",
+          "finding": "OSRM endpoints."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "68596-68620",
+          "finding": "Route coordinate URL."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "79554-79570",
+          "finding": "Nearest-road coordinate URL."
+        }
+      ]
+    },
+    {
+      "provider": "OpenStreetMap Nominatim",
+      "purpose": "Reverse geocoding/search",
+      "dataSent": [
+        "latitude/longitude for reverse lookup",
+        "search query for forward lookup"
+      ],
+      "dataReceived": [
+        "place/address candidates"
+      ],
+      "locationSent": true,
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "86976-86996",
+          "finding": "Reverse geocode sends coordinate parameters."
+        }
+      ]
+    },
+    {
+      "provider": "OpenStreetMap/Carto/Esri",
+      "purpose": "Map tiles and labels",
+      "dataSent": [
+        "tile coordinates, IP and ordinary HTTP metadata"
+      ],
+      "dataReceived": [
+        "map imagery/tiles"
+      ],
+      "locationSent": "unknown",
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "46834-46858",
+          "finding": "Configured tile providers."
+        }
+      ]
+    },
+    {
+      "provider": "DriveTexas/TxDOT",
+      "purpose": "Official roadway situations",
+      "dataSent": [
+        "provider request and ordinary HTTP metadata"
+      ],
+      "dataReceived": [
+        "roadway situation data"
+      ],
+      "locationSent": false,
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "98582-98583",
+          "finding": "DriveTexas provenance is rendered for official records."
+        }
+      ]
+    },
+    {
+      "provider": "Weather provider configured by runtime",
+      "purpose": "Weather awareness",
+      "dataSent": [
+        "selected awareness location or provider query parameters"
+      ],
+      "dataReceived": [
+        "weather observations/forecast"
+      ],
+      "locationSent": "unknown",
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "94353-94610",
+          "finding": "Notification architecture consumes runtime weather/community state but does not deliver push."
+        }
+      ]
+    },
+    {
+      "provider": "Zippopotam.us",
+      "purpose": "ZIP lookup",
+      "dataSent": [
+        "ZIP code"
+      ],
+      "dataReceived": [
+        "town/state lookup"
+      ],
+      "locationSent": false,
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "45962-45970",
+          "finding": "ZIP code is placed in provider URL."
+        }
+      ]
+    },
+    {
+      "provider": "data.transportation.gov",
+      "purpose": "FRA crossing fallback inventory",
+      "dataSent": [
+        "Texas/Liberty query and ordinary HTTP metadata"
+      ],
+      "dataReceived": [
+        "crossing GeoJSON"
+      ],
+      "locationSent": false,
+      "userGeneratedContentSent": false,
+      "deviceIdentifierSent": false,
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "21-22",
+          "finding": "Transportation.gov crossing endpoint configured."
+        }
+      ]
+    }
+  ],
+  "cloudflare": {
+    "classification": "PREVIEW_INFRASTRUCTURE_SEPARATE_FROM_CURRENT_CONSUMER_RUNTIME",
+    "consumerRuntimeDataFlowProven": false
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "DECLARATIONS_DO_NOT_MATCH_WEB_RUNTIME_LOCATION_USE",
+  "android": {
+    "declared": [],
+    "locationRuntimeUseProven": true,
+    "backgroundLocationDeclared": false,
+    "notificationsDeclared": false,
+    "camera": false,
+    "photos": false,
+    "contacts": false,
+    "microphone": false,
+    "bluetooth": false,
+    "result": "No permissions declared; foreground web geolocation use is proven."
+  },
+  "ios": {
+    "usageDescriptionKeys": [],
+    "locationRuntimeUseProven": true,
+    "backgroundModesLocation": false,
+    "notifications": false,
+    "camera": false,
+    "photos": false,
+    "contacts": false,
+    "microphone": false,
+    "bluetooth": false,
+    "result": "No native permission usage descriptions declared; foreground web geolocation use is proven."
+  },
+  "evidence": [
+    {
+      "file": "android/app/src/main/AndroidManifest.xml",
+      "lines": "1-17",
+      "finding": "No uses-permission elements."
+    },
+    {
+      "file": "ios/App/App/Info.plist",
+      "lines": "1-18",
+      "finding": "No privacy usage-description or background-mode keys."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "48447-48457",
+      "finding": "Runtime uses high-accuracy watchPosition."
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "PRIVACY_ARCHITECTURE_AUDIT_COMPLETE_WITH_UNKNOWNS",
+  "truthBoundary": "Repository-observable current consumer behavior only; provider-side retention and deployed database policy are unknown.",
+  "dataClasses": [
+    {
+      "name": "precise_current_location",
+      "collected": true,
+      "source": "Browser Geolocation API",
+      "purpose": "Map centering, nearby context, reporting, routing, Route Watch",
+      "storage": "Runtime memory",
+      "retention": "LIFECYCLE_DERIVED: page/app runtime; Route Watch alias cleared when stopped",
+      "sentToServer": false,
+      "thirdPartyRecipients": [
+        "OSRM when used as route origin/nearest input",
+        "Nominatim when reverse geocoding is invoked"
+      ],
+      "linkedToIdentity": false,
+      "requiredForCoreFunction": false,
+      "deletionMechanism": "Stop Route Watch clears watch; app/page data ends runtime state",
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "39062-39118",
+          "finding": "getCurrentPosition uses configured high-accuracy options and stores coordinates in runtime state."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "48122-48138",
+          "finding": "Explicit current-location control requests high accuracy."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "48413-48469",
+          "finding": "Route Watch stores current position in memory, watches in foreground, and clears the watcher."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "90436-90442",
+          "finding": "Stop Route Watch stops position updates."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81087-81103",
+          "finding": "Supabase report rows contain report coordinates, not a standalone current-position telemetry write."
+        }
+      ],
+      "classification": "PRECISE_FOREGROUND_LOCATION"
+    },
+    {
+      "name": "community_report",
+      "collected": true,
+      "source": "User report workflow",
+      "purpose": "Shared roadway and crossing awareness",
+      "storage": "Supabase public.reports and runtime caches",
+      "retention": "UNKNOWN server deletion; active visibility is lifecycle-derived from expires_at",
+      "sentToServer": true,
+      "thirdPartyRecipients": [
+        "Supabase"
+      ],
+      "linkedToIdentity": true,
+      "requiredForCoreFunction": true,
+      "deletionMechanism": "No consumer mechanism proven",
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "79891-79976",
+          "finding": "Report writes are inserted into Supabase."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81087-81103",
+          "finding": "Road hazard row exact shape."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81673-81689",
+          "finding": "Clear event is a new pseudonymous report row with coordinates and expiry."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "84469-84530",
+          "finding": "Crossing reports calculate expiry and submit shared report fields."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "42499-42520",
+          "finding": "Realtime changes cause all shared reports to reload."
+        }
+      ],
+      "classification": "PSEUDONYMOUS_USER_GENERATED_CONTENT"
+    },
+    {
+      "name": "persistent_device_identifier",
+      "collected": true,
+      "source": "crypto.randomUUID fallback Date.now",
+      "purpose": "Associate reports, duplicate suppression, scoped development cleanup",
+      "storage": "localStorage gridlyDeviceId; Supabase reports.device_id",
+      "retention": "PERSISTENT_UNTIL_APP_DATA_CLEAR locally; UNKNOWN on server",
+      "sentToServer": true,
+      "thirdPartyRecipients": [
+        "Supabase"
+      ],
+      "linkedToIdentity": true,
+      "requiredForCoreFunction": true,
+      "deletionMechanism": "Clear site/app data locally; no consumer server deletion mechanism proven",
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "41886-41889",
+          "finding": "Persistent device identifier is generated and saved."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "81087-81103",
+          "finding": "Identifier is attached to report rows."
+        }
+      ],
+      "classification": "PSEUDONYMOUS_NOT_ANONYMOUS"
+    },
+    {
+      "name": "consumer_account_identity",
+      "collected": false,
+      "source": "none proven",
+      "purpose": "none",
+      "storage": "none proven",
+      "retention": "not_applicable",
+      "sentToServer": false,
+      "thirdPartyRecipients": [],
+      "linkedToIdentity": false,
+      "requiredForCoreFunction": false,
+      "deletionMechanism": "not_applicable",
+      "evidence": [
+        {
+          "file": "package.json",
+          "lines": "1-12",
+          "finding": "No authentication dependency; runtime uses public Supabase client without account UI."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "42499-42520",
+          "finding": "Supabase initializes data/realtime without an auth flow."
+        }
+      ],
+      "classification": "NO_ACCOUNT_LOGIN_EMAIL_PHONE_USERNAME_PASSWORD_OR_SOCIAL_IDENTITY_PROVEN"
+    },
+    {
+      "name": "saved_places_and_preferences",
+      "collected": true,
+      "source": "User selections",
+      "purpose": "Personalization, routes, notification preferences, map style",
+      "storage": "localStorage",
+      "retention": "PERSISTENT_UNTIL_CLEAR",
+      "sentToServer": false,
+      "thirdPartyRecipients": [],
+      "linkedToIdentity": false,
+      "requiredForCoreFunction": false,
+      "deletionMechanism": "In-app reset paths remove saved-place keys; clearing app/site data removes all",
+      "evidence": [
+        {
+          "file": "js/app.js",
+          "lines": "45962-46007",
+          "finding": "ZIP lookup result and home/work labels are used locally."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "85471-85506",
+          "finding": "Saved places persist in localStorage."
+        },
+        {
+          "file": "js/app.js",
+          "lines": "94619-94652",
+          "finding": "Smart alert preferences persist locally."
+        }
+      ],
+      "classification": "LOCAL_DEVICE_PREFERENCES"
+    }
+  ],
+  "accounts": {
+    "required": false,
+    "login": false,
+    "email": false,
+    "phone": false,
+    "username": false,
+    "password": false,
+    "socialIdentity": false,
+    "authenticationUsage": false
+  },
+  "payments": {
+    "classification": "ABSENT",
+    "storeKit": false,
+    "googlePlayBilling": false,
+    "stripe": false,
+    "revenueCat": false,
+    "paddle": false,
+    "paypal": false,
+    "entitlements": false,
+    "paywall": false,
+    "receipts": false,
+    "trials": false,
+    "cancellation": false
+  },
+  "localStorage": {
+    "present": true,
+    "relevant": [
+      "gridlyDeviceId",
+      "saved places/home/work",
+      "home-town/profile/settings",
+      "movement intelligence and commute baseline samples",
+      "map style",
+      "notification preferences",
+      "UI seen/expanded flags",
+      "crossing review decisions",
+      "local feedback log"
+    ]
+  },
+  "sessionStorage": {
+    "present": true,
+    "relevant": [
+      "startup geolocation prompt guard",
+      "first-run reset marker"
+    ]
+  },
+  "indexedDB": false,
+  "cookies": false,
+  "nativeStorage": false,
+  "cacheStorage": "Service worker application-shell and fetched-asset caching; no proven user/device record cache schema",
+  "operationalRights": {
+    "dataAccess": false,
+    "dataDeletion": false,
+    "correction": false,
+    "reportRemoval": false,
+    "accountDeletion": "not_applicable_no_accounts"
+  },
+  "dataSaleSharing": {
+    "sale": false,
+    "targetedAdvertisingSharing": false,
+    "dataBrokerTransfer": false,
+    "licensing": false,
+    "note": "No current repository implementation proven."
+  },
+  "analytics": {
+    "googleAnalytics": "ABSENT",
+    "firebaseAnalytics": "ABSENT",
+    "metaPixel": "ABSENT",
+    "mixpanel": "ABSENT",
+    "amplitude": "ABSENT",
+    "posthog": "ABSENT",
+    "sentry": "ABSENT",
+    "datadog": "ABSENT",
+    "fullstory": "ABSENT",
+    "hotjar": "ABSENT",
+    "microsoftClarity": "ABSENT",
+    "ordinaryLoggingIsAnalytics": false
+  },
+  "notifications": {
+    "browserNotificationApi": false,
+    "nativePush": false,
+    "tokens": false,
+    "externalProvider": false,
+    "preferenceUiOnly": true
+  },
+  "materialPrivacyDefect": {
+    "found": true,
+    "finding": "Persistent device_id is attached to community reports; any anonymous-reporting characterization would be inaccurate. Expiry filtering does not prove deletion of expired server rows."
+  },
+  "evidence": [
+    {
+      "file": "js/app.js",
+      "lines": "113217-113226",
+      "finding": "Runtime self-audit identifies geolocation, notification preference-only state, storage, and Supabase persistence."
+    },
+    {
+      "file": "package.json",
+      "lines": "1-12",
+      "finding": "Dependencies are Capacitor runtime packages only."
+    }
+  ]
+}
