@@ -20,6 +20,11 @@ function createRuntime(preview) {
     activeRouteOriginSource: '',
     activeRouteDestinationLabel: '',
     activeRouteSource: '',
+    routeGeometrySource: 'fallback',
+    routePreviewPolylinePointCount: 0,
+    lastRouteGeometryPointCount: 0,
+    routePreviewRendered: false,
+    osrmRouteSuccess: false,
     getGridlyDestinationRoutePreviewState: () => preview,
     formatGridlyRouteOriginLabel: (label) => label,
     gridlyFriendlyPlaceLabel: (place) => place.label,
@@ -56,6 +61,7 @@ test('Destination Intelligence starts Route Watch from an existing 250-mile stat
   assert.equal(context.routeWatchActivated, true);
   assert.equal(context.window.__gridlyRouteWatchActive, true);
   assert.equal(context.activeDestinationPlace.label, 'Talco City Hall');
+  assert.equal(context.window.__gridlyMonitoredRouteGeometry, preview.geometry, 'Route Watch retains the exact destination-preview geometry reference');
   assert.equal(calls.some(([name]) => name === 'inline'), false, 'does not rebuild the valid statewide route through the local saved-place path');
   assert.equal(calls.some(([name, message, tone]) => name === 'confirmation' && /Route Watch active/.test(message) && tone === 'success'), true);
   assert.equal(calls.some(([name]) => name === 'impact-pane'), true);

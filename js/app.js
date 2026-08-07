@@ -35208,6 +35208,14 @@ async function startGridlyRouteWatchFromRouteDetails() {
     activeRouteOriginSource = destinationPreview.source.source || "destination_preview";
     activeRouteDestinationLabel = destinationLabel;
     activeRouteSource = "destination_preview";
+    // Destination preview remains the geometry owner. Route Watch retains this
+    // exact ready geometry reference instead of rebuilding it through the local path.
+    window.__gridlyMonitoredRouteGeometry = destinationGeometry;
+    routeGeometrySource = destinationPreview.routeProvider || "destination_preview";
+    routePreviewPolylinePointCount = destinationGeometry.length;
+    lastRouteGeometryPointCount = destinationGeometry.length;
+    routePreviewRendered = true;
+    osrmRouteSuccess = String(destinationPreview.routeProvider || "osrm").toLowerCase() === "osrm";
     safeText("desktopRouteStatus", `Route Watch active · Watching ${originLabel} → ${destinationLabel}. Use Stop Route Watch to turn it off.`);
     safeText("routeWatchSetupHint", `Route Watch active · Watching ${originLabel} → ${destinationLabel}. Use Stop Route Watch to turn it off.`);
     updateGridlyRouteOwnershipSurface();
@@ -39667,7 +39675,7 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
   let routeSource = "none";
   if (routeWatchActive) {
     routeContextType = "route_watch_monitored_route";
-    routeSource = "route_watch";
+    routeSource = activeRouteSource === "destination_preview" ? "destination_preview" : "route_watch";
   } else if (destinationPreviewActive) {
     if (destinationType === "home") {
       routeContextType = "home_destination_route";
@@ -39703,7 +39711,9 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
     destinationType,
     destinationLabel: destinationLabel || (routeWatchActive ? activeRouteDestinationLabel || "Route Watch destination" : ""),
     hasGeometry,
-    geometrySource: routeWatchActive && hasRouteWatchGeometry ? "route_watch_preview" : hasDestinationGeometry ? "destination_route_preview" : routeContextType === "cleared_route" ? "cleared" : "none",
+    geometrySource: routeWatchActive && hasRouteWatchGeometry
+      ? (activeRouteSource === "destination_preview" ? "destination_route_preview" : "route_watch_preview")
+      : hasDestinationGeometry ? "destination_route_preview" : routeContextType === "cleared_route" ? "cleared" : "none",
     vertexCount,
     routeGeometry: Object.freeze(activeRouteGeometry.map((point) => Object.freeze({ lat: point.lat, lng: point.lng }))),
     routePreviewAvailable: Boolean(preview?.active || preview?.status === "ready" || routePreviewRendered || destinationVertexCount >= 2 || routeWatchVertexCount >= 2),
@@ -39712,7 +39722,9 @@ function gridlyBuildCurrentDetectedActiveRouteContext() {
     routeWatchEligible: Boolean(destinationType === "home" || destinationType === "work" || destinationType === "saved_place" || routeWatchActive),
     ownershipNotes: [
       "Active route context is read-only and descriptive.",
-      "Destination route geometry is classified as observable route context, not Route Watch ownership.",
+      activeRouteSource === "destination_preview"
+        ? "Destination preview owns the exact geometry monitored by Route Watch."
+        : "Local Route Watch geometry remains owned by the saved-place preview.",
       "Route Watch monitoring remains separate from route creation and destination preview.",
       "Audit observation may read geometry counts without changing recommendations, relevance, routing, UI, or storage."
     ]
@@ -54311,6 +54323,13 @@ function renderCrossings(reason = "unspecified", options = {}) {
 
 
 function getRoutePolylineLatLngs() {
+  const monitoredDestinationGeometry = window.__gridlyMonitoredRouteGeometry;
+  if (routeWatchActivated && activeRouteSource === "destination_preview" && Array.isArray(monitoredDestinationGeometry) && monitoredDestinationGeometry.length >= 2) {
+    return monitoredDestinationGeometry.map((pt) => ({
+      lat: Number(Array.isArray(pt) ? pt[0] : pt?.lat ?? pt?.latitude),
+      lng: Number(Array.isArray(pt) ? pt[1] : pt?.lng ?? pt?.lon ?? pt?.longitude)
+    })).filter((pt) => Number.isFinite(pt.lat) && Number.isFinite(pt.lng));
+  }
   const layerLatLngs = window.__gridlyRoutePreviewLayer?.getLatLngs?.();
   if (Array.isArray(layerLatLngs) && layerLatLngs.length >= 2) {
     return layerLatLngs.map((pt) => ({ lat: Number(pt?.lat), lng: Number(pt?.lng) })).filter((pt) => Number.isFinite(pt.lat) && Number.isFinite(pt.lng));
@@ -90248,6 +90267,7 @@ function clearGridlyRoute(source = "clear_route") {
   routeComparisonStatus = "alternate_unavailable";
   routeComparisonSummary = "";
   activeRouteSource = "primary";
+  window.__gridlyMonitoredRouteGeometry = null;
   if (els?.routeWatchDestinationSelect) els.routeWatchDestinationSelect.value = "";
   const mobileRouteQuickDestination = document.getElementById("mobileRouteQuickDestination");
   if (mobileRouteQuickDestination) mobileRouteQuickDestination.value = "";
@@ -91022,6 +91042,7 @@ async function startInlineRouteWatch(options = {}) {
   lastRoutePipelineStep = "entered";
   lastRouteEarlyReturnReason = null;
   const { activateWatch = true, source = "route_watch_cta" } = options;
+  window.__gridlyMonitoredRouteGeometry = null;
   routeDebugLog("Gridly route pipeline step", { step: lastRoutePipelineStep, source, activateWatch });
 
   lastRoutePipelineStep = "received_source_action";
