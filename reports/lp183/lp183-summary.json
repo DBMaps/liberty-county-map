@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "gridly.lp183.summary.v1",
+  "milestone": "LP183",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "candidateCommit": "6a1489aebd7cb8ad9e730ca87d08247a421747cf",
+  "candidateIdentity": "sha256:6a543cccea123ca9b4b9fe7df815e505587515b52a70698f988ca582178373a6",
+  "classification": "OWNER_APPROVED_PLATFORM_CONFIGURATION_REQUIRED",
+  "ownerApprovalStatus": "APPROVED_EXACT_LP182_SCOPE_ONLY",
+  "candidateStatus": "LP182_EXACT_CANDIDATE_RETAINED_GOVERNANCE_ONLY_HEAD_ADVANCE",
+  "accessControlStatus": "ACCESS_CONTROL_POLICY_READY_PLATFORM_NOT_CONFIGURED",
+  "rollbackStatus": "ROLLBACK_POLICY_READY_NOT_OPERATIONAL",
+  "scopedDeploymentAuthorization": "NOT_AUTHORIZED_PENDING_ACCESS_CONTROL_AND_ROLLBACK_CONFIGURATION_EVIDENCE",
+  "scopedDistributionAuthorization": "NOT_AUTHORIZED_PENDING_ACCESS_CONTROL_AND_ROLLBACK_CONFIGURATION_EVIDENCE",
+  "deterministicCanonicalOutput": "PASS",
+  "secretSafety": "PASS",
+  "runtimeModified": false,
+  "protectedFiles": [
+    "index.html",
+    "js/app.js",
+    "manifest.json",
+    "service-worker.js"
+  ],
+  "mergeRecommendation": "READY_TO_MERGE"
+}

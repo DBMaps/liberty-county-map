@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp183.ownerApproval.v1",
+  "milestone": "LP183",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "candidateCommit": "6a1489aebd7cb8ad9e730ca87d08247a421747cf",
+  "candidateIdentity": "sha256:6a543cccea123ca9b4b9fe7df815e505587515b52a70698f988ca582178373a6",
+  "approvalType": "BOUNDED_PREVIEW_VALIDATION_SCOPE_GOVERNANCE_APPROVAL",
+  "approvedByRole": "OWNER",
+  "approvedAt": null,
+  "evidenceTimestampPolicy": "OWNER_APPROVAL_RECORDED_WITHOUT_EXTERNAL_TIMESTAMP",
+  "hostname": "preview.gridlygo.com",
+  "purpose": "PHYSICAL_DEVICE_VALIDATION",
+  "audience": "OWNER_APPROVED_TESTERS",
+  "permittedUse": [
+    "REAL_ANDROID_BROWSER_AND_PWA_VALIDATION",
+    "REAL_IPHONE_BROWSER_AND_PWA_VALIDATION"
+  ],
+  "publicLaunchApproved": false,
+  "canonicalPromotionApproved": false,
+  "appStoreDistributionApproved": false,
+  "marketingApproved": false,
+  "betaReopeningApproved": false,
+  "automaticDeploymentApproved": false,
+  "executionApprovedByThisArtifact": false,
+  "classification": "OWNER_APPROVAL_RECORDED_EXACT_LP182_SCOPE_ONLY"
+}
