@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1841a": "node tools/lp1841a/build-privacy-audit.mjs build",
+    "verify:lp1841a": "node tools/lp1841a/build-privacy-audit.mjs verify",
+    "test:lp1841a": "node --test tests/lp1841a/*.test.mjs",
     "build:lp183": "node tools/lp183/build-preview-execution-readiness.mjs build",
     "verify:lp183": "node tools/lp183/build-preview-execution-readiness.mjs verify",
     "test:lp183": "node --test tests/lp183/*.test.mjs",

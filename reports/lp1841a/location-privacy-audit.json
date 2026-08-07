@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "LP184.1A-1",
+  "milestone": "LP184.1A",
+  "auditOnly": true,
+  "generatedAt": null,
+  "classification": "AUDIT_ONLY_CURRENT_RUNTIME",
+  "preciseLocation": true,
+  "requestTiming": [
+    "Explicit current-location controls and report placement",
+    "destination routing after a non-startup request",
+    "Route Watch activation"
+  ],
+  "startupBehavior": "Startup readiness explicitly defers automatic geolocation.",
+  "getCurrentPosition": true,
+  "watchPosition": true,
+  "routeWatch": {
+    "continuousForeground": true,
+    "highAccuracy": true,
+    "backgroundLocation": false,
+    "stopsOn": "Stop Route Watch and clear-route flows call clearWatch",
+    "storage": "In-memory userLocation and window aliases only",
+    "history": false
+  },
+  "currentLocationToSupabase": false,
+  "providerTransmission": {
+    "osrmRouting": true,
+    "osrmNearest": true,
+    "nominatimReverseGeocoding": true,
+    "mapTileProviders": "Tile requests reveal viewport/tile coordinates, not the userLocation object as an explicit parameter"
+  },
+  "evidence": [
+    {
+      "file": "js/app.js",
+      "lines": "39062-39118",
+      "finding": "getCurrentPosition uses configured high-accuracy options and stores coordinates in runtime state."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "48122-48138",
+      "finding": "Explicit current-location control requests high accuracy."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "48413-48469",
+      "finding": "Route Watch stores current position in memory, watches in foreground, and clears the watcher."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "90436-90442",
+      "finding": "Stop Route Watch stops position updates."
+    },
+    {
+      "file": "js/app.js",
+      "lines": "81087-81103",
+      "finding": "Supabase report rows contain report coordinates, not a standalone current-position telemetry write."
+    }
+  ]
+}
