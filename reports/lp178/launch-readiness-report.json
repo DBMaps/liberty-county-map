@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "gridly.lp178.launchReadiness.v1",
+  "milestone": "LP178",
+  "retiredPrerequisite": {
+    "id": "LP167-B001",
+    "blanketActivationBlocker": false,
+    "countySpecificRestrictionsPreserved": 11
+  },
+  "items": [
+    {
+      "id": "LP167-B002",
+      "name": "Live Talco routing",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "evidence": "LP163 deterministic routing PASS; no live owner observation is recorded.",
+      "remainingAction": "Execute and attest checklist LP167-B002.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    },
+    {
+      "id": "LP167-B003-Q",
+      "name": "Quiet awareness validation",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "evidence": "LP164 quiet fixtures PASS; no live quiet observation is recorded.",
+      "remainingAction": "Execute and attest checklist LP167-B003-Q.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    },
+    {
+      "id": "LP167-B003-A",
+      "name": "Active awareness validation",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "evidence": "LP164 active fixtures PASS; no live active observation is recorded.",
+      "remainingAction": "Execute and attest checklist LP167-B003-A.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    },
+    {
+      "id": "LP167-B003-C",
+      "name": "Cleared awareness validation",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "evidence": "LP164 cleared fixtures and rehydration guard PASS; no live transition is recorded.",
+      "remainingAction": "Execute and attest checklist LP167-B003-C.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    },
+    {
+      "id": "LP167-B005",
+      "name": "Physical-device validation",
+      "classification": "LIVE_VALIDATION_REQUIRED",
+      "evidence": "Browser/synthetic certifications exist; no real Android/iPhone evidence is recorded.",
+      "remainingAction": "Run the consolidated real-device checklist, then packaged-app checks through both closed-test platforms.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B010-A",
+      "name": "Android build",
+      "classification": "BLOCKED_BY_ENVIRONMENT",
+      "evidence": "Native project structure, identifier and version fields PASS repository validation. The governed baseline has no Gradle wrapper JAR, Android SDK or release signing credentials; no Android build PASS is inferred.",
+      "remainingAction": "Supply governed platform build tooling/artifacts outside this milestone, then sync web assets and produce/sign the governed release artifact.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B010-I",
+      "name": "iOS build",
+      "classification": "BLOCKED_BY_ENVIRONMENT",
+      "evidence": "Identifiers/version/project PASS. xcodebuild and Apple signing credentials are unavailable.",
+      "remainingAction": "On governed macOS/Xcode, sync web assets and archive/sign the governed release.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B010-C",
+      "name": "Closed testing",
+      "classification": "PLATFORM_ACTION_REQUIRED",
+      "evidence": "Projects are repository-ready; no Play closed-test or TestFlight submission/test evidence exists.",
+      "remainingAction": "Upload governed builds, configure tester cohorts, test on physical devices, and retain platform/test evidence.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B011-ACCOUNT",
+      "name": "Store accounts",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "evidence": "No governed Apple Developer/App Store Connect or Google Play Console ownership evidence is present.",
+      "remainingAction": "Owner confirms active entity accounts, agreements, roles, payment/tax/contact state as applicable.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B011-ASSET",
+      "name": "Store assets",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "evidence": "Repository contains the 1024px master icon; Apple/Google asset directories, screenshots and governed listing metadata are otherwise empty.",
+      "remainingAction": "Owner supplies only platform-required screenshots, listing/support/legal URLs and metadata for the chosen distribution; generate platform renditions during submission.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": true
+    },
+    {
+      "id": "LP167-B012",
+      "name": "Legal approval",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "evidence": "LP167 requires review of the checklist legal materials; no counsel/authorized approver decision is recorded.",
+      "remainingAction": "Obtain dated approval (or required corrections) for the minimum LP167 legal set.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    },
+    {
+      "id": "LP167-B013",
+      "name": "Final owner launch approval",
+      "classification": "OWNER_ACTION_REQUIRED",
+      "evidence": "No explicit final owner approval is recorded.",
+      "remainingAction": "After all preceding evidence is complete, Denise explicitly approves the governed launch window and operations package.",
+      "repositoryWorkComplete": true,
+      "ownerActionRequired": true,
+      "platformActionRequired": false
+    }
+  ],
+  "repositoryValidation": {
+    "classification": "PASS",
+    "values": {
+      "applicationId": "com.gridly.app",
+      "androidVersionCode": 1,
+      "androidVersionName": "1.0",
+      "iosBundleId": "com.gridly.app",
+      "iosShortVersion": "1.0",
+      "iosBuildVersion": "1"
+    },
+    "checks": {
+      "identifiersAligned": true,
+      "androidVersionAligned": true,
+      "iosVersionAligned": true,
+      "androidProjectComplete": true,
+      "iosProjectComplete": true,
+      "storeIconPresent": true
+    },
+    "buildInputs": {
+      "androidGradleWrapperJarAvailable": false
+    },
+    "buildAttempts": {
+      "android": {
+        "command": "./android/gradlew :app:assembleDebug",
+        "result": "BLOCKED_BY_ENVIRONMENT",
+        "evidence": "The governed repository baseline has no Gradle wrapper JAR; Android SDK and release signing credentials are also unavailable. No Android build PASS is inferred."
+      },
+      "ios": {
+        "command": "xcodebuild",
+        "result": "BLOCKED_BY_ENVIRONMENT",
+        "evidence": "xcodebuild is unavailable in this Linux environment; Apple signing and account evidence are also absent."
+      }
+    }
+  },
+  "authorization": {
+    "deployment": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        "LP167-B002",
+        "LP167-B003-Q",
+        "LP167-B003-A",
+        "LP167-B003-C",
+        "LP167-B005",
+        "LP167-B012",
+        "LP167-B013"
+      ]
+    },
+    "activation": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        "LP167-B002",
+        "LP167-B003-Q",
+        "LP167-B003-A",
+        "LP167-B003-C",
+        "LP167-B005",
+        "LP167-B012",
+        "LP167-B013"
+      ]
+    },
+    "distribution": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        "LP167-B005",
+        "LP167-B010-A",
+        "LP167-B010-I",
+        "LP167-B010-C",
+        "LP167-B011-ACCOUNT",
+        "LP167-B011-ASSET",
+        "LP167-B012",
+        "LP167-B013"
+      ]
+    },
+    "publicLaunch": {
+      "status": "NOT_AUTHORIZED",
+      "authorizationGranted": false,
+      "remainingPrerequisites": [
+        "LP167-B002",
+        "LP167-B003-Q",
+        "LP167-B003-A",
+        "LP167-B003-C",
+        "LP167-B005",
+        "LP167-B012",
+        "LP167-B013"
+      ]
+    }
+  },
+  "exactRemainingBlockers": [
+    "LP167-B002",
+    "LP167-B003-Q",
+    "LP167-B003-A",
+    "LP167-B003-C",
+    "LP167-B005",
+    "LP167-B010-A",
+    "LP167-B010-I",
+    "LP167-B010-C",
+    "LP167-B011-ACCOUNT",
+    "LP167-B011-ASSET",
+    "LP167-B012",
+    "LP167-B013"
+  ],
+  "operationsPerformed": {
+    "deployments": 0,
+    "activations": 0,
+    "distributions": 0,
+    "publicLaunches": 0
+  },
+  "authorizationReassessmentReady": true
+}
