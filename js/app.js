@@ -13941,7 +13941,9 @@ window.gridlyRouteConsequenceVisualAudit = function gridlyRouteConsequenceVisual
 
 window.gridlyFreshnessAudit = function gridlyFreshnessAudit() {
   try {
-    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const incidents = routeWatchActivated
+      ? getLiveProximityRouteIntelligenceIncidents()
+      : (Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []));
     const evaluated = incidents.map((incident) => ({ incident, freshness: evaluateGridlyIncidentFreshness(incident) }));
     const freshnessCounts = { fresh: 0, recent: 0, aging: 0, stale: 0, unknown: 0 };
     const timestampSourceCounts = {};
@@ -13984,7 +13986,9 @@ window.gridlyFreshnessAudit = function gridlyFreshnessAudit() {
 
 window.gridlyConfidenceAudit = function gridlyConfidenceAudit() {
   try {
-    const incidents = Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []);
+    const incidents = routeWatchActivated
+      ? getLiveProximityRouteIntelligenceIncidents()
+      : (Array.isArray(getUnifiedIncidents?.()) ? getUnifiedIncidents() : (Array.isArray(activeHazards) ? activeHazards : []));
     const evaluated = incidents.map((incident) => ({ incident, visualState: getGridlyIncidentVisualState(incident), confidence: evaluateGridlyIncidentConfidence(incident) }));
     const confidenceCounts = { very_low: 0, low: 0, medium: 0, high: 0 };
     let scoreTotal = 0;
@@ -14184,6 +14188,31 @@ function getGridlyRouteHydrationLayerSnapshot() {
 
 function buildGridlyRouteIntelligenceAuditSnapshot() {
   try {
+    const liveProximityIncidents = getLiveProximityRouteIntelligenceIncidents();
+    if (liveProximityIncidents.length > 0) {
+      const topRoutePhraseSamples = liveProximityIncidents.slice(0, 8).map((incident) => ({
+        id: incident?.id || incident?.key || "",
+        shortPhrase: incident?.title || incident?.description || "Active route condition",
+        routePhrase: incident?.title || incident?.description || "Active route condition",
+        confidencePhrase: evaluateGridlyIncidentConfidence(incident)?.confidenceLevel || "unknown",
+        confidenceLevel: evaluateGridlyIncidentConfidence(incident)?.confidenceLevel || "unknown",
+        routeImpact: true,
+        distanceMiles: incident.gridlyLiveProximity?.distanceMiles ?? null
+      }));
+      return {
+        evaluatedCount: liveProximityIncidents.length,
+        routeRelevantCount: liveProximityIncidents.length,
+        routeRelevantPhraseCount: liveProximityIncidents.length,
+        routeImpactPhraseCount: liveProximityIncidents.length,
+        domBridgePhraseCount: 0,
+        finalSourceUsed: "live_proximity_route_incidents",
+        finalUsedExtractedSamples: false,
+        topRoutePhraseSamples,
+        selectedDomCount: 0,
+        extractedDomPhraseCount: 0,
+        extractedRoutePhraseCount: liveProximityIncidents.length
+      };
+    }
     const markerPane = typeof document !== "undefined" ? document.querySelector("#map .leaflet-marker-pane") : null;
     const selectedDomNodes = getGridlyDomBridgeAuditTargets(markerPane);
     const extractedPhraseSamples = selectedDomNodes
@@ -40922,6 +40951,11 @@ function getGridlyDestinationRouteCacheKey() {
     firstPoint: routePoints[0] ? [routePoints[0].lat, routePoints[0].lng] : null,
     lastPoint: routePoints[routePoints.length - 1] ? [routePoints[routePoints.length - 1].lat, routePoints[routePoints.length - 1].lng] : null,
     distanceMeters: Number.isFinite(Number(preview.distanceMeters)) ? Math.round(Number(preview.distanceMeters)) : null,
+    livePosition: (() => {
+      const coordinate = getGridlyCurrentLocationStateCoordinate();
+      return coordinate ? [Number(coordinate.lat.toFixed(5)), Number(coordinate.lng.toFixed(5))] : null;
+    })(),
+    routeWatchActivated: Boolean(routeWatchActivated),
     sourceSignature: getGridlyDestinationRouteSourceSignature()
   });
 }
@@ -40969,9 +41003,18 @@ function buildGridlyDestinationRouteIntelligenceAudit(options = {}) {
   const corridorMatchStartedAt = getGridlyDestinationPerfNow();
   if (routeFound) gridlyDestinationPerformanceAuditState.locationEnrichmentMs = 0;
   const routeBounds = routeFound ? getGridlyDestinationRouteExpandedBounds(routePoints, corridorWidthFeet) : null;
-  const matchedHazards = routeFound
+  const corridorMatchedHazards = routeFound
     ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteHazardSource(), routePoints, { type: "hazard", title: "Active hazard", corridorWidthFeet, routeBounds })
     : [];
+  const liveProximityHazards = routeFound ? getLiveProximityRouteIntelligenceIncidents() : [];
+  const matchedHazards = [...corridorMatchedHazards];
+  const matchedHazardIds = new Set(matchedHazards.map((incident) => String(incident?.id || incident?.raw?.id || incident?.key || "")).filter(Boolean));
+  liveProximityHazards.forEach((incident) => {
+    const id = String(incident?.id || incident?.raw?.id || incident?.key || "");
+    if (id && matchedHazardIds.has(id)) return;
+    if (id) matchedHazardIds.add(id);
+    matchedHazards.push(incident);
+  });
   const matchedReports = routeFound
     ? findGridlyDestinationRouteCorridorMatches(getGridlyDestinationRouteReportSource(), routePoints, { type: "report", title: "Active report", corridorWidthFeet, routeBounds })
     : [];
@@ -48324,6 +48367,12 @@ function setGridlyUserLocation(candidate) {
   }
   const recoveryTriggered = maybeTriggerGridlyDestinationLocationRecovery("current_location_updated");
   if (candidate?.suppressRouteOriginRefresh !== true && !recoveryTriggered) scheduleGridlyDestinationRoutePreviewOriginRefresh("current_location_updated");
+  // Location is live journey state, not only the immutable origin used to build
+  // a route. Re-evaluate the watched corridor without replacing that origin.
+  gridlyDestinationRouteIntelligenceCache = null;
+  gridlyDestinationRouteImpactCache = null;
+  if (typeof updateRouteIntelligence === "function") updateRouteIntelligence();
+  if (typeof renderGridlyDestinationImpactPane === "function") renderGridlyDestinationImpactPane();
   return true;
 }
 
@@ -70273,6 +70322,21 @@ function getRouteIntelligenceSourceIncidents() {
   const localSourceIds = new Set(localAndOfficial.map((incident) => String(incident?.raw?.id || "")).filter(Boolean));
   const remoteCommunity = getRouteWatchCommunitySourceIncidents().filter((incident) => !localSourceIds.has(String(incident?.raw?.id || "")));
   return [...localAndOfficial, ...remoteCommunity];
+}
+
+function getLiveProximityRouteIntelligenceIncidents(options = {}) {
+  if (!routeWatchActivated) return [];
+  const userAnchor = getGridlyActiveAwarenessUserLocationAnchor(options);
+  if (!userAnchor) return [];
+  const routeHazard = options.routeHazard || getRouteHazardAssessment();
+  return getRouteIntelligenceSourceIncidents()
+    .filter((incident) => String(incident?.status || "").toLowerCase() === "active")
+    .filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
+    .map((incident) => ({
+      ...incident,
+      gridlyLiveProximity: buildGridlyActiveAwarenessProximityModel(incident, userAnchor)
+    }))
+    .filter((incident) => Number(incident.gridlyLiveProximity?.score || 0) > 0);
 }
 
 const GRIDLY_ROAD_CLUSTER_PREVIOUS_ROUNDING_DECIMALS = 3;
@@ -94876,11 +94940,13 @@ function updateRouteIntelligence(nearest = []) {
   const routeLabelParts = buildRouteWatchLabelParts();
 
   const unifiedActive = getRouteIntelligenceSourceIncidents().filter((incident) => incident.status === "active");
-  const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
-  const activeIssues = railActive;
+  const activeIssues = routeWatchActivated
+    ? getLiveProximityRouteIntelligenceIncidents()
+    : unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
 
-  const highAlerts = unifiedActive.filter((report) => report.severity === "high").length;
-  const moderateAlerts = unifiedActive.filter((report) => report.severity === "medium").length;
+  const consumerActive = routeWatchActivated ? activeIssues : unifiedActive;
+  const highAlerts = consumerActive.filter((report) => report.severity === "high").length;
+  const moderateAlerts = consumerActive.filter((report) => report.severity === "medium").length;
   const confirmedIncidents = getConsolidatedIncidents().filter((incident) => {
     const reports = Array.isArray(incident?.reports) ? incident.reports : [];
     const latest = reports[0] || [...reports].sort(compareReportsByRecency)[0];
@@ -94912,7 +94978,7 @@ function updateRouteIntelligence(nearest = []) {
   });
   const corridorHealth = getCorridorHealthFromScore(routeHazard?.score || 0);
   const estimatedDelayImpact = getEstimatedDelayImpact(corridorHealth, routeHazard?.level || "");
-  const activeUnifiedHazards = unifiedActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
+  const activeUnifiedHazards = consumerActive.filter((incident) => !String(incident.type || "").startsWith("rail_"));
   const routeRelevantHazards = routeIsMonitoring
     ? activeUnifiedHazards.filter((incident) => isIncidentRouteRelevant(incident, routeHazard))
     : [];
