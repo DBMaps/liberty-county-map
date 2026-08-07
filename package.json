@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp180": "node tools/lp180/build-web-pwa-foundation.mjs build",
+    "verify:lp180": "node tools/lp180/build-web-pwa-foundation.mjs verify",
+    "test:lp180": "node --test tests/lp180/*.test.mjs",
     "build:lp179": "node tools/lp179/close-owner-live-validation.mjs build",
     "verify:lp179": "node tools/lp179/close-owner-live-validation.mjs verify",
     "test:lp179": "node --test tests/lp179/*.test.mjs",

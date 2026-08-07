@@ -4,12 +4,18 @@
 
   <script>
     (function gridlyHostnameGate() {
-      var hostname = window.location.hostname;
+      var hostname = String(window.location.hostname || "").toLowerCase();
       var isLocalHost =
         hostname === "localhost" ||
         hostname === "127.0.0.1";
+      var productionCandidateHosts = [
+        "gridlygo.com",
+        "www.gridlygo.com",
+        "preview.gridlygo.com"
+      ];
+      var isProductionCandidateHost = productionCandidateHosts.indexOf(hostname) !== -1;
 
-      if (isLocalHost) return;
+      if (isLocalHost || isProductionCandidateHost) return;
 
       var target = "./beta-closed.html";
       var search = window.location.search || "";

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "gridly.lp180.physicalDeviceValidationAccessPlan.v1",
+  "milestone": "LP180",
+  "classification": "BLOCKED_BY_AUTHORIZATION",
+  "accessModel": "After explicit Deployment and Distribution authorization, publish the unchanged production-candidate artifact over HTTPS at preview.gridlygo.com. Do not reopen the historical beta, add ad-hoc authentication, or rely on noindex/obscurity. Promote the already-validated artifact to gridlygo.com only under later Public Launch authorization.",
+  "optionComparison": {
+    "gridlygoCom": {
+      "classification": "BLOCKED_BY_AUTHORIZATION",
+      "governance": "Resembles the final public entry point and risks being interpreted as Distribution/Public Launch.",
+      "recommendation": "Reserve for authorized launch."
+    },
+    "previewGridlygoCom": {
+      "classification": "BLOCKED_BY_AUTHORIZATION",
+      "governance": "Separates device validation from the canonical launch origin while using the same artifact; still constitutes reachable distribution and requires authorization.",
+      "recommendation": "Preferred validation hostname after authorization."
+    }
+  },
+  "android": {
+    "classification": "OWNER_ACTION_REQUIRED",
+    "evidence": [
+      "manufacturer/model",
+      "Android version",
+      "Chrome version",
+      "UTC timestamp",
+      "approved HTTPS validation URL",
+      "location permission",
+      "search",
+      "Current Location route",
+      "Talco route",
+      "Route Watch",
+      "Destination Intelligence",
+      "Awareness",
+      "report creation",
+      "hazard clear if safe",
+      "screenshots",
+      "tester attestation",
+      "PWA installation",
+      "home-screen launch",
+      "online reload",
+      "offline/service-worker fallback observation (do not claim full offline support)"
+    ],
+    "remainingAction": "Owner supplies actual device evidence; LP180 does not mark PASS.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "iphone": {
+    "classification": "OWNER_ACTION_REQUIRED",
+    "evidence": [
+      "iPhone model",
+      "iOS version",
+      "Safari version",
+      "UTC timestamp",
+      "approved HTTPS validation URL",
+      "location permission",
+      "search",
+      "Current Location route",
+      "Talco route",
+      "Route Watch",
+      "Destination Intelligence",
+      "Awareness",
+      "report creation",
+      "hazard clear if safe",
+      "screenshots",
+      "tester attestation",
+      "Add to Home Screen",
+      "standalone launch",
+      "online reload",
+      "service-worker fallback observation (do not claim full offline support)"
+    ],
+    "remainingAction": "Owner supplies actual device evidence; LP180 does not mark PASS.",
+    "ownerDependency": true,
+    "platformDependency": true,
+    "repositoryDependency": false
+  },
+  "evidenceRules": [
+    "Record exact URL and UTC timestamp",
+    "Capture permission prompts/results and screenshots",
+    "Identify tester",
+    "Do not clear a real hazard unless safe and authorized",
+    "Do not infer PASS from emulators, repository tests, or prior beta evidence"
+  ],
+  "authorizationRequiredBeforeExecution": [
+    "deployment",
+    "distribution"
+  ],
+  "publicLaunchAuthorizationRemainsRequiredForCanonicalHost": true
+}
