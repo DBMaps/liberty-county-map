@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { build, validate, verify } from '../../tools/lp173/complete-operational-evidence.mjs';
+import { AUTHORIZED_CURRENT_APP_BLOB, AUTHORIZED_CURRENT_COMPARISON_COMMIT, ORIGINAL_LP173_BASELINE_COMMIT, build, reconcileProtectedIdentity, validate, verify } from '../../tools/lp173/complete-operational-evidence.mjs';
+import { build as buildLp172 } from '../../tools/lp172/collect-owner-operational-evidence.mjs';
 import template from '../../evidence/lp173/owner-evidence.template.json' with { type: 'json' };
 
 const fact = (classification, value = 'metadata value') => ({ classification, collectionMethod: 'metadata-only collection', evidenceType: 'governed operational metadata', source: 'owner-supplied source description', sourceArtifactIdentity: null, sourceReportedTime: null, value, verificationMethod: classification === 'OWNER_ATTESTED' ? 'owner attestation review' : 'machine metadata comparison' });
@@ -50,6 +51,10 @@ test('protected identity is canonical Git-blob based and deterministic output is
   assert.equal(summary.validation.protectedGitBlobIdentities, 'PASS');
   assert.equal(summary.validation.protectedIdentityProvenance.identitySource, 'CANONICAL_GIT_BLOB');
   assert.equal(summary.validation.protectedIdentityProvenance.workingTreeIgnored, true);
+  assert.equal(summary.validation.protectedIdentityProvenance.baselineCommit, ORIGINAL_LP173_BASELINE_COMMIT);
+  assert.equal(summary.validation.protectedIdentityProvenance.authorizedCurrentComparisonCommit, AUTHORIZED_CURRENT_COMPARISON_COMMIT);
+  assert.equal(summary.validation.protectedIdentityProvenance.authorizedCurrentAppGitBlob, AUTHORIZED_CURRENT_APP_BLOB);
+  assert.equal(summary.validation.protectedIdentityProvenance.classification, 'PASS');
   assert.ok(summary.protectedArtifacts.every(item => item.classification === 'PASS'));
   assert.equal(verify(), true);
   for (const name of ['operational-evidence-completion-report.json', 'launch-authorization-readiness-report.json', 'lp173-summary.json']) {
@@ -57,4 +62,12 @@ test('protected identity is canonical Git-blob based and deterministic output is
     assert.notDeepEqual([...bytes.subarray(0, 3)], [0xef, 0xbb, 0xbf]);
     assert.equal(bytes.includes(13), false);
   }
+});
+
+test('protected identity fails closed for an ungoverned canonical Git blob', () => {
+  const lp172 = buildLp172()['owner-operational-evidence-summary.json'];
+  const changed = reconcileProtectedIdentity(undefined, lp172, '333141cf220c174f48f1d87c84a9873ff8e9c8a2');
+  assert.equal(changed.protectedGitBlobIdentities, 'CHANGED');
+  assert.equal(changed.protectedArtifactVerification.classification, 'CHANGED');
+  assert.equal(changed.protectedArtifacts.find(item => item.path === 'js/app.js').classification, 'CHANGED');
 });
