@@ -4,7 +4,7 @@
     "originalLp178BaselineCommit": "121b24926ec33d8a3ec33706cbe3280b388544c4",
     "authorizedLp1781RepairCommit": "333141cf220c174f48f1d87c84a9873ff8e9c8a2",
     "authorizedLp1782RepairGitBlob": "13d316b56a3cde2e37d158681638780892e0cd2b",
-    "authorizedLp1783RepairCommit": "50962126fe08adac7de871e874e06812dfd6daad",
+    "authorizedLp1783RepairCommit": "fa16aa8ea97f4c270b93f87dd33ebe8f72787cc4",
     "authorizedLp1783RepairGitBlob": "01a3ae3792f4bc29a5542001c525a1cdce52278d",
     "currentComparisonCommit": "8f70179327944b8b371a87c87cc13bb8a7232eb8",
     "transition": "LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> RECONCILED_PROTECTED_IDENTITY"
@@ -14,11 +14,11 @@
     {
       "path": "js/app.js",
       "identity": "CANONICAL_GIT_BLOB",
-      "expectedBaselineCommit": "50962126fe08adac7de871e874e06812dfd6daad",
+      "expectedBaselineCommit": "fa16aa8ea97f4c270b93f87dd33ebe8f72787cc4",
       "authorizedLp1782GitBlob": "13d316b56a3cde2e37d158681638780892e0cd2b",
       "authorizedLp1783GitBlob": "01a3ae3792f4bc29a5542001c525a1cdce52278d",
       "expectedGitBlob": "01a3ae3792f4bc29a5542001c525a1cdce52278d",
-      "actualComparisonCommit": "50962126fe08adac7de871e874e06812dfd6daad",
+      "actualComparisonCommit": "fa16aa8ea97f4c270b93f87dd33ebe8f72787cc4",
       "actualGitBlob": "01a3ae3792f4bc29a5542001c525a1cdce52278d",
       "expectedSha256": "47cf3ab141df0f24bf72b7478e886d8b6ef68b8fe27db69ea5fc60b7ee70ce51",
       "actualSha256": "47cf3ab141df0f24bf72b7478e886d8b6ef68b8fe27db69ea5fc60b7ee70ce51",
