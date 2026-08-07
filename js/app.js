@@ -14169,10 +14169,16 @@ function getGridlyRouteHydrationLayerSnapshot() {
     ? latLngs.filter((pt) => Number.isFinite(Number(pt?.lat)) && Number.isFinite(Number(pt?.lng))).length
     : 0;
   const routeLayerOnMap = Boolean(map && routeLayer && typeof map.hasLayer === "function" && map.hasLayer(routeLayer));
+  const activeContext = typeof getActiveRouteContext === "function" ? getActiveRouteContext() : null;
+  const governedRoutePointCount = activeContext?.hasGeometry && Array.isArray(activeContext?.routeGeometry)
+    ? activeContext.routeGeometry.length
+    : 0;
   return {
     routeLayerExists: Boolean(routeLayer),
     routeLayerOnMap,
-    routePointCount
+    routePointCount,
+    governedRouteGeometryAvailable: governedRoutePointCount >= 2,
+    governedRoutePointCount
   };
 }
 
@@ -14205,7 +14211,7 @@ function buildGridlyRouteIntelligenceAuditSnapshot() {
 
 function getGridlyRouteIntelligenceZeroReason({ routeGeometryAudit, layerSnapshot, bridgeSummary, intelligenceSnapshot } = {}) {
   if (!routeGeometryAudit?.activeRoutePresent) return "no_active_route_coordinates";
-  if (!layerSnapshot?.routeLayerOnMap) return "route_layer_not_on_map";
+  if (!layerSnapshot?.routeLayerOnMap && !layerSnapshot?.governedRouteGeometryAvailable) return "route_geometry_unavailable";
   if (!bridgeSummary?.routeBridgeApplyAttempted) return "route_bridge_apply_not_attempted";
   if (bridgeSummary?.routeBridgeApplyError) return `route_bridge_apply_error:${bridgeSummary.routeBridgeApplyError}`;
   if (!bridgeSummary?.domBridgeAvailable) return "route_bridge_unavailable";
@@ -14226,7 +14232,7 @@ function safeApplyRouteIntelligenceAfterRouteRender(reason = "route_intelligence
     activeRoutePresent: Boolean(routeGeometryAudit?.activeRoutePresent),
     routeCoordinatesPresent: Number(routeGeometryAudit?.activeRouteCoordinateCount || 0) >= 2,
     routeLayerOnMap: Boolean(layerSnapshot.routeLayerOnMap),
-    routePointCount: Number(layerSnapshot.routePointCount || routeGeometryAudit?.activeRouteCoordinateCount || 0),
+    routePointCount: Number(layerSnapshot.governedRoutePointCount || layerSnapshot.routePointCount || routeGeometryAudit?.activeRouteCoordinateCount || 0),
     routeBridgeApplyAttempted: false,
     routeBridgeApplySuccess: false,
     domBridgeAvailable: typeof window.gridlyApplyRailRouteImpactDomBridge === "function",
@@ -14249,10 +14255,8 @@ function safeApplyRouteIntelligenceAfterRouteRender(reason = "route_intelligence
     summary.impactedSampleCount = Number(bridgeResult?.impactedSampleCount || 0);
     summary.matchedDomCount = Number(bridgeResult?.matchedDomCount || 0);
     summary.escalatedDomCount = Number(bridgeResult?.escalatedDomCount || 0);
-    summary.routeBridgeApplySuccess = summary.activeRoutePresent
-      && summary.evaluatedRailDomCount > 0
-      && summary.impactedSampleCount > 0
-      && summary.matchedDomCount > 0;
+    // Zero matching rail DOM nodes is truthful source state, not a route-hydration failure.
+    summary.routeBridgeApplySuccess = summary.activeRoutePresent;
   } catch (error) {
     summary.routeBridgeApplyError = error?.message || "unknown error";
     summary.routeBridgeApplySuccess = false;
@@ -16905,6 +16909,8 @@ let gridlyCrossingVisibilityOptimizationState = {
 let activeReports = [];
 let activeHazards = [];
 let recentlyClearedRoadHazards = [];
+// Source-only shared hazards for Route Watch; local Awareness never reads this collection.
+let routeWatchSourceHazards = [];
 
 let gridlyHistoricalProjection = null;
 let gridlyHistoricalProjectionLastGeneratedAt = null;
@@ -53082,9 +53088,10 @@ async function loadSharedReports(reason = "manual") {
     const normalizeStage = reportStage("local filtering and normalization", { dependency: "normalizeReports" });
     const normalized = normalizeReports(rawRows);
     const activeCountyId = gridlyGetActiveCountyId();
-    const countyVisibleNormalized = normalized.filter((report) => gridlyReportMatchesActiveCounty(report, activeCountyId));
     gridlyDevCleanupSharedSuppressionState.lastSuppressedCount = 0;
-    const visibleNormalized = countyVisibleNormalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
+    const sourceVisibleNormalized = normalized.filter((report) => !gridlyShouldSuppressSharedReportDuringDevCleanup(report, reason));
+    const countyVisibleNormalized = sourceVisibleNormalized.filter((report) => gridlyReportMatchesActiveCounty(report, activeCountyId));
+    const visibleNormalized = countyVisibleNormalized;
     endReportStage(normalizeStage, "completed", { message: `raw=${rawRows.length}; normalized=${normalized.length}; countyVisible=${countyVisibleNormalized.length}; visible=${visibleNormalized.length}` });
 
     const reconcileStage = reportStage("active cleared stale reconciliation", { dependency: "report lifecycle filters" });
@@ -53097,6 +53104,10 @@ async function loadSharedReports(reason = "manual") {
       ? gridlyGetCrossingReportAreaFilter(refreshedCrossingReportCandidates, `loadSharedReports:${reason}:refreshedCrossingReports`, loadSharedReportsCrossingAreaFilter)
       : { filteredRecords: refreshedCrossingReportCandidates, filteredOutRecords: [] };
     const lifecycleFilterNow = Date.now();
+    const routeSourceHazards = sourceVisibleNormalized.filter((report) => report.reportKind === "hazard");
+    // Preserve source availability for Route Watch without changing selected-area collections.
+    // The active lifecycle reducer also prevents remote clear records from rehydrating.
+    routeWatchSourceHazards = gridlyFilterRoadHazardsByLatestLifecycle(routeSourceHazards, lifecycleFilterNow);
     recentlyClearedRoadHazards = gridlyFilterRecentlyClearedRoadHazardsForVisibility(visibleHazards, lifecycleFilterNow);
     activeHazards = gridlyFilterRoadHazardsByLatestLifecycle(visibleHazards, lifecycleFilterNow);
     activeReports = visibleNormalized.filter((report) => report.reportKind !== "hazard");
@@ -70230,6 +70241,38 @@ function getRecentlyClearedRoadHazardIncidents() {
 
 function getLiveHazardIncidents() {
   return gridlyBuildRoadHazardIncidentsFromReports([...gridlyDiagnosticArray(activeHazards), ...gridlyDiagnosticArray(recentlyClearedRoadHazards)]);
+}
+
+function getRouteWatchCommunitySourceIncidents() {
+  if (!routeWatchActivated) return [];
+  return gridlyBuildRoadHazardIncidentsFromReports(routeWatchSourceHazards).map((incident) => {
+    const latest = incident.latestReport || {};
+    return normalizeUnifiedIncident({
+      id: `road-route-${latest.id || incident.key}`,
+      type: latest.type || latest.report_type || "road_hazard",
+      source: "community",
+      status: "active",
+      severity: latest.severity || "medium",
+      title: latest.title || latest.detail || "Community road report",
+      description: latest.detail || "",
+      raw: latest,
+      lat: latest.lat ?? latest.latitude ?? latest.rawLat,
+      lng: latest.lng ?? latest.lon ?? latest.longitude ?? latest.rawLng,
+      area: latest.location_name || latest.area || latest.city || "",
+      created_at: latest.submittedAt,
+      reports_count: incident.count,
+      age_minutes: latest.minutesAgo,
+      report_type: latest.type
+    });
+  });
+}
+
+function getRouteIntelligenceSourceIncidents() {
+  const localAndOfficial = getUnifiedIncidents();
+  if (!routeWatchActivated) return localAndOfficial;
+  const localSourceIds = new Set(localAndOfficial.map((incident) => String(incident?.raw?.id || "")).filter(Boolean));
+  const remoteCommunity = getRouteWatchCommunitySourceIncidents().filter((incident) => !localSourceIds.has(String(incident?.raw?.id || "")));
+  return [...localAndOfficial, ...remoteCommunity];
 }
 
 const GRIDLY_ROAD_CLUSTER_PREVIOUS_ROUNDING_DECIMALS = 3;
@@ -90487,7 +90530,7 @@ function attachRouteWatchDebugGlobal() {
         routeHazardLevel: routeHazard?.level || "clear",
         fallbackExtraMinutes: 0
       });
-          const activeIncidents = (getUnifiedIncidents?.() || []).filter((incident) => incident.status === "active");
+          const activeIncidents = (getRouteIntelligenceSourceIncidents?.() || []).filter((incident) => incident.status === "active");
       const routeRelevantIncidents = activeIncidents.filter((incident) => isIncidentRouteRelevant(incident, routeHazard));
       const routeRelevantCrossings = routeHazard.nearbyReports.filter((report) => report.reportType === "blocked" && report.lifecycleState === "active");
       const routeImpactingHazards = (Array.isArray(routeHazard?.nearbyReports) ? routeHazard.nearbyReports : []).filter((report) => report.lifecycleState === "active");
@@ -90536,7 +90579,7 @@ function attachRouteWatchDebugGlobal() {
         routePreviewPolylinePointCount >= 2
         && map
         && typeof map.hasLayer === "function"
-        && (map.hasLayer(window.__gridlyRoutePreviewLayer) || map.hasLayer(routePreviewCorridorLayer) || map.hasLayer(savedRouteLayer))
+        && [window.__gridlyRoutePreviewLayer, routePreviewCorridorLayer, savedRouteLayer].filter(Boolean).some((layer) => map.hasLayer(layer))
       ),
       routePreviewPolylinePointCount,
       routePolylineVertexCount: routePreviewPolylinePointCount,
@@ -94832,7 +94875,7 @@ function computeRouteConfidenceModel({ routeRelevantHazards = [], routeHazard = 
 function updateRouteIntelligence(nearest = []) {
   const routeLabelParts = buildRouteWatchLabelParts();
 
-  const unifiedActive = getUnifiedIncidents().filter((incident) => incident.status === "active");
+  const unifiedActive = getRouteIntelligenceSourceIncidents().filter((incident) => incident.status === "active");
   const railActive = unifiedActive.filter((incident) => incident.type.startsWith("rail_"));
   const activeIssues = railActive;
 
