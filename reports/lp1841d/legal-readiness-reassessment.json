@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "LP184.1D-1",
+  "milestone": "LP184.1D",
+  "generatedAt": null,
+  "draftOnly": true,
+  "sources": [
+    "reports/lp1841a/*",
+    "reports/lp1841b/*",
+    "reports/lp1841c/*"
+  ],
+  "prerequisiteId": "LP167-B012",
+  "status": "LEGAL_OWNER_DECISIONS_SUBSTANTIALLY_COMPLETE_FINAL_APPROVAL_REQUIRED",
+  "pass": false,
+  "closed": false,
+  "classification": "LEGAL_OWNER_DECISIONS_SUBSTANTIALLY_COMPLETE_FINAL_APPROVAL_REQUIRED",
+  "attorneyReviewItems": [
+    "minimum-age policy and applicable consent requirements",
+    "historical retention and device-link lifecycle",
+    "report-removal/deletion lifecycle",
+    "subscription terms and billing disclosures",
+    "Texas governing-law language and any venue language",
+    "dispute terms, including any arbitration, waiver, venue, or indemnification decision",
+    "warranty disclaimers, damages limitations, indemnification, safety language, and enforceability",
+    "commercial historical-intelligence policy and deidentification representations",
+    "final legal documents, effective date, and final owner approval"
+  ],
+  "implementationRequiredItems": [
+    "prove support@gridlygo.com operational",
+    "prove privacy@gridlygo.com operational",
+    "implement accountless privacy-request verification and report/device-data identification",
+    "implement report removal and define deletion/historical-record/backup lifecycle",
+    "define and implement device-link retention, separation, removal, or deidentification lifecycle",
+    "implement billing, platform subscription configuration, cancellation, entitlements, and paid-period access",
+    "review or repair native location permission declarations",
+    "complete final Apple App Privacy mapping",
+    "complete final Google Play Data Safety mapping"
+  ],
+  "blocksScopedPreviewValidation": false,
+  "blocksStoreSubmission": true,
+  "blocksPublicLaunch": true
+}

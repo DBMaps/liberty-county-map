@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "LP184.1D-1",
+  "milestone": "LP184.1D",
+  "generatedAt": null,
+  "draftOnly": true,
+  "sources": [
+    "reports/lp1841a/*",
+    "reports/lp1841b/*",
+    "reports/lp1841c/*"
+  ],
+  "classification": "OWNER_DECISIONS_RECORDED_REVIEW_AND_IMPLEMENTATION_OPEN",
+  "records": [
+    {
+      "id": "LEGAL_OPERATOR",
+      "decision": "DJ Burns Collective LLC",
+      "status": "OWNER_DECISION_COMPLETE",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SUPPORT_CONTACT",
+      "decision": "support@gridlygo.com; planned mailbox not proven operational",
+      "status": "OWNER_DECISION_COMPLETE_OPERATIONAL_SETUP_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "PRIVACY_CONTACT",
+      "decision": "privacy@gridlygo.com; planned mailbox not proven operational",
+      "status": "OWNER_DECISION_COMPLETE_OPERATIONAL_SETUP_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "MINIMUM_AGE",
+      "decision": "Owner-selected product eligibility age 16; not a universal legal driving age",
+      "status": "OWNER_POLICY_DECISION_COMPLETE_LEGAL_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SERVER_HISTORICAL_RETENTION",
+      "decision": "Long-term, potentially indefinite event intelligence; persistent reporter/device linkage excluded from intended permanent asset; lifecycle unresolved",
+      "status": "OWNER_POLICY_DECISION_COMPLETE_IMPLEMENTATION_AND_LEGAL_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "HAZARD_ZIP_VS_REPORTER_ZIP",
+      "decision": "Hazard-location ZIP may be event intelligence; reporter residential ZIP is not an approved replacement identifier",
+      "status": "OWNER_POLICY_DECISION_COMPLETE",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "PRIVACY_REQUEST_PROCESS",
+      "decision": "Planned privacy contact; accountless verification and identification process not operational",
+      "status": "OWNER_POLICY_DECISION_COMPLETE_IMPLEMENTATION_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "REPORT_REMOVAL",
+      "decision": "Applicable submitter requests and moderation directed; display removal is not necessarily universal deletion; lifecycle unresolved",
+      "status": "OWNER_POLICY_DECISION_COMPLETE_IMPLEMENTATION_AND_LEGAL_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "SUBSCRIPTION_INTENT",
+      "decision": "$2.99/month auto-renewing; no free version or initial trial; platform cancellation; paid-period access; billing absent",
+      "status": "OWNER_INTENT_APPROVED_PENDING_BILLING_IMPLEMENTATION_AND_LEGAL_REVIEW",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "GOVERNING_LAW",
+      "decision": "Texas law direction; no final venue language",
+      "status": "OWNER_DIRECTION_COMPLETE_ATTORNEY_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "DISPUTE_TERMS",
+      "decision": "No arbitration, class waiver, jury waiver, mandatory venue, or indemnification invented",
+      "status": "ATTORNEY_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "LIABILITY_SAFETY_POLICY",
+      "decision": "Informational-awareness limitations and user safety responsibilities directed; exact legal language unresolved",
+      "status": "OWNER_POLICY_DIRECTION_COMPLETE_ATTORNEY_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "FUTURE_COMMERCIAL_INTELLIGENCE",
+      "decision": "Potential aggregated/deidentified historical condition commercialization; personal and reporter/device intelligence excluded; current data not claimed deidentified",
+      "status": "OWNER_POLICY_DECISION_COMPLETE_IMPLEMENTATION_AND_LEGAL_REVIEW_REQUIRED",
+      "blocksScopedPreviewValidation": false
+    },
+    {
+      "id": "FINAL_EFFECTIVE_DATE",
+      "decision": "Set only after final documents are approved for publication",
+      "status": "DEFERRED_UNTIL_FINAL_LEGAL_APPROVAL",
+      "blocksScopedPreviewValidation": false
+    }
+  ]
+}
