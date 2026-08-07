@@ -108,7 +108,9 @@ const json = value => `${JSON.stringify(value, null, 2)}\n`;
 const canonicalLf = value => value.replace(/\r\n/g, "\n");
 export async function run(mode = "verify") {
   const expected = await outputs();
-  const entries = [...Object.entries(expected.drafts).map(([n,v]) => [path.join(root,"legal/drafts",n),v]), ...Object.entries(expected.reports).map(([n,v]) => [path.join(root,"reports/lp1841c",n),json(v)])];
+  // LP184.1D supersedes the living draft text while these LP184.1C reports remain
+  // immutable baseline evidence. LP184.1D owns deterministic draft verification.
+  const entries = Object.entries(expected.reports).map(([n,v]) => [path.join(root,"reports/lp1841c",n),json(v)]);
   if (mode === "build") { await mkdir(path.join(root,"legal/drafts"),{recursive:true}); await mkdir(path.join(root,"reports/lp1841c"),{recursive:true}); for (const [file,value] of entries) await writeFile(file,value,"utf8"); }
   const mismatches=[]; for (const [file,value] of entries) { let actual=""; try { actual=await readFile(file,"utf8"); } catch {} if(canonicalLf(actual)!==canonicalLf(value)) mismatches.push(path.relative(root,file)); }
   if(mismatches.length) throw new Error(`LP184.1C deterministic verification failed: ${mismatches.join(", ")}`);

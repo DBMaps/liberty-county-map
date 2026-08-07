@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1841d": "node tools/lp1841d/close-owner-legal-decisions.mjs build",
+    "verify:lp1841d": "node tools/lp1841d/close-owner-legal-decisions.mjs verify",
+    "test:lp1841d": "node --test tests/lp1841d/*.test.mjs",
     "build:lp1841c": "node tools/lp1841c/build-consumer-legal-drafts.mjs build",
     "verify:lp1841c": "node tools/lp1841c/build-consumer-legal-drafts.mjs verify",
     "test:lp1841c": "node --test tests/lp1841c/*.test.mjs",

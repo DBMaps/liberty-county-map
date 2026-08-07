@@ -1,13 +1,12 @@
 DRAFT — NOT LEGALLY APPROVED
 
-Effective Date: [TO BE SET AT LEGAL APPROVAL]
+Effective Date: [DEFERRED UNTIL FINAL LEGAL APPROVAL]
 
 # Location & Route Intelligence Disclosure
 
-- Gridly may use precise foreground location for location-aware features.
-- Route Watch may update foreground location while it is active. Monitoring stops when Route Watch stops.
-- No background-location implementation is currently proven.
-- Route or location coordinates may be sent to routing and geocoding services, including OSRM and Nominatim. Map providers also receive normal map requests.
-- Report coordinates and a persistent pseudonymous device identifier may be stored through Supabase when a community report is submitted; reporting is not anonymous.
-- Gridly cannot guarantee that every route, hazard, crossing, weather, or traffic condition is detected or accurate.
-- Official signs, closures, gates, law-enforcement instructions, and traffic controls always take priority.
+- Gridly may use precise foreground location for location-aware features; no background-location implementation is currently proven.
+- Route or location coordinates may be sent to routing, geocoding, map, and other functional providers.
+- Event coordinates and hazard-location-derived ZIP/geographic areas may be retained long-term, potentially indefinitely, as historical condition intelligence.
+- Report coordinates and a persistent pseudonymous device identifier may be stored through Supabase. Current stored reports are not represented as already deidentified, and no device-link removal/separation lifecycle currently exists.
+- Reporter home or residential ZIP is not an approved replacement identifier and is not introduced by this policy.
+- Gridly cannot guarantee route, hazard, crossing, weather, traffic, accuracy, completeness, currency, availability, safety, or uninterrupted service. Official controls always take priority.

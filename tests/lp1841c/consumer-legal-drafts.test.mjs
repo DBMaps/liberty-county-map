@@ -11,7 +11,7 @@ const report = async name => JSON.parse(await readFile(`reports/lp1841c/${name}`
 test("every draft is conspicuously unapproved and has no invented effective date", async () => {
   for (const name of draftNames) {
     const text = await draft(name);
-    assert.ok(text.startsWith("DRAFT — NOT LEGALLY APPROVED\n\nEffective Date: [TO BE SET AT LEGAL APPROVAL]"));
+    assert.ok(text.startsWith("DRAFT — NOT LEGALLY APPROVED\n\nEffective Date: [DEFERRED UNTIL FINAL LEGAL APPROVAL]"));
     assert.doesNotMatch(text, /Effective Date:\s*(?:19|20)\d\d/);
   }
 });
@@ -39,11 +39,12 @@ test("safety and community language does not elevate community evidence", async 
   assert.match(community, /Official traffic controls[\s\S]*always take priority/i);
 });
 
-test("commercial, contact, operator, age, and legal questions remain placeholders", async () => {
+test("living drafts preserve fail-closed handling after owner decisions supersede placeholders", async () => {
   const all = (await Promise.all(draftNames.map(draft))).join("\n");
-  for (const placeholder of ["[GRIDLY LEGAL OPERATOR]", "[GRIDLY SUPPORT CONTACT]", "[GRIDLY PRIVACY CONTACT]", "[MINIMUM AGE]", "[GOVERNING LAW]"]) assert.ok(all.includes(placeholder));
-  assert.match(await draft("terms-of-service.md"), /\[SUBSCRIPTION TERMS — OWNER\/LEGAL DECISION REQUIRED\]/);
-  assert.doesNotMatch(all, /\$\d|per month|per year|Apple billing|Google billing|web billing/i);
+  assert.match(all, /DRAFT — NOT LEGALLY APPROVED/);
+  assert.match(all, /not (?:yet )?proven operational/i);
+  assert.match(all, /No payment or subscription implementation currently exists/i);
+  assert.match(await draft("terms-of-service.md"), /not binding final terms/i);
 });
 
 test("decision register is complete without turning legal approval into a scoped-preview blocker", async () => {
