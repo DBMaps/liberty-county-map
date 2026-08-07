@@ -1,0 +1,568 @@
+{
+  "schemaVersion": "LP184.1B-1",
+  "milestone": "LP184.1B",
+  "sourceAudit": "LP184.1A",
+  "draftOnly": true,
+  "generatedAt": null,
+  "status": "DRAFT_COMPLETE_APPLE_POLICY_REVIEW_REQUIRED",
+  "policyDecision": "APPLE_POLICY_REVIEW_REQUIRED",
+  "backgroundLocationCollected": "NO_IMPLEMENTATION_PROVEN",
+  "categories": [
+    {
+      "dataCategory": "Contact Info",
+      "dataSubcategory": "Name",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Contact Info",
+      "dataSubcategory": "Email Address",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Contact Info",
+      "dataSubcategory": "Phone Number",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Contact Info",
+      "dataSubcategory": "Physical Address",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Contact Info",
+      "dataSubcategory": "Other User Contact Info",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Health & Fitness",
+      "dataSubcategory": "Health",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Health & Fitness",
+      "dataSubcategory": "Fitness",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Financial Info",
+      "dataSubcategory": "Payment Info",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Financial Info",
+      "dataSubcategory": "Credit Info",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Financial Info",
+      "dataSubcategory": "Other Financial Info",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Location",
+      "dataSubcategory": "Precise Location",
+      "collected": "UNKNOWN",
+      "classification": "UNKNOWN_REQUIRES_APPLE_POLICY_REVIEW",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "requiredOrOptional": "OPTIONAL",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    },
+    {
+      "dataCategory": "Location",
+      "dataSubcategory": "Coarse Location",
+      "collected": "UNKNOWN",
+      "classification": "UNKNOWN_REQUIRES_APPLE_POLICY_REVIEW",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "requiredOrOptional": "OPTIONAL",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    },
+    {
+      "dataCategory": "Sensitive Info",
+      "dataSubcategory": "Sensitive Information",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Contacts",
+      "dataSubcategory": "Contacts",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "User Content",
+      "dataSubcategory": "Other User Content",
+      "collected": "YES",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "requiredOrOptional": "OPTIONAL",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    },
+    {
+      "dataCategory": "Browsing History",
+      "dataSubcategory": "Browsing History",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Search History",
+      "dataSubcategory": "Search History",
+      "collected": "UNKNOWN",
+      "classification": "UNKNOWN_REQUIRES_APPLE_POLICY_REVIEW",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "requiredOrOptional": "OPTIONAL",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[saved_places_and_preferences]/localStorage",
+          "finding": "Saved places and preferences stay local; searches may be transmitted to Nominatim but server persistence is unknown."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/third-party-service-inventory.json",
+          "path": "services[OpenStreetMap Nominatim]",
+          "finding": "Search queries are sent to Nominatim; local/server persistence is not proven by LP184.1A."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    },
+    {
+      "dataCategory": "Identifiers",
+      "dataSubcategory": "Device ID",
+      "collected": "YES",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY"
+      ],
+      "requiredOrOptional": "OPTIONAL",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    },
+    {
+      "dataCategory": "Identifiers",
+      "dataSubcategory": "User ID",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Purchases",
+      "dataSubcategory": "Purchase History",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Usage Data",
+      "dataSubcategory": "Product Interaction",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Usage Data",
+      "dataSubcategory": "Advertising Data",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Usage Data",
+      "dataSubcategory": "Other Usage Data",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Diagnostics",
+      "dataSubcategory": "Crash Data",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Diagnostics",
+      "dataSubcategory": "Performance Data",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Diagnostics",
+      "dataSubcategory": "Other Diagnostic Data",
+      "collected": "NO",
+      "linkedToUser": "NOT_APPLICABLE",
+      "usedForTracking": "NO",
+      "purposes": [
+        "NOT_APPLICABLE"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "accounts/payments/analytics/dataSaleSharing",
+          "finding": "LP184.1A found no accounts, payments, analytics, advertising, tracking, or sale implementation."
+        }
+      ],
+      "storeInterpretationReviewRequired": false
+    },
+    {
+      "dataCategory": "Other Data",
+      "dataSubcategory": "Other Data Types",
+      "collected": "UNKNOWN",
+      "linkedToUser": "UNKNOWN",
+      "usedForTracking": "NO",
+      "purposes": [
+        "APP_FUNCTIONALITY",
+        "UNKNOWN"
+      ],
+      "requiredOrOptional": "UNKNOWN",
+      "evidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[saved_places_and_preferences]/localStorage",
+          "finding": "Saved places and preferences stay local; searches may be transmitted to Nominatim but server persistence is unknown."
+        }
+      ],
+      "storeInterpretationReviewRequired": true
+    }
+  ]
+}

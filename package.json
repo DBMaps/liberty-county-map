@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1841b": "node tools/lp1841b/build-store-privacy-mapping.mjs build",
+    "verify:lp1841b": "node tools/lp1841b/build-store-privacy-mapping.mjs verify",
+    "test:lp1841b": "node --test tests/lp1841b/*.test.mjs",
     "build:lp1841a": "node tools/lp1841a/build-privacy-audit.mjs build",
     "verify:lp1841a": "node tools/lp1841a/build-privacy-audit.mjs verify",
     "test:lp1841a": "node --test tests/lp1841a/*.test.mjs",

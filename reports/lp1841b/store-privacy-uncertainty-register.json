@@ -1,0 +1,330 @@
+{
+  "schemaVersion": "LP184.1B-1",
+  "milestone": "LP184.1B",
+  "sourceAudit": "LP184.1A",
+  "draftOnly": true,
+  "generatedAt": null,
+  "status": "OPEN_POLICY_AND_OWNER_DECISIONS",
+  "items": [
+    {
+      "id": "APPLE-LOCATION-001",
+      "platform": "APPLE",
+      "question": "Does Apple's applicable collection definition include transient precise coordinates sent to routing/geocoding providers and report coordinates stored by Supabase?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Apple store classification cannot be derived from network behavior alone.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "APPLE-CONTENT-002",
+      "platform": "APPLE",
+      "question": "Which Apple User Content and Location subcategories apply to community report category, detail, coordinates, timestamps, and lifecycle fields?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Apple taxonomy interpretation is external to the repository.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "APPLE-ID-003",
+      "platform": "APPLE",
+      "question": "Is persistent pseudonymous device_id linked to the user under Apple's definition?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Pseudonymous linkage is proven, but Apple's store meaning of linked is a policy question.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "APPLE-SEARCH-004",
+      "platform": "APPLE",
+      "question": "Does transmission of searches to Nominatim constitute collected Search History?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Transmission is proven; storage and Apple classification are not.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "GOOGLE-SHARING-001",
+      "platform": "GOOGLE",
+      "question": "Are Supabase, OSRM, Nominatim, and tile-provider product-function transmissions shared under Google exclusions?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Recipient flows are proven; service-provider/exclusion status is not.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "GOOGLE-CONTENT-002",
+      "platform": "GOOGLE",
+      "question": "Should community report fields map to App Activity, other user-generated content, or another Google type?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Google taxonomy interpretation is external to the repository.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "GOOGLE-ID-003",
+      "platform": "GOOGLE",
+      "question": "How must persistent pseudonymous device_id be declared and is its transfer shared?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Persistence and transmission are proven; platform classification is not.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "BOTH-RETENTION-001",
+      "platform": "BOTH",
+      "question": "What are actual provider/server retention periods and valid deletion declarations?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Report expiry does not prove deletion; provider retention and deployed policy are unknown.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "GOOGLE-DELETION-002",
+      "platform": "GOOGLE",
+      "question": "Does store readiness require a consumer deletion request mechanism for this collected data?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "No operational consumer mechanism is proven; store/legal obligations are external.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": true,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    },
+    {
+      "id": "BOTH-NATIVE-001",
+      "platform": "BOTH",
+      "question": "Do absent native foreground-location declarations block native validation and store submission?",
+      "repositoryEvidence": [
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/location-privacy-audit.json",
+          "path": "preciseLocation/routeWatch/providerTransmission",
+          "finding": "Precise foreground location and provider transmission are proven; background location is false."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/community-reporting-privacy-audit.json",
+          "path": "submittedFields/lifecycle",
+          "finding": "Supabase report rows contain user content, coordinates, timestamps/lifecycle fields, and persistent device_id; deletion is not proven."
+        },
+        {
+          "sourceAudit": "LP184.1A",
+          "report": "reports/lp1841a/data-inventory.json",
+          "path": "dataClasses[persistent_device_identifier]",
+          "finding": "device_id is persistent, transmitted, pseudonymous, and not anonymous."
+        }
+      ],
+      "whyRepositoryEvidenceIsInsufficient": "Runtime/declaration mismatch is proven but native packaging outcome requires engineering/platform validation.",
+      "ownerDecisionRequired": true,
+      "platformPolicyReviewRequired": true,
+      "legalReviewRequired": false,
+      "blocksStoreSubmission": true,
+      "blocksPublicLaunch": true,
+      "recommendedNextAction": "Obtain owner, platform-policy, native-engineering, and legal review as applicable; update the draft without guessing."
+    }
+  ]
+}
