@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "gridly.lp181.physicalDeviceValidationDeploymentAuthorization.v1",
+  "milestone": "LP181",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "candidateCommit": "05f9edb4720dbc5474547a233ee1b850e76ac5c9",
+  "candidateProtectedIdentity": {
+    "type": "CANONICAL_GIT_BLOB_SET",
+    "commit": "05f9edb4720dbc5474547a233ee1b850e76ac5c9",
+    "artifacts": [
+      {
+        "file": "index.html",
+        "sha256": "sha256:439f9edf6d81159c46dae339b269b0e33ca7b9c48028b2621dade835bcac3842"
+      },
+      {
+        "file": "js/app.js",
+        "sha256": "sha256:e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285"
+      },
+      {
+        "file": "manifest.json",
+        "sha256": "sha256:4af4612435de51747dcd47d0da46ec3631d2c683ca37ef00e6e991d7e53d7394"
+      },
+      {
+        "file": "service-worker.js",
+        "sha256": "sha256:112321f5e22964a8551d805d106bd2f0445e6fa9f854a671732cd357b5e26d58"
+      }
+    ]
+  },
+  "candidateBranch": "main",
+  "sourceOfTruth": "main at LP181 audit start; arbitrary future HEAD is not authorized",
+  "validationHostname": "preview.gridlygo.com",
+  "canonicalProductionHostname": "gridlygo.com",
+  "purpose": "physical-device validation only",
+  "audience": "owner-approved real-device testers",
+  "authorizationScope": {
+    "requestedScope": {
+      "hostname": "preview.gridlygo.com",
+      "purpose": "physical-device validation",
+      "audience": "owner-approved real-device testers",
+      "artifact": {
+        "type": "CANONICAL_GIT_BLOB_SET",
+        "commit": "05f9edb4720dbc5474547a233ee1b850e76ac5c9",
+        "artifacts": [
+          {
+            "file": "index.html",
+            "sha256": "sha256:439f9edf6d81159c46dae339b269b0e33ca7b9c48028b2621dade835bcac3842"
+          },
+          {
+            "file": "js/app.js",
+            "sha256": "sha256:e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285"
+          },
+          {
+            "file": "manifest.json",
+            "sha256": "sha256:4af4612435de51747dcd47d0da46ec3631d2c683ca37ef00e6e991d7e53d7394"
+          },
+          {
+            "file": "service-worker.js",
+            "sha256": "sha256:112321f5e22964a8551d805d106bd2f0445e6fa9f854a671732cd357b5e26d58"
+          }
+        ]
+      },
+      "duration": "bounded"
+    },
+    "governanceModel": "GLOBAL_OPERATION_STATES_ONLY",
+    "scopeAwareAuthorizationSupported": false,
+    "privateTestingDistinguishedFromPublicDistribution": false,
+    "blocker": "LP167 and its LP176 reassessment authorize operations globally and define no governed environment, hostname, audience, or private-testing scope. LP181 cannot invent a scoped authorization object that changes those decisions."
+  },
+  "deploymentAuthorization": "NOT_AUTHORIZED",
+  "distributionAuthorization": "NOT_AUTHORIZED",
+  "activationAuthorization": "NOT_AUTHORIZED",
+  "publicLaunchAuthorization": "NOT_AUTHORIZED",
+  "canonicalProductionPromotionAuthorization": "NOT_AUTHORIZED",
+  "appStoreDistributionAuthorization": "NOT_AUTHORIZED",
+  "restoreAuthorization": "NOT_AUTHORIZED",
+  "rollbackAuthorization": "NOT_AUTHORIZED",
+  "interpretation": {
+    "deployment": true,
+    "distribution": true,
+    "activation": false,
+    "publicLaunch": false,
+    "internetReachableUnannouncedUrlIsDistribution": true,
+    "obscurityPermittedAsAccessLimitation": false,
+    "accessControl": "UNKNOWN",
+    "accessControlRationale": "Existing governance says noindex/obscurity is not access control but defines neither a private-preview control nor an exception produced by one."
+  },
+  "authorizationConditions": [
+    "No authorization is granted until existing governance is amended by an owner-approved milestone to support a validation-only scope or all global Deployment and Distribution gates are satisfied.",
+    "Any future authorization must bind preview.gridlygo.com, the exact candidate identity, physical-device validation, owner-approved testers, and a bounded window.",
+    "gridlygo.com, the old beta, marketing/public announcement, automatic deployment, canonical promotion, and app stores remain unauthorized.",
+    "A defined, owner-approved rollback method and separately granted incident-specific rollback authority are required before execution.",
+    "No private keys, signing material, service-role credentials, or owner secrets may be served or committed."
+  ],
+  "expirationCondition": "No validation authority exists. A future bounded authority should close when both Android and iPhone evidence are complete or the owner explicitly closes the validation window, whichever occurs first.",
+  "remainingBlockers": [
+    {
+      "id": "LP167-B005",
+      "blocker": "physical-device validation",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "The global Distribution gate requires the evidence that the proposed distribution is intended to collect.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B010-A",
+      "blocker": "Android release build",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "LP167/LP176 does not distinguish web validation distribution from native distribution.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B010-I",
+      "blocker": "iOS release build",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "LP167/LP176 does not distinguish web validation distribution from native distribution.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B010-C",
+      "blocker": "Play/TestFlight closed testing",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "LP167/LP176 applies the closed-testing gate to Distribution globally.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B011-ACCOUNT",
+      "blocker": "store accounts",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "The existing Distribution decision has no owner/tester or web-only scope.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B011-ASSET",
+      "blocker": "store assets/listing readiness",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "The existing Distribution decision has no owner/tester or web-only scope.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B012",
+      "blocker": "legal approval",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "LP167 places legal/business approval in Distribution review without a private-validation exception.",
+      "alsoRequiredBeforePublicLaunch": true
+    },
+    {
+      "id": "LP167-B013",
+      "blocker": "final owner approval",
+      "classification": "REQUIRED_BEFORE_PREVIEW_VALIDATION",
+      "rationale": "Explicit owner approval is mandatory for authorization under LP167.",
+      "alsoRequiredBeforePublicLaunch": true
+    }
+  ],
+  "previewRequiredBlockers": [
+    "LP167-B005",
+    "LP167-B010-A",
+    "LP167-B010-I",
+    "LP167-B010-C",
+    "LP167-B011-ACCOUNT",
+    "LP167-B011-ASSET",
+    "LP167-B012",
+    "LP167-B013"
+  ],
+  "publicLaunchOnlyBlockers": [],
+  "blockerClassificationCaveat": "All eight remain preview prerequisites only because the governed Distribution state is global. LP181 does not claim they are intrinsically necessary for web testing.",
+  "legalApprovalRequiredBeforePreviewValidation": true,
+  "rollbackAssessment": {
+    "requiredBeforeDeployment": true,
+    "sufficientMechanismExists": false,
+    "status": "NOT_CONFIGURED_AND_NOT_AUTHORIZED",
+    "evidence": "LP180 records no configured web rollback. LP170/LP176 require identity, ownership, validation/rehearsal and incident-specific authority; a conceptual prior-artifact redeploy is not sufficient governed execution evidence."
+  },
+  "operationalOwnership": {
+    "monitoringOwner": "GOVERNED_IN_EXISTING_OWNER_EVIDENCE",
+    "incidentOwner": "GOVERNED_IN_EXISTING_OWNER_EVIDENCE",
+    "supportOwner": "GOVERNED_IN_EXISTING_OWNER_EVIDENCE",
+    "source": "evidence/lp173/owner-evidence.autodiscovered.json",
+    "namesRepeated": false
+  },
+  "ownerActionsRequired": [
+    "Approve any governance change or satisfy all global gates",
+    "Select/configure the host only after authorization",
+    "Provide exact platform/DNS evidence",
+    "Grant final release approval",
+    "Close any future validation window"
+  ],
+  "platformActionsRequired": [
+    "After authorization only: configure hosting/custom-domain binding, DNS verification, HTTPS certificate, and manual publication"
+  ],
+  "repositoryActionsRequired": [
+    "Create an owner-approved scope-aware authorization policy before reassessment, unless all global gates will be satisfied",
+    "Define and govern a manual preview deployment and rollback procedure before execution"
+  ],
+  "performsDeployment": false,
+  "performsDnsChange": false,
+  "performsActivation": false,
+  "performsDistribution": false,
+  "performsPublicLaunch": false,
+  "performsRestore": false,
+  "performsRollback": false,
+  "protectedSystemsModified": [],
+  "runtimeModified": false,
+  "physicalDeviceValidationPerformed": false,
+  "secretSafety": "PASS",
+  "deterministicCanonicalOutput": "PASS",
+  "classification": "NOT_AUTHORIZED"
+}

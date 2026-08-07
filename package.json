@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp181": "node tools/lp181/authorize-physical-device-validation-preview.mjs build",
+    "verify:lp181": "node tools/lp181/authorize-physical-device-validation-preview.mjs verify",
+    "test:lp181": "node --test tests/lp181/*.test.mjs",
     "build:lp180": "node tools/lp180/build-web-pwa-foundation.mjs build",
     "verify:lp180": "node tools/lp180/build-web-pwa-foundation.mjs verify",
     "test:lp180": "node --test tests/lp180/*.test.mjs",
