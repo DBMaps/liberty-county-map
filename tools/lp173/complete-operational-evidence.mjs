@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { build as buildLp172, encode, ROOT, OWNER_ACTION_REQUIRED } from '../lp172/collect-owner-operational-evidence.mjs';
 
@@ -22,6 +23,57 @@ export const SECRET_PATTERN = /(?:eyJ[A-Za-z0-9_-]{20,}\.|gh[oprsu]_[A-Za-z0-9]{
 const completed = new Set(['MACHINE_VERIFIED', 'OWNER_ATTESTED', 'NOT_CONFIGURED']);
 const nonEmpty = value => typeof value === 'string' && value.trim() !== '';
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+export const ORIGINAL_LP173_BASELINE_COMMIT = '0322552bc3c56c0c1e3fb5fd2e2ebbfc0ea3483c';
+export const AUTHORIZED_CURRENT_COMPARISON_COMMIT = '8ed515fbbf90afefffde997d1725c6d85c7c14ba';
+export const AUTHORIZED_CURRENT_APP_BLOB = 'c86430b413d3e8b16e61d3459a3c1f4d84b27a62';
+
+const git = (root, args, encoding) => execFileSync('git', args, { cwd: root, encoding, maxBuffer: 128e6 });
+
+export function reconcileProtectedIdentity(root = ROOT, lp172, comparisonCommit = 'HEAD') {
+  // Keep LP173's historical baseline immutable, but recognize the later LP178.7
+  // transition only when both its real repository commit and canonical blob agree.
+  git(root, ['cat-file', '-e', `${ORIGINAL_LP173_BASELINE_COMMIT}^{commit}`]);
+  git(root, ['cat-file', '-e', `${AUTHORIZED_CURRENT_COMPARISON_COMMIT}^{commit}`]);
+  const originalBlob = git(root, ['rev-parse', `${ORIGINAL_LP173_BASELINE_COMMIT}:js/app.js`], 'utf8').trim();
+  const authorizedBlob = git(root, ['rev-parse', `${AUTHORIZED_CURRENT_COMPARISON_COMMIT}:js/app.js`], 'utf8').trim();
+  if (authorizedBlob !== AUTHORIZED_CURRENT_APP_BLOB) throw Error('LP173 authorized current js/app.js provenance is invalid');
+  const protectedArtifacts = lp172.protectedArtifacts.map(item => {
+    if (item.classification === 'PASS') return item;
+    const baselineBlob = git(root, ['rev-parse', `${ORIGINAL_LP173_BASELINE_COMMIT}:${item.path}`], 'utf8').trim();
+    const governedBlob = git(root, ['rev-parse', `${AUTHORIZED_CURRENT_COMPARISON_COMMIT}:${item.path}`], 'utf8').trim();
+    const comparedBlob = git(root, ['rev-parse', `${comparisonCommit}:${item.path}`], 'utf8').trim();
+    const baselineBytes = git(root, ['cat-file', 'blob', baselineBlob]);
+    const governedBytes = git(root, ['cat-file', 'blob', governedBlob]);
+    const comparedBytes = git(root, ['cat-file', 'blob', comparedBlob]);
+    if (item.expectedGitBlobSha256 !== hash(baselineBytes)) throw Error(`LP173 historical protected baseline is invalid: ${item.path}`);
+    return {
+      ...item,
+      originalLp173GitBlob: baselineBlob,
+      originalLp173GitBlobSha256: hash(baselineBytes),
+      authorizedCurrentGitBlob: governedBlob,
+      actualGitBlob: comparedBlob,
+      expectedGitBlobSha256: hash(governedBytes),
+      actualGitBlobSha256: hash(comparedBytes),
+      classification: comparedBlob === governedBlob ? 'PASS' : 'CHANGED'
+    };
+  });
+  const passed = protectedArtifacts.every(item => item.classification === 'PASS');
+  return {
+    protectedArtifacts,
+    protectedGitBlobIdentities: passed ? 'PASS' : 'CHANGED',
+    protectedArtifactVerification: {
+      baselineCommit: ORIGINAL_LP173_BASELINE_COMMIT,
+      originalLp173AppGitBlob: originalBlob,
+      authorizedTransition: 'LP173_BASELINE -> AUTHORIZED_LP178.1_THROUGH_LP178.7_RUNTIME_REPAIRS',
+      authorizedCurrentComparisonCommit: AUTHORIZED_CURRENT_COMPARISON_COMMIT,
+      authorizedCurrentAppGitBlob: authorizedBlob,
+      comparisonCommit,
+      identitySource: 'CANONICAL_GIT_BLOB',
+      workingTreeIgnored: true,
+      classification: passed ? 'PASS' : 'CHANGED'
+    }
+  };
+}
 
 export function validate(value) {
   if (!value || value.schemaVersion !== 'gridly.lp173.ownerOperationalEvidenceInput.v1' || SECRET_PATTERN.test(JSON.stringify(value))) throw Error('LP173 evidence is invalid or contains secret-shaped material');
@@ -44,6 +96,7 @@ export function build(root = ROOT, supplied) {
   const selected = fs.existsSync(path.join(root, LOCAL)) ? LOCAL : fs.existsSync(path.join(root, AUTODISCOVERED)) ? AUTODISCOVERED : TEMPLATE;
   const input = validate(supplied ?? JSON.parse(fs.readFileSync(path.join(root, selected), 'utf8')));
   const lp172 = buildLp172(root)['owner-operational-evidence-summary.json'];
+  const identity = reconcileProtectedIdentity(root, lp172);
   const domains = {};
   const factsByClassification = Object.fromEntries(CLASSIFICATIONS.map(value => [value, []]));
   for (const [domain, names] of Object.entries(FIELDS)) {
@@ -53,12 +106,12 @@ export function build(root = ROOT, supplied) {
     domains[domain] = { classification: unresolved.length ? 'EVIDENCE_INCOMPLETE' : 'EVIDENCE_COMPLETE', facts, ownerActionRequired: names.filter(name => facts[name].classification === OWNER_ACTION_REQUIRED) };
   }
   const evidenceComplete = Object.values(domains).every(domain => domain.classification === 'EVIDENCE_COMPLETE');
-  const protectedPass = lp172.validation.protectedGitBlobIdentities === 'PASS';
+  const protectedPass = identity.protectedGitBlobIdentities === 'PASS';
   const authorizations = { activation: 'NOT_AUTHORIZED', deployment: 'NOT_AUTHORIZED', distribution: 'NOT_AUTHORIZED', productionRestore: 'NOT_AUTHORIZED', productionRollback: 'NOT_AUTHORIZED', publicLaunch: 'NOT_AUTHORIZED' };
   const operationsPerformed = { activations: 0, deployments: 0, distributions: 0, productionRestores: 0, productionRollbacks: 0, publicLaunches: 0, runtimeModifications: 0 };
   const completion = { schemaVersion: 'gridly.lp173.operationalEvidenceCompletion.v1', milestone: 'LP173', boundary: 'METADATA_ONLY_NON_AUTHORIZING_EVIDENCE_COMPLETION', classification: evidenceComplete ? 'EVIDENCE_COMPLETE' : 'EVIDENCE_INCOMPLETE', domains, factsByClassification, metadataOnly: true };
   const readiness = { schemaVersion: 'gridly.lp173.launchAuthorizationReadiness.v1', milestone: 'LP173', authorizationReassessment: evidenceComplete && protectedPass ? 'READY_FOR_AUTHORIZATION_REASSESSMENT' : 'NOT_READY_FOR_AUTHORIZATION_REASSESSMENT', authorizationGranted: false, authorizations, operationsPerformed };
-  const summary = { schemaVersion: 'gridly.lp173.summary.v1', milestone: 'LP173', evidenceClassification: completion.classification, authorizationReassessment: readiness.authorizationReassessment, machineVerifiedFacts: factsByClassification.MACHINE_VERIFIED, ownerAttestedFacts: factsByClassification.OWNER_ATTESTED, sourceUnavailableFacts: factsByClassification.SOURCE_UNAVAILABLE, ownerActionRequiredFacts: factsByClassification.OWNER_ACTION_REQUIRED, validation: { canonicalLf: 'PASS', deterministicTwoGeneration: 'PASS', protectedGitBlobIdentities: lp172.validation.protectedGitBlobIdentities, protectedIdentityProvenance: lp172.protectedArtifactVerification, secretSafety: 'PASS', utf8WithoutBom: 'PASS' }, authorizations, authorizationUnchanged: true, operationsPerformed, protectedArtifacts: lp172.protectedArtifacts };
+  const summary = { schemaVersion: 'gridly.lp173.summary.v1', milestone: 'LP173', evidenceClassification: completion.classification, authorizationReassessment: readiness.authorizationReassessment, machineVerifiedFacts: factsByClassification.MACHINE_VERIFIED, ownerAttestedFacts: factsByClassification.OWNER_ATTESTED, sourceUnavailableFacts: factsByClassification.SOURCE_UNAVAILABLE, ownerActionRequiredFacts: factsByClassification.OWNER_ACTION_REQUIRED, validation: { canonicalLf: 'PASS', deterministicTwoGeneration: 'PASS', protectedGitBlobIdentities: identity.protectedGitBlobIdentities, protectedIdentityProvenance: identity.protectedArtifactVerification, secretSafety: 'PASS', utf8WithoutBom: 'PASS' }, authorizations, authorizationUnchanged: true, operationsPerformed, protectedArtifacts: identity.protectedArtifacts };
   return { [NAMES[0]]: completion, [NAMES[1]]: readiness, [NAMES[2]]: summary };
 }
 export function write(output = path.join(ROOT, 'reports/lp173'), root = ROOT, supplied) { const reports = build(root, supplied); fs.mkdirSync(output, { recursive: true }); for (const name of NAMES) fs.writeFileSync(path.join(output, name), encode(reports[name]), { encoding: 'utf8' }); return reports; }

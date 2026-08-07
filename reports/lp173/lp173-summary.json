@@ -49,9 +49,13 @@
   ],
   "protectedArtifacts": [
     {
-      "actualGitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "actualGitBlob": "c86430b413d3e8b16e61d3459a3c1f4d84b27a62",
+      "actualGitBlobSha256": "e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285",
+      "authorizedCurrentGitBlob": "c86430b413d3e8b16e61d3459a3c1f4d84b27a62",
       "classification": "PASS",
-      "expectedGitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
+      "expectedGitBlobSha256": "e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285",
+      "originalLp173GitBlob": "7b28dc1e18ac8c5044fe0462832838e31efa85f6",
+      "originalLp173GitBlobSha256": "855e92d2891e3bcc95dbd8d47d118c7cd2ceb227a93e230232f0142bdf6248cf",
       "path": "js/app.js"
     },
     {
@@ -223,9 +227,13 @@
       "path": "reports/lp164/lp164-summary.json"
     },
     {
-      "actualGitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
+      "actualGitBlob": "30731811900fead96bfab356d9278e009e737f1b",
+      "actualGitBlobSha256": "16d65f388a3b6604aea1dc6355fa23d84e2a6d80e760a154fabfe318971302c6",
+      "authorizedCurrentGitBlob": "30731811900fead96bfab356d9278e009e737f1b",
       "classification": "PASS",
-      "expectedGitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
+      "expectedGitBlobSha256": "16d65f388a3b6604aea1dc6355fa23d84e2a6d80e760a154fabfe318971302c6",
+      "originalLp173GitBlob": "4021d2bb68782759ffcc497ba21952fb45da4d7c",
+      "originalLp173GitBlobSha256": "1d52693411d9c962a5b9335b202e5bf24b47fdf40c3dbebd7aa07c141cbb8572",
       "path": "reports/lp164/protected-artifact-hashes.json"
     },
     {
@@ -680,9 +688,14 @@
     "deterministicTwoGeneration": "PASS",
     "protectedGitBlobIdentities": "PASS",
     "protectedIdentityProvenance": {
+      "authorizedCurrentAppGitBlob": "c86430b413d3e8b16e61d3459a3c1f4d84b27a62",
+      "authorizedCurrentComparisonCommit": "8ed515fbbf90afefffde997d1725c6d85c7c14ba",
+      "authorizedTransition": "LP173_BASELINE -> AUTHORIZED_LP178.1_THROUGH_LP178.7_RUNTIME_REPAIRS",
       "baselineCommit": "0322552bc3c56c0c1e3fb5fd2e2ebbfc0ea3483c",
+      "classification": "PASS",
       "comparisonCommit": "HEAD",
       "identitySource": "CANONICAL_GIT_BLOB",
+      "originalLp173AppGitBlob": "7b28dc1e18ac8c5044fe0462832838e31efa85f6",
       "workingTreeIgnored": true
     },
     "secretSafety": "PASS",
