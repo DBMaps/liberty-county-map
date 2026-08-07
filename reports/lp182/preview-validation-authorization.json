@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "gridly.lp182.previewValidationAuthorization.v1",
+  "milestone": "LP182",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "globalAuthorizationStates": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "scopeType": "PHYSICAL_DEVICE_VALIDATION_PREVIEW",
+  "scopeStatus": "POLICY_READY_OWNER_APPROVAL_REQUIRED",
+  "hostname": "preview.gridlygo.com",
+  "purpose": "PHYSICAL_DEVICE_VALIDATION",
+  "audience": "OWNER_APPROVED_TESTERS",
+  "candidateBranch": "main",
+  "candidateCommit": "6a1489aebd7cb8ad9e730ca87d08247a421747cf",
+  "candidateIdentity": "sha256:6a543cccea123ca9b4b9fe7df815e505587515b52a70698f988ca582178373a6",
+  "protectedArtifacts": [
+    {
+      "file": "index.html",
+      "gitBlob": "94d233cc1b1e010196ae1683b901864a9ef9b2b7"
+    },
+    {
+      "file": "js/app.js",
+      "gitBlob": "c86430b413d3e8b16e61d3459a3c1f4d84b27a62"
+    },
+    {
+      "file": "manifest.json",
+      "gitBlob": "2a9e101a60ebe5d8b280f50b924a57c96ba54a9d"
+    },
+    {
+      "file": "service-worker.js",
+      "gitBlob": "1300f9731d65a4d6067737a420e0447c4a67bb0f"
+    }
+  ],
+  "ownerApprovalRequired": true,
+  "ownerApprovalEvidence": {
+    "status": "ABSENT_FOR_THIS_SPECIFIC_SCOPE",
+    "instructionIsPolicyRequestNotExecutionApproval": true
+  },
+  "scopedOperations": {
+    "deployment": "NOT_AUTHORIZED_PENDING_OWNER_APPROVAL_AND_PREREQUISITES",
+    "distribution": "NOT_AUTHORIZED_PENDING_OWNER_APPROVAL_AND_PREREQUISITES",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "rollback": "PREAUTHORIZED_CONDITIONALLY_WITHIN_PREVIEW_SCOPE",
+    "restore": "NOT_APPLICABLE_WITHIN_PREVIEW_SCOPE"
+  },
+  "prohibitedOperations": {
+    "canonicalProductionPromotion": "NOT_AUTHORIZED",
+    "appStoreDistribution": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED",
+    "marketing": "NOT_AUTHORIZED",
+    "betaReopening": "NOT_AUTHORIZED"
+  },
+  "zeroExecution": {
+    "dnsChanges": 0,
+    "hostingConfigurationChanges": 0,
+    "deployments": 0,
+    "distributions": 0,
+    "activations": 0,
+    "publicLaunches": 0,
+    "restores": 0,
+    "rollbacks": 0
+  },
+  "classification": "SCOPE_POLICY_READY_OWNER_APPROVAL_REQUIRED"
+}

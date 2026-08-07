@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp182.summary.v1",
+  "milestone": "LP182",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "classification": "SCOPE_POLICY_READY_OWNER_APPROVAL_REQUIRED",
+  "extensionPoint": "LP167/LP176 global authorization decisions, extended beside rather than inside their immutable historical artifacts",
+  "globalAuthorizationStates": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "scopedAuthorizationSupported": true,
+  "scopeStatus": "POLICY_READY_OWNER_APPROVAL_REQUIRED",
+  "hostname": "preview.gridlygo.com",
+  "candidateCommit": "6a1489aebd7cb8ad9e730ca87d08247a421747cf",
+  "candidateIdentity": "sha256:6a543cccea123ca9b4b9fe7df815e505587515b52a70698f988ca582178373a6",
+  "deterministicCanonicalOutput": "PASS",
+  "secretSafety": "PASS",
+  "runtimeModified": false,
+  "protectedSystemsModified": [],
+  "mergeRecommendation": "READY_TO_MERGE"
+}
