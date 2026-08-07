@@ -4,7 +4,8 @@ import { readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 
 const draftNames = ["privacy-policy.md", "terms-of-service.md", "community-reporting-guidelines.md", "location-route-intelligence-disclosure.md"];
-const draft = name => readFile(`legal/drafts/${name}`, "utf8");
+const canonicalLf = text => text.replace(/\r\n/g, "\n");
+const draft = async name => canonicalLf(await readFile(`legal/drafts/${name}`, "utf8"));
 const report = async name => JSON.parse(await readFile(`reports/lp1841c/${name}`, "utf8"));
 
 test("every draft is conspicuously unapproved and has no invented effective date", async () => {
@@ -79,7 +80,7 @@ test("outputs are deterministic, secret-safe, non-executing, and protected files
   const protectedDiff = execFileSync("git", ["diff", "--name-only", "--", "index.html", "js/app.js", "manifest.json", "service-worker.js", "android", "ios"], { encoding: "utf8" }).trim();
   assert.equal(protectedDiff, "");
   for (const file of [...draftNames.map(x => `legal/drafts/${x}`), "reports/lp1841c/legal-owner-decision-register.json", "reports/lp1841c/legal-readiness-reassessment.json", "reports/lp1841c/lp1841c-summary.json"]) {
-    const raw = await readFile(file, "utf8");
+    const raw = canonicalLf(await readFile(file, "utf8"));
     assert.equal(raw.includes("\r"), false);
     assert.doesNotMatch(raw, /(?:service_role|SUPABASE_(?:ANON|PUBLIC|SERVICE)[_A-Z]*KEY|eyJ[A-Za-z0-9_-]{20,})/);
   }
