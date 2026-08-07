@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "LP184.1C-1",
+  "milestone": "LP184.1C",
+  "generatedAt": null,
+  "draftOnly": true,
+  "sources": [
+    "reports/lp1841a/*",
+    "reports/lp1841b/*"
+  ],
+  "prerequisiteId": "LP167-B012",
+  "status": "LEGAL_DRAFTING_COMPLETE_APPROVAL_REQUIRED",
+  "pass": false,
+  "closed": false,
+  "classification": "LEGAL_DRAFTING_COMPLETE_APPROVAL_REQUIRED",
+  "whatRemainsBeforeClosure": [
+    "Approve the four consumer legal drafts through authorized legal review.",
+    "Resolve every record in legal-owner-decision-register.json, replace every explicit placeholder, and set the effective date only at approval.",
+    "Operationally validate support, privacy-request, deletion/retention, and report-removal processes.",
+    "Complete applicable Apple/Google policy mapping and native permission review identified by LP184.1B.",
+    "Record dated owner/legal approval of the final publication-ready materials."
+  ],
+  "blocksScopedPreviewValidation": false,
+  "blocksStoreSubmission": true,
+  "blocksPublicLaunch": true
+}
