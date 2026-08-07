@@ -35193,6 +35193,31 @@ function syncGridlyVisibleRouteExitControls() {
 }
 
 async function startGridlyRouteWatchFromRouteDetails() {
+  const destinationPreview = typeof getGridlyDestinationRoutePreviewState === "function"
+    ? getGridlyDestinationRoutePreviewState()
+    : (window.GridlyDestinationRoutePreview || {});
+  const destinationGeometry = Array.isArray(destinationPreview?.geometry) ? destinationPreview.geometry : [];
+  if (destinationPreview?.status === "ready" && destinationPreview?.source && destinationPreview?.destination && destinationGeometry.length >= 2) {
+    const originLabel = formatGridlyRouteOriginLabel(destinationPreview.source.label, destinationPreview.source.source);
+    const destinationLabel = gridlyFriendlyPlaceLabel(destinationPreview.destination, "Destination");
+    routeWatchActivated = true;
+    window.__gridlyRouteWatchActive = true;
+    window.__gridlySelectedRouteId = `destination-preview:${destinationPreview.destination.id || destinationLabel}`;
+    activeDestinationPlace = destinationPreview.destination;
+    activeRouteOriginLabel = originLabel;
+    activeRouteOriginSource = destinationPreview.source.source || "destination_preview";
+    activeRouteDestinationLabel = destinationLabel;
+    activeRouteSource = "destination_preview";
+    safeText("desktopRouteStatus", `Route Watch active · Watching ${originLabel} → ${destinationLabel}. Use Stop Route Watch to turn it off.`);
+    safeText("routeWatchSetupHint", `Route Watch active · Watching ${originLabel} → ${destinationLabel}. Use Stop Route Watch to turn it off.`);
+    updateGridlyRouteOwnershipSurface();
+    updateRouteIntelligence();
+    syncRouteQuickPanelUiState?.();
+    syncGridlyVisibleRouteExitControls?.();
+    setConfirmation("Route Watch active. Gridly is checking this route for local reports.", "success");
+    renderGridlyDestinationImpactPane?.();
+    return { success: true, activateWatch: true, source: "destination_route_preview", routePointCount: destinationGeometry.length };
+  }
   if (typeof startInlineRouteWatch !== "function") {
     setConfirmation("Route Watch is not available for this route yet.", "error");
     return { success: false, reason: "start_inline_route_watch_unavailable" };
