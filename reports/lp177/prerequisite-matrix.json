@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "gridly.lp177.prerequisiteMatrix.v1",
+  "milestone": "LP177",
+  "policySource": "LP167",
+  "prerequisites": [
+    {
+      "id": "LP167-B001",
+      "prerequisite": "Eleven-county address certification",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_PLATFORM_INPUT",
+      "evidence": "evidence/lp135/statewide-certification.json",
+      "remainingBlocker": "The eleven byte-identical LP130 packages are absent; restore/mount and certify them through LP134 without weakening exact-match rules."
+    },
+    {
+      "id": "LP167-B002",
+      "prerequisite": "Live Talco routing validation",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_LIVE_VALIDATION",
+      "evidence": "reports/lp163/lp163-summary.json",
+      "remainingBlocker": "A launch-window Talco route attestation and smoke test must be performed against the live route."
+    },
+    {
+      "id": "LP167-B003-Q",
+      "prerequisite": "Quiet awareness live validation",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_LIVE_VALIDATION",
+      "evidence": "reports/lp164/lp164-summary.json",
+      "remainingBlocker": "Observe and attest the quiet state against configured production sources."
+    },
+    {
+      "id": "LP167-B003-A",
+      "prerequisite": "Active awareness live validation",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_LIVE_VALIDATION",
+      "evidence": "reports/lp164/lp164-summary.json",
+      "remainingBlocker": "Observe and attest an active state against configured production sources."
+    },
+    {
+      "id": "LP167-B003-C",
+      "prerequisite": "Cleared awareness live validation",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_LIVE_VALIDATION",
+      "evidence": "reports/lp164/lp164-summary.json",
+      "remainingBlocker": "Observe and attest a cleared transition against configured production sources."
+    },
+    {
+      "id": "LP167-B005",
+      "prerequisite": "Physical-device validation",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_PHYSICAL_DEVICE",
+      "evidence": "reports/lp166/lp166-summary.json",
+      "remainingBlocker": "Record real Android and iPhone browser evidence; packaged apps additionally require closed-platform testing."
+    },
+    {
+      "id": "LP167-B009",
+      "prerequisite": "PWA readiness",
+      "category": "ENGINEERING_COMPLETABLE",
+      "status": "COMPLETED",
+      "evidence": "LP177 deterministic manifest, service-worker, icon, shell, and install-contract validation",
+      "remainingBlocker": null
+    },
+    {
+      "id": "LP167-B010-A",
+      "prerequisite": "Governed Android build readiness",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "ENGINEERING_PROJECT_VALIDATED_PLATFORM_BLOCKED",
+      "evidence": "LP177 native project validation",
+      "remainingBlocker": "Produce a governed signed build under release credentials and platform governance."
+    },
+    {
+      "id": "LP167-B010-I",
+      "prerequisite": "Governed iOS build readiness",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "ENGINEERING_PROJECT_VALIDATED_PLATFORM_BLOCKED",
+      "evidence": "LP177 native project validation",
+      "remainingBlocker": "Produce a governed signed build with Xcode, Apple credentials, and platform governance."
+    },
+    {
+      "id": "LP167-B010-C",
+      "prerequisite": "Closed testing readiness",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_PLATFORM_APPROVAL",
+      "evidence": "reports/lp167/blocker-register.json",
+      "remainingBlocker": "Complete Google Play closed testing and TestFlight with governed accounts and physical testers."
+    },
+    {
+      "id": "LP167-B011",
+      "prerequisite": "Store asset readiness",
+      "category": "PLATFORM_DEPENDENT",
+      "status": "BLOCKED_PLATFORM_OWNER_INPUT",
+      "evidence": "assets/store repository inventory",
+      "remainingBlocker": "Complete store metadata, screenshots, support assets, and confirm store-account ownership."
+    },
+    {
+      "id": "LP167-B012",
+      "prerequisite": "Legal approval",
+      "category": "EXTERNAL_OWNER_APPROVAL",
+      "status": "BLOCKED_EXTERNAL_APPROVAL",
+      "evidence": "reports/lp167/blocker-register.json",
+      "remainingBlocker": "Legal must approve the privacy, terms, disclaimer, data-use, refund/subscription, and support materials."
+    },
+    {
+      "id": "LP167-B013",
+      "prerequisite": "Final owner launch approval",
+      "category": "EXTERNAL_OWNER_APPROVAL",
+      "status": "BLOCKED_OWNER_APPROVAL",
+      "evidence": "reports/lp167/blocker-register.json",
+      "remainingBlocker": "Owner must approve the launch window, incident/support plan, release notes, limitations, and launch-day script."
+    }
+  ],
+  "counts": {
+    "evaluated": 13,
+    "completed": 1,
+    "externalOwnerApproval": 2,
+    "platformDependent": 10
+  },
+  "engineeringValidation": {
+    "pwaChecks": {
+      "manifestLinked": true,
+      "serviceWorkerRegistered": true,
+      "standaloneDisplay": true,
+      "startAndScopePresent": true,
+      "requiredIcons": true,
+      "offlineShell": true
+    },
+    "nativeChecks": {
+      "canonicalApplicationId": true,
+      "androidProjectPresent": true,
+      "iosProjectPresent": true,
+      "governedVersionFieldsPresent": true
+    }
+  }
+}
