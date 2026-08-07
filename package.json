@@ -14,7 +14,8 @@
   "scripts": {
     "build:lp178": "node tools/lp178/close-launch-execution-readiness.mjs build",
     "verify:lp178": "node tools/lp178/close-launch-execution-readiness.mjs verify",
-    "test:lp178": "node --test tests/lp178/*.test.mjs tests/lp1781-talco-route-watch-start-repair.test.mjs tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs tests/lp1783-route-aware-incident-hydration.test.mjs tests/lp1784-live-proximity-route-intelligence.test.mjs tests/lp1785-live-route-progress-propagation.test.mjs tests/lp1786-cleared-route-convergence.test.mjs",
+    "test:lp178": "node --test tests/lp178/*.test.mjs tests/lp1781-talco-route-watch-start-repair.test.mjs tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs tests/lp1783-route-aware-incident-hydration.test.mjs tests/lp1784-live-proximity-route-intelligence.test.mjs tests/lp1785-live-route-progress-propagation.test.mjs tests/lp1786-cleared-route-convergence.test.mjs tests/lp1787-weather-evidence-provenance.test.mjs",
+    "test:lp1787": "node --test tests/lp1787-weather-evidence-provenance.test.mjs",
     "test:lp1784": "node --test tests/lp1784-live-proximity-route-intelligence.test.mjs",
     "test:lp1785": "node --test tests/lp1785-live-route-progress-propagation.test.mjs",
     "build:lp10812:harris-buckets": "node tools/lp108/harris-certified-lookup.mjs build",

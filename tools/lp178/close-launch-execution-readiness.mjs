@@ -16,6 +16,8 @@ export const LP1784_APP_BLOB = 'ab6fc1369e09a15d2a6c77ec8c5ed90179829389';
 export const LP1785_APP_BLOB = '13ca73cda733b899c04ce097ae9ba6690c290565';
 export const LP1786_REPAIR_COMMIT = '85a5ff83713fcededd95405ff558e431d569904c';
 export const LP1786_APP_BLOB = 'b379e066eb8383bcee9c7fbc761e381c3072ee5b';
+export const LP1787_REPAIR_COMMIT = '3cf2ee9e2fa2f44c16115636b19f679a580b3065';
+export const LP1787_APP_BLOB = 'c86430b413d3e8b16e61d3459a3c1f4d84b27a62';
 export const REPORT_DIR = 'reports/lp178';
 export const NAMES = ['launch-readiness-report.json', 'owner-validation-checklist.json', 'protected-artifact-identities.json', 'lp178-summary.json'];
 const PROTECTED = ['js/app.js', 'reports/lp167/launch-readiness-assessment.json', 'reports/lp167/blocker-register.json', 'reports/lp167/deployment-authorization-decision.json', 'reports/lp167/activation-authorization-decision.json', 'reports/lp167/app-distribution-authorization-decision.json', 'reports/lp167/public-launch-authorization-decision.json', 'reports/lp177/prerequisite-matrix.json', 'reports/lp177/authorization-reassessment.json'];
@@ -55,11 +57,11 @@ function item(id, name, classification, evidence, remainingAction, repositoryWor
 
 export function identities(root = ROOT) {
   const artifacts = PROTECTED.map(file => {
-    const expectedCommit = file === 'js/app.js' ? LP1786_REPAIR_COMMIT : BASELINE;
-    const expectedGitBlob = file === 'js/app.js' ? LP1786_APP_BLOB : execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
-    const actualComparisonCommit = file === 'js/app.js' ? 'LP178.6_AUTHORIZED_GIT_BLOB' : COMPARISON_COMMIT;
+    const expectedCommit = file === 'js/app.js' ? LP1787_REPAIR_COMMIT : BASELINE;
+    const expectedGitBlob = file === 'js/app.js' ? LP1787_APP_BLOB : execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
+    const actualComparisonCommit = file === 'js/app.js' ? 'LP178.7_AUTHORIZED_GIT_BLOB' : COMPARISON_COMMIT;
     const actualGitBlob = file === 'js/app.js'
-      ? LP1786_APP_BLOB
+      ? LP1787_APP_BLOB
       : execFileSync('git', ['rev-parse', `${COMPARISON_COMMIT}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
     const expected = execFileSync('git', ['cat-file', 'blob', expectedGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
     const actual = execFileSync('git', ['cat-file', 'blob', actualGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
@@ -67,10 +69,10 @@ export function identities(root = ROOT) {
       if (bytes.includes(13) || (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf)) throw Error(`LP178 non-canonical ${source} Git blob: ${file}`);
       new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     }
-    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, authorizedLp1782GitBlob: file === 'js/app.js' ? LP1782_APP_BLOB : null, authorizedLp1783GitBlob: file === 'js/app.js' ? LP1783_APP_BLOB : null, authorizedLp1784GitBlob: file === 'js/app.js' ? LP1784_APP_BLOB : null, authorizedLp1785GitBlob: file === 'js/app.js' ? LP1785_APP_BLOB : null, authorizedLp1786GitBlob: file === 'js/app.js' ? LP1786_APP_BLOB : null, expectedGitBlob, actualComparisonCommit, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
+    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, authorizedLp1782GitBlob: file === 'js/app.js' ? LP1782_APP_BLOB : null, authorizedLp1783GitBlob: file === 'js/app.js' ? LP1783_APP_BLOB : null, authorizedLp1784GitBlob: file === 'js/app.js' ? LP1784_APP_BLOB : null, authorizedLp1785GitBlob: file === 'js/app.js' ? LP1785_APP_BLOB : null, authorizedLp1786GitBlob: file === 'js/app.js' ? LP1786_APP_BLOB : null, authorizedLp1787GitBlob: file === 'js/app.js' ? LP1787_APP_BLOB : null, expectedGitBlob, actualComparisonCommit, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
   });
   return {
-    schemaVersion: 'gridly.lp178.protectedIdentities.v6',
+    schemaVersion: 'gridly.lp178.protectedIdentities.v7',
     provenance: {
       originalLp178BaselineCommit: BASELINE,
       authorizedLp1781RepairCommit: REPAIR_BASELINE,
@@ -82,8 +84,10 @@ export function identities(root = ROOT) {
       authorizedLp1785RepairGitBlob: LP1785_APP_BLOB,
       authorizedLp1786RepairCommit: LP1786_REPAIR_COMMIT,
       authorizedLp1786RepairGitBlob: LP1786_APP_BLOB,
+      authorizedLp1787RepairCommit: LP1787_REPAIR_COMMIT,
+      authorizedLp1787RepairGitBlob: LP1787_APP_BLOB,
       currentComparisonCommit: COMPARISON_COMMIT,
-      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION -> AUTHORIZED_LP178.5_LIVE_ROUTE_PROGRESS_PROPAGATION -> AUTHORIZED_LP178.6_CLEARED_ROUTE_CONVERGENCE_AND_OFFICIAL_SOURCE_TRUTHFULNESS'
+      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> AUTHORIZED_LP178.3_ROUTE_AWARE_HYDRATION -> AUTHORIZED_LP178.3A_PROVENANCE_RECONCILIATION -> AUTHORIZED_LP178.4_LIVE_PROXIMITY_PROPAGATION -> AUTHORIZED_LP178.5_LIVE_ROUTE_PROGRESS_PROPAGATION -> AUTHORIZED_LP178.6_CLEARED_ROUTE_CONVERGENCE_AND_OFFICIAL_SOURCE_TRUTHFULNESS -> AUTHORIZED_LP178.7_WEATHER_EVIDENCE_PROVENANCE_TRUTHFULNESS'
     },
     classification: artifacts.every(x => x.classification === 'PASS') ? 'PASS' : 'FAIL',
     artifacts
