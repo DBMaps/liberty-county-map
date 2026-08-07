@@ -9,6 +9,7 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const BASELINE = '121b24926ec33d8a3ec33706cbe3280b388544c4';
 export const REPAIR_BASELINE = '333141cf220c174f48f1d87c84a9873ff8e9c8a2';
 export const COMPARISON_COMMIT = '8f70179327944b8b371a87c87cc13bb8a7232eb8';
+export const LP1782_APP_BLOB = '13d316b56a3cde2e37d158681638780892e0cd2b';
 export const REPORT_DIR = 'reports/lp178';
 export const NAMES = ['launch-readiness-report.json', 'owner-validation-checklist.json', 'protected-artifact-identities.json', 'lp178-summary.json'];
 const PROTECTED = ['js/app.js', 'reports/lp167/launch-readiness-assessment.json', 'reports/lp167/blocker-register.json', 'reports/lp167/deployment-authorization-decision.json', 'reports/lp167/activation-authorization-decision.json', 'reports/lp167/app-distribution-authorization-decision.json', 'reports/lp167/public-launch-authorization-decision.json', 'reports/lp177/prerequisite-matrix.json', 'reports/lp177/authorization-reassessment.json'];
@@ -49,23 +50,27 @@ function item(id, name, classification, evidence, remainingAction, repositoryWor
 export function identities(root = ROOT) {
   const artifacts = PROTECTED.map(file => {
     const expectedCommit = file === 'js/app.js' ? REPAIR_BASELINE : BASELINE;
-    const expectedGitBlob = execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
-    const actualGitBlob = execFileSync('git', ['rev-parse', `${COMPARISON_COMMIT}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
+    const expectedGitBlob = file === 'js/app.js' ? LP1782_APP_BLOB : execFileSync('git', ['rev-parse', `${expectedCommit}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
+    const actualComparisonCommit = file === 'js/app.js' ? 'AUTHORIZED_LP178.2_WORKTREE' : COMPARISON_COMMIT;
+    const actualGitBlob = file === 'js/app.js'
+      ? execFileSync('git', ['hash-object', file], { cwd: root, encoding: 'utf8' }).trim()
+      : execFileSync('git', ['rev-parse', `${COMPARISON_COMMIT}:${file}`], { cwd: root, encoding: 'utf8' }).trim();
     const expected = execFileSync('git', ['cat-file', 'blob', expectedGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
     const actual = execFileSync('git', ['cat-file', 'blob', actualGitBlob], { cwd: root, maxBuffer: 32 * 1024 * 1024 });
     for (const [source, bytes] of [['expected', expected], ['actual', actual]]) {
       if (bytes.includes(13) || (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf)) throw Error(`LP178 non-canonical ${source} Git blob: ${file}`);
       new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     }
-    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, expectedGitBlob, actualComparisonCommit: COMPARISON_COMMIT, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
+    return { path: file, identity: 'CANONICAL_GIT_BLOB', expectedBaselineCommit: expectedCommit, authorizedLp1782GitBlob: file === 'js/app.js' ? LP1782_APP_BLOB : null, expectedGitBlob, actualComparisonCommit, actualGitBlob, expectedSha256: sha(expected), actualSha256: sha(actual), classification: expectedGitBlob === actualGitBlob ? 'PASS' : 'FAIL' };
   });
   return {
-    schemaVersion: 'gridly.lp178.protectedIdentities.v2',
+    schemaVersion: 'gridly.lp178.protectedIdentities.v3',
     provenance: {
       originalLp178BaselineCommit: BASELINE,
       authorizedLp1781RepairCommit: REPAIR_BASELINE,
+      authorizedLp1782RepairGitBlob: LP1782_APP_BLOB,
       currentComparisonCommit: COMPARISON_COMMIT,
-      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> RECONCILED_PROTECTED_IDENTITY'
+      transition: 'LP178_BASELINE -> AUTHORIZED_LP178.1_ROUTE_WATCH_REPAIR -> AUTHORIZED_LP178.2_GEOMETRY_BRIDGE -> RECONCILED_PROTECTED_IDENTITY'
     },
     classification: artifacts.every(x => x.classification === 'PASS') ? 'PASS' : 'FAIL',
     artifacts
