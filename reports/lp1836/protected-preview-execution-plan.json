@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "gridly.lp1836.protectedPreviewExecutionPlan.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "targetProject": "gridly-preview",
+  "targetHostname": "preview.gridlygo.com",
+  "executionCount": {
+    "directUploads": 1
+  },
+  "futureOnly": true,
+  "requiresOwnerConfirmation": true,
+  "phases": {
+    "A": [
+      "Create/use a temporary least-privilege Pages-capable credential if required",
+      "Verify exact Cloudflare account",
+      "Verify gridly-preview project identity",
+      "Verify zero deployments and zero custom domains before upload"
+    ],
+    "B": [
+      "Rebuild and verify LP183.3 if required",
+      "Stage the LP183.1 exact governed artifact",
+      "Record artifact identity immediately before upload",
+      "Prove staged identity equals the authorized identity"
+    ],
+    "C": [
+      "Execute exactly ONE Direct Upload: wrangler pages deploy .artifacts/lp1831/cloudflare-pages --project-name gridly-preview --branch preview --commit-dirty=true"
+    ],
+    "D": [
+      "Capture deployment ID, deployment URL, project, branch, upload result, and timestamp",
+      "Reconcile deployment with the exact authorized artifact identity"
+    ],
+    "E": [
+      "Only after reconciliation and separate owner confirmation, bind only preview.gridlygo.com",
+      "Create or accept only the preview-specific DNS route",
+      "Verify certificate and hostname activation",
+      "Confirm existing Access protection remains"
+    ],
+    "F": [
+      "Approved exact email: OTP, authenticate, policy match, ALLOW",
+      "Anonymous request: DENY",
+      "Authenticated non-approved email: DENY"
+    ],
+    "G": [
+      "Validate on a physical device",
+      "Verify Gridly loads",
+      "Verify production gridlygo.com is unchanged",
+      "Verify beta-closed surfaces are unchanged"
+    ],
+    "H": [
+      "Retain deployment/artifact/validation evidence",
+      "STOP; do not promote to public launch"
+    ]
+  },
+  "abortConditions": [
+    "artifact identity differs from authorized identity",
+    "staged file count changes unexpectedly",
+    "any staged file exceeds the Pages limit",
+    "project identity is not gridly-preview",
+    "project has unexpected deployments",
+    "unexpected custom domains exist",
+    "Access application or policy differs",
+    "preview.gridlygo.com is already bound unexpectedly",
+    "upload produces unrecognized project or deployment state",
+    "DNS operation would affect root gridlygo.com",
+    "certificate activation fails",
+    "approved user cannot authenticate",
+    "anonymous user is allowed",
+    "non-approved authenticated email is allowed",
+    "production surface changes",
+    "beta-closed surface changes",
+    "rollback controls are unavailable",
+    "secret material would be stored in repository evidence"
+  ],
+  "firstDeploymentWithdrawal": [
+    "Stop further testing/distribution",
+    "Identify the preview.gridlygo.com DNS record",
+    "Delete or disable only preview-specific DNS publication",
+    "Remove preview.gridlygo.com from gridly-preview Pages custom domains",
+    "Verify preview.gridlygo.com no longer serves the Gridly candidate",
+    "Verify gridlygo.com production remains unchanged",
+    "Verify beta-closed surfaces remain unchanged",
+    "Capture rollback evidence",
+    "Retain deployment/artifact evidence for diagnosis"
+  ]
+}

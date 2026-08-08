@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "gridly.lp1836.pagesProjectReadiness.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "evidenceSource": "reports/lp1835/pages-project-evidence.json",
+  "evidenceClass": "OWNER_LOCAL_SANITIZED_EVIDENCE",
+  "project": {
+    "name": "gridly-preview",
+    "exists": true,
+    "model": "DIRECT_UPLOAD",
+    "directUpload": true,
+    "gitIntegration": false,
+    "productionBranch": "preview",
+    "deployments": 0,
+    "customDomains": 0,
+    "defaultHostname": "gridly-preview.pages.dev",
+    "automaticDeployment": false
+  },
+  "artifactUploaded": false,
+  "previewHostname": {
+    "hostname": "preview.gridlygo.com",
+    "bound": false
+  },
+  "defaultHostnameApprovedForDistribution": false,
+  "projectCreationNeeded": false
+}

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "gridly.lp1836.summary.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "classification": "PROTECTED_PREVIEW_DEPLOYMENT_AUTHORIZATION_READY_FOR_OWNER_CONFIRMATION",
+  "currentMainCommit": "080f2de8bca6e1d7fd0a860f1546d7c6cf0b8e72",
+  "runtimeCandidate": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+  "artifact": {
+    "identity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+    "fileCount": 493,
+    "totalBytes": 155746432,
+    "maximumFile": {
+      "path": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
+      "bytes": 17042129,
+      "sha256": "4068dcede64b379c10fdf5bf187da28669fcf394130d236930a2ac988ac1547a"
+    },
+    "oversizedFileCount": 0,
+    "montgomery": {
+      "schemaVersion": "gridly.lp1833.montgomeryPackage.v1",
+      "milestone": "LP183.3",
+      "generatedAt": "1970-01-01T00:00:00.000Z",
+      "performsCloudExecution": false,
+      "candidateCommit": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+      "compression": "gzip",
+      "compressedBytes": 6444342,
+      "uncompressedBytes": 35232470,
+      "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1",
+      "source": {
+        "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+        "gitBlob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
+        "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
+      },
+      "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
+      "deterministicRegeneration": {
+        "algorithm": "gzip",
+        "implementation": "fflate@0.8.3",
+        "level": 9,
+        "mtime": 0,
+        "byteIdentical": true,
+        "command": "npm run build:lp1833"
+      },
+      "present": true,
+      "repositoryState": "GENERATED_UNTRACKED_IGNORED"
+    }
+  },
+  "project": {
+    "name": "gridly-preview",
+    "exists": true,
+    "model": "DIRECT_UPLOAD",
+    "directUpload": true,
+    "gitIntegration": false,
+    "productionBranch": "preview",
+    "deployments": 0,
+    "customDomains": 0,
+    "defaultHostname": "gridly-preview.pages.dev",
+    "automaticDeployment": false
+  },
+  "previewHostname": {
+    "hostname": "preview.gridlygo.com",
+    "bound": false
+  },
+  "accessEvidenceStatus": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION",
+  "liveTests": {
+    "approvedUserAdmission": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+    "anonymousDenial": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+    "authenticatedNonApprovedEmailDenial": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST"
+  },
+  "rollback": {
+    "dns": "PROVEN",
+    "pagesDomain": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION",
+    "projectDeletionFallback": "DOCUMENTED_LAST_RESORT_SEPARATELY_AUTHORIZED",
+    "firstDeployment": {
+      "readiness": "ROLLBACK_CONTROLS_EVIDENCE_COMPLETE_EXECUTION_NOT_AUTHORIZED",
+      "target": "NO_PREVIEW_STATE",
+      "knownGoodRollback": "NOT_YET_AVAILABLE",
+      "rollbackExecuted": false,
+      "sequence": [
+        "Stop further testing/distribution",
+        "Identify the preview.gridlygo.com DNS record",
+        "Delete or disable only preview-specific DNS publication",
+        "Remove preview.gridlygo.com from gridly-preview Pages custom domains",
+        "Verify preview.gridlygo.com no longer serves the Gridly candidate",
+        "Verify gridlygo.com production remains unchanged",
+        "Verify beta-closed surfaces remain unchanged",
+        "Capture rollback evidence",
+        "Retain deployment/artifact evidence for diagnosis"
+      ]
+    },
+    "laterKnownGood": "AVAILABLE_ONLY_AFTER_FIRST_SUCCESSFUL_VALIDATED_PREVIEW"
+  },
+  "scope": "ONE_PROTECTED_PREVIEW_EXECUTION",
+  "globalAuthorizationState": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  },
+  "secretSafety": "PASS_NO_SECRET_SHAPED_MATERIAL",
+  "protectedRuntimeNativeDiff": "EMPTY"
+}
