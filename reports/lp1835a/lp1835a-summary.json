@@ -1,0 +1,38 @@
+{
+  "accessChanged": false,
+  "artifactUploaded": false,
+  "automaticDeployment": false,
+  "classification": "PAGES_CUSTOM_DOMAIN_REMOVAL_CONTROL_EVIDENCE_CLOSED",
+  "customDomainCount": 0,
+  "deploymentConsequence": "SEPARATE_DEPLOYMENT_AUTHORIZATION_REASSESSMENT_REQUIRED",
+  "deploymentCount": 0,
+  "destructiveControlExecuted": false,
+  "dnsChanged": false,
+  "dnsDeleteEvidenceStatus": "PROVEN_OWNER_OBSERVED_AUTHENTICATED_DASHBOARD_CONTROL",
+  "evidenceOnly": true,
+  "firstDeploymentRollbackReadiness": "ROLLBACK_CONTROLS_EVIDENCE_COMPLETE_EXECUTION_NOT_AUTHORIZED",
+  "generatedAt": "2026-08-08T00:00:00.000Z",
+  "globalAuthorizationState": {
+    "activation": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "milestone": "LP183.5A",
+  "pagesDomainRemoveEvidenceStatus": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION",
+  "previewGridlygoComBound": false,
+  "project": {
+    "defaultHostname": "gridly-preview.pages.dev",
+    "exists": true,
+    "gitIntegration": false,
+    "name": "gridly-preview",
+    "productionBranch": "preview"
+  },
+  "projectDeletionFallbackEvidenceStatus": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION_SEPARATELY_AUTHORIZATION_GATED",
+  "protectedRuntimeNativeDiff": "EMPTY",
+  "schemaVersion": "gridly.lp1835a.summary.v1",
+  "secretSafety": "PASS_NO_SECRET_MATERIAL_STORED"
+}
