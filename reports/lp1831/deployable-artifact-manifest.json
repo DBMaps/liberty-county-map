@@ -1,0 +1,3239 @@
+{
+  "schemaVersion": "gridly.lp1831.deployableArtifactManifest.v1",
+  "milestone": "LP183.1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "source": "TRACKED_GIT_WORKTREE_FILES_ONLY",
+  "stagingDirectory": ".artifacts/lp1831/cloudflare-pages",
+  "repositoryRootSafeForUpload": false,
+  "requiredStaging": true,
+  "identityMethod": "SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF",
+  "artifactIdentity": "sha256:9e4fb579077e5d1c192d85cbf79a7d38044c214484ad24fdaa8b413d16969bda",
+  "fileCount": 641,
+  "totalBytes": 406845211,
+  "missingRequired": [],
+  "cloudflarePagesOversizedFiles": [
+    {
+      "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "bytes": 67186117,
+      "limitBytes": 26214400
+    },
+    {
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "bytes": 35232470,
+      "limitBytes": 26214400
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz",
+      "bytes": 57731771,
+      "limitBytes": 26214400
+    }
+  ],
+  "files": [
+    {
+      "path": "Community-Packages/COMMUNITY-PACKAGE-SPEC.md",
+      "bytes": 2262,
+      "sha256": "d02bc3c8a7cb5fa163704cb8cdc33bbb33ad1e4d4a5fa2321bfc3ebb3314faac"
+    },
+    {
+      "path": "Community-Packages/austin/package-manifest.json",
+      "bytes": 424,
+      "sha256": "cd52fc175c7f438f1c0f8332404e97ab420cc8ae5165e35681a0a23122a0575f"
+    },
+    {
+      "path": "Community-Packages/brazoria/package-manifest.json",
+      "bytes": 427,
+      "sha256": "50594df341d45e798fd645546db2b9857688fde4c7db836cf2fa001cb0a9b691"
+    },
+    {
+      "path": "Community-Packages/brazos/package-manifest.json",
+      "bytes": 425,
+      "sha256": "8e40003d1430cad87c941e1bb4d6266d02ed3e7bb7f1c2449b6f16bcf40627a3"
+    },
+    {
+      "path": "Community-Packages/calhoun/package-manifest.json",
+      "bytes": 425,
+      "sha256": "2e452a8c25c2eb95efb8da1ddf7575368626ee276e8401aec78bb9002ecfbe62"
+    },
+    {
+      "path": "Community-Packages/chambers/package-manifest.json",
+      "bytes": 421,
+      "sha256": "644dfca814bc5d2cb0182368fc3c2560e973b824eceee2ae2de8ed5ca85c04fb"
+    },
+    {
+      "path": "Community-Packages/colorado/package-manifest.json",
+      "bytes": 426,
+      "sha256": "ac95b22fc0bc655812b6bce56aa3f91cea02335d4c460a59704f1cd0e71babe1"
+    },
+    {
+      "path": "Community-Packages/county-manifest.json",
+      "bytes": 10608,
+      "sha256": "e9a9e384f63a6ca0b27e1c5faa8404854fe1c0537fdcd70883a4d447a44f00f8"
+    },
+    {
+      "path": "Community-Packages/fayette/package-manifest.json",
+      "bytes": 425,
+      "sha256": "eb2e6045570e2dd28384eac0eeb1eb5d5f35146e59563bd23055ac90fb354bd4"
+    },
+    {
+      "path": "Community-Packages/fort-bend/package-manifest.json",
+      "bytes": 428,
+      "sha256": "0cd7a084a2ecee88d90f894df5d0cc2b3306ca0c7fd4587d006c3d48257dda90"
+    },
+    {
+      "path": "Community-Packages/galveston/package-manifest.json",
+      "bytes": 428,
+      "sha256": "7aebc41675e2812685dacbe9f2f962c97c3624bb72890f750f7344ad130ae2b5"
+    },
+    {
+      "path": "Community-Packages/grimes/package-manifest.json",
+      "bytes": 424,
+      "sha256": "6cc507487a5b3a98c8ffb18994c7d11cc5a7e0d94f486a7aee9110541dbe5b8f"
+    },
+    {
+      "path": "Community-Packages/hardin/package-manifest.json",
+      "bytes": 383,
+      "sha256": "be90442fe48fbb1a818760bfc50fbd4075aa119361ae84c3a756f432532e6dd0"
+    },
+    {
+      "path": "Community-Packages/harris/package-manifest.json",
+      "bytes": 440,
+      "sha256": "cac22e3b364ea573034bdfcd7487cbc31dddc4d377ed5a5319ce9f42d667cb6a"
+    },
+    {
+      "path": "Community-Packages/jackson/package-manifest.json",
+      "bytes": 425,
+      "sha256": "7a6e96d8a9f237d3de22f54d8fbc4293ec6e9a2b38357dfa36b2eab51586bdcc"
+    },
+    {
+      "path": "Community-Packages/jasper/package-manifest.json",
+      "bytes": 424,
+      "sha256": "8b9d1b0ecd6f31c71af6d544d2cf2b3b2fec9d80d1fc4321ab0fb6467eebe818"
+    },
+    {
+      "path": "Community-Packages/jefferson/package-manifest.json",
+      "bytes": 437,
+      "sha256": "cdbe9126e29e7af70951e39ac42f1e4a0042f06e7914c611903246658fe638fe"
+    },
+    {
+      "path": "Community-Packages/lavaca/package-manifest.json",
+      "bytes": 424,
+      "sha256": "064f85cbe27150e946687c81ad70a2da22ac0b4c48f3a3da4b1dea8f864ee541"
+    },
+    {
+      "path": "Community-Packages/liberty/liberty-boundary.geojson",
+      "bytes": 63739,
+      "sha256": "be41e6556c9aa7ac224894cc8c08dca465ab02671adef9fda1dcc3c3b4df4793"
+    },
+    {
+      "path": "Community-Packages/liberty/liberty-roads.geojson",
+      "bytes": 11393784,
+      "sha256": "7c740df1923762ed87b341bb75dfe0df946dd76ffdf77d5880d2d9939e1ee4be"
+    },
+    {
+      "path": "Community-Packages/liberty/package-manifest.json",
+      "bytes": 760,
+      "sha256": "361160dfb8c1bf0daf16e08ca3fcd056f37ce86ede463485bda5b6ece61b910b"
+    },
+    {
+      "path": "Community-Packages/matagorda/package-manifest.json",
+      "bytes": 427,
+      "sha256": "31c25de208dbf0508f2124fff210779e1243b2352e896efebb7ff34c5109b2c6"
+    },
+    {
+      "path": "Community-Packages/montgomery/package-manifest.json",
+      "bytes": 477,
+      "sha256": "1d2609a62798df76256f4017f7d7aa98a31d665f59ab6c975bee41a1bd22b08b"
+    },
+    {
+      "path": "Community-Packages/newton/package-manifest.json",
+      "bytes": 424,
+      "sha256": "55e7617468936547347736409db620468c508b980736c20d2b2d9afcc3f00e64"
+    },
+    {
+      "path": "Community-Packages/orange/package-manifest.json",
+      "bytes": 424,
+      "sha256": "e93d9483a6418c16ffa8ffb625fe84fd57e16ef16ca3faf78554dc7bfa9e475e"
+    },
+    {
+      "path": "Community-Packages/polk/package-manifest.json",
+      "bytes": 381,
+      "sha256": "17c4e963ae9e8ff252dd273f987f220786decab15b0f665d66de394a55957d0c"
+    },
+    {
+      "path": "Community-Packages/san-jacinto/package-manifest.json",
+      "bytes": 559,
+      "sha256": "80d46610a8c854765f4f50b859d2ed9b85302b837b49090d867466222b1f130d"
+    },
+    {
+      "path": "Community-Packages/tyler/package-manifest.json",
+      "bytes": 423,
+      "sha256": "3cb218bc9f31c95ff0d540ae73684cbdef8719967fdcad23a68c95d4b6b48494"
+    },
+    {
+      "path": "Community-Packages/walker/package-manifest.json",
+      "bytes": 383,
+      "sha256": "979be738699433e1df984cbc83ffd3228e14bde3fb9e58d3394a901904c61777"
+    },
+    {
+      "path": "Community-Packages/waller/package-manifest.json",
+      "bytes": 425,
+      "sha256": "95aa37067a9fc6a63b9ba5a23041fdc9d8cbe748c9c1cd71e763d2c9fca363c2"
+    },
+    {
+      "path": "Community-Packages/washington/package-manifest.json",
+      "bytes": 429,
+      "sha256": "feaee3cfc8744c1668097d068cca399b1672fa14f103de0cb82d42a6501d465b"
+    },
+    {
+      "path": "Community-Packages/wharton/package-manifest.json",
+      "bytes": 426,
+      "sha256": "4d0436dec5fb05d365eb80a8ccffb4a4f72343744166c432ba07842009b57b06"
+    },
+    {
+      "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "bytes": 67186117,
+      "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
+    },
+    {
+      "path": "Crossing-Packages/Texas/package-manifest.json",
+      "bytes": 333,
+      "sha256": "ba57799caf9f6dff3a579bd6d21dfc87f94c4958735608461bc4e814b36b7bea"
+    },
+    {
+      "path": "Crossing-Packages/austin/Production/austin-production-crossings.geojson",
+      "bytes": 454645,
+      "sha256": "b6de99a655e312a8357fec6a37b7eb61d7c8b76a429cb6cf726c9c523d939d91"
+    },
+    {
+      "path": "Crossing-Packages/austin/austin-crossings.geojson",
+      "bytes": 422226,
+      "sha256": "bbd8f6c14e2dffd680a9d9ecebc5904027d1d5a57d087bbb1c753e9b3cab8ba1"
+    },
+    {
+      "path": "Crossing-Packages/austin/package-manifest.json",
+      "bytes": 308,
+      "sha256": "64119905a4612d4072940ba41040e8f974f1c6dac2721e111498e3a617278afd"
+    },
+    {
+      "path": "Crossing-Packages/brazoria/Production/brazoria-production-crossings.geojson",
+      "bytes": 705503,
+      "sha256": "015a5c9f934a8c695befa0b094475a1e59a398f1b1fd75acab90ea9c6c2d4667"
+    },
+    {
+      "path": "Crossing-Packages/brazoria/brazoria-crossings.geojson",
+      "bytes": 655096,
+      "sha256": "d4c5d4d1c6d4406635d349ca8c17b8a18e605ff20674067937135386463c8eaa"
+    },
+    {
+      "path": "Crossing-Packages/brazoria/package-manifest.json",
+      "bytes": 314,
+      "sha256": "32487fb6bb9f2f31f26da2187975e8c800884962c11287fa859aee21ae72bed3"
+    },
+    {
+      "path": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
+      "bytes": 387040,
+      "sha256": "5db9fbbcf348146e59462ce20b8c6d61f0d6ceea0b3c79dc4dd4468419cf2c41"
+    },
+    {
+      "path": "Crossing-Packages/brazos/brazos-crossings.geojson",
+      "bytes": 359183,
+      "sha256": "34ca896de2b5321c36b1d06732fd30bbef75b1139acc711fb6df42292394e0ca"
+    },
+    {
+      "path": "Crossing-Packages/brazos/package-manifest.json",
+      "bytes": 307,
+      "sha256": "3ec2947ef928f16a9d62375f4eedef8f450b33bd96fbc59ed90465d463aa2474"
+    },
+    {
+      "path": "Crossing-Packages/calhoun/Production/calhoun-production-crossings.geojson",
+      "bytes": 333065,
+      "sha256": "2003f6ecb90151980ad45d32b1ac0c6bddcb7c5ba039f917fe1adf27e264550d"
+    },
+    {
+      "path": "Crossing-Packages/calhoun/calhoun-crossings.geojson",
+      "bytes": 309110,
+      "sha256": "ce1780804bd6598882c3b6c0e368e27c570f15a36cc81e58461f59b5c73b4a26"
+    },
+    {
+      "path": "Crossing-Packages/calhoun/package-manifest.json",
+      "bytes": 310,
+      "sha256": "0fb2f7b95f272de64887fe734ccd8c5018a96627b5d38a1eb09e4b260d336af2"
+    },
+    {
+      "path": "Crossing-Packages/chambers/Production/chambers-production-crossings.geojson",
+      "bytes": 67482,
+      "sha256": "83af3239834d9fb1ab9f5e0d1b14b70868585bae96efc347eb27e46965dcbadc"
+    },
+    {
+      "path": "Crossing-Packages/chambers/chambers-crossings.geojson",
+      "bytes": 62659,
+      "sha256": "61e28b198cc01b1c3c5915fac17974e939c0b0e1cf5805067089eadd04166bc2"
+    },
+    {
+      "path": "Crossing-Packages/chambers/package-manifest.json",
+      "bytes": 313,
+      "sha256": "334051fc7d83d31b125322ea0e3a2e0d751fc4029704e9ed8fe1086aee40a2cb"
+    },
+    {
+      "path": "Crossing-Packages/colorado/Production/colorado-production-crossings.geojson",
+      "bytes": 489861,
+      "sha256": "5acb4fe7057815377eaae0d4862777eb5c87699d8f179be7e2a6aad17fa58e1c"
+    },
+    {
+      "path": "Crossing-Packages/colorado/colorado-crossings.geojson",
+      "bytes": 454930,
+      "sha256": "fd001533ff199c464d27892cc82fcc9e9174e73d4717a852d006d51ea2926899"
+    },
+    {
+      "path": "Crossing-Packages/colorado/package-manifest.json",
+      "bytes": 314,
+      "sha256": "121160e13695fe46bf94ff42038c7dee7c691b70c62f22bda882e3933ea76ff7"
+    },
+    {
+      "path": "Crossing-Packages/crossing-manifest.json",
+      "bytes": 11196,
+      "sha256": "04564b2e82ead7c694bbcdcbc5a9783a5df1a222ec9e2d78567cdf27ac917102"
+    },
+    {
+      "path": "Crossing-Packages/fayette/Production/fayette-production-crossings.geojson",
+      "bytes": 683189,
+      "sha256": "c47e7199b6e76ab8936fa473af00b39f6331bc0319cfb96566d12465255c0ed7"
+    },
+    {
+      "path": "Crossing-Packages/fayette/fayette-crossings.geojson",
+      "bytes": 634380,
+      "sha256": "1a9ea12ba69c8fcba8af0f9bf6d64bf1b53186a85f93cdf04a682a14a85c68fb"
+    },
+    {
+      "path": "Crossing-Packages/fayette/package-manifest.json",
+      "bytes": 311,
+      "sha256": "61be2fb6a7f331ef8a534f3c3e68a5dd41d994a360f96848b0f7ba9311cdbc42"
+    },
+    {
+      "path": "Crossing-Packages/fort-bend/Production/fort-bend-production-crossings.geojson",
+      "bytes": 787141,
+      "sha256": "3ca40a03b1ec992131852de1091128c9b2ab7294e61cc322a8498924a3b60339"
+    },
+    {
+      "path": "Crossing-Packages/fort-bend/fort-bend-crossings.geojson",
+      "bytes": 730896,
+      "sha256": "3d497f67b27fff7cf44ea5418c3f199d7f4dbc06206e2969a7f3bd8f62623a73"
+    },
+    {
+      "path": "Crossing-Packages/fort-bend/package-manifest.json",
+      "bytes": 317,
+      "sha256": "e82c666aab75fcd0096ef9b96beaee750a8c08529df5b91150090ebb217ad055"
+    },
+    {
+      "path": "Crossing-Packages/galveston/Production/galveston-production-crossings.geojson",
+      "bytes": 648986,
+      "sha256": "9f11dbca59d3376807580777d68f4a675e62795a9454fe321f9e3bb2ea0178e4"
+    },
+    {
+      "path": "Crossing-Packages/galveston/galveston-crossings.geojson",
+      "bytes": 602197,
+      "sha256": "e95c991f2baefa81ee05ee3b7bd88fa397edb48bb8e49145274ffeeedcc5ca80"
+    },
+    {
+      "path": "Crossing-Packages/galveston/package-manifest.json",
+      "bytes": 317,
+      "sha256": "d0f5b41801e2d8d35c5b54d13b72bb509cb33975e0aad50ae2bd52a77ed37c7c"
+    },
+    {
+      "path": "Crossing-Packages/grimes/Production/grimes-production-crossings.geojson",
+      "bytes": 489295,
+      "sha256": "9893775082ecb7c76f22f75d460ea87baf9bd0ff8a44abcaa271448ccf26d67f"
+    },
+    {
+      "path": "Crossing-Packages/grimes/grimes-crossings.geojson",
+      "bytes": 454635,
+      "sha256": "1e5e13aa6d6fe55e46e0f7b23bcdbe36cae8f84d39cf9ebfbfc724af59a93058"
+    },
+    {
+      "path": "Crossing-Packages/grimes/package-manifest.json",
+      "bytes": 308,
+      "sha256": "b37804c8d703683193f63437fb6167764b7c43439593371705b4d7097bf9b8da"
+    },
+    {
+      "path": "Crossing-Packages/hardin/Production/hardin-production-crossings.geojson",
+      "bytes": 368625,
+      "sha256": "fa29dd5512c674243384b774c1db5e8924e0db4eb674126a739286b69654c45a"
+    },
+    {
+      "path": "Crossing-Packages/hardin/hardin-crossings.geojson",
+      "bytes": 342535,
+      "sha256": "5db12c5fca71a4ad1444e76889ee271e08bcfbc54b723ea7e497d9fa37a17ec1"
+    },
+    {
+      "path": "Crossing-Packages/hardin/package-manifest.json",
+      "bytes": 307,
+      "sha256": "b6e14cd428abbfcadc9b4b85cc1479e791f028f72d730b1457242eadf8bd4671"
+    },
+    {
+      "path": "Crossing-Packages/harris/Production/harris-production-crossings.geojson",
+      "bytes": 5211235,
+      "sha256": "538deb45d7ea7534e015324acd70027c79d7564e57b5489ed50203ac871bd27e"
+    },
+    {
+      "path": "Crossing-Packages/harris/harris-crossings.geojson",
+      "bytes": 4835407,
+      "sha256": "f9f473ccbeddcd3bd73cdf6fb4f646b9c5f6060b52d1ecf3c934f9e343c3130f"
+    },
+    {
+      "path": "Crossing-Packages/harris/package-manifest.json",
+      "bytes": 377,
+      "sha256": "77a609a3268dd10b4cd1f538ff6709d0fb4eaad52857d7c53d88ef8dc5fd41de"
+    },
+    {
+      "path": "Crossing-Packages/jackson/Production/jackson-production-crossings.geojson",
+      "bytes": 331976,
+      "sha256": "5c48d62b4e9462a70914f0afdf36cc6f3ae4f1c104231ddafc55692f6656e06c"
+    },
+    {
+      "path": "Crossing-Packages/jackson/jackson-crossings.geojson",
+      "bytes": 308504,
+      "sha256": "a17a86b9986e28b88bbcddeeef94e31558bbcd65f1a089a7c4338dfb54eddef0"
+    },
+    {
+      "path": "Crossing-Packages/jackson/package-manifest.json",
+      "bytes": 310,
+      "sha256": "d19646863c4ffe800bcead9e252ac5a348a27694ded9a71f5055593517213692"
+    },
+    {
+      "path": "Crossing-Packages/jasper/Production/jasper-production-crossings.geojson",
+      "bytes": 474582,
+      "sha256": "c75383076a996644d6eb8c77ea34136f5f060560a66c71e39d78b5b917d81298"
+    },
+    {
+      "path": "Crossing-Packages/jasper/jasper-crossings.geojson",
+      "bytes": 440587,
+      "sha256": "bfea97537d6e2cfff72671ef739d45dcf61dc8028abd18265052ef034a4ba2d4"
+    },
+    {
+      "path": "Crossing-Packages/jasper/package-manifest.json",
+      "bytes": 308,
+      "sha256": "8eac4b47703a054ec918d365f78afabe6d23e7366d22c951aff2a46a2486daed"
+    },
+    {
+      "path": "Crossing-Packages/jefferson/Production/jefferson-production-crossings.geojson",
+      "bytes": 1699344,
+      "sha256": "7c82153d17686634f49e28566ad5fd272d222bd5b31e6413373c660c89399aa3"
+    },
+    {
+      "path": "Crossing-Packages/jefferson/jefferson-crossings.geojson",
+      "bytes": 1577544,
+      "sha256": "73f2ed169efb1273f7220e22594539b3a68db93261a71b9b58ea0f012659bde6"
+    },
+    {
+      "path": "Crossing-Packages/jefferson/package-manifest.json",
+      "bytes": 317,
+      "sha256": "458cf716ac81be205db7588d771b70128235798355f7e943a5ce9d71daeb72bd"
+    },
+    {
+      "path": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
+      "bytes": 175107,
+      "sha256": "6db4fa45a74a36f4dddeb6b7ab46765b010b582a425ca9045628397b5bf40871"
+    },
+    {
+      "path": "Crossing-Packages/lavaca/lavaca-crossings.geojson",
+      "bytes": 162740,
+      "sha256": "260aa298a19baba5c5d84f0f2005f0f7f5657371a2aaa5580466d911f1db5388"
+    },
+    {
+      "path": "Crossing-Packages/lavaca/package-manifest.json",
+      "bytes": 307,
+      "sha256": "992032733d5b595097d2f60be82349aa48f66b084aabd8289d3230dfa4ef59a1"
+    },
+    {
+      "path": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "bytes": 516569,
+      "sha256": "09ef9d4e06c7c78fc4a630f95f8da33778b5568ad84da4c67951ed79ec404346"
+    },
+    {
+      "path": "Crossing-Packages/liberty/liberty-crossings-curated.geojson",
+      "bytes": 1605,
+      "sha256": "3fc77a1c7344fe0362c95d82d5381341c3263268af041045083aaf42eb411ba7"
+    },
+    {
+      "path": "Crossing-Packages/liberty/liberty-crossings.geojson",
+      "bytes": 479809,
+      "sha256": "c67d204dea8d62de2ea4eda55836b16760ff036fe654ada645c73a76a9903978"
+    },
+    {
+      "path": "Crossing-Packages/liberty/package-manifest.json",
+      "bytes": 311,
+      "sha256": "9a04a4ffdc62a81bfcd81dd902a0e0c90859ab36afc5638f6ddd6b7c49c38ce5"
+    },
+    {
+      "path": "Crossing-Packages/matagorda/Production/matagorda-production-crossings.geojson",
+      "bytes": 360057,
+      "sha256": "9fe621372fe7cc83cb64901e813c881b8960b097de54fccf62b7be1f3cf5c30f"
+    },
+    {
+      "path": "Crossing-Packages/matagorda/matagorda-crossings.geojson",
+      "bytes": 334477,
+      "sha256": "b9a50e4dc8bba59eea8399fe2771120886e84bb2cfb8a589efc9cd6dff9de5d3"
+    },
+    {
+      "path": "Crossing-Packages/matagorda/package-manifest.json",
+      "bytes": 316,
+      "sha256": "7c3013faf864754511ffaf211efec0473911ffcbaace74d57285bf11074b57c6"
+    },
+    {
+      "path": "Crossing-Packages/montgomery/Production/montgomery-production-crossings.geojson",
+      "bytes": 765072,
+      "sha256": "047af2bc6a80b29f9960ef8eeb3dd7b7ddb72e0cc4c7bcc04e7faadee24ce23a"
+    },
+    {
+      "path": "Crossing-Packages/montgomery/montgomery-crossings.geojson",
+      "bytes": 710461,
+      "sha256": "8e7e115c1ed5ce32eeb21400f5557fad8d0de7f84a4ed726cb7e7047ebe2d0fe"
+    },
+    {
+      "path": "Crossing-Packages/montgomery/package-manifest.json",
+      "bytes": 320,
+      "sha256": "c325a2ee6f79072abf61d1ce781f2a42f3ba99d321c2064472085a28e951a864"
+    },
+    {
+      "path": "Crossing-Packages/newton/Production/newton-production-crossings.geojson",
+      "bytes": 116938,
+      "sha256": "1752035f721c1b9afd3b1d66f068f07b4173881f0014cfe83505b75213bea61d"
+    },
+    {
+      "path": "Crossing-Packages/newton/newton-crossings.geojson",
+      "bytes": 108616,
+      "sha256": "a8830e9643cf55be07146aa42a36f18159d7e931955c4b7735d32da98b849f8f"
+    },
+    {
+      "path": "Crossing-Packages/newton/package-manifest.json",
+      "bytes": 307,
+      "sha256": "d7747150d1efb2f05cc522cab806d9ff51336e618c9ea0cc40d75028952e5a94"
+    },
+    {
+      "path": "Crossing-Packages/orange/Production/orange-production-crossings.geojson",
+      "bytes": 668403,
+      "sha256": "d721600a5b7a740e2cea65fd7332f580d59db8ef233989c3dd825f37003dbaf5"
+    },
+    {
+      "path": "Crossing-Packages/orange/orange-crossings.geojson",
+      "bytes": 620340,
+      "sha256": "ca0ac442e718ad8d96bc2e9ba0720be17cee6f5e3cacbd46ff90bbf1e80b38a6"
+    },
+    {
+      "path": "Crossing-Packages/orange/package-manifest.json",
+      "bytes": 308,
+      "sha256": "db86e4dea66d52c6423502db21cdbc4e4e035bff2a064abd53e62aa0968b14de"
+    },
+    {
+      "path": "Crossing-Packages/polk/Production/polk-production-crossings.geojson",
+      "bytes": 287203,
+      "sha256": "b99bbc169a6493d66ffa9bc0cad82e4cb6e310a7cb549ecdcf3cafe180a4c2e2"
+    },
+    {
+      "path": "Crossing-Packages/polk/package-manifest.json",
+      "bytes": 301,
+      "sha256": "b2e91c53d52103fd1d9f1f7cbd5e31b722171aec91e55b50b66398770b7b23bd"
+    },
+    {
+      "path": "Crossing-Packages/polk/polk-crossings.geojson",
+      "bytes": 266739,
+      "sha256": "1b8d172845a39f6fe286f0a192b7ce3f2c31766cd09797ab29aa7bf1b6f10d5b"
+    },
+    {
+      "path": "Crossing-Packages/production-crossing-manifest.json",
+      "bytes": 12017,
+      "sha256": "01c3765ebdaf47224c91e045a84ecffa68e52cf7eb481aec483efd3d1a5ba438"
+    },
+    {
+      "path": "Crossing-Packages/san-jacinto/Production/san-jacinto-production-crossings.geojson",
+      "bytes": 54149,
+      "sha256": "19e2f6c2ce18700179ccc409074098505c96cbb522a212b04afdacd28203bab5"
+    },
+    {
+      "path": "Crossing-Packages/san-jacinto/package-manifest.json",
+      "bytes": 322,
+      "sha256": "a98c544e50637507e21446eff7a91b62ae4688828dea0b887134ee872c1ca06d"
+    },
+    {
+      "path": "Crossing-Packages/san-jacinto/san-jacinto-crossings.geojson",
+      "bytes": 50286,
+      "sha256": "0b799828e4b293c43a6edafefce36a536a50b347bba534fc1e5b145e2227fa3b"
+    },
+    {
+      "path": "Crossing-Packages/tyler/Production/tyler-production-crossings.geojson",
+      "bytes": 275,
+      "sha256": "a2016a99efa422750b871b423a77b8e8844342b302433b72346ea883fc98a218"
+    },
+    {
+      "path": "Crossing-Packages/tyler/package-manifest.json",
+      "bytes": 303,
+      "sha256": "ad1da988a8371d059d1c33f7161fa1ee91b8af9b88a5e6dd7db3797b3afa3b7a"
+    },
+    {
+      "path": "Crossing-Packages/tyler/tyler-crossings.geojson",
+      "bytes": 275,
+      "sha256": "a2016a99efa422750b871b423a77b8e8844342b302433b72346ea883fc98a218"
+    },
+    {
+      "path": "Crossing-Packages/walker/Production/walker-production-crossings.geojson",
+      "bytes": 162061,
+      "sha256": "11c05a1c44ccf26e3c3e1ba6d88f128020561b14af62c83b1b50b26021a9a81b"
+    },
+    {
+      "path": "Crossing-Packages/walker/package-manifest.json",
+      "bytes": 307,
+      "sha256": "c4748e6fad838bf359fbb0c1f17b4b717535036be5e367951efa3f268fe68bb2"
+    },
+    {
+      "path": "Crossing-Packages/walker/walker-crossings.geojson",
+      "bytes": 150521,
+      "sha256": "a37ba17303295c85feaa8451ce75cf4767bc42f75d282ef4b6c7e5de091d8f66"
+    },
+    {
+      "path": "Crossing-Packages/waller/Production/waller-production-crossings.geojson",
+      "bytes": 206964,
+      "sha256": "11b1f137bb9d403b3abc922c8bed313307fcb943e8daf2eb76895e4a697d88af"
+    },
+    {
+      "path": "Crossing-Packages/waller/package-manifest.json",
+      "bytes": 307,
+      "sha256": "7a0111e06283acf6b190aa3c36f249841781db43ffdc7681c472178eaa6948c0"
+    },
+    {
+      "path": "Crossing-Packages/waller/waller-crossings.geojson",
+      "bytes": 192213,
+      "sha256": "e8dfa1afcaad6a4640d1798d02a427386349d2593441147fd732f40101421fbb"
+    },
+    {
+      "path": "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
+      "bytes": 185111,
+      "sha256": "398ca971cbe85ef1cfe7db67b68a674510d0c2dbdaacc8c49f2b84e2a5e187b0"
+    },
+    {
+      "path": "Crossing-Packages/washington/package-manifest.json",
+      "bytes": 319,
+      "sha256": "29547b7564486225c4cdbed9f3020461df247cd5f37dc6f39dd1ecc662628a8c"
+    },
+    {
+      "path": "Crossing-Packages/washington/washington-crossings.geojson",
+      "bytes": 172062,
+      "sha256": "d618ca25842c54a51102eccfc1ad58901cbc5b85af79d4ebc060ea0e71d2b8df"
+    },
+    {
+      "path": "Crossing-Packages/wharton/Production/wharton-production-crossings.geojson",
+      "bytes": 323245,
+      "sha256": "277e754fe3d9262b302ff406fa5996a3bd0c44737b6b7aed7cc8d0222bd56ad6"
+    },
+    {
+      "path": "Crossing-Packages/wharton/package-manifest.json",
+      "bytes": 310,
+      "sha256": "9a09b7ba67cf73366c82e18af3f08ed0bb8c01a667589175e74f75c9793523bb"
+    },
+    {
+      "path": "Crossing-Packages/wharton/wharton-crossings.geojson",
+      "bytes": 300326,
+      "sha256": "099aced3267f03255102a9a1bf1fe99215b78d111181c946690e90cac88dac7f"
+    },
+    {
+      "path": "assets/UI/icons/dock/alerts-bell.png",
+      "bytes": 51603,
+      "sha256": "704f818a2ead1dbdfddfe4002367f514973897fc3ed1566cf3f07870fc6603c8"
+    },
+    {
+      "path": "assets/UI/icons/dock/history-clock-arrow.png",
+      "bytes": 53191,
+      "sha256": "8cb499f1003d8d6084da5c8d500891cabab913f8cdaaa13068587043ced61a6c"
+    },
+    {
+      "path": "assets/UI/icons/dock/report-map-pin.png",
+      "bytes": 47424,
+      "sha256": "464de14d6700a6d588b682a3940d764cf7d4ae47a9ac75e932fed850603b64a8"
+    },
+    {
+      "path": "assets/UI/icons/dock/settings-gear.png",
+      "bytes": 60237,
+      "sha256": "b66a81efb16989881c721a6388e5c50e68fe68f30bb93160507d765ab3fd2cec"
+    },
+    {
+      "path": "assets/beta/qr/gridly-beta-qr-1024.png",
+      "bytes": 17113,
+      "sha256": "2da83fcbbc0a382234de83296451d61f640141a23334c8e4b591d3c4c4020f8a"
+    },
+    {
+      "path": "assets/beta/qr/gridly-beta-qr-2048.png",
+      "bytes": 29806,
+      "sha256": "d4cbd8827aca1b4ef1a38e302334af8aea93ba00fc7a6cdbac729945244da5a2"
+    },
+    {
+      "path": "assets/beta/qr/gridly-beta-qr-512.png",
+      "bytes": 13974,
+      "sha256": "a37398352d4bafbc1f5c1b0e2d9e34ea5da160f6c903b45d5e63083bfdc39eb9"
+    },
+    {
+      "path": "assets/beta/qr/gridly-beta-qr.svg",
+      "bytes": 13227,
+      "sha256": "d38d628e1bf08761b1660c365c23fc4575a353424a27fb6af8ca7556586d41af"
+    },
+    {
+      "path": "assets/boundaries/texas-counties-boundaries.geojson",
+      "bytes": 14000697,
+      "sha256": "a9f5a0cf44f40d4f9fae81c16756e9ad32d36b7e9d08e34e96f1f02f94f8a50d"
+    },
+    {
+      "path": "assets/county-implementation/austin/boundary/austin-county-boundary.geojson",
+      "bytes": 128088,
+      "sha256": "d5a551256e5499287ac1105c4f22cefb64cf0a0d632034e907ceb7f99a2b0c65"
+    },
+    {
+      "path": "assets/county-implementation/brazoria/boundary/brazoria-county-boundary.geojson",
+      "bytes": 125922,
+      "sha256": "75323185a0bb51c3ed8a47c3a9cf738832f5a223e32d65d2c460404b965f1144"
+    },
+    {
+      "path": "assets/county-implementation/brazos/boundary/brazos-county-boundary.geojson",
+      "bytes": 151851,
+      "sha256": "290a02386f4dacb21f7ffb3301e2fce4e04c6b05f2dda10530116fcb343ada8f"
+    },
+    {
+      "path": "assets/county-implementation/bulk-county-preparation-plan-v815.json",
+      "bytes": 162405,
+      "sha256": "4794fdac07f8d17ed9c0e616c7425c784ff6f6c8f57c200aeaec45b388373b80"
+    },
+    {
+      "path": "assets/county-implementation/bulk-county-preparation-whatif-v816.json",
+      "bytes": 180749,
+      "sha256": "d820ae2660e829f222d6067975aa8764384c129f9c85f9591fcf31d6213f72b2"
+    },
+    {
+      "path": "assets/county-implementation/bulk-county-preparation-writemode-v817.json",
+      "bytes": 25137,
+      "sha256": "3d671a49d5d319dc135f705917f085410bf0a7457361980e3dccabe2e10cac97"
+    },
+    {
+      "path": "assets/county-implementation/bulk-county-promotion-v818.json",
+      "bytes": 4919,
+      "sha256": "e9690f4dcf3f3260701bb40cde31e0982b8cb008d76a0e2adc9d8950528459ad"
+    },
+    {
+      "path": "assets/county-implementation/calhoun/boundary/calhoun-county-boundary.geojson",
+      "bytes": 70147,
+      "sha256": "044742a4dbd8662863eaccd6c302a77a768703cce71bb316dac498f891c1cafa"
+    },
+    {
+      "path": "assets/county-implementation/chambers/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson",
+      "bytes": 146448,
+      "sha256": "5bf60d7c1d656794a278254465da0bb15273540a4481c560fa3250049293d749"
+    },
+    {
+      "path": "assets/county-implementation/chambers/runtime-assets/chambers-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/chambers/runtime-assets/chambers-county-rail-crossings.geojson",
+      "bytes": 347818,
+      "sha256": "0f0f22208060dac574af70ed4de41824099a1fcd18cb7805a9c811ef93de872f"
+    },
+    {
+      "path": "assets/county-implementation/colorado/boundary/colorado-county-boundary.geojson",
+      "bytes": 78784,
+      "sha256": "6c56ac55bc50c829e935bdafe67b69b59eda7e9d7478a34b1b85115a953c3edd"
+    },
+    {
+      "path": "assets/county-implementation/county-automation-capability-audit-v814.json",
+      "bytes": 58511,
+      "sha256": "5aea82a0edba36a629af4a7f34d92172e8b2a2f2ae92aaf2b9775a0ce20834e0"
+    },
+    {
+      "path": "assets/county-implementation/county-expansion-framework-v811.json",
+      "bytes": 11996,
+      "sha256": "9e413fa13ada3a06c36f628fe28fe940ca9f6f8d2b2616e4af3b70d89231131b"
+    },
+    {
+      "path": "assets/county-implementation/county-preparation-planner-v813.json",
+      "bytes": 69293,
+      "sha256": "a6e48e285e489c5b5b09034386d479fa5b5fead064bb724c190df463ff365039"
+    },
+    {
+      "path": "assets/county-implementation/county-readiness-gap-resolver-v812.json",
+      "bytes": 65222,
+      "sha256": "179095fbb630f8e2ca2281164f5b55506815e08242cc80b582d6db76bf8d9c8f"
+    },
+    {
+      "path": "assets/county-implementation/fayette/boundary/fayette-county-boundary.geojson",
+      "bytes": 28910,
+      "sha256": "7abd1020a19c7d9c2b7c4461f26fa9d09663c4230a4a6036f24a4b540619b2fc"
+    },
+    {
+      "path": "assets/county-implementation/fort-bend/boundary/fort-bend-county-boundary.geojson",
+      "bytes": 130240,
+      "sha256": "18d9b9d8678f2981abf01906266ad913799ff5163bd215d1687f9739aa1029e9"
+    },
+    {
+      "path": "assets/county-implementation/galveston/boundary/galveston-county-boundary.geojson",
+      "bytes": 138658,
+      "sha256": "218c5d55f71fc66858d6eab44a56f54cfd901c74323d05aa5da69118fc168157"
+    },
+    {
+      "path": "assets/county-implementation/grimes/boundary/grimes-county-boundary.geojson",
+      "bytes": 78510,
+      "sha256": "67cc770866661a8c5463a09a0b4da25fbbe66c9ed8a63b3deb76d83348a8d154"
+    },
+    {
+      "path": "assets/county-implementation/hardin/boundary/hardin-county-boundary.geojson",
+      "bytes": 124478,
+      "sha256": "1074fc150fd2c7d1e0dd5b4e1b5c309176d912f6955e7a94f77d38fc2a28b6ab"
+    },
+    {
+      "path": "assets/county-implementation/harris/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/harris/boundary/harris-county-boundary.geojson",
+      "bytes": 291872,
+      "sha256": "bff86efafb05e8f388a8d44384bac83e120da350ad0c0eb988ffb7c4fb77e72d"
+    },
+    {
+      "path": "assets/county-implementation/harris/runtime-assets/harris-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
+      "bytes": 17042129,
+      "sha256": "4068dcede64b379c10fdf5bf187da28669fcf394130d236930a2ac988ac1547a"
+    },
+    {
+      "path": "assets/county-implementation/jackson/boundary/jackson-county-boundary.geojson",
+      "bytes": 44373,
+      "sha256": "608204e127a06bf8ed258695e54dbd183872998830db5637bc10b539a2a10118"
+    },
+    {
+      "path": "assets/county-implementation/jasper/boundary/jasper-county-boundary.geojson",
+      "bytes": 102654,
+      "sha256": "59ba29fdff1aa6e8e3b35f8e2e886101912639041d4b9f1b91dfe7ee4c88f764"
+    },
+    {
+      "path": "assets/county-implementation/jefferson/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/jefferson/boundary/jefferson-county-boundary.geojson",
+      "bytes": 88066,
+      "sha256": "672e5decc1ad9bbd5f7a1f128335751e2c9939edb30ed41fb1018d41e2fee255"
+    },
+    {
+      "path": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/jefferson/runtime-assets/jefferson-county-rail-crossings.geojson",
+      "bytes": 4614373,
+      "sha256": "519807da420518e0e8ecda3ab26b2394f1b54246c27a0d6ea10a4c9990930a01"
+    },
+    {
+      "path": "assets/county-implementation/jefferson/validation/jefferson-boundary-validation-v802.json",
+      "bytes": 634,
+      "sha256": "7a31c60abfba405a07f9d96daca506efaca775f68da803e5b6b1c86deff779a6"
+    },
+    {
+      "path": "assets/county-implementation/lavaca/boundary/lavaca-county-boundary.geojson",
+      "bytes": 24620,
+      "sha256": "11cd71a97dba1fd5de6061feff641426ac1f3d205d220c3d636eb9b200a290ed"
+    },
+    {
+      "path": "assets/county-implementation/liberty/boundary/liberty-county-boundary.geojson",
+      "bytes": 63909,
+      "sha256": "022b1738187f7cb9ef33a6508bfa1b60ff919043f49b410fbfc9db723f451536"
+    },
+    {
+      "path": "assets/county-implementation/matagorda/boundary/matagorda-county-boundary.geojson",
+      "bytes": 65973,
+      "sha256": "78eece5350dcf582f25287ba74bcde35724166f94ec0629f352a0f80b151b899"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/montgomery-activation-gap-analysis-v589.json",
+      "bytes": 11509,
+      "sha256": "2c6bbd79435cbbd1d9707e4dff94be63d38b1e5cfe5dae33d719b42ba4253223"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/montgomery-activation-implementation-v590.json",
+      "bytes": 1772,
+      "sha256": "05c6ad6d758239ccad6d5d32f63b402ff7d24a91caea33d9c430b4d522592fbd"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/montgomery-activation-readiness-packet-v580.json",
+      "bytes": 5995,
+      "sha256": "e5b6861a31fe4a1433ebcf7b98a07422f87d12104db33d20ed0f6ff1bda36445"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/montgomery-activation-rollback-v590.json",
+      "bytes": 1766,
+      "sha256": "3c762244ecdd1c539258c21b02e62314f96b6598bebda6e1d193e08f52ba91c5"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/activation/montgomery-observation-period-plan-v580.json",
+      "bytes": 2532,
+      "sha256": "31df0a632a0e59e8060c4e1d688b2310de5c628e5682e22a0be4e70566a01d7c"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
+      "bytes": 156171,
+      "sha256": "84613cc1c9eaa3711efe2bd29ed7ed2ed7efa4c8b8d1c4374e6e9b7a7af15b70"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/containment/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/containment/montgomery-containment-fixture-suite-v578.json",
+      "bytes": 5019,
+      "sha256": "bb9916b744002250e64300619c2de96f114f75d27709138c28fc23172df3cb83"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/launch/montgomery-launch-decision-findings-v588.json",
+      "bytes": 2811,
+      "sha256": "b4175122c020d47d03388f01c82eba2dd76fe64762b06f798ebfcbf7b6db2d91"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/launch/montgomery-launch-decision-package-v588.json",
+      "bytes": 5265,
+      "sha256": "5db5bca66dc61a9f362451efcf801d5e831353f396c16cb7e927c88ef6eb355b"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/launch/montgomery-launch-gap-matrix-v583.json",
+      "bytes": 6898,
+      "sha256": "4f4d4eb0c6a1c2cc2b2a238b30b710968d304d53559c8e460dc40ec4186c83f5"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/launch/montgomery-launch-readiness-program-v583.json",
+      "bytes": 8225,
+      "sha256": "4d469f608999f5c59b86cb2c89f5c29567dbd848fa0f19d5d74405c2d34d74d8"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/launch/montgomery-launch-sequence-v583.json",
+      "bytes": 2439,
+      "sha256": "11abfd750d43b25145118520471a278c9c58623c4a03a75a15d0ad46bfbb3cae"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/manifests/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
+      "bytes": 1884,
+      "sha256": "da3c54c5e72eae081d50da4e0a29555cf38a64ad20e0d06ef67b2e05bb67ccb6"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-findings-v587.json",
+      "bytes": 2721,
+      "sha256": "24af6e46a694514c330f05d7221fcb230a02cca1ecf16ef3a043126ae99becc4"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-plan-v586.json",
+      "bytes": 6182,
+      "sha256": "9010aaee93f229de47656f0b0cd3846c295c2c20dbb44a552124be463967c6ba"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/observation/montgomery-controlled-observation-report-v587.json",
+      "bytes": 2938,
+      "sha256": "587952b96e8fce701eaec9c3a77f0ea5d27aed1cf8ffe8f48a179a6c95ea7a8f"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/observation/montgomery-observation-failure-thresholds-v586.json",
+      "bytes": 2331,
+      "sha256": "df5c84c67af55692f1d6cfddbd759cb560d78a87466c7e0748548fe2ad7f58f4"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/observation/montgomery-observation-success-criteria-v586.json",
+      "bytes": 3722,
+      "sha256": "21487dafbdd3a3e816f719c0cb717cc8a4d6d0dd1f66791433baa48fe5c49fbb"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/registry/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
+      "bytes": 2410,
+      "sha256": "07f6428acbcfcc473856c8ac2385f2ad4a330906029abc44568e8daf89ea1756"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/rollback/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/rollback/montgomery-rollback-procedure-v579.json",
+      "bytes": 6245,
+      "sha256": "4549d0e9c6225182eefff81509f52631a5e500170ca2c16ecb574fbaeb906ea1"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-county-rail-crossings.geojson",
+      "bytes": 1909860,
+      "sha256": "5d67139be0ba4785d61ff7a5f62f4d26606232af3457cc1efe3dd02b36b6def6"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "bytes": 35232470,
+      "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-activation-readiness-validation-v580.json",
+      "bytes": 3291,
+      "sha256": "384afcb966252638b8a1afb0975f234666a2c1e250e43efe1c587869dd8b139b"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-activation-validation-v590.json",
+      "bytes": 1785,
+      "sha256": "9bf2474efa50f63e9713a9e6338076de74465275f5c411233ba961ae5fcb7ae0"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-boundary-validation-v576.json",
+      "bytes": 938,
+      "sha256": "6791320f3bcdd68ae11cfbe4651bd2565eb13f250094f52bffaeb136aa8afb4c"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-containment-validation-v578.json",
+      "bytes": 3269,
+      "sha256": "c09154930db8157141e4382f32c69b776adcecaed95ed480a314ff2efddd963b"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-end-to-end-readiness-assessment-v582.json",
+      "bytes": 21940,
+      "sha256": "7a2d93e4bfee9873b7c7f92baaa843f928fdc466b59d3b1365e5d044f5e35717"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-implementation-completion-review-v581.json",
+      "bytes": 6951,
+      "sha256": "4aa798ce4118dbd650a42c72a504ed922cee2da58739bda268242eada2892a2e"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-observation-readiness-v585.json",
+      "bytes": 2960,
+      "sha256": "7367b90294d173cce12258c4b54ed9d8ac341ee6c83e70c62511ec788f2d8a48"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-package-manifest-validation-v577.json",
+      "bytes": 995,
+      "sha256": "e6c423356c566c3b02c7abdcacd98bad7c0d96b8e98a03faccb95a2ef6f79fcf"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-registry-validation-v577.json",
+      "bytes": 974,
+      "sha256": "9963c4eac9efa934fd21dcd5574b6d7805915b8354f0e67573251bab9f7ffb65"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-rollback-validation-v579.json",
+      "bytes": 4061,
+      "sha256": "6a7a3c051e5ead8ef6e08f0b9407ef94298882226ec70381f96fb4e6a95dcbe6"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-runtime-data-source-integration-v598.json",
+      "bytes": 1847,
+      "sha256": "1146f03fb94671cc05300bcb4bd3efb8b975a005cf490a18813f03106fcf3625"
+    },
+    {
+      "path": "assets/county-implementation/montgomery/validation/montgomery-staged-runtime-validation-v585.json",
+      "bytes": 3959,
+      "sha256": "27928d4f54d5a68c52d6391576950f0557173fd4b683c7a8190d12f730d96a5b"
+    },
+    {
+      "path": "assets/county-implementation/multi-county-asset-package-manifest-v601.5.json",
+      "bytes": 9448,
+      "sha256": "af5058f020e2a7d85b94ed3e0aa25b033a4c3f226edc4d5256e6e10426c983b9"
+    },
+    {
+      "path": "assets/county-implementation/newton/boundary/newton-county-boundary.geojson",
+      "bytes": 81284,
+      "sha256": "ce61f1aa493c4fc9bff747f1dbffb2b17d6e813c82ef53b60121ad63c167358c"
+    },
+    {
+      "path": "assets/county-implementation/orange/boundary/orange-county-boundary.geojson",
+      "bytes": 56069,
+      "sha256": "392de9ff3b02ce1ea3aefec83b7479bae9982bb7d6cf5bb1435c339a15d36ee9"
+    },
+    {
+      "path": "assets/county-implementation/polk/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/polk/boundary/polk-county-boundary.geojson",
+      "bytes": 80957,
+      "sha256": "3cec1bf5eb0cb064475b363704362151c0ec2b83923685221beb2fd4f7afcd67"
+    },
+    {
+      "path": "assets/county-implementation/polk/runtime-assets/polk-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/polk/runtime-assets/polk-county-rail-crossings.geojson",
+      "bytes": 557838,
+      "sha256": "a9c2f7bc3cc4b76fa2fab1c3234a879fffba54d503691f1257c62efba8d9b4e8"
+    },
+    {
+      "path": "assets/county-implementation/regional-runtime-certification-v820.json",
+      "bytes": 41929,
+      "sha256": "9cac1336fd530fe60206ca7cabb976a99359aa61274d97094829c4f614173feb"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/boundary/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/boundary/san-jacinto-county-boundary.geojson",
+      "bytes": 74074,
+      "sha256": "c3e6fe33fb477e8a81906db9d5acaf9c0e3507770fd4bb8b69c7e6e08a2e141d"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/inventory/san-jacinto-source-inventory-v639.json",
+      "bytes": 1094,
+      "sha256": "26e7f7f23f6aeff4933d8f306d42af8251076a742d14ea0ecf2c3af1964aa349"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/manifests/san-jacinto-runtime-onboarding-v639.json",
+      "bytes": 400,
+      "sha256": "048fd6871154f4c18b2ac3b11ccda348702d83d710a2846c980216f583de5343"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/registry/san-jacinto-county-runtime-registry-v639.json",
+      "bytes": 1333,
+      "sha256": "aa416e2bfa3bae5fb8d1cfd99fef88c4ca07bae7fd0a05501e73b455d9c4d4f2"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-crossing-review-overrides.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/runtime-assets/san-jacinto-county-rail-crossings.geojson",
+      "bytes": 111670,
+      "sha256": "740e2e736b79db1b5d40fff968c74acc8832ff675f247bb3afe4a69f62802543"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-authoritative-boundary-extraction-v653.json",
+      "bytes": 1697,
+      "sha256": "6a6c00e8a5672dd0e191e16d8130c464a6321cdc35fdf6613d2d657552d2194f"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-boundary-credibility-resolution-v652.json",
+      "bytes": 4866,
+      "sha256": "ea6a4e1eb17a0ecb112737e01e9d1f1b0622e150512c11d9b1540d6484aa2d85"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-boundary-ownership-hardening-v648.json",
+      "bytes": 3663,
+      "sha256": "d46ff88595ebbc340f063c807beaf54f3f3a7e4b05e5b00cd6454e0e70071412"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-browser-validation-rerun-v650r11.json",
+      "bytes": 2613,
+      "sha256": "b59ee272964daa37dbb3930de1b839b86c2874cbaef554df543fad01e534f618"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-road-geometry-runtime-wiring-v650r10.json",
+      "bytes": 2667,
+      "sha256": "40192b6210ffc5578999211e826ed9c5b95a6f7689669f598577108985a3a10a"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-road-resolution-validation-v650r12.json",
+      "bytes": 8511,
+      "sha256": "de1cbdf58c2b4029c6c97c8cfa62d527227aa115f809773fca8ae35cc4fdc59e"
+    },
+    {
+      "path": "assets/county-implementation/san-jacinto/validation/san-jacinto-runtime-validation-v640.json",
+      "bytes": 3529,
+      "sha256": "0162feb68bad4ebb3a8d76b2b16e41fe472fe09405fc30c939b556f2ddaed326"
+    },
+    {
+      "path": "assets/county-implementation/tyler/boundary/tyler-county-boundary.geojson",
+      "bytes": 71344,
+      "sha256": "3b4978ceb1c0f6ec11e8ab48cb3fe469160297985d1d52e0ea2c69aedda14e19"
+    },
+    {
+      "path": "assets/county-implementation/walker/boundary/walker-county-boundary.geojson",
+      "bytes": 76862,
+      "sha256": "c0806f8383340b5fe58939967ba4d71050f83d8d46b7ba7c8f972717b803c52c"
+    },
+    {
+      "path": "assets/county-implementation/waller/boundary/waller-county-boundary.geojson",
+      "bytes": 67840,
+      "sha256": "6870da1816eaace0f28bd7048a22f1fb3e6da9b4e1a79f3962ad0fc1f4b3904e"
+    },
+    {
+      "path": "assets/county-implementation/washington/boundary/washington-county-boundary.geojson",
+      "bytes": 127104,
+      "sha256": "eb777d28624f87d6f97ac40042fba5e273000a366288c59720250f5b1ffb2824"
+    },
+    {
+      "path": "assets/county-implementation/wharton/boundary/wharton-county-boundary.geojson",
+      "bytes": 94693,
+      "sha256": "1d9f25ac36406b33facaa279226ab17a6aad622038a812e32224ef482b11ee5f"
+    },
+    {
+      "path": "assets/desktop-gate/gridly-desktop-beta-board.png",
+      "bytes": 1883728,
+      "sha256": "b8b8a5699e45be1e99791ce6a30d04b5ad58d7f152cf6058529962de3744c6ef"
+    },
+    {
+      "path": "assets/desktop-gate/gridly-landscape-rotate-board.png",
+      "bytes": 1592477,
+      "sha256": "7930e7de05fca0d69f59aa8dae5a6a2a5369ca50969f5f10e20f60a32115a852"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-corridor-inventory.json",
+      "bytes": 2061,
+      "sha256": "5d5d8fc16c034374b6f9a5777e2ef9dea05a428f3662e68c23299dd55cb19bf4"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v684-us59-i69-segment-inventory.json",
+      "bytes": 439969,
+      "sha256": "027b1adb3205a65c872ecc96dd21cfce6dadcc4c2add919d4b36b33814fbb7ba"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-fm1960-candidate-inventory.json",
+      "bytes": 18243,
+      "sha256": "a17067f296e98f668fc617137adaa37d59dd398588d6b8cf19fa2b945e1dee1c"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-fm1960-corridor-inventory.json",
+      "bytes": 1134,
+      "sha256": "53a07b9d0151c835e3a0493bc91605e101d79fd06ae266ff041ec997cc5a29c0"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-fm1960-segment-inventory.json",
+      "bytes": 17723,
+      "sha256": "7bbeb7d779ec43440a0437f25c242d79a6b29d0581b1cd6ea12f907ef5da0163"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-tx146-candidate-inventory.json",
+      "bytes": 150714,
+      "sha256": "1e3c193a32f6eb2ce9362df1f8d1ccdbf8b2438816908cf19d05da651c5903b6"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-tx146-corridor-inventory.json",
+      "bytes": 1358,
+      "sha256": "65dc70d01a036daa9eac65d6a60978fa10b7a1c8355ccf178b88d3b6c2c6d29c"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-tx146-segment-inventory.json",
+      "bytes": 141753,
+      "sha256": "3c099ff0ee376baced79b842ba0711cafe8020d37b8924912ea526b19cbeda53"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-us90-candidate-inventory.json",
+      "bytes": 167100,
+      "sha256": "f7a3a1fbbc5a536927feb6de6a80c634081151cb8de2e986453d0a039ee4aa94"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-us90-corridor-inventory.json",
+      "bytes": 1414,
+      "sha256": "16744d40ee5859ff193376c1e9f7db7892a6c62e48915ca742abdf4829dc5016"
+    },
+    {
+      "path": "assets/directional-intelligence/extracted/v719-us90-segment-inventory.json",
+      "bytes": 154146,
+      "sha256": "30fe5210a1f0bd7d491b2fefe3737dabac3166b3214c0a0b37919274adfd148c"
+    },
+    {
+      "path": "assets/directional-intelligence/runtime/v719-fm1960-directional-runtime.json",
+      "bytes": 190,
+      "sha256": "c112e3066f414ba4317e80c2900462d56c5e7e982fa49dd04f184bc54de2b651"
+    },
+    {
+      "path": "assets/directional-intelligence/runtime/v719-tx146-directional-runtime.json",
+      "bytes": 33139,
+      "sha256": "dec69107a66d0d86c2bdc58cf482fb7132ea7cd97a3a819fcab9fe16fbdbbbc0"
+    },
+    {
+      "path": "assets/directional-intelligence/runtime/v719-us90-directional-runtime.json",
+      "bytes": 74489,
+      "sha256": "49297b3d66784d51914f9d7c62375e588ff8346f4e86bdda2919bd1d3d97d85b"
+    },
+    {
+      "path": "assets/favicon-32.png",
+      "bytes": 2412,
+      "sha256": "fc3d24ad64e2f2153a31e39ff9b072209c469a0423bb39b8749acba13a1d0548"
+    },
+    {
+      "path": "assets/gridly-header-compact.png",
+      "bytes": 148592,
+      "sha256": "de66020bf906ac9b4b825752b983db5bb1150111b658621269c55be1b16c9898"
+    },
+    {
+      "path": "assets/gridly-header-ultra-compact-fixed.png",
+      "bytes": 101502,
+      "sha256": "015e9fa30cf0ca3951664c1c3b8937c8bc7632d7ca6215bd6f857057dd3a905b"
+    },
+    {
+      "path": "assets/gridly-header-ultra-compact.png",
+      "bytes": 130756,
+      "sha256": "87d15847f53dc54d7106c44f6209e6d08bae2bebfda41494900a79df91399c0c"
+    },
+    {
+      "path": "assets/gridly-logo-primary.png",
+      "bytes": 2065520,
+      "sha256": "72670c549ced0a7b7eedba03eac76e5532155ee3b04965230bf9cb5758b15a12"
+    },
+    {
+      "path": "assets/icon-180.png",
+      "bytes": 54511,
+      "sha256": "fa60da564faf21c5c971ec7a0d1af93145d6498d558a82b7d57fd16e22c4fcbe"
+    },
+    {
+      "path": "assets/icon-192.png",
+      "bytes": 60330,
+      "sha256": "6f844fc79edea70712ffc2860904d1b545c264a4aeeb76f9a94c68e556ce85f1"
+    },
+    {
+      "path": "assets/icon-512.png",
+      "bytes": 340128,
+      "sha256": "b6525f3fb8cb2dc896dd1670eec2fb4f05c458c54627321ee96c0db672bd759b"
+    },
+    {
+      "path": "assets/icons/app-icon-inventory.json",
+      "bytes": 951,
+      "sha256": "41ca26d30bd0c1b7b879812f0327dd83f60e6112e23d2e1da56381f7574b0cc8"
+    },
+    {
+      "path": "assets/icons/incoming/gridly-icon-master-128.png",
+      "bytes": 11956,
+      "sha256": "50e9de958e4868c5271e002bdaf65ef59fa5ae076f835aa70f44b3519a217d35"
+    },
+    {
+      "path": "assets/icons/incoming/gridly-icon-master-152.png",
+      "bytes": 15156,
+      "sha256": "050b14946534b4bed5eaf4496a3ffb91a09966b893c221d88c6aa233d5a20b4e"
+    },
+    {
+      "path": "assets/icons/incoming/gridly-icon-master-167.png",
+      "bytes": 17319,
+      "sha256": "e90a98b7c1c843549c7c0658a3e3e7ffe4e43ad187e0e59ee46529927fed602e"
+    },
+    {
+      "path": "assets/icons/incoming/gridly-icon-master-72 .png",
+      "bytes": 5948,
+      "sha256": "a6cf0365b3e509953a507232711dba5ba06e755f48d41c0caaf8da2d94da988f"
+    },
+    {
+      "path": "assets/icons/incoming/gridly-icon-master-96.png",
+      "bytes": 8279,
+      "sha256": "f1af9d19723b0d6a6d8bcce364e8c0ab6ab053d9ba9a7b29821b59ddc096b0ad"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+      "bytes": 2756121,
+      "sha256": "ba0e44fbaf1a396909f7aad98ace7d55a20f86a23ca9352c980f39116ed32461"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json",
+      "bytes": 1294,
+      "sha256": "7f7088e7250fca468f95edb5dd33a39bb3703e12781c9845ffe702b7d6539fe2"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
+      "bytes": 13934264,
+      "sha256": "6c6eeb549bb5e03d79efbc4d421783c06988c81c0f728c79add32f8c219e3d49"
+    },
+    {
+      "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.manifest.json",
+      "bytes": 1683,
+      "sha256": "67fa26854a7a00699fd119a2a58773ae81a0f18f62f283e89a8216ec92f53f58"
+    },
+    {
+      "path": "assets/markers/png/construction-zone.png",
+      "bytes": 48528,
+      "sha256": "71cabf31bd84dcd750611445c58e665093404620849b22a9ccef46c35bd4eb84"
+    },
+    {
+      "path": "assets/markers/png/crash-on-road.png",
+      "bytes": 27042,
+      "sha256": "01ec6634d332c3add804a72ffc5fbe4cc7e1e5df43049fbe744e13ca597d8403"
+    },
+    {
+      "path": "assets/markers/png/debris-in-road.png",
+      "bytes": 22097,
+      "sha256": "5d2de2676699e4e71f8eb587818b3bddf88617e055c4d3ab55898e2ee8ce7599"
+    },
+    {
+      "path": "assets/markers/png/disabled-vehicle.png",
+      "bytes": 47370,
+      "sha256": "14cd612a8fccbcf96fbc6c444b3224436f446466cc79c43c143790a0be146337"
+    },
+    {
+      "path": "assets/markers/png/downed-power-line.png",
+      "bytes": 50707,
+      "sha256": "585d9f42519c850d092c4365501114478b4d20717d64954761cfe59be6b28894"
+    },
+    {
+      "path": "assets/markers/png/emergency-response.png",
+      "bytes": 48015,
+      "sha256": "fd7866b9400a2c1cbf2632cf9d9c3a7d29ec2c2f5638f332bc1563b8e2e75f1e"
+    },
+    {
+      "path": "assets/markers/png/livestock-on-road.png",
+      "bytes": 39855,
+      "sha256": "76fb70fa0f9a18319e7a88ed3e4eeaeb95361e1d6115b1a33427e553e3865d4c"
+    },
+    {
+      "path": "assets/markers/png/other-hazard.png",
+      "bytes": 42238,
+      "sha256": "27060c56b7ccd6a75d59453683febf95e7610ec285e58bccb1ef430af1bbeef5"
+    },
+    {
+      "path": "assets/markers/png/rail-crossing.png",
+      "bytes": 2101887,
+      "sha256": "04d4e71f28e33254907b96915ce6b039f618698efb91becf2e5330e134e6ff24"
+    },
+    {
+      "path": "assets/markers/png/road-closed.png",
+      "bytes": 26340,
+      "sha256": "c9de9803eaf6e7d338f1f18c21a781e0551e3c1066e4f3e078b0d887f4771a42"
+    },
+    {
+      "path": "assets/markers/png/traffic-backup-heavy-delay.png",
+      "bytes": 20361,
+      "sha256": "065dcf78098f07b6be683071bcb69b1415cb7df47bd18240e9faa080367cd9af"
+    },
+    {
+      "path": "assets/markers/png/traffic-signal-issue.png",
+      "bytes": 21840,
+      "sha256": "a6848cca68b47fd61e84acd69ea629e611b9beb53d8a563b2db8f9fc198f4e3a"
+    },
+    {
+      "path": "assets/markers/png/train-front.png",
+      "bytes": 31545,
+      "sha256": "9d2016594c89235c9018ac93fb1072c6896037a62c0f1be234f751e5efa1a79b"
+    },
+    {
+      "path": "assets/markers/png/water-over-road.png",
+      "bytes": 33238,
+      "sha256": "a640cf9ce2018ed7640409075a1b3dd9b9e5b84af77cfc6ebc7fe5086a0d2dfc"
+    },
+    {
+      "path": "assets/markers/svg/GRIDLY-MARKER-SYSTEM-V1.svg",
+      "bytes": 10876,
+      "sha256": "8ac96ebd0bf77d049a763df3138b89c05e90276620961af162d44b2f27848b3b"
+    },
+    {
+      "path": "assets/markers/svg/MARKER-INVENTORY.md",
+      "bytes": 2348,
+      "sha256": "342cdd8fdb09230bb1c73b4c68d6a0189dc4dbf49e47426d5b3eb797881327e1"
+    },
+    {
+      "path": "assets/markers/svg/MARKER-MAPPING.md",
+      "bytes": 2378,
+      "sha256": "37608eaf8e69c4120514c72e9206bb9f8493399568c878a7c181a98b9a170a65"
+    },
+    {
+      "path": "assets/markers/svg/marker-construction.svg",
+      "bytes": 1751,
+      "sha256": "b12cb14badaa8f0f209294a5a0dd92bd3d88622c97bcd05b38aa0c8d71b02d5c"
+    },
+    {
+      "path": "assets/markers/svg/marker-crash.svg",
+      "bytes": 1827,
+      "sha256": "8876596bf05b33d2b504d8c0e74c8d8fdced06332cd911c5659cd8de47490455"
+    },
+    {
+      "path": "assets/markers/svg/marker-crossing.svg",
+      "bytes": 1756,
+      "sha256": "1f1e591187e55ee70866834fedddc75c94db635abbd9d0eea908d088b52a9527"
+    },
+    {
+      "path": "assets/markers/svg/marker-debris.svg",
+      "bytes": 1617,
+      "sha256": "b4fedfdb81f5baed305602f8c709acd3d0e6b7442f89a0cd08f6e4b75ee74115"
+    },
+    {
+      "path": "assets/markers/svg/marker-disabled.svg",
+      "bytes": 1833,
+      "sha256": "f2172c2ef8b11353984c439ee4785287d09b230801bdd97199bccca26e804b56"
+    },
+    {
+      "path": "assets/markers/svg/marker-emergency.svg",
+      "bytes": 1753,
+      "sha256": "fa7dd0f56ca36469eb213748cd93b535f746bf55b06bd25672cfaec91d797d88"
+    },
+    {
+      "path": "assets/markers/svg/marker-flooding.svg",
+      "bytes": 1770,
+      "sha256": "847b031e23432ea0b042e09ffe76e6541866a12c44103a49fbd643fce9f51e42"
+    },
+    {
+      "path": "assets/markers/svg/marker-livestock.svg",
+      "bytes": 1770,
+      "sha256": "dfea9c69affe6593d6191bf7d46a9ba38a9bd0e3a1f290e5eafde3b93d681eb0"
+    },
+    {
+      "path": "assets/markers/svg/marker-other.svg",
+      "bytes": 1636,
+      "sha256": "5df887ffd47cb32d04a4bd40f911b7b91befcabc51014083c1442cab0caec430"
+    },
+    {
+      "path": "assets/markers/svg/marker-power-line.svg",
+      "bytes": 1768,
+      "sha256": "92caebf4575b845b8d84e3cdddc57c9eeee397b4a19f4ea47941beec72ddb8b4"
+    },
+    {
+      "path": "assets/markers/svg/marker-road-closed.svg",
+      "bytes": 1560,
+      "sha256": "40293018a7873928f9e8380c929a2407abd225018ba361d8da66b3a59b81c2aa"
+    },
+    {
+      "path": "assets/markers/svg/marker-train.svg",
+      "bytes": 1860,
+      "sha256": "210a9410075cfc696f297d812f8f08f4ba3c27c4add6ecd0484c375814b41461"
+    },
+    {
+      "path": "assets/onboarding/alerts-hero.png",
+      "bytes": 1345500,
+      "sha256": "ab9883c730b0b24f231d46d6c0030fbcc4f1ceceac97cdbd08ee1d0d1310e231"
+    },
+    {
+      "path": "assets/onboarding/awareness-hero.png",
+      "bytes": 1487424,
+      "sha256": "9c422b9cb7d436495cbbdb54a724df177105ca512486498cc2c7aacbd2b0caa2"
+    },
+    {
+      "path": "assets/onboarding/map-hero.png",
+      "bytes": 1552083,
+      "sha256": "2a5233b502c3359693972263d1e1c78b74f3a5ad02ffd2c240399b4a5320ea73"
+    },
+    {
+      "path": "assets/onboarding/originals/alerts.jpg",
+      "bytes": 181981,
+      "sha256": "f0bba07e76042f3fee03441de68d3389cbc817d26f160254da47ea3769d9a40e"
+    },
+    {
+      "path": "assets/onboarding/originals/awareness.jpg",
+      "bytes": 269315,
+      "sha256": "3d367727a8b65a2d6ffad429fc9b55005d98485e69e3025807d7aa4de70bb943"
+    },
+    {
+      "path": "assets/onboarding/originals/map.jpg",
+      "bytes": 285309,
+      "sha256": "34b647a384eda92de0621e2fe0b3eef5712559e3f0ff4a3af48bc855d78ede9f"
+    },
+    {
+      "path": "assets/onboarding/originals/report.jpg",
+      "bytes": 189567,
+      "sha256": "6e6175145f171ec9270596181ccf3d03225791f760b1d4af1e272053427c8b3e"
+    },
+    {
+      "path": "assets/onboarding/originals/settings.jpg",
+      "bytes": 202714,
+      "sha256": "bf9d9fd509009d85afcdf53a76ddaef99d8b1c8fde14ccef124d414861d140cd"
+    },
+    {
+      "path": "assets/onboarding/report-hero.png",
+      "bytes": 1325223,
+      "sha256": "ede8564fcdd7dcfcbd52ab0c42f3e5e1d96f787c67bc36dc4251ec18400b95c7"
+    },
+    {
+      "path": "assets/onboarding/settings-hero.png",
+      "bytes": 1389918,
+      "sha256": "b155003a031302b3c1ea5b760a2fb78cde29cbb0692b20ca7f1a652d5063f46d"
+    },
+    {
+      "path": "assets/package-registry/runtime-package-registry.json",
+      "bytes": 16764,
+      "sha256": "99008734b46594b14767f221d0a6d210c3ea7067c47acb2d14cb9f7adf4bfbc6"
+    },
+    {
+      "path": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
+      "bytes": 57587,
+      "sha256": "f405cdc2ff464f406feaa0bcc13df8242b4ef1e2ab0bbb00f073bfccb4244154"
+    },
+    {
+      "path": "assets/store/apple/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/apple/icons/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/apple/previews/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/apple/screenshots/ipad/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/apple/screenshots/iphone/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/branding/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/branding/Logos/gridly-logo-horizontal.png",
+      "bytes": 226821,
+      "sha256": "06ce945d6aec3a2877d52f0ad3f83b066a28ff80a86902f0718d8c1412a8e5ea"
+    },
+    {
+      "path": "assets/store/branding/Logos/gridly-logo-vertical.png",
+      "bytes": 365574,
+      "sha256": "08fe7101e5c139e4b1f0d20b3395e16ad33d96f7f39104339306d2358d2ab084"
+    },
+    {
+      "path": "assets/store/branding/Splash/gridly-splash-landscape.png",
+      "bytes": 368412,
+      "sha256": "1d1bc902b6bfae2f512a37b21e7b365eb72eda638bd3c9f9f37b593e33fc4eda"
+    },
+    {
+      "path": "assets/store/branding/Splash/gridly-splash-portrait.png",
+      "bytes": 267886,
+      "sha256": "ea0ac2ae03b9b121fcf0a836c5872bef25241b4bb557779f047360d273b68960"
+    },
+    {
+      "path": "assets/store/google/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/google/graphics/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/google/icons/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/google/screenshots/phone/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/google/screenshots/tablet-10/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/google/screenshots/tablet-7/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/icons/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/store/icons/gridly-icon-master-1024.png",
+      "bytes": 463173,
+      "sha256": "35dd199b10af5914b832c0db08ddef4f1938eb46de1d1f2d1466134ab3d111e4"
+    },
+    {
+      "path": "assets/store/screenshots/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "beta-closed.html",
+      "bytes": 12145,
+      "sha256": "0c2ff4514049a946ae5c8f8cde543418155277b1ba2ad340df9519dbfce69b68"
+    },
+    {
+      "path": "beta-closure.html",
+      "bytes": 10083,
+      "sha256": "079ad5de31fac24161e8de8780dbf75b00065f36e7aece6c48d5b059425bf0b6"
+    },
+    {
+      "path": "css/lp071-historical-intelligence-prototype.css",
+      "bytes": 2339,
+      "sha256": "a2be104cefc600bc5312ecd5f0840a8611bfdef93cabe9a021ef150d55016880"
+    },
+    {
+      "path": "css/lp072-historical-intelligence-certification.css",
+      "bytes": 1117,
+      "sha256": "053e02d0ede7c22b28e68c1f3384a1cbf93b60714a10c0f183b295f03d1961a8"
+    },
+    {
+      "path": "css/lp073-historical-intelligence-consumer-experience.css",
+      "bytes": 3532,
+      "sha256": "900d249738547bc3a6af57cc72f1bbd11317511d56af3e4ec44a82e792b8ee5b"
+    },
+    {
+      "path": "css/styles.css",
+      "bytes": 797063,
+      "sha256": "33c810886125eb58d20e72c8e4e7a93e93478f9839f6cabb3f325c03e95d7b8f"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/anderson-48001.addresses.jsonl.gz",
+      "bytes": 937861,
+      "sha256": "67c9d0b865c556b4f7b23c49b674a421e488a928b726b811ad5c517a70ea416c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/anderson-48001.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "d6d631c24088687efc96036d684972dee091eec11f92c4a3599cd52b5b70685e"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/andrews-48003.addresses.jsonl.gz",
+      "bytes": 248776,
+      "sha256": "cae8cbd71b92ad9bcb99eadb9cdddcb702e7c2fb9225d8f40de80cf71320ecd1"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/andrews-48003.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "a2dd91e5a20301e8be23c5add7c8073170cafb36f4379996b2c25a72295a1516"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/angelina-48005.addresses.jsonl.gz",
+      "bytes": 1335591,
+      "sha256": "4d85c76356d7a9fb33c84a5f7c2b7a0cb75a4bc77373073d3de96848d69b8f1d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/angelina-48005.addresses.jsonl.gz.json",
+      "bytes": 440,
+      "sha256": "6990e425542facbf80a17a7a4cbba3e9571d09c9ad748bacefe1c8000c4813a9"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/aransas-48007.addresses.jsonl.gz",
+      "bytes": 448181,
+      "sha256": "d0d44489df72ca1c8008cae7a2ae9f1d233fd01d3e65c5b5cf7d2ab3d17a0b46"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/aransas-48007.addresses.jsonl.gz.json",
+      "bytes": 434,
+      "sha256": "44e39cf9f267a46dc8bc7d44bba8125a8bf8e27b4cefdd87a1fc7e53c9567fc8"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/archer-48009.addresses.jsonl.gz",
+      "bytes": 176349,
+      "sha256": "54ae18d6991c72d210de9d7b8b94094d4cec34a8e0ee063f2e4a7a9dd18c8d4d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/archer-48009.addresses.jsonl.gz.json",
+      "bytes": 429,
+      "sha256": "5dcad9308bbf9135bb290999a655ecf5ea481a776146642f4b13a49723cf76b4"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/armstrong-48011.addresses.jsonl.gz",
+      "bytes": 41191,
+      "sha256": "54c0295943e3d8d476176b6d12d04da81835491f501a2893c63ca5fc870ad509"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/armstrong-48011.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "3919d7a8db08279e1674b9de7d9180b4e4f9732e609edc2c128472acbd032a91"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/atascosa-48013.addresses.jsonl.gz",
+      "bytes": 839784,
+      "sha256": "f4236ae690e9f7ab74f951c65681d6b308f93e5b33002a8eba91ef03ed5de3f5"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/atascosa-48013.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "276652849cb34d30bf05d9bede4ae6eede18855ffb5edb1a2b85b394adb83d1d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/austin-48015.addresses.jsonl.gz",
+      "bytes": 552056,
+      "sha256": "419bba187d251bea8d7c54ce66d178720a1cb84696e7198a7cd5271e6eabff17"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/austin-48015.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "8acf7b65f3c194b961e30356a24f31541eafc2ba028d0ceff1d58932a6bbaace"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/austin-48015.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "221a40c458c019db212a33a36cdc138425a3260f7b14cdd02bcceb330329cfc5"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bailey-48017.addresses.jsonl.gz",
+      "bytes": 105773,
+      "sha256": "570f39cf5831952f85c1b7bf1108e223b8f78ec2bb67bc45c9d063b9d5dd1f55"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bailey-48017.addresses.jsonl.gz.json",
+      "bytes": 429,
+      "sha256": "99cec487f233a5778d97c94e3e077428dd580a8d0418653e2f6466daed4a12a9"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bandera-48019.addresses.jsonl.gz",
+      "bytes": 539409,
+      "sha256": "2ab51ecd72ab93d21ade77d0488fc6c2b5841f6d600561ab9f37beb0c878b54f"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bandera-48019.addresses.jsonl.gz.json",
+      "bytes": 434,
+      "sha256": "bf1bbf0f275a6847c6df6f4c2511ff7da399a6b3ae817d6ef7fc8bb9d6afecf5"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bastrop-48021.addresses.jsonl.gz",
+      "bytes": 1906657,
+      "sha256": "e76e11c1ab7e50f63b81ef530b893d456fa7963ab962daa6d7c8c6aab13052a8"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bastrop-48021.addresses.jsonl.gz.json",
+      "bytes": 436,
+      "sha256": "8327a70176d59a1ba790e141945309ac7151773f371b2ea473dac9b067355de5"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/baylor-48023.addresses.jsonl.gz",
+      "bytes": 84590,
+      "sha256": "a54c061b7d635abccdb9216b1d7426121a05990812f8c496d319a925f1458acf"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/baylor-48023.addresses.jsonl.gz.json",
+      "bytes": 428,
+      "sha256": "c8ab56dc269a6da4a122016fa5b23b102e10c7912c64d9052fa551f990d087af"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bee-48025.addresses.jsonl.gz",
+      "bytes": 225545,
+      "sha256": "3346b1a073af5fa6a0eecef30e62d13d0e3ec326edaf7e3d9157ede61aedadd6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bee-48025.addresses.jsonl.gz.json",
+      "bytes": 420,
+      "sha256": "614ce9b9921849c010e560529d088166f5e60003e0d9e08471cc9d656cc99250"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bell-48027.addresses.jsonl.gz",
+      "bytes": 5367668,
+      "sha256": "723866abca0dc45d8c2406193d308d1c9c1d37fda8054f448853b9a0ff1e9050"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bell-48027.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "258398b9bdfc6a0e7681f9f84584a4a36f1f2ea5ddd5c5231396d9d718d842f1"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bexar-48029.addresses.jsonl.gz",
+      "bytes": 21101375,
+      "sha256": "5e786e920f2f5d157fda7d4bdae624f1a905d8f2628d0977b28d696c1a4552f9"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bexar-48029.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "a71f27efc933c4d392867f5fc350dd0d590b6396daa24aa610017063377e00d2"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/blanco-48031.addresses.jsonl.gz",
+      "bytes": 307471,
+      "sha256": "308b3a51a4bb50480fd6ceb8355b829b4f99d83b9f5829f24833dcab71851115"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/blanco-48031.addresses.jsonl.gz.json",
+      "bytes": 429,
+      "sha256": "9636fbb628b1f78033c94fc181a85d003f7cf9d4fb53ba4920013ed11ca82197"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/borden-48033.addresses.jsonl.gz",
+      "bytes": 23819,
+      "sha256": "d1b02266e1dd38d41df86d849a2c09d2d09f006f0ec8a3a13cbbc8831de65d1d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/borden-48033.addresses.jsonl.gz.json",
+      "bytes": 426,
+      "sha256": "822be230aafe80091e44180de2257911c3f58062be0e26704bf43422c051546c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bosque-48035.addresses.jsonl.gz",
+      "bytes": 337704,
+      "sha256": "507809c294eff0d1bf1cea7e5b0e45ba0aee02868aa797033ddc390216349df0"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bosque-48035.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "95baee82954c64f186b15eb0eb6d6ba9306a625d0e5bddedb252c7c76bd900cf"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bowie-48037.addresses.jsonl.gz",
+      "bytes": 1499449,
+      "sha256": "bd3753265a913ad4f87619a23420a22b42a22036345fea082829f4f5a96437d9"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/bowie-48037.addresses.jsonl.gz.json",
+      "bytes": 429,
+      "sha256": "47f425aaa34e3838a3ae39e9916a45d7c81f59f58fd0725cdbbe7703bf6f4ffb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazoria-48039.addresses.jsonl.gz",
+      "bytes": 5695185,
+      "sha256": "65ba704f3f6b86c88a340f98f4318ae0e35698d908cb2b896a29093d57276dc7"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazoria-48039.addresses.jsonl.gz.json",
+      "bytes": 442,
+      "sha256": "3b32fcb8c66e72a8d11254819e06b8fd679ae629af054c50851cfa7ad09dce13"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazoria-48039.runtime-certificate.json",
+      "bytes": 466,
+      "sha256": "c59e3101f8266f798a841d243d3e8f20c1f79359bae5f6880f9494921a5ed905"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazos-48041.addresses.jsonl.gz",
+      "bytes": 3078907,
+      "sha256": "2566408c84bcf0b910db515817ceb57541462dfd12227b614dff1640040367f2"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazos-48041.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "a0e3f698b189b4b00493f99fdccfdc3d9d33ee92e11568a964d6c29c7bb04b9c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brazos-48041.runtime-certificate.json",
+      "bytes": 460,
+      "sha256": "697d4ea7660ece7b22b67649b8c3168ef6dfdd92f4cca6b0d790db9fb389c240"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brewster-48043.addresses.jsonl.gz",
+      "bytes": 334550,
+      "sha256": "5e65c18de8352d711e3ad8e8afab4c13c2c3d57169b4df1593e6758ddb8763a2"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brewster-48043.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "a919fb818e85302d1b64dff1104b2dc38d59ec7a81de5fbd7f89feaf56c6a9cb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/briscoe-48045.addresses.jsonl.gz",
+      "bytes": 38147,
+      "sha256": "0e8dcc6c665c237a200e3e43811d3e186e1eda7e049c74e8eebb5e776d431621"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/briscoe-48045.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "fc905d51b6f96b40190abc1d043909cc00f1f9adb78f30ca53980c68de6f625a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brooks-48047.addresses.jsonl.gz",
+      "bytes": 101543,
+      "sha256": "2e758fa2880ac35ea746cafc48d9f159b1f6237953c3daffad889df355ba1f88"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brooks-48047.addresses.jsonl.gz.json",
+      "bytes": 429,
+      "sha256": "5283c7ac378fe1ee785fe8a11bbb4ed73e5223e9222557a74d95a1ddb733dccb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brown-48049.addresses.jsonl.gz",
+      "bytes": 831260,
+      "sha256": "5238c99ee9c40327b6dd55cb2dcf1cea1c0f2da842117eb9cfba0d9998a6f2f3"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/brown-48049.addresses.jsonl.gz.json",
+      "bytes": 428,
+      "sha256": "53eb2811f9c0d5198ca9fd3f37dd79dbfb7ea3367b4d174d42241bd761ef109b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/burleson-48051.addresses.jsonl.gz",
+      "bytes": 596519,
+      "sha256": "d8db4098133e23444aeef498faa0df281843660ef79262a0d397db4ab6d935bb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/burleson-48051.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "af9f1fc642f2dd107b8448d1771fe9798756f40ef3b3fbff630dbb46b587b0bf"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/burnet-48053.addresses.jsonl.gz",
+      "bytes": 1257248,
+      "sha256": "b98b0b60a1a9cdafdc59b120433395935752c4baebc42398c84b40eede2c1491"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/burnet-48053.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "d39650bcc2a982b8e1bc508976e5a65862859dd8311e3bf1c0fb6346db72a529"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/caldwell-48055.addresses.jsonl.gz",
+      "bytes": 850854,
+      "sha256": "e7a8fc813318b9fed62629dea20e8ac57e9c366057046f3a9208c5205e096126"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/caldwell-48055.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "0f7aaa9bb4310a0a15dfe080770dd7afefc10c913aa4e6a9314fc0c0a40819fb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/calhoun-48057.addresses.jsonl.gz",
+      "bytes": 443130,
+      "sha256": "1f771bdda51ea470722d1427a023b2bf6b93d6c690907ded392ce0877d5c9229"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/calhoun-48057.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "f0d87a603053e1fbe78a9a9b06a869bc916eae66240765ad6440fe953d0c6719"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/calhoun-48057.runtime-certificate.json",
+      "bytes": 462,
+      "sha256": "31fddd3efb9f16463bfb4599369de25798d3256bb8cedab1bdf5864dc2c0fe69"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/callahan-48059.addresses.jsonl.gz",
+      "bytes": 310500,
+      "sha256": "98b55e4834c0365d751c996a81bdc77ec25121caf485cf7cc1d61612fbfba110"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/callahan-48059.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "1bbaf15198b2d438fefbf3e51a15730a374224e64a5671761bb35d5c7524b5ed"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/chambers-48071.addresses.jsonl.gz",
+      "bytes": 885892,
+      "sha256": "5583faee708fd2bcfe4bbfc5723cc2007f1e301b99a0872a725738d29aae7819"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/chambers-48071.addresses.jsonl.gz.json",
+      "bytes": 438,
+      "sha256": "afb056f97df4019d34a2e171b7dab8b5f03d82b0a9d4f8fd4fb4bab0b739e6bd"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/chambers-48071.runtime-certificate.json",
+      "bytes": 465,
+      "sha256": "355c718dae97b36826872ede367e84f87cf0ff876a6efbcaf72d1102929249ea"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/colorado-48089.addresses.jsonl.gz",
+      "bytes": 465779,
+      "sha256": "8f7ebc0e01e44b78137ddb7cc14e96e9d54a6666d3d40f4bc541b981bed9fdd2"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/colorado-48089.addresses.jsonl.gz.json",
+      "bytes": 437,
+      "sha256": "bc25f1e4a2ea4804e570d1cd9b7d682ba89b13398adf747748f22a3970afcb6b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/colorado-48089.runtime-certificate.json",
+      "bytes": 465,
+      "sha256": "6614d8b86dfbe0bbdaf4bc3572d2eb39d08421f70cc99654d266286d08fa28bb"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fayette-48149.addresses.jsonl.gz",
+      "bytes": 815379,
+      "sha256": "5dc2852dca0f394f954f537a09e9ac7b7c1a66f1adceaf887036149ff299f86f"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fayette-48149.addresses.jsonl.gz.json",
+      "bytes": 434,
+      "sha256": "41628a5e2bb2bb386f1401fb7e8c4ee040940a83c817d405226bc4adfdd93586"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fayette-48149.runtime-certificate.json",
+      "bytes": 462,
+      "sha256": "aa8d51bf16e09c98e0be3c34cb785a071974d4b3871a9662c5a6ce1d3e1cec9f"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fort-bend-48157.addresses.jsonl.gz",
+      "bytes": 12845351,
+      "sha256": "c10c23219216981e4d512661e7b898155c6b7db9f277ed8ea1e506e74a014b52"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fort-bend-48157.addresses.jsonl.gz.json",
+      "bytes": 446,
+      "sha256": "2be1045e1bde7cc07d4623d4dc68870899cde2313d850e9933eaadbd7a984f2b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/fort-bend-48157.runtime-certificate.json",
+      "bytes": 470,
+      "sha256": "9c42ee8955204a91ec059ed5de5610ddb449b0f35f0bdc7d33058d5cda6b767c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/galveston-48167.addresses.jsonl.gz",
+      "bytes": 4226191,
+      "sha256": "43c03ce0e55c8a2e70dbd7bb6ff3c9f5f751042705080bc188935f34d92b49b6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/galveston-48167.addresses.jsonl.gz.json",
+      "bytes": 445,
+      "sha256": "78c0994f99c5376a84bd61497ff341dd06e62510ae0a286faff831eaab2f55b4"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/galveston-48167.runtime-certificate.json",
+      "bytes": 469,
+      "sha256": "c4c6c8fb408d02f7a13dea1cc340ba47a839c98f8e4bf4fc93c48e749fa922c3"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/grimes-48185.addresses.jsonl.gz",
+      "bytes": 734091,
+      "sha256": "db2fee740aa83848b369f2bb1b228457a64547c3949948555b36aba56a4944ff"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/grimes-48185.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "71d3d2d7360c006398fc2bb32fb83b3705ad54042d8847c44e5ce5bb7a5fa229"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/grimes-48185.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "d3bf453433f0fb250acf7ee072d1051bb9f5bb9b623309b53ba6eae2be61f111"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/hardin-48199.addresses.jsonl.gz",
+      "bytes": 1011612,
+      "sha256": "eae9b3eb4d82b535544419dc5c7713898ddbdae1a085fdd5d51b98307f6196df"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/hardin-48199.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "3229a8f9f6e0a3c3a329501ed0b81f394fb732030edaaa7483f4a0382d62012d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/hardin-48199.runtime-certificate.json",
+      "bytes": 460,
+      "sha256": "513d431099fe0e95f3bb27e295b678c5bc1a479396184218b3ec0279d8327ff0"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz",
+      "bytes": 57731771,
+      "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz.json",
+      "bytes": 440,
+      "sha256": "d1110bb333d5391ad1b39aa923b2b8df48c91a1094549cf848778f2c9156db1a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/harris-48201.runtime-certificate.json",
+      "bytes": 461,
+      "sha256": "559a18cdb9350f020cff142ade06db5e2a33ef16809b9ee17b31c324ef78b08d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jackson-48239.addresses.jsonl.gz",
+      "bytes": 321123,
+      "sha256": "e95df5459e756e6901497560ceb0b74fdfda08ba336330dd90cd05f6870c0c2c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jackson-48239.addresses.jsonl.gz.json",
+      "bytes": 434,
+      "sha256": "0b0addac34577b90dcff9605f5ff0b140e505bb139933c42c79b5f8fe8f8dc9d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jackson-48239.runtime-certificate.json",
+      "bytes": 462,
+      "sha256": "fd5a0f8160c158116d976f6958fff4eb080e3505bf99e9fcf0e067df16dbd850"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jasper-48241.addresses.jsonl.gz",
+      "bytes": 789761,
+      "sha256": "91907a8e0db5148b5e87d73887e49d99ab9cc83e9605c386b8660000cc596dd3"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jasper-48241.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "418f0652d16a1314a238767457f2ea91875dd138e051d58d3e9afa67e91535c4"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jasper-48241.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "608b17140151f42cc4c2190286d7f1ffade2b4008332786c15af7f8f483d28e2"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jefferson-48245.addresses.jsonl.gz",
+      "bytes": 2847538,
+      "sha256": "c3a1a46d04d97c60b60648846f1aae39813ecd4e6d24a7d975492d0191bec63e"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jefferson-48245.addresses.jsonl.gz.json",
+      "bytes": 441,
+      "sha256": "149ebf42721fc3d02f226024fa587d250151f4c90f0691a98905dda486103b06"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/jefferson-48245.runtime-certificate.json",
+      "bytes": 469,
+      "sha256": "9231a33c631a39bd7bb87f05e58ba3696d18d377ae893e0becf4ecbf02d0610c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/lavaca-48285.addresses.jsonl.gz",
+      "bytes": 436394,
+      "sha256": "31964187c74fa0557cd93e9416dba660ac414f16d5cff052762dba6c912d9e9b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/lavaca-48285.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "445617b1d976563a822888633977bca0333a0fca70d9088599c873a9b0380356"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/lavaca-48285.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "31287b301a2b5a2e6530bad73f94eb0e4781aa4d20c6a32bb7b5e2864b121bdd"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/lee-48287.addresses.jsonl.gz",
+      "bytes": 370322,
+      "sha256": "2bd75bece2db6308e433efe3d734333894dbd62bad04b9223acc26d29615ec53"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/lee-48287.addresses.jsonl.gz.json",
+      "bytes": 423,
+      "sha256": "be7353969a0ac3223f92b76b6bafbf792776ef2e00f6567dcd40f3a0758166a9"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz",
+      "bytes": 2555016,
+      "sha256": "792f4f3f76524ef6652fbabf7c1c17d76eb1dfd9d83a71c460c1e038c2841b93"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz.21048.records",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "a82dc4d0c8ae75cab0ad8943dcdc15d93a288e81bd134671637c0473e1e8ab5b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/liberty-48291.runtime-certificate.json",
+      "bytes": 463,
+      "sha256": "900e611c5ccbe2411af3da02c32acea473db86bd1982000ee1192413f4e1ba2e"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/manifest.json",
+      "bytes": 123605,
+      "sha256": "3d19b17c97550be08609b36b3954f7e19e09784516768553e19c3a3253d50f2a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/matagorda-48321.addresses.jsonl.gz",
+      "bytes": 899427,
+      "sha256": "011a351aac3560b70a4be6f120b8d7cf830bf34e32995b3c7c16aed2a7aae0e6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/matagorda-48321.addresses.jsonl.gz.json",
+      "bytes": 440,
+      "sha256": "f2bd8a8e9559291669d38075b235dfe161668d10388ce6810447962018cfbe2c"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/matagorda-48321.runtime-certificate.json",
+      "bytes": 468,
+      "sha256": "9f49cb2f2b5ffd8a6ba662e9e8e5b4254180cd2aca5ad8127e295fa38cb08862"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/milam-48331.addresses.jsonl.gz",
+      "bytes": 375753,
+      "sha256": "eff1e9f78ce0f32c425f3ec7ac687a16589c9403626cfbef3041b55e24157fd0"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/milam-48331.addresses.jsonl.gz.json",
+      "bytes": 428,
+      "sha256": "342003a4bfd558133f9f1166421315481ba37057ac8a93340efe8551f2dca8f6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/montgomery-48339.addresses.jsonl.gz",
+      "bytes": 10057950,
+      "sha256": "24fc0d219cb2a30824b65ab1e0db27ef41fc1295684ccedc17016a555c281168"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/montgomery-48339.addresses.jsonl.gz.json",
+      "bytes": 449,
+      "sha256": "ebab9a6c357bc10356d6e5d65e54649640bf40b69b3a441c5fa8cb1f8c7e3d01"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/montgomery-48339.runtime-certificate.json",
+      "bytes": 473,
+      "sha256": "8709908f46abe991712f94bb1948808f108b771b3318db51f20b5a3ab66eaa31"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/newton-48351.addresses.jsonl.gz",
+      "bytes": 349580,
+      "sha256": "ff552698906aff743422c72e2520636f07f5fd36639dfe667f59dad9a9eeff1f"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/newton-48351.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "bd513b949969afe59916680d9ce7e541164040866f4586f952ea011521acbb10"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/newton-48351.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "13c8c6762859d21adc39beceaae47e41373a159e5b2ee172bd411383381e88a6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/orange-48361.addresses.jsonl.gz",
+      "bytes": 1268809,
+      "sha256": "a7e05d1af7988fee12736ae3101bc8e3e485d8fdf35c4140a6d5fef36b0c8d6a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/orange-48361.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "f7f065e6cdd2984b36cb4d90dc10c2146c4ba3f901c673798f9af7e7858a6f48"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/orange-48361.runtime-certificate.json",
+      "bytes": 460,
+      "sha256": "a7ae2cd64170e5fd06c795c69f90820af12da1caafda948b945607d93ffb332e"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/polk-48373.addresses.jsonl.gz",
+      "bytes": 1231358,
+      "sha256": "5bbff8901efc5665e2f3600e144aa129e42126cc6700f17c2945d9feda717865"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/polk-48373.addresses.jsonl.gz.json",
+      "bytes": 427,
+      "sha256": "e1b6a6adf0d776626f4aba943a462236dd993bda751c53f5668c501ee0999cc0"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/polk-48373.runtime-certificate.json",
+      "bytes": 454,
+      "sha256": "638c475a22e988d42bd74730b9a6395714557836b162959e89c689cb8679fd05"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/robertson-48395.addresses.jsonl.gz",
+      "bytes": 401846,
+      "sha256": "dbed5f383863fbf4f52dfd98657af8edfd7416943c6e5b1b9b179b36aea8c1e6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/robertson-48395.addresses.jsonl.gz.json",
+      "bytes": 440,
+      "sha256": "ab59d220a78b3fe1138c7c71cfd75c5ccce9f7e8e81e4cdb363e3da86352d90b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/runtime-manifest.json",
+      "bytes": 471,
+      "sha256": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/san-jacinto-48407.addresses.jsonl.gz",
+      "bytes": 803304,
+      "sha256": "505ade44db988bb61041a0aa9563a563812affdd13d840e21c5cfb5795f55955"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/san-jacinto-48407.addresses.jsonl.gz.json",
+      "bytes": 448,
+      "sha256": "bc2b19a17acf942778b9809bfde474422439da09045b757c44dc93205a0fc89a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/san-jacinto-48407.runtime-certificate.json",
+      "bytes": 474,
+      "sha256": "608fdf19d5a465e2273377af85f19abc4c2f66f4636468337bb7199361b446e6"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/trinity-48455.addresses.jsonl.gz",
+      "bytes": 499106,
+      "sha256": "c75007278d50c9d064b666eb012d9b7f2d50bde1c1ef026072546cb92f321f62"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/trinity-48455.addresses.jsonl.gz.json",
+      "bytes": 435,
+      "sha256": "992dac69948ff7a759a61d1b031c02d798aa90016f692fa1570c9e9cddf3adce"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/tyler-48457.addresses.jsonl.gz",
+      "bytes": 492755,
+      "sha256": "2ca09bd54ece728a48559cf0f2f815ee910aacc67c2101f42b1f518753e15a4b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/tyler-48457.addresses.jsonl.gz.json",
+      "bytes": 428,
+      "sha256": "344f6ea059caa56f907ebb68168448cdf392a2d7fd78e5f4b0de04d8a726dbee"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/tyler-48457.runtime-certificate.json",
+      "bytes": 456,
+      "sha256": "d368c04bcdb8562c8941fb3639f16257b9669f4996a6b98ffc52365fdb271db7"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/victoria-48469.addresses.jsonl.gz",
+      "bytes": 1326361,
+      "sha256": "3bea2448d541dbcd06e37857ae4259d53995b1e6c10645342e57b7c6608bc711"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/victoria-48469.addresses.jsonl.gz.json",
+      "bytes": 440,
+      "sha256": "85468e6507a8e82f0058d328b77740d6e9b4754bba471871f984cbbcc59e0de1"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/walker-48471.addresses.jsonl.gz",
+      "bytes": 984566,
+      "sha256": "52518da0123ae61c6d08041ddeeee356889ea1d9840577e5358e99a2a93e8ee1"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/walker-48471.addresses.jsonl.gz.json",
+      "bytes": 431,
+      "sha256": "cfdd36633997c064fc4e9c0e88a5a9fd5a213123b0f3b4b9bad60e502a96255a"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/walker-48471.runtime-certificate.json",
+      "bytes": 459,
+      "sha256": "d91bb54c5d32c4d64e827a3c8f1e9a3082c1a700640ec59cea747dcfeb5087b1"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/waller-48473.addresses.jsonl.gz",
+      "bytes": 1595248,
+      "sha256": "c7c3298f57f96ee5fc1f2c3907f4c27ab668c8aa86d7798cf0df7993894dd906"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/waller-48473.addresses.jsonl.gz.json",
+      "bytes": 432,
+      "sha256": "ab4e0b536e4e07bfa4d3612df1178700941861ff69f8c5c1566adadab41e2e58"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/waller-48473.runtime-certificate.json",
+      "bytes": 460,
+      "sha256": "ea0c3f70ab54b32c9a9f05e007b446922c3ce07071b3f1d7e2bc37afa9ef39e3"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/washington-48477.addresses.jsonl.gz",
+      "bytes": 790797,
+      "sha256": "97bf5b1476ed73bb1dfdb5da156b710991e6e8eac74615f7704edced3744604d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/washington-48477.addresses.jsonl.gz.json",
+      "bytes": 443,
+      "sha256": "ae69016f62e75435abbe60ac7eaf219f2f3347872fc16e3de32b97ea718fde6b"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/washington-48477.runtime-certificate.json",
+      "bytes": 471,
+      "sha256": "346fae6c905cf1a9e55e963cb3e0be9390416116d33493faf32ba8da367b963d"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/wharton-48481.addresses.jsonl.gz",
+      "bytes": 790321,
+      "sha256": "cb2292668842d4259b82a1966372d81e79f89fb64eea8d1a8ed1043ed677c357"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/wharton-48481.addresses.jsonl.gz.json",
+      "bytes": 434,
+      "sha256": "0c3c5830b2d3ebd8483e0f5e6424e3aed5d278467091ee3e67a266cbbaa36916"
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/wharton-48481.runtime-certificate.json",
+      "bytes": 462,
+      "sha256": "3be827dedbd6354e5f54e388b5f45710edc86f085af10afbf0cbd998812ebce4"
+    },
+    {
+      "path": "data/gridly-crossing-review-overrides.json",
+      "bytes": 28001,
+      "sha256": "621bad8437a54c5444b158287b33d5c92c69f546758ed7204d9ac3569ce53084"
+    },
+    {
+      "path": "data/gridly-zip-awareness-index-v1.json",
+      "bytes": 1663,
+      "sha256": "d9ce85eea79e3f66204f0b0f1b7d873e96b2b43535ebfd901036644fa0c3a89d"
+    },
+    {
+      "path": "data/gridly-zip-awareness-index-v2.json",
+      "bytes": 30256,
+      "sha256": "38eff6e8c08cfca990fad590f617a4d17937993993f9fdd070fd693f07a50d14"
+    },
+    {
+      "path": "data/liberty-county-boundary.geojson",
+      "bytes": 63739,
+      "sha256": "be41e6556c9aa7ac224894cc8c08dca465ab02671adef9fda1dcc3c3b4df4793"
+    },
+    {
+      "path": "data/liberty-county-rail-crossings.geojson",
+      "bytes": 1605,
+      "sha256": "3fc77a1c7344fe0362c95d82d5381341c3263268af041045083aaf42eb411ba7"
+    },
+    {
+      "path": "data/liberty-county-road-segments.geojson",
+      "bytes": 11393784,
+      "sha256": "7c740df1923762ed87b341bb75dfe0df946dd76ffdf77d5880d2d9939e1ee4be"
+    },
+    {
+      "path": "data/lp104/source-license-manifest.json",
+      "bytes": 4810,
+      "sha256": "06dc655576cd02dde4abb8c0268fe3d085f6f4efd224c6858d132711037505ec"
+    },
+    {
+      "path": "data/lp104/texas-counties.json",
+      "bytes": 36620,
+      "sha256": "808467c27171743bf217e1b31d9fffb506064c8dba304010387c7b9719b9358c"
+    },
+    {
+      "path": "data/lp104/texas-county-coverage.json",
+      "bytes": 187090,
+      "sha256": "4f5116d3d3f334ee30980962a3e2330695533aa31ad94d86732edc7cab1b1692"
+    },
+    {
+      "path": "data/lp104/txgio-2026-address-source.json",
+      "bytes": 534,
+      "sha256": "edc927aee5431711a402ff41eaa92a6598f580fad3354093c4fe602fa1dc82e4"
+    },
+    {
+      "path": "data/lp105/txgio-license-decision.json",
+      "bytes": 789,
+      "sha256": "9efb7f35780b03283b87205fcaf3cbc4323ba5cdd8220a6dd16fadacbd7ed709"
+    },
+    {
+      "path": "data/lp106/governed-source-hierarchy.json",
+      "bytes": 3436,
+      "sha256": "8bac8121992baf978aa827a46c126e3ec1171f2193a8512b9390aaef701a7e09"
+    },
+    {
+      "path": "data/lp149/runtime-county-registry.json",
+      "bytes": 227081,
+      "sha256": "0185e7d3aac7965fff83ce7859c829604091284eda96f33669f2d2757c977f22"
+    },
+    {
+      "path": "data/lp150/candidate-membership-contract.json",
+      "bytes": 957,
+      "sha256": "9235f3a5e4fe17480d02a9769021132ac8fea8ca3b7381b179490c6f59ba6941"
+    },
+    {
+      "path": "data/lp150/membership-transition-registry.json",
+      "bytes": 296075,
+      "sha256": "f23cd930d343ebfebac7aed0eef510a50f35ae0ff082189b8f5dc18abca9e806"
+    },
+    {
+      "path": "data/lp151/statewide-operational-validation-registry.json",
+      "bytes": 92017,
+      "sha256": "01f8fac864d7620aa0a3afce6f77d619237143074eeaf6257290b4564546fab4"
+    },
+    {
+      "path": "data/lp152/operational-enablement-registry.json",
+      "bytes": 506416,
+      "sha256": "bcd5d25cb2f5dfb782ceb06b2dc11a0725970c0fe40fcc50e6d4a4dcc173bb80"
+    },
+    {
+      "path": "data/lp153/operational-execution-registry.json",
+      "bytes": 206817,
+      "sha256": "e718e07a746af0cbe2bf7a1f3db0cb5e88f4d2f141cd6676c0660d7a499a8f69"
+    },
+    {
+      "path": "data/lp154/statewide-consumer-experience-checklist.json",
+      "bytes": 3723,
+      "sha256": "b932a6caf35217deb4379c1f3df194f161ef316920a438ec0ce4421b45c37a1a"
+    },
+    {
+      "path": "data/lp155/statewide-consumer-evidence-execution-plan.json",
+      "bytes": 3217,
+      "sha256": "563fc410d68571358cc2aca6ab394a9992b62b8800e066b60cc9177f24ce5c34"
+    },
+    {
+      "path": "data/lp156/statewide-data-acquisition-plan.json",
+      "bytes": 2497,
+      "sha256": "e69449003f03476abb448aaa66f0f72ea5853054a06080714eec6abeeacd3167"
+    },
+    {
+      "path": "data/lp157/texas-community-intelligence-registry.json",
+      "bytes": 14492,
+      "sha256": "59a79d0bdf83c61d52e8bedee7ad77660d6f71b673c13b381af4bf235978ec92"
+    },
+    {
+      "path": "data/lp157/texas-community-relationship-registry.json",
+      "bytes": 4798,
+      "sha256": "ee5c14e0c63a8985957264f11cbaa049d3b610f4077414f8395425c72d8c16a5"
+    },
+    {
+      "path": "data/lp158/texas-destination-registry.json",
+      "bytes": 281315,
+      "sha256": "d8eb4a5c3995f81d4edc4fe800741395cf8feeb66578989c1521a1f8bd51c31a"
+    },
+    {
+      "path": "data/lp159/destination-source-selection.json",
+      "bytes": 9983,
+      "sha256": "70e4028fb8faf82a77b2b5e75fff4deedababa50671e3274179f0a900a29743e"
+    },
+    {
+      "path": "data/lp160/destination-category-mapping.json",
+      "bytes": 2679,
+      "sha256": "ddd548ad035a7cd62c4054b9a74757e8d4b37f9689978a95f671ea7965839a56"
+    },
+    {
+      "path": "data/lp160/destination-search-index-manifest.json",
+      "bytes": 551,
+      "sha256": "2a77b27620baf14a1e998baf89f53c2f26f7c5abeed1af6ab6d51b4455a8041a"
+    },
+    {
+      "path": "data/lp160/destination-source-manifest.json",
+      "bytes": 845,
+      "sha256": "7286b0a1ecf3b0c46383d023db53110ec28ec69f96a1bc7247e65c4162012e32"
+    },
+    {
+      "path": "data/lp160/statewide-destination-search-index.json",
+      "bytes": 22125,
+      "sha256": "0c8dc76425c87fb0647afde9c080a65e3f53d6503f980c3d2f67936957ae18b6"
+    },
+    {
+      "path": "data/lp160/texas-destination-candidate-registry.json",
+      "bytes": 21035,
+      "sha256": "4d0fd52da142c72f55fa356c17dcac09c5101ec06a0c253a688809418f1ec28e"
+    },
+    {
+      "path": "data/lp1601/category-mapping.json",
+      "bytes": 4159,
+      "sha256": "40066226755912f58bca3d31355edfd16df278739fafa5f91c6d6f878743c3d5"
+    },
+    {
+      "path": "data/lp1601/overture-source-manifest.json",
+      "bytes": 478,
+      "sha256": "cb96cf191f11a4ef6088b0b07b161df51e8c417916adadf6b0a1c5531578e53e"
+    },
+    {
+      "path": "data/lp1601/texas-destination-candidate-registry-manifest.json",
+      "bytes": 162567,
+      "sha256": "596f70a0e21876607d5398f370ba4583b1faa591254217308cb72ef97477a275"
+    },
+    {
+      "path": "data/lp1601/texas-destination-candidate-registry.json",
+      "bytes": 478,
+      "sha256": "cb96cf191f11a4ef6088b0b07b161df51e8c417916adadf6b0a1c5531578e53e"
+    },
+    {
+      "path": "data/lp1601a/overture-category-mapping.json",
+      "bytes": 4450,
+      "sha256": "cbd08a25a7ae64db6c6c77110060e116b03c08168180109306bef51719710f78"
+    },
+    {
+      "path": "data/lp1601a/overture-geoparquet-source-contract.json",
+      "bytes": 675,
+      "sha256": "28efcd3ac15304e41f72ca2d8fcabcb7278c589f7ccd134a50a0c625920cee4a"
+    },
+    {
+      "path": "data/lp1601a/overture-normalized-sample-manifest.json",
+      "bytes": 537,
+      "sha256": "b490cfabc52fe76dc0907e60f69dc8144420b298533282b9dd42984def496909"
+    },
+    {
+      "path": "data/lp1601a/staging-format-contract.json",
+      "bytes": 682,
+      "sha256": "f242888ee094c80a99fc14e875c7bc68b62cab00424df30efb4bb27368b2ebe2"
+    },
+    {
+      "path": "data/lp1601b/staging-manifest.json",
+      "bytes": 405,
+      "sha256": "a7668de1fe4b91c683bf60d45a218c59c2a84999c7284625d85425641e2e3f32"
+    },
+    {
+      "path": "data/lp1601d/overture-2026-07-22-schema-adapter.json",
+      "bytes": 7546,
+      "sha256": "0c213d63a6667c51647e01c70d43f2868e5f732148a380081324bc84c9b7d89f"
+    },
+    {
+      "path": "data/lp1601e/overture-address-array-adapter.json",
+      "bytes": 7546,
+      "sha256": "0c213d63a6667c51647e01c70d43f2868e5f732148a380081324bc84c9b7d89f"
+    },
+    {
+      "path": "data/lp1601f/destination-exclusion-manifest.json",
+      "bytes": 456,
+      "sha256": "2f6cc96c1e804e975687612c67f660db815121d49e23e5f76de70d9e532b79cd"
+    },
+    {
+      "path": "data/lp1601f/duplicate-decision-manifest.json",
+      "bytes": 533,
+      "sha256": "519281dcd77bb4de980bc882cdd51c32a80d37b3f762ad4c24808b7cb2420514"
+    },
+    {
+      "path": "data/lp1601f/resume-contract.json",
+      "bytes": 661,
+      "sha256": "ddb6817895eadc114e68d287464b184139f711008b0656c231f8938fc910378b"
+    },
+    {
+      "path": "data/lp1601f/staging-manifest.json",
+      "bytes": 1129,
+      "sha256": "a4ee452b8e61cbad232f92b1edc005ac9aa1ca4a5180713d16f3267d29367a53"
+    },
+    {
+      "path": "data/lp1601f/staging-partition-contract.json",
+      "bytes": 866,
+      "sha256": "36d5554d577b88becc18a5a73b8996457c3a601c48b93410d237ed5d48518e49"
+    },
+    {
+      "path": "data/lp1601h/staging-consumption-contract.json",
+      "bytes": 878,
+      "sha256": "6bd4d358c795c3c089ef7a10c683ddf3bf03b12638ed3b6bf66deff70f43ac16"
+    },
+    {
+      "path": "data/lp1601i/destination-exclusion-manifest.json",
+      "bytes": 579,
+      "sha256": "a16d5bdb1f3bab8530f2e0c1f9390dfc8cd7697a005b47d7c4c36ae74d1425b4"
+    },
+    {
+      "path": "data/lp1601i/duplicate-decision-manifest.json",
+      "bytes": 604,
+      "sha256": "189a7cbb4620f1658d0def9747557ca66779fdf6e8469813d31f52aab0c98080"
+    },
+    {
+      "path": "data/lp1601i/staging-format-reader-contract.json",
+      "bytes": 1044,
+      "sha256": "5f820ddda3e97cc9b5069a8a609db0ea49487a3ca3e352c173878162e309f5e0"
+    },
+    {
+      "path": "data/lp1601j/destination-exclusion-manifest.json",
+      "bytes": 539,
+      "sha256": "cd57d284264a440048757a6932e5edd624e563bb3521c45e951bb48128961084"
+    },
+    {
+      "path": "data/lp1601j/duplicate-decision-manifest.json",
+      "bytes": 453,
+      "sha256": "ef81ad2b04a747dd5e43058fadc631c0a285ad7d38a6dd05e688d6803cd1f91e"
+    },
+    {
+      "path": "data/roadway-runtime-manifest.json",
+      "bytes": 10072,
+      "sha256": "bc9c41cd76f4f4ffb0a5991f768f2f051cb12562915093bb31d14e71298b5b7a"
+    },
+    {
+      "path": "data/route-watch-geometry-shadow-fixtures.json",
+      "bytes": 23963,
+      "sha256": "3cdb50bf467566fec5fcd889a30c16c5f5bf9f873d5949576757106c6865ec01"
+    },
+    {
+      "path": "index.html",
+      "bytes": 86357,
+      "sha256": "439f9edf6d81159c46dae339b269b0e33ca7b9c48028b2621dade835bcac3842"
+    },
+    {
+      "path": "js/app.js",
+      "bytes": 7221917,
+      "sha256": "e4ef9a80faf472a515a0043717be2da2a4f31ffcb12f199a33e1d03a44007285"
+    },
+    {
+      "path": "js/gridly-geocoding-client.js",
+      "bytes": 11693,
+      "sha256": "f6094cb3f4dc04c43539f92f2cc23b9946080c75f10b9352f99a8cc0b74b7e15"
+    },
+    {
+      "path": "js/gridly.local.example.js",
+      "bytes": 375,
+      "sha256": "daae096e716e4d8c8f3a6e77d9f75f75be0486f43516a90c267fde7383c462f5"
+    },
+    {
+      "path": "js/gridlyAlertsPublishedAwareness.js",
+      "bytes": 15204,
+      "sha256": "33f5f0aebfb077a28d79d272f474af9ae0522b9cad9d41fdb815f0a81ea59cff"
+    },
+    {
+      "path": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "bytes": 11436,
+      "sha256": "52fad2eb9d976f6935335704463ee4b2e8378bfb9dd2cad81f31708fed23a0c6"
+    },
+    {
+      "path": "js/gridlyAwarenessResolutionTurnCache.js",
+      "bytes": 2062,
+      "sha256": "8bcf6f402596ea0f75267203dfd62aa5d8d0030ae4249d4a7b10e4f7760eb822"
+    },
+    {
+      "path": "js/gridlyCrossProviderEvaluationAudit.js",
+      "bytes": 16238,
+      "sha256": "9e5d9ff15f394e3e5254a6350286f1aedd0082ac0b4baa28bd4084d8d33159ca"
+    },
+    {
+      "path": "js/gridlyCrossingPackageAdapter.js",
+      "bytes": 9288,
+      "sha256": "ef6c88ca270d9577c1f4db1bf6ac00d3f212e3fbc18f38c2b46b801a5a611f38"
+    },
+    {
+      "path": "js/gridlyCrossingPackageValidationAudit.js",
+      "bytes": 7146,
+      "sha256": "a2b248b60cd04bc7bf60a98e7e6ee0b63da8c30b4b2cc144b2d8b0bba5359126"
+    },
+    {
+      "path": "js/gridlyCrossingProvider.js",
+      "bytes": 8011,
+      "sha256": "bd3a7f8762332788aac06376de881814801a6d6b862f8a5bab9b37fb8b9c1f6a"
+    },
+    {
+      "path": "js/gridlyCrossingProviderActivationAudit.js",
+      "bytes": 9361,
+      "sha256": "32546c1c579f353816d530bf32085e09b58c2501f726e5ffda935baac47d35bf"
+    },
+    {
+      "path": "js/gridlyDirectionalAwarenessLayer.js",
+      "bytes": 8616,
+      "sha256": "0a409f1ea6d9e6c9451f474e51fe9cf6fc8d1550f9b75d42b437e9512985d585"
+    },
+    {
+      "path": "js/gridlyDirectionalRuntimeCandidatePrototype.js",
+      "bytes": 5732,
+      "sha256": "745ce6a22f1462a6f92ab5162b0eab27ccc438f6ad1dc1494e923b43b8c45a03"
+    },
+    {
+      "path": "js/gridlyDirectionalServiceConsumer.js",
+      "bytes": 5175,
+      "sha256": "b2ab783bab8923d77751477237a288806b6a4cf2d11d0d5eb95236189c557624"
+    },
+    {
+      "path": "js/gridlyDirectionalServiceLayer.js",
+      "bytes": 4989,
+      "sha256": "e505fb4ea0809524eee053520fbf94ff95ed2455db1c7d27dd3625cf91da77ae"
+    },
+    {
+      "path": "js/gridlyDriveTexasAuthoritySourceIntegration.js",
+      "bytes": 106771,
+      "sha256": "ae7b32e88bf60d526d710726cc1d388abcdad3956a9c99d4e2ef7190309f9435"
+    },
+    {
+      "path": "js/gridlyDriveTexasConnectorEndpointAudit.js",
+      "bytes": 3841,
+      "sha256": "758d0260ccad185498e7ca3ce6edc03f0770e565c04f14605ed421dd3f778ef4"
+    },
+    {
+      "path": "js/gridlyDriveTexasGeometryAuthority.js",
+      "bytes": 8862,
+      "sha256": "0736d1a10331819a44bbf494d77b079499e9975568ae73dda66c8e6da0b4ff91"
+    },
+    {
+      "path": "js/gridlyDriveTexasLiveConnector.js",
+      "bytes": 70586,
+      "sha256": "b38b0cc18df757fd778b75059854d85e1e0a1255164e8fd249c972233d04b28a"
+    },
+    {
+      "path": "js/gridlyDriveTexasProvider.js",
+      "bytes": 13613,
+      "sha256": "5de12734645d1b195fdf019c709285bdc2e29636799bd7d0d7ed9ee9240011ff"
+    },
+    {
+      "path": "js/gridlyEndToEndPerformanceAudit.js",
+      "bytes": 40561,
+      "sha256": "8e584a051fb1f95839b4dd2e0e1e1b3051bc5380c3c182c92a6c7ce63be5ab22"
+    },
+    {
+      "path": "js/gridlyIntelligenceActivationReadiness.js",
+      "bytes": 6392,
+      "sha256": "76a9744eaa0675adfd4ca20f79c729126eac3958724caa969ac8466b5bf075cd"
+    },
+    {
+      "path": "js/gridlyLiveConnectorDesignReadinessAudit.js",
+      "bytes": 7084,
+      "sha256": "a0492097051214a21f54a59e633ac53935b90b87df16c5567cb98c306b304248"
+    },
+    {
+      "path": "js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
+      "bytes": 10070,
+      "sha256": "38dbabdba25252ec5e1ac40901481a05ff93ec961863253a935588f4438b557e"
+    },
+    {
+      "path": "js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js",
+      "bytes": 5969,
+      "sha256": "d221f8315114106de57fb5919e6775611608deee29a6aa5575e7352dd738d65b"
+    },
+    {
+      "path": "js/gridlyLp044DriveTexasCommunityAuthorityInventory.js",
+      "bytes": 24939,
+      "sha256": "c4e4af3c8efc0b8bbe951f311e7b1f9c25f5e4a8f9c969578e4b619e5683dfa6"
+    },
+    {
+      "path": "js/gridlyLp0941LaunchSurfaceAudit.js",
+      "bytes": 2061,
+      "sha256": "2186efcf0d0676c202dd19a9fb40d3a71769c2dd357579be23a0c40f3041f9e5"
+    },
+    {
+      "path": "js/gridlyLp0952CrossingAlertInteractionAudit.js",
+      "bytes": 2444,
+      "sha256": "a3f2e232c20451aef1200003632794e0348d00731f28c529a66d2ce61b9e27c3"
+    },
+    {
+      "path": "js/gridlyLp095UnifiedPresentationAudit.js",
+      "bytes": 924,
+      "sha256": "4188be4e9fa96acfb62afe898aed4b6fef652e725c8511c72ab65fa257c30fd1"
+    },
+    {
+      "path": "js/gridlyOfficialProviderActivation.js",
+      "bytes": 6704,
+      "sha256": "dea9c92b75a8da804aa6c35577af897c72d0e4caee029d12d312c6f32d1ee61a"
+    },
+    {
+      "path": "js/gridlyOfficialProviderSourceEvaluation.js",
+      "bytes": 4731,
+      "sha256": "b03e1de82bcf5328c2c7c559f78d6241cef6bfb65035929ff0e4f4ebdb28aeab"
+    },
+    {
+      "path": "js/gridlyPackageDiscovery.js",
+      "bytes": 3694,
+      "sha256": "1dcad3461e9ad1ee2f9c4d4e5f860f55a77b507fd2aaac61602591ff7778f11f"
+    },
+    {
+      "path": "js/gridlyPackageLoader.js",
+      "bytes": 1477,
+      "sha256": "4335c4d7cd37940fd0168de20c27855d086c164dbfbb236b8b1fb75a87c75c3d"
+    },
+    {
+      "path": "js/gridlyPackageRegistry.js",
+      "bytes": 67977,
+      "sha256": "0449a5612a748edca4f36b74320b3ebe3954342ba5faeb81133375de105523be"
+    },
+    {
+      "path": "js/gridlyRouteWatchGeometryRuntimeShadowAudit.js",
+      "bytes": 28402,
+      "sha256": "b230bd128b5f12aec34385185b75598881d9f3a7ef6e3b08a4328a0b4676026f"
+    },
+    {
+      "path": "js/gridlyRouteWatchGeometryShadowScoring.js",
+      "bytes": 13002,
+      "sha256": "22052df921ddeafb1d8f169a68fdc432c743e642a007dc91dacd1e42ddf3f2ba"
+    },
+    {
+      "path": "js/gridlyRuntimeSourceBridgeActivation.js",
+      "bytes": 10184,
+      "sha256": "aebe69270403c21284a70a8e2991aca028a78d5581e423b9c1959b288bdf2ee6"
+    },
+    {
+      "path": "js/gridlyRuntimeSourceComparisonAudit.js",
+      "bytes": 2996,
+      "sha256": "1259a41f8073d542511d97de37aa8451dc8e21dc56d7c009331dac6cfa9e2af7"
+    },
+    {
+      "path": "js/gridlyRuntimeSourceRegistryBridge.js",
+      "bytes": 10160,
+      "sha256": "e4c5602d478cf816800ffef26455fe031ea4bbcbacbfd8427bdecbf8755f99df"
+    },
+    {
+      "path": "js/gridlyStartupDiagnostics.js",
+      "bytes": 23318,
+      "sha256": "52d8f337b74e6ef7ac35a964157d9dd0c1dc4bf630813ddd8eda9d77aeaabe26"
+    },
+    {
+      "path": "js/gridlyTxdotGeometryRetentionPrototype.js",
+      "bytes": 8344,
+      "sha256": "20396ab4519292b7ffa9528c8592151a076bcea6eadb7610cf118aca1286ddc5"
+    },
+    {
+      "path": "js/gridlyTxdotService.js",
+      "bytes": 20298,
+      "sha256": "b01981ed7d7659cc6099bb5045c0a9814a7fc9b17bef6340855869b9a00b7dd4"
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligence.js",
+      "bytes": 4931,
+      "sha256": "50f151227e1aade647c431409ad510908c25646f7c654b6b3c302276c7a55b6b"
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceObservationAudit.js",
+      "bytes": 6436,
+      "sha256": "1a43088b13564b0a7813ba875898ebc5c6598f88a781af51e9694e1c7096dfc2"
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligencePrototype.js",
+      "bytes": 21466,
+      "sha256": "404bb14ecf062212cb10adb1b2701901561042a9acd92c4042d2c876916e7a2e"
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceReadinessAudit.js",
+      "bytes": 6775,
+      "sha256": "7dcd57ba3bcea26149948c7262d42734c7d3f0d67c4ace8ef8521b665ec1de0f"
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceSimulation.js",
+      "bytes": 7001,
+      "sha256": "301454ec7b8a3b4d8c1acbbfd24e3c649a7b6269d4876757208cd377343f132f"
+    },
+    {
+      "path": "js/gridlyWeatherAuthorityFoundation.js",
+      "bytes": 13385,
+      "sha256": "660c2f5bc128e8b87c7ccc1c4eef4b963c1df3f7ef0d778c845bd8c6986a75d6"
+    },
+    {
+      "path": "js/gridlyWeatherAuthoritySourceIntegration.js",
+      "bytes": 23054,
+      "sha256": "3915a5724d91b1d4829cfae4c3131490f384a062ebaddcc068de052778437c47"
+    },
+    {
+      "path": "js/gridlyWeatherConnectorEndpointAudit.js",
+      "bytes": 5836,
+      "sha256": "577ee3ead6b890b6ac45dc709259b7b91c55029ab91668c77c4d7280ef5a2892"
+    },
+    {
+      "path": "js/gridlyWeatherLiveConnector.js",
+      "bytes": 12872,
+      "sha256": "6e9f5a310994fc991783956fc21d67131de3f7fe6b729f308118628b0404e422"
+    },
+    {
+      "path": "js/gridlyWeatherProvider.js",
+      "bytes": 12067,
+      "sha256": "ad0a4fe52df9acaa09bba0d67f58374d073c67552b0f259da6cfdc21661063bf"
+    },
+    {
+      "path": "js/historical-activation-readiness-revalidation.js",
+      "bytes": 12576,
+      "sha256": "e55fcb16390a2e693d6513feb0281a3e1acd2df5ea19a52f0d06add8a1440a7f"
+    },
+    {
+      "path": "js/historical-archive-persistence.js",
+      "bytes": 11412,
+      "sha256": "dce6b891f93db246d83a5f6843e769f57f941367e636cb79071800bb5dc0a6a8"
+    },
+    {
+      "path": "js/historical-intelligence-activation-boundary.js",
+      "bytes": 3673,
+      "sha256": "44c6982b7c32f3113a94cbc89058ce7e244a347ca12e71c4695ce4098398598c"
+    },
+    {
+      "path": "js/historical-intelligence-attachment-controller.js",
+      "bytes": 7865,
+      "sha256": "7dd6e406711b7683c91f23dc622e8580a5814f563afb76d660fa0b7c8939ef0a"
+    },
+    {
+      "path": "js/historical-intelligence-presentation.js",
+      "bytes": 2611,
+      "sha256": "cd433632eec38bee0b294f7d92fb28ac270089d432728b31adc6c00024e5a9af"
+    },
+    {
+      "path": "js/historical-knowledge-base.js",
+      "bytes": 13179,
+      "sha256": "719a4b865a7e5a37e0b0b69d6b071f39971de6582782f710f142864db44f20a4"
+    },
+    {
+      "path": "js/historical-knowledge-retrieval.js",
+      "bytes": 20848,
+      "sha256": "3057c8890004ad94bc68a0aa511f05f01857e8fd5314d82d3e416425a3ead326"
+    },
+    {
+      "path": "js/historical-learning-orchestration.js",
+      "bytes": 14281,
+      "sha256": "775eb04eb8114579b8ac459dd1c126c4ad23195e59acc21fc8b41b55598df70a"
+    },
+    {
+      "path": "js/historical-learning-quality-governance.js",
+      "bytes": 12297,
+      "sha256": "9f0ab13edd4d72111b5c566f0c2eac5f593cd1eb481f9797428fce4ca92ebdea"
+    },
+    {
+      "path": "js/historical-narrative-generator.js",
+      "bytes": 5451,
+      "sha256": "659167704b48fc8353093d1cb35942a4cef79b11937040aa98c4d72283d55645"
+    },
+    {
+      "path": "js/historical-narrative-input-assembly.js",
+      "bytes": 10616,
+      "sha256": "0b3114417105ff8e685e5c3f519f5a0d02af8e74bf56b75d093100db0fdbb1b8"
+    },
+    {
+      "path": "js/historical-narrative-invocation-governance.js",
+      "bytes": 12735,
+      "sha256": "15205d2f38ccbdc8601285ce667dcc9cf84b2f7301787722f51195a718b4f9ac"
+    },
+    {
+      "path": "js/historical-narrative-output-validation.js",
+      "bytes": 13742,
+      "sha256": "11950089393448734da6fcdd72b0afe29e0c42e100b012b248c171cc3123e21f"
+    },
+    {
+      "path": "js/historical-narrative-ranking-input-governance.js",
+      "bytes": 11856,
+      "sha256": "9256fd3ffe4c14339210d7ddbbd6c9089028549bb69026eb3216e87ff653ad2a"
+    },
+    {
+      "path": "js/historical-narrative-ranking-output-governance.js",
+      "bytes": 15320,
+      "sha256": "90ec59f48161d021b1b720d6fff02aa32a48a27591bd1dda87ab554d998f1d38"
+    },
+    {
+      "path": "js/historical-narrative-ranking.js",
+      "bytes": 10648,
+      "sha256": "00735d22494cade217181351fbbdfd06c5b76debdf49edbacf831fda402051c9"
+    },
+    {
+      "path": "js/historical-observation-learning.js",
+      "bytes": 8121,
+      "sha256": "6d8920d2a3452d234e77b76a79e304460bf0fff36bd9f2a3795960831e07b391"
+    },
+    {
+      "path": "js/historical-operational-rollout-plan.js",
+      "bytes": 21775,
+      "sha256": "b64aff5f9fd9db4dcadf85d451ea2e37096e74b2cba4508d16069dcd305547ef"
+    },
+    {
+      "path": "js/historical-pattern-intelligence.js",
+      "bytes": 11520,
+      "sha256": "c58439d3dd44374daf32f683f4884579af3d08f5b30f07c2cd009223b69a61ba"
+    },
+    {
+      "path": "js/historical-pattern-lifecycle.js",
+      "bytes": 10290,
+      "sha256": "e76fe9ef1feeedda468303d575b8fd50f7748593cdd710ef110dff4ef15c7a88"
+    },
+    {
+      "path": "js/historical-pipeline-certification.js",
+      "bytes": 10336,
+      "sha256": "e561839f48ad96cdde9898016e0156b2917d93196df8a73b56482979fa61275d"
+    },
+    {
+      "path": "js/historical-presentation-invocation-governance.js",
+      "bytes": 17660,
+      "sha256": "02a7950faba80f68bfb86ae5524f7aeb6147d843411656960f3d267c505d83e6"
+    },
+    {
+      "path": "js/historical-presentation-output-validation.js",
+      "bytes": 12628,
+      "sha256": "17bc77ba5df5bf5644797147110c253cc0f755ce5666b1d6776f975a245df86d"
+    },
+    {
+      "path": "js/historical-retrieval-session.js",
+      "bytes": 17370,
+      "sha256": "c41105da2474e07cb4ea19232141543df23b84028ebd9b954804c865675692cc"
+    },
+    {
+      "path": "js/history-capture/historyAggregationEngine.js",
+      "bytes": 11886,
+      "sha256": "565308f07dcbf2f90266de39c7fa312f9be27db9fb7aa43d26dcd9ad2a205c21"
+    },
+    {
+      "path": "js/history-capture/historyAwarenessAdapter.js",
+      "bytes": 39582,
+      "sha256": "6ab2e3450c843950fa2f3025d0d046c274300d64edbbda11bcc2fd5b7976a6a1"
+    },
+    {
+      "path": "js/history-capture/historyCaptureEnvelope.js",
+      "bytes": 14892,
+      "sha256": "633ec4728d68cee332621bbfe7e82efda1438a52aedd74d68732ec55ef721392"
+    },
+    {
+      "path": "js/history-capture/historyCaptureFlags.js",
+      "bytes": 1558,
+      "sha256": "92aa616b2be7e38a9f76a86e0fcfbeda00b3a3a0affdf5f1dd57b2bf688013f1"
+    },
+    {
+      "path": "js/history-capture/historyCaptureIdempotency.js",
+      "bytes": 1629,
+      "sha256": "5fbcd6410803cc0b07492fc433ea72188f1ab9b8060ff926a1e29f64ea60bc55"
+    },
+    {
+      "path": "js/history-capture/historyCaptureMonitoring.js",
+      "bytes": 3381,
+      "sha256": "c106af7d63c08de4dfd237748923769b714d37243503cc4c9c29271d960548c7"
+    },
+    {
+      "path": "js/history-capture/historyCapturePhase1A.js",
+      "bytes": 5846,
+      "sha256": "4b8785ea99d794c932f7cd9d67edd7843e40578d6da88e4b9566164fc9082b4e"
+    },
+    {
+      "path": "js/history-capture/historyCaptureWriter.js",
+      "bytes": 9917,
+      "sha256": "9cd2f135b518e68f61dd94b5b77b5a104d782860130bd2bf8ca88ff8b6140e73"
+    },
+    {
+      "path": "js/history-capture/historyEpisodeResolver.js",
+      "bytes": 17379,
+      "sha256": "37d76d199b5a5d0125328b3629f4eca992530b1dc3bf37b2cd909634d9c38bbf"
+    },
+    {
+      "path": "js/history-capture/historyEpisodeRuntimeBridge.js",
+      "bytes": 12284,
+      "sha256": "a72bc228aa421c4b4765148b99affca02b6c9c406391e6ee7537358293c2654f"
+    },
+    {
+      "path": "js/history-capture/historyEvidenceInterpretationAdapter.js",
+      "bytes": 19707,
+      "sha256": "3667e3e638f6aae71304f0203fa6c7a060ba35e49ea4a26bf641909eb7b79a94"
+    },
+    {
+      "path": "js/history-capture/historyIdentity.js",
+      "bytes": 7769,
+      "sha256": "92ac59fef627249a224f454ac789ca58a1d158db86c19b2fa55c6c7fbc2db4b1"
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceEngine.js",
+      "bytes": 23623,
+      "sha256": "034041ecee4858470f380feca907f05082a04a2c633070c658ee51c23f1af7f7"
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceReadinessIndex.js",
+      "bytes": 25472,
+      "sha256": "0a701b2e33cddfb3eb6b69ff0de3dcf07ace40631890ffabc6376650685e0dcc"
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceRuntimeIntegration.js",
+      "bytes": 15182,
+      "sha256": "b6fa4d269c735eb63e7ae38f7a1e4cfc62c1b67f5518e8b927a01036d5847ce5"
+    },
+    {
+      "path": "js/history-capture/historyPatternQualificationEngine.js",
+      "bytes": 18593,
+      "sha256": "19597c70fbf972e04d258f689c4297f4706e636690659bf7bece8fdfa470595e"
+    },
+    {
+      "path": "js/history-capture/historyPatternRegistry.js",
+      "bytes": 15200,
+      "sha256": "467e2d34c2856ede25a7ef71f9d83c42b173eff330b3ec5f99bb9ce067405949"
+    },
+    {
+      "path": "js/lp097-curated-destinations.js",
+      "bytes": 4917,
+      "sha256": "7d4986d96cb55fb8b2eaac72eb49d80797bbf21ee3292d58e6a665f26479196c"
+    },
+    {
+      "path": "js/lp097-search-governance.js",
+      "bytes": 8038,
+      "sha256": "2f6f6a343e77a822d9cf3926d2ada5ed0a5e2043418b6978d3ef097e65f9302e"
+    },
+    {
+      "path": "js/lp098-curated-destinations.js",
+      "bytes": 8635,
+      "sha256": "96cf177621611335aed8cc8e1b55628a1f9b8283366ccbbbf8da0938b1ab4572"
+    },
+    {
+      "path": "js/lp099-business-search.js",
+      "bytes": 6823,
+      "sha256": "1115f2e5f902f8e390213de4ceca85a800b4d133a26664f853ce5b9c79570181"
+    },
+    {
+      "path": "js/lp101-search-quality.js",
+      "bytes": 34250,
+      "sha256": "4fcebc9e02e7525cf230f9c97f2a9f74511318d0a751a30398d3e36b4a44dbbe"
+    },
+    {
+      "path": "js/lp102-rural-address-cases.js",
+      "bytes": 1273,
+      "sha256": "aa5dd33403f94e7abaaf4a81c7e5e13cc3b4a677f78f4f6789d12860d71630e9"
+    },
+    {
+      "path": "js/lp104-regional-rural-address-audit.js",
+      "bytes": 5319,
+      "sha256": "6577e26d14fc601cbc91a441805c65a7daeee9dfbac0f15343a2a591e1c3a51d"
+    },
+    {
+      "path": "js/lp1045-txgio-address-runtime.js",
+      "bytes": 13090,
+      "sha256": "944b326565c79bcbe402fb821624bf75d74fa1ea2b6c9d274c908a3939d5dbf6"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 569,
+      "sha256": "4af4612435de51747dcd47d0da46ec3631d2c683ca37ef00e6e991d7e53d7394"
+    },
+    {
+      "path": "service-worker.js",
+      "bytes": 3673,
+      "sha256": "112321f5e22964a8551d805d106bd2f0445e6fa9f854a671732cd357b5e26d58"
+    }
+  ]
+}

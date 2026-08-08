@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "gridly.lp1831.summary.v1",
+  "milestone": "LP183.1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "classification": "PLATFORM_PREPARATION_BLOCKED_OWNER_ACTION_REQUIRED",
+  "artifactIdentity": "sha256:9e4fb579077e5d1c192d85cbf79a7d38044c214484ad24fdaa8b413d16969bda",
+  "repositoryRootSafeForUpload": false,
+  "stagingRequired": true,
+  "runtimeModified": false,
+  "cloudExecution": "NONE",
+  "ownerActionRequired": true,
+  "authorizationState": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  },
+  "blockers": [
+    "PAGES_25_MIB_LIMIT:Crossing-Packages/Texas/fra-crossings-tx.geojson",
+    "PAGES_25_MIB_LIMIT:assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+    "PAGES_25_MIB_LIMIT:data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz"
+  ]
+}

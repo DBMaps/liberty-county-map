@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "gridly.lp1831.rollbackPlan.v1",
+  "milestone": "LP183.1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "rollbackAuthorization": "NOT_AUTHORIZED",
+  "firstDeployment": {
+    "executableNow": false,
+    "objective": "Return to no-preview state",
+    "procedure": [
+      "Owner disables/removes the preview.gridlygo.com Pages custom-domain binding or other publication route using the platform control proven at execution time",
+      "Owner removes/disables only the corresponding preview DNS route if one was later authorized and created",
+      "Verify preview.gridlygo.com no longer serves the candidate anonymously or as an approved tester",
+      "Verify gridlygo.com and the closed beta surfaces are unchanged",
+      "Capture control, DNS, HTTP, Access and timestamp evidence"
+    ],
+    "caveat": "Do not claim executable until Cloudflare proves the exact route-removal controls exist."
+  },
+  "knownGood": {
+    "executableNow": false,
+    "procedure": [
+      "Retain the known-good staging artifact and manifest identified by SHA-256",
+      "Recreate/verify it with node tools/lp1831/prepare-cloudflare-preview-artifact.mjs stage --output <KNOWN_GOOD_DIRECTORY>",
+      "After separate authorization, explicitly run wrangler pages deploy against that immutable directory",
+      "Capture the new deployment ID/URL and reconcile every file hash"
+    ],
+    "caveat": "No known-good preview deployment currently exists; Pages redeployment creates a new deployment identity."
+  }
+}
