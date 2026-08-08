@@ -10,20 +10,20 @@
     "count": 0,
     "gridlyArtifactDeployments": 0
   },
-  "directUpload": false,
+  "directUpload": true,
   "dnsChanged": false,
-  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
-  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "evidenceSource": "OWNER_LOCAL_SANITIZED_EVIDENCE",
+  "generatedAt": "2026-08-08T18:07:30.8013844Z",
   "gitIntegration": false,
   "milestone": "LP183.5",
   "model": "DIRECT_UPLOAD",
-  "ownerConfirmedProjectName": "OWNER_CONFIRMATION_REQUIRED",
+  "ownerConfirmedProjectName": "gridly-preview",
   "project": {
-    "countAfter": 0,
+    "countAfter": 1,
     "countBefore": 0,
-    "created": false,
-    "defaultHostname": "NOT_ASSIGNED_PROJECT_NOT_CREATED",
-    "name": "OWNER_CONFIRMATION_REQUIRED",
+    "created": true,
+    "defaultHostname": "gridly-preview.pages.dev",
+    "name": "gridly-preview",
     "productionBranch": "preview"
   },
   "schemaVersion": "gridly.lp1835.pagesProjectEvidence.v1"

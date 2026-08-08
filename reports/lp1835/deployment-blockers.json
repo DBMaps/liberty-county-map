@@ -7,8 +7,8 @@
     "governed Access preservation",
     "live admission and denial validation after protected publication"
   ],
-  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
-  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "evidenceSource": "OWNER_LOCAL_SANITIZED_EVIDENCE",
+  "generatedAt": "2026-08-08T18:07:30.8013844Z",
   "globalAuthorizationState": {
     "activation": "NOT_AUTHORIZED",
     "automaticDeployment": "NOT_AUTHORIZED",

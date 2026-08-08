@@ -1,19 +1,19 @@
 {
   "account": {
-    "id": "OWNER_VERIFICATION_REQUIRED",
-    "name": "OWNER_VERIFICATION_REQUIRED"
+    "id": "f474bdd24e395de2e6bc4585d8705422",
+    "name": "Dburns.mgmt@gmail.com's Account"
   },
-  "authenticated": false,
+  "authenticated": true,
   "command": "npx --yes wrangler whoami",
-  "commandStatus": "FAILED_NPX_REGISTRY_403",
-  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
-  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "commandStatus": "PASS",
+  "evidenceSource": "OWNER_LOCAL_SANITIZED_EVIDENCE",
+  "generatedAt": "2026-08-08T18:07:30.8013844Z",
   "milestone": "LP183.5",
   "schemaVersion": "gridly.lp1835.cloudflareAccountEvidence.v1",
   "secretMaterialStored": false,
-  "wranglerVersion": "UNAVAILABLE_NPX_REGISTRY_403",
+  "wranglerVersion": "4.120.0",
   "zone": {
     "name": "gridlygo.com",
-    "ownershipStatus": "OWNER_VERIFICATION_REQUIRED"
+    "ownershipStatus": "VERIFIED"
   }
 }

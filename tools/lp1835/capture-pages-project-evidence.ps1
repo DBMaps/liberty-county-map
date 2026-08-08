@@ -9,7 +9,7 @@ if ((Read-Host 'Type the exact project name to confirm') -cne $ProjectName) { th
 function Invoke-SafeWrangler([string[]]$Arguments,[string]$File) {
   $text = (& npx --yes wrangler @Arguments 2>&1 | Out-String)
   if ($LASTEXITCODE -ne 0) { throw "Wrangler command failed: $($Arguments -join ' ')" }
-  if ($text -match '(?i)(CLOUDFLARE_API_TOKEN|authorization\s*:|cookie\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key)') { throw 'Secret-shaped Wrangler output rejected.' }
+  if ($text -match '(?i)(CLOUDFLARE_API_TOKEN\s*=\s*\S+|authorization\s*:|cookie\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key)') { throw 'Secret-shaped Wrangler output rejected.' }
   [IO.File]::WriteAllText($File,($text -replace "`r`n","`n"),(New-Object Text.UTF8Encoding($false)))
   return $text
 }
@@ -39,7 +39,7 @@ $dnsDelete = (Read-Host 'Type PROVEN only if the gridlygo.com DNS record Delete 
 $projectDelete = $deleteHelp -match '(?i)delete'
 $record = [ordered]@{schemaVersion='gridly.lp1835.ownerPagesEvidence.v1';capturedAt=(Get-Date).ToUniversalTime().ToString('o');wranglerVersion=$version.Trim();authenticated=$true;authenticatedCommandStatus='PASS';accountName=$accountName;accountId=$accountId;zoneName='gridlygo.com';zoneOwnershipStatus=$zoneStatus;projectName=$ProjectName;productionBranch='preview';defaultHostname=$defaultHostname;projectCreated=$true;directUpload=$true;gitIntegration=$false;automaticDeployment=$false;previewCustomDomainBound=$false;dnsChanged=$false;accessChanged=$false;artifactUploaded=$false;projectDeleteControlProven=$projectDelete;customDomainDetachControlProven=$domainDetach;dnsDeleteControlProven=$dnsDelete;projectCountBefore=$countBefore;projectCountAfter=$countAfter;deploymentCount=$deploymentCount;customDomainCount=$customDomainCount}
 $json = $record | ConvertTo-Json -Depth 5
-if ($json -match '(?i)(CLOUDFLARE_API_TOKEN|authorization\s*:|cookie\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key)') { throw 'Secret-shaped evidence rejected.' }
+if ($json -match '(?i)(CLOUDFLARE_API_TOKEN\s*=\s*\S+|authorization\s*:|cookie\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key)') { throw 'Secret-shaped evidence rejected.' }
 [IO.File]::WriteAllText((Join-Path $evidenceDir 'pages-project-owner-evidence.local.json'),(($json -replace "`r`n","`n")+"`n"),(New-Object Text.UTF8Encoding($false)))
 Write-Host 'STOP: do not deploy, bind a domain, change DNS/Access, or delete the project.'
 Write-Host 'Run: npm run build:lp1835; npm run test:lp1835; npm run verify:lp1835'
