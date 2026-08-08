@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "gridly.lp1832.summary.v1",
+  "milestone": "LP183.2",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "limitBytes": 26214400,
+  "classification": "OVERSIZED_ASSET_RESOLUTION_AUDIT_COMPLETE_IMPLEMENTATION_REQUIRED",
+  "oversizedAssetCount": 3,
+  "assets": [
+    {
+      "repositoryPath": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "bytes": 67186117,
+      "mib": 64.073674,
+      "recommendation": "Exclude from the Pages artifact; retain tracked repository source unchanged"
+    },
+    {
+      "repositoryPath": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "bytes": 35232470,
+      "mib": 33.600302,
+      "recommendation": "Manufacture a deterministic gzip package and minimally extend the existing Montgomery loader/manifest path to decompress and validate it"
+    },
+    {
+      "repositoryPath": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz",
+      "bytes": 57731771,
+      "mib": 55.057307,
+      "recommendation": "Make LP183.1 address inclusion manifest-driven and exclude this unreferenced package; do not alter the package"
+    }
+  ],
+  "oneSharedResolution": false,
+  "runtimeChangesRequired": [
+    "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson"
+  ],
+  "manufacturingChangesRequired": [
+    "LP183.1 manifest-driven exclusion for non-runtime manufacturing/address outputs",
+    "Deterministic Montgomery gzip manufacture"
+  ],
+  "serviceWorkerChangesRequired": [],
+  "cloudflareInfrastructureChangesRequired": [],
+  "currentLp1831Compatibility": "BLOCKED",
+  "nextImplementationMilestone": {
+    "proposedId": "LP183.3",
+    "scope": [
+      "Change LP183.1 staging selection to include only browser-referenced crossing/address artifacts and prove FRA/Harris exclusion",
+      "Manufacture a deterministic versioned Montgomery .geojson.gz without modifying the source asset",
+      "Update the roadway manifest and protected Montgomery loader with explicit decompression, validation and fail-closed behavior",
+      "Certify target browsers, county switching, route intelligence, Awareness, Route Watch, PWA behavior and artifact max-file limit",
+      "Rebuild LP183.1 identity and reports; perform no cloud execution"
+    ]
+  },
+  "protectedRuntimeModified": false,
+  "oversizedAssetsModified": false,
+  "authorizationState": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  }
+}

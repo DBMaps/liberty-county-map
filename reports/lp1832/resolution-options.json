@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "gridly.lp1832.resolutionOptions.v1",
+  "milestone": "LP183.2",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "limitBytes": 26214400,
+  "resolutionMatrix": [
+    {
+      "asset": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "problem": "Uncompressed, whitespace-expanded statewide aggregation with 16,101 points and 48 repeated property fields; also erroneous deploy inclusion",
+      "runtimeImportance": "NONE",
+      "causes": [
+        "uncompressed text/JSON",
+        "oversized statewide aggregation",
+        "unnecessary deploy inclusion"
+      ],
+      "options": {
+        "safeSplitShard": "Not needed; browser already supports county package boundaries, while manufacturing may retain this source unchanged",
+        "compression": "Deterministic minification would be 20797869 bytes and gzip would be 1678989 bytes, but packaging it is unnecessary",
+        "exclude": "SAFE: no browser reference and county packages are the runtime inputs",
+        "regenerateSmaller": "Possible minification, but lower priority than exclusion",
+        "externalStorage": "Rejected: adds origin/CORS/cache/Access/offline/integrity/rollback/cost complexity for a non-runtime file",
+        "alternateHosting": "Not necessary"
+      },
+      "risks": [
+        "LP183.1 inclusion selector must exclude only manufacturing statewide source, not county crossing packages"
+      ],
+      "recommendedResolution": "Exclude from the Pages artifact; retain tracked repository source unchanged",
+      "runtimeChangeRequired": false,
+      "manufacturingChangeRequired": true,
+      "serviceWorkerChangeRequired": false,
+      "cloudflareInfrastructureChangeRequired": false,
+      "expectedResultingMaxFileSize": 0,
+      "unresolvedUnknowns": []
+    },
+    {
+      "asset": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "problem": "Uncompressed county GeoJSON with 80,380 geometries; whitespace removal alone remains over limit",
+      "runtimeImportance": "REQUIRED_WHEN_MONTGOMERY_ACTIVE",
+      "causes": [
+        "uncompressed text/JSON",
+        "embedded geometry",
+        "large county feature count"
+      ],
+      "measuredAlternatives": {
+        "minifiedJsonBytes": 35151673,
+        "deterministicGzipBytes": 6057789,
+        "propertyKeys": [
+          "highway",
+          "name",
+          "osm_id",
+          "other_tags",
+          "z_order"
+        ]
+      },
+      "options": {
+        "safeSplitShard": "Not runtime-compatible today: manifest and loader accept one URL and one FeatureCollection; implementation would require an indexed package list, multi-fetch, ordered assembly, integrity and failure semantics",
+        "compression": "RECOMMENDED: deterministic gzip is 6057789 bytes; HTTP transfer compression of the existing upload is not counted as a solution. A .geojson.gz path plus explicit browser DecompressionStream/fallback, digest/size validation and JSON parse is required",
+        "exclude": "Unsafe: directly requested and required for Montgomery roads and route intelligence",
+        "regenerateSmaller": "Property stripping or geometry simplification is not proven semantically equivalent; minification alone is too large",
+        "externalStorage": "Technically possible but rejected unless compression fails; would require public/private decision, CORS, Access interaction, immutable URL/integrity, cache/rollback and offline policy",
+        "alternateHosting": "Not necessary"
+      },
+      "risks": [
+        "Protected js/app.js change needs separate approval and browser compatibility tests",
+        "Compressed-package failure must remain fail-closed without cross-county fallback",
+        "PWA currently does not cache this asset, and that behavior must remain explicit"
+      ],
+      "recommendedResolution": "Manufacture a deterministic gzip package and minimally extend the existing Montgomery loader/manifest path to decompress and validate it",
+      "runtimeChangeRequired": true,
+      "manufacturingChangeRequired": true,
+      "serviceWorkerChangeRequired": false,
+      "cloudflareInfrastructureChangeRequired": false,
+      "expectedResultingMaxFileSize": 6057789,
+      "unresolvedUnknowns": [
+        "Target-browser DecompressionStream support/fallback policy must be certified before implementation"
+      ]
+    },
+    {
+      "asset": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz",
+      "problem": "Already-compressed county aggregation has 1,452,427 address rows but is absent from the runtime manifest; erroneous deploy inclusion",
+      "runtimeImportance": "NONE_IN_CURRENT_ARTIFACT",
+      "causes": [
+        "oversized county aggregation",
+        "compressed binary asset",
+        "unnecessary deploy inclusion"
+      ],
+      "options": {
+        "safeSplitShard": "Not needed for current runtime. If Harris address activation is later authorized, current runtime supports one package per county and would need an indexed/sharded contract",
+        "compression": "Already gzip-compressed at 57,731,771 bytes; HTTP transfer compression cannot reduce the uploaded individual asset",
+        "exclude": "SAFE: validatedEntry can return only manifest entries, and Harris has no entry",
+        "regenerateSmaller": "Future sharded address manufacture is possible but is a separate Harris activation milestone",
+        "externalStorage": "Rejected for current preview; future use would require URL/CORS/Access/cache/offline/integrity/versioning/rollback/cost decisions",
+        "alternateHosting": "Not necessary"
+      },
+      "risks": [
+        "Exclusion rule must be manifest-driven so Liberty package/certificate and future explicitly activated entries remain included"
+      ],
+      "recommendedResolution": "Make LP183.1 address inclusion manifest-driven and exclude this unreferenced package; do not alter the package",
+      "runtimeChangeRequired": false,
+      "manufacturingChangeRequired": true,
+      "serviceWorkerChangeRequired": false,
+      "cloudflareInfrastructureChangeRequired": false,
+      "expectedResultingMaxFileSize": 0,
+      "unresolvedUnknowns": []
+    }
+  ],
+  "sharedResolution": {
+    "appliesToAllThree": false,
+    "finding": "FRA and Harris are erroneous inclusion fixes; Montgomery requires a compressed runtime packaging and loader change."
+  },
+  "rejectedGlobalAlternatives": [
+    "HTTP transfer compression does not address uploaded individual asset size",
+    "R2/alternate hosting is disproportionate while two files can be excluded and the sole required file compresses below 25 MiB",
+    "Blind splitting is incompatible with Montgomery and address single-package loaders"
+  ]
+}

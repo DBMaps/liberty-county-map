@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1832": "node tools/lp1832/audit-oversized-runtime-assets.mjs build",
+    "verify:lp1832": "node tools/lp1832/audit-oversized-runtime-assets.mjs verify",
+    "test:lp1832": "node --test tests/lp1832/*.test.mjs",
     "build:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs build",
     "stage:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs stage",
     "verify:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs verify",
