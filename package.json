@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1834": "node tools/lp1834/reassess-protected-preview.mjs build",
+    "test:lp1834": "node --test tests/lp1834/*.test.mjs",
+    "verify:lp1834": "node tools/lp1834/reassess-protected-preview.mjs verify",
     "build:lp1833": "node tools/lp1833/repair-pages-artifact.mjs build",
     "test:lp1833": "node --test tests/lp1833/*.test.mjs",
     "verify:lp1833": "node tools/lp1833/repair-pages-artifact.mjs verify",

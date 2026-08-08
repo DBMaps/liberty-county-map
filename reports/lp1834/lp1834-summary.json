@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "gridly.lp1834.summary.v1",
+  "milestone": "LP183.4",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "NONE",
+  "classification": "PROTECTED_PREVIEW_PROJECT_CREATION_READY_DEPLOYMENT_STILL_BLOCKED",
+  "candidateCommitIdentities": {
+    "mainlineBaseline": "de77bb7506ff2a0014b850ebcc888c6fa5bf4c28",
+    "lp1833RuntimeCandidate": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+    "lp1833bPortability": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516"
+  },
+  "artifact": {
+    "identity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+    "fileCount": 493,
+    "totalBytes": 155746432,
+    "maximumFile": {
+      "path": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
+      "bytes": 17042129,
+      "sha256": "4068dcede64b379c10fdf5bf187da28669fcf394130d236930a2ac988ac1547a"
+    },
+    "oversizedFileCount": 0,
+    "montgomery": {
+      "schemaVersion": "gridly.lp1833.montgomeryPackage.v1",
+      "milestone": "LP183.3",
+      "generatedAt": "1970-01-01T00:00:00.000Z",
+      "performsCloudExecution": false,
+      "candidateCommit": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+      "compression": "gzip",
+      "compressedBytes": 6444342,
+      "uncompressedBytes": 35232470,
+      "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1",
+      "source": {
+        "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+        "gitBlob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
+        "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
+      },
+      "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
+      "deterministicRegeneration": {
+        "algorithm": "gzip",
+        "implementation": "fflate@0.8.3",
+        "level": 9,
+        "mtime": 0,
+        "byteIdentical": true,
+        "command": "npm run build:lp1833"
+      },
+      "presentInStagedArtifact": true,
+      "repositoryState": "GENERATED_UNTRACKED_IGNORED",
+      "arbitraryUntrackedAdmission": "DENIED_BY_GOVERNED_MANIFEST"
+    }
+  },
+  "accessEvidenceStatus": "OWNER_PROVIDED_MANUALLY_VERIFIED_NO_AUTHENTICATED_API_EVIDENCE",
+  "admissionTestStatus": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+  "denialTestStatus": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+  "pagesProjectReadiness": {
+    "technicalReadiness": "READY",
+    "executionAuthorization": "OWNER_CONFIRMATION_REQUIRED"
+  },
+  "customDomainDnsReadiness": "SEQUENCE_DEFINED_NOT_EXECUTED",
+  "firstDeploymentRollbackStatus": "NOT_EXECUTABLE_CURRENT_EXTERNAL_PLATFORM_CONTROL_EVIDENCE_REQUIRED",
+  "knownGoodRollbackStatus": "NOT_YET_AVAILABLE",
+  "automaticDeployment": "NOT_AUTHORIZED",
+  "protectedRuntimeNativeDiff": "EMPTY",
+  "globalAuthorizationState": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  }
+}

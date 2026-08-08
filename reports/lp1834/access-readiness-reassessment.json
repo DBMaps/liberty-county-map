@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "gridly.lp1834.accessReadiness.v1",
+  "milestone": "LP183.4",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "NONE",
+  "evidenceBoundary": "OWNER_PROVIDED_MANUALLY_VERIFIED_NO_AUTHENTICATED_API_EVIDENCE",
+  "zone": {
+    "name": "gridlygo.com",
+    "status": "ACTIVE",
+    "evidenceClass": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION"
+  },
+  "zeroTrust": {
+    "status": "ACTIVE",
+    "evidenceClass": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION"
+  },
+  "application": {
+    "name": "preview",
+    "destination": "preview.gridlygo.com",
+    "authentication": "One-time PIN",
+    "oneTimePinSelected": true,
+    "acceptAllAvailableIdentityProviders": false,
+    "evidenceClass": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION"
+  },
+  "policy": {
+    "name": "Gridly Preview Approved Testers",
+    "action": "Allow",
+    "include": "Emails",
+    "match": "exact approved owner/tester email",
+    "evidenceClass": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION"
+  },
+  "anonymousPublicAccess": "NOT_AUTHORIZED",
+  "cloudflareOneClientAuthentication": "OFF",
+  "browserRdpSshVnc": "OFF",
+  "sessionDuration": "24 hours",
+  "admissionTest": {
+    "flow": [
+      "approved email",
+      "One-time PIN challenge",
+      "successful authentication",
+      "exact-email policy match",
+      "preview allowed"
+    ],
+    "status": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST"
+  },
+  "denialTests": [
+    {
+      "subject": "anonymous user",
+      "expected": "denied",
+      "status": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST"
+    },
+    {
+      "subject": "authenticated but non-approved email",
+      "expected": "denied",
+      "status": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST"
+    }
+  ]
+}

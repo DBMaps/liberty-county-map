@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "gridly.lp1834.pagesPlatformReadiness.v1",
+  "milestone": "LP183.4",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "NONE",
+  "model": "DIRECT_UPLOAD",
+  "project": {
+    "exists": false,
+    "deployments": 0,
+    "evidenceClass": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION",
+    "lastOwnerInspection": true
+  },
+  "artifactUploaded": false,
+  "customDomain": {
+    "hostname": "preview.gridlygo.com",
+    "bound": false,
+    "certificateIssued": false
+  },
+  "dns": {
+    "publicationRouteExists": false
+  },
+  "emptyProjectCreation": {
+    "technicalReadiness": "READY",
+    "executionAuthorization": "OWNER_CONFIRMATION_REQUIRED"
+  },
+  "deploymentReadiness": "BLOCKED_FIRST_DEPLOYMENT_ROLLBACK_CONTROLS_AND_OWNER_EXECUTION_EVIDENCE_REQUIRED",
+  "requiredSequence": [
+    "Owner authenticates and verifies the intended Cloudflare account",
+    "Create exactly one empty Direct Upload Pages project under separate authorization",
+    "Prove custom-domain removal and any DNS-route removal controls",
+    "Explicitly upload only the exact governed staged artifact after separate authorization",
+    "Bind only preview.gridlygo.com while preserving the existing Access application and policy",
+    "Validate admission and both denial paths on a physical device"
+  ],
+  "domainBindingRequirements": [
+    "Pages project exists",
+    "Add preview.gridlygo.com as the project custom domain",
+    "Create or accept only the required preview hostname DNS publication route",
+    "Wait for and verify hostname activation and certificate issuance",
+    "Verify Access protection before approved-user validation"
+  ],
+  "productionDomainUnaffectedRequired": true
+}
