@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "gridly.lp1831.cloudflareCommandPlan.v1",
+  "milestone": "LP183.1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "shellBoundary": "PowerShell 5.1 compatible; run from repository root",
+  "placeholders": {
+    "project": "<OWNER_SELECTED_PAGES_PROJECT_NAME>",
+    "accountId": "<VERIFIED_ACCOUNT_ID>",
+    "artifactDirectory": ".artifacts/lp1831/cloudflare-pages"
+  },
+  "environment": [
+    "No repository secret is required",
+    "Owner completes interactive OAuth when npx wrangler prompts, or supplies a temporary CLOUDFLARE_API_TOKEN in the process environment only"
+  ],
+  "sequence": [
+    {
+      "purpose": "authenticated account verification",
+      "command": "npx --yes wrangler whoami",
+      "executeNow": false
+    },
+    {
+      "purpose": "create empty Direct Upload project",
+      "command": "npx --yes wrangler pages project create <OWNER_SELECTED_PAGES_PROJECT_NAME> --production-branch preview",
+      "executeNow": false
+    },
+    {
+      "purpose": "future explicit upload only after authorization",
+      "command": "npx --yes wrangler pages deploy .artifacts/lp1831/cloudflare-pages --project-name <OWNER_SELECTED_PAGES_PROJECT_NAME> --branch preview --commit-dirty=true",
+      "executeNow": false
+    },
+    {
+      "purpose": "list and capture deployment ID, URL, environment and timestamp",
+      "command": "npx --yes wrangler pages deployment list --project-name <OWNER_SELECTED_PAGES_PROJECT_NAME>",
+      "executeNow": false
+    }
+  ],
+  "identityCapture": "Capture the deploy command output and deployment-list output; reconcile the returned deployment URL/ID with this manifest identity. Wrangler does not prove file identity by itself.",
+  "customDomainNote": "Custom-domain binding/removal is deliberately omitted: it requires a separately authorized owner Dashboard/API action and confirmed platform controls."
+}

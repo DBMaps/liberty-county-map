@@ -12,6 +12,10 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs build",
+    "stage:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs stage",
+    "verify:lp1831": "node tools/lp1831/prepare-cloudflare-preview-artifact.mjs verify",
+    "test:lp1831": "node --test tests/lp1831/*.test.mjs",
     "build:lp1841d": "node tools/lp1841d/close-owner-legal-decisions.mjs build",
     "verify:lp1841d": "node tools/lp1841d/close-owner-legal-decisions.mjs verify",
     "test:lp1841d": "node --test tests/lp1841d/*.test.mjs",

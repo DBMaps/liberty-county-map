@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "gridly.lp1831.platformReadiness.v1",
+  "milestone": "LP183.1",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "classification": "PLATFORM_PREPARATION_BLOCKED_OWNER_ACTION_REQUIRED",
+  "governedFacts": {
+    "zone": "gridlygo.com",
+    "zoneState": "ACTIVE",
+    "registrar": "GoDaddy",
+    "cloudflareRegistrarRole": "NONE",
+    "accessApplication": "preview",
+    "protectedDestination": "preview.gridlygo.com",
+    "authentication": "ONE_TIME_PIN",
+    "policy": "Gridly Preview Approved Testers / Allow / exact approved email allowlist",
+    "anonymousAccess": "NOT_AUTHORIZED",
+    "cloudflareOneClient": "OFF",
+    "browserRemoteProtocols": "OFF",
+    "pagesProjects": 0,
+    "pagesDeployments": 0,
+    "previewDnsOrCustomDomainRoute": false,
+    "artifactUploaded": false,
+    "evidenceSource": "OWNER_PROVIDED_UNAUTHENTICATED_FACTS"
+  },
+  "authorizations": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  },
+  "ownerActionsRequired": [
+    "Resolve every Pages file-size incompatibility without runtime behavior drift or obtain proven platform support",
+    "Select project name and Cloudflare account",
+    "Authenticate interactively or provide a least-privilege temporary token outside the repository",
+    "Verify the account before project creation",
+    "Obtain separate scoped authorization before every project, DNS, domain, upload, or rollback action",
+    "Capture authenticated platform evidence"
+  ],
+  "reassessmentPrerequisites": [
+    "Authenticated whoami/account evidence",
+    "Empty Direct Upload project identity and configuration evidence",
+    "Exact artifact manifest and SHA-256 identity",
+    "Evidence every uploaded file satisfies Pages limits",
+    "Access application/policy export or screenshots showing exact allowlist and anonymous denial",
+    "Proven custom-domain and first-deployment route-removal controls",
+    "DNS and certificate plan without execution",
+    "Approved-tester and anonymous access test plan",
+    "Owner authorization record bounded to the exact artifact and window",
+    "Post-upload deployment ID/URL/hash reconciliation plan"
+  ],
+  "unresolvedUnknowns": [
+    "Authenticated Cloudflare account identity and permissions",
+    "Selected Pages project name",
+    "Current platform facts have not been independently authenticated",
+    "Exact Pages custom-domain removal/disable controls before a project exists",
+    "Future deployment ID and URL",
+    "Approved tester identities",
+    "Whether oversized runtime files can be served by Pages Direct Upload",
+    "No immutable known-good preview exists"
+  ]
+}
