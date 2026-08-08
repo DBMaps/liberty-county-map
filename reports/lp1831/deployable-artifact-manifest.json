@@ -9,9 +9,9 @@
   "repositoryRootSafeForUpload": false,
   "requiredStaging": true,
   "identityMethod": "SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF",
-  "artifactIdentity": "sha256:8b166ac0216513ad9554299cd559924154cf97c93df9be8dd852fd8918ea875b",
+  "artifactIdentity": "sha256:e2f1bc5b12acda5fb03156c5132252523bd69c781fe4c4322c56f69ea9a18131",
   "fileCount": 493,
-  "totalBytes": 155359829,
+  "totalBytes": 155746432,
   "missingRequired": [],
   "cloudflarePagesOversizedFiles": [],
   "files": [
@@ -977,8 +977,8 @@
     },
     {
       "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
-      "bytes": 6057739,
-      "sha256": "037e0a8517b01db9b9411c0e80eb02d9f3bff8dc2df7e6e2dfe12631927e3f74"
+      "bytes": 6444342,
+      "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1"
     },
     {
       "path": "assets/county-implementation/montgomery/validation/montgomery-activation-readiness-validation-v580.json",

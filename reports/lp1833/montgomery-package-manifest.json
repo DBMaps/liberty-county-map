@@ -3,12 +3,12 @@
   "milestone": "LP183.3",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "performsCloudExecution": false,
-  "candidateCommit": "5ca4d1e8b4ecad4eb26924aeacface188c84ad15",
+  "candidateCommit": "68a9d2597f0ee119ccfd361873fa8fac2cf0feda",
   "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
   "compression": "gzip",
-  "compressedBytes": 6057739,
+  "compressedBytes": 6444342,
   "uncompressedBytes": 35232470,
-  "sha256": "037e0a8517b01db9b9411c0e80eb02d9f3bff8dc2df7e6e2dfe12631927e3f74",
+  "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1",
   "source": {
     "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
     "gitBlob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
@@ -17,6 +17,7 @@
   "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
   "deterministicRegeneration": {
     "algorithm": "gzip",
+    "implementation": "fflate@0.8.3",
     "level": 9,
     "mtime": 0,
     "byteIdentical": true,

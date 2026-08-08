@@ -3,11 +3,11 @@
   "milestone": "LP183.3",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "performsCloudExecution": false,
-  "candidateCommit": "5ca4d1e8b4ecad4eb26924aeacface188c84ad15",
+  "candidateCommit": "68a9d2597f0ee119ccfd361873fa8fac2cf0feda",
   "transition": "AUTHORIZED_REPOSITORY_COMPATIBILITY_TRANSITION_REASSESSMENT_REQUIRED",
   "priorCandidateChanged": true,
   "priorLp1831ArtifactIdentity": "sha256:9e4fb579077e5d1c192d85cbf79a7d38044c214484ad24fdaa8b413d16969bda",
-  "candidateArtifactIdentity": "sha256:8b166ac0216513ad9554299cd559924154cf97c93df9be8dd852fd8918ea875b",
+  "candidateArtifactIdentity": "sha256:e2f1bc5b12acda5fb03156c5132252523bd69c781fe4c4322c56f69ea9a18131",
   "protectedRuntimeFilesChanged": [
     "js/app.js"
   ],

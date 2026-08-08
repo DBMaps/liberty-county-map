@@ -2,7 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
 
-const appSource = fs.readFileSync('js/app.js', 'utf8');
+const appSource = fs.readFileSync('js/app.js', 'utf8').replace(/\r\n/g, '\n');
 const swSource = fs.readFileSync('service-worker.js', 'utf8');
 const manifestText = fs.readFileSync('data/roadway-runtime-manifest.json', 'utf8');
 const manifest = JSON.parse(manifestText);

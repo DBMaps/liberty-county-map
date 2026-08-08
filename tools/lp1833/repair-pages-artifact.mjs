@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import zlib from 'node:zlib';
+import { gzipSync } from 'fflate';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { inventory, stage } from '../lp1831/prepare-cloudflare-preview-artifact.mjs';
@@ -13,15 +13,15 @@ export const REPORT_DIR = 'reports/lp1833';
 export const SOURCE = 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson';
 export const PACKAGE = 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz';
 export const LIMIT_BYTES = 25 * 1024 * 1024;
-export const EXPECTED_PACKAGE_BYTES = 6057739;
-export const EXPECTED_PACKAGE_SHA256 = '037e0a8517b01db9b9411c0e80eb02d9f3bff8dc2df7e6e2dfe12631927e3f74';
+export const EXPECTED_PACKAGE_BYTES = 6444342;
+export const EXPECTED_PACKAGE_SHA256 = '2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1';
 const FRA = 'Crossing-Packages/Texas/fra-crossings-tx.geojson';
 const HARRIS = 'data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz';
 const GENERATED_AT = '1970-01-01T00:00:00.000Z';
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 const encode = value => `${JSON.stringify(value, null, 2)}\n`;
-export function deterministicGzip(source) { return zlib.gzipSync(source, { level: 9, mtime: 0 }); }
+export function deterministicGzip(source) { return Buffer.from(gzipSync(source, { level: 9, mtime: 0 })); }
 export function packageAsset(root = ROOT, write = true) { const source = canonicalBlob(root, SOURCE); const bytes = deterministicGzip(source); if (bytes.length !== EXPECTED_PACKAGE_BYTES || sha(bytes) !== EXPECTED_PACKAGE_SHA256) throw Error('Montgomery package governed identity mismatch'); if (write) fs.writeFileSync(path.join(root, PACKAGE), bytes); return bytes; }
 export function build(root = ROOT) {
   const source = canonicalBlob(root, SOURCE), compressed = fs.readFileSync(path.join(root, PACKAGE)), regenerated = deterministicGzip(source);
@@ -29,7 +29,7 @@ export function build(root = ROOT) {
   const inv = inventory(root), paths = new Set(inv.files.map(x => x.path));
   const max = [...inv.files].sort((a,b) => b.bytes-a.bytes || a.path.localeCompare(b.path))[0];
   const common = { milestone:'LP183.3', generatedAt:GENERATED_AT, performsCloudExecution:false, candidateCommit:git('rev-parse','HEAD') };
-  const packageManifest = { schemaVersion:'gridly.lp1833.montgomeryPackage.v1', ...common, path:PACKAGE, compression:'gzip', compressedBytes:compressed.length, uncompressedBytes:source.length, sha256:sha(compressed), source:{ path:SOURCE, gitBlob:git('rev-parse',`HEAD:${SOURCE}`), sha256:sha(source) }, schema:'GeoJSON FeatureCollection with LineString/MultiLineString features', deterministicRegeneration:{ algorithm:'gzip', level:9, mtime:0, byteIdentical:true, command:'npm run build:lp1833' } };
+  const packageManifest = { schemaVersion:'gridly.lp1833.montgomeryPackage.v1', ...common, path:PACKAGE, compression:'gzip', compressedBytes:compressed.length, uncompressedBytes:source.length, sha256:sha(compressed), source:{ path:SOURCE, gitBlob:git('rev-parse',`HEAD:${SOURCE}`), sha256:sha(source) }, schema:'GeoJSON FeatureCollection with LineString/MultiLineString features', deterministicRegeneration:{ algorithm:'gzip', implementation:'fflate@0.8.3', level:9, mtime:0, byteIdentical:true, command:'npm run build:lp1833' } };
   const compatibility = { schemaVersion:'gridly.lp1833.compatibilityVerification.v1', ...common, limitBytes:LIMIT_BYTES, artifactIdentity:inv.artifactIdentity, fileCount:inv.files.length, totalBytes:inv.files.reduce((n,x)=>n+x.bytes,0), maximumFile:max, oversizedFileCount:inv.files.filter(x=>x.bytes>=LIMIT_BYTES).length, proofs:{ fraStatewideSourceAbsent:!paths.has(FRA), harrisUnusedAddressAbsent:!paths.has(HARRIS), montgomeryRawAbsent:!paths.has(SOURCE), montgomeryCompressedPresent:paths.has(PACKAGE), allFilesBelowLimit:inv.files.every(x=>x.bytes<LIMIT_BYTES), requiredEntriesPresent:inv.missingRequired.length===0 } };
   if (compatibility.oversizedFileCount || Object.values(compatibility.proofs).includes(false)) throw Error('Pages compatibility proof failed');
   const implementation = { schemaVersion:'gridly.lp1833.implementationSummary.v1', ...common, classification:'PAGES_ARTIFACT_COMPATIBILITY_REPAIRED_DEPLOYMENT_REASSESSMENT_REQUIRED', inclusionPolicy:'Runtime-manifest address packages/certificates only; statewide crossing manufacturing sources and compressed-road superseded sources excluded', runtimeFilesModified:['js/app.js','data/roadway-runtime-manifest.json','assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json'], serviceWorkerModified:false, browserMethod:{ implementation:"DecompressionStream('gzip') plus Web Crypto SHA-256 and fatal UTF-8 decoding", chromiumEdge:'SUPPORTED', androidWebViewCapacitor:'SUPPORTED_BY_CURRENT_CAPACITOR_8_MODERN_WEBVIEW_TARGET', safariIosWebView:'SUPPORTED_FROM_SAFARI_IOS_16.4; FAILS_CLOSED_WHEN_UNAVAILABLE', fallbackDependencyAdded:false }, failurePolicy:'HTTP, API support, compressed size, digest, decompression, uncompressed size, UTF-8, JSON, FeatureCollection and line-geometry failures leave roadway state empty; raw source is never fetched.' };
