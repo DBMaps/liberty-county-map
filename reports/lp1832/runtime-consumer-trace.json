@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly.lp1832.runtimeConsumerTrace.v1",
+  "milestone": "LP183.2",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "limitBytes": 26214400,
+  "traces": [
+    {
+      "asset": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
+      "consumer": "Manufacturing tools only (LP115 and production-package builders)",
+      "requestCode": null,
+      "loadPath": "No browser fetch path; county crossing runtime uses county package paths from GRIDLY_COUNTY_REGISTRY",
+      "requestedWhen": "Never by browser runtime",
+      "whyRequired": "Input for deterministic county crossing manufacture, not a deployed runtime input",
+      "wholeFileRequired": "Manufacturing reads the statewide collection; browser requires only already-manufactured county packages",
+      "subsetsConsumed": "County-contained crossing packages",
+      "existingSmallerPackagesSupported": true,
+      "evidence": [
+        "tools/lp115/manufacture-candidate-crossings.mjs",
+        "js/app.js: GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY crossingSource",
+        "Crossing-Packages/*/Production/*-production-crossings.geojson"
+      ]
+    },
+    {
+      "asset": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "consumer": "Montgomery roadway dataset loader, nearest-road/route-intelligence geometry consumers",
+      "requestCode": "js/app.js loadRoadwayDataset -> gridlyResolveRoadwayRuntimeSource -> fetch(roadwaySource.url) -> response.json()",
+      "loadPath": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "requestedWhen": "Lazy, after Montgomery county activation; not at application startup",
+      "whyRequired": "Supplies Montgomery LineString/MultiLineString roadway geometry and names",
+      "wholeFileRequired": "Current loader parses the entire FeatureCollection into roadwaySegmentFeatures",
+      "subsetsConsumed": "All valid line features are retained; downstream consumers chiefly use geometry plus roadway naming/identity properties",
+      "existingSmallerPackagesSupported": false,
+      "evidence": [
+        "js/app.js:48",
+        "js/app.js:769-777",
+        "js/app.js:48816-48873",
+        "data/roadway-runtime-manifest.json montgomery-tx"
+      ]
+    },
+    {
+      "asset": "data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz",
+      "consumer": "No current runtime consumer",
+      "requestCode": "Address runtime can request only entry.path returned by validatedEntry(); current runtime-manifest contains Liberty only",
+      "loadPath": null,
+      "requestedWhen": "Never under the current manifest",
+      "whyRequired": "Not required by the current browser artifact; it is a manufacturing/certification output accidentally admitted by the broad LP183.1 generated-address exception",
+      "wholeFileRequired": false,
+      "subsetsConsumed": "None in current runtime",
+      "existingSmallerPackagesSupported": false,
+      "evidence": [
+        "js/lp1045-txgio-address-runtime.js:4,96-130",
+        "data/generated/lp104/txgio-addresses/runtime-manifest.json",
+        "tools/lp1831/prepare-cloudflare-preview-artifact.mjs EXCLUDE generated exception"
+      ]
+    }
+  ],
+  "serviceWorkerFinding": "service-worker.js contains no reference to any of the three assets and does not precache them."
+}
