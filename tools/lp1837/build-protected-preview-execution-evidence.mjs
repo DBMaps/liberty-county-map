@@ -9,7 +9,7 @@ export const REPORT_DIR='reports/lp1837';
 export const ARTIFACT_ID='sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f';
 export const PROJECT='gridly-preview', HOSTNAME='preview.gridlygo.com';
 const AT='1970-01-01T00:00:00.000Z';
-const SECRET=/(CLOUDFLARE_API_TOKEN["']?\s*[=:]|authorization["']?\s*:|cookie["']?\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key|otp["']?\s*[=:])/i;
+const SECRET=/(CLOUDFLARE_API_TOKEN["']?\s*[=:]|["']authorization["']\s*:|cookie["']?\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key|otp["']?\s*[=:])/i;
 const globalAuthorizationState={deployment:'NOT_AUTHORIZED',distribution:'NOT_AUTHORIZED',activation:'NOT_AUTHORIZED',publicLaunch:'NOT_AUTHORIZED',restore:'NOT_AUTHORIZED',rollback:'NOT_AUTHORIZED',automaticDeployment:'NOT_AUTHORIZED'};
 const pending='NOT_RUN_OWNER_EXECUTION_NOT_CAPTURED';
 const read=(root,file)=>JSON.parse(fs.readFileSync(path.join(root,file),'utf8'));

@@ -2,13 +2,13 @@
   "schemaVersion": "gridly.lp1837.deploymentEvidence.v1",
   "milestone": "LP183.7",
   "generatedAt": "1970-01-01T00:00:00.000Z",
-  "evidenceSource": "NONE_FAIL_CLOSED",
-  "wranglerVersion": null,
+  "evidenceSource": "OWNER_LOCAL_SAFE_SUMMARY",
+  "wranglerVersion": "4.120.0",
   "projectName": "gridly-preview",
   "uploadCommandClass": "WRANGLER_PAGES_DIRECT_UPLOAD",
-  "uploadCount": 0,
-  "deploymentId": null,
-  "deploymentUrl": null,
-  "branch": null,
-  "defaultPagesDevExposure": "NOT_CREATED"
+  "uploadCount": 1,
+  "deploymentId": "458fa7f4-ba68-44c7-82ea-c5e6475e456e",
+  "deploymentUrl": "https://458fa7f4.gridly-preview.pages.dev",
+  "branch": "preview",
+  "defaultPagesDevExposure": "DEPLOYMENT_CREATED_NOT_APPROVED_DISTRIBUTION_HOSTNAME"
 }

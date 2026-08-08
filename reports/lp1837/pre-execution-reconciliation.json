@@ -2,20 +2,21 @@
   "schemaVersion": "gridly.lp1837.preExecutionReconciliation.v1",
   "milestone": "LP183.7",
   "generatedAt": "1970-01-01T00:00:00.000Z",
-  "evidenceSource": "NONE_FAIL_CLOSED",
-  "ownerAuthorization": "NOT_CAPTURED",
-  "authenticated": false,
-  "repositoryCommit": null,
+  "evidenceSource": "OWNER_LOCAL_SAFE_SUMMARY",
+  "ownerAuthorization": "AUTHORIZE_ONE_PROTECTED_PREVIEW_EXECUTION",
+  "authenticated": true,
+  "repositoryCommit": "945527f05918dc002742e76de74165e1c8b2ae41",
   "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
   "fileCount": 493,
   "totalBytes": 155746432,
   "oversizedFileCount": 0,
   "montgomery": {
     "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+    "bytes": 6444342,
     "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1"
   },
   "projectName": "gridly-preview",
-  "preUploadDeploymentCount": null,
-  "preUploadCustomDomainCount": null,
+  "preUploadDeploymentCount": 0,
+  "preUploadCustomDomainCount": 0,
   "protectedRuntimeNativeDiff": "EMPTY"
 }
