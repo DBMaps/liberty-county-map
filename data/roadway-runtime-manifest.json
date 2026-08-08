@@ -26,11 +26,20 @@
     },
     "montgomery-tx": {
       "status": "local_runtime",
-      "url": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
-      "version": "legacy",
-      "sha256": null,
+      "url": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+      "version": "lp1833-v1",
+      "sha256": "037e0a8517b01db9b9411c0e80eb02d9f3bff8dc2df7e6e2dfe12631927e3f74",
       "featureCount": null,
-      "lineGeometryCount": null
+      "lineGeometryCount": null,
+      "compression": "gzip",
+      "compressedBytes": 6057739,
+      "uncompressedBytes": 35232470,
+      "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
+      "source": {
+        "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+        "gitBlob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
+        "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
+      }
     },
     "san-jacinto-tx": {
       "status": "local_runtime",

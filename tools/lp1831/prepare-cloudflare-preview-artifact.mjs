@@ -11,14 +11,19 @@ export const STAGE_DIR = '.artifacts/lp1831/cloudflare-pages';
 export const GENERATED_AT = '1970-01-01T00:00:00.000Z';
 const ENTRY = ['index.html', 'beta-closed.html', 'beta-closure.html', 'manifest.json', 'service-worker.js'];
 const FAMILIES = ['js/', 'css/', 'assets/', 'data/', 'Community-Packages/', 'Crossing-Packages/'];
+const addressManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/generated/lp104/txgio-addresses/runtime-manifest.json'), 'utf8'));
+const roadwayManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/roadway-runtime-manifest.json'), 'utf8'));
+const runtimeAddressPaths = new Set(['data/generated/lp104/txgio-addresses/runtime-manifest.json', ...addressManifest.packages.flatMap(entry => [entry.path, entry.certificate].filter(Boolean))]);
+const supersededCompressedSources = new Set(Object.values(roadwayManifest.counties).filter(entry => entry.compression === 'gzip').map(entry => entry.source?.path).filter(Boolean));
+const generatedRuntimeEntries = Object.values(roadwayManifest.counties).filter(entry => entry.compression === 'gzip').map(entry => ({ path: entry.url, bytes: entry.compressedBytes, sha256: entry.sha256 }));
 const EXCLUDE = [
   /^js\/gridly\.local\.js$/, /\.backup(?:-|\.)/i, /\/source\//, /\/sources\//,
-  /\/generated\/(?!lp104\/txgio-addresses\/)/, /\/evidence\//, /\/fixtures?\//i,
+  /\/generated\/(?!lp104\/txgio-addresses\/)/, /^Crossing-Packages\/Texas\//, /\/evidence\//, /\/fixtures?\//i,
   /(?:^|\/)README(?:\.|$)/i, /(?:^|\/)BUILD-SYSTEM-STATUS\.md$/
 ];
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
-export const isIncluded = file => (ENTRY.includes(file) || FAMILIES.some(x => file.startsWith(x))) && !EXCLUDE.some(x => x.test(file));
+export const isIncluded = file => (ENTRY.includes(file) || FAMILIES.some(x => file.startsWith(x))) && !EXCLUDE.some(x => x.test(file)) && (!file.startsWith('data/generated/lp104/txgio-addresses/') || runtimeAddressPaths.has(file)) && !supersededCompressedSources.has(file);
 
 export function inventory(root = ROOT) {
   const paths = trackedPaths(root).filter(isIncluded);
@@ -27,6 +32,15 @@ export function inventory(root = ROOT) {
     const bytes = blobs.get(file);
     return { path: file, bytes: bytes.length, sha256: sha(bytes) };
   });
+  for (const generated of generatedRuntimeEntries) {
+    if (!isIncluded(generated.path) || paths.includes(generated.path)) continue;
+    const generatedPath = path.join(root, generated.path);
+    if (!fs.existsSync(generatedPath)) throw Error(`governed generated runtime asset missing; run npm run build:lp1833: ${generated.path}`);
+    const bytes = fs.readFileSync(generatedPath);
+    if (bytes.length !== generated.bytes || sha(bytes) !== generated.sha256) throw Error(`governed generated runtime asset identity mismatch: ${generated.path}`);
+    files.push({ path: generated.path, bytes: bytes.length, sha256: sha(bytes) });
+  }
+  files.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
   const missingRequired = ENTRY.filter(x => !files.some(f => f.path === x));
   const oversized = files.filter(x => x.bytes > 25 * 1024 * 1024).map(x => ({ path: x.path, bytes: x.bytes, limitBytes: 25 * 1024 * 1024 }));
   const identityInput = files.map(({ path: p, bytes, sha256 }) => `${p}\0${bytes}\0${sha256}\n`).join('');
@@ -37,7 +51,7 @@ export function build(root = ROOT) {
   const inv = inventory(root);
   const excluded = {
     always: ['.git/', 'node_modules/', 'android/', 'ios/', 'tests/', 'tools/', 'reports/', 'evidence/', 'legal/', 'docs/', 'supabase/', 'scripts/', 'Gridly-Source-Data/', 'repository-root governance/report files', 'secrets and untracked files'],
-    withinIncludedFamilies: ['js/gridly.local.js', 'backup files', 'source/source archives', 'generated staging except tracked runtime address artifacts', 'evidence and fixture directories', 'README and build-status documents']
+    withinIncludedFamilies: ['js/gridly.local.js', 'backup files', 'source/source archives', 'generated staging except packages and certificates exposed by the current address runtime manifest', 'statewide crossing manufacturing sources', 'raw roadway sources superseded by compressed runtime manifest entries', 'evidence and fixture directories', 'README and build-status documents']
   };
   const common = { milestone: 'LP183.1', generatedAt: GENERATED_AT, performsCloudExecution: false };
   const manifest = { schemaVersion: 'gridly.lp1831.deployableArtifactManifest.v1', ...common, source: 'CANONICAL_TRACKED_GIT_BLOBS_AT_HEAD', materializationPolicy: 'Write canonical Git blob bytes at HEAD without working-tree EOL conversion', stagingDirectory: STAGE_DIR, repositoryRootSafeForUpload: false, requiredStaging: true, identityMethod: 'SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF', artifactIdentity: inv.artifactIdentity, fileCount: inv.files.length, totalBytes: inv.files.reduce((n, x) => n + x.bytes, 0), missingRequired: inv.missingRequired, cloudflarePagesOversizedFiles: inv.oversized, files: inv.files };
@@ -55,6 +69,6 @@ export function build(root = ROOT) {
 
 const REPORTS = { 'deployable-artifact-manifest.json': 'manifest', 'cloudflare-pages-command-plan.json': 'commands', 'rollback-plan.json': 'rollback', 'platform-readiness.json': 'readiness', 'lp1831-summary.json': 'summary' };
 export function writeReports(output = path.join(ROOT, REPORT_DIR), root = ROOT) { const made = build(root); fs.mkdirSync(output, { recursive: true }); for (const [name, key] of Object.entries(REPORTS)) fs.writeFileSync(path.join(output, name), json(made[key])); return made; }
-export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) { const inv = inventory(root); const blobs = canonicalBlobs(root, inv.files.map(file => file.path)); fs.rmSync(output, { recursive: true, force: true }); for (const file of inv.files) { const target = path.join(output, file.path); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, blobs.get(file.path)); } return inv; }
+export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) { const inv = inventory(root); const tracked = new Set(trackedPaths(root)); const trackedIncluded = inv.files.filter(file => tracked.has(file.path)).map(file => file.path); const blobs = canonicalBlobs(root, trackedIncluded); fs.rmSync(output, { recursive: true, force: true }); for (const file of inv.files) { const target = path.join(output, file.path); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, blobs.get(file.path) || fs.readFileSync(path.join(root, file.path))); } return inv; }
 export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-')); try { const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); writeReports(a, root); writeReports(b, root); for (const name of Object.keys(REPORTS)) { const x = fs.readFileSync(path.join(a, name)); if (!x.equals(fs.readFileSync(path.join(b, name))) || !x.equals(fs.readFileSync(path.join(root, REPORT_DIR, name)))) throw Error(`deterministic report drift: ${name}`); if (x.includes(13) || (x[0] === 0xef && x[1] === 0xbb && x[2] === 0xbf)) throw Error(`non-canonical encoding: ${name}`); } return true; } finally { fs.rmSync(temp, { recursive: true, force: true }); } }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const mode = process.argv[2] || 'build'; const outputFlag = process.argv.indexOf('--output'); const output = outputFlag < 0 ? undefined : path.resolve(process.argv[outputFlag + 1]); if (outputFlag >= 0 && !process.argv[outputFlag + 1]) throw Error('--output requires a directory'); if (mode === 'build') writeReports(output); else if (mode === 'stage') stage(output); else if (mode === 'verify') verify(); else throw Error(`unknown mode: ${mode}`); console.log(`LP183.1 ${mode} PASS; no Cloudflare command executed.`); }

@@ -55,3 +55,6 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 # LP175 sanitized authoritative provider capture remains local; its SHA-256 is
 # propagated into governed evidence by the deterministic capture command.
 /evidence/lp175/supabase-production-metadata.capture.json
+
+# LP183.3 deterministic Montgomery Pages runtime package; npm run build:lp1833 recreates it.
+/assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz

@@ -1,15 +1,13 @@
 {
-  "schemaVersion": "gridly.lp1831.summary.v1",
-  "milestone": "LP183.1",
+  "schemaVersion": "gridly.lp1833.readiness.v1",
+  "milestone": "LP183.3",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "performsCloudExecution": false,
-  "classification": "PLATFORM_PREPARATION_COMPLETE_OWNER_EXECUTION_REQUIRED",
-  "artifactIdentity": "sha256:8b166ac0216513ad9554299cd559924154cf97c93df9be8dd852fd8918ea875b",
-  "repositoryRootSafeForUpload": false,
-  "stagingRequired": true,
-  "runtimeModified": false,
+  "candidateCommit": "5ca4d1e8b4ecad4eb26924aeacface188c84ad15",
+  "classification": "PAGES_ARTIFACT_COMPATIBILITY_REPAIRED_DEPLOYMENT_REASSESSMENT_REQUIRED",
+  "artifactCompatibility": "PASS",
+  "deploymentReassessmentRequired": true,
   "cloudExecution": "NONE",
-  "ownerActionRequired": true,
   "authorizationState": {
     "deployment": "NOT_AUTHORIZED",
     "distribution": "NOT_AUTHORIZED",
@@ -18,6 +16,5 @@
     "restore": "NOT_AUTHORIZED",
     "rollback": "NOT_AUTHORIZED",
     "automaticDeployment": "NOT_AUTHORIZED"
-  },
-  "blockers": []
+  }
 }
