@@ -6,8 +6,8 @@
   "application": "preview",
   "hostname": "preview.gridlygo.com",
   "policy": "Gridly Preview Approved Testers",
-  "preserved": null,
-  "approvedUser": "NOT_RUN_BINDING_PENDING",
-  "anonymous": "NOT_RUN_BINDING_PENDING",
-  "authenticatedNonApprovedUser": "NOT_RUN_BINDING_PENDING"
+  "preserved": true,
+  "approvedUser": "ALLOW",
+  "anonymous": "DENY",
+  "authenticatedNonApprovedUser": "DENY_BEFORE_OTP"
 }

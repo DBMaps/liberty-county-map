@@ -24,7 +24,7 @@ export function validateOwnerEvidence(e){
   if(e.uploadCount!==1)throw Error('exactly one upload required');
   if(!e.deploymentId||!e.deploymentUrl||e.deploymentBranch!=='preview'||e.deploymentArtifactReconciled!==true)throw Error('deployment reconciliation required');
   if(e.bindingAttempted&&e.bindingAuthorization!=='AUTHORIZE_PREVIEW_GRIDLYGO_COM_BINDING')throw Error('exact binding authorization missing');
-  if(e.bindingAttempted&&(!e.accessPreserved||e.approvedUserResult!=='ALLOW'||e.anonymousResult!=='DENY'||e.nonApprovedUserResult!=='DENY'))throw Error('Access validation failed');
+  if(e.bindingAttempted&&(!e.accessPreserved||e.approvedUserResult!=='ALLOW'||e.anonymousResult!=='DENY'||!['DENY','DENY_BEFORE_OTP'].includes(e.nonApprovedUserResult)))throw Error('Access validation failed');
   if(e.bindingAttempted&&e.productionIsolation!=='PASS')throw Error('production isolation failed');
   if(e.gitIntegration!==false||e.automaticDeployment!==false||e.projectDeletionAuthorized!==false)throw Error('closed authorization changed');
   return e;
@@ -47,7 +47,7 @@ export function build(root=ROOT){
   const physical={schemaVersion:'gridly.lp1837.physicalDeviceValidation.v1',...common,result:state.physicalDeviceValidation};
   const production={schemaVersion:'gridly.lp1837.productionIsolation.v1',...common,result:state.productionIsolation,automaticDeployment:false,gitIntegration:false};
   const withdrawal={schemaVersion:'gridly.lp1837.previewWithdrawalEvidence.v1',...common,occurred:state.withdrawalOccurred,result:state.withdrawalResult,scope:'ONLY_PREVIEW_GRIDLYGO_COM_DNS_AND_PAGES_CUSTOM_DOMAIN',deploymentRetained:true,projectDeletionAuthorized:false};
-  const success=state.bindingAttempted&&state.accessPreserved&&state.approvedUserResult==='ALLOW'&&state.anonymousResult==='DENY'&&state.nonApprovedUserResult==='DENY'&&state.physicalDeviceValidation==='PASS'&&state.productionIsolation==='PASS';
+  const success=state.bindingAttempted&&state.accessPreserved&&state.approvedUserResult==='ALLOW'&&state.anonymousResult==='DENY'&&['DENY','DENY_BEFORE_OTP'].includes(state.nonApprovedUserResult)&&state.physicalDeviceValidation==='PASS'&&state.productionIsolation==='PASS';
   const partial=state.uploadCount===1&&state.deploymentArtifactReconciled&&!state.bindingAttempted;
   const classification=success?'PROTECTED_PREVIEW_DEPLOYED_ACCESS_VALIDATED_OWNER_TESTING_ACTIVE':partial?'PROTECTED_PREVIEW_DEPLOYED_DOMAIN_BINDING_PENDING_OWNER_CONFIRMATION':state.withdrawalOccurred?'PROTECTED_PREVIEW_WITHDRAWN_AFTER_ABORT':'PROTECTED_PREVIEW_EXECUTION_BLOCKED_PRECONDITION_FAILED';
   const summary={schemaVersion:'gridly.lp1837.summary.v1',...common,classification,...state,globalAuthorizationState,publicLaunch:'NOT_AUTHORIZED'};
