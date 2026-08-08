@@ -56,5 +56,9 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 # propagated into governed evidence by the deterministic capture command.
 /evidence/lp175/supabase-production-metadata.capture.json
 
+# LP183.5 authenticated Wrangler output is owner-local and must never be committed.
+/evidence/lp1835/pages-project-owner-evidence.local.json
+/evidence/lp1835/raw/
+
 # LP183.3 deterministic Montgomery Pages runtime package; npm run build:lp1833 recreates it.
 /assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz

@@ -1,0 +1,30 @@
+{
+  "accessChanged": false,
+  "artifactUploaded": false,
+  "automaticDeployment": false,
+  "customDomains": {
+    "count": 0,
+    "previewGridlygoComBound": false
+  },
+  "deployments": {
+    "count": 0,
+    "gridlyArtifactDeployments": 0
+  },
+  "directUpload": false,
+  "dnsChanged": false,
+  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
+  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "gitIntegration": false,
+  "milestone": "LP183.5",
+  "model": "DIRECT_UPLOAD",
+  "ownerConfirmedProjectName": "OWNER_CONFIRMATION_REQUIRED",
+  "project": {
+    "countAfter": 0,
+    "countBefore": 0,
+    "created": false,
+    "defaultHostname": "NOT_ASSIGNED_PROJECT_NOT_CREATED",
+    "name": "OWNER_CONFIRMATION_REQUIRED",
+    "productionBranch": "preview"
+  },
+  "schemaVersion": "gridly.lp1835.pagesProjectEvidence.v1"
+}
