@@ -13,3 +13,8 @@ data/*.json text eol=lf
 data/**/*.json text eol=lf
 evidence/*.json text eol=lf
 evidence/**/*.json text eol=lf
+
+# Oversized governed assets: text is always LF; compressed content is byte-exact.
+Crossing-Packages/Texas/fra-crossings-tx.geojson text eol=lf
+assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson text eol=lf
+data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz binary

@@ -32,15 +32,26 @@ test('staging is reproducible in two isolated directories', () => {
   } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 });
 
-test('controlled content drift changes artifact identity without changing tracked inventory', () => {
+test('working-tree EOL drift cannot change canonical artifact identity', () => {
   const target = path.join(ROOT, 'index.html');
   const original = fs.readFileSync(target);
   const before = inventory().artifactIdentity;
   try {
-    fs.writeFileSync(target, Buffer.concat([original, Buffer.from('\n')]));
-    assert.notEqual(inventory().artifactIdentity, before);
+    fs.writeFileSync(target, Buffer.from(original.toString('utf8').replace(/(?<!\r)\n/g, '\r\n')));
+    assert.equal(inventory().artifactIdentity, before);
   } finally { fs.writeFileSync(target, original); }
   assert.equal(inventory().artifactIdentity, before);
+});
+
+test('staging ignores checkout bytes and writes canonical Git blobs', () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-canonical-stage-'));
+  const target = path.join(ROOT, 'beta-closed.html');
+  const original = fs.readFileSync(target);
+  try {
+    fs.writeFileSync(target, Buffer.from(original.toString('utf8').replace(/(?<!\r)\n/g, '\r\n')));
+    stage(temp);
+    assert.deepEqual(fs.readFileSync(path.join(temp, 'beta-closed.html')), original);
+  } finally { fs.writeFileSync(target, original); fs.rmSync(temp, { recursive: true, force: true }); }
 });
 
 test('reports are fail-closed, secret-safe, and only plan Cloudflare commands', () => {

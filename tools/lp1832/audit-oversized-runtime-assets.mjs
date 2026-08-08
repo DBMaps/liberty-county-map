@@ -5,6 +5,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { canonicalBlob, gitAttributes, sourceIdentity } from '../lp18321/git-asset-identity.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const REPORT_DIR = 'reports/lp1832';
@@ -23,19 +24,19 @@ const common = { milestone: 'LP183.2', generatedAt: GENERATED_AT, performsCloudE
 
 function measurements(root) {
   return Object.fromEntries(ASSETS.map(file => {
-    const bytes = fs.readFileSync(path.join(root, file));
-    return [file, { bytes: bytes.length, mib: Number((bytes.length / 1048576).toFixed(6)), sha256: sha256(bytes), gitTracked: tracked(root, file) }];
+    const bytes = canonicalBlob(root, file);
+    return [file, { bytes: bytes.length, mib: Number((bytes.length / 1048576).toFixed(6)), sha256: sha256(bytes), gitBlobObjectId: sourceIdentity(root, file).gitObjectId, gitAttributes: gitAttributes(root, file), identitySource: 'CANONICAL_GIT_BLOB_AT_HEAD', gitTracked: tracked(root, file) }];
   }));
 }
 
 export function build(root = ROOT) {
   const m = measurements(root);
   const fra = ASSETS[0], montgomery = ASSETS[1], harris = ASSETS[2];
-  const fraJson = JSON.parse(readText(root, fra).replace(/^\ufeff/, ''));
-  const roadJson = JSON.parse(readText(root, montgomery).replace(/^\ufeff/, ''));
+  const fraJson = JSON.parse(canonicalBlob(root, fra).toString('utf8').replace(/^\ufeff/, ''));
+  const roadJson = JSON.parse(canonicalBlob(root, montgomery).toString('utf8').replace(/^\ufeff/, ''));
   const roadMinified = Buffer.from(JSON.stringify(roadJson));
   const roadGzip = zlib.gzipSync(roadMinified, { level: 9, mtime: 0 });
-  const harrisCompressed = fs.readFileSync(path.join(root, harris));
+  const harrisCompressed = canonicalBlob(root, harris);
   const harrisLines = zlib.gunzipSync(harrisCompressed).toString('utf8').trimEnd().split('\n');
   const runtimeManifest = JSON.parse(readText(root, 'data/generated/lp104/txgio-addresses/runtime-manifest.json'));
   const roadProperties = [...new Set(roadJson.features.flatMap(feature => Object.keys(feature.properties || {})))].sort();
