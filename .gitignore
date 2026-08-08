@@ -67,3 +67,8 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 
 # LP183.3 deterministic Montgomery Pages runtime package; npm run build:lp1833 recreates it.
 /assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz
+
+# LP183.1 generated Cloudflare Pages staging is local/recreatable.
+# LP183.7 preserved failed-wrapper attempt markers are owner-local diagnostics.
+/.artifacts/lp1831/
+/evidence/lp1837/.upload-attempted.wrapper-failure-*.local
