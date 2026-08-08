@@ -5,7 +5,7 @@ $evidence=Join-Path $repo 'evidence\lp1837'; $raw=Join-Path $evidence 'raw'; New
 $guard=Join-Path $evidence '.upload-attempted.local'
 $secret='(?i)(CLOUDFLARE_API_TOKEN\s*[=:]\s*\S+|authorization\s*:|cookie\s*:|bearer\s+\S+|access[_-]?token|refresh[_-]?token|session[_-]?token|api[_-]?key|otp\s*[=:])'
 function Assert-Safe([string]$Text){if($Text -match $secret){throw 'Secret-shaped output rejected.'}}
-function Run([string[]]$Args){$text=(& npx --yes wrangler @Args 2>&1|Out-String); if($LASTEXITCODE -ne 0){throw "Wrangler failed: $($Args -join ' ')"}; Assert-Safe $text; return $text.Trim()}
+function Run([string[]]$WranglerArgs){$text=(& npx --yes wrangler @WranglerArgs 2>&1|Out-String); if($LASTEXITCODE -ne 0){throw "Wrangler failed: $($WranglerArgs -join ' ')"}; Assert-Safe $text; return $text.Trim()}
 function Ask([string]$Prompt,[string]$Exact){if((Read-Host $Prompt)-cne $Exact){throw "STOP: exact confirmation '$Exact' was not supplied."}}
 if(-not $env:CLOUDFLARE_API_TOKEN){throw 'Create a temporary least-privilege token outside the repository and set CLOUDFLARE_API_TOKEN only in this process.'}
 try {
