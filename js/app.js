@@ -37506,10 +37506,9 @@ function getGridlyDestinationRouteImpactCardText() {
       ? window.gridlyDestinationRouteImpactAudit()
       : null;
     const decision = buildGridlyDestinationDecisionPresentation({ audit });
-    return [decision.interpretation, decision.reason, `${decision.confidence} · ${decision.freshness}.`]
-      .map((line) => normalizeGridlyUserFacingRoadText(line))
-      .filter((line) => String(line || "").trim())
-      .join("\n");
+    // The persistent map card owns only the at-a-glance decision. Supporting
+    // reason, confidence, and freshness remain in Destination Intelligence.
+    return normalizeGridlyUserFacingRoadText(decision.interpretation);
   } catch (_) {
     return "";
   }
