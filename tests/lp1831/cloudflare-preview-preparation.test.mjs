@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { ROOT, build, inventory, isIncluded, stage } from '../../tools/lp1831/prepare-cloudflare-preview-artifact.mjs';
+import { ROOT, build, inventory, isIncluded, stage, verify } from '../../tools/lp1831/prepare-cloudflare-preview-artifact.mjs';
+import { canonicalBlob, crlfMaterialization } from '../../tools/lp18321/git-asset-identity.mjs';
 
 test('includes the required browser shell and excludes repository-only paths', () => {
   const inv = inventory();
@@ -45,12 +46,17 @@ test('working-tree EOL drift cannot change canonical artifact identity', () => {
 
 test('staging ignores checkout bytes and writes canonical Git blobs', () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-canonical-stage-'));
-  const target = path.join(ROOT, 'beta-closed.html');
+  const file = 'index.html';
+  const target = path.join(ROOT, file);
   const original = fs.readFileSync(target);
+  const canonical = canonicalBlob(ROOT, file);
+  const before = inventory().artifactIdentity;
   try {
-    fs.writeFileSync(target, Buffer.from(original.toString('utf8').replace(/(?<!\r)\n/g, '\r\n')));
-    stage(temp);
-    assert.deepEqual(fs.readFileSync(path.join(temp, 'beta-closed.html')), original);
+    fs.writeFileSync(target, crlfMaterialization(canonical));
+    const staged = stage(temp);
+    assert.deepEqual(fs.readFileSync(path.join(temp, file)), canonical);
+    assert.equal(staged.artifactIdentity, before);
+    assert.equal(verify(), true);
   } finally { fs.writeFileSync(target, original); fs.rmSync(temp, { recursive: true, force: true }); }
 });
 
