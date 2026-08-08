@@ -1,0 +1,69 @@
+{
+  "apiControl": {
+    "endpoint": "/accounts/{account_id}/pages/projects/{project_name}/domains/{domain_name}",
+    "executionOccurred": false,
+    "method": "DELETE",
+    "purpose": "Delete a Pages project's domain.",
+    "requiredPermission": "Pages Write",
+    "targetIfSeparatelyAuthorized": {
+      "account": "VERIFIED_GRIDLY_CLOUDFLARE_ACCOUNT",
+      "domain": "preview.gridlygo.com",
+      "project": "gridly-preview"
+    }
+  },
+  "classification": "PAGES_CUSTOM_DOMAIN_REMOVAL_CONTROL_EVIDENCE_CLOSED",
+  "dashboardControl": {
+    "executionOccurred": false,
+    "procedure": [
+      "Open the DNS Records page for gridlygo.com.",
+      "Locate the Pages-associated CNAME record for preview.gridlygo.com.",
+      "Select Edit, then select Delete to remove the preview-specific DNS record.",
+      "Open Workers & Pages, select gridly-preview, then open Custom domains.",
+      "Open the three-dot menu for preview.gridlygo.com and select Remove domain."
+    ]
+  },
+  "domainApiFamily": [
+    "GET domains",
+    "GET domain",
+    "POST domain",
+    "PATCH domain",
+    "DELETE domain"
+  ],
+  "evidenceClass": "AUTHORITATIVE_PLATFORM_DOCUMENTED_CONTROL",
+  "generatedAt": "2026-08-08T00:00:00.000Z",
+  "liveRollbackExecuted": false,
+  "milestone": "LP183.5A",
+  "ownerExecutedRemoveTest": false,
+  "provenance": [
+    {
+      "capability": "Dashboard removal requires deleting the Pages CNAME and selecting Remove domain in the Pages custom-domain menu.",
+      "executionOccurred": false,
+      "provider": "Cloudflare",
+      "sourceType": "OFFICIAL_PROVIDER_DOCUMENTATION",
+      "title": "Custom domains · Cloudflare Pages docs",
+      "url": "https://developers.cloudflare.com/pages/configuration/custom-domains/",
+      "verifiedOn": "2026-08-08"
+    },
+    {
+      "capability": "DELETE /accounts/{account_id}/pages/projects/{project_name}/domains/{domain_name} with Pages Write permission.",
+      "executionOccurred": false,
+      "provider": "Cloudflare",
+      "sourceType": "OFFICIAL_PROVIDER_DOCUMENTATION",
+      "title": "Delete a Pages project domain · Cloudflare API",
+      "url": "https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/domains/methods/delete/",
+      "verifiedOn": "2026-08-08"
+    },
+    {
+      "capability": "Pages project domain API family includes get, add, patch, and delete controls.",
+      "executionOccurred": false,
+      "provider": "Cloudflare",
+      "sourceType": "OFFICIAL_PROVIDER_DOCUMENTATION",
+      "title": "Pages project domains · Cloudflare API",
+      "url": "https://developers.cloudflare.com/api/resources/pages/subresources/projects/subresources/domains/",
+      "verifiedOn": "2026-08-08"
+    }
+  ],
+  "schemaVersion": "gridly.lp1835a.pagesCustomDomainRemovalControl.v1",
+  "secretMaterialStored": false,
+  "status": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION"
+}

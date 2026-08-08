@@ -1,0 +1,48 @@
+{
+  "controls": {
+    "dnsDelete": {
+      "evidenceClass": "OWNER_OBSERVED_AUTHENTICATED_DASHBOARD_CONTROL",
+      "executedInLp1835a": false,
+      "status": "PROVEN"
+    },
+    "pagesCustomDomainRemove": {
+      "evidenceClass": "AUTHORITATIVE_PLATFORM_DOCUMENTED_CONTROL",
+      "executedInLp1835a": false,
+      "status": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION"
+    },
+    "projectDeleteFallback": {
+      "endpoint": "/accounts/{account_id}/pages/projects/{project_name}",
+      "executionOccurred": false,
+      "method": "DELETE",
+      "provenance": {
+        "capability": "DELETE /accounts/{account_id}/pages/projects/{project_name}; associated custom-domain CNAME removal is required before project deletion.",
+        "executionOccurred": false,
+        "provider": "Cloudflare",
+        "sourceType": "OFFICIAL_PROVIDER_DOCUMENTATION",
+        "title": "Delete a Pages project · Cloudflare API",
+        "url": "https://developers.cloudflare.com/api/resources/pages/subresources/projects/methods/delete/",
+        "verifiedOn": "2026-08-08"
+      },
+      "role": "LAST_RESORT_NOT_PREFERRED",
+      "separatelyAuthorizationGated": true,
+      "status": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION"
+    }
+  },
+  "generatedAt": "2026-08-08T00:00:00.000Z",
+  "milestone": "LP183.5A",
+  "preferredRollback": "REMOVE_PREVIEW_SPECIFIC_DNS_AND_CUSTOM_DOMAIN_PUBLICATION",
+  "readiness": "ROLLBACK_CONTROLS_EVIDENCE_COMPLETE_EXECUTION_NOT_AUTHORIZED",
+  "rollbackAuthorization": "NOT_AUTHORIZED",
+  "rollbackExecuted": false,
+  "schemaVersion": "gridly.lp1835a.firstDeploymentRollbackClosure.v1",
+  "sequence": [
+    "Locate the preview.gridlygo.com Pages-associated DNS record.",
+    "Delete or remove that preview-specific DNS record.",
+    "Open Workers & Pages -> gridly-preview -> Custom domains.",
+    "Use the custom-domain menu for preview.gridlygo.com.",
+    "Select Remove domain; or, only with separate API authorization, call DELETE /accounts/{account_id}/pages/projects/{project_name}/domains/{domain_name} for the verified Gridly account, gridly-preview, and preview.gridlygo.com.",
+    "Verify preview.gridlygo.com no longer serves the Gridly candidate.",
+    "Verify gridlygo.com production remains unaffected.",
+    "Verify beta-closed surfaces remain unaffected."
+  ]
+}
