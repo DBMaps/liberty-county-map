@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "gridly.lp1836.rollbackReadiness.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "evidenceSources": [
+    "reports/lp1835/rollback-control-evidence.json",
+    "reports/lp1835a/first-deployment-rollback-closure.json"
+  ],
+  "dnsRemoval": {
+    "status": "PROVEN",
+    "evidenceClass": "OWNER_OBSERVED_AUTHENTICATED_DASHBOARD_CONTROL"
+  },
+  "pagesCustomDomainRemoval": {
+    "status": "PROVEN_BY_AUTHORITATIVE_PLATFORM_DOCUMENTATION",
+    "method": "DELETE",
+    "endpoint": "/accounts/{account_id}/pages/projects/{project_name}/domains/{domain_name}",
+    "requiredPermission": "Pages Write"
+  },
+  "projectDeletionFallback": "DOCUMENTED_LAST_RESORT_SEPARATELY_AUTHORIZED",
+  "postRemovalVerificationPlan": "DEFINED",
+  "firstDeployment": {
+    "readiness": "ROLLBACK_CONTROLS_EVIDENCE_COMPLETE_EXECUTION_NOT_AUTHORIZED",
+    "target": "NO_PREVIEW_STATE",
+    "knownGoodRollback": "NOT_YET_AVAILABLE",
+    "rollbackExecuted": false,
+    "sequence": [
+      "Stop further testing/distribution",
+      "Identify the preview.gridlygo.com DNS record",
+      "Delete or disable only preview-specific DNS publication",
+      "Remove preview.gridlygo.com from gridly-preview Pages custom domains",
+      "Verify preview.gridlygo.com no longer serves the Gridly candidate",
+      "Verify gridlygo.com production remains unchanged",
+      "Verify beta-closed surfaces remain unchanged",
+      "Capture rollback evidence",
+      "Retain deployment/artifact evidence for diagnosis"
+    ]
+  },
+  "laterKnownGoodRollback": {
+    "status": "AVAILABLE_ONLY_AFTER_FIRST_SUCCESSFUL_VALIDATED_PREVIEW",
+    "retain": [
+      "immutable artifact identity",
+      "staged artifact identity",
+      "deployment ID",
+      "deployment URL",
+      "validation evidence"
+    ],
+    "method": "NEW_EXPLICIT_DIRECT_UPLOAD_OF_VERIFIED_KNOWN_GOOD_ARTIFACT_NOT_SILENT_MUTATION"
+  },
+  "projectDeletionPermitted": false,
+  "rollbackAuthorization": "NOT_AUTHORIZED"
+}

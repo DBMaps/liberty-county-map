@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "gridly.lp1836.accessReadiness.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "evidenceStatus": "OWNER_VERIFIED_EXTERNAL_CONFIGURATION",
+  "apiVerified": false,
+  "application": {
+    "name": "preview",
+    "hostname": "preview.gridlygo.com",
+    "authentication": "One-time PIN",
+    "acceptAllAvailableIdentityProviders": false,
+    "allowedIdentityProvider": "One-time PIN",
+    "cloudflareOneClientAuthentication": "OFF",
+    "browserRdpSshVnc": "OFF",
+    "sessionDuration": "24 hours"
+  },
+  "policy": {
+    "name": "Gridly Preview Approved Testers",
+    "action": "Allow",
+    "include": "Emails",
+    "match": "exact approved owner/tester email"
+  },
+  "liveTests": {
+    "approvedUserAdmission": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+    "anonymousDenial": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST",
+    "authenticatedNonApprovedEmailDenial": "NOT_RUN_LIVE_PREVIEW_DOES_NOT_EXIST"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "gridly.lp1836.candidateArtifactReconciliation.v1",
+  "milestone": "LP183.6",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "ZERO_EXTERNAL_CLOUDFLARE_CHANGES",
+  "currentMainCommit": "080f2de8bca6e1d7fd0a860f1546d7c6cf0b8e72",
+  "lp1833GovernedRuntimeCandidate": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+  "lp1833bPortabilityCandidate": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+  "lp1835ProjectEvidenceCommit": "e2c1ae49da1048b1165c45ae8d54940865057ac9",
+  "lp1835aRollbackEvidenceCommit": "1e2db72b92f219f8acb08e395d1d1336c5d6c95f",
+  "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+  "fileCount": 493,
+  "totalBytes": 155746432,
+  "maximumFile": {
+    "path": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
+    "bytes": 17042129,
+    "sha256": "4068dcede64b379c10fdf5bf187da28669fcf394130d236930a2ac988ac1547a"
+  },
+  "oversizedFileCount": 0,
+  "pagesLimitBytes": 26214400,
+  "stagingDirectory": ".artifacts/lp1831/cloudflare-pages",
+  "exactGovernedFiles": true,
+  "exclusions": {
+    "statewideFraManufacturingSourceAbsent": true,
+    "unusedHarrisAddressPackageAbsent": true,
+    "montgomeryRawGeojsonAbsent": true
+  },
+  "montgomery": {
+    "schemaVersion": "gridly.lp1833.montgomeryPackage.v1",
+    "milestone": "LP183.3",
+    "generatedAt": "1970-01-01T00:00:00.000Z",
+    "performsCloudExecution": false,
+    "candidateCommit": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
+    "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+    "compression": "gzip",
+    "compressedBytes": 6444342,
+    "uncompressedBytes": 35232470,
+    "sha256": "2d7a52fdfbab8549a92b6724d557e9e26c4b089d523961d41b7ddc7b94c5e6b1",
+    "source": {
+      "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+      "gitBlob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
+      "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
+    },
+    "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
+    "deterministicRegeneration": {
+      "algorithm": "gzip",
+      "implementation": "fflate@0.8.3",
+      "level": 9,
+      "mtime": 0,
+      "byteIdentical": true,
+      "command": "npm run build:lp1833"
+    },
+    "present": true,
+    "repositoryState": "GENERATED_UNTRACKED_IGNORED"
+  },
+  "arbitraryUntrackedAdmission": "DENIED_BY_GOVERNED_MANIFEST",
+  "binaryPullRequestBlocker": "NONE",
+  "protectedRuntimeNativeDiff": "EMPTY"
+}
