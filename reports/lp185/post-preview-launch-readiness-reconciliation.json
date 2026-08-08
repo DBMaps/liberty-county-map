@@ -1,0 +1,769 @@
+{
+  "schemaVersion": "gridly.lp185.postPreviewReconciliation.v1",
+  "milestone": "LP185",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsRuntimeChange": false,
+  "performsDeploymentChange": false,
+  "performsActivationChange": false,
+  "performsDistributionChange": false,
+  "performsStoreSubmission": false,
+  "protectedArtifactsModified": false,
+  "startingClassification": "PROTECTED_PREVIEW_DEPLOYED_ACCESS_VALIDATED_OWNER_TESTING_ACTIVE",
+  "declaration": "PROTECTED PREVIEW SUCCESS DOES NOT AUTHORIZE PUBLIC LAUNCH.",
+  "statusVocabulary": [
+    "COMPLETE",
+    "REPOSITORY_READY",
+    "PARTIALLY_COMPLETE",
+    "OWNER_ACTION_REQUIRED",
+    "ATTORNEY_OR_POLICY_REVIEW_REQUIRED",
+    "PLATFORM_ACTION_REQUIRED",
+    "PHYSICAL_DEVICE_EVIDENCE_REQUIRED",
+    "PRODUCTION_EVIDENCE_REQUIRED",
+    "NOT_STARTED",
+    "NOT_APPLICABLE",
+    "UNKNOWN_FAIL_CLOSED"
+  ],
+  "protectedPreviewStatus": {
+    "status": "COMPLETE",
+    "deploymentId": "458fa7f4-ba68-44c7-82ea-c5e6475e456e",
+    "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+    "accessValidation": "PASS",
+    "productionIsolation": "PASS",
+    "requiresRedeployment": false
+  },
+  "globalAuthorizationState": {
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "activation": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED"
+  },
+  "launchGates": [
+    {
+      "id": "LP185-G01",
+      "name": "Protected preview reconciliation",
+      "category": "protected-preview",
+      "status": "COMPLETE",
+      "blockingStoreSubmission": false,
+      "blockingPublicLaunch": false,
+      "evidence": [
+        "reports/lp1837/lp1837-summary.json: deployment/artifact, Access, device-browser validation, isolation and token closure are recorded"
+      ],
+      "remainingActions": [],
+      "ownerDependency": false,
+      "platformDependency": false,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Bounded preview success only; no redeployment is required. PROTECTED PREVIEW SUCCESS DOES NOT AUTHORIZE PUBLIC LAUNCH."
+    },
+    {
+      "id": "LP185-G02",
+      "name": "Final consumer legal approval",
+      "category": "legal",
+      "status": "ATTORNEY_OR_POLICY_REVIEW_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1841d/legal-readiness-reassessment.json: draftOnly=true; final approval required",
+        "legal/privacy-policy-draft.md and legal/terms-of-use-draft.md: consumer drafts"
+      ],
+      "remainingActions": [
+        "Resolve attorney-review register; approve dated final Privacy Policy and Terms; set effective date; preserve age 16 and Texas decisions subject to counsel."
+      ],
+      "ownerDependency": true,
+      "platformDependency": false,
+      "legalDependency": true,
+      "physicalDeviceDependency": false,
+      "notes": "Draft completeness and owner decisions are not attorney approval."
+    },
+    {
+      "id": "LP185-G03",
+      "name": "Operational support and privacy contacts",
+      "category": "contacts",
+      "status": "OWNER_ACTION_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1841d/legal-readiness-reassessment.json: mailbox operation remains unproved"
+      ],
+      "remainingActions": [
+        "Prove support@gridlygo.com and privacy@gridlygo.com can receive and answer mail without capturing message contents or credentials."
+      ],
+      "ownerDependency": true,
+      "platformDependency": false,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Planned addresses are not operational evidence."
+    },
+    {
+      "id": "LP185-G04",
+      "name": "Apple App Privacy declaration",
+      "category": "apple-privacy",
+      "status": "ATTORNEY_OR_POLICY_REVIEW_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1841b/apple-app-privacy-draft.json: draft only",
+        "reports/lp1841b/store-privacy-uncertainty-register.json: Apple location/content/id/search and retention questions open"
+      ],
+      "remainingActions": [
+        "Resolve precise-location collection, transient provider transmission, stored report coordinates, linkage, sharing, purpose, retention and deletion interpretations; enter the approved mapping in App Store Connect."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": true,
+      "physicalDeviceDependency": false,
+      "notes": "Repository mapping is not Apple review or approval."
+    },
+    {
+      "id": "LP185-G05",
+      "name": "Google Play Data Safety declaration",
+      "category": "google-privacy",
+      "status": "ATTORNEY_OR_POLICY_REVIEW_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1841b/google-play-data-safety-draft.json: draft only",
+        "reports/lp1841b/store-privacy-uncertainty-register.json: Google sharing/content/id/deletion questions open"
+      ],
+      "remainingActions": [
+        "Resolve taxonomy and sharing/exclusion treatment; separately declare server-stored community-report coordinates and transient OSRM/Nominatim/provider requests; enter approved answers in Play Console."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": true,
+      "physicalDeviceDependency": false,
+      "notes": "Repository mapping is not Google review or approval."
+    },
+    {
+      "id": "LP185-G06",
+      "name": "Subscription and purchase implementation",
+      "category": "subscriptions",
+      "status": "NOT_STARTED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1841d/owner-decision-register.json: $2.99/month auto-renewing, no-free-version business decision",
+        "Repository audit: no store product IDs, purchase/entitlement/restore implementation, configured products, or production validation evidence"
+      ],
+      "remainingActions": [
+        "Implement governed purchase, entitlement, cancellation/disclosure and restore flows; configure Apple and Google products separately; validate production purchase receipts later."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": true,
+      "physicalDeviceDependency": false,
+      "notes": "Business decision COMPLETE. Apple product, Google product, architecture, restore handling, product IDs and production validation NOT_STARTED."
+    },
+    {
+      "id": "LP185-G07",
+      "name": "Android signed production build",
+      "category": "android-build",
+      "status": "PARTIALLY_COMPLETE",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "android/app/build.gradle: com.gridly.app; versionCode 1/versionName 1.0; no release/signing block",
+        "android/gradlew and wrapper properties exist; tracked wrapper JAR absent",
+        "reports/lp178/launch-readiness-report.json: no Android build PASS"
+      ],
+      "remainingActions": [
+        "Complete repository-safe release configuration; owner supplies signing externally; produce a signed AAB and capture hash/build identity; upload only under later authorization."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Native project exists. No keystore/secrets are expected in Git. No release artifact or Play-ready AAB evidence exists."
+    },
+    {
+      "id": "LP185-G08",
+      "name": "iOS archive and signing",
+      "category": "ios-build",
+      "status": "PARTIALLY_COMPLETE",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "capacitor.config.json: appId com.gridly.app, appName Gridly",
+        "ios/App/App.xcodeproj/project.pbxproj: placeholder project has no build settings",
+        "reports/lp178/launch-readiness-report.json: macOS/Xcode and signing externally required"
+      ],
+      "remainingActions": [
+        "Complete Xcode project/version/team configuration on governed macOS; archive/sign; capture archive identity; upload only under later authorization."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Source presence is not archive success. No archive, IPA, TestFlight or App Store Connect build evidence exists."
+    },
+    {
+      "id": "LP185-G09",
+      "name": "Physical packaged Android validation",
+      "category": "android-device",
+      "status": "PHYSICAL_DEVICE_EVIDENCE_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp178/launch-readiness-report.json: no real packaged Android evidence",
+        "reports/lp1837/physical-device-validation.json: protected browser preview only"
+      ],
+      "remainingActions": [
+        "Exercise the signed/closed-test Android app on physical supported hardware and retain non-sensitive results."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": true,
+      "notes": "Browser preview evidence is explicitly not native Android evidence."
+    },
+    {
+      "id": "LP185-G10",
+      "name": "Physical packaged iPhone validation",
+      "category": "ios-device",
+      "status": "PHYSICAL_DEVICE_EVIDENCE_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp178/launch-readiness-report.json: no real packaged iOS evidence",
+        "reports/lp1837/physical-device-validation.json: Safari/browser preview only"
+      ],
+      "remainingActions": [
+        "Exercise the TestFlight/native iOS app on physical supported iPhone hardware and retain non-sensitive results."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": true,
+      "notes": "Safari/PWA evidence is explicitly not packaged-iOS evidence."
+    },
+    {
+      "id": "LP185-G11",
+      "name": "Store metadata and assets",
+      "category": "store-assets",
+      "status": "PARTIALLY_COMPLETE",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "assets/store/icons/gridly-icon-master-1024.png exists",
+        "assets/store/apple and assets/store/google contain placeholders; screenshot directories contain no tracked screenshots",
+        "docs/STORE/ contains draft copy/checklists"
+      ],
+      "remainingActions": [
+        "Approve listing copy, category/rating, URLs and review notes; create/validate required platform renditions, screenshots and Google graphic; upload in each console and capture status."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Existence does not prove compliance, final approval, or upload."
+    },
+    {
+      "id": "LP185-G12",
+      "name": "Apple account and commercial console",
+      "category": "apple-account",
+      "status": "PLATFORM_ACTION_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp178/launch-readiness-report.json: no governed Apple account evidence"
+      ],
+      "remainingActions": [
+        "Prove entity enrollment, App Store Connect role/app record, agreements and paid-app tax/banking status without capturing sensitive financial data."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "OWNER_OR_PLATFORM_EVIDENCE_REQUIRED."
+    },
+    {
+      "id": "LP185-G13",
+      "name": "Google account and commercial console",
+      "category": "google-account",
+      "status": "PLATFORM_ACTION_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp178/launch-readiness-report.json: no governed Google account evidence"
+      ],
+      "remainingActions": [
+        "Prove Play Console/app record, merchant/payments requirements, agreements and applicable closed-testing track/process without sensitive data."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "OWNER_OR_PLATFORM_EVIDENCE_REQUIRED."
+    },
+    {
+      "id": "LP185-G14",
+      "name": "Production backend, configuration and secrets",
+      "category": "production-config",
+      "status": "PRODUCTION_EVIDENCE_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp168/production-readiness.json: production validation not certified",
+        "reports/lp169 and lp17x: governance preparation does not establish current live production configuration"
+      ],
+      "remainingActions": [
+        "Attest required variable presence/ownership (not values); validate production Supabase migrations/RLS/functions/storage, provider configuration, separation, least privilege and leak controls."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Owner/platform-managed secret absence from Git is correct; operational evidence remains required."
+    },
+    {
+      "id": "LP185-G15",
+      "name": "Statewide Texas runtime scope",
+      "category": "statewide-runtime",
+      "status": "PARTIALLY_COMPLETE",
+      "blockingStoreSubmission": false,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp147/statewide-storage-publication.json: 254 packages and certificates validated/matching",
+        "reports/lp151/validation-summary.json: 254 identities, exactly 28 operational counties, zero activation/deployment",
+        "reports/lp178/launch-readiness-report.json: blanket LP167-B001 retired; 11 county-specific restrictions preserved"
+      ],
+      "remainingActions": [
+        "Reconcile and approve the truthful launch cohort; resolve 11 county-specific restrictions before claiming unrestricted statewide Texas runtime coverage."
+      ],
+      "ownerDependency": true,
+      "platformDependency": false,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Manufactured/certified: 254. Runtime operational: 28. Deployment/activation: 0. Statewide architecture/manufacturing does not equal statewide admission."
+    },
+    {
+      "id": "LP185-G16",
+      "name": "Production operations and monitoring",
+      "category": "operations",
+      "status": "PRODUCTION_EVIDENCE_REQUIRED",
+      "blockingStoreSubmission": false,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp170 through reports/lp174: runbooks/evidence framework",
+        "reports/lp1837/preview-withdrawal-evidence.json: preview-only withdrawal evidence"
+      ],
+      "remainingActions": [
+        "Prove live health checks, monitoring/telemetry/error visibility, escalation, incident response, deployment verification and production rollback/withdrawal ownership; document store-release rollback limitations."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "Repository preparation and preview controls are not live production proof."
+    },
+    {
+      "id": "LP185-G17",
+      "name": "Public legal/support web and root domain",
+      "category": "public-web",
+      "status": "OWNER_ACTION_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1837/production-isolation.json: gridlygo.com unchanged; preview isolated",
+        "reports/lp180/gridlygo-domain-readiness.json: pre-existing parked/lander surface"
+      ],
+      "remainingActions": [
+        "Publish approved privacy, terms and support surfaces at stable public URLs in a later authorized milestone; validate them before store submission; decide and separately authorize any root-domain/DNS change."
+      ],
+      "ownerDependency": true,
+      "platformDependency": true,
+      "legalDependency": true,
+      "physicalDeviceDependency": false,
+      "notes": "No DNS, publication or preview promotion is authorized here."
+    },
+    {
+      "id": "LP185-G18",
+      "name": "Final owner submission and launch authorization",
+      "category": "authorization",
+      "status": "OWNER_ACTION_REQUIRED",
+      "blockingStoreSubmission": true,
+      "blockingPublicLaunch": true,
+      "evidence": [
+        "reports/lp1837/lp1837-summary.json: all global authorizations NOT_AUTHORIZED",
+        "reports/lp167/lp167-summary.json: distribution/activation/public launch closed"
+      ],
+      "remainingActions": [
+        "After prerequisite evidence, issue explicit scoped authorizations separately for store submission, distribution/release, production activation and public launch."
+      ],
+      "ownerDependency": true,
+      "platformDependency": false,
+      "legalDependency": false,
+      "physicalDeviceDependency": false,
+      "notes": "LP185 grants none of these authorizations."
+    }
+  ],
+  "countsByStatus": {
+    "COMPLETE": 1,
+    "REPOSITORY_READY": 0,
+    "PARTIALLY_COMPLETE": 4,
+    "OWNER_ACTION_REQUIRED": 3,
+    "ATTORNEY_OR_POLICY_REVIEW_REQUIRED": 3,
+    "PLATFORM_ACTION_REQUIRED": 2,
+    "PHYSICAL_DEVICE_EVIDENCE_REQUIRED": 2,
+    "PRODUCTION_EVIDENCE_REQUIRED": 2,
+    "NOT_STARTED": 1,
+    "NOT_APPLICABLE": 0,
+    "UNKNOWN_FAIL_CLOSED": 0
+  },
+  "storeSubmissionReadiness": {
+    "Apple": {
+      "status": "NOT_READY",
+      "blockingGateIds": [
+        "LP185-G02",
+        "LP185-G03",
+        "LP185-G04",
+        "LP185-G06",
+        "LP185-G08",
+        "LP185-G10",
+        "LP185-G11",
+        "LP185-G12",
+        "LP185-G14",
+        "LP185-G17",
+        "LP185-G18"
+      ]
+    },
+    "Google": {
+      "status": "NOT_READY",
+      "blockingGateIds": [
+        "LP185-G02",
+        "LP185-G03",
+        "LP185-G05",
+        "LP185-G06",
+        "LP185-G07",
+        "LP185-G09",
+        "LP185-G11",
+        "LP185-G13",
+        "LP185-G14",
+        "LP185-G17",
+        "LP185-G18"
+      ]
+    }
+  },
+  "publicLaunchReadiness": {
+    "status": "NOT_READY",
+    "blockingGateIds": [
+      "LP185-G02",
+      "LP185-G03",
+      "LP185-G04",
+      "LP185-G05",
+      "LP185-G06",
+      "LP185-G07",
+      "LP185-G08",
+      "LP185-G09",
+      "LP185-G10",
+      "LP185-G11",
+      "LP185-G12",
+      "LP185-G13",
+      "LP185-G14",
+      "LP185-G15",
+      "LP185-G16",
+      "LP185-G17",
+      "LP185-G18"
+    ]
+  },
+  "remainingRepositoryActions": [
+    {
+      "gateId": "LP185-G06",
+      "action": "Implement governed purchase, entitlement, cancellation/disclosure and restore flows; configure Apple and Google products separately; validate production purchase receipts later."
+    },
+    {
+      "gateId": "LP185-G07",
+      "action": "Complete repository-safe release configuration; owner supplies signing externally; produce a signed AAB and capture hash/build identity; upload only under later authorization."
+    },
+    {
+      "gateId": "LP185-G08",
+      "action": "Complete Xcode project/version/team configuration on governed macOS; archive/sign; capture archive identity; upload only under later authorization."
+    },
+    {
+      "gateId": "LP185-G11",
+      "action": "Approve listing copy, category/rating, URLs and review notes; create/validate required platform renditions, screenshots and Google graphic; upload in each console and capture status."
+    },
+    {
+      "gateId": "LP185-G15",
+      "action": "Reconcile and approve the truthful launch cohort; resolve 11 county-specific restrictions before claiming unrestricted statewide Texas runtime coverage."
+    }
+  ],
+  "remainingOwnerActions": [
+    {
+      "gateId": "LP185-G02",
+      "action": "Resolve attorney-review register; approve dated final Privacy Policy and Terms; set effective date; preserve age 16 and Texas decisions subject to counsel."
+    },
+    {
+      "gateId": "LP185-G03",
+      "action": "Prove support@gridlygo.com and privacy@gridlygo.com can receive and answer mail without capturing message contents or credentials."
+    },
+    {
+      "gateId": "LP185-G04",
+      "action": "Resolve precise-location collection, transient provider transmission, stored report coordinates, linkage, sharing, purpose, retention and deletion interpretations; enter the approved mapping in App Store Connect."
+    },
+    {
+      "gateId": "LP185-G05",
+      "action": "Resolve taxonomy and sharing/exclusion treatment; separately declare server-stored community-report coordinates and transient OSRM/Nominatim/provider requests; enter approved answers in Play Console."
+    },
+    {
+      "gateId": "LP185-G06",
+      "action": "Implement governed purchase, entitlement, cancellation/disclosure and restore flows; configure Apple and Google products separately; validate production purchase receipts later."
+    },
+    {
+      "gateId": "LP185-G07",
+      "action": "Complete repository-safe release configuration; owner supplies signing externally; produce a signed AAB and capture hash/build identity; upload only under later authorization."
+    },
+    {
+      "gateId": "LP185-G08",
+      "action": "Complete Xcode project/version/team configuration on governed macOS; archive/sign; capture archive identity; upload only under later authorization."
+    },
+    {
+      "gateId": "LP185-G09",
+      "action": "Exercise the signed/closed-test Android app on physical supported hardware and retain non-sensitive results."
+    },
+    {
+      "gateId": "LP185-G10",
+      "action": "Exercise the TestFlight/native iOS app on physical supported iPhone hardware and retain non-sensitive results."
+    },
+    {
+      "gateId": "LP185-G11",
+      "action": "Approve listing copy, category/rating, URLs and review notes; create/validate required platform renditions, screenshots and Google graphic; upload in each console and capture status."
+    },
+    {
+      "gateId": "LP185-G12",
+      "action": "Prove entity enrollment, App Store Connect role/app record, agreements and paid-app tax/banking status without capturing sensitive financial data."
+    },
+    {
+      "gateId": "LP185-G13",
+      "action": "Prove Play Console/app record, merchant/payments requirements, agreements and applicable closed-testing track/process without sensitive data."
+    },
+    {
+      "gateId": "LP185-G14",
+      "action": "Attest required variable presence/ownership (not values); validate production Supabase migrations/RLS/functions/storage, provider configuration, separation, least privilege and leak controls."
+    },
+    {
+      "gateId": "LP185-G15",
+      "action": "Reconcile and approve the truthful launch cohort; resolve 11 county-specific restrictions before claiming unrestricted statewide Texas runtime coverage."
+    },
+    {
+      "gateId": "LP185-G16",
+      "action": "Prove live health checks, monitoring/telemetry/error visibility, escalation, incident response, deployment verification and production rollback/withdrawal ownership; document store-release rollback limitations."
+    },
+    {
+      "gateId": "LP185-G17",
+      "action": "Publish approved privacy, terms and support surfaces at stable public URLs in a later authorized milestone; validate them before store submission; decide and separately authorize any root-domain/DNS change."
+    },
+    {
+      "gateId": "LP185-G18",
+      "action": "After prerequisite evidence, issue explicit scoped authorizations separately for store submission, distribution/release, production activation and public launch."
+    }
+  ],
+  "remainingLegalActions": [
+    {
+      "gateId": "LP185-G02",
+      "action": "Resolve attorney-review register; approve dated final Privacy Policy and Terms; set effective date; preserve age 16 and Texas decisions subject to counsel."
+    },
+    {
+      "gateId": "LP185-G04",
+      "action": "Resolve precise-location collection, transient provider transmission, stored report coordinates, linkage, sharing, purpose, retention and deletion interpretations; enter the approved mapping in App Store Connect."
+    },
+    {
+      "gateId": "LP185-G05",
+      "action": "Resolve taxonomy and sharing/exclusion treatment; separately declare server-stored community-report coordinates and transient OSRM/Nominatim/provider requests; enter approved answers in Play Console."
+    },
+    {
+      "gateId": "LP185-G06",
+      "action": "Implement governed purchase, entitlement, cancellation/disclosure and restore flows; configure Apple and Google products separately; validate production purchase receipts later."
+    },
+    {
+      "gateId": "LP185-G17",
+      "action": "Publish approved privacy, terms and support surfaces at stable public URLs in a later authorized milestone; validate them before store submission; decide and separately authorize any root-domain/DNS change."
+    }
+  ],
+  "remainingPhysicalDeviceActions": [
+    {
+      "gateId": "LP185-G09",
+      "action": "Exercise the signed/closed-test Android app on physical supported hardware and retain non-sensitive results."
+    },
+    {
+      "gateId": "LP185-G10",
+      "action": "Exercise the TestFlight/native iOS app on physical supported iPhone hardware and retain non-sensitive results."
+    }
+  ],
+  "remainingAppleActions": [
+    "Resolve/finalize App Privacy mapping",
+    "Prove Apple account/app/commercial prerequisites",
+    "Configure subscription after authorization",
+    "Archive/sign, TestFlight-test, upload metadata/build, then separately authorize submission"
+  ],
+  "remainingGoogleActions": [
+    "Resolve/finalize Data Safety mapping",
+    "Prove Play account/app/merchant/testing prerequisites",
+    "Configure subscription after authorization",
+    "Sign AAB, closed-test, upload metadata/build, then separately authorize submission"
+  ],
+  "remainingProductionActions": [
+    {
+      "gateId": "LP185-G14",
+      "action": "Attest required variable presence/ownership (not values); validate production Supabase migrations/RLS/functions/storage, provider configuration, separation, least privilege and leak controls."
+    },
+    {
+      "gateId": "LP185-G16",
+      "action": "Prove live health checks, monitoring/telemetry/error visibility, escalation, incident response, deployment verification and production rollback/withdrawal ownership; document store-release rollback limitations."
+    }
+  ],
+  "ownerChecklist": [
+    {
+      "id": "OC-01",
+      "what": "Obtain attorney approval of final legal documents and store privacy positions.",
+      "where": "Attorney/counsel workflow",
+      "evidence": "Dated approval, final document identities, resolved-issue register",
+      "mustNotCapture": "Privileged advice, signatures beyond necessary approval evidence",
+      "consumer": "LP186 legal/store closure"
+    },
+    {
+      "id": "OC-02",
+      "what": "Verify support and privacy mailboxes end-to-end.",
+      "where": "Mail provider/admin and test inboxes",
+      "evidence": "Timestamped send/receive/reply attestation",
+      "mustNotCapture": "Passwords, OTPs, recovery codes, message contents",
+      "consumer": "LP186 contact readiness"
+    },
+    {
+      "id": "OC-03",
+      "what": "Prove Apple and Google organization/account/commercial prerequisites.",
+      "where": "App Store Connect and Play Console",
+      "evidence": "Redacted status/role/agreement/app-record evidence",
+      "mustNotCapture": "Passwords, OTPs, full tax/banking/payment data",
+      "consumer": "Platform onboarding milestone"
+    },
+    {
+      "id": "OC-04",
+      "what": "Configure separate $2.99 monthly products after implementation is approved.",
+      "where": "App Store Connect and Play Console",
+      "evidence": "Product IDs/status/pricing-territory summary and disclosure identity",
+      "mustNotCapture": "Credentials, financial details",
+      "consumer": "Subscription validation milestone"
+    },
+    {
+      "id": "OC-05",
+      "what": "Provide signing access externally and capture signed release identities.",
+      "where": "Governed Android build host and macOS/Xcode",
+      "evidence": "Version/build, SHA-256, signing certificate fingerprint/expiry, AAB/archive status",
+      "mustNotCapture": "Private keys, keystores, provisioning contents, passwords",
+      "consumer": "Native release evidence milestone"
+    },
+    {
+      "id": "OC-06",
+      "what": "Validate packaged apps on physical Android and iPhone devices.",
+      "where": "Play closed test and TestFlight",
+      "evidence": "Device/OS/app build matrix and pass/fail observations",
+      "mustNotCapture": "Device identifiers, tester credentials, personal data",
+      "consumer": "Native physical-device milestone"
+    },
+    {
+      "id": "OC-07",
+      "what": "Approve and upload final store metadata/assets and public URLs.",
+      "where": "Both store consoles and authorized public web host",
+      "evidence": "Asset/listing versions, console status, reachable URL checks",
+      "mustNotCapture": "Console credentials or reviewer personal data",
+      "consumer": "Store-submission milestone"
+    },
+    {
+      "id": "OC-08",
+      "what": "Prove production configuration and operations without values.",
+      "where": "Supabase/provider/hosting/monitoring consoles",
+      "evidence": "Presence/owner/expiry attestation, read-only validations, alert/incident/rollback exercises",
+      "mustNotCapture": "API secrets, tokens, database credentials, private keys",
+      "consumer": "Production readiness milestone"
+    },
+    {
+      "id": "OC-09",
+      "what": "Approve truthful Texas launch scope and resolve county restrictions.",
+      "where": "Governance record",
+      "evidence": "Approved county cohort and disposition of all 11 restrictions",
+      "mustNotCapture": "No sensitive material expected",
+      "consumer": "Launch authorization milestone"
+    },
+    {
+      "id": "OC-10",
+      "what": "Issue explicit scoped submission, distribution, activation and public-launch decisions.",
+      "where": "Final governance record after all gates close",
+      "evidence": "Dated owner decision, artifact/release identities and window",
+      "mustNotCapture": "Credentials, OTPs, recovery codes",
+      "consumer": "Release/launch execution milestone"
+    }
+  ],
+  "proposedLaunchSequence": [
+    {
+      "order": 1,
+      "step": "Repository: close purchase, native configuration, metadata and privacy-map gaps",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 2,
+      "step": "Attorney/legal: approve final documents, disclosures and interpretations",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 3,
+      "step": "Owner: verify contacts and both platform/account prerequisites",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 4,
+      "step": "Production: configure and validate backend, secrets-by-presence and operations",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 5,
+      "step": "Apple/Google: configure products and app records under separate authorization",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 6,
+      "step": "Build/sign: create identity-recorded Android AAB and iOS archive",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 7,
+      "step": "Physical device: complete Play closed-test and TestFlight validation",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 8,
+      "step": "Public web: publish and verify approved legal/support URLs under authorization",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 9,
+      "step": "Store submission: owner separately authorizes and submits each platform",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 10,
+      "step": "Review: answer store review and reconcile approved release candidates",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 11,
+      "step": "Release authorization: owner explicitly approves distribution and launch scope/window",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 12,
+      "step": "Public activation: perform separately authorized production/domain/store release actions",
+      "grantsAuthorization": false
+    },
+    {
+      "order": 13,
+      "step": "Post-launch: verify health, purchases, support, telemetry and incident/withdrawal controls",
+      "grantsAuthorization": false
+    }
+  ],
+  "finalClassification": "POST_PREVIEW_RECONCILIATION_COMPLETE_LAUNCH_REQUIREMENTS_REMAIN",
+  "ownerRunRequired": true
+}
