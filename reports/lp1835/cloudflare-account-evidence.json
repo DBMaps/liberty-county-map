@@ -1,0 +1,19 @@
+{
+  "account": {
+    "id": "OWNER_VERIFICATION_REQUIRED",
+    "name": "OWNER_VERIFICATION_REQUIRED"
+  },
+  "authenticated": false,
+  "command": "npx --yes wrangler whoami",
+  "commandStatus": "FAILED_NPX_REGISTRY_403",
+  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
+  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "milestone": "LP183.5",
+  "schemaVersion": "gridly.lp1835.cloudflareAccountEvidence.v1",
+  "secretMaterialStored": false,
+  "wranglerVersion": "UNAVAILABLE_NPX_REGISTRY_403",
+  "zone": {
+    "name": "gridlygo.com",
+    "ownershipStatus": "OWNER_VERIFICATION_REQUIRED"
+  }
+}

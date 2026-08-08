@@ -1,0 +1,27 @@
+{
+  "controls": {
+    "customDomainDetach": {
+      "executed": false,
+      "proven": false
+    },
+    "dnsRouteDelete": {
+      "executed": false,
+      "proven": false
+    },
+    "postRemovalCandidateVerification": {
+      "proven": false,
+      "reason": "Cannot execute or verify until a governed candidate is separately deployed"
+    },
+    "projectDelete": {
+      "executed": false,
+      "proven": false
+    }
+  },
+  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
+  "firstDeploymentRollbackReadiness": "INCOMPLETE",
+  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "milestone": "LP183.5",
+  "rollbackAuthorization": "NOT_AUTHORIZED",
+  "rollbackExecuted": false,
+  "schemaVersion": "gridly.lp1835.rollbackControlEvidence.v1"
+}

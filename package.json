@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1835": "node tools/lp1835/ingest-pages-project-evidence.mjs build",
+    "test:lp1835": "node --test tests/lp1835/*.test.mjs",
+    "verify:lp1835": "node tools/lp1835/ingest-pages-project-evidence.mjs verify",
     "build:lp1834": "node tools/lp1834/reassess-protected-preview.mjs build",
     "test:lp1834": "node --test tests/lp1834/*.test.mjs",
     "verify:lp1834": "node tools/lp1834/reassess-protected-preview.mjs verify",

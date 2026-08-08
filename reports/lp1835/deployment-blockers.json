@@ -1,0 +1,23 @@
+{
+  "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
+  "artifactUploadAuthorized": false,
+  "blockers": [
+    "separate owner authorization for exact artifact upload",
+    "governed custom-domain and DNS sequence",
+    "governed Access preservation",
+    "live admission and denial validation after protected publication"
+  ],
+  "evidenceSource": "CURRENT_ENVIRONMENT_AND_OWNER_EXECUTION_BOUNDARY",
+  "generatedAt": "2026-08-08T17:23:19.000Z",
+  "globalAuthorizationState": {
+    "activation": "NOT_AUTHORIZED",
+    "automaticDeployment": "NOT_AUTHORIZED",
+    "deployment": "NOT_AUTHORIZED",
+    "distribution": "NOT_AUTHORIZED",
+    "publicLaunch": "NOT_AUTHORIZED",
+    "restore": "NOT_AUTHORIZED",
+    "rollback": "NOT_AUTHORIZED"
+  },
+  "milestone": "LP183.5",
+  "schemaVersion": "gridly.lp1835.deploymentBlockers.v1"
+}
