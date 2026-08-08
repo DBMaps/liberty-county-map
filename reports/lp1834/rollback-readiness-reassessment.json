@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "gridly.lp1834.rollbackReadiness.v1",
+  "milestone": "LP183.4",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "cloudExecution": "NONE",
+  "firstDeployment": {
+    "targetState": "NO_PREVIEW",
+    "status": "NOT_EXECUTABLE_CURRENT_EXTERNAL_PLATFORM_CONTROL_EVIDENCE_REQUIRED",
+    "minimumControlsToProve": [
+      "disable or remove preview custom-domain publication",
+      "remove or disable the preview DNS route if one is created",
+      "verify the preview candidate is no longer served",
+      "verify production gridlygo.com is unaffected",
+      "verify beta-closed surfaces are unaffected"
+    ]
+  },
+  "knownGoodArtifactRollback": {
+    "status": "NOT_YET_AVAILABLE",
+    "reason": "No known-good preview deployment exists",
+    "futureRequirement": "Retain immutable successful deployment and governed artifact identity after first protected-preview validation"
+  },
+  "rollbackAuthorization": "NOT_AUTHORIZED"
+}
