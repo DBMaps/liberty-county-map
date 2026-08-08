@@ -3,7 +3,7 @@
   "milestone": "LP183.3",
   "generatedAt": "1970-01-01T00:00:00.000Z",
   "performsCloudExecution": false,
-  "candidateCommit": "68a9d2597f0ee119ccfd361873fa8fac2cf0feda",
+  "candidateCommit": "5b0182e6f523d5fbfbbc12ec95b52f7b57771516",
   "classification": "PAGES_ARTIFACT_COMPATIBILITY_REPAIRED_DEPLOYMENT_REASSESSMENT_REQUIRED",
   "inclusionPolicy": "Runtime-manifest address packages/certificates only; statewide crossing manufacturing sources and compressed-road superseded sources excluded",
   "runtimeFilesModified": [
