@@ -60,5 +60,10 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /evidence/lp1835/pages-project-owner-evidence.local.json
 /evidence/lp1835/raw/
 
+# LP183.7 authenticated execution evidence and one-upload guard are owner-local.
+/evidence/lp1837/owner-execution-evidence.local.json
+/evidence/lp1837/raw/
+/evidence/lp1837/.upload-attempted.local
+
 # LP183.3 deterministic Montgomery Pages runtime package; npm run build:lp1833 recreates it.
 /assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz
