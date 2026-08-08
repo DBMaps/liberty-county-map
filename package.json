@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp185": "node tools/lp185/build-post-preview-reconciliation.mjs build",
+    "test:lp185": "node --test tests/lp185/*.test.mjs",
+    "verify:lp185": "node tools/lp185/build-post-preview-reconciliation.mjs verify",
     "build:lp1837": "node tools/lp1837/build-protected-preview-execution-evidence.mjs build",
     "test:lp1837": "node --test tests/lp1837/*.test.mjs",
     "verify:lp1837": "node tools/lp1837/build-protected-preview-execution-evidence.mjs verify",
