@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1837": "node tools/lp1837/build-protected-preview-execution-evidence.mjs build",
+    "test:lp1837": "node --test tests/lp1837/*.test.mjs",
+    "verify:lp1837": "node tools/lp1837/build-protected-preview-execution-evidence.mjs verify",
     "build:lp1835a": "node tools/lp1835a/build-pages-domain-removal-evidence.mjs build",
     "test:lp1835a": "node --test tests/lp1835a/*.test.mjs",
     "verify:lp1835a": "node tools/lp1835a/build-pages-domain-removal-evidence.mjs verify",

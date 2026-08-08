@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "gridly.lp1837.customDomainEvidence.v1",
+  "milestone": "LP183.7",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "evidenceSource": "NONE_FAIL_CLOSED",
+  "hostname": "preview.gridlygo.com",
+  "bindingAuthorization": "NOT_CAPTURED",
+  "bindingAttempted": false,
+  "state": "NOT_BOUND",
+  "dnsState": "UNCHANGED",
+  "certificateState": "NOT_REQUESTED"
+}
