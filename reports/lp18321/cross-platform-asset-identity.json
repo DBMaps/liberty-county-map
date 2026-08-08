@@ -6,6 +6,8 @@
   "performsCloudExecution": false,
   "sourceIdentityPolicy": "SHA-256 and byte size of the canonical Git blob at the governed commit (HEAD), never checkout-materialized bytes.",
   "deploymentArtifactIdentityPolicy": "LP183.1 stages each tracked file directly from its canonical Git blob at HEAD. No checkout EOL conversion is applied; staged hashes and sizes therefore equal source-blob hashes and sizes.",
+  "workingTreeDiagnosticPolicy": "Current-machine working-tree bytes, hashes, and sizes are non-governed diagnostics and are excluded from this deterministic report. They may be classified at runtime without changing canonical evidence.",
+  "binaryIdentityPolicy": "Binary assets are compared byte-for-byte as canonical Git blobs. No content or line-ending normalization is permitted.",
   "assets": [
     {
       "path": "Crossing-Packages/Texas/fra-crossings-tx.geojson",
@@ -19,10 +21,6 @@
         "bytes": 67186117,
         "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f",
         "gitObjectId": "36b5311c74aef1adebe9a3bc672e78fa0a8c6c3b"
-      },
-      "workingTreeAtReconciliation": {
-        "bytes": 67186117,
-        "sha256": "6396582142ea3329a6981885c462e9bf8d7d37c1c1a7183a70f97b22ca497b3f"
       },
       "simulatedWindowsCrlfMaterialization": {
         "bytes": 68200491,
@@ -44,10 +42,6 @@
         "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac",
         "gitObjectId": "77ee71ee689c4ff245c5795b5c01c11a28b25646"
       },
-      "workingTreeAtReconciliation": {
-        "bytes": 35232470,
-        "sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac"
-      },
       "simulatedWindowsCrlfMaterialization": {
         "bytes": 35312857,
         "sha256": "ab43a50d34a061c21215915078ecb311660ceebe9d4db341a4c371481bc0ec3c"
@@ -68,10 +62,7 @@
         "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b",
         "gitObjectId": "1b35790252338afa036679b20fed5e37b05bdc2b"
       },
-      "workingTreeAtReconciliation": {
-        "bytes": 57731771,
-        "sha256": "80a474e6f63edd0bf51d282822132bce48a985c020b1f97f32479fd3221e8d1b"
-      },
+      "checkoutConversion": "NONE",
       "byteExact": true
     }
   ],

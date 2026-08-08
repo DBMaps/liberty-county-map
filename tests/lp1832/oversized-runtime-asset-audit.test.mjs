@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import test from 'node:test';
 import { build, LIMIT_BYTES, ROOT } from '../../tools/lp1832/audit-oversized-runtime-assets.mjs';
+import { workingTreeDiagnostic } from '../../tools/lp18321/git-asset-identity.mjs';
 
 const reports = build();
 
@@ -29,7 +29,13 @@ test('chooses two exclusions and one sub-limit compressed package without infras
 test('audit does not modify protected runtime, native trees, or oversized assets', () => {
   const changed = new Set(Object.keys(reports).flatMap(() => []));
   for (const file of ['index.html', 'js/app.js', 'manifest.json', 'service-worker.js']) assert.equal(changed.has(file), false);
-  for (const asset of reports.inventory.assets) assert.equal(fs.statSync(`${ROOT}/${asset.repositoryPath}`).size, asset.bytes);
+  for (const asset of reports.inventory.assets) {
+    const diagnostic = workingTreeDiagnostic(ROOT, asset.repositoryPath, asset.fileType.startsWith('gzip-') ? 'BINARY' : 'TEXT');
+    assert.equal(diagnostic.canonical.bytes, asset.bytes);
+    assert.equal(diagnostic.canonical.sha256, asset.sha256);
+    assert.equal(diagnostic.governed, false);
+    assert.ok(['CANONICAL_MATCH', 'CRLF_CHECKOUT_MATERIALIZATION'].includes(diagnostic.classification));
+  }
   assert.equal(reports.summary.protectedRuntimeModified, false);
   assert.equal(reports.summary.oversizedAssetsModified, false);
 });

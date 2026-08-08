@@ -64,3 +64,17 @@ export function workingIdentity(root, file) {
 export function crlfMaterialization(bytes) {
   return Buffer.from(bytes.toString('binary').replace(/(?<!\r)\n/g, '\r\n'), 'binary');
 }
+
+// This is intentionally diagnostic only. Governed identity must always come from
+// sourceIdentity(); a checkout can legitimately differ because of Git EOL
+// materialization without changing the blob at HEAD.
+export function workingTreeDiagnostic(root, file, kind, revision = 'HEAD') {
+  const canonicalBytes = canonicalBlob(root, file, revision);
+  const canonical = sourceIdentity(root, file, revision);
+  const working = workingIdentity(root, file);
+  const expectedCrlf = kind === 'TEXT' ? identity(crlfMaterialization(canonicalBytes)) : null;
+  let classification = 'WORKING_TREE_DIFFERS_FROM_CANONICAL';
+  if (working.bytes === canonical.bytes && working.sha256 === canonical.sha256) classification = 'CANONICAL_MATCH';
+  else if (expectedCrlf && working.bytes === expectedCrlf.bytes && working.sha256 === expectedCrlf.sha256) classification = 'CRLF_CHECKOUT_MATERIALIZATION';
+  return { governed: false, identitySource: 'CURRENT_MACHINE_WORKING_TREE', classification, canonical, working, expectedCrlf };
+}

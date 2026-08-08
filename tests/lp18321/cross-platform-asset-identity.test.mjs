@@ -5,7 +5,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { execFileSync } from 'node:child_process';
 import { ASSETS, build } from '../../tools/lp18321/reconcile-cross-platform-identity.mjs';
-import { crlfMaterialization, sourceIdentity, workingIdentity } from '../../tools/lp18321/git-asset-identity.mjs';
+import { crlfMaterialization, sourceIdentity, workingIdentity, workingTreeDiagnostic } from '../../tools/lp18321/git-asset-identity.mjs';
 
 test('observed Windows size drift is exactly LF-to-CRLF materialization', () => {
   const report = build();
@@ -19,6 +19,15 @@ test('attributes pin governed text to LF and gzip to binary', () => {
   const attrs = build().assets.map(x => x.attributes);
   assert.deepEqual(attrs.slice(0, 2), [{ text: 'set', eol: 'lf', binary: 'unspecified' }, { text: 'set', eol: 'lf', binary: 'unspecified' }]);
   assert.deepEqual(attrs[2], { text: 'unset', eol: 'unspecified', binary: 'set' });
+});
+
+test('canonical report excludes current-machine identity while diagnostics classify CRLF separately', () => {
+  const report = build();
+  assert.ok(report.assets.every(asset => !Object.hasOwn(asset, 'workingTreeAtReconciliation')));
+  assert.match(report.workingTreeDiagnosticPolicy, /excluded from this deterministic report/);
+  const diagnostic = workingTreeDiagnostic(process.cwd(), ASSETS[0], 'TEXT');
+  assert.equal(diagnostic.governed, false);
+  assert.ok(['CANONICAL_MATCH', 'CRLF_CHECKOUT_MATERIALIZATION'].includes(diagnostic.classification));
 });
 
 test('CRLF checkout mutation is ignored but committed substantive drift changes source identity', () => {
