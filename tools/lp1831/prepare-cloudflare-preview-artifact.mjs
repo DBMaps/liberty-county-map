@@ -2,8 +2,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { canonicalBlobs, trackedPaths } from '../lp18321/git-asset-identity.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const REPORT_DIR = 'reports/lp1831';
@@ -18,12 +18,13 @@ const EXCLUDE = [
 ];
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
-const tracked = root => execFileSync('git', ['ls-files', '-z'], { cwd: root }).toString().split('\0').filter(Boolean).sort();
 export const isIncluded = file => (ENTRY.includes(file) || FAMILIES.some(x => file.startsWith(x))) && !EXCLUDE.some(x => x.test(file));
 
 export function inventory(root = ROOT) {
-  const files = tracked(root).filter(isIncluded).map(file => {
-    const bytes = fs.readFileSync(path.join(root, file));
+  const paths = trackedPaths(root).filter(isIncluded);
+  const blobs = canonicalBlobs(root, paths);
+  const files = paths.map(file => {
+    const bytes = blobs.get(file);
     return { path: file, bytes: bytes.length, sha256: sha(bytes) };
   });
   const missingRequired = ENTRY.filter(x => !files.some(f => f.path === x));
@@ -39,7 +40,7 @@ export function build(root = ROOT) {
     withinIncludedFamilies: ['js/gridly.local.js', 'backup files', 'source/source archives', 'generated staging except tracked runtime address artifacts', 'evidence and fixture directories', 'README and build-status documents']
   };
   const common = { milestone: 'LP183.1', generatedAt: GENERATED_AT, performsCloudExecution: false };
-  const manifest = { schemaVersion: 'gridly.lp1831.deployableArtifactManifest.v1', ...common, source: 'TRACKED_GIT_WORKTREE_FILES_ONLY', stagingDirectory: STAGE_DIR, repositoryRootSafeForUpload: false, requiredStaging: true, identityMethod: 'SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF', artifactIdentity: inv.artifactIdentity, fileCount: inv.files.length, totalBytes: inv.files.reduce((n, x) => n + x.bytes, 0), missingRequired: inv.missingRequired, cloudflarePagesOversizedFiles: inv.oversized, files: inv.files };
+  const manifest = { schemaVersion: 'gridly.lp1831.deployableArtifactManifest.v1', ...common, source: 'CANONICAL_TRACKED_GIT_BLOBS_AT_HEAD', materializationPolicy: 'Write canonical Git blob bytes at HEAD without working-tree EOL conversion', stagingDirectory: STAGE_DIR, repositoryRootSafeForUpload: false, requiredStaging: true, identityMethod: 'SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF', artifactIdentity: inv.artifactIdentity, fileCount: inv.files.length, totalBytes: inv.files.reduce((n, x) => n + x.bytes, 0), missingRequired: inv.missingRequired, cloudflarePagesOversizedFiles: inv.oversized, files: inv.files };
   const commands = { schemaVersion: 'gridly.lp1831.cloudflareCommandPlan.v1', ...common, shellBoundary: 'PowerShell 5.1 compatible; run from repository root', placeholders: { project: '<OWNER_SELECTED_PAGES_PROJECT_NAME>', accountId: '<VERIFIED_ACCOUNT_ID>', artifactDirectory: STAGE_DIR }, environment: ['No repository secret is required', 'Owner completes interactive OAuth when npx wrangler prompts, or supplies a temporary CLOUDFLARE_API_TOKEN in the process environment only'], sequence: [
     { purpose: 'authenticated account verification', command: 'npx --yes wrangler whoami', executeNow: false },
     { purpose: 'create empty Direct Upload project', command: 'npx --yes wrangler pages project create <OWNER_SELECTED_PAGES_PROJECT_NAME> --production-branch preview', executeNow: false },
@@ -54,6 +55,6 @@ export function build(root = ROOT) {
 
 const REPORTS = { 'deployable-artifact-manifest.json': 'manifest', 'cloudflare-pages-command-plan.json': 'commands', 'rollback-plan.json': 'rollback', 'platform-readiness.json': 'readiness', 'lp1831-summary.json': 'summary' };
 export function writeReports(output = path.join(ROOT, REPORT_DIR), root = ROOT) { const made = build(root); fs.mkdirSync(output, { recursive: true }); for (const [name, key] of Object.entries(REPORTS)) fs.writeFileSync(path.join(output, name), json(made[key])); return made; }
-export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) { const inv = inventory(root); fs.rmSync(output, { recursive: true, force: true }); for (const file of inv.files) { const target = path.join(output, file.path); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.copyFileSync(path.join(root, file.path), target); } return inv; }
+export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) { const inv = inventory(root); const blobs = canonicalBlobs(root, inv.files.map(file => file.path)); fs.rmSync(output, { recursive: true, force: true }); for (const file of inv.files) { const target = path.join(output, file.path); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, blobs.get(file.path)); } return inv; }
 export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-')); try { const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); writeReports(a, root); writeReports(b, root); for (const name of Object.keys(REPORTS)) { const x = fs.readFileSync(path.join(a, name)); if (!x.equals(fs.readFileSync(path.join(b, name))) || !x.equals(fs.readFileSync(path.join(root, REPORT_DIR, name)))) throw Error(`deterministic report drift: ${name}`); if (x.includes(13) || (x[0] === 0xef && x[1] === 0xbb && x[2] === 0xbf)) throw Error(`non-canonical encoding: ${name}`); } return true; } finally { fs.rmSync(temp, { recursive: true, force: true }); } }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const mode = process.argv[2] || 'build'; const outputFlag = process.argv.indexOf('--output'); const output = outputFlag < 0 ? undefined : path.resolve(process.argv[outputFlag + 1]); if (outputFlag >= 0 && !process.argv[outputFlag + 1]) throw Error('--output requires a directory'); if (mode === 'build') writeReports(output); else if (mode === 'stage') stage(output); else if (mode === 'verify') verify(); else throw Error(`unknown mode: ${mode}`); console.log(`LP183.1 ${mode} PASS; no Cloudflare command executed.`); }

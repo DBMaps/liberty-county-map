@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp18321": "node tools/lp18321/reconcile-cross-platform-identity.mjs build",
+    "verify:lp18321": "node tools/lp18321/reconcile-cross-platform-identity.mjs verify",
+    "test:lp18321": "node --test tests/lp18321/*.test.mjs",
     "build:lp1832": "node tools/lp1832/audit-oversized-runtime-assets.mjs build",
     "verify:lp1832": "node tools/lp1832/audit-oversized-runtime-assets.mjs verify",
     "test:lp1832": "node --test tests/lp1832/*.test.mjs",
