@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const appSource = fs.readFileSync('js/app.js', 'utf8');
 const registryBlock = appSource.slice(appSource.indexOf('const GRIDLY_COUNTY_REGISTRY'), appSource.indexOf('function gridlyIsLoadableGeoJsonSource'));
-const montgomeryRoadPath = 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson';
+const montgomeryRoadPath = 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz';
 
 assert(appSource.includes('window.gridlyRegionalRuntimeAssetOwnershipAudit = function gridlyRegionalRuntimeAssetOwnershipAudit()'), 'V823 browser asset ownership audit is exposed');
 assert(appSource.includes('assetOwnershipAuditPassed'), 'V820 regional runtime certification includes asset ownership as a blocking check');

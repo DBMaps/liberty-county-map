@@ -44,5 +44,17 @@
     "Transportation Intelligence remains disabled"
   ],
   "runtime_references_created": false,
-  "activation_references_created": false
+  "activation_references_created": false,
+  "lp1833_runtime_package": {
+    "path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
+    "compression": "gzip",
+    "compressed_bytes": 6057739,
+    "uncompressed_bytes": 35232470,
+    "sha256": "037e0a8517b01db9b9411c0e80eb02d9f3bff8dc2df7e6e2dfe12631927e3f74",
+    "schema": "GeoJSON FeatureCollection with LineString/MultiLineString features",
+    "source_path": "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+    "source_git_blob": "77ee71ee689c4ff245c5795b5c01c11a28b25646",
+    "source_sha256": "3f5ca248794a856b7fb8bfa17a09496304d4b4a2a2e2c4660bdb9ad0d690f4ac",
+    "regeneration": "node tools/lp1833/repair-pages-artifact.mjs package"
+  }
 }

@@ -21,7 +21,7 @@ assert.strictEqual(manifest.contractVersion, 'LP028.4');
 assert.strictEqual(Object.keys(manifest.counties).length, 28, 'manifest covers exactly 28 counties');
 assert.deepStrictEqual(Object.keys(manifest.counties).sort(), [...coveredCountyIds].sort(), 'manifest county ids match LP028 coverage');
 assert.strictEqual(manifest.counties['liberty-tx'].url, 'data/liberty-county-road-segments.geojson');
-assert.strictEqual(manifest.counties['montgomery-tx'].url, 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson');
+assert.strictEqual(manifest.counties['montgomery-tx'].url, 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz');
 assert.strictEqual(manifest.counties['san-jacinto-tx'].url, 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson');
 localRuntime.forEach((id) => assert.strictEqual(manifest.counties[id].status, 'local_runtime', `${id} remains local runtime`));
 pendingCopiedCountyIds.forEach((id) => {
@@ -53,7 +53,7 @@ assert.strictEqual(api.gridlyValidateRoadwayRuntimeAssetUrl('data/liberty-county
 
 api.gridlyInstallRoadwayRuntimeManifest(manifest);
 assert.strictEqual(api.gridlyGetCountyRuntimeSources('liberty-tx').roadSource, 'data/liberty-county-road-segments.geojson');
-assert.strictEqual(api.gridlyGetCountyRuntimeSources('montgomery-tx').roadSource, 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson');
+assert.strictEqual(api.gridlyGetCountyRuntimeSources('montgomery-tx').roadSource, 'assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz');
 assert.strictEqual(api.gridlyGetCountyRuntimeSources('san-jacinto-tx').roadSource, 'assets/county-implementation/san-jacinto/runtime-assets/source/san-jacinto-county-road-segments.geojson');
 assert.ok(api.gridlyResolveRoadwayRuntimeSource('polk-tx').url.includes('/roadways/polk-tx/lp030-v1/'), 'external entries resolve a fetch URL');
 assert.strictEqual(api.gridlyResolveRoadwayRuntimeSource('harris-tx').url, null, 'partitioned Harris cannot resolve a single package URL');

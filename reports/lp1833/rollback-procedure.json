@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "gridly.lp1833.rollback.v1",
+  "milestone": "LP183.3",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "candidateCommit": "5ca4d1e8b4ecad4eb26924aeacface188c84ad15",
+  "scope": "REPOSITORY_ONLY",
+  "authorization": "NOT_AUTHORIZED",
+  "procedure": [
+    "Revert the LP183.3 compatibility commits",
+    "Restore the previous js/app.js Montgomery raw roadway URL and response.json loader",
+    "Restore the previous data/roadway-runtime-manifest.json Montgomery entry",
+    "Restore the previous LP183.1 artifact inclusion logic",
+    "Remove the compressed package reference and generated gzip file",
+    "Rebuild and re-run governed verification before any separately authorized action"
+  ],
+  "cloudRollbackExists": false
+}

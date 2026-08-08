@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "gridly.lp1833.compatibilityVerification.v1",
+  "milestone": "LP183.3",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "performsCloudExecution": false,
+  "candidateCommit": "5ca4d1e8b4ecad4eb26924aeacface188c84ad15",
+  "limitBytes": 26214400,
+  "artifactIdentity": "sha256:8b166ac0216513ad9554299cd559924154cf97c93df9be8dd852fd8918ea875b",
+  "fileCount": 493,
+  "totalBytes": 155359829,
+  "maximumFile": {
+    "path": "assets/county-implementation/harris/runtime-assets/harris-county-rail-crossings.geojson",
+    "bytes": 17042129,
+    "sha256": "4068dcede64b379c10fdf5bf187da28669fcf394130d236930a2ac988ac1547a"
+  },
+  "oversizedFileCount": 0,
+  "proofs": {
+    "fraStatewideSourceAbsent": true,
+    "harrisUnusedAddressAbsent": true,
+    "montgomeryRawAbsent": true,
+    "montgomeryCompressedPresent": true,
+    "allFilesBelowLimit": true,
+    "requiredEntriesPresent": true
+  }
+}

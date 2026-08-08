@@ -45,7 +45,7 @@ const GRIDLY_COUNTY_REGISTRY = Object.freeze({
     manifestPath: "assets/county-implementation/montgomery/manifests/montgomery-package-manifest.json",
     registryArtifactPath: "assets/county-implementation/montgomery/registry/montgomery-county-registry-artifact.json",
     boundaryPath: "assets/county-implementation/montgomery/boundary/montgomery-county-boundary.geojson",
-    roadSegmentsPath: "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson",
+    roadSegmentsPath: "assets/county-implementation/montgomery/runtime-assets/montgomery-roads-lp1833-v1.geojson.gz",
     crossingsPath: null,
     localCrossingsPath: "Crossing-Packages/montgomery/montgomery-crossings.geojson",
     crossingOverridesPath: "assets/county-implementation/montgomery/runtime-assets/montgomery-county-crossing-review-overrides.json",
@@ -707,7 +707,7 @@ function gridlyValidateRoadwayRuntimeAssetUrl(url, options = {}) {
   const text = String(url || "").trim();
   if (!text || /^(?:javascript|data|file|blob):/i.test(text) || /^[a-z]:[\\/]/i.test(text) || /\\/.test(text)) return false;
   if (/\.(?:shp|dbf|shx|prj)(?:[?#].*)?$/i.test(text)) return false;
-  if (!/\.geojson(?:[?#].*)?$/i.test(text)) return false;
+  if (!/\.geojson(?:\.gz)?(?:[?#].*)?$/i.test(text)) return false;
   if (/^https:\/\//i.test(text)) return true;
   if (/^http:\/\//i.test(text)) return options.allowLocalhostHttp === true && gridlyIsLocalhostHttpUrl(text);
   if (/^[a-z][a-z0-9+.-]*:/i.test(text)) return false;
@@ -772,7 +772,7 @@ function gridlyResolveRoadwayRuntimeSource(countyId = gridlyGetActiveCountyId())
   const manifestEntry = gridlyGetRoadwayRuntimeManifestEntry(normalizedCountyId);
   const manifestStatus = manifestEntry?.status || null;
   const registryRoadSource = sources?.roadSourceLoadable && gridlyValidateRoadwayRuntimeAssetUrl(sources.roadSource, { allowLocalhostHttp: true }) ? sources.roadSource : null;
-  if (registryRoadSource) return Object.freeze({ countyId: normalizedCountyId, url: registryRoadSource, version: manifestEntry?.version || "legacy", status: manifestStatus || "local_runtime", external: false, cacheKey: gridlyBuildRoadwayPackageCacheKey(normalizedCountyId, manifestEntry?.version || "legacy", registryRoadSource), fetchCacheMode: "no-store" });
+  if (registryRoadSource) return Object.freeze({ countyId: normalizedCountyId, url: registryRoadSource, version: manifestEntry?.version || "legacy", status: manifestStatus || "local_runtime", external: false, compression: manifestEntry?.compression || null, compressedBytes: manifestEntry?.compressedBytes || null, uncompressedBytes: manifestEntry?.uncompressedBytes || null, sha256: manifestEntry?.sha256 || null, schema: manifestEntry?.schema || null, cacheKey: gridlyBuildRoadwayPackageCacheKey(normalizedCountyId, manifestEntry?.version || "legacy", registryRoadSource), fetchCacheMode: "no-store" });
   if (manifestStatus === "external_runtime" && gridlyValidateRoadwayRuntimeAssetUrl(manifestEntry?.url)) {
     return Object.freeze({ countyId: normalizedCountyId, url: manifestEntry.url, version: manifestEntry.version || "unversioned", status: manifestStatus, external: true, cacheKey: gridlyBuildRoadwayPackageCacheKey(normalizedCountyId, manifestEntry.version || "unversioned", manifestEntry.url), fetchCacheMode: "force-cache" });
   }
@@ -44314,7 +44314,7 @@ function gridlyBuildRegionalRuntimeAssetOwnershipAudit() {
       roadPathOwned: roadUnavailable ? true : gridlyPathBelongsToCounty(roadPath, countyId),
       crossingPathOwned: gridlyPathBelongsToCounty(crossingPath, countyId),
       runtimeSourceOwnerMatches: String(config.runtimeSourceOwner || "") === `${gridlyNormalizeCountyAssetOwnerToken(countyId)}-owned`,
-      noMontgomeryRoadLeak: countyId === "montgomery-tx" || !/assets\/county-implementation\/montgomery\/runtime-assets\/montgomery-roads-raw\.geojson/i.test(roadPath),
+      noMontgomeryRoadLeak: countyId === "montgomery-tx" || !/assets\/county-implementation\/montgomery\/runtime-assets\/montgomery-roads-lp1833-v1\.geojson\.gz/i.test(roadPath),
       noLibertyFallbackLeak: countyId === "liberty-tx" || !/(data\/liberty-county-|countyname=liberty|assets\/county-implementation\/liberty\/)/i.test(`${boundaryPath} ${roadPath} ${crossingPath}`),
       countyBoundsAvailable: Boolean(boundsMetadata?.rawBounds && boundsMetadata.missingBoundary !== true)
     });
@@ -48813,6 +48813,20 @@ async function gridlyActivateRoadwayDatasetForActiveCounty(reason = "active-coun
 }
 
 // LP028.4 compatibility: the active-county path still resolves with gridlyResolveRoadwayRuntimeSource() semantics.
+async function gridlyDecodeMontgomeryRoadwayPackage(response, roadwaySource) {
+  if (roadwaySource?.countyId !== "montgomery-tx" || roadwaySource?.compression !== "gzip") return response.json();
+  if (typeof DecompressionStream !== "function" || !globalThis.crypto?.subtle || typeof TextDecoder !== "function") throw new Error("montgomery_roadway_gzip_runtime_unsupported");
+  const compressed = new Uint8Array(await response.arrayBuffer());
+  if (!Number.isSafeInteger(roadwaySource.compressedBytes) || compressed.byteLength !== roadwaySource.compressedBytes) throw new Error("montgomery_roadway_compressed_size_mismatch");
+  const digest = new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", compressed));
+  const digestHex = Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  if (!/^[a-f0-9]{64}$/.test(roadwaySource.sha256 || "") || digestHex !== roadwaySource.sha256) throw new Error("montgomery_roadway_digest_mismatch");
+  const decompressed = await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+  if (!Number.isSafeInteger(roadwaySource.uncompressedBytes) || decompressed.byteLength !== roadwaySource.uncompressedBytes) throw new Error("montgomery_roadway_uncompressed_size_mismatch");
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(decompressed);
+  return JSON.parse(text);
+}
+
 async function loadRoadwayDataset(options = {}) {
   await gridlyEnsureRoadwayRuntimeManifestLoaded();
   const requestedCountyId = gridlyNormalizeCountyId(options.requestedCountyId || gridlyGetActiveCountyId());
@@ -48851,7 +48865,7 @@ async function loadRoadwayDataset(options = {}) {
       }
       const response = await fetch(roadwaySource.url, { cache: roadwaySource.fetchCacheMode || "no-store" });
       if (!response.ok) throw new Error(`Roadway dataset returned ${response.status}`);
-      const geojson = await response.json();
+      const geojson = await gridlyDecodeMontgomeryRoadwayPackage(response, roadwaySource);
       if (geojson?.type !== "FeatureCollection") throw new Error("roadway_dataset_not_feature_collection");
       const features = Array.isArray(geojson?.features) ? geojson.features : [];
       const lineFeatures = features.filter((feature) => {

@@ -12,6 +12,9 @@
     "@capacitor/cli": "8.3.4"
   },
   "scripts": {
+    "build:lp1833": "node tools/lp1833/repair-pages-artifact.mjs build",
+    "test:lp1833": "node --test tests/lp1833/*.test.mjs",
+    "verify:lp1833": "node tools/lp1833/repair-pages-artifact.mjs verify",
     "build:lp18321": "node tools/lp18321/reconcile-cross-platform-identity.mjs build",
     "verify:lp18321": "node tools/lp18321/reconcile-cross-platform-identity.mjs verify",
     "test:lp18321": "node --test tests/lp18321/*.test.mjs",

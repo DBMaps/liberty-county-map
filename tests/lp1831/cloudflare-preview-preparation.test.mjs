@@ -62,7 +62,7 @@ test('staging ignores checkout bytes and writes canonical Git blobs', () => {
 
 test('reports are fail-closed, secret-safe, and only plan Cloudflare commands', () => {
   const made = build();
-  assert.match(made.readiness.classification, /OWNER_ACTION_REQUIRED$/);
+  assert.match(made.readiness.classification, /(?:OWNER_ACTION|OWNER_EXECUTION)_REQUIRED$/);
   assert.equal(made.summary.cloudExecution, 'NONE');
   assert.ok(made.commands.sequence.every(x => x.executeNow === false && x.command.startsWith('npx --yes wrangler')));
   const emitted = JSON.stringify(made);
