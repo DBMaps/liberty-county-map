@@ -26313,3 +26313,135 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   font-weight: 700;
   line-height: 1.2;
 }
+
+/* LP185.2 — real-iPhone portrait shell density, Pass 1.
+   Presentation-only: reclaim map canvas from persistent chrome while keeping
+   44px actions and the expanded Brief / Destination Intelligence surfaces intact. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-header-top: max(6px, calc(env(safe-area-inset-top, 0px) + 4px));
+    --gridly-v2-awareness-card-top: calc(var(--gridly-v2-header-top) + 38px);
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 136px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 178px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 8px);
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    min-height: 32px;
+    padding-block: 4px;
+    border-radius: 15px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brand img {
+    max-height: 22px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    gap: 6px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card {
+    min-height: 88px !important;
+    padding: 10px 14px !important;
+    gap: 3px;
+    border-radius: 18px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="quiet"] {
+    align-content: center !important;
+    min-height: 78px !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state]:not([data-awareness-state="quiet"]) {
+    min-height: 88px !important;
+    max-height: none !important;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-awareness-trust-line {
+    margin-top: 2px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 14px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    gap: 3px;
+    padding: 3px;
+    border-radius: 15px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 36px;
+    padding-inline: 4px;
+    border-radius: 12px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
+    padding: 8px 12px;
+    border-radius: 17px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-status,
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-meta {
+    line-height: 1.2;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    gap: 5px;
+    padding: 5px;
+    border-radius: 18px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 48px;
+    gap: 1px;
+    padding-block: 2px;
+    border-radius: 13px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+    border-radius: 11px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon img {
+    width: 18px;
+    height: 18px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em {
+    line-height: 1.05;
+  }
+
+  body[data-layout-mode="portrait"] .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed) {
+    min-height: 104px !important;
+    padding: 8px 10px !important;
+    gap: 7px !important;
+    border-radius: 17px !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .mobile-destination-command-copy {
+    gap: 2px !important;
+  }
+
+  body[data-layout-mode="portrait"] .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel) .destination-route-impact-line:not(:empty) {
+    display: -webkit-box !important;
+    min-height: 0 !important;
+    max-height: 2.48em !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    text-overflow: ellipsis !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2;
+    line-height: 1.24 !important;
+  }
+}
