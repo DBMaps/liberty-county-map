@@ -91815,22 +91815,48 @@ function filterGridlyManualAwarenessAreas(query = "") {
   }).filter((group) => group.communities.length > 0);
 }
 
+function resolveGridlyManualAwarenessAreaSearch(query = "") {
+  const normalizedQuery = String(query || "").replace(/\s+/g, " ").trim();
+  if (!normalizedQuery) return Object.freeze({ status: "EMPTY", groups: Object.freeze([]) });
+  if (/^\d/.test(normalizedQuery)) {
+    if (!/^\d{5}$/.test(normalizedQuery)) return Object.freeze({ status: "INVALID_ZIP", groups: Object.freeze([]) });
+    const resolution = resolveGridlyAwarenessAreaQuery(normalizedQuery);
+    if (resolution.status !== "RESOLVED_OPERATIONAL") {
+      return Object.freeze({ status: resolution.status, resolution, groups: Object.freeze([]) });
+    }
+    const groups = getGridlyManualAwarenessAreaOptions().map((group) => {
+      const communities = group.communities.filter((community) => community.key === resolution.awarenessAreaKey);
+      return Object.freeze({ ...group, communities: Object.freeze(communities) });
+    }).filter((group) => group.communities.length > 0);
+    return Object.freeze({ status: groups.length ? "RESULTS" : "RESOLVED_NOT_OPERATIONAL", resolution, groups: Object.freeze(groups) });
+  }
+  return Object.freeze({ status: "RESULTS", groups: Object.freeze(filterGridlyManualAwarenessAreas(normalizedQuery)) });
+}
+
 function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending) {
   const selectedArea = resolveGridlyAwarenessArea(selectedValue || getGridlyHomeTownPreference?.() || "");
   const pendingArea = resolveGridlyAwarenessArea(pendingValue);
   const normalizedQuery = String(query || "").trim();
-  const groups = normalizedQuery ? filterGridlyManualAwarenessAreas(normalizedQuery) : [];
+  const search = resolveGridlyManualAwarenessAreaSearch(normalizedQuery);
+  const groups = search.groups;
   const resultHtml = groups.flatMap((group) => group.communities.map((community) => {
       const isCurrent = community.key === selectedArea?.key;
       const isPending = community.key === pendingArea?.key;
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
-      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}${isCurrent ? " · Current watched area" : ""}</small></button>`;
+      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
     })).join("");
   const pendingHtml = pendingArea ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingArea.label || pendingArea.storageValue)}</strong><small>${escapeGridlySettingsAttribute(GRIDLY_COUNTY_REGISTRY[pendingArea.countyId]?.name || "")}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Watch this area</button></div>` : "";
+  const emptyResult = search.status === "INVALID_ZIP"
+    ? "Enter a valid 5-digit ZIP code."
+    : search.status === "RESOLVED_NOT_OPERATIONAL" || (search.status === "NOT_FOUND" && /^\d{5}$/.test(normalizedQuery))
+      ? "Gridly isn't available for this ZIP yet."
+      : search.status === "AMBIGUOUS"
+        ? "This ZIP matches more than one area. Try a town or county instead."
+        : "No available areas match your search.";
   const results = normalizedQuery
-    ? `<div class="settings-manual-county-list" aria-live="polite">${resultHtml || '<p class="settings-manual-no-results" role="status">No available areas match your search.</p>'}</div>`
+    ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose from available areas</h3><label>Search county or community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="Search county or community" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p><label>Search ZIP, town, or county<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
@@ -91840,6 +91866,7 @@ function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
   const input = container.querySelector("[data-gridly-manual-awareness-search]");
   input?.addEventListener("input", (event) => {
     gridlySettingsManualAwarenessQuery = String(event.target.value || "");
+    gridlySettingsManualAwarenessPending = "";
     renderGridlyManualAwarenessAreaPicker(container, { focusSearch: true });
   });
   container.querySelectorAll("[data-gridly-manual-awareness-value]").forEach((button) => button.addEventListener("click", () => {
