@@ -14909,18 +14909,35 @@ const GRIDLY_REVIEWED_CROSSING_LOCATION_ALIASES = Object.freeze({
   "LC-003": "762790L"
 });
 
+function normalizeGridlyReviewedCrossingId(crossingId = "") {
+  const id = String(crossingId || "").trim();
+  const authoritativeMatch = /^FRA-(\d{6}[A-Z])$/i.exec(id);
+  return authoritativeMatch ? authoritativeMatch[1].toUpperCase() : id;
+}
+
+function formatGridlyAuthoritativePlaceName(value = "") {
+  const placeName = String(value || "").trim();
+  return placeName && placeName === placeName.toUpperCase()
+    ? placeName.toLowerCase().replace(/\b\w/g, (character) => character.toUpperCase())
+    : placeName;
+}
+
 function getGridlyReviewedCrossingLocationContext(crossingId = "", review = {}) {
   const id = String(crossingId || "").trim();
   const reviewed = (review && typeof review === "object") ? review : {};
+  const normalizedId = normalizeGridlyReviewedCrossingId(id);
   const aliasId = id ? (GRIDLY_REVIEWED_CROSSING_LOCATION_ALIASES[id] || "") : "";
-  const configured = id ? (GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[id] || GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[aliasId] || {}) : {};
+  const configuredId = id && GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[id]
+    ? id
+    : (normalizedId && GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[normalizedId] ? normalizedId : aliasId);
+  const configured = configuredId ? (GRIDLY_REVIEWED_CROSSING_LOCATION_CONTEXT[configuredId] || {}) : {};
   const primaryLabel = String(reviewed.consumerPrimaryRoad || reviewed.primaryRoad || reviewed.mainRoad || configured.primaryLabel || "").trim();
   const secondaryLabel = String(reviewed.consumerSecondaryRoad || reviewed.secondaryRoad || reviewed.localName || reviewed.nickname || configured.secondaryLabel || "").trim();
   const displayName = String(reviewed.consumerDisplayName || reviewed.displayName || reviewed.reviewedDisplayName || configured.displayName || (primaryLabel && secondaryLabel ? `${primaryLabel} at ${secondaryLabel}` : "")).trim();
   const source = displayName || primaryLabel || secondaryLabel
     ? (reviewed.consumerDisplayName || reviewed.displayName || reviewed.consumerPrimaryRoad || reviewed.consumerSecondaryRoad ? "review_override" : (configured.displayName || configured.primaryLabel || configured.secondaryLabel ? "reviewed_local_context" : "fallback_fields"))
     : "none";
-  return { primaryLabel, secondaryLabel, displayName, source, reviewedCrossingId: reviewed.reviewedCrossingId || configured.reviewedCrossingId || aliasId || id };
+  return { primaryLabel, secondaryLabel, displayName, source, reviewedCrossingId: reviewed.reviewedCrossingId || configured.reviewedCrossingId || configuredId || id };
 }
 
 // Exact crossing-id join only: never derive consumer street precision from coordinates.
@@ -14931,9 +14948,9 @@ function getGridlyCanonicalCrossingLocationContext(record = {}) {
   if (!canonicalCrossing) return null;
   const props = canonicalCrossing?.props || canonicalCrossing?.properties || {};
   const reviewed = getGridlyReviewedCrossingLocationContext(crossingId, canonicalCrossing?.review || crossingReviewOverrides?.[crossingId] || {});
-  const primaryRoad = String(canonicalCrossing?.primaryRoad || canonicalCrossing?.roadName || canonicalCrossing?.road || reviewed.primaryLabel || props.road_name || props.roadwayname || props.highwayname || props.road || "").trim();
+  const primaryRoad = String(canonicalCrossing?.primaryRoad || canonicalCrossing?.roadName || canonicalCrossing?.road || reviewed.primaryLabel || props.STREET || props.road_name || props.roadwayname || props.highwayname || props.road || "").trim();
   const secondaryRoad = String(canonicalCrossing?.secondaryRoad || canonicalCrossing?.crossStreet || canonicalCrossing?.referenceRoad || reviewed.secondaryLabel || props.secondary_road || props.cross_street || props.reference_road || "").trim();
-  const resolvedLocality = String(canonicalCrossing?.resolvedLocality || canonicalCrossing?.locality || canonicalCrossing?.city || props.locality || props.city || props.town || props.community || "").trim();
+  const resolvedLocality = formatGridlyAuthoritativePlaceName(canonicalCrossing?.resolvedLocality || canonicalCrossing?.locality || canonicalCrossing?.city || props.locality || props.city || props.CITYNAME || props.town || props.community || "");
   return Object.freeze({
     crossingId,
     canonicalCrossingFound: true,
@@ -14942,7 +14959,7 @@ function getGridlyCanonicalCrossingLocationContext(record = {}) {
     referenceRoad: String(canonicalCrossing?.referenceRoad || props.reference_road || "").trim(),
     canonicalDisplayLocation: String(canonicalCrossing?.canonicalDisplayLocation || reviewed.displayName || canonicalCrossing?.displayName || "").trim(),
     resolvedLocality,
-    county: String(canonicalCrossing?.county || props.county || "").trim(),
+    county: String(canonicalCrossing?.county || props.COUNTYNAME || props.countyName || props.county || "").trim(),
     source: reviewed.source || canonicalCrossing?.labelSource || "production-crossing-runtime"
   });
 }

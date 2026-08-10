@@ -10,6 +10,15 @@ vm.createContext(context);
 vm.runInContext(helperSource, context);
 const present = context.window.getGridlyIncidentLocationPresentation;
 
+const reviewedContextStart = appSource.indexOf("let crossingReviewOverrides = {};");
+const reviewedContextEnd = appSource.indexOf("if (typeof window !== \"undefined\") window.getGridlyCanonicalCrossingLocationContext", reviewedContextStart);
+const reviewedContext = { crossings: [] };
+vm.createContext(reviewedContext);
+vm.runInContext(`${appSource.slice(reviewedContextStart, reviewedContextEnd)}
+this.normalizeReviewedId = normalizeGridlyReviewedCrossingId;
+this.getReviewedContext = getGridlyReviewedCrossingLocationContext;
+this.getCanonicalContext = getGridlyCanonicalCrossingLocationContext;`, reviewedContext);
+
 const crossingIncident = Object.freeze({
   id: "fixture-crossing-incident",
   crossingId: "fixture-crossing-reference",
@@ -29,6 +38,54 @@ test("canonical crossing metadata produces one trusted full and compact identity
   assert.equal(identity.compactLabel, identity.fullLabel);
   assert.equal(identity.source, "canonical-infrastructure");
   assert.equal(identity.precision, "intersection");
+});
+
+test("authoritative FRA crossing IDs normalize narrowly for reviewed lookup", () => {
+  assert.equal(reviewedContext.normalizeReviewedId("FRA-762790L"), "762790L");
+  assert.equal(reviewedContext.normalizeReviewedId("fra-123456a"), "123456A");
+  assert.equal(reviewedContext.normalizeReviewedId("FRA-MISSING-US90"), "FRA-MISSING-US90");
+  assert.equal(reviewedContext.getReviewedContext("FRA-999999Z").source, "none");
+});
+
+test("reviewed context supports normalized FRA, configured alias, and bare IDs", () => {
+  for (const id of ["FRA-762790L", "LC-003", "762790L"]) {
+    const result = reviewedContext.getReviewedContext(id);
+    assert.equal(result.reviewedCrossingId, "762790L");
+    assert.equal(result.primaryLabel, "US 90");
+    assert.equal(result.secondaryLabel, "Waco Street");
+  }
+});
+
+test("canonical runtime context promotes FRA locality and county without changing its exact ID join", () => {
+  reviewedContext.crossings.push({
+    id: "FRA-762790L",
+    props: { STREET: "US 90", CITYNAME: "DAYTON", COUNTYNAME: "LIBERTY" }
+  });
+  const canonical = reviewedContext.getCanonicalContext({ crossingId: "FRA-762790L", lat: 0, lng: 0 });
+  assert.equal(canonical.crossingId, "FRA-762790L");
+  assert.equal(canonical.resolvedLocality, "Dayton");
+  assert.equal(canonical.county, "LIBERTY");
+  assert.equal(canonical.primaryRoad, "US 90");
+  assert.equal(canonical.secondaryRoad, "Waco Street");
+  assert.equal(present({ type: "rail_blocked", ...canonical }).fullLabel, "US 90 & Waco Street");
+  assert.equal(reviewedContext.getCanonicalContext({ crossingId: "762790L" }), null);
+});
+
+test("FRA CITYNAME supplies road-locality fallback only when reviewed intersection context is absent", () => {
+  reviewedContext.crossings.push({
+    id: "FRA-123456A",
+    primaryRoad: "US 90",
+    props: { CITYNAME: "DAYTON", COUNTYNAME: "LIBERTY" }
+  });
+  const canonical = reviewedContext.getCanonicalContext({ crossingId: "FRA-123456A" });
+  assert.equal(present({ type: "rail_blocked", ...canonical }).fullLabel, "US 90 — Dayton");
+});
+
+test("reviewed-ID normalization is independent of coordinates and fixture identities", () => {
+  const functionStart = appSource.indexOf("function normalizeGridlyReviewedCrossingId");
+  const functionEnd = appSource.indexOf("\nfunction ", functionStart + 10);
+  const normalizationSource = appSource.slice(functionStart, functionEnd);
+  assert.doesNotMatch(normalizationSource, /(?:lat|lng|latitude|longitude|Waco|762790)/i);
 });
 
 test("canonical projection preserves authoritative crossing fields for the shared resolver", () => {
