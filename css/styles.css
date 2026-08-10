@@ -25039,9 +25039,94 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .settings-awareness-watch-btn { justify-self: start; margin-top: 3px; min-height: 44px; }
 .settings-awareness-candidates { margin: 0; padding-left: 20px; color: #f4f9ff; }
 .settings-manual-awareness-action { align-self: start; }
+
+/* LP185.3A — compact operational-inventory manual area picker. */
+.settings-awareness-manual-picker {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.settings-awareness-manual-picker h3 { margin: 0; font-size: 1.05rem; }
+.settings-awareness-manual-picker > label {
+  display: grid;
+  gap: 7px;
+  color: rgba(241, 247, 255, 0.92);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+.settings-awareness-manual-picker input[type="search"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid rgba(142, 239, 255, 0.34);
+  border-radius: 16px;
+  background: rgba(5, 13, 28, 0.96);
+  color: #f8fbff;
+  font: inherit;
+  font-size: 16px;
+  padding: 0 14px;
+}
+.settings-manual-available-head,
+.settings-manual-county-group > summary,
+.settings-manual-pending { display: grid; gap: 4px; }
+.settings-manual-available-head span,
+.settings-manual-county-group > summary span,
+.settings-manual-pending small { color: rgba(220, 234, 249, 0.72); font-size: 0.82rem; }
+.settings-manual-county-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(42vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 3px 18px 0;
+}
+.settings-manual-county-group {
+  border: 1px solid rgba(142, 239, 255, 0.18);
+  border-radius: 15px;
+  background: rgba(6, 16, 32, 0.7);
+  overflow: clip;
+}
+.settings-manual-county-group > summary {
+  min-height: 48px;
+  box-sizing: border-box;
+  cursor: pointer;
+  list-style-position: inside;
+  padding: 9px 12px;
+  font-weight: 850;
+}
+.settings-manual-area-results { display: grid; gap: 1px; border-top: 1px solid rgba(142, 239, 255, 0.12); }
+.settings-manual-area-result {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 1px solid rgba(142, 239, 255, 0.09);
+  background: rgba(5, 13, 28, 0.7);
+  color: #f8fbff;
+  cursor: pointer;
+  font: inherit;
+  padding: 9px 13px;
+  text-align: left;
+}
+.settings-manual-area-result span { font-weight: 850; }
+.settings-manual-area-result small { color: rgba(220, 234, 249, 0.76); font-size: 0.84rem; }
+.settings-manual-area-result.is-current small { color: rgba(67, 230, 160, 0.96); }
+.settings-manual-area-result.is-pending { background: rgba(25, 91, 99, 0.64); box-shadow: inset 3px 0 rgba(67, 230, 160, 0.9); }
+.settings-manual-pending {
+  border: 1px solid rgba(67, 230, 160, 0.32);
+  border-radius: 15px;
+  background: rgba(19, 62, 69, 0.48);
+  padding: 12px;
+}
+.settings-manual-pending .primary-btn { justify-self: start; min-height: 44px; margin-top: 5px; }
+.settings-manual-no-results { margin: 0; padding: 16px 12px; color: rgba(232, 241, 255, 0.84); }
 @media (max-width: 430px) {
   .settings-awareness-search-row { grid-template-columns: 1fr; }
   .settings-awareness-search-row .primary-btn { width: 100%; }
+  .settings-manual-county-list { max-height: min(38vh, 360px); padding-bottom: max(22px, env(safe-area-inset-bottom)); }
 }
 
 /* V904P — Gridly-native hierarchical awareness native-select polish. */

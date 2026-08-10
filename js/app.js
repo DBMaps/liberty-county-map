@@ -91795,27 +91795,68 @@ function syncGridlySettingsTextSizeSegments(root, selectedValue = "standard") {
   });
 }
 
-function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "") {
-  const resolved = gridlyResolveHierarchicalAwarenessSelection(selectedValue || getGridlyHomeTownPreference?.() || "");
-  const groups = gridlyGetCountyGroupedAwarenessOptions();
-  const selectedCounty = resolved.county?.countyValue || groups[0]?.countyValue || GRIDLY_DEFAULT_COUNTY_ID;
-  const selectedGroup = groups.find((group) => group.countyValue === selectedCounty) || groups[0];
-  const selectedCommunity = resolved.community?.value || selectedGroup?.communities?.[0]?.value || "";
-  const countyOptions = groups.map((group) => `<option value="${escapeGridlySettingsAttribute(group.countyValue)}"${group.countyValue === selectedCounty ? " selected" : ""}>${escapeGridlySettingsAttribute(group.countyLabel)}</option>`).join("");
-  const communityOptions = (selectedGroup?.communities || []).map((community) => `<option value="${escapeGridlySettingsAttribute(community.value)}"${community.value === selectedCommunity ? " selected" : ""}>${escapeGridlySettingsAttribute(community.label)}</option>`).join("");
-  const countyLabel = selectedGroup?.countyLabel || "County";
-  const communityLabel = resolved.community?.label || selectedCommunity || "Select a community";
-  return `
-    <div class="settings-awareness-hierarchical" data-gridly-hierarchical-awareness-selector="true">
-      <p class="settings-placeholder-note">Choose the county and community Gridly should watch first.</p>
-      <label class="settings-awareness-select-label">County
-        <select class="gridly-premium-select" data-gridly-awareness-county-select aria-label="County">${countyOptions}</select>
-      </label>
-      <label class="settings-awareness-select-label">Community
-        <select class="gridly-premium-select" data-gridly-awareness-community-select data-gridly-settings-awareness-option="${escapeGridlySettingsAttribute(selectedCommunity)}" data-v2-action="settings-select-awareness-area" data-gridly-awareness-area="${escapeGridlySettingsAttribute(selectedCommunity)}" aria-label="Community">${communityOptions}</select>
-      </label>
-      <p class="settings-awareness-summary" data-gridly-awareness-selection-summary>Watching ${escapeGridlySettingsAttribute(communityLabel)}, ${escapeGridlySettingsAttribute(countyLabel)}</p>
-    </div>`;
+let gridlySettingsManualAwarenessQuery = "";
+let gridlySettingsManualAwarenessPending = "";
+
+function getGridlyManualAwarenessAreaOptions() {
+  return gridlyGetCountyGroupedAwarenessOptions().map((group) => Object.freeze({
+    ...group,
+    communities: Object.freeze(group.communities.filter((community) => community.fallback !== true))
+  })).filter((group) => group.communities.length > 0);
+}
+
+function filterGridlyManualAwarenessAreas(query = "") {
+  const normalizedQuery = normalizeGridlyAwarenessAreaLookupText(String(query || "").trim());
+  return getGridlyManualAwarenessAreaOptions().map((group) => {
+    const countyMatches = normalizeGridlyAwarenessAreaLookupText(group.countyLabel).includes(normalizedQuery);
+    const communities = !normalizedQuery || countyMatches ? group.communities : group.communities.filter((community) => normalizeGridlyAwarenessAreaLookupText(community.label).includes(normalizedQuery));
+    return Object.freeze({ ...group, communities: Object.freeze(communities) });
+  }).filter((group) => group.communities.length > 0);
+}
+
+function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending) {
+  const selectedArea = resolveGridlyAwarenessArea(selectedValue || getGridlyHomeTownPreference?.() || "");
+  const pendingArea = resolveGridlyAwarenessArea(pendingValue);
+  const groups = filterGridlyManualAwarenessAreas(query);
+  const normalizedQuery = String(query || "").trim();
+  const resultHtml = groups.map((group) => {
+    const hasCurrent = group.communities.some((community) => community.key === selectedArea?.key);
+    const rows = group.communities.map((community) => {
+      const isCurrent = community.key === selectedArea?.key;
+      const isPending = community.key === pendingArea?.key;
+      const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
+      return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}${isCurrent ? " · Current watched area" : ""}</small></button>`;
+    }).join("");
+    return `<details class="settings-manual-county-group"${normalizedQuery || hasCurrent ? " open" : ""}><summary>${escapeGridlySettingsAttribute(group.countyLabel)}<span>${group.communities.length} ${group.communities.length === 1 ? "area" : "areas"}</span></summary><div class="settings-manual-area-results">${rows}</div></details>`;
+  }).join("");
+  const pendingHtml = pendingArea ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingArea.label || pendingArea.storageValue)}</strong><small>${escapeGridlySettingsAttribute(GRIDLY_COUNTY_REGISTRY[pendingArea.countyId]?.name || "")}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Watch this area</button></div>` : "";
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose an area manually</h3><label>Search county or community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="County or community" value="${escapeGridlySettingsAttribute(query)}"></label><div class="settings-manual-available-head"><strong>Available areas</strong><span>${groups.length ? "Only areas Gridly currently covers" : ""}</span></div>${pendingHtml}<div class="settings-manual-county-list">${resultHtml || '<p class="settings-manual-no-results" role="status">No available areas match your search.</p>'}</div></div>`;
+}
+
+function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
+  if (!container) return;
+  const display = getGridlySettingsAwarenessAreaDisplay();
+  container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue, gridlySettingsManualAwarenessQuery, gridlySettingsManualAwarenessPending);
+  const input = container.querySelector("[data-gridly-manual-awareness-search]");
+  input?.addEventListener("input", (event) => {
+    gridlySettingsManualAwarenessQuery = String(event.target.value || "");
+    renderGridlyManualAwarenessAreaPicker(container, { focusSearch: true });
+  });
+  container.querySelectorAll("[data-gridly-manual-awareness-value]").forEach((button) => button.addEventListener("click", () => {
+    gridlySettingsManualAwarenessPending = button.dataset.gridlyManualAwarenessValue || "";
+    renderGridlyManualAwarenessAreaPicker(container);
+  }));
+  container.querySelector("[data-gridly-manual-awareness-apply]")?.addEventListener("click", () => {
+    if (!gridlySettingsManualAwarenessPending) return;
+    if (selectGridlySettingsAwarenessArea(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container)) {
+      gridlySettingsManualAwarenessPending = "";
+      renderGridlyManualAwarenessAreaPicker(container);
+    }
+  });
+  if (options.focusSearch) {
+    input?.focus({ preventScroll: true });
+    input?.setSelectionRange?.(input.value.length, input.value.length);
+  }
 }
 
 
@@ -91853,7 +91894,7 @@ function renderGridlySettingsAwarenessControl() {
   document.querySelectorAll("[data-gridly-settings-awareness-current]").forEach((node) => { node.textContent = display.label; });
   document.querySelectorAll("[data-gridly-settings-awareness-meta]").forEach((node) => { node.textContent = display.meta; });
   document.querySelectorAll("[data-gridly-settings-awareness-options]").forEach((container) => {
-    container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue);
+    renderGridlyManualAwarenessAreaPicker(container);
   });
 }
 
