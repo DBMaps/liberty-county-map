@@ -25040,7 +25040,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .settings-awareness-candidates { margin: 0; padding-left: 20px; color: #f4f9ff; }
 .settings-manual-awareness-action { align-self: start; }
 
-/* LP185.3A — compact operational-inventory manual area picker. */
+/* LP185.3B — search-first operational-inventory area picker. */
 .settings-awareness-manual-picker {
   display: grid;
   gap: 12px;
@@ -25123,6 +25123,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 }
 .settings-manual-pending .primary-btn { justify-self: start; min-height: 44px; margin-top: 5px; }
 .settings-manual-no-results { margin: 0; padding: 16px 12px; color: rgba(232, 241, 255, 0.84); }
+.settings-manual-search-instruction { margin: 0; color: rgba(232, 241, 255, 0.84); line-height: 1.45; }
 @media (max-width: 430px) {
   .settings-awareness-search-row { grid-template-columns: 1fr; }
   .settings-awareness-search-row .primary-btn { width: 100%; }

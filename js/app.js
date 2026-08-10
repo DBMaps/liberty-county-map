@@ -91807,9 +91807,10 @@ function getGridlyManualAwarenessAreaOptions() {
 
 function filterGridlyManualAwarenessAreas(query = "") {
   const normalizedQuery = normalizeGridlyAwarenessAreaLookupText(String(query || "").trim());
+  if (!normalizedQuery) return [];
   return getGridlyManualAwarenessAreaOptions().map((group) => {
     const countyMatches = normalizeGridlyAwarenessAreaLookupText(group.countyLabel).includes(normalizedQuery);
-    const communities = !normalizedQuery || countyMatches ? group.communities : group.communities.filter((community) => normalizeGridlyAwarenessAreaLookupText(community.label).includes(normalizedQuery));
+    const communities = countyMatches ? group.communities : group.communities.filter((community) => normalizeGridlyAwarenessAreaLookupText(community.label).includes(normalizedQuery));
     return Object.freeze({ ...group, communities: Object.freeze(communities) });
   }).filter((group) => group.communities.length > 0);
 }
@@ -91817,20 +91818,19 @@ function filterGridlyManualAwarenessAreas(query = "") {
 function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending) {
   const selectedArea = resolveGridlyAwarenessArea(selectedValue || getGridlyHomeTownPreference?.() || "");
   const pendingArea = resolveGridlyAwarenessArea(pendingValue);
-  const groups = filterGridlyManualAwarenessAreas(query);
   const normalizedQuery = String(query || "").trim();
-  const resultHtml = groups.map((group) => {
-    const hasCurrent = group.communities.some((community) => community.key === selectedArea?.key);
-    const rows = group.communities.map((community) => {
+  const groups = normalizedQuery ? filterGridlyManualAwarenessAreas(normalizedQuery) : [];
+  const resultHtml = groups.flatMap((group) => group.communities.map((community) => {
       const isCurrent = community.key === selectedArea?.key;
       const isPending = community.key === pendingArea?.key;
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
       return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}${isCurrent ? " · Current watched area" : ""}</small></button>`;
-    }).join("");
-    return `<details class="settings-manual-county-group"${normalizedQuery || hasCurrent ? " open" : ""}><summary>${escapeGridlySettingsAttribute(group.countyLabel)}<span>${group.communities.length} ${group.communities.length === 1 ? "area" : "areas"}</span></summary><div class="settings-manual-area-results">${rows}</div></details>`;
-  }).join("");
+    })).join("");
   const pendingHtml = pendingArea ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingArea.label || pendingArea.storageValue)}</strong><small>${escapeGridlySettingsAttribute(GRIDLY_COUNTY_REGISTRY[pendingArea.countyId]?.name || "")}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Watch this area</button></div>` : "";
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose an area manually</h3><label>Search county or community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="County or community" value="${escapeGridlySettingsAttribute(query)}"></label><div class="settings-manual-available-head"><strong>Available areas</strong><span>${groups.length ? "Only areas Gridly currently covers" : ""}</span></div>${pendingHtml}<div class="settings-manual-county-list">${resultHtml || '<p class="settings-manual-no-results" role="status">No available areas match your search.</p>'}</div></div>`;
+  const results = normalizedQuery
+    ? `<div class="settings-manual-county-list" aria-live="polite">${resultHtml || '<p class="settings-manual-no-results" role="status">No available areas match your search.</p>'}</div>`
+    : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose from available areas</h3><label>Search county or community<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="Search county or community" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
@@ -91914,7 +91914,7 @@ function renderGridlySettingsAwarenessSearchResult(result) {
   if (result.status === "NOT_FOUND") { status.textContent = "We couldn't find that ZIP code or town."; return; }
   if (result.status === "TEMPORARILY_UNAVAILABLE") { status.textContent = "Area search is temporarily unavailable. Try again in a moment."; return; }
   if (result.status === "AMBIGUOUS") {
-    status.textContent = "More than one area matches. Choose manually or enter a more specific area.";
+    status.textContent = "More than one area matches. Choose from available areas or enter a more specific area.";
     const list = document.createElement("ul");
     list.className = "settings-awareness-candidates";
     result.candidates.forEach((candidate) => {
@@ -93989,7 +93989,7 @@ function bindGridlySettingsPreferences() {
     });
   }
   const manualCommunityBtn = typeof document !== "undefined" ? document.getElementById("settingsChooseCommunityManuallyBtn") : null;
-  if (manualCommunityBtn && manualCommunityBtn.dataset.gridlySettingsBound !== "1") { manualCommunityBtn.dataset.gridlySettingsBound = "1"; manualCommunityBtn.addEventListener("click", () => { const open = manualCommunityBtn.getAttribute("aria-expanded") !== "true"; setGridlySettingsAwarenessChooserOpen(open, els.settingsModal || document); manualCommunityBtn.setAttribute("aria-expanded", open ? "true" : "false"); manualCommunityBtn.textContent = open ? "Hide manual browse" : "Browse areas manually"; }); }
+  if (manualCommunityBtn && manualCommunityBtn.dataset.gridlySettingsBound !== "1") { manualCommunityBtn.dataset.gridlySettingsBound = "1"; manualCommunityBtn.addEventListener("click", () => { const open = manualCommunityBtn.getAttribute("aria-expanded") !== "true"; if (open) { gridlySettingsManualAwarenessQuery = ""; gridlySettingsManualAwarenessPending = ""; renderGridlyManualAwarenessAreaPicker(document.getElementById("settingsAwarenessAreaChooser")); } setGridlySettingsAwarenessChooserOpen(open, els.settingsModal || document); manualCommunityBtn.setAttribute("aria-expanded", open ? "true" : "false"); manualCommunityBtn.textContent = open ? "Hide available areas" : "Choose from available areas"; }); }
   if (els.settingsAwarenessAreaSearchForm && els.settingsAwarenessAreaSearchForm.dataset.gridlySettingsBound !== "1") {
     els.settingsAwarenessAreaSearchForm.dataset.gridlySettingsBound = "1";
     els.settingsAwarenessAreaSearchForm.addEventListener("submit", (event) => {

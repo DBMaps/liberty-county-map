@@ -19,13 +19,13 @@ function extractFunction(name) {
   throw new Error(`Could not extract ${name}`);
 }
 
-test('manual browse stays secondary, collapsed, and replaces native county/community selects', () => {
+test('available-area search stays secondary, collapsed, and replaces native county/community selects', () => {
   assert.match(html, /id="settingsAwarenessAreaChooser"[^>]*hidden/);
-  assert.match(html, />Browse areas manually</);
+  assert.match(html, />Choose from available areas</);
   assert.match(html, /id="settingsAwarenessAreaSearchInput"[^>]*placeholder="77535 or Dayton"/);
   const builder = extractFunction('buildGridlySettingsAwarenessOptionsHtml');
   assert.doesNotMatch(builder, /<select|data-gridly-awareness-county-select|data-gridly-awareness-community-select/);
-  assert.match(builder, /Choose an area manually/);
+  assert.match(builder, /Choose from available areas/);
   assert.match(builder, /Search county or community/);
   assert.match(css, /settings-awareness-manual-picker input\[type="search"\][\s\S]*font-size: 16px/);
   assert.match(css, /settings-manual-county-list[\s\S]*overflow-y: auto/);
@@ -48,10 +48,15 @@ test('manual inventory filter searches operational county and community identiti
     Object
   };
   vm.runInNewContext(`${getOptions}\n${filterOptions}\nthis.filter = filterGridlyManualAwarenessAreas;`, context);
-  assert.deepEqual(Array.from(context.filter('  LiBeRtY  '), (group) => group.countyId), ['liberty-tx']);
+  const liberty = context.filter('  LiBeRtY  ');
+  assert.deepEqual(Array.from(liberty, (group) => group.countyId), ['liberty-tx']);
+  assert.deepEqual(Array.from(liberty[0].communities, (community) => community.label), ['Liberty County', 'Dayton']);
+  assert.deepEqual(Array.from(context.filter('DAYTON')[0].communities, (community) => community.label), ['Dayton']);
   assert.deepEqual(Array.from(context.filter('livingston'), (group) => group.countyId), ['polk-tx']);
+  assert.deepEqual(Array.from(context.filter('  liv  ')[0].communities, (community) => community.label), ['Livingston']);
   assert.equal(context.filter('nonsense').length, 0);
   assert.equal(context.filter('Nowhere').length, 0, 'non-canonical fallback rows cannot become selectable');
+  assert.equal(context.filter('').length, 0, 'empty search never returns the operational inventory');
 });
 
 test('manual choice requires confirmation and applies only through the canonical Settings updater', () => {
