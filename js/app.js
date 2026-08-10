@@ -2418,6 +2418,8 @@ function gridlyTravelBriefCommunityConditionCopy(conditionKey) {
 function gridlyTravelBriefCommunityLine(record = {}) {
   const condition = gridlyTravelBriefCommunityCondition(record);
   const copy = gridlyTravelBriefCommunityConditionCopy(condition);
+  const identity = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(record) : null;
+  if (identity?.fullLabel) return `${copy.singular} at ${identity.fullLabel}.`;
   const locality = gridlyTravelBriefCommunityLocality(record);
   return gridlyTravelBriefCommunityConditionLine(condition, copy, locality);
 }
@@ -40700,6 +40702,8 @@ function buildGridlyDestinationRouteLocationMeta(record = {}) {
 }
 
 function getGridlyDestinationRouteBestLocationLine(item = {}, options = {}) {
+  const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(item) : null;
+  if (incidentLocation?.fullLabel) return incidentLocation.fullLabel;
   const roadName = formatGridlyDestinationRouteLocationLabel(item?.roadName);
   const referenceRoadA = formatGridlyDestinationRouteLocationLabel(item?.referenceRoadA || item?.referenceRoad);
   const referenceRoadB = formatGridlyDestinationRouteLocationLabel(item?.referenceRoadB);
@@ -76112,7 +76116,8 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}, options = {}) {
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
   stepStart = gridlyNowMs();
   const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(incident, { adapterType: "crossing" }) : null;
-  const locationLabel = lp023ConsumerLocation?.displayLocation || resolveGridlyCrossingPopupLocationLabel(incident, { auditRow });
+  const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(incident) : null;
+  const locationLabel = incidentLocation?.fullLabel || lp023ConsumerLocation?.displayLocation || resolveGridlyCrossingPopupLocationLabel(incident, { auditRow });
   const locationLine = normalizeGridlyUserFacingRoadText(locationLabel);
   gridlyAddPopupAuditDuration(auditRow, "locationResolutionDurationMs", stepStart);
   stepStart = gridlyNowMs();
@@ -76212,6 +76217,8 @@ function getGridlyAlertCardCrossingLocationEvidence(alert = {}) {
 
 function resolveGridlyConsumerLocationFromStructuredRecord(record = {}, options = {}) {
   if (!record || typeof record !== "object") return "";
+  const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(record) : null;
+  if (incidentLocation?.fullLabel) return incidentLocation.fullLabel;
   const structured = record?.structuredDisplayLocation && typeof record.structuredDisplayLocation === "object" ? record.structuredDisplayLocation : {};
   const raw = record?.raw && typeof record.raw === "object" ? record.raw : {};
   const source = record?.source && typeof record.source === "object" ? record.source : {};
@@ -76890,6 +76897,8 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 if (typeof window !== "undefined") window.gridlyLp023ConsumerLocationAdapterAudit = gridlyLp023ConsumerLocationAdapterAudit;
 
 function normalizeGridlyAlertCardLocationLabel(alert = {}) {
+  const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(alert) : null;
+  if (incidentLocation?.fullLabel) return incidentLocation.fullLabel;
   const crossingEvidence = getGridlyAlertCardCrossingLocationEvidence(alert);
   if (crossingEvidence?.locationLineLabel) return crossingEvidence.locationLineLabel;
   const isCrossing = isGridlyAlertCardCrossingRelated(alert);
@@ -76920,7 +76929,8 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
     : { primaryLocation: normalizeGridlyAlertCardLocationLabel(alert) };
   if (typeof gridlyLp021RecordLocationTrace === "function") gridlyLp021RecordLocationTrace("alert-card", alert?.id || alert?.incidentId || "alert", alert, lp021LocationPresentation);
   const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(alert) : null;
-  const locationLabel = lp023ConsumerLocation?.displayLocation || crossingLocationEvidence?.locationLineLabel || lp021LocationPresentation.primaryLocation || normalizeGridlyAlertCardLocationLabel(alert);
+  const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(alert) : null;
+  const locationLabel = incidentLocation?.fullLabel || lp023ConsumerLocation?.displayLocation || crossingLocationEvidence?.locationLineLabel || lp021LocationPresentation.primaryLocation || normalizeGridlyAlertCardLocationLabel(alert);
   const locationLine = normalizeGridlyCountyAwareDisplayText(locationLabel, alert);
   const reportCountCandidates = [alert?.incidentReportCount, alert?.activeReportCount, alert?.reports_count, alert?.count, alert?.confirmations, alert?.users_count, Array.isArray(alert?.reports) ? alert.reports.length : null]
     .map((value) => Number(value))
@@ -82475,6 +82485,8 @@ function buildGridlyLeafletCrossingPopupConsumerModel(crossing = {}, report = nu
   const popupState = hasActiveReport ? "active" : (isRecentlyClearedReport ? "recently_cleared" : "no_report");
   const reportCount = hasActiveReport ? getReportCountForCrossing(crossing.id) : 0;
   return buildGridlyCrossingPopupConsumerModel({
+    ...crossing,
+    ...(report && typeof report === "object" ? report : {}),
     id: `rail-${crossing.id || "crossing"}`,
     type: isClearedReport ? "rail_cleared" : (report?.type === "heavy" ? "rail_delay" : "rail_blocked"),
     report_type: isClearedReport ? "cleared" : (report?.type || ""),
@@ -82482,6 +82494,8 @@ function buildGridlyLeafletCrossingPopupConsumerModel(crossing = {}, report = nu
     popupState,
     crossingName: crossing.name,
     crossing_name: crossing.name,
+    primaryRoad: crossing.primaryRoad || crossing.roadName || crossing.road || crossing.roadway || "",
+    secondaryRoad: crossing.secondaryRoad || crossing.crossStreet || crossing.cross_street || crossing.name || "",
     area: crossing.name,
     railroad: crossing.railroad,
     reports_count: reportCount,
