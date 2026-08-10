@@ -61,6 +61,8 @@ const publishedAwarenessSandbox = {
   gridlyBuildNeutralAlertsSheetMarkup: () => '<div>neutral</div>',
   formatGridlyAlertsFreshnessLine: () => 'Updated 12 minutes ago',
   formatGridlyAlertsTrustLine: () => 'Awaiting additional reports',
+  gridlyResolveVisibleAlertCardLocationLine: (record, consumerCard) => consumerCard?.locationLine || consumerCard?.locationLabel || publishedAwarenessSandbox.gridlyGetPublishedAwarenessConsumerLocation(record, 'Nearby'),
+  gridlyBuildVisibleAlertLocationLineMarkup: (location, escapeText) => `<div class="gridly-alert-location-line" data-gridly-alert-location-line="true">${escapeText(location)}</div>`,
   buildGridlyAlertCardConsumerModel: undefined,
   isGridlyCachedAwarenessSummaryForCurrentArea: () => true,
   gridlyCommunityPulseAuditState: null,
