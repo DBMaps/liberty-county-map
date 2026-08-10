@@ -14922,6 +14922,31 @@ function getGridlyReviewedCrossingLocationContext(crossingId = "", review = {}) 
     : "none";
   return { primaryLabel, secondaryLabel, displayName, source, reviewedCrossingId: reviewed.reviewedCrossingId || configured.reviewedCrossingId || aliasId || id };
 }
+
+// Exact crossing-id join only: never derive consumer street precision from coordinates.
+function getGridlyCanonicalCrossingLocationContext(record = {}) {
+  const crossingId = String(record?.crossingId || record?.crossing_id || record?.raw?.crossingId || record?.raw?.crossing_id || record?.source?.crossingId || record?.source?.crossing_id || "").trim();
+  if (!crossingId || !Array.isArray(crossings)) return null;
+  const canonicalCrossing = crossings.find((crossing) => String(crossing?.id || crossing?.crossingId || crossing?.crossing_id || "").trim() === crossingId);
+  if (!canonicalCrossing) return null;
+  const props = canonicalCrossing?.props || canonicalCrossing?.properties || {};
+  const reviewed = getGridlyReviewedCrossingLocationContext(crossingId, canonicalCrossing?.review || crossingReviewOverrides?.[crossingId] || {});
+  const primaryRoad = String(canonicalCrossing?.primaryRoad || canonicalCrossing?.roadName || canonicalCrossing?.road || reviewed.primaryLabel || props.road_name || props.roadwayname || props.highwayname || props.road || "").trim();
+  const secondaryRoad = String(canonicalCrossing?.secondaryRoad || canonicalCrossing?.crossStreet || canonicalCrossing?.referenceRoad || reviewed.secondaryLabel || props.secondary_road || props.cross_street || props.reference_road || "").trim();
+  const resolvedLocality = String(canonicalCrossing?.resolvedLocality || canonicalCrossing?.locality || canonicalCrossing?.city || props.locality || props.city || props.town || props.community || "").trim();
+  return Object.freeze({
+    crossingId,
+    canonicalCrossingFound: true,
+    primaryRoad,
+    secondaryRoad,
+    referenceRoad: String(canonicalCrossing?.referenceRoad || props.reference_road || "").trim(),
+    canonicalDisplayLocation: String(canonicalCrossing?.canonicalDisplayLocation || reviewed.displayName || canonicalCrossing?.displayName || "").trim(),
+    resolvedLocality,
+    county: String(canonicalCrossing?.county || props.county || "").trim(),
+    source: reviewed.source || canonicalCrossing?.labelSource || "production-crossing-runtime"
+  });
+}
+if (typeof window !== "undefined") window.getGridlyCanonicalCrossingLocationContext = getGridlyCanonicalCrossingLocationContext;
 let roadwaySegmentFeatures = [];
 const gridlyRoadwayPackageRuntimeState = {
   loadedCounty: null,

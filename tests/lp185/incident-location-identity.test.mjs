@@ -31,6 +31,26 @@ test("canonical crossing metadata produces one trusted full and compact identity
   assert.equal(identity.precision, "intersection");
 });
 
+test("canonical projection preserves authoritative crossing fields for the shared resolver", () => {
+  assert.match(appSource, /function getGridlyCanonicalCrossingLocationContext/);
+  assert.match(appSource, /crossings\.find/);
+  assert.match(appSource, /primaryRoad,[\s\S]*secondaryRoad,[\s\S]*referenceRoad:[\s\S]*canonicalDisplayLocation:[\s\S]*resolvedLocality,/);
+  assert.match(helperSource, /getGridlyCanonicalCrossingLocationContext/);
+});
+
+test("road and authoritative locality are richer than road-only", () => {
+  const identity = present({ type: "rail_blocked", primaryRoad: "US 90", resolvedLocality: "Dayton" });
+  assert.equal(identity.fullLabel, "US 90 — Dayton");
+  assert.equal(identity.source, "trusted-road-locality");
+  assert.equal(identity.precision, "road-locality");
+});
+
+test("intersection wins over locality without duplicating locality", () => {
+  const identity = present({ type: "rail_blocked", primaryRoad: "US 90", secondaryRoad: "Waco Street", resolvedLocality: "Dayton" });
+  assert.equal(identity.fullLabel, "US 90 & Waco Street");
+  assert.equal(identity.secondaryLabel, "Dayton");
+});
+
 test("alerts, crossing popup, Travel Brief, and Destination Intelligence consume the shared decision", () => {
   for (const functionName of [
     "normalizeGridlyAlertCardLocationLabel",
