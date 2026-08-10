@@ -124,6 +124,70 @@ test("alerts, crossing popup, Travel Brief, and Destination Intelligence consume
   assert.doesNotMatch(appSource, /US 90 & Waco Street/);
 });
 
+test("visible Portrait V2 Alerts preserve governed crossing evidence through the final markup sink", () => {
+  const functionSource = (name) => {
+    const start = appSource.indexOf(`function ${name}`);
+    assert.notEqual(start, -1, `${name} exists`);
+    let depth = 0;
+    let opened = false;
+    const bodyStart = appSource.indexOf(") {", start) + 2;
+    for (let index = bodyStart; index < appSource.length; index += 1) {
+      if (appSource[index] === "{") { depth += 1; opened = true; }
+      if (appSource[index] === "}" && opened) depth -= 1;
+      if (opened && depth === 0) return appSource.slice(start, index + 1);
+    }
+    throw new Error(`${name} body not closed`);
+  };
+  const runtime = {
+    getGridlyAlertCardCrossingLocationEvidence: () => ({ locationLineLabel: "US 90 & Waco Street", reviewedLabelApplied: true, fallbackLabelUsed: false }),
+    getGridlyIncidentLocationPresentation: present,
+    gridlyLp021ResolvedLocationPresentation: () => ({ primaryLocation: "US 90" }),
+    gridlyLp023ResolveConsumerLocation: () => ({ displayLocation: "US 90" }),
+    normalizeGridlyCountyAwareDisplayText: (value) => String(value || ""),
+    normalizeGridlyAlertCardTitleCandidate: (_alert, fallback) => fallback,
+    standardizeGridlyAlertHeadline: (value) => value,
+    getGridlyCommunityTrustPresentationModel: () => ({ reportCountLine: "1 community report", trustLine: "Community reported" }),
+    formatGridlyHazardPopupFreshnessLine: () => "Updated just now",
+    normalizeGridlyUserFacingRoadText: (value) => value,
+    getGridlyHazardPopupReportCount: () => 1,
+    GRIDLY_HAZARD_POPUP_TECHNICAL_METADATA_PATTERN: /$a/,
+    cleanDisplayValue: (value) => String(value || "").trim(),
+    esc: (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+  };
+  vm.createContext(runtime);
+  vm.runInContext([
+    functionSource("normalizeGridlyAlertCardLocationLabel"),
+    functionSource("buildGridlyAlertCardConsumerModel"),
+    functionSource("gridlyResolveVisibleAlertCardLocationLine"),
+    functionSource("gridlyBuildVisibleAlertLocationLineMarkup")
+  ].join("\n"), runtime);
+
+  const report = { ...crossingIncident, crossingId: "FRA-762790L", __gridlyPresentationLocationLabel: "US 90" };
+  const evidence = runtime.getGridlyAlertCardCrossingLocationEvidence(report);
+  const model = runtime.buildGridlyAlertCardConsumerModel(report, { fallbackTitle: "Train Blocking Crossing" });
+  const visibleLocation = runtime.gridlyResolveVisibleAlertCardLocationLine(report, model);
+  const markup = runtime.gridlyBuildVisibleAlertLocationLineMarkup(visibleLocation, runtime.esc);
+
+  assert.equal(present(report).fullLabel, "US 90 & Waco Street");
+  assert.equal(evidence.locationLineLabel, "US 90 & Waco Street");
+  assert.equal(model.locationLine, "US 90 & Waco Street");
+  assert.equal(visibleLocation, "US 90 & Waco Street");
+  assert.match(markup, /class="gridly-alert-location-line"/);
+  assert.match(markup, />US 90 &amp; Waco Street<\/div>/);
+  assert.doesNotMatch(markup, />US 90<\/div>/);
+  assert.match(appSource, /gridlyBuildVisibleAlertLocationLineMarkup\(displaySubtitle, esc\)/);
+});
+
+test("visible Alerts fallbacks and source ownership remain intact", () => {
+  const resolverStart = appSource.indexOf("function gridlyResolveVisibleAlertCardLocationLine");
+  const resolverBody = appSource.slice(resolverStart, appSource.indexOf("\nfunction ", resolverStart + 10));
+  assert.ok(resolverBody.indexOf("consumerCard?.locationLine") < resolverBody.indexOf("alert?.__gridlyPresentationLocationLabel"));
+  assert.match(resolverBody, /alert\?\.roadName/);
+  assert.match(resolverBody, /alert\?\.city/);
+  assert.doesNotMatch(resolverBody, /Waco|secondaryRoad|crossingDisplayName/);
+  assert.doesNotMatch(appSource.slice(appSource.indexOf("const RenderCompleteAlertCard"), appSource.indexOf("const renderAlertCard", appSource.indexOf("const RenderCompleteAlertCard"))), /secondaryRoad|crossingDisplayName|\s&\s/);
+});
+
 test("road-only records remain road-only and coordinates never synthesize a cross street", () => {
   assert.equal(present({ type: "rail_blocked", primaryRoad: "US 90" }).fullLabel, "US 90");
   assert.equal(present({ type: "rail_blocked", primaryRoad: "US 90", lat: 30.01, lng: -94.89 }).fullLabel, "US 90");

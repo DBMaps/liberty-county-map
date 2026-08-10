@@ -33996,34 +33996,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
       const sourceTextFor = (row = {}) => [row?.provider, row?.sourceName, row?.source, row?.origin, row?.feed, row?.authority, row?.agency, row?.raw?.provider, row?.raw?.source, row?.source?.provider, row?.source?.name].map(text).join(" ").toLowerCase();
       const rowLooksOfficialRoadway = (row = {}) => /drivetexas|txdot|official|roadway|transportation|dot\b/.test(sourceTextFor(row));
       const rowLooksWeather = (row = {}) => /weather|nws|national weather|warning|watch|advisory/.test([sourceTextFor(row), row?.category, row?.event, row?.title, row?.headline, row?.description].map(text).join(" ").toLowerCase());
-      const getNarrowAlertLocationLabel = (alert = {}, consumerCard = {}) => pickFirstNonEmptyText([
-    alert?.__gridlyPresentationLocationLabel,
-    consumerCard?.locationLabel,
-    consumerCard?.locationLine,
-    alert?.locationLabel,
-    alert?.locationLine,
-    alert?.displayLocation,
-    alert?.presentationLocation,
-    alert?.roadName,
-    alert?.primaryRoad,
-    alert?.corridor,
-    alert?.route,
-    alert?.normalizedLocation,
-    alert?.normalizedLocationText,
-    alert?.locationName,
-    alert?.knownLocation,
-    alert?.raw?.normalizedLocation,
-    alert?.raw?.locationName,
-    alert?.source?.normalizedLocation,
-    alert?.source?.locationName,
-    alert?.awarenessArea,
-    alert?.awareness_area,
-    alert?.area,
-    alert?.city,
-    alert?.town,
-    alert?.raw?.awarenessArea,
-    alert?.raw?.city
-  ]) || "Nearby";
+      const getNarrowAlertLocationLabel = (alert = {}, consumerCard = {}) => gridlyResolveVisibleAlertCardLocationLine(alert, consumerCard);
 
       const buildNarrowAlertTrustDisplayModel = (alert = {}, resolvedTitle = "") => {
         const existing = alert?.__gridlyNarrowTrustDisplayModel || alert?.__gridlyNarrowConsumerCard;
@@ -34145,7 +34118,7 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     <div style="min-width:0;flex:1;">
       <div style="display:grid;gap:4px;">
         <strong class="gridly-alert-title" data-gridly-alert-title-text="true" data-gridly-alert-title-node="true" style="display:block;font-size:14px;line-height:1.3;color:#fff;letter-spacing:0.01em;">${esc(displayTitle)}</strong>
-        <div class="gridly-alert-location-line" data-gridly-alert-location-line="true" style="font-size:12px;line-height:1.35;color:rgba(235,244,255,0.92);font-weight:720;">${esc(displaySubtitle)}</div>
+        ${gridlyBuildVisibleAlertLocationLineMarkup(displaySubtitle, esc)}
         <div class="gridly-alert-situation-summary gridly-alert-subtitle" data-gridly-alert-situation-summary="true" data-gridly-alert-condition-line="true" data-gridly-alert-condition-node="true" style="font-size:12px;line-height:1.35;color:rgba(242,246,255,0.9);">${esc(displayCondition)}</div>
         <div class="gridly-alert-meta-line" data-gridly-alert-freshness="true"><strong>Updated</strong> ${esc(freshnessLine.replace(/^Updated\s*/i, ""))}</div>
         ${eventEvidenceHtml}
@@ -76972,7 +76945,7 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
   if (typeof gridlyLp021RecordLocationTrace === "function") gridlyLp021RecordLocationTrace("alert-card", alert?.id || alert?.incidentId || "alert", alert, lp021LocationPresentation);
   const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(alert) : null;
   const incidentLocation = typeof getGridlyIncidentLocationPresentation === "function" ? getGridlyIncidentLocationPresentation(alert) : null;
-  const locationLabel = incidentLocation?.fullLabel || lp023ConsumerLocation?.displayLocation || crossingLocationEvidence?.locationLineLabel || lp021LocationPresentation.primaryLocation || normalizeGridlyAlertCardLocationLabel(alert);
+  const locationLabel = crossingLocationEvidence?.locationLineLabel || incidentLocation?.fullLabel || lp023ConsumerLocation?.displayLocation || lp021LocationPresentation.primaryLocation || normalizeGridlyAlertCardLocationLabel(alert);
   const locationLine = normalizeGridlyCountyAwareDisplayText(locationLabel, alert);
   const reportCountCandidates = [alert?.incidentReportCount, alert?.activeReportCount, alert?.reports_count, alert?.count, alert?.confirmations, alert?.users_count, Array.isArray(alert?.reports) ? alert.reports.length : null]
     .map((value) => Number(value))
@@ -77006,6 +76979,41 @@ function buildGridlyAlertCardConsumerModel(alert = {}, options = {}) {
   };
   gridlyLp017AuditRecordModelCall(alert, model);
   return model;
+}
+
+function gridlyResolveVisibleAlertCardLocationLine(alert = {}, consumerCard = {}) {
+  return cleanDisplayValue(
+    consumerCard?.locationLine ||
+    consumerCard?.locationLabel ||
+    alert?.__gridlyPresentationLocationLabel ||
+    alert?.locationLabel ||
+    alert?.locationLine ||
+    alert?.displayLocation ||
+    alert?.presentationLocation ||
+    alert?.roadName ||
+    alert?.primaryRoad ||
+    alert?.corridor ||
+    alert?.route ||
+    alert?.normalizedLocation ||
+    alert?.normalizedLocationText ||
+    alert?.locationName ||
+    alert?.knownLocation ||
+    alert?.raw?.normalizedLocation ||
+    alert?.raw?.locationName ||
+    alert?.source?.normalizedLocation ||
+    alert?.source?.locationName ||
+    alert?.awarenessArea ||
+    alert?.awareness_area ||
+    alert?.area ||
+    alert?.city ||
+    alert?.town ||
+    alert?.raw?.awarenessArea ||
+    alert?.raw?.city
+  ) || "Nearby";
+}
+
+function gridlyBuildVisibleAlertLocationLineMarkup(locationLine = "", escapeText = esc) {
+  return `<div class="gridly-alert-location-line" data-gridly-alert-location-line="true" style="font-size:12px;line-height:1.35;color:rgba(235,244,255,0.92);font-weight:720;">${escapeText(locationLine)}</div>`;
 }
 
 function gridlyRoadHazardLocationConsistencyAudit(options = {}) {

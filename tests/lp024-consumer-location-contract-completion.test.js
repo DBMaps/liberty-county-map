@@ -19,11 +19,14 @@ const officialPopup = block('gridlyLp019OfficialPopupHtml', 'gridlyLp019PointAud
 const audit = block('gridlyLp023ConsumerLocationAdapterAudit', 'normalizeGridlyAlertCardLocationLabel');
 
 assert(alertModel.includes('const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(alert)'), 'Alert builder consumes LP023 contract');
-assert(alertModel.includes('const locationLabel = lp023ConsumerLocation?.displayLocation'), 'Alert location comes from lp023ConsumerLocation.displayLocation first');
+assert(alertModel.includes('const crossingLocationEvidence = getGridlyAlertCardCrossingLocationEvidence(alert)'), 'Alert builder consumes governed crossing evidence');
+assert(alertModel.includes('const locationLabel = crossingLocationEvidence?.locationLineLabel || incidentLocation?.fullLabel'), 'Alert location prefers governed crossing evidence before legacy consumer fallbacks');
+assert(source.includes('gridlyResolveVisibleAlertCardLocationLine(alert, consumerCard)'), 'Visible Alerts renderer consumes the alert consumer model location contract');
+assert(source.includes('gridlyBuildVisibleAlertLocationLineMarkup(displaySubtitle, esc)'), 'Visible Alerts markup writes the preserved consumer location into the canonical location node');
 assert(!/MAIN LANES not affected/i.test(officialAdapter), 'Official adapter does not special-case advisory text as location');
 assert(officialAdapter.includes('GRIDLY_LP023_ADVISORY_PROSE.test([record?.description, record?.title, raw?.description].join(" "))'), 'Official adapter records advisory rejection without promoting prose');
 assert(officialPopup.includes('gridlyLp023ResolveConsumerLocation(record, { adapterType: "official" })'), 'Official popup consumes official LP023 contract');
-assert(officialPopup.includes('const location = lp023ConsumerLocation?.displayLocation'), 'Official popup renders lp023ConsumerLocation.displayLocation first');
+assert(officialPopup.includes('const rawLocation = lp023ConsumerLocation?.displayLocation'), 'Official popup preserves source-owned LP023 displayLocation before presentation fallbacks');
 
 assert(communityPopup.includes('gridlyLp023ResolveConsumerLocation(incident, { adapterType: "community" })'), 'Community popup consumes community LP023 contract');
 assert(communityPopup.includes('const locationLine = normalizedRoadLabel'), 'Community popup preserves canonical contract display as its location line');
