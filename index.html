@@ -946,13 +946,22 @@
             <p class="settings-placeholder-note">Choose where Gridly should focus local awareness for you. Profile details stay on this device.</p>
             <div class="settings-place-grid" aria-label="Awareness Area settings">
               <article class="settings-place-card settings-place-card-wide settings-awareness-area-card">
-                <span class="settings-place-label">Home area</span>
+                <span class="settings-place-label">Watching</span>
                 <strong id="settingsAwarenessAreaValue">Not selected</strong>
                 <small id="settingsAwarenessAreaMeta">Choose the community-watch area Gridly should follow.</small>
-                <span class="settings-place-label">Home ZIP</span>
-                <strong id="settingsHomeZipValue">Not set</strong>
-                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsChangeAwarenessAreaBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Change home ZIP</button>
-                <button type="button" class="secondary-btn compact-btn settings-place-action" id="settingsChooseCommunityManuallyBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Choose community manually</button>
+                <div class="settings-awareness-search">
+                  <span class="settings-place-label">Change area</span>
+                  <form id="settingsAwarenessAreaSearchForm" novalidate>
+                    <label for="settingsAwarenessAreaSearchInput">Where do you want Gridly to watch?</label>
+                    <div class="settings-awareness-search-row">
+                      <input id="settingsAwarenessAreaSearchInput" type="text" inputmode="search" autocomplete="postal-code" placeholder="77535 or Dayton" aria-describedby="settingsAwarenessAreaSearchStatus">
+                      <button type="submit" class="primary-btn" id="settingsChangeAwarenessAreaBtn">Find Area</button>
+                    </div>
+                  </form>
+                  <div class="settings-awareness-search-result" id="settingsAwarenessAreaSearchResult" hidden></div>
+                  <p class="settings-awareness-search-status" id="settingsAwarenessAreaSearchStatus" role="status" aria-live="polite"></p>
+                </div>
+                <button type="button" class="secondary-btn compact-btn settings-place-action settings-manual-awareness-action" id="settingsChooseCommunityManuallyBtn" aria-expanded="false" aria-controls="settingsAwarenessAreaChooser">Browse areas manually</button>
               </article>
             </div>
             <div class="settings-awareness-area-chooser" id="settingsAwarenessAreaChooser" data-gridly-settings-awareness-options aria-label="Choose an awareness area" hidden></div>
