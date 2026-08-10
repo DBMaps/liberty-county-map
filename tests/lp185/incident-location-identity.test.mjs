@@ -188,6 +188,69 @@ test("visible Alerts fallbacks and source ownership remain intact", () => {
   assert.doesNotMatch(appSource.slice(appSource.indexOf("const RenderCompleteAlertCard"), appSource.indexOf("const renderAlertCard", appSource.indexOf("const RenderCompleteAlertCard"))), /secondaryRoad|crossingDisplayName|\s&\s/);
 });
 
+test("published-awareness Alerts cannot downgrade the completed consumer location", () => {
+  const publishedSource = fs.readFileSync(new URL("../../js/gridlyAlertsPublishedAwareness.js", import.meta.url), "utf8");
+  const escapeText = (value) => String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const sandbox = {
+    window: {},
+    console,
+    normalizeGridlyCountyAwareDisplayText: (value) => String(value || "").trim(),
+    cleanDisplayValue: (value) => String(value || "").trim(),
+    esc: escapeText,
+    gridlyBuildNeutralAlertsSheetMarkup: () => "<div>neutral</div>",
+    formatGridlyAlertsFreshnessLine: () => "Updated just now",
+    formatGridlyAlertsTrustLine: () => "Community reported",
+    buildGridlyAlertCardConsumerModel: (record) => ({ title: record.title, locationLine: record.governedLocation }),
+    gridlyResolveVisibleAlertCardLocationLine: (record, consumerCard) => consumerCard?.locationLine || consumerCard?.locationLabel || record.locationLabel || record.roadName || "Nearby",
+    gridlyBuildVisibleAlertLocationLineMarkup: (location, escape = escapeText) => `<div class="gridly-alert-location-line" data-gridly-alert-location-line="true">${escape(location)}</div>`,
+    isGridlyCachedAwarenessSummaryForCurrentArea: () => true,
+    gridlyCommunityPulseAuditState: null,
+    gridlyLP012RecordAlertsClick: () => {},
+    gridlyAlertsOpenRefreshFixNow: () => 0,
+    gridlyBeginAlertsSheetLifecycle: () => 1,
+    gridlyBeginAlertsOpenRefreshFixTiming: () => {},
+    gridlyRecordAlertsOpenRefreshFixTiming: () => {},
+    gridlyInstantAlertsSheetAuditState: {},
+    gridlyAlertsSheetLifecycleState: { lateResultIgnoredCount: 0 }
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(publishedSource, sandbox);
+
+  const record = {
+    id: "FRA-762790L",
+    crossingId: "FRA-762790L",
+    type: "rail_blocked",
+    title: "Train Blocking Crossing",
+    locationLabel: "US 90",
+    primaryRoad: "US 90",
+    governedLocation: "US 90 & Waco Street"
+  };
+  assert.equal(sandbox.gridlyGetPublishedAwarenessConsumerLocation(record, record.governedLocation), "US 90");
+
+  const html = sandbox.gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords([record]);
+  assert.match(html, /class="gridly-alert-location-line"[^>]*>US 90 &amp; Waco Street<\/div>/);
+  assert.doesNotMatch(html, /class="gridly-alert-location-line"[^>]*>US 90<\/div>/);
+  assert.match(html, /data-gridly-alert-location="US 90 &amp; Waco Street"/);
+
+  for (const fixture of [
+    { title: "Road closure", locationLabel: "FM 1960", governedLocation: "FM 1960" },
+    { title: "Crossing blocked", locationLabel: "US 90", governedLocation: "US 90 — Dayton" },
+    { title: "Disabled vehicle", locationLabel: "Highway 90 and Bowie Street", governedLocation: "Highway 90 and Bowie Street" },
+    { title: "DriveTexas closure", providerId: "drivetexas", locationLabel: "From FM 364 to the Neches River", governedLocation: "From FM 364 to the Neches River" },
+    { title: "Travel Alert", governedLocation: "Nearby" }
+  ]) {
+    const fixtureHtml = sandbox.gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords([fixture]);
+    assert.match(fixtureHtml, new RegExp(`data-gridly-alert-location="${escapeText(fixture.governedLocation)}"`));
+  }
+
+  const builderStart = publishedSource.indexOf("function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords");
+  const builderEnd = publishedSource.indexOf("\nfunction openAlertsSurfaceFromDock", builderStart);
+  const builderSource = publishedSource.slice(builderStart, builderEnd);
+  assert.match(builderSource, /gridlyResolveVisibleAlertCardLocationLine\(\s*record,\s*consumerCard\s*\)/);
+  assert.match(builderSource, /gridlyBuildVisibleAlertLocationLineMarkup\(location, esc\)/);
+  assert.doesNotMatch(builderSource, /gridlyGetPublishedAwarenessConsumerLocation\(/);
+});
+
 test("road-only records remain road-only and coordinates never synthesize a cross street", () => {
   assert.equal(present({ type: "rail_blocked", primaryRoad: "US 90" }).fullLabel, "US 90");
   assert.equal(present({ type: "rail_blocked", primaryRoad: "US 90", lat: 30.01, lng: -94.89 }).fullLabel, "US 90");

@@ -235,9 +235,9 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
         record
       );
 
-      const location = gridlyGetPublishedAwarenessConsumerLocation(
+      const location = gridlyResolveVisibleAlertCardLocationLine(
         record,
-        consumerCard?.locationLabel || consumerCard?.locationLine || "Nearby"
+        consumerCard
       );
 
       const summary = gridlyGetPublishedAwarenessConsumerSummary(
@@ -302,9 +302,7 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
               ${esc(title)}
             </strong>
 
-            <div class="gridly-alert-location-line" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">
-              ${esc(location)}
-            </div>
+            ${gridlyBuildVisibleAlertLocationLineMarkup(location, esc)}
 
             <div class="gridly-alert-situation-summary" style="font-size:12px;line-height:1.35;color:rgba(242,246,255,0.9);">
               ${esc(summary)}

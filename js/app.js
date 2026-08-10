@@ -32209,21 +32209,8 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
         record
       );
 
-      const structuredConsumerLocation =
-        typeof resolveGridlyConsumerLocationFromStructuredRecord === "function"
-          ? resolveGridlyConsumerLocationFromStructuredRecord(record)
-          : "";
       const location = normalizeGridlyCountyAwareDisplayText(
-        structuredConsumerLocation ||
-          consumerCard?.locationLabel ||
-          consumerCard?.locationLine ||
-          record?.locationLabel ||
-          record?.roadName ||
-          record?.primaryRoad ||
-          record?.route ||
-          record?.area ||
-          record?.city ||
-          "Nearby",
+        gridlyResolveVisibleAlertCardLocationLine(record, consumerCard),
         record
       );
 
@@ -32309,9 +32296,7 @@ function gridlyBuildAlertsSheetMarkupFromPublishedAwarenessRecords(
               ${esc(title)}
             </strong>
 
-            <div class="gridly-alert-location-line" style="font-size:11px;line-height:1.35;color:rgba(199,211,226,0.86);">
-              ${esc(cleanOfficialLocation)}
-            </div>
+            ${gridlyBuildVisibleAlertLocationLineMarkup(cleanOfficialLocation, esc)}
 
             <div class="gridly-alert-situation-summary" style="font-size:12px;line-height:1.35;color:rgba(242,246,255,0.9);">
               ${esc(summary)}
