@@ -26,7 +26,7 @@ test('available-area search stays secondary, collapsed, and replaces native coun
   const builder = extractFunction('buildGridlySettingsAwarenessOptionsHtml');
   assert.doesNotMatch(builder, /<select|data-gridly-awareness-county-select|data-gridly-awareness-community-select/);
   assert.match(builder, /Choose from available areas/);
-  assert.match(builder, /Search county or community/);
+  assert.match(builder, /Search ZIP, town, or county/);
   assert.match(css, /settings-awareness-manual-picker input\[type="search"\][\s\S]*font-size: 16px/);
   assert.match(css, /settings-manual-county-list[\s\S]*overflow-y: auto/);
 });
@@ -67,7 +67,7 @@ test('manual choice requires confirmation and applies only through the canonical
   assert.doesNotMatch(render, /localStorage|saveGridlyHomeTownPreference|setGridlyAwarenessView/);
   assert.match(extractFunction('getGridlyManualAwarenessAreaOptions'), /gridlyGetCountyGroupedAwarenessOptions/);
   assert.match(extractFunction('gridlyGetCountyGroupedAwarenessOptions'), /gridlyGetSelectableOperationalCountyIds/);
-  assert.match(extractFunction('buildGridlySettingsAwarenessOptionsHtml'), /Current watched area/);
+  assert.match(extractFunction('buildGridlySettingsAwarenessOptionsHtml'), /Currently watching/);
   assert.match(extractFunction('buildGridlySettingsAwarenessOptionsHtml'), /No available areas match your search\./);
 });
 

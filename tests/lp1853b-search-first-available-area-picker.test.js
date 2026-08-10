@@ -32,9 +32,9 @@ test('empty query is an instructional state and does not construct or render inv
   assert.match(filter, /if \(!normalizedQuery\) return \[\]/);
   assert.ok(filter.indexOf('if (!normalizedQuery) return []') < filter.indexOf('getGridlyManualAwarenessAreaOptions()'));
   assert.match(builder, /Start typing to find an available Gridly area\./);
-  assert.match(builder, /normalizedQuery \? filterGridlyManualAwarenessAreas/);
+  assert.match(builder, /resolveGridlyManualAwarenessAreaSearch\(normalizedQuery\)/);
   assert.doesNotMatch(builder, /<details|settings-manual-county-group|<summary/);
-  assert.match(builder, /placeholder="Search county or community"/);
+  assert.match(builder, /placeholder="77535, Dayton, or Liberty County"/);
 });
 
 test('search results are flat semantic buttons with pending-only selection and canonical apply', () => {
@@ -43,7 +43,7 @@ test('search results are flat semantic buttons with pending-only selection and c
   assert.match(builder, /groups\.flatMap/);
   assert.match(builder, /<button type="button" class="settings-manual-area-result/);
   assert.match(builder, /group\.countyLabel/);
-  assert.match(builder, /Current watched area/);
+  assert.match(builder, /Currently watching/);
   assert.match(builder, /No available areas match your search\./);
   assert.match(renderer, /gridlySettingsManualAwarenessPending = button\.dataset\.gridlyManualAwarenessValue/);
   assert.match(renderer, /selectGridlySettingsAwarenessArea\(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container\)/);

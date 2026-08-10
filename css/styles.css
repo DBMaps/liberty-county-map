@@ -25043,14 +25043,15 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 /* LP185.3B — search-first operational-inventory area picker. */
 .settings-awareness-manual-picker {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
   min-width: 0;
 }
-.settings-awareness-manual-picker h3 { margin: 0; font-size: 1.05rem; }
+.settings-awareness-manual-picker h3 { margin: 0; font-size: 0.78rem; letter-spacing: 0.11em; text-transform: uppercase; }
+.settings-manual-search-helper { margin: -5px 0 1px; color: rgba(220, 234, 249, 0.76); font-size: 0.9rem; line-height: 1.45; }
 .settings-awareness-manual-picker > label {
   display: grid;
-  gap: 7px;
+  gap: 8px;
   color: rgba(241, 247, 255, 0.92);
   font-size: 0.92rem;
   font-weight: 800;
@@ -25060,14 +25061,19 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   width: 100%;
   min-width: 0;
   min-height: 48px;
-  border: 1px solid rgba(142, 239, 255, 0.34);
+  border: 1px solid rgba(142, 239, 255, 0.3);
   border-radius: 16px;
-  background: rgba(5, 13, 28, 0.96);
+  background: linear-gradient(180deg, rgba(9, 22, 40, 0.98), rgba(5, 13, 28, 0.98));
   color: #f8fbff;
   font: inherit;
   font-size: 16px;
-  padding: 0 14px;
+  padding: 0 16px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035), 0 8px 22px rgba(0, 0, 0, 0.12);
 }
+.settings-awareness-manual-picker input[type="search"]::placeholder { color: rgba(220, 234, 249, 0.52); }
+.settings-awareness-manual-picker input[type="search"]:focus-visible { outline: 3px solid rgba(142, 239, 255, 0.22); outline-offset: 2px; border-color: rgba(142, 239, 255, 0.72); }
+.settings-manual-results { display: grid; gap: 8px; min-width: 0; }
+.settings-manual-results-label { color: rgba(220, 234, 249, 0.62); font-size: 0.72rem; font-weight: 850; letter-spacing: 0.12em; text-transform: uppercase; }
 .settings-manual-available-head,
 .settings-manual-county-group > summary,
 .settings-manual-pending { display: grid; gap: 4px; }
@@ -25076,11 +25082,11 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 .settings-manual-pending small { color: rgba(220, 234, 249, 0.72); font-size: 0.82rem; }
 .settings-manual-county-list {
   display: grid;
-  gap: 8px;
+  gap: 9px;
   max-height: min(42vh, 420px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 2px 3px 18px 0;
+  padding: 2px 3px 18px 1px;
 }
 .settings-manual-county-group {
   border: 1px solid rgba(142, 239, 255, 0.18);
@@ -25101,20 +25107,22 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   display: grid;
   gap: 3px;
   width: 100%;
-  min-height: 54px;
-  border: 0;
-  border-bottom: 1px solid rgba(142, 239, 255, 0.09);
-  background: rgba(5, 13, 28, 0.7);
+  min-height: 68px;
+  border: 1px solid rgba(142, 239, 255, 0.16);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(12, 29, 49, 0.88), rgba(5, 14, 29, 0.92));
   color: #f8fbff;
   cursor: pointer;
   font: inherit;
-  padding: 9px 13px;
+  padding: 12px 14px;
   text-align: left;
 }
 .settings-manual-area-result span { font-weight: 850; }
 .settings-manual-area-result small { color: rgba(220, 234, 249, 0.76); font-size: 0.84rem; }
-.settings-manual-area-result.is-current small { color: rgba(67, 230, 160, 0.96); }
-.settings-manual-area-result.is-pending { background: rgba(25, 91, 99, 0.64); box-shadow: inset 3px 0 rgba(67, 230, 160, 0.9); }
+.settings-manual-area-result:disabled { cursor: default; opacity: 1; }
+.settings-manual-area-state { justify-self: start; border: 1px solid rgba(67, 230, 160, 0.28); border-radius: 999px; color: rgba(112, 241, 181, 0.96); font-size: 0.72rem; font-style: normal; font-weight: 850; padding: 3px 8px; }
+.settings-manual-area-result.is-current { border-color: rgba(67, 230, 160, 0.28); }
+.settings-manual-area-result.is-pending { border-color: rgba(67, 230, 160, 0.54); background: linear-gradient(145deg, rgba(25, 91, 99, 0.68), rgba(8, 33, 44, 0.9)); box-shadow: inset 3px 0 rgba(67, 230, 160, 0.9); }
 .settings-manual-pending {
   border: 1px solid rgba(67, 230, 160, 0.32);
   border-radius: 15px;

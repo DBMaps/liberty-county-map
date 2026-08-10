@@ -34,7 +34,7 @@ test('Portrait V2 opener resets and renders the canonical LP185.3B search-first 
   assert.match(opener, /gridlySettingsManualAwarenessQuery = ""/);
   assert.match(opener, /gridlySettingsManualAwarenessPending = ""/);
   assert.match(opener, /renderGridlyManualAwarenessAreaPicker/);
-  assert.match(builder, /normalizedQuery \? filterGridlyManualAwarenessAreas\(normalizedQuery\) : \[\]/);
+  assert.match(builder, /resolveGridlyManualAwarenessAreaSearch\(normalizedQuery\)/);
   assert.match(builder, /Start typing to find an available Gridly area\./);
   assert.match(builder, /groups\.flatMap/);
   assert.doesNotMatch(builder, /<select|<details|<summary/);
