@@ -59,7 +59,7 @@ test('Settings is search-first and keeps manual selection collapsed and function
   assert.match(html, /id="settingsAwarenessAreaSearchInput"[^>]*placeholder="77535 or Dayton"/);
   assert.match(html, /id="settingsAwarenessAreaSearchResult" hidden/);
   assert.match(html, /id="settingsAwarenessAreaChooser"[^>]*hidden/);
-  assert.match(html, />Browse areas manually</);
+  assert.match(html, />Choose from available areas</);
   assert.match(app, /selectGridlySettingsAwarenessArea\(target\.value \|\| "", "legacy_settings_awareness_area"/);
   assert.match(css, /@media \(max-width: 430px\)[\s\S]*settings-awareness-search-row/);
 });
