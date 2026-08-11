@@ -4,9 +4,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import { buildArtifacts, capturePackageDirectory, stableJson } from '../tools/lp1885/capture-community-package-identities.mjs';
 
-const root = path.resolve(new URL('..', import.meta.url).pathname);
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const identity = JSON.parse(fs.readFileSync(path.join(root, 'data/lp149/runtime-county-registry.json'), 'utf8'));
 const restriction = JSON.parse(fs.readFileSync(path.join(root, 'reports/lp186/county-restriction-reconciliation.json'), 'utf8'));
 const registry = JSON.parse(fs.readFileSync(path.join(root, 'reports/lp1885/community-package-promotion-only-registry.json'), 'utf8'));
