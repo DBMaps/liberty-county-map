@@ -26968,3 +26968,26 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   object-fit: cover;
   object-position: 50% 13%;
 }
+
+/* LP185.6G — live-proven legacy Location Context surface closure.
+   Match the high-specificity V250.8C runtime owner without changing its layout
+   or visibility contract. Dark keeps the existing compatibility glass paint. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  .mobile-destination-command.is-awareness-panel,
+  &.gridly-mobile-awareness-panel-present .map-card > .mobile-destination-command,
+  .map-card > .mobile-destination-command.is-awareness-panel:not([hidden]):not(.is-command-card-suppressed) {
+    background-color: var(--gridly-elevated) !important;
+    background-image: none !important;
+    border: 1px solid var(--gridly-border-neutral) !important;
+    box-shadow: var(--gridly-shadow) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .mobile-destination-command.is-awareness-panel::before,
+  &.gridly-mobile-awareness-panel-present .map-card > .mobile-destination-command::before {
+    content: none !important;
+    background: none !important;
+    background-image: none !important;
+  }
+}

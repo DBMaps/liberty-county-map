@@ -6,6 +6,7 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const authority = css.slice(css.indexOf("/* LP185.6F"));
+const legacyClosure = css.slice(css.indexOf("/* LP185.6G"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -66,6 +67,28 @@ test("both Location Context owners are normalized without a Light navy gradient"
     assert.match(ruleFor(selector), /--gridly-elevated[\s\S]*--gridly-shadow/);
   assert.doesNotMatch(authority, /mobile-destination-command\.is-awareness-panel[^{}]*\{[^{}]*linear-gradient/);
   assert.match(authority, /&\.gridly-mobile-awareness-panel-present \.map-card > \.mobile-destination-command/);
+});
+
+test("live-proven legacy Location Context owner has an explicit Light-only material closure", () => {
+  assert.match(legacyClosure, /:is\(body\.gridly-theme-light, html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system\)\[data-layout-mode="portrait"\]/);
+  assert.match(legacyClosure, /\.mobile-destination-command\.is-awareness-panel,/);
+  assert.match(legacyClosure, /&\.gridly-mobile-awareness-panel-present \.map-card > \.mobile-destination-command,/);
+  assert.match(legacyClosure, /\.map-card > \.mobile-destination-command\.is-awareness-panel:not\(\[hidden\]\):not\(\.is-command-card-suppressed\)/);
+  assert.match(legacyClosure, /background-color:\s*var\(--gridly-elevated\) !important/);
+  assert.match(legacyClosure, /background-image:\s*none !important/);
+  assert.match(legacyClosure, /border:\s*1px solid var\(--gridly-border-neutral\) !important/);
+  assert.match(legacyClosure, /box-shadow:\s*var\(--gridly-shadow\) !important/);
+  assert.match(legacyClosure, /(?:^|\s)backdrop-filter:\s*none !important/);
+  assert.match(legacyClosure, /-webkit-backdrop-filter:\s*none !important/);
+  assert.doesNotMatch(legacyClosure, /radial-gradient|rgba\(7,\s*22,\s*34|rgba\(5,\s*13,\s*23/);
+});
+
+test("legacy Location Context highlight is removed in Light without changing Dark or visibility", () => {
+  assert.match(legacyClosure, /\.mobile-destination-command\.is-awareness-panel::before,/);
+  assert.match(legacyClosure, /gridly-mobile-awareness-panel-present[\s\S]*\.mobile-destination-command::before/);
+  assert.match(legacyClosure, /content:\s*none !important[\s\S]*background:\s*none !important[\s\S]*background-image:\s*none !important/);
+  assert.doesNotMatch(legacyClosure, /gridly-theme-dark|effective-theme="dark"/);
+  assert.doesNotMatch(legacyClosure, /(?:^|[;{]\s*)(?:display|visibility|position|width|height|top|right|bottom|left|padding|margin)\s*:/m);
 });
 
 test("current runtime foreground owners use readable semantic roles", () => {
