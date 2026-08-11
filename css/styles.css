@@ -27228,3 +27228,12 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     opacity: 1 !important;
   }
 }
+
+/* LP185.6L — Travel Brief inner kicker contrast closure.
+   The runtime H4 owner retains its type and grid declarations above; only its
+   foreground is remapped for explicit Light and effective System-Light. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"]
+  #gridlyPortraitV2 .gridly-travel-brief-item h4 {
+  color: var(--gridly-accent) !important;
+  opacity: 1 !important;
+}
