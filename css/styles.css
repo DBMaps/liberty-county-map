@@ -27332,3 +27332,87 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     box-shadow: none !important;
   }
 }
+
+/* LP185.7 Phase 3 — audited Light material finishing. These scoped owners only
+   refine the four accepted groupings; they add no role, shadow, or geometry. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  /* Report choices remain CONTROL, with a quiet NESTED tonal cue against the
+     ELEVATED sheet. Selection continues to be owned by ACCENT-SOFT below. */
+  #gridlyPortraitV2Sheet[data-active-sheet="report"] #gridlyPortraitV2SheetBody
+    .gridly-v2-report-action:not(.is-selected):not([aria-pressed="true"]) {
+    background: color-mix(in srgb, var(--gridly-control-bg) 72%, var(--gridly-nested)) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="report"] #gridlyPortraitV2SheetBody
+    .gridly-v2-report-action:is(.is-selected, [aria-pressed="true"]) {
+    background: var(--gridly-accent-soft) !important;
+    border-color: var(--gridly-accent) !important;
+  }
+
+  /* Only the real populated list receives INSET ownership. Alert rows remain
+     flat peers separated by DIVIDER rather than becoming individual cards. */
+  #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-alerts-active > .gridly-v2-list {
+    background: var(--gridly-nested) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="alerts"]
+    .gridly-alerts-active > .gridly-v2-list > .gridly-alert-row.gridly-alert-intel-card {
+    background: transparent !important;
+    border-color: transparent transparent var(--gridly-divider) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="alerts"]
+    .gridly-alerts-active > .gridly-v2-list > .gridly-alert-row.gridly-alert-intel-card:last-child {
+    border-bottom-color: transparent !important;
+  }
+
+  /* The subject/location copy stays on the sheet. “What to know now” owns the
+     INSET grouping, while details keep their previously accepted INSET role. */
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-subject {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-typical-pattern,
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-details {
+    background: var(--gridly-nested) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-detail-title {
+    border-top-color: var(--gridly-divider) !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-row {
+    box-shadow: none !important;
+  }
+
+  /* Settings is one grouped INSET region. Sections and summaries are flat
+     peers; only an opened detail retains its own existing INSET ownership. */
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet {
+    background: var(--gridly-nested) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet
+    :is(.settings-list-section, .settings-modal-section) {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet .settings-list-summary {
+    background: transparent !important;
+    border-color: transparent transparent var(--gridly-divider) !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet
+    :is(.settings-list-section, .settings-modal-section):last-child > .settings-list-summary {
+    border-bottom-color: transparent !important;
+  }
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet .settings-list-detail {
+    background: var(--gridly-nested) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    box-shadow: none !important;
+  }
+}
