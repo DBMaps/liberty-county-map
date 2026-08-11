@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1882": "node tools/lp1882/validate-census-place-source.mjs build",
+    "verify:lp1882": "node tools/lp1882/validate-census-place-source.mjs verify",
+    "test:lp1882": "node --test tests/lp1882-census-place-source-lock.test.mjs",
     "build:lp188": "node tools/lp188/audit-statewide-community-source.mjs build",
     "verify:lp188": "node tools/lp188/audit-statewide-community-source.mjs verify",
     "test:lp188": "node --test tests/lp188-statewide-community-source-gate.test.mjs",

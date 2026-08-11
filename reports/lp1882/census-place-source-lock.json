@@ -1,0 +1,49 @@
+{
+  "milestone": "LP188.2",
+  "title": "Census Source Validation and Provenance Lock",
+  "finalClassification": "SOURCE_ACQUISITION_BLOCKED_OWNER_ACTION_REQUIRED",
+  "expectedSource": {
+    "publisher": "U.S. Census Bureau",
+    "dataset": "2025 TIGER/Line Shapefiles — Places — Texas",
+    "stateFips": "48",
+    "filename": "tl_2025_48_place.zip",
+    "ownerAbsolutePath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\PLACE\\original\\tl_2025_48_place.zip"
+  },
+  "environmentObservation": {
+    "accessibleCandidates": [
+      "/workspace/liberty-county-map/Gridly-Source-Data/Census/TIGER2025/PLACE/original/tl_2025_48_place.zip",
+      "/workspace/Gridly-Source-Data/Census/TIGER2025/PLACE/original/tl_2025_48_place.zip",
+      "/mnt/c/GitHub/Gridly-Source-Data/Census/TIGER2025/PLACE/original/tl_2025_48_place.zip"
+    ],
+    "matchingFiles": [],
+    "exactFileExists": false,
+    "blocker": "OWNER_ARCHIVE_NOT_VISIBLE_IN_EXECUTION_ENVIRONMENT"
+  },
+  "provenance": {
+    "byteSize": null,
+    "sha256": null,
+    "zipReadable": null,
+    "originalModified": false
+  },
+  "validation": {
+    "extractedFiles": [],
+    "schemaValidated": false,
+    "geoidValidated": false,
+    "classificationValidated": false,
+    "geometryValidated": false,
+    "countyMembershipValidated": false
+  },
+  "downstream": {
+    "lp1883Ready": false,
+    "manufacturingStarted": false,
+    "expensiveAllCountyJobRun": false
+  },
+  "safety": {
+    "countyActivation": false,
+    "deployment": false,
+    "packageManufacturing": false,
+    "supabaseMutation": false,
+    "restrictionRemoval": false,
+    "addressOrRoadwayOrCrossingRebuild": false
+  }
+}
