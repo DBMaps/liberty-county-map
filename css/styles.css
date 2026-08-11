@@ -27090,3 +27090,45 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     opacity: 1 !important;
   }
 }
+
+/* LP185.6J — live-evidence Light chrome and residual contrast closure.
+   The bottom region is canvas around the unchanged dock. The intentionally dark
+   Community Pulse surface consumes opaque, governed on-dark foreground roles. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  #gridlyPortraitV2 #gridlyPortraitBottomRegion.gridly-v2-bottom-region {
+    background-color: var(--gridly-app-bg) !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  #gridlyPortraitV2Sheet[data-active-sheet="report"] #gridlyPortraitV2SheetBody {
+    .gridly-v2-report-prompt {
+      color: inherit !important;
+    }
+    .gridly-v2-report-prompt strong {
+      color: var(--gridly-text-primary) !important;
+    }
+    .gridly-v2-report-prompt span,
+    [data-v2-precondition-helper] {
+      color: var(--gridly-text-secondary) !important;
+      opacity: 1 !important;
+    }
+    .gridly-v2-report-ctas [data-v2-action="report-use-location"]:disabled {
+      background: var(--gridly-disabled) !important;
+      border-color: var(--gridly-border-neutral) !important;
+      color: var(--gridly-disabled-foreground) !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+
+  .community-pulse-surface .community-pulse-kicker {
+    color: var(--gridly-accent-foreground) !important;
+    opacity: 1 !important;
+  }
+  .community-pulse-surface #gridlyCommunityPulseSubline {
+    color: color-mix(in srgb, var(--gridly-accent-foreground) 84%, var(--gridly-accent)) !important;
+    opacity: 1 !important;
+  }
+}
