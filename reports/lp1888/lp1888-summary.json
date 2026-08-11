@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "gridly.statewide-activation-eligibility-certification.lp1888.v1",
+  "milestone": "LP188.8",
+  "mode": "AUDIT_AND_OWNER_DECISION_PREPARATION_ONLY",
+  "expectedCountyCount": 254,
+  "evaluatedCountyCount": 254,
+  "currentlyOperationalCount": 28,
+  "newStructurallyActivationEligibleCount": 0,
+  "ownerActivationAuthorizationRequiredCount": 0,
+  "ownerActivationAuthorizedCount": 0,
+  "restrictedCountyCount": 11,
+  "addressBlockedCount": 11,
+  "otherDependencyBlockedCount": 215,
+  "requiresReviewCount": 0,
+  "newActivatedCount": 0,
+  "totalPotentialOperationalAfterAuthorizedActivation": 28,
+  "runtimeOperationalCountChanged": false,
+  "restrictedCountyStateChanged": false,
+  "overallClassification": "ACTIVATION_ELIGIBILITY_RECONCILED_NO_NEW_COUNTY_CURRENTLY_ACTIVATABLE",
+  "remainingPathTo254": [
+    {
+      "blocker": "GOVERNED_CANDIDACY_MEMBERSHIP_DEPLOYMENT_AND_RUNTIME_VALIDATION",
+      "countyCount": 226
+    },
+    {
+      "blocker": "RESTRICTED_EXACT_PAYLOAD_RECOVERY_AND_LP134_DOUBLE_CERTIFICATION",
+      "countyCount": 11
+    },
+    {
+      "blocker": "EXPLICIT_FIPS_BASED_OWNER_ACTIVATION_AUTHORIZATION_AFTER_STRUCTURAL_READINESS",
+      "countyCount": 226
+    }
+  ],
+  "supportedOwnerAuthorizationScope": "EXPLICIT_COUNTY_FIPS_OR_EXPLICIT_FIPS_MEMBERSHIP_IN_A_GOVERNED_WAVE",
+  "nextMilestone": "LP188.9_GOVERNED_CANDIDACY_MEMBERSHIP_DEPLOYMENT_AND_RUNTIME_VALIDATION_EVIDENCE"
+}

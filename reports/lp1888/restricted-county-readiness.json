@@ -1,0 +1,123 @@
+[
+  {
+    "countyFips": "48061",
+    "countyName": "Cameron County",
+    "restrictionAuthority": "LP135-48061-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48073",
+    "countyName": "Cherokee County",
+    "restrictionAuthority": "LP135-48073-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48113",
+    "countyName": "Dallas County",
+    "restrictionAuthority": "LP135-48113-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48121",
+    "countyName": "Denton County",
+    "restrictionAuthority": "LP135-48121-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48135",
+    "countyName": "Ector County",
+    "restrictionAuthority": "LP135-48135-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48229",
+    "countyName": "Hudspeth County",
+    "restrictionAuthority": "LP135-48229-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48329",
+    "countyName": "Midland County",
+    "restrictionAuthority": "LP135-48329-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48377",
+    "countyName": "Presidio County",
+    "restrictionAuthority": "LP135-48377-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48401",
+    "countyName": "Rusk County",
+    "restrictionAuthority": "LP135-48401-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48425",
+    "countyName": "Somervell County",
+    "restrictionAuthority": "LP135-48425-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  },
+  {
+    "countyFips": "48441",
+    "countyName": "Taylor County",
+    "restrictionAuthority": "LP135-48441-PACKAGE_AVAILABILITY; evidence/lp135/statewide-certification.json",
+    "restrictionReason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "historicalRecoveryEvidence": "LP188.1 records historical LP147 remote byte-size and SHA-256 matches; no current restoration is proven.",
+    "remainingExactPayloadRequirement": "Restore or securely mount the exact immutable LP130 payload and verify governed byte size and SHA-256.",
+    "requiredCertificationPasses": 2,
+    "activationEligible": false,
+    "activationBlockedReason": "RESTORATION_NOT_PROVEN_AND_ACTIVE_RESTRICTION_PRESERVED"
+  }
+]

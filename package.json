@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1888": "node tools/lp1888/reconcile-activation-eligibility.mjs build",
+    "verify:lp1888": "node tools/lp1888/reconcile-activation-eligibility.mjs verify",
+    "test:lp1888": "node --test tests/lp1888-activation-eligibility.test.mjs",
     "build:lp1887": "node tools/lp1887/execute-metadata-promotion.mjs build",
     "verify:lp1887": "node tools/lp1887/execute-metadata-promotion.mjs verify",
     "test:lp1887": "node --test tests/lp1887-metadata-promotion.test.mjs",
