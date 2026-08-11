@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "gridly.lp1889.governed-readiness-summary.v1",
+  "milestone": "LP188.9",
+  "mode": "PREPARATION_ONLY_NO_ACTIVATION",
+  "targetCountyCount": 215,
+  "candidacyCompleteCount": 215,
+  "candidacyBlockedCount": 0,
+  "membershipCompleteCount": 0,
+  "membershipBlockedCount": 215,
+  "deploymentPreparedCount": 0,
+  "deploymentConfirmedCount": 0,
+  "deploymentBlockedCount": 215,
+  "runtimeValidatedCount": 0,
+  "runtimeValidationBlockedCount": 215,
+  "structurallyActivationEligibleCount": 0,
+  "ownerActionRequiredCount": 215,
+  "externalActionRequiredCount": 215,
+  "unresolvedCount": 215,
+  "exclusiveEndStates": [
+    {
+      "state": "CANDIDATE_AWAITING_EXPLICIT_MEMBERSHIP_APPROVAL",
+      "countyCount": 215
+    }
+  ],
+  "currentlyOperationalCount": 28,
+  "restrictedCountyCount": 11,
+  "newActivatedCount": 0,
+  "potentialOperationalAfterSeparateOwnerAuthorizationAndActivation": 28,
+  "overlappingActionCounts": true,
+  "overlappingActionCountExplanation": "Owner and external action counts are independent future requirements and may overlap; exclusiveEndStates is the non-overlapping reconciliation.",
+  "overallClassification": "CANDIDACY_PREPARED_MEMBERSHIP_OWNER_DECISION_REQUIRED_NO_ACTIVATION",
+  "nextMilestone": "LP188.10_OWNER_MEMBERSHIP_DECISION_AND_NON_PRODUCTION_VALIDATION_WAVE_AUTHORIZATION"
+}

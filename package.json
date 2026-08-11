@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1889": "node tools/lp1889/prepare-governed-readiness.mjs build",
+    "verify:lp1889": "node tools/lp1889/prepare-governed-readiness.mjs verify",
+    "test:lp1889": "node --test tests/lp1889-governed-readiness.test.mjs",
     "build:lp1888": "node tools/lp1888/reconcile-activation-eligibility.mjs build",
     "verify:lp1888": "node tools/lp1888/reconcile-activation-eligibility.mjs verify",
     "test:lp1888": "node --test tests/lp1888-activation-eligibility.test.mjs",
