@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1887": "node tools/lp1887/execute-metadata-promotion.mjs build",
+    "verify:lp1887": "node tools/lp1887/execute-metadata-promotion.mjs verify",
+    "test:lp1887": "node --test tests/lp1887-metadata-promotion.test.mjs",
     "build:lp1886": "node tools/lp1886/review-promotion-eligibility.mjs build",
     "verify:lp1886": "node tools/lp1886/review-promotion-eligibility.mjs verify",
     "test:lp1886": "node --test tests/lp1886-promotion-eligibility.test.mjs",
