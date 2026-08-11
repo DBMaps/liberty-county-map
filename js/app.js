@@ -35276,6 +35276,35 @@ function syncGridlyVisibleRouteExitControls() {
   window.__gridlySyncAwarenessPanelDockContract?.();
 }
 
+function focusGridlyRouteWatchStartOnce(destinationPreview) {
+  const liveCoordinate = getGridlyCurrentLocationRouteCoordinate();
+  const storedOriginCoordinate = normalizeCoordinatePair(destinationPreview?.source?.lat, destinationPreview?.source?.lng);
+  const geometryCoordinate = getGridlyFirstRouteGeometryCoordinate(destinationPreview);
+  const coordinate = liveCoordinate || storedOriginCoordinate || geometryCoordinate;
+  const coordinateSource = liveCoordinate
+    ? "current_location"
+    : storedOriginCoordinate
+      ? "destination_preview_source"
+      : geometryCoordinate
+        ? "route_geometry_fallback"
+        : "unavailable";
+  const mapInstance = getGridlyMapInstance();
+  const zoom = typeof mapInstance?.getZoom === "function" ? Number(mapInstance.getZoom()) : null;
+
+  if (!coordinate || !Number.isFinite(zoom) || typeof mapInstance?.setView !== "function") {
+    gridlyRouteViewportOwnershipState.routeWatchActivationFocusApplied = false;
+    gridlyRouteViewportOwnershipState.routeWatchActivationFocusSource = coordinateSource;
+    return false;
+  }
+
+  mapInstance.setView([coordinate.lat, coordinate.lng], zoom, { animate: false });
+  gridlyRouteViewportOwnershipState.routeWatchActivationFocusApplied = true;
+  gridlyRouteViewportOwnershipState.routeWatchActivationFocusSource = coordinateSource;
+  gridlyRouteViewportOwnershipState.routeWatchActivationFocusZoom = zoom;
+  gridlyRouteViewportOwnershipState.routeWatchActivationFocusCount += 1;
+  return true;
+}
+
 async function startGridlyRouteWatchFromRouteDetails() {
   const destinationPreview = typeof getGridlyDestinationRoutePreviewState === "function"
     ? getGridlyDestinationRoutePreviewState()
@@ -35308,6 +35337,7 @@ async function startGridlyRouteWatchFromRouteDetails() {
     syncGridlyVisibleRouteExitControls?.();
     setConfirmation("Route Watch active. Gridly is checking this route for local reports.", "success");
     renderGridlyDestinationImpactPane?.();
+    focusGridlyRouteWatchStartOnce(destinationPreview);
     return { success: true, activateWatch: true, source: "destination_route_preview", routePointCount: destinationGeometry.length };
   }
   if (typeof startInlineRouteWatch !== "function") {
@@ -37298,6 +37328,15 @@ function applyGridlyDestinationVisibilityOffset(destinationInput, options = {}) 
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.bottomInsetApplied = Boolean(layout.bottomInsetApplied && layout.destinationCardDetected);
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.destinationLat = coordinates?.lat ?? null;
   GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.destinationLng = coordinates?.lng ?? null;
+
+  // Destination previews own the camera until monitoring starts. Once a ready
+  // destination preview becomes the monitored route, a queued preview recovery
+  // must not take ownership back from the one-time activation focus.
+  if (routeWatchActivated && activeRouteSource === "destination_preview") {
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = false;
+    GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.lastReason = "route_watch_activation_owns_viewport";
+    return false;
+  }
 
   if (!destinationSelected || !routePreviewActive || !layout.destinationCardDetected || !coordinates || !mapInstance) {
     GRIDLY_DESTINATION_VISIBILITY_OFFSET_STATE.viewportAdjusted = false;
@@ -68707,6 +68746,10 @@ const gridlyRouteViewportOwnershipState = {
   routeRenderedWithoutViewportTakeover: false,
   awarenessViewportPreserved: true,
   destinationFocusApplied: false,
+  routeWatchActivationFocusApplied: false,
+  routeWatchActivationFocusSource: "",
+  routeWatchActivationFocusZoom: null,
+  routeWatchActivationFocusCount: 0,
   routeFitRequiresUserAction: true,
   lastRouteRenderZoomBefore: null,
   lastRouteRenderZoomAfter: null,
@@ -68915,6 +68958,10 @@ function gridlyRouteViewportOwnershipAudit() {
     routeRenderedWithoutViewportTakeover: Boolean(gridlyRouteViewportOwnershipState.routeRenderedWithoutViewportTakeover),
     awarenessViewportPreserved: Boolean(gridlyRouteViewportOwnershipState.awarenessViewportPreserved),
     destinationFocusApplied: Boolean(gridlyRouteViewportOwnershipState.destinationFocusApplied),
+    routeWatchActivationFocusApplied: Boolean(gridlyRouteViewportOwnershipState.routeWatchActivationFocusApplied),
+    routeWatchActivationFocusSource: gridlyRouteViewportOwnershipState.routeWatchActivationFocusSource,
+    routeWatchActivationFocusZoom: gridlyRouteViewportOwnershipState.routeWatchActivationFocusZoom,
+    routeWatchActivationFocusCount: gridlyRouteViewportOwnershipState.routeWatchActivationFocusCount,
     routeFitRequiresUserAction: Boolean(gridlyRouteViewportOwnershipState.routeFitRequiresUserAction),
     showFullRouteHandlerError: gridlyRouteViewportOwnershipState.lastShowFullRouteError,
     consumerFriendlyPass,

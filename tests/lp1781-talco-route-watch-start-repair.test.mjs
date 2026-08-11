@@ -35,6 +35,7 @@ function createRuntime(preview) {
     syncGridlyVisibleRouteExitControls: () => calls.push(['exit-controls']),
     setConfirmation: (message, tone) => calls.push(['confirmation', message, tone]),
     renderGridlyDestinationImpactPane: () => calls.push(['impact-pane']),
+    focusGridlyRouteWatchStartOnce: () => calls.push(['activation-focus']),
     startInlineRouteWatch: async (options) => {
       calls.push(['inline', options]);
       return { success: true, activateWatch: true, source: 'saved_places' };
