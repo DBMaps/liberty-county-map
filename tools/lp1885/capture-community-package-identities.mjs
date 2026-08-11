@@ -8,11 +8,18 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 export const stableJson = value => `${JSON.stringify(value, null, 2)}\n`;
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
-function assertPackageMetadata(value, expectedFips, expectedName) {
+function governedCountyBaseName(countyName) {
+  if (typeof countyName !== 'string' || !countyName.endsWith(' County')) throw new Error('invalid governed countyName');
+  return countyName.slice(0, -' County'.length);
+}
+
+function assertPackageMetadata(value, filenameFips, governedCounty) {
   if (!value || value.schemaVersion !== 'gridly.community-package.identity.v1') throw new Error('unsupported schemaVersion');
   if (!value.county || !/^48\d{3}$/.test(value.county.countyFips)) throw new Error('invalid county FIPS');
-  if (value.county.countyFips !== expectedFips) throw new Error(`county identity mismatch: expected ${expectedFips}`);
-  if (value.county.displayName !== expectedName) throw new Error(`county identity mismatch: expected ${expectedName}`);
+  if (value.county.countyFips !== filenameFips) throw new Error(`county identity mismatch: expected ${filenameFips}`);
+  if (!governedCounty || governedCounty.fips !== value.county.countyFips) throw new Error(`county identity mismatch: ${value.county.countyFips} is absent from governed registry`);
+  const expectedDisplayName = governedCountyBaseName(governedCounty.countyName);
+  if (value.county.displayName !== expectedDisplayName) throw new Error(`county display-name mismatch: expected ${expectedDisplayName}`);
   if (!Array.isArray(value.censusPlaces) || !Array.isArray(value.legacyAwarenessAreas) || !Array.isArray(value.communities)) throw new Error('invalid package collections');
 }
 
@@ -30,7 +37,7 @@ export function capturePackageDirectory({ sourceDirectory, governedCounties }) {
     const bytes = fs.readFileSync(path.join(countyDirectory, filename));
     try {
       const metadata = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
-      assertPackageMetadata(metadata, filenameFips, expected.get(filenameFips)?.countyName);
+      assertPackageMetadata(metadata, filenameFips, expected.get(filenameFips));
       records.push({
         countyFips: filenameFips,
         countyName: metadata.county.displayName,
@@ -42,7 +49,7 @@ export function capturePackageDirectory({ sourceDirectory, governedCounties }) {
     } catch (error) {
       const detail = { relativePackagePath, reason: String(error.message) };
       packageValidationFailures.push(detail);
-      if (/identity mismatch/.test(error.message)) countyIdentityMismatch.push(detail);
+      if (/identity mismatch|display-name mismatch/.test(error.message)) countyIdentityMismatch.push(detail);
     }
   }
   records.sort((a, b) => a.countyFips.localeCompare(b.countyFips));
