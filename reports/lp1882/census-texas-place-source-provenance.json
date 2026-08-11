@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "milestone": "LP188.2",
+  "sourceAuthority": "United States Census Bureau",
+  "sourceDataset": "2025 TIGER/Line Shapefiles — Places — Texas",
+  "sourceEdition": "TIGER/Line 2025",
+  "sourceUrl": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_48_place.zip",
+  "retrievalAttemptedAt": "2026-08-11T19:39:00Z",
+  "retrievedAt": null,
+  "originalFilename": "tl_2025_48_place.zip",
+  "intendedOriginalLocalPath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\PLACE\\original\\tl_2025_48_place.zip",
+  "repositoryContainerPath": "Gridly-Source-Data/Census/TIGER2025/PLACE/original/tl_2025_48_place.zip",
+  "byteSize": null,
+  "sha256": null,
+  "fileFormat": "ZIP containing an ESRI Shapefile and companion files",
+  "stateFips": "48",
+  "stateName": "Texas",
+  "sourceScope": "Texas statewide places",
+  "recordCount": null,
+  "uniquePlaceCount": null,
+  "crs": null,
+  "requiredFieldsPresent": null,
+  "classificationValidated": false,
+  "geometryValidated": false,
+  "sourceBytesPreserved": false,
+  "acquisitionFailure": {
+    "stage": "HTTPS download",
+    "result": "HTTP 403 Forbidden from the execution environment's CONNECT tunnel",
+    "attemptedHosts": [
+      "www2.census.gov",
+      "ftp2.census.gov"
+    ],
+    "substituteUsed": false
+  },
+  "sourceLockStatus": "SOURCE_ACQUISITION_BLOCKED_OWNER_ACTION_REQUIRED"
+}
