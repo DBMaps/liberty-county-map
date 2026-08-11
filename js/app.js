@@ -91740,6 +91740,8 @@ function applyGridlySettingsDisplayPreferences(display = {}, source = "settings"
   const themeClass = `gridly-theme-${normalized.theme}`;
   const textSizeClass = `gridly-text-${normalized.textSize}`;
   const textScale = GRIDLY_SETTINGS_TEXT_SIZE_SCALES[normalized.textSize] || 1;
+  const systemLight = normalized.theme === "system" && Boolean(window.matchMedia?.("(prefers-color-scheme: light)")?.matches);
+  const effectiveTheme = normalized.theme === "system" ? (systemLight ? "light" : "dark") : normalized.theme;
   if (body) {
     ["gridly-theme-system", "gridly-theme-light", "gridly-theme-dark"].forEach((className) => body.classList.remove(className));
     ["gridly-text-standard", "gridly-text-large", "gridly-text-compact", "gridly-text-extra-large"].forEach((className) => body.classList.remove(className));
@@ -91751,14 +91753,25 @@ function applyGridlySettingsDisplayPreferences(display = {}, source = "settings"
   }
   if (root) {
     root.dataset.gridlyTheme = normalized.theme;
-    const systemLight = normalized.theme === "system" && Boolean(window.matchMedia?.("(prefers-color-scheme: light)")?.matches);
-    const effectiveTheme = normalized.theme === "system" ? (systemLight ? "light" : "dark") : normalized.theme;
     root.dataset.gridlyEffectiveTheme = effectiveTheme;
     root.style.colorScheme = effectiveTheme;
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute("content", effectiveTheme === "light" ? "#f4f8fb" : "#071426"));
     root.dataset.gridlyTextSize = normalized.textSize;
     root.style.setProperty("--gridly-app-font-scale", String(textScale));
     root.style.setProperty("--gridly-settings-text-scale", String(textScale));
+  }
+  document.querySelectorAll("[data-gridly-theme-logo]").forEach((logo) => {
+    const nextAsset = effectiveTheme === "light" ? logo.dataset.gridlyLightLogo : logo.dataset.gridlyDarkLogo;
+    if (nextAsset && logo.getAttribute("src") !== nextAsset) logo.setAttribute("src", nextAsset);
+    logo.dataset.gridlyLogoTheme = effectiveTheme;
+  });
+  if (!window.__gridlyThemeLogoMediaBound && window.matchMedia) {
+    const appearanceQuery = window.matchMedia("(prefers-color-scheme: light)");
+    appearanceQuery.addEventListener?.("change", () => {
+      const current = getGridlySettingsPreferences();
+      if (current.display.theme === "system") applyGridlySettingsDisplayPreferences(current.display, "system_appearance_change");
+    });
+    window.__gridlyThemeLogoMediaBound = true;
   }
   try {
     localStorage.setItem(MAP_STYLE_STORAGE_KEY, layerName);

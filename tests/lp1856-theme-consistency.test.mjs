@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+const lp1855Protection = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
+const lp1854Protection = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const neutralContract = css.slice(css.indexOf("/* LP185.6 — neutral"), css.indexOf("/* LP185.6A"));
 
 test("saved theme is resolved safely before paint without becoming settings authority", () => {
@@ -125,4 +127,67 @@ test("LP185.6B dark-mode protection comes from parallel hierarchy token definiti
     assert.match(dark, new RegExp(`--gridly-${token}:`));
     assert.match(light, new RegExp(`--gridly-${token}:`));
   }
+});
+
+const finalClosure = css.slice(css.indexOf("/* LP185.6C"));
+
+test("LP185.6C targets the active Location Context owner for explicit and effective system Light", () => {
+  assert.match(finalClosure, /html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system/);
+  for (const owner of [
+    ".gridly-v2-location-awareness-panel",
+    ".gridly-v2-location-awareness-kicker",
+    ".gridly-v2-location-awareness-title",
+    ".gridly-v2-location-awareness-status",
+    ".gridly-v2-location-awareness-meta",
+    ".gridly-v2-location-awareness-route"
+  ]) assert.ok(finalClosure.includes(owner), `missing Location Context owner ${owner}`);
+});
+
+test("active destination search shell, input, actions, results and state presentation are Light-owned", () => {
+  for (const owner of [
+    "#gridlySearchShell .gridly-search-card",
+    ".gridly-search-label",
+    ".gridly-search-subtitle",
+    ".gridly-search-close-btn",
+    ".gridly-search-input-row",
+    ".gridly-search-input",
+    "#gridlyRemoteSearchBtn:not(:disabled)",
+    ".gridly-search-results-status",
+    ".gridly-search-result-item",
+    ".gridly-search-result-title",
+    ".gridly-search-result-meta",
+    ":disabled"
+  ]) assert.ok(finalClosure.includes(owner), `missing Destination Search owner ${owner}`);
+});
+
+test("KBYG, Settings closed controls and Travel Brief retain a token-governed Light hierarchy", () => {
+  assert.match(finalClosure, /\.gridly-brief-foundation-handle[\s\S]*?linear-gradient[\s\S]*?--gridly-accent-soft/);
+  assert.match(finalClosure, /data-active-sheet="settings"[\s\S]*?settings-select-grid :is\(select, \.settings-text-size-segments, \.settings-text-size-segment\)/);
+  assert.match(finalClosure, /settings-text-size-segment:is\(\.is-selected, \[aria-checked="true"\]\)/);
+  assert.match(finalClosure, /\.gridly-travel-brief[\s\S]*?--gridly-panel[\s\S]*?--gridly-elevated[\s\S]*?--gridly-nested/);
+});
+
+test("Portrait V2 logo uses the existing dark and light asset contract", () => {
+  const brand = html.slice(html.indexOf('<div class="gridly-v2-brand"'), html.indexOf("</div></div>", html.indexOf('<div class="gridly-v2-brand"')));
+  assert.match(brand, /data-gridly-theme-logo/);
+  assert.match(brand, /data-gridly-dark-logo="assets\/store\/branding\/Logos\/gridly-logo-horizontal\.png"/);
+  assert.match(brand, /data-gridly-light-logo="assets\/store\/branding\/Logos\/gridly-logo-vertical\.png"/);
+  const inventory = readdirSync(new URL("../assets/store/branding/Logos/", import.meta.url)).sort();
+  assert.deepEqual(inventory, ["gridly-logo-horizontal.png", "gridly-logo-vertical.png"]);
+});
+
+test("theme application swaps logo ownership live for Dark, Light and effective System appearance", () => {
+  const apply = app.slice(app.indexOf("function applyGridlySettingsDisplayPreferences"), app.indexOf("function updateGridlySettingsMapStyleLabel"));
+  assert.match(apply, /effectiveTheme === "light" \? logo\.dataset\.gridlyLightLogo : logo\.dataset\.gridlyDarkLogo/);
+  assert.match(apply, /logo\.setAttribute\("src", nextAsset\)/);
+  assert.match(apply, /normalized\.theme === "system"/);
+  assert.match(apply, /matchMedia\("\(prefers-color-scheme: light\)"\)/);
+  assert.match(apply, /appearanceQuery\.addEventListener\?\.\("change"/);
+});
+
+test("LP185.6C is presentation-only and protects map style, layout, LP185.5 and LP185.4", () => {
+  assert.doesNotMatch(finalClosure, /(?:width|height|top|right|bottom|left|padding|margin)\s*:/);
+  assert.doesNotMatch(finalClosure, /route-geometry|destination-routing|hazard-lifecycle|tile-provider|map-style|setUrl/);
+  assert.match(lp1855Protection, /focusGridlyRouteWatchStartOnce/);
+  assert.match(lp1854Protection, /getGridlyIncidentLocationPresentation/);
 });
