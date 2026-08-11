@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp188": "node tools/lp188/audit-statewide-community-source.mjs build",
+    "verify:lp188": "node tools/lp188/audit-statewide-community-source.mjs verify",
+    "test:lp188": "node --test tests/lp188-statewide-community-source-gate.test.mjs",
     "build:lp187": "node tools/lp187/build-texas-statewide-activation-foundation.mjs build",
     "verify:lp187": "node tools/lp187/build-texas-statewide-activation-foundation.mjs verify",
     "test:lp187": "node --test tests/lp187-texas-statewide-activation-foundation.test.mjs",

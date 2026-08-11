@@ -1,0 +1,290 @@
+{
+  "milestone": "LP188",
+  "title": "Statewide Texas Community/Awareness Foundation Source Authority Gate",
+  "mode": "AUDIT_SOURCE_AUTHORITY_FIRST",
+  "finalClassification": "STATEWIDE_COMMUNITY_SOURCE_REQUIRED",
+  "target": "254 / 254 TEXAS COUNTIES OPERATIONAL",
+  "decision": {
+    "sourceGatePassed": false,
+    "manufacturingStarted": false,
+    "certificationStarted": false,
+    "reason": "The repository has authoritative statewide county identity and geometry, but no preserved authoritative statewide Texas place source containing complete incorporated-place and CDP identities, classifications, county relationships, and geographic evidence.",
+    "prohibitedSubstitutionsRejected": [
+      "28 hardcoded runtime awareness lists",
+      "LP157 partial seed records",
+      "address-derived locality strings",
+      "destination-derived locality strings",
+      "arbitrary geocoder results",
+      "manual or model-authored place lists"
+    ]
+  },
+  "sourceAuthorityAudit": {
+    "inspectedArtifacts": [
+      {
+        "relativePath": "data/lp157/texas-community-intelligence-registry.json",
+        "sha256": "59a79d0bdf83c61d52e8bedee7ad77660d6f71b673c13b381af4bf235978ec92"
+      },
+      {
+        "relativePath": "reports/lp187/texas-county-community-readiness.json",
+        "sha256": "0135d738bbc636f3ec4e52b1e81dd980898adf8d929350fed395c3ca0c71558a"
+      },
+      {
+        "relativePath": "evidence/lp122/wave-1-authoritative-community-destination-evidence.json",
+        "sha256": "de584dea10767fcfb0f50e29a156436fc5713780b2ffb2685db037933d06e8c8"
+      },
+      {
+        "relativePath": "evidence/lp124/sources/census-tiger-2025-county-identity-source.json",
+        "sha256": "b1ba93392b1751a6746c76171881b5c8f1711b532efd85f50df07b8e58a2b528"
+      },
+      {
+        "relativePath": "evidence/lp126/texas-statewide-multi-class-evidence.json",
+        "sha256": "b4996b74ab15d234f7c39b377ed3e8aa27dda918a9577c387cbb43491ff03974"
+      },
+      {
+        "relativePath": "evidence/lp127a/texas-statewide-source-gap-report.json",
+        "sha256": "7696a5b235b2e1fa24f4a74c5e784aa1140b31b2ce2f23aa6791c09f7041ae0a"
+      },
+      {
+        "relativePath": "Community-Packages/county-manifest.json",
+        "sha256": "e9a9e384f63a6ca0b27e1c5faa8404854fe1c0537fdcd70883a4d447a44f00f8"
+      }
+    ],
+    "usableAuthorities": [
+      {
+        "source": "LP149 runtime county registry",
+        "scope": "254 Texas county identities only",
+        "usableForPlaces": false
+      },
+      {
+        "source": "authoritative county geometry runtime artifact",
+        "scope": "county containment validation after place acquisition",
+        "usableForPlaces": false
+      }
+    ],
+    "insufficientArtifacts": [
+      {
+        "source": "data/lp157/texas-community-intelligence-registry.json",
+        "recordCount": 22,
+        "finding": "Partial governed seed, not statewide complete and not a source snapshot."
+      },
+      {
+        "source": "GRIDLY_COUNTY_REGISTRY.defaultAwarenessAreas",
+        "countyCount": 28,
+        "finding": "Untyped consumer runtime labels for the current 28; not statewide source authority."
+      },
+      {
+        "source": "Community-Packages",
+        "finding": "Existing package manifests describe current county runtime assets; they do not preserve a statewide incorporated-place/CDP source."
+      },
+      {
+        "source": "LP127A source audit",
+        "finding": "CONFIRMED_ABSENT_ACCESSIBLE_LOCATIONS"
+      }
+    ]
+  },
+  "exactMissingSource": {
+    "requiredClass": "AUTHORITATIVE_US_CENSUS_TIGER_LINE_TEXAS_PLACES_AND_PLACE_COUNTY_RELATIONSHIPS",
+    "recommendedAcquisition": [
+      "Preserve an official Census TIGER/Line Texas place shapefile for one declared vintage (state FIPS 48).",
+      "Preserve the matching official Census place-to-county relationship file, or derive memberships by deterministic intersection with the governed county geometry and retain intersection evidence.",
+      "Record upstream URLs, vintage, retrieval metadata, byte size, and SHA-256 in a repository source manifest.",
+      "Import only after license/public-domain status, schema, Texas scope, and source hashes validate.",
+      "Run LP188 manufacturing twice in isolated directories and compare every byte before promoting generated artifacts."
+    ],
+    "requiredFields": [
+      "STATEFP",
+      "PLACEFP",
+      "GEOID",
+      "NAME",
+      "NAMELSAD or LSAD",
+      "MTFCC or equivalent place classification",
+      "geometry",
+      "source vintage"
+    ],
+    "requiredRelationshipEvidence": [
+      "county FIPS",
+      "canonical place GEOID",
+      "source-supported or geometry-intersection county membership",
+      "multi-county intersection evidence"
+    ],
+    "validationRequirements": [
+      "state FIPS equals 48",
+      "unique canonical place GEOID",
+      "valid incorporated-place versus CDP classification",
+      "valid geometry",
+      "membership intersects governed Texas county geometry",
+      "all source places represented without silent dropping"
+    ],
+    "ownerActionRequired": true,
+    "optionalFutureLayer": {
+      "type": "RECOGNIZED_UNINCORPORATED_COMMUNITY",
+      "status": "DEFERRED_SOURCE_REQUIRED",
+      "recommendedSourceClass": "authoritative GNIS Populated Place snapshot with explicit deterministic inclusion/exclusion policy; do not block incorporated-place/CDP/countywide foundation"
+    }
+  },
+  "governedSemanticsPrepared": {
+    "INCORPORATED_PLACE": "Include when official source classification identifies an incorporated place.",
+    "CENSUS_DESIGNATED_PLACE": "Include separately when official source classification identifies a CDP.",
+    "RECOGNIZED_UNINCORPORATED_COMMUNITY": "Exclude from the base build until a preserved authoritative populated-place source and policy exist.",
+    "COUNTYWIDE": "Exactly one record per county, created only after the place source gate passes; it uses county identity/geometry and no fabricated coordinate."
+  },
+  "identityContractPrepared": {
+    "countyIdentity": "countyFips = 5-character Census county GEOID",
+    "canonicalPlaceIdentity": "canonicalPlaceId = census-place:<7-character place GEOID>",
+    "awarenessAreaIdentity": "place membership: tx:<countyFips>:place:<placeGEOID>; countywide: tx:<countyFips>:countywide",
+    "multiCountyPolicy": "One canonical place identity plus one county-qualified awareness membership in each source-supported intersecting county.",
+    "duplicateNamePolicy": "Names never identify records; selection is county-qualified and out-of-county labels may render as <name>, <county> without changing identity."
+  },
+  "counts": {
+    "texasCounties": 254,
+    "countyPackages": 0,
+    "countywideFallbacks": 0,
+    "canonicalPlaces": 0,
+    "incorporatedPlaces": 0,
+    "censusDesignatedPlaces": 0,
+    "recognizedUnincorporatedCommunities": 0,
+    "countyMemberships": 0,
+    "multiCountyPlaces": 0,
+    "duplicateDisplayNameGroups": 0,
+    "certifiedCounties": 0,
+    "failedCounties": 254
+  },
+  "workAllowedBeforeAcquisition": [
+    "source importer/schema validator",
+    "stable identity contract",
+    "county containment harness",
+    "deterministic serializer and two-pass comparator",
+    "current-28 reconciliation rules",
+    "on-demand package-loading documentation"
+  ],
+  "runtimeLoadingContract": "Future runtime loads a lightweight manifest, then only the resolved active-county package, caches it by SHA-256, and switches packages on county change. It must not eagerly load 254 packages.",
+  "performance": {
+    "status": "NOT_MEASURABLE_BEFORE_MANUFACTURING",
+    "manifestBytes": null,
+    "totalPackageBytes": null,
+    "minCountyPackageBytes": null,
+    "medianCountyPackageBytes": null,
+    "maxCountyPackageBytes": null,
+    "activeCountyPayloadEstimate": null
+  },
+  "restrictedCountyStatus": [
+    {
+      "countyName": "Cameron County",
+      "countyFips": "48061",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Cherokee County",
+      "countyFips": "48073",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Dallas County",
+      "countyFips": "48113",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Denton County",
+      "countyFips": "48121",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Ector County",
+      "countyFips": "48135",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Hudspeth County",
+      "countyFips": "48229",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Midland County",
+      "countyFips": "48329",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Presidio County",
+      "countyFips": "48377",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Rusk County",
+      "countyFips": "48401",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Somervell County",
+      "countyFips": "48425",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    },
+    {
+      "countyName": "Taylor County",
+      "countyFips": "48441",
+      "communityStatus": "SOURCE_GATE_BLOCKED_WITH_ALL_COUNTIES",
+      "downstreamActivationBlocker": "ADDRESS_RESTORATION_REQUIRED",
+      "restrictionPreserved": true
+    }
+  ],
+  "downstreamIdentityMigration": {
+    "productionMutationPerformed": false,
+    "futureRequiredFields": {
+      "reports": [
+        "countyFips",
+        "awarenessAreaId",
+        "canonicalPlaceId when place-scoped"
+      ],
+      "hazards": [
+        "countyFips",
+        "awarenessAreaId",
+        "canonicalPlaceId when place-scoped"
+      ],
+      "alerts": [
+        "countyFips",
+        "awarenessAreaId"
+      ],
+      "locationContext": [
+        "countyFips",
+        "awarenessAreaId",
+        "canonicalPlaceId when resolved"
+      ],
+      "awarenessAndCrossingFiltering": [
+        "countyFips",
+        "awarenessAreaId"
+      ],
+      "searchDestinationContext": [
+        "countyFips",
+        "canonicalPlaceId when applicable"
+      ]
+    }
+  },
+  "safety": {
+    "countiesActivated": false,
+    "countiesDeployed": false,
+    "operationalMembershipChanged": false,
+    "authorizationGranted": false,
+    "addressRestrictionsRemoved": false,
+    "productionSupabaseMutated": false,
+    "runtimeBehaviorChanged": false
+  }
+}
