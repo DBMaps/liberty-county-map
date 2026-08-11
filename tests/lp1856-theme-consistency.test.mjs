@@ -7,6 +7,7 @@ const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const authority = css.slice(css.indexOf("/* LP185.6F"));
 const legacyClosure = css.slice(css.indexOf("/* LP185.6G"));
+const foregroundGrade = css.slice(css.indexOf("/* LP185.6H"), css.indexOf("/* LP185.6G"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -112,6 +113,39 @@ test("foreground closure adds roles, not fixed pale generic copy or layout", () 
   const closure = authority.slice(authority.indexOf("Foreground ownership is explicit"));
   assert.doesNotMatch(closure, /color:\s*(?:#fff(?:fff)?\b|rgba?\(2(?:0[02468]|2[02468]),\s*2(?:2[02468]|3[02468]|4[02468]))/i);
   assert.doesNotMatch(closure, /(?:^|[;{]\s*)(?:width|height|top|right|bottom|left|padding|margin)\s*:/m);
+});
+
+test("LP185.6H governs a contrast-safe Light foreground palette without changing Dark values", () => {
+  const light = ruleFor(':is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)');
+  const dark = ruleFor(':is(body.gridly-theme-dark, html[data-gridly-effective-theme="dark"] body.gridly-theme-system)');
+  assert.match(light, /--gridly-text-primary:\s*#0d1b2a/);
+  assert.match(light, /--gridly-text-secondary:\s*#3d5265/);
+  assert.match(light, /--gridly-text-muted:\s*#536a7f/);
+  assert.match(light, /--gridly-accent:\s*#066b70/);
+  assert.match(light, /--gridly-accent-soft:\s*rgba\(8, 127, 131, 0\.13\)/);
+  assert.match(light, /--gridly-accent-foreground:\s*#f7ffff/);
+  assert.match(light, /--gridly-disabled-foreground:\s*#536a7f/);
+  assert.match(dark, /--gridly-accent:\s*#22d3c5/);
+  assert.match(dark, /--gridly-text-primary:\s*#f4f8fc/);
+  assert.match(dark, /--gridly-text-secondary:\s*#c5d3e0/);
+  assert.match(dark, /--gridly-text-muted:\s*#8fa4b8/);
+  assert.doesNotMatch(light, /--gridly-accent:\s*(?:#22d3c5|#9feaff)/i);
+});
+
+test("LP185.6H assigns readable foreground ownership to reviewed Light runtime content", () => {
+  assert.match(foregroundGrade, /location-awareness-kicker[\s\S]*--gridly-accent[\s\S]*opacity:\s*1/);
+  assert.match(foregroundGrade, /bottom-dock button:is\([\s\S]*--gridly-accent/);
+  assert.match(foregroundGrade, /mobile-awareness-panel-kicker[\s\S]*--gridly-accent/);
+  assert.match(foregroundGrade, /data-active-sheet="alerts"[\s\S]*gridly-v2-sheet-copy[\s\S]*--gridly-text-secondary/);
+  assert.match(foregroundGrade, /gridly-v2-report-action\):disabled[\s\S]*--gridly-disabled-foreground/);
+  assert.match(foregroundGrade, /gridly-v2-awareness-trust-line[\s\S]*opacity:\s*1/);
+  assert.doesNotMatch(foregroundGrade, /color:\s*var\(--gridly-accent-soft\)/);
+});
+
+test("LP185.6H is foreground-only and preserves explicit/System-Light parity", () => {
+  assert.match(foregroundGrade, /:is\(body\.gridly-theme-light, html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system\)/);
+  assert.doesNotMatch(foregroundGrade, /gridly-theme-dark|effective-theme="dark"/);
+  assert.doesNotMatch(foregroundGrade, /(?:^|[;{]\s*)(?:background|border|box-shadow|width|height|top|right|bottom|left|padding|margin|font-size|font-weight)\s*:/m);
 });
 
 test("existing logo assets are retained and no artwork was added", () => {
