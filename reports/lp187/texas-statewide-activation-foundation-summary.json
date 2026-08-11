@@ -1,0 +1,135 @@
+{
+  "milestone": "LP187",
+  "mode": "STATEWIDE_FOUNDATION_AUDIT_GOVERNANCE_PREPARATION_ONLY",
+  "finalClassification": "NO_COMPLETE_STRUCTURAL_FOUNDATION",
+  "target": "254 / 254 TEXAS COUNTIES OPERATIONAL",
+  "deterministicPrecedence": [
+    "ALREADY_OPERATIONAL",
+    "ADDRESS_RESTORATION_REQUIRED",
+    "CERTIFICATION_REQUIRED",
+    "COMMUNITY_STRUCTURE_REQUIRED",
+    "RUNTIME_INTEGRATION_REQUIRED",
+    "STRUCTURE_READY_GOVERNANCE_REQUIRED",
+    "OWNER_EVIDENCE_REQUIRED",
+    "UNKNOWN_REQUIRES_RECONCILIATION"
+  ],
+  "counts": {
+    "total": 254,
+    "currentOperational": 28,
+    "unrestrictedNonOperational": 215,
+    "restricted": 11,
+    "structureReadyGovernanceRequired": 0,
+    "communityStructureRequired": 215,
+    "otherRepositoryWorkRequired": 0,
+    "ownerEvidenceRequired": 0,
+    "unknown": 0
+  },
+  "communityCoverage": {
+    "countiesWithAnyInventory": 34,
+    "zeroCommunityCounties": 220,
+    "runtimeReadyCounties": 28,
+    "countywideFallbackCounties": 28,
+    "completeCounties": 0,
+    "incompleteCounties": 254,
+    "totalDistinctCountyCommunityRecords": 268,
+    "crossCountyDuplicateNames": [
+      {
+        "normalizedName": "katy",
+        "countyFips": [
+          "48157",
+          "48201"
+        ]
+      }
+    ]
+  },
+  "communityModel": {
+    "authoritativeRuntimeOwner": "GRIDLY_COUNTY_REGISTRY.defaultAwarenessAreas in js/app.js, copied into GRIDLY_COUNTY_RUNTIME_SOURCE_REGISTRY",
+    "countywideDefinition": "A county-scoped label equal to County Name or Entire County Name; only current operational registry entries prove it.",
+    "communityDefinition": "Current runtime uses untyped county-scoped human-readable awareness labels; LP157 separately models city, town, CDP, and recognized_unincorporated_community but is a 22-record seed, not statewide runtime authority.",
+    "semanticsNotEquivalent": true,
+    "completenessRequirement": "Must authoritatively cover incorporated places, applicable CDPs, governed relevant unincorporated communities, and countywide fallback, with stable county-qualified identity and geographic containment.",
+    "identityFinding": "Runtime filtering frequently accepts human-readable awarenessArea/community/city/town fields; statewide same-name collision safety is not certified.",
+    "reference28Reusable": false,
+    "referenceFinding": "All 28 have selectable lists and county fallback, but lists are hardcoded, mostly untyped, lack per-community geometry, and have no statewide completeness certificate."
+  },
+  "unrestricted215": {
+    "preparedTogetherNow": false,
+    "directGovernancePreparationCount": 0,
+    "communityManufacturingRequiredCount": 215,
+    "finding": "One deterministic manufacturing framework may process all 215 after an authoritative statewide source and completeness policy exist; current evidence does not justify candidacy or authorization as one cohort."
+  },
+  "restricted11": {
+    "count": 11,
+    "communityPreparationIndependent": true,
+    "addressClearance": "Exact LP130 payload restored/securely mounted; size and SHA-256 verified; unchanged LP134 passes twice; restriction remains until governed clearance."
+  },
+  "crossings": {
+    "certifiedCountyPackages": 28,
+    "certifiedCrossings": 3771,
+    "countiesWithoutPackage": 226,
+    "awarenessFirstActivationBlocker": false,
+    "finding": "Current governance does not make crossings an activation prerequisite. Community awareness can operate without them, but Route Watch/Destination Intelligence must truthfully expose unavailable crossing coverage and avoid completeness claims."
+  },
+  "sharedSystems": {
+    "statewideReady": false,
+    "finding": "County-aware runtime paths exist, but current operational county registry and awareness lists are explicit 28-county configuration; stable statewide community/awareness identity and end-to-end association certification are absent.",
+    "protectedRuntimeModified": false
+  },
+  "supabaseIdentity": {
+    "statewideReady": false,
+    "productionConnectionPerformed": false,
+    "blocker": "Repository contracts accept several name fields and coordinates, but do not prove mandatory county FIPS plus stable awareness-area/community ID on every report/hazard/alert. Same-name collision handling is therefore not activation-safe statewide."
+  },
+  "performance": {
+    "statewideReadyForExpansion": false,
+    "currentBoundary": "County runtime sources are selected from registry and roadway/crossing assets load by active county or manifest entry; identity/community configuration itself is eagerly embedded in app.js.",
+    "blocker": "No measured 254-county community registry/loading certificate; do not embed manufactured statewide place geometry or address/crossing payloads eagerly."
+  },
+  "hardcodingAudit": [
+    {
+      "location": "js/app.js#GRIDLY_DEFAULT_COUNTY_ID",
+      "classification": "CURRENT_OPERATIONAL_CONFIGURATION"
+    },
+    {
+      "location": "js/app.js#GRIDLY_COUNTY_REGISTRY",
+      "classification": "CURRENT_OPERATIONAL_CONFIGURATION_AND_STATEWIDE_BLOCKER_FOR_UNREGISTERED_COUNTIES"
+    },
+    {
+      "location": "js/gridlyPackageRegistry.js community awarenessAreas",
+      "classification": "SAFE_REFERENCE_DATA_FOR_CURRENT_PACKAGES_NOT_STATEWIDE_AUTHORITY"
+    },
+    {
+      "location": "data/lp157/texas-community-intelligence-registry.json Liberty benchmark aliases",
+      "classification": "SAFE_REFERENCE_DATA_PARTIAL"
+    }
+  ],
+  "governancePath": [
+    "KNOWN_NOT_CANDIDATE",
+    "CANDIDATE",
+    "APPROVED / MEMBERSHIP AUTHORIZED",
+    "DEPLOYMENT AUTHORIZED",
+    "DEPLOYED",
+    "ACTIVATION AUTHORIZED",
+    "ACTIVATED",
+    "OPERATIONAL"
+  ],
+  "governanceEvidence": {
+    "identity": "LP149 runtime identity registry + test:lp149",
+    "membership": "LP150 membership transition registry + test:lp150",
+    "validation": "LP151 statewide operational validation + test:lp151",
+    "deploymentPreparation": "LP152 operational enablement registry + test:lp152",
+    "execution": "LP153 operational execution registry + test:lp153",
+    "address": "LP135 statewide certification; restricted restoration uses unchanged LP134 twice",
+    "candidateAuthorizationInputs": "LP140 wave plan, LP141 dossiers, LP142 audit, LP143 activation authorization framework, LP144 operational authorization manufacturing; owner authority must not be inferred."
+  },
+  "nextMilestone": "LP188 — acquire/govern an authoritative statewide Texas place/community source and manufacture a deterministic 254-county community/awareness registry with incorporated-place/CDP policy, reviewed unincorporated-community policy, stable IDs, county FIPS, countywide fallback, coordinates/geometry containment, duplicate-name qualification, runtime-loading contract, and certification. Do not manufacture candidacy until it passes.",
+  "safety": {
+    "candidateArtifactsPreparedOnly": true,
+    "authorizationGranted": false,
+    "activationPerformed": false,
+    "deploymentPerformed": false,
+    "membershipChanged": false,
+    "restrictionRemoved": false,
+    "productionSupabaseTouched": false
+  }
+}

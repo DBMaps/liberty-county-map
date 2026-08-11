@@ -1,0 +1,178 @@
+[
+  {
+    "countyName": "Cameron County",
+    "countyFips": "48061",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Cherokee County",
+    "countyFips": "48073",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Dallas County",
+    "countyFips": "48113",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Denton County",
+    "countyFips": "48121",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Ector County",
+    "countyFips": "48135",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Hudspeth County",
+    "countyFips": "48229",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Midland County",
+    "countyFips": "48329",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Presidio County",
+    "countyFips": "48377",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Rusk County",
+    "countyFips": "48401",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Somervell County",
+    "countyFips": "48425",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  },
+  {
+    "countyName": "Taylor County",
+    "countyFips": "48441",
+    "restrictionStatus": "PRESERVED",
+    "reason": "LOCAL_PACKAGE_UNAVAILABLE",
+    "communityPreparationIndependent": true,
+    "restorationSteps": [
+      "Restore or securely mount the exact immutable LP130 payload.",
+      "Verify the restored byte size against governed evidence.",
+      "Verify SHA-256 against governed evidence.",
+      "Run unchanged LP134 certification once and require PASS.",
+      "Run unchanged LP134 certification a second time and require PASS.",
+      "Rebuild downstream certification/governance inputs without clearing or inferring owner authorization."
+    ],
+    "restrictionClearancePerformed": false
+  }
+]
