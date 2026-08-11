@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp186": "node tools/lp186/build-texas-county-activation-readiness.mjs build",
+    "verify:lp186": "node tools/lp186/build-texas-county-activation-readiness.mjs verify",
+    "test:lp186": "node --test tests/lp186-texas-county-activation-readiness.test.mjs",
     "test:lp1859b": "node --test tests/lp1859b-desktop-initial-load-stabilization.test.mjs",
     "test:lp1859a": "node --test tests/lp1859a-responsive-ownership.test.mjs",
     "test:lp1858": "node --test tests/lp1858-light-wordmark.test.mjs",

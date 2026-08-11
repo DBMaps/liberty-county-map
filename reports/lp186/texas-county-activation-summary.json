@@ -1,0 +1,1435 @@
+{
+  "milestone": "LP186",
+  "mode": "AUDIT_RECONCILIATION_ONLY",
+  "generatedFromRepositoryEvidence": true,
+  "classificationPrecedence": [
+    "CURRENT_OPERATIONAL",
+    "RESTRICTED",
+    "REPOSITORY_WORK_REQUIRED",
+    "OWNER_EVIDENCE_REQUIRED",
+    "EXTERNAL_DEPENDENCY_REQUIRED",
+    "ACTIVATION_READY",
+    "UNKNOWN_REQUIRES_RECONCILIATION"
+  ],
+  "counts": {
+    "totalTexasCounties": 254,
+    "operational": 28,
+    "nonOperational": 226,
+    "activationReadyNow": 0,
+    "repositoryWorkRequired": 215,
+    "ownerOrExternalActionRequired": 0,
+    "restricted": 11,
+    "unknown": 0
+  },
+  "address": {
+    "manifestRepresented": 254,
+    "identityRecorded": 254,
+    "payloadAvailableAndCertified": 243,
+    "certificationBlocked": 11,
+    "malformedOrDuplicate": 0
+  },
+  "crossings": {
+    "packages": 28,
+    "certifiedPackages": 28,
+    "blockedPackages": 0,
+    "certifiedCrossings": 3771,
+    "countiesWithoutPackage": 226,
+    "activationPrerequisite": false
+  },
+  "operationalCounties": [
+    "Austin County",
+    "Brazoria County",
+    "Brazos County",
+    "Calhoun County",
+    "Chambers County",
+    "Colorado County",
+    "Fayette County",
+    "Fort Bend County",
+    "Galveston County",
+    "Grimes County",
+    "Hardin County",
+    "Harris County",
+    "Jackson County",
+    "Jasper County",
+    "Jefferson County",
+    "Lavaca County",
+    "Liberty County",
+    "Matagorda County",
+    "Montgomery County",
+    "Newton County",
+    "Orange County",
+    "Polk County",
+    "San Jacinto County",
+    "Tyler County",
+    "Walker County",
+    "Waller County",
+    "Washington County",
+    "Wharton County"
+  ],
+  "nonOperationalCounties": [
+    {
+      "countyName": "Anderson County",
+      "fips": "48001",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Andrews County",
+      "fips": "48003",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Angelina County",
+      "fips": "48005",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Aransas County",
+      "fips": "48007",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Archer County",
+      "fips": "48009",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Armstrong County",
+      "fips": "48011",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Atascosa County",
+      "fips": "48013",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bailey County",
+      "fips": "48017",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bandera County",
+      "fips": "48019",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bastrop County",
+      "fips": "48021",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Baylor County",
+      "fips": "48023",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bee County",
+      "fips": "48025",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bell County",
+      "fips": "48027",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bexar County",
+      "fips": "48029",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Blanco County",
+      "fips": "48031",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Borden County",
+      "fips": "48033",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bosque County",
+      "fips": "48035",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Bowie County",
+      "fips": "48037",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Brewster County",
+      "fips": "48043",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Briscoe County",
+      "fips": "48045",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Brooks County",
+      "fips": "48047",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Brown County",
+      "fips": "48049",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Burleson County",
+      "fips": "48051",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Burnet County",
+      "fips": "48053",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Caldwell County",
+      "fips": "48055",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Callahan County",
+      "fips": "48059",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cameron County",
+      "fips": "48061",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Camp County",
+      "fips": "48063",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Carson County",
+      "fips": "48065",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cass County",
+      "fips": "48067",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Castro County",
+      "fips": "48069",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cherokee County",
+      "fips": "48073",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Childress County",
+      "fips": "48075",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Clay County",
+      "fips": "48077",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cochran County",
+      "fips": "48079",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Coke County",
+      "fips": "48081",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Coleman County",
+      "fips": "48083",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Collin County",
+      "fips": "48085",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Collingsworth County",
+      "fips": "48087",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Comal County",
+      "fips": "48091",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Comanche County",
+      "fips": "48093",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Concho County",
+      "fips": "48095",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cooke County",
+      "fips": "48097",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Coryell County",
+      "fips": "48099",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Cottle County",
+      "fips": "48101",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Crane County",
+      "fips": "48103",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Crockett County",
+      "fips": "48105",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Crosby County",
+      "fips": "48107",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Culberson County",
+      "fips": "48109",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Dallam County",
+      "fips": "48111",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Dallas County",
+      "fips": "48113",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Dawson County",
+      "fips": "48115",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Deaf Smith County",
+      "fips": "48117",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Delta County",
+      "fips": "48119",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Denton County",
+      "fips": "48121",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "DeWitt County",
+      "fips": "48123",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Dickens County",
+      "fips": "48125",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Dimmit County",
+      "fips": "48127",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Donley County",
+      "fips": "48129",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Duval County",
+      "fips": "48131",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Eastland County",
+      "fips": "48133",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Ector County",
+      "fips": "48135",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Edwards County",
+      "fips": "48137",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Ellis County",
+      "fips": "48139",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "El Paso County",
+      "fips": "48141",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Erath County",
+      "fips": "48143",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Falls County",
+      "fips": "48145",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Fannin County",
+      "fips": "48147",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Fisher County",
+      "fips": "48151",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Floyd County",
+      "fips": "48153",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Foard County",
+      "fips": "48155",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Franklin County",
+      "fips": "48159",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Freestone County",
+      "fips": "48161",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Frio County",
+      "fips": "48163",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Gaines County",
+      "fips": "48165",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Garza County",
+      "fips": "48169",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Gillespie County",
+      "fips": "48171",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Glasscock County",
+      "fips": "48173",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Goliad County",
+      "fips": "48175",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Gonzales County",
+      "fips": "48177",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Gray County",
+      "fips": "48179",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Grayson County",
+      "fips": "48181",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Gregg County",
+      "fips": "48183",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Guadalupe County",
+      "fips": "48187",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hale County",
+      "fips": "48189",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hall County",
+      "fips": "48191",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hamilton County",
+      "fips": "48193",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hansford County",
+      "fips": "48195",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hardeman County",
+      "fips": "48197",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Harrison County",
+      "fips": "48203",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hartley County",
+      "fips": "48205",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Haskell County",
+      "fips": "48207",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hays County",
+      "fips": "48209",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hemphill County",
+      "fips": "48211",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Henderson County",
+      "fips": "48213",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hidalgo County",
+      "fips": "48215",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hill County",
+      "fips": "48217",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hockley County",
+      "fips": "48219",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hood County",
+      "fips": "48221",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hopkins County",
+      "fips": "48223",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Houston County",
+      "fips": "48225",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Howard County",
+      "fips": "48227",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hudspeth County",
+      "fips": "48229",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Hunt County",
+      "fips": "48231",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Hutchinson County",
+      "fips": "48233",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Irion County",
+      "fips": "48235",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Jack County",
+      "fips": "48237",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Jeff Davis County",
+      "fips": "48243",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Jim Hogg County",
+      "fips": "48247",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Jim Wells County",
+      "fips": "48249",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Johnson County",
+      "fips": "48251",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Jones County",
+      "fips": "48253",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Karnes County",
+      "fips": "48255",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kaufman County",
+      "fips": "48257",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kendall County",
+      "fips": "48259",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kenedy County",
+      "fips": "48261",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kent County",
+      "fips": "48263",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kerr County",
+      "fips": "48265",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kimble County",
+      "fips": "48267",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "King County",
+      "fips": "48269",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kinney County",
+      "fips": "48271",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Kleberg County",
+      "fips": "48273",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Knox County",
+      "fips": "48275",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lamar County",
+      "fips": "48277",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lamb County",
+      "fips": "48279",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lampasas County",
+      "fips": "48281",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "La Salle County",
+      "fips": "48283",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lee County",
+      "fips": "48287",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Leon County",
+      "fips": "48289",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Limestone County",
+      "fips": "48293",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lipscomb County",
+      "fips": "48295",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Live Oak County",
+      "fips": "48297",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Llano County",
+      "fips": "48299",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Loving County",
+      "fips": "48301",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lubbock County",
+      "fips": "48303",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Lynn County",
+      "fips": "48305",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "McCulloch County",
+      "fips": "48307",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "McLennan County",
+      "fips": "48309",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "McMullen County",
+      "fips": "48311",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Madison County",
+      "fips": "48313",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Marion County",
+      "fips": "48315",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Martin County",
+      "fips": "48317",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Mason County",
+      "fips": "48319",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Maverick County",
+      "fips": "48323",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Medina County",
+      "fips": "48325",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Menard County",
+      "fips": "48327",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Midland County",
+      "fips": "48329",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Milam County",
+      "fips": "48331",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Mills County",
+      "fips": "48333",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Mitchell County",
+      "fips": "48335",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Montague County",
+      "fips": "48337",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Moore County",
+      "fips": "48341",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Morris County",
+      "fips": "48343",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Motley County",
+      "fips": "48345",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Nacogdoches County",
+      "fips": "48347",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Navarro County",
+      "fips": "48349",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Nolan County",
+      "fips": "48353",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Nueces County",
+      "fips": "48355",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Ochiltree County",
+      "fips": "48357",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Oldham County",
+      "fips": "48359",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Palo Pinto County",
+      "fips": "48363",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Panola County",
+      "fips": "48365",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Parker County",
+      "fips": "48367",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Parmer County",
+      "fips": "48369",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Pecos County",
+      "fips": "48371",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Potter County",
+      "fips": "48375",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Presidio County",
+      "fips": "48377",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Rains County",
+      "fips": "48379",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Randall County",
+      "fips": "48381",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Reagan County",
+      "fips": "48383",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Real County",
+      "fips": "48385",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Red River County",
+      "fips": "48387",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Reeves County",
+      "fips": "48389",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Refugio County",
+      "fips": "48391",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Roberts County",
+      "fips": "48393",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Robertson County",
+      "fips": "48395",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Rockwall County",
+      "fips": "48397",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Runnels County",
+      "fips": "48399",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Rusk County",
+      "fips": "48401",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Sabine County",
+      "fips": "48403",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "San Augustine County",
+      "fips": "48405",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "San Patricio County",
+      "fips": "48409",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "San Saba County",
+      "fips": "48411",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Schleicher County",
+      "fips": "48413",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Scurry County",
+      "fips": "48415",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Shackelford County",
+      "fips": "48417",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Shelby County",
+      "fips": "48419",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Sherman County",
+      "fips": "48421",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Smith County",
+      "fips": "48423",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Somervell County",
+      "fips": "48425",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Starr County",
+      "fips": "48427",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Stephens County",
+      "fips": "48429",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Sterling County",
+      "fips": "48431",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Stonewall County",
+      "fips": "48433",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Sutton County",
+      "fips": "48435",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Swisher County",
+      "fips": "48437",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Tarrant County",
+      "fips": "48439",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Taylor County",
+      "fips": "48441",
+      "primaryClassification": "RESTRICTED",
+      "remainingBlocker": "LP132 Gate 2 closed: immutable LP130 payload unavailable for byte-identical recertification"
+    },
+    {
+      "countyName": "Terrell County",
+      "fips": "48443",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Terry County",
+      "fips": "48445",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Throckmorton County",
+      "fips": "48447",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Titus County",
+      "fips": "48449",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Tom Green County",
+      "fips": "48451",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Travis County",
+      "fips": "48453",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Trinity County",
+      "fips": "48455",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Upshur County",
+      "fips": "48459",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Upton County",
+      "fips": "48461",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Uvalde County",
+      "fips": "48463",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Val Verde County",
+      "fips": "48465",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Van Zandt County",
+      "fips": "48467",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Victoria County",
+      "fips": "48469",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Ward County",
+      "fips": "48475",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Webb County",
+      "fips": "48479",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wheeler County",
+      "fips": "48483",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wichita County",
+      "fips": "48485",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wilbarger County",
+      "fips": "48487",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Willacy County",
+      "fips": "48489",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Williamson County",
+      "fips": "48491",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wilson County",
+      "fips": "48493",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Winkler County",
+      "fips": "48495",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wise County",
+      "fips": "48497",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Wood County",
+      "fips": "48499",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Yoakum County",
+      "fips": "48501",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Young County",
+      "fips": "48503",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Zapata County",
+      "fips": "48505",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    },
+    {
+      "countyName": "Zavala County",
+      "fips": "48507",
+      "primaryClassification": "REPOSITORY_WORK_REQUIRED",
+      "remainingBlocker": "County is KNOWN_NOT_CANDIDATE; membership, deployment authorization/deployment, and activation authorization/activation are absent"
+    }
+  ],
+  "activationReadyCounties": [],
+  "recommendation": "No activation pass is justified: first create governed county candidacy, dossier, authorization, deployment, and activation evidence; retain the 11 restrictions. When ready, stage by certified-crossing coverage versus address-only coverage rather than arbitrary batch size.",
+  "safety": {
+    "countyActivationPerformed": false,
+    "restrictionRemoved": false,
+    "productionDeploymentPerformed": false,
+    "statewideLaunchAuthorizationCreated": false
+  }
+}
