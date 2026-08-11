@@ -76,9 +76,9 @@ try {
     $canonical = @(Read-Features $canonicalRaw | ForEach-Object {
         $p = $_.properties
         $type = if ($p.CLASSFP -eq 'C9') { 'INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE' } elseif ($p.LSAD -eq '57') { 'CENSUS_DESIGNATED_PLACE' } elseif ($p.CLASSFP -eq 'C1') { 'INCORPORATED_PLACE' } else { 'OTHER_REQUIRES_REVIEW' }
-        [ordered]@{ stateFips=$p.STATEFP; placeFips=$p.PLACEFP; geoid=$p.GEOID; geoidFq=$p.GEOIDFQ; officialName=$p.NAME; nameLsad=$p.NAMELSAD; lsad=$p.LSAD; classFp=$p.CLASSFP; funcStat=$p.FUNCSTAT; governedType=$type; aland=$p.ALAND; awater=$p.AWATER; intptLat=$p.INTPTLAT; intptLon=$p.INTPTLON }
+        [pscustomobject][ordered]@{ stateFips=$p.STATEFP; placeFips=$p.PLACEFP; geoid=$p.GEOID; geoidFq=$p.GEOIDFQ; officialName=$p.NAME; nameLsad=$p.NAMELSAD; lsad=$p.LSAD; classFp=$p.CLASSFP; funcStat=$p.FUNCSTAT; governedType=$type; aland=$p.ALAND; awater=$p.AWATER; intptLat=$p.INTPTLAT; intptLon=$p.INTPTLON }
     } | Sort-Object geoid)
-    $memberships = @(Read-Features $membershipRaw | ForEach-Object { $p=$_.properties; [ordered]@{ placeGeoid=$p.placeGeoid; placeName=$p.placeName; countyFips=$p.countyFips; countyName=$p.countyName; membershipSource='CENSUS_TIGER_2025_GEOMETRY'; membershipMethod='POLYGON_AREA_INTERSECTION' } } | Sort-Object placeGeoid,countyFips)
+    $memberships = @(Read-Features $membershipRaw | ForEach-Object { $p=$_.properties; [pscustomobject][ordered]@{ placeGeoid=$p.placeGeoid; placeName=$p.placeName; countyFips=$p.countyFips; countyName=$p.countyName; membershipSource='CENSUS_TIGER_2025_GEOMETRY'; membershipMethod='POLYGON_AREA_INTERSECTION' } } | Sort-Object placeGeoid,countyFips)
 
     $duplicateGeoids = @($canonical | Group-Object geoid | Where-Object Count -gt 1)
     $nonTexas = @($canonical | Where-Object stateFips -ne '48')
