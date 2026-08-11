@@ -111,12 +111,36 @@ test('GIS operation and geometry promotion remain structurally locked', async ()
   assert.match(script, /'-nlt','PROMOTE_TO_MULTI'/);
 });
 
+test('both temporary working layers use the governed statewide projected CRS', async () => {
+  const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
+  assert.match(script, /\$ProjectedEpsg = '3083'/);
+  assert.match(script, /\$ProjectedCrs = "EPSG:\$ProjectedEpsg"/);
+  assert.match(script, /\$PlaceSource,'-nln','places_projected'.*'-t_srs',\$ProjectedCrs/);
+  assert.match(script, /\$CountySource,'-nln','counties_projected'.*'-t_srs',\$ProjectedCrs/);
+  assert.match(script, /\$projectedPlaceEpsg -ne \$ProjectedEpsg -or \$projectedCountyEpsg -ne \$ProjectedEpsg/);
+  assert.match(script, /PLACE source must declare EPSG:4269/);
+  assert.match(script, /COUNTY source must declare EPSG:4269/);
+  assert.doesNotMatch(script, /-a_srs/);
+});
+
+test('membership is fully recomputed from projected polygon area without fallbacks or thresholds', async () => {
+  const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
+  const membershipSql = script.match(/\$membershipSql = "([^"]+)"/)?.[1];
+  assert.ok(membershipSql);
+  assert.match(membershipSql, /FROM places_projected p JOIN counties_projected c/);
+  assert.match(membershipSql, /JOIN counties_projected c ON ST_Intersects\(p\.geom,c\.geom\)/);
+  assert.match(membershipSql, /WHERE ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
+  assert.doesNotMatch(membershipSql, /MakePoint|ST_Distance|ST_Touches|buffer|centroid|name\s*=|percent|ratio/i);
+  assert.match(script, /\$memberships = @\(Read-Features \$membershipRaw/);
+  assert.match(script, /arbitraryThresholdUsed=\$false/);
+});
+
 test('unmatched records produce stable read-only spatial diagnostics before failure', async () => {
   const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
   const fields = [
     'geoid', 'placeFp', 'officialName', 'nameLsad', 'lsad', 'classFp', 'funcStat',
     'intptLat', 'intptLon', 'aland', 'awater', 'intersectsAnyCounty', 'touchesOnly',
-    'maximumIntersectionArea', 'internalPointInOrOnCounty', 'nearestCountyGeoid',
+    'maximumIntersectionAreaSquareMeters', 'internalPointInOrOnCounty', 'nearestCountyGeoid',
     'nearestCountyName', 'geometryEmpty', 'geometryValid', 'geometryType', 'boundingBox',
   ];
   let previous = -1;
@@ -144,13 +168,14 @@ test('unmatched records produce stable read-only spatial diagnostics before fail
   assert.match(script, /projectionMismatchDetected=/);
   assert.match(script, /vintageMismatchDetected=\$false/);
   assert.match(script, /projectionOrVintageMismatchCouldExplainUnmatched=/);
+  assert.match(script, /areaUnit='square metre'/);
 });
 
 test('diagnostics do not alter governed membership or add assignment fallbacks', async () => {
   const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
   const membershipSql = script.match(/\$membershipSql = "([^"]+)"/)?.[1];
   assert.ok(membershipSql);
-  assert.match(membershipSql, /JOIN counties c ON ST_Intersects\(p\.geom,c\.geom\)/);
+  assert.match(membershipSql, /JOIN counties_projected c ON ST_Intersects\(p\.geom,c\.geom\)/);
   assert.match(membershipSql, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
   assert.doesNotMatch(membershipSql, /MakePoint|ST_Distance|ST_Touches|buffer|centroid/i);
   assert.doesNotMatch(script, /membershipMethod='(?:INTERNAL_POINT|NEAREST|CENTROID|NAME)/);
