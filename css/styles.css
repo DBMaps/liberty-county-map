@@ -27048,3 +27048,84 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   border-color: var(--gridly-border-neutral) !important;
   color: var(--gridly-text-secondary) !important;
 }
+
+/* LP185.6C — final real-device Light surface and existing-brand closure.
+   This is intentionally Light-effective only; established Dark presentation and
+   every geometry/interaction owner remain untouched. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  box-shadow: 0 12px 28px rgba(25, 49, 71, 0.14), inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel :is(.gridly-v2-location-awareness-title, .gridly-v2-location-awareness-route) {
+  color: var(--gridly-text-primary) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel :is(.gridly-v2-location-awareness-kicker, .gridly-v2-location-awareness-status, .gridly-v2-location-awareness-meta) {
+  color: var(--gridly-text-secondary) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-route {
+  background: var(--gridly-control-bg) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-route:is(:hover, :active, :focus-visible) {
+  background: var(--gridly-accent-soft) !important;
+  border-color: var(--gridly-accent) !important;
+  outline-color: var(--gridly-accent) !important;
+}
+
+/* Destination Search is a body-level overlay, outside the Portrait V2 sheet. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell .gridly-search-card {
+  background: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  box-shadow: var(--gridly-shadow) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-label, .gridly-search-result-title) { color: var(--gridly-text-primary) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-subtitle, .gridly-search-result-meta, .gridly-search-results-status) { color: var(--gridly-text-secondary) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-close-btn, .gridly-search-input-row, .gridly-search-clear-btn, .gridly-search-results-status, .gridly-search-result-item) {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  box-shadow: none !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell .gridly-search-input { background: var(--gridly-input-bg) !important; color: var(--gridly-text-primary) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-close-btn, .gridly-search-clear-btn, .gridly-search-result-item):is(:hover, :active, :focus-visible) {
+  background: var(--gridly-accent-soft) !important;
+  border-color: var(--gridly-accent) !important;
+  outline-color: var(--gridly-accent) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell #gridlyRemoteSearchBtn:not(:disabled) { background: var(--gridly-accent) !important; color: var(--gridly-accent-foreground) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) #gridlySearchShell :is(button, input):disabled { background: var(--gridly-disabled) !important; color: var(--gridly-text-muted) !important; }
+
+/* Branded without retaining the heavy navy handle used by Dark. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+  background: linear-gradient(135deg, var(--gridly-accent-soft), var(--gridly-panel)) !important;
+  border-color: color-mix(in srgb, var(--gridly-accent) 62%, var(--gridly-border-neutral)) !important;
+  color: #075f67 !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle :is(span, strong, .gridly-brief-foundation-handle-icon) { color: #075f67 !important; }
+
+/* Only closed Gridly controls are styled; native open option UI stays native. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid :is(select, .settings-text-size-segments, .settings-text-size-segment) {
+  background: var(--gridly-control-bg) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-select-grid :is(select, .settings-text-size-segment):focus-visible {
+  border-color: var(--gridly-accent) !important;
+  outline-color: var(--gridly-accent) !important;
+}
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-text-size-segment:is(.is-selected, [aria-checked="true"]) {
+  background: var(--gridly-accent-soft) !important;
+  border-color: var(--gridly-accent) !important;
+  color: var(--gridly-text-primary) !important;
+}
+
+/* Restrained cool separation for the already-Light Travel Brief hierarchy. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-travel-brief .gridly-brief-flow { background: var(--gridly-panel) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-travel-brief :is(.gridly-travel-brief-list, .gridly-travel-brief-item) { background: var(--gridly-elevated) !important; }
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-travel-brief :is(.gridly-unified-evidence, .gridly-unified-evidence-item) { background: var(--gridly-nested) !important; }
+
+/* Existing vertical asset supplies its legible navy/cyan mark on Light chrome. */
+#gridlyPortraitV2 .gridly-v2-brand img[data-gridly-logo-theme="light"] { object-fit: cover; object-position: 50% 22%; }
