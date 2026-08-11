@@ -19,7 +19,7 @@ test('PowerShell builder encodes deterministic, positive-area, fail-closed contr
   const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
   for (const contract of [
     ". (Join-Path $PSScriptRoot 'gridly-gis-env.ps1')",
-    "ST_Area(ST_Intersection(p.geom,c.geom)) > 0",
+    "ST_Area(ST_CollectionExtract(ST_Intersection(p.geom,c.geom),3)) > 0",
     "POLYGON_AREA_INTERSECTION",
     "Sort-Object placeGeoid,countyFips",
     "[Text.UTF8Encoding]::new($false)",
@@ -107,7 +107,8 @@ test('record grouping fixture distinguishes real identity and name property valu
 test('GIS operation and geometry promotion remain structurally locked', async () => {
   const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
   assert.match(script, /ST_Intersects\(p\.geom,c\.geom\)/);
-  assert.match(script, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
+  assert.match(script, /ST_Area\(ST_CollectionExtract\(ST_Intersection\(p\.geom,c\.geom\),3\)\) > 0/);
+  assert.doesNotMatch(script, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\)/);
   assert.match(script, /'-nlt','PROMOTE_TO_MULTI'/);
 });
 
@@ -129,7 +130,7 @@ test('membership is fully recomputed from projected polygon area without fallbac
   assert.ok(membershipSql);
   assert.match(membershipSql, /FROM places_projected p JOIN counties_projected c/);
   assert.match(membershipSql, /JOIN counties_projected c ON ST_Intersects\(p\.geom,c\.geom\)/);
-  assert.match(membershipSql, /WHERE ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
+  assert.match(membershipSql, /WHERE ST_Area\(ST_CollectionExtract\(ST_Intersection\(p\.geom,c\.geom\),3\)\) > 0/);
   assert.doesNotMatch(membershipSql, /MakePoint|ST_Distance|ST_Touches|buffer|centroid|name\s*=|percent|ratio/i);
   assert.match(script, /\$memberships = @\(Read-Features \$membershipRaw/);
   assert.match(script, /arbitraryThresholdUsed=\$false/);
@@ -154,7 +155,7 @@ test('unmatched records produce stable read-only spatial diagnostics before fail
 
   for (const operation of [
     'ST_Intersects(p.geom,c.geom)', 'ST_Touches(p.geom,c.geom)',
-    'MAX(ST_Area(ST_Intersection(p.geom,c.geom)))',
+    'MAX(ST_Area(ST_CollectionExtract(ST_Intersection(p.geom,c.geom),3)))',
     'MakePoint(CAST(p.INTPTLON AS REAL),CAST(p.INTPTLAT AS REAL),4269)',
     'ORDER BY ST_Distance(p.geom,c.geom),c.GEOID', 'ST_IsEmpty(p.geom)',
     'ST_IsValid(p.geom)', 'GeometryType(p.geom)', 'ST_MinX(p.geom)', 'ST_MaxY(p.geom)',
@@ -176,7 +177,7 @@ test('diagnostics do not alter governed membership or add assignment fallbacks',
   const membershipSql = script.match(/\$membershipSql = "([^"]+)"/)?.[1];
   assert.ok(membershipSql);
   assert.match(membershipSql, /JOIN counties_projected c ON ST_Intersects\(p\.geom,c\.geom\)/);
-  assert.match(membershipSql, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
+  assert.match(membershipSql, /ST_Area\(ST_CollectionExtract\(ST_Intersection\(p\.geom,c\.geom\),3\)\) > 0/);
   assert.doesNotMatch(membershipSql, /MakePoint|ST_Distance|ST_Touches|buffer|centroid/i);
   assert.doesNotMatch(script, /membershipMethod='(?:INTERNAL_POINT|NEAREST|CENTROID|NAME)/);
 });
