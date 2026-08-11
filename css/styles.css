@@ -26786,3 +26786,122 @@ body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(.leaf
 .gridly-pwa-update-notice button { border-radius: 999px; padding: .5rem .75rem; }
 .gridly-pwa-update-notice [data-gridly-pwa-update-later] { border: 1px solid var(--gridly-border-neutral); background: transparent; color: inherit; }
 .gridly-pwa-update-notice [data-gridly-pwa-update-now] { border: 0; background: #38bdf8; color: #04111f; font-weight: 700; }
+
+/* LP185.6A — active portrait surface closure.
+   These are the V2 nodes mounted by index.html/app.js.  This block intentionally
+   follows every portrait presentation layer: several of those layers use fixed
+   navy colors, ID-heavy selectors, and !important declarations, so the neutral
+   contract must close the cascade at the actual runtime owners. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 :is(
+  .gridly-v2-topbar,
+  .gridly-v2-awareness-brief-card,
+  .gridly-brief-interaction-panel,
+  .gridly-v2-segments,
+  .gridly-v2-control-rail .gridly-v2-map-control,
+  .gridly-v2-location-awareness-panel,
+  .gridly-v2-bottom-dock,
+  #gridlyPortraitV2Sheet
+) {
+  background: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  box-shadow: var(--gridly-shadow);
+}
+
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 :is(
+  .gridly-v2-awareness-brief-card,
+  .gridly-brief-interaction-panel,
+  .gridly-v2-segments,
+  .gridly-v2-control-rail .gridly-v2-map-control,
+  .gridly-v2-location-awareness-panel,
+  .gridly-v2-bottom-dock,
+  #gridlyPortraitV2Sheet
+) :is(strong, h2, h3, h4, p, span, em, button, label) {
+  color: var(--gridly-text-primary) !important;
+}
+
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 :is(
+  .gridly-v2-awareness-trust-line,
+  .gridly-v2-location-awareness-kicker,
+  .gridly-v2-location-awareness-status,
+  .gridly-v2-location-awareness-meta,
+  .gridly-v2-report-prompt span,
+  .settings-list-meta,
+  .settings-placeholder-note
+) {
+  color: var(--gridly-text-secondary) !important;
+}
+
+/* Travel Brief owns local gradients and fixed evidence copy colors. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 :is(
+  .gridly-brief-flow,
+  .gridly-travel-brief-list,
+  .gridly-travel-brief-item,
+  .gridly-unified-evidence,
+  .gridly-unified-evidence-item
+) {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 .gridly-travel-brief :is(h4, p, dd) {
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 .gridly-travel-brief :is(.gridly-travel-brief-source, dt, summary) {
+  color: var(--gridly-text-secondary) !important;
+}
+
+/* Current report sheet: shell, choices, explanatory copy and sticky CTA owner. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="report"] :is(
+  #gridlyPortraitV2SheetBody,
+  .gridly-v2-report-picker,
+  .gridly-v2-report-tiles,
+  .gridly-v2-report-ctas
+) {
+  background: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-action {
+  background: var(--gridly-control-bg) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+
+/* Settings is rendered inside the shared V2 sheet, not the legacy modal. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(
+  header,
+  #gridlyPortraitV2SheetBody,
+  .gridly-settings-sheet,
+  .settings-list-section,
+  .settings-list-summary,
+  .settings-list-detail,
+  .settings-toggle-row,
+  .settings-select-grid label,
+  .settings-place-card,
+  .gridly-v2-tile
+) {
+  background: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-list-title, .settings-list-detail p, .settings-select-grid label, .settings-toggle-row span) {
+  color: var(--gridly-text-primary) !important;
+}
+
+/* Other shared V2 sheets (alerts, areas, destination search and transient states). */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet :is(
+  header,
+  #gridlyPortraitV2SheetBody,
+  .gridly-v2-tile,
+  .mobile-native-surface-card,
+  .gridly-alert-row,
+  .gridly-alert-intel-card,
+  .loading,
+  .empty,
+  .confirmation-box
+) {
+  background-color: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
