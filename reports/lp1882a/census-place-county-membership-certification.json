@@ -1,0 +1,26 @@
+{
+  "milestone": "LP188.2A",
+  "finalClassification": "CERTIFICATION_BLOCKED_REQUIRED_GIS_SOURCES_AND_TOOLCHAIN_UNAVAILABLE",
+  "certificationRunCompleted": false,
+  "blockers": [
+    "The required PLACE shapefile is not present in this execution environment.",
+    "The required authoritative county shapefile is not present in this execution environment.",
+    "gridly-gis-env.ps1 is not present in this execution environment.",
+    "PowerShell, ogrinfo, and ogr2ogr are not installed in this execution environment."
+  ],
+  "governedPlaceZip": {
+    "filename": "tl_2025_48_place.zip",
+    "byteSize": 9782040,
+    "sha256": "5A0C4D49641F69028EE9F5C343BF09936EC00A378E5E6393115B106BAB935E13"
+  },
+  "certifiedCounts": null,
+  "determinismResult": "NOT_RUN_FAIL_CLOSED",
+  "outputArtifactsProduced": [],
+  "toolingAdded": "Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1",
+  "runtimeChanged": false,
+  "communityPackagesManufactured": false,
+  "countyActivationPerformed": false,
+  "countyDeploymentPerformed": false,
+  "supabaseModified": false,
+  "addressRestrictionsRemoved": false
+}

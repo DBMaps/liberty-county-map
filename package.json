@@ -13,6 +13,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp1882a": "node --test tests/lp1882a-census-place-county-membership.test.mjs",
     "test:lp1882": "node --test tests/lp1882-census-place-source-provenance.test.mjs",
     "build:lp188": "node tools/lp188/audit-statewide-community-source.mjs build",
     "verify:lp188": "node tools/lp188/audit-statewide-community-source.mjs verify",
