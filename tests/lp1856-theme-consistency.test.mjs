@@ -56,7 +56,7 @@ test("Travel Brief rows and evidence children are not nested cards", () => {
 test("Destination Search has one elevated shell and flat result rows", () => {
   assert.match(ruleFor("#gridlySearchShell .gridly-search-card"), /--gridly-elevated[\s\S]*--gridly-shadow/);
   assert.match(ruleFor("#gridlySearchShell .gridly-search-result-item {"), /background:\s*transparent[\s\S]*box-shadow:\s*none/);
-  const search = authority.slice(authority.indexOf("#gridlySearchShell"), authority.indexOf("/* Light compromise"));
+  const search = authority.slice(authority.indexOf("#gridlySearchShell"), authority.indexOf("/* LP185.8"));
   assert.equal((search.match(/box-shadow:\s*var\(--gridly-shadow\)/g) || []).length, 1);
 });
 
@@ -152,11 +152,11 @@ test("LP185.6H is foreground-only and preserves explicit/System-Light parity", (
   assert.doesNotMatch(foregroundGrade, /(?:^|[;{]\s*)(?:background|border|box-shadow|width|height|top|right|bottom|left|padding|margin|font-size|font-weight)\s*:/m);
 });
 
-test("existing logo assets are retained and no artwork was added", () => {
+test("theme logo contract uses the owner-supplied Light horizontal artwork", () => {
   assert.match(html, /data-gridly-dark-logo="assets\/store\/branding\/Logos\/gridly-logo-horizontal\.png"/);
-  assert.match(html, /data-gridly-light-logo="assets\/store\/branding\/Logos\/gridly-logo-vertical\.png"/);
+  assert.match(html, /data-gridly-light-logo="assets\/gridly-logo-horizontal-lite-mode\.png"/);
   assert.deepEqual(readdirSync(new URL("../assets/store/branding/Logos/", import.meta.url)).sort(), ["gridly-logo-horizontal.png", "gridly-logo-vertical.png"]);
-  assert.match(authority, /existing vertical bitmap is clipped to its complete mark/);
+  assert.match(authority, /owner-supplied horizontal Light wordmark/);
 });
 
 test("theme remains independent of map/provider and protected behavior", () => {
