@@ -13,13 +13,14 @@ const restriction = JSON.parse(fs.readFileSync(path.join(root, 'reports/lp186/co
 const registry = JSON.parse(fs.readFileSync(path.join(root, 'reports/lp1885/community-package-promotion-only-registry.json'), 'utf8'));
 const certification = JSON.parse(fs.readFileSync(path.join(root, 'reports/lp1885/lp1885-identity-capture-certification.json'), 'utf8'));
 
-function fixture(bytes, fips = '48001', name = 'Anderson County') {
+function fixture(bytes, filenameFips = '48001') {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1885-non-authoritative-'));
   fs.mkdirSync(path.join(directory, 'counties'));
-  fs.writeFileSync(path.join(directory, 'counties', `${fips}.json`), bytes);
+  fs.writeFileSync(path.join(directory, 'counties', `${filenameFips}.json`), bytes);
   return directory;
 }
-const valid = Buffer.from('{\r\n  "schemaVersion":"gridly.community-package.identity.v1", "county":{"countyFips":"48001","displayName":"Anderson County"}, "censusPlaces":[], "legacyAwarenessAreas":[], "communities":[]\r\n}\r\n');
+const packageBytes = (fips, displayName) => Buffer.from(`{\r\n  "schemaVersion":"gridly.community-package.identity.v1", "county":{"countyFips":"${fips}","displayName":"${displayName}"}, "censusPlaces":[], "legacyAwarenessAreas":[], "communities":[]\r\n}\r\n`);
+const valid = packageBytes('48001', 'Anderson');
 
 test('capture hashes exact file bytes without rewriting or normalizing the package', () => {
   const directory = fixture(valid);
@@ -30,17 +31,52 @@ test('capture hashes exact file bytes without rewriting or normalizing the packa
   assert.deepEqual(fs.readFileSync(path.join(directory, 'counties/48001.json')), before);
 });
 
-test('identity is governed by FIPS and metadata must match filename and county authority', () => {
-  const bad = Buffer.from(valid.toString().replace('48001', '48003'));
-  const result = capturePackageDirectory({ sourceDirectory: fixture(bad), governedCounties: [identity.identities[0]] });
+test('Liberty Census base display matches its FIPS-bound governed countyName', () => {
+  const liberty = identity.identities.find(row => row.fips === '48291');
+  const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes('48291', 'Liberty'), '48291'), governedCounties: [liberty] });
+  assert.equal(result.records.length, 1);
+  assert.equal(result.countyIdentityMismatch.length, 0);
+});
+
+test('correct FIPS with a genuinely wrong display name fails', () => {
+  const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes('48291', 'Liberty Parish'), '48291'), governedCounties: [identity.identities.find(row => row.fips === '48291')] });
+  assert.equal(result.records.length, 0);
+  assert.match(result.packageValidationFailures[0].reason, /display-name mismatch: expected Liberty/);
+});
+
+test('correct-looking display name cannot substitute for a governed FIPS', () => {
+  const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes('48999', 'Liberty'), '48999'), governedCounties: [identity.identities.find(row => row.fips === '48291')] });
   assert.equal(result.records.length, 0);
   assert.equal(result.countyIdentityMismatch.length, 1);
+  assert.match(result.packageValidationFailures[0].reason, /absent from governed registry/);
+});
+
+test('filename FIPS must equal package county FIPS', () => {
+  const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes('48291', 'Liberty'), '48001'), governedCounties: identity.identities });
+  assert.equal(result.records.length, 0);
+  assert.match(result.packageValidationFailures[0].reason, /expected 48001/);
+});
+
+test('exact terminal County projection preserves DeWitt and La Salle spelling and spacing', () => {
+  for (const [fips, name] of [['48123', 'DeWitt'], ['48283', 'La Salle']]) {
+    const governed = identity.identities.find(row => row.fips === fips);
+    const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes(fips, name), fips), governedCounties: [governed] });
+    assert.equal(result.records.length, 1, name);
+  }
+});
+
+test('display-name validation is exact and performs no fuzzy or case-insensitive matching', () => {
+  const liberty = identity.identities.find(row => row.fips === '48291');
+  for (const name of ['liberty', 'Liberty County', 'Liberty C', 'LibertyCounty', 'Liberty Extra']) {
+    const result = capturePackageDirectory({ sourceDirectory: fixture(packageBytes('48291', name), '48291'), governedCounties: [liberty] });
+    assert.equal(result.records.length, 0, name);
+  }
 });
 
 test('inventory is ordered and two captures produce byte-identical deterministic evidence', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1885-non-authoritative-'));
   fs.mkdirSync(path.join(dir, 'counties'));
-  const second = Buffer.from(valid.toString().replaceAll('48001', '48003').replace('Anderson County', 'Andrews County'));
+  const second = packageBytes('48003', 'Andrews');
   fs.writeFileSync(path.join(dir, 'counties/48003.json'), second);
   fs.writeFileSync(path.join(dir, 'counties/48001.json'), valid);
   const counties = identity.identities.slice(0, 2);
