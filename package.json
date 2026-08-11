@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18810": "node tools/lp18810/govern-owner-membership.mjs build",
+    "verify:lp18810": "node tools/lp18810/govern-owner-membership.mjs verify",
+    "test:lp18810": "node --test tests/lp18810-owner-membership.test.mjs",
     "build:lp1889": "node tools/lp1889/prepare-governed-readiness.mjs build",
     "verify:lp1889": "node tools/lp1889/prepare-governed-readiness.mjs verify",
     "test:lp1889": "node --test tests/lp1889-governed-readiness.test.mjs",
