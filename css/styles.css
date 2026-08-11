@@ -26966,11 +26966,11 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   color: var(--gridly-accent-foreground) !important;
 }
 
-/* Light compromise: the existing vertical bitmap is clipped to its complete mark;
-   its wordmark/tagline region stays outside the unchanged compact header box. */
+/* LP185.8 — the owner-supplied horizontal Light wordmark uses the same complete,
+   uncropped presentation model as the Dark horizontal wordmark. */
 #gridlyPortraitV2 .gridly-v2-brand img[data-gridly-logo-theme="light"] {
-  object-fit: cover;
-  object-position: 50% 13%;
+  object-fit: contain;
+  object-position: left center;
 }
 
 /* LP185.6H — Light foreground color grade. Pale cyan remains a tint or
