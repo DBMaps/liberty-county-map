@@ -26652,7 +26652,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   }
 }
 
-/* LP185.6E — authoritative Portrait V2 role contract.
+/* LP185.6F — authoritative Portrait V2 role contract.
    LP185.6/A/B/C were consolidated here: a role has one material owner and peers
    use typography/dividers instead of recursively acquiring cards. Semantic,
    marker, route, provider, geometry and interaction contracts remain untouched. */
@@ -26802,7 +26802,8 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   /* Compatibility Location Context remains runtime-capable, but shares the exact
      role of the V2 owner. Existing hidden/state ownership ensures only one mounts
      perceptibly; presentation does not change that behavior. */
-  .mobile-destination-command.is-awareness-panel {
+  .mobile-destination-command.is-awareness-panel,
+  &.gridly-mobile-awareness-panel-present .map-card > .mobile-destination-command {
     background: var(--gridly-elevated) !important;
     border-color: var(--gridly-border-neutral) !important;
     color: var(--gridly-text-primary) !important;
@@ -26820,6 +26821,34 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     border-color: var(--gridly-border-neutral) !important;
     color: var(--gridly-text-primary) !important;
     box-shadow: none !important;
+  }
+
+  /* Foreground ownership is explicit because legacy portrait rules color broad
+     descendants (strong/p/span/em/label/small/button) instead of inheriting the
+     role carried by their current runtime surface. */
+  #gridlyPortraitV2 {
+    .gridly-travel-brief-header,
+    .gridly-travel-brief-item :is(strong, [data-gridly-decision-role="interpretation"]),
+    .gridly-unified-evidence-item dd {
+      color: var(--gridly-text-primary) !important;
+    }
+    .gridly-brief-context,
+    .gridly-brief-travel-support,
+    .gridly-travel-brief-item [data-gridly-decision-role="reason"] {
+      color: var(--gridly-text-secondary) !important;
+    }
+    .gridly-travel-brief-source,
+    .gridly-travel-brief-item :is([data-gridly-decision-role="confidence"], [data-gridly-decision-role="freshness"]),
+    .gridly-unified-evidence-item dt {
+      color: var(--gridly-text-muted) !important;
+    }
+    .gridly-brief-section-label,
+    .gridly-unified-evidence summary {
+      color: var(--gridly-accent) !important;
+    }
+    .gridly-v2-bottom-dock button :is(.dock-icon, span, em, svg) {
+      color: inherit !important;
+    }
   }
 
   #gridlyPortraitV2Sheet {
@@ -26841,6 +26870,25 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     border-color: var(--gridly-border-neutral) !important;
     color: var(--gridly-text-primary) !important;
     box-shadow: none !important;
+  }
+  #gridlyPortraitV2SheetTitle,
+  #gridlyPortraitV2Sheet .gridly-v2-report-prompt strong,
+  #gridlyPortraitV2Sheet .gridly-v2-report-action :is(span, strong),
+  #gridlyPortraitV2Sheet .gridly-historical-intelligence-row :is(strong, .gridly-historical-intelligence-location, .gridly-historical-intelligence-pattern),
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-list-title, label, select, input) {
+    color: var(--gridly-text-primary) !important;
+  }
+  #gridlyPortraitV2Sheet .gridly-v2-report-prompt span,
+  #gridlyPortraitV2Sheet .gridly-historical-intelligence-subtitle,
+  #gridlyPortraitV2Sheet .gridly-historical-intelligence-line,
+  #gridlyPortraitV2Sheet .gridly-historical-intelligence-row p:not(.gridly-historical-intelligence-context-note),
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-list-meta, .settings-placeholder-note, .settings-list-detail p, .settings-list-detail small) {
+    color: var(--gridly-text-secondary) !important;
+  }
+  #gridlyPortraitV2Sheet :is(.gridly-historical-intelligence-note, .gridly-historical-intelligence-context-note),
+  #gridlyPortraitV2Sheet :is(button, .gridly-v2-report-action):disabled,
+  #gridlyPortraitV2Sheet [aria-disabled="true"] {
+    color: var(--gridly-text-muted) !important;
   }
   #gridlyPortraitV2Sheet .gridly-v2-report-action:is(.is-selected, [aria-pressed="true"]) {
     background: var(--gridly-accent-soft) !important;
@@ -26887,6 +26935,19 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   border-color: var(--gridly-border-neutral) !important;
   color: var(--gridly-text-primary) !important;
   box-shadow: none !important;
+}
+:is(body.gridly-theme-light, body.gridly-theme-dark, html[data-gridly-effective-theme] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-label, .gridly-search-result-title) {
+  color: var(--gridly-text-primary) !important;
+}
+:is(body.gridly-theme-light, body.gridly-theme-dark, html[data-gridly-effective-theme] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-subtitle, .gridly-search-results-status, .gridly-search-result-meta) {
+  color: var(--gridly-text-secondary) !important;
+}
+:is(body.gridly-theme-light, body.gridly-theme-dark, html[data-gridly-effective-theme] body.gridly-theme-system) #gridlySearchShell .gridly-search-input::placeholder {
+  color: var(--gridly-text-muted) !important;
+  opacity: 1;
+}
+:is(body.gridly-theme-light, body.gridly-theme-dark, html[data-gridly-effective-theme] body.gridly-theme-system) #gridlySearchShell :is(.gridly-search-close-btn, .gridly-search-clear-btn) {
+  color: var(--gridly-text-secondary) !important;
 }
 :is(body.gridly-theme-light, body.gridly-theme-dark, html[data-gridly-effective-theme] body.gridly-theme-system) #gridlySearchShell .gridly-search-result-item {
   background: transparent !important;

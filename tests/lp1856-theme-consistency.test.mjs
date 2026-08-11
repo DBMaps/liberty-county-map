@@ -5,7 +5,7 @@ import { readFileSync, readdirSync } from "node:fs";
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../css/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-const authority = css.slice(css.indexOf("/* LP185.6E"));
+const authority = css.slice(css.indexOf("/* LP185.6F"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -18,8 +18,8 @@ function ruleFor(selectorFragment) {
 }
 
 test("one consolidated LP185.6 family authority remains", () => {
-  assert.equal((css.match(/\/\* LP185\.6[A-D]?\b/g) || []).length, 0);
-  assert.equal((css.match(/\/\* LP185\.6E\b/g) || []).length, 1);
+  assert.equal((css.match(/\/\* LP185\.6[A-E]?\b/g) || []).length, 0);
+  assert.equal((css.match(/\/\* LP185\.6F\b/g) || []).length, 1);
 });
 
 test("explicit and effective System themes share complete seven-role contracts", () => {
@@ -62,9 +62,33 @@ test("sheet rows stay flat while expanded Settings and Historical details are IN
 });
 
 test("both Location Context owners are normalized without a Light navy gradient", () => {
-  for (const selector of [".gridly-v2-location-awareness-panel", ".mobile-destination-command.is-awareness-panel {"])
+  for (const selector of [".gridly-v2-location-awareness-panel", ".mobile-destination-command.is-awareness-panel,"])
     assert.match(ruleFor(selector), /--gridly-elevated[\s\S]*--gridly-shadow/);
   assert.doesNotMatch(authority, /mobile-destination-command\.is-awareness-panel[^{}]*\{[^{}]*linear-gradient/);
+  assert.match(authority, /&\.gridly-mobile-awareness-panel-present \.map-card > \.mobile-destination-command/);
+});
+
+test("current runtime foreground owners use readable semantic roles", () => {
+  const required = [
+    ["Travel decision", /data-gridly-decision-role="interpretation"[\s\S]*--gridly-text-primary/],
+    ["Travel support", /gridly-brief-context[\s\S]*--gridly-text-secondary/],
+    ["Travel metadata", /gridly-travel-brief-source[\s\S]*--gridly-text-muted/],
+    ["Search heading", /gridly-search-label, \.gridly-search-result-title\)[\s\S]*--gridly-text-primary/],
+    ["Search status", /gridly-search-subtitle, \.gridly-search-results-status[\s\S]*--gridly-text-secondary/],
+    ["Search placeholder", /gridly-search-input::placeholder[\s\S]*--gridly-text-muted/],
+    ["Report prompt", /gridly-v2-report-prompt strong[\s\S]*--gridly-text-primary/],
+    ["Report disabled", /gridly-v2-report-action\):disabled[\s\S]*--gridly-text-muted/],
+    ["History body", /gridly-historical-intelligence-line[\s\S]*--gridly-text-secondary/],
+    ["Settings title", /settings-list-title, label, select, input[\s\S]*--gridly-text-primary/],
+    ["Dock descendants", /bottom-dock button :is\(\.dock-icon, span, em, svg\)[\s\S]*color: inherit !important/]
+  ];
+  for (const [name, pattern] of required) assert.match(authority, pattern, name);
+});
+
+test("foreground closure adds roles, not fixed pale generic copy or layout", () => {
+  const closure = authority.slice(authority.indexOf("Foreground ownership is explicit"));
+  assert.doesNotMatch(closure, /color:\s*(?:#fff(?:fff)?\b|rgba?\(2(?:0[02468]|2[02468]),\s*2(?:2[02468]|3[02468]|4[02468]))/i);
+  assert.doesNotMatch(closure, /(?:^|[;{]\s*)(?:width|height|top|right|bottom|left|padding|margin)\s*:/m);
 });
 
 test("existing logo assets are retained and no artwork was added", () => {
