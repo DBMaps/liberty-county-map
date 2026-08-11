@@ -13,6 +13,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp1859b": "node --test tests/lp1859b-desktop-initial-load-stabilization.test.mjs",
     "test:lp1859a": "node --test tests/lp1859a-responsive-ownership.test.mjs",
     "test:lp1858": "node --test tests/lp1858-light-wordmark.test.mjs",
     "test:lp1857": "node --test tests/lp1857-light-material-depth.test.mjs",

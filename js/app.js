@@ -28520,6 +28520,7 @@ function applyLayoutMode(nextMode) {
     deactivateGridlyPortraitV2Owner();
   }
   syncTacticalMapSurfaceVisibility();
+  document.documentElement?.classList.remove("gridly-desktop-startup-containment");
 }
 
 // Layout mode UX contracts:

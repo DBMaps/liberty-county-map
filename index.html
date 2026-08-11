@@ -97,13 +97,72 @@
       opacity: 0 !important;
       visibility: hidden !important;
     }
+
+    html.gridly-desktop-startup-containment body > :not(.gridly-desktop-gate):not(script):not(style) {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    html.gridly-desktop-startup-containment .gridly-desktop-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 2147482000;
+      display: grid !important;
+      place-items: center;
+      overflow: hidden;
+      width: 100vw;
+      min-height: 100vh;
+      background: #00030c;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    html.gridly-desktop-startup-containment .gridly-desktop-gate-shell,
+    html.gridly-desktop-startup-containment .gridly-desktop-gate-board-image {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    html.gridly-desktop-startup-containment .gridly-desktop-gate-board-image {
+      object-fit: fill;
+    }
   </style>
   <script>
     document.documentElement.classList.add("gridly-prepaint-lock");
     (function gridlyReleasePrepaintLock() {
       var released = false;
+      function ensureStartupLayoutOwnership() {
+        var body = document.body;
+        var existingMode = body && body.getAttribute("data-layout-mode");
+        var width = window.visualViewport && window.visualViewport.width || window.innerWidth || document.documentElement.clientWidth || 0;
+        var height = window.visualViewport && window.visualViewport.height || window.innerHeight || document.documentElement.clientHeight || 0;
+        var landscape = width > height;
+        var finePointer = false;
+        var coarsePointer = false;
+        try {
+          finePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
+          coarsePointer = Boolean(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+        } catch (error) {}
+        var mode = existingMode || (landscape && width <= 1100 && height <= 520
+          ? "tactical-landscape"
+          : landscape && finePointer && !coarsePointer
+            ? "desktop"
+            : width <= 980
+              ? "portrait"
+              : "desktop");
+        document.documentElement.classList.toggle("gridly-desktop-startup-containment", mode === "desktop");
+        if (body && !existingMode) {
+          body.setAttribute("data-layout-mode", mode);
+          body.setAttribute("data-layout-mode-legacy", mode === "desktop" ? "desktop" : "mobile");
+        }
+      }
       function release() {
         if (released) return;
+        ensureStartupLayoutOwnership();
         released = true;
         document.documentElement.classList.remove("gridly-prepaint-lock");
         (window.gridlyStartupDiagnostics?.markPrepaintReleased || function(reason) { (window.gridlyStartupEarlyEvents = window.gridlyStartupEarlyEvents || []).push({ type: "prepaintReleased", reason: reason }); })("inline prepaint release");
