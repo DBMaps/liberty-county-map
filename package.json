@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1884": "node tools/lp1884/build-community-promotion-readiness.mjs build",
+    "verify:lp1884": "node tools/lp1884/build-community-promotion-readiness.mjs verify",
+    "test:lp1884": "node --test tests/lp1884-community-promotion-readiness.test.mjs",
     "build:lp1883": "node tools/lp188/manufacture-community-packages.mjs",
     "test:lp1883": "node --test tests/lp1883-community-package-manufacturing.test.mjs",
     "test:lp1883a": "node --test tests/lp1883a-community-package-identity-contract.test.mjs",
