@@ -54,7 +54,10 @@ try {
     foreach ($field in @('STATEFP','COUNTYFP','GEOID','NAME')) { if ($countyText -notmatch "\b$field\b") { throw "COUNTY field is absent: $field" } }
 
     $db = Join-Path $scratch 'intersection.gpkg'
-    Invoke-Ogr ogr2ogr @('-f','GPKG',$db,$PlaceSource,'-nln','places','-where',"STATEFP = '48'",'-makevalid')
+    # A Texas PLACE source can contain both POLYGON and MULTIPOLYGON features.
+    # Promote single polygons without changing their coordinates so the layer
+    # accepts every source geometry without GDAL's polygon-layer warning.
+    Invoke-Ogr ogr2ogr @('-f','GPKG',$db,$PlaceSource,'-nln','places','-nlt','PROMOTE_TO_MULTI','-where',"STATEFP = '48'",'-makevalid')
     Invoke-Ogr ogr2ogr @('-f','GPKG','-update',$db,$CountySource,'-nln','counties','-where',"STATEFP = '48'",'-makevalid')
 
     $placeCount = (& ogrinfo -ro -so $db places 2>&1 | Select-String 'Feature Count:\s*(\d+)').Matches.Groups[1].Value
@@ -96,7 +99,34 @@ try {
         counts=[ordered]@{ TOTAL_PLACES=$canonical.Count; INCORPORATED_ACTIVE=@($canonical | Where-Object governedType -eq 'INCORPORATED_PLACE').Count; INCORPORATED_INACTIVE_OR_NONFUNCTIONING=@($canonical | Where-Object governedType -eq 'INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE').Count; CDP=@($canonical | Where-Object governedType -eq 'CENSUS_DESIGNATED_PLACE').Count; OTHER_REQUIRES_REVIEW=@($canonical | Where-Object governedType -eq 'OTHER_REQUIRES_REVIEW').Count; SINGLE_COUNTY_PLACES=$single; MULTI_COUNTY_PLACES=$multi; TOTAL_PLACE_COUNTY_MEMBERSHIPS=$memberships.Count; UNMATCHED_PLACES=$unmatched.Count; COUNTIES_WITH_AT_LEAST_ONE_PLACE=$countiesWithPlaces; COUNTIES_WITH_ZERO_CENSUS_PLACES=254-$countiesWithPlaces; DUPLICATE_DISPLAY_NAME_GROUPS=$duplicates.Count; DUPLICATE_GEOIDS=$duplicateGeoids.Count; INVALID_GEOMETRIES=$invalidGeometry; NON_TEXAS_RECORDS=$nonTexas.Count }
         method=[ordered]@{ operation='OGR SQLite ST_Intersects plus ST_Area(ST_Intersection) > 0'; arbitraryThresholdUsed=$false; canonicalIdentity='Census PLACE GEOID'; stableSort='canonical GEOID; membership place GEOID then county FIPS' }
     }
-    if ($canonical.Count -ne 1863 -or $duplicateGeoids.Count -or $nonTexas.Count -or $unmatched.Count -or $invalidGeometry -or $summary.counts.OTHER_REQUIRES_REVIEW) { throw 'Certification reconciliation failed; temporary output will not be promoted.' }
+    Write-Host 'Certification reconciliation diagnostics:'
+    foreach ($diagnostic in @(
+        @('Canonical places', $summary.counts.TOTAL_PLACES),
+        @('Duplicate GEOIDs', $summary.counts.DUPLICATE_GEOIDS),
+        @('Non-Texas records', $summary.counts.NON_TEXAS_RECORDS),
+        @('Unmatched places', $summary.counts.UNMATCHED_PLACES),
+        @('Invalid geometries', $summary.counts.INVALID_GEOMETRIES),
+        @('Other requires review', $summary.counts.OTHER_REQUIRES_REVIEW),
+        @('Single-county places', $summary.counts.SINGLE_COUNTY_PLACES),
+        @('Multi-county places', $summary.counts.MULTI_COUNTY_PLACES),
+        @('Total memberships', $summary.counts.TOTAL_PLACE_COUNTY_MEMBERSHIPS),
+        @('Counties with Census places', $summary.counts.COUNTIES_WITH_AT_LEAST_ONE_PLACE),
+        @('Counties with zero Census places', $summary.counts.COUNTIES_WITH_ZERO_CENSUS_PLACES),
+        @('Duplicate-name groups', $summary.counts.DUPLICATE_DISPLAY_NAME_GROUPS)
+    )) { Write-Host ("  {0}: {1}" -f $diagnostic[0], $diagnostic[1]) }
+
+    $failedGates = @()
+    if ($canonical.Count -ne 1863) { $failedGates += "Canonical places: expected 1863, found $($canonical.Count)" }
+    if ($duplicateGeoids.Count -gt 0) { $failedGates += "Duplicate GEOIDs: expected 0, found $($duplicateGeoids.Count)" }
+    if ($nonTexas.Count -gt 0) { $failedGates += "Non-Texas records: expected 0, found $($nonTexas.Count)" }
+    if ($unmatched.Count -gt 0) { $failedGates += "Unmatched places: expected 0, found $($unmatched.Count)" }
+    if ($invalidGeometry -gt 0) { $failedGates += "Invalid geometries: expected 0, found $invalidGeometry" }
+    if ($summary.counts.OTHER_REQUIRES_REVIEW -gt 0) { $failedGates += "Other requires review: expected 0, found $($summary.counts.OTHER_REQUIRES_REVIEW)" }
+    if ($failedGates.Count -gt 0) {
+        Write-Host 'Failing reconciliation gates:'
+        foreach ($failedGate in $failedGates) { Write-Host "  - $failedGate" }
+        throw 'Certification reconciliation failed; temporary output will not be promoted.'
+    }
     Write-StableJson (Join-Path $promote 'texas-place-canonical.json') $canonical
     Write-StableJson (Join-Path $promote 'texas-place-county-memberships.json') $memberships
     Write-StableJson (Join-Path $promote 'texas-place-duplicate-names.json') $duplicates
