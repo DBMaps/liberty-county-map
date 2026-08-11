@@ -93,8 +93,9 @@ try {
     $membershipRaw = Join-Path $scratch 'memberships.geojson'
     $canonicalSql = 'SELECT STATEFP, PLACEFP, GEOID, GEOIDFQ, NAME, NAMELSAD, LSAD, CLASSFP, FUNCSTAT, ALAND, AWATER, INTPTLAT, INTPTLON FROM places_projected ORDER BY GEOID'
     Invoke-Ogr ogr2ogr @('-f','GeoJSON',$canonicalRaw,$db,'-dialect','SQLITE','-sql',$canonicalSql)
-    # ST_Area(intersection) > 0 rejects line/point boundary touches. No percentage threshold is applied.
-    $membershipSql = "SELECT p.GEOID AS placeGeoid, p.NAME AS placeName, c.GEOID AS countyFips, c.NAME AS countyName FROM places_projected p JOIN counties_projected c ON ST_Intersects(p.geom,c.geom) WHERE ST_Area(ST_Intersection(p.geom,c.geom)) > 0 ORDER BY p.GEOID,c.GEOID"
+    # Extracting polygon components before measuring area rejects line/point
+    # boundary touches, including when intersection returns a geometry collection.
+    $membershipSql = "SELECT p.GEOID AS placeGeoid, p.NAME AS placeName, c.GEOID AS countyFips, c.NAME AS countyName FROM places_projected p JOIN counties_projected c ON ST_Intersects(p.geom,c.geom) WHERE ST_Area(ST_CollectionExtract(ST_Intersection(p.geom,c.geom),3)) > 0 ORDER BY p.GEOID,c.GEOID"
     Invoke-Ogr ogr2ogr @('-f','GeoJSON',$membershipRaw,$db,'-dialect','SQLITE','-sql',$membershipSql)
 
     $canonical = @(Read-Features $canonicalRaw | ForEach-Object {
@@ -122,7 +123,7 @@ SELECT p.GEOID AS geoid, p.PLACEFP AS placeFp, p.NAME AS officialName,
  p.ALAND AS aland, p.AWATER AS awater,
  CASE WHEN EXISTS (SELECT 1 FROM counties_projected c WHERE ST_Intersects(p.geom,c.geom)) THEN 1 ELSE 0 END AS intersectsAnyCounty,
  CASE WHEN EXISTS (SELECT 1 FROM counties_projected c WHERE ST_Touches(p.geom,c.geom)) THEN 1 ELSE 0 END AS touchesAnyCounty,
- COALESCE((SELECT MAX(ST_Area(ST_Intersection(p.geom,c.geom))) FROM counties_projected c WHERE ST_Intersects(p.geom,c.geom)),0) AS maximumIntersectionAreaSquareMeters,
+ COALESCE((SELECT MAX(ST_Area(ST_CollectionExtract(ST_Intersection(p.geom,c.geom),3))) FROM counties_projected c WHERE ST_Intersects(p.geom,c.geom)),0) AS maximumIntersectionAreaSquareMeters,
  CASE WHEN EXISTS (SELECT 1 FROM counties_projected c WHERE ST_Intersects(c.geom,ST_Transform(MakePoint(CAST(p.INTPTLON AS REAL),CAST(p.INTPTLAT AS REAL),4269),$ProjectedEpsg))) THEN 1 ELSE 0 END AS internalPointInOrOnCounty,
  (SELECT c.GEOID FROM counties_projected c ORDER BY ST_Distance(p.geom,c.geom),c.GEOID LIMIT 1) AS nearestCountyGeoid,
  (SELECT c.NAME FROM counties_projected c ORDER BY ST_Distance(p.geom,c.geom),c.GEOID LIMIT 1) AS nearestCountyName,
@@ -147,7 +148,7 @@ FROM places_projected p WHERE p.GEOID IN ($quotedGeoids) ORDER BY p.GEOID
         $diagnosticArtifact = "$OutputDirectory.unmatched-place-diagnostics.json"
         $diagnosticReport = [ordered]@{
             milestone='LP188.2A'; purpose='READ_ONLY_UNMATCHED_PLACE_RECONCILIATION'
-            membershipMethod='ST_Intersects AND ST_Area(ST_Intersection) > 0 on projected geometry'
+            membershipMethod='ST_Intersects AND ST_Area(ST_CollectionExtract(ST_Intersection,3)) > 0 on projected geometry'
             workingCrs=[ordered]@{ authority='EPSG'; code=$ProjectedEpsg; name='NAD83 / Texas Centric Albers Equal Area'; linearUnit='metre'; areaUnit='square metre' }
             internalPointUsedForMembership=$false; nearestCountyUsedForMembership=$false
             sourceContracts=[ordered]@{
@@ -175,7 +176,7 @@ FROM places_projected p WHERE p.GEOID IN ($quotedGeoids) ORDER BY p.GEOID
         milestone='LP188.2A'; censusEdition='TIGER2025'; finalClassification='PLACE_COUNTY_MEMBERSHIP_CERTIFIED_READY_FOR_COMMUNITY_MANUFACTURING'
         provenance=[ordered]@{ placeZip='tl_2025_48_place.zip'; placeZipBytes=9782040; placeZipSha256=$zipHash; placeShapefile=$PlaceSource; countyShapefile=$CountySource; gdalVersion=$gdalVersion; qgisVersion='3.44.11 (configured by gridly-gis-env.ps1)' }
         counts=[ordered]@{ TOTAL_PLACES=$canonical.Count; INCORPORATED_ACTIVE=@($canonical | Where-Object governedType -eq 'INCORPORATED_PLACE').Count; INCORPORATED_INACTIVE_OR_NONFUNCTIONING=@($canonical | Where-Object governedType -eq 'INACTIVE_OR_NONFUNCTIONING_INCORPORATED_PLACE').Count; CDP=@($canonical | Where-Object governedType -eq 'CENSUS_DESIGNATED_PLACE').Count; OTHER_REQUIRES_REVIEW=@($canonical | Where-Object governedType -eq 'OTHER_REQUIRES_REVIEW').Count; SINGLE_COUNTY_PLACES=$single; MULTI_COUNTY_PLACES=$multi; TOTAL_PLACE_COUNTY_MEMBERSHIPS=$memberships.Count; UNMATCHED_PLACES=$unmatched.Count; COUNTIES_WITH_AT_LEAST_ONE_PLACE=$countiesWithPlaces; COUNTIES_WITH_ZERO_CENSUS_PLACES=254-$countiesWithPlaces; DUPLICATE_DISPLAY_NAME_GROUPS=$duplicates.Count; DUPLICATE_GEOIDS=$duplicateGeoids.Count; INVALID_GEOMETRIES=$invalidGeometry; NON_TEXAS_RECORDS=$nonTexas.Count }
-        method=[ordered]@{ operation='OGR SQLite ST_Intersects plus ST_Area(ST_Intersection) > 0 on projected geometry'; workingCrs=$ProjectedCrs; workingCrsName='NAD83 / Texas Centric Albers Equal Area'; areaUnit='square metre'; sourceGeometryModified=$false; arbitraryThresholdUsed=$false; canonicalIdentity='Census PLACE GEOID'; stableSort='canonical GEOID; membership place GEOID then county FIPS' }
+        method=[ordered]@{ operation='OGR SQLite ST_Intersects plus ST_Area(ST_CollectionExtract(ST_Intersection,3)) > 0 on projected geometry'; workingCrs=$ProjectedCrs; workingCrsName='NAD83 / Texas Centric Albers Equal Area'; areaUnit='square metre'; sourceGeometryModified=$false; arbitraryThresholdUsed=$false; canonicalIdentity='Census PLACE GEOID'; stableSort='canonical GEOID; membership place GEOID then county FIPS' }
     }
     Write-Host 'Certification reconciliation diagnostics:'
     foreach ($diagnostic in @(
