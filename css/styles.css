@@ -27132,3 +27132,99 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     opacity: 1 !important;
   }
 }
+
+/* LP185.6K — live-evidence residual Dark chrome and alert contrast closure.
+   These Light/System-Light overrides target the populated runtime owners that
+   still win from V873–V876 and V257.1. Geometry, visibility, interaction and
+   the intentionally dark Awareness Brief are outside this closure. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  /* Populated alert descendants previously inherited fixed on-dark values from
+     the high-specificity V875 rules (all !important). */
+  #gridlyPortraitV2Sheet[data-active-sheet="alerts"] {
+    .gridly-alert-row.gridly-alert-intel-card strong,
+    .gridly-alert-title {
+      color: var(--gridly-text-primary) !important;
+    }
+    .gridly-alert-location-line,
+    [data-gridly-alert-location-line="true"] {
+      color: var(--gridly-text-secondary) !important;
+    }
+    .gridly-alert-meta-line {
+      color: var(--gridly-accent) !important;
+      opacity: 1 !important;
+    }
+    .gridly-alert-meta-line strong {
+      color: var(--gridly-text-primary) !important;
+    }
+    .gridly-alert-trust-line {
+      color: var(--gridly-text-muted) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  /* The single runtime class owns TRAVEL BRIEF and its informational category
+     peers (BEFORE YOU GO, COMMUNITY, OFFICIAL ROADWAYS and WEATHER). */
+  #gridlyPortraitV2 .gridly-brief-section-label {
+    color: var(--gridly-accent) !important;
+    opacity: 1 !important;
+  }
+
+  /* Active persistent route context is the destination-panel state of the
+     mobile command article, not a legacy `.route-card`. V257.1 owns its current
+     dimensions and footer layout, which remain deliberately unmentioned. */
+  .map-card > .mobile-destination-command.is-destination-panel:not([hidden]):not(.is-command-card-suppressed) {
+    background-color: var(--gridly-elevated) !important;
+    background-image: none !important;
+    border-color: var(--gridly-border-neutral) !important;
+    color: var(--gridly-text-primary) !important;
+    box-shadow: var(--gridly-shadow) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .mobile-destination-command.is-destination-panel {
+    .mobile-awareness-panel-kicker {
+      color: var(--gridly-accent) !important;
+    }
+    #mobileDestinationCommandTitle,
+    .destination-route-impact-line {
+      color: var(--gridly-text-primary) !important;
+    }
+    #mobileDestinationCommandMeta {
+      color: var(--gridly-text-secondary) !important;
+    }
+    #mobileDestinationCommandBtn {
+      background: var(--gridly-control-bg) !important;
+      border-color: var(--gridly-border-neutral) !important;
+      color: var(--gridly-text-primary) !important;
+      box-shadow: none !important;
+    }
+  }
+
+  /* Destination Intelligence is already a Light sheet. Its exact action stack
+     and evidence summary were the remaining fixed on-dark foreground owners. */
+  #gridlyDestinationImpactPane .gridly-destination-impact-actions {
+    :is(.gridly-destination-impact-show-full-route, .gridly-destination-impact-clear-route,
+      .gridly-destination-impact-done, .gridly-destination-impact-stop-watch) {
+      background: var(--gridly-control-bg) !important;
+      border-color: var(--gridly-border-neutral) !important;
+      color: var(--gridly-text-primary) !important;
+      box-shadow: none !important;
+    }
+    .gridly-destination-impact-manage-route:not(:disabled) {
+      background: var(--gridly-accent) !important;
+      border-color: var(--gridly-accent) !important;
+      color: var(--gridly-accent-foreground) !important;
+      box-shadow: none !important;
+    }
+    :is(button, .secondary-btn):disabled {
+      background: var(--gridly-disabled) !important;
+      border-color: var(--gridly-border-neutral) !important;
+      color: var(--gridly-disabled-foreground) !important;
+      opacity: 1 !important;
+    }
+  }
+  #gridlyDestinationImpactPane .gridly-destination-impact-why .gridly-unified-evidence summary {
+    color: var(--gridly-accent) !important;
+    opacity: 1 !important;
+  }
+}
