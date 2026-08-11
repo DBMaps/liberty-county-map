@@ -10,6 +10,7 @@ const legacyClosure = css.slice(css.indexOf("/* LP185.6G"));
 const foregroundGrade = css.slice(css.indexOf("/* LP185.6H"), css.indexOf("/* LP185.6G"));
 const microContrast = css.slice(css.indexOf("/* LP185.6I"));
 const liveEvidenceClosure = css.slice(css.indexOf("/* LP185.6J"));
+const residualChromeClosure = css.slice(css.indexOf("/* LP185.6K"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -228,6 +229,46 @@ test("LP185.6J corrects only foreground contrast on the retained dark Community 
 test("LP185.6J is Light-only, behavior-neutral, and retains LP185.5/LP185.4", () => {
   assert.doesNotMatch(liveEvidenceClosure, /gridly-theme-dark|effective-theme="dark"/);
   assert.doesNotMatch(liveEvidenceClosure, /(?:display|visibility|pointer-events|touch-action)\s*:/);
+  assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
+  assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
+});
+
+test("LP185.6K gives populated Light alerts governed foreground hierarchy", () => {
+  assert.match(residualChromeClosure, /gridly-alert-row\.gridly-alert-intel-card strong,[\s\S]*gridly-alert-title[^{]*\{[^}]*--gridly-text-primary/);
+  assert.match(residualChromeClosure, /gridly-alert-location-line,[\s\S]*data-gridly-alert-location-line="true"[^{]*\{[^}]*--gridly-text-secondary/);
+  assert.match(residualChromeClosure, /gridly-alert-meta-line\s*\{[^}]*--gridly-accent[^}]*opacity:\s*1 !important/);
+  assert.doesNotMatch(residualChromeClosure, /rgba\(151,\s*221,\s*255|#97ddff/i);
+  assert.match(residualChromeClosure, /gridly-alert-meta-line strong\s*\{[^}]*--gridly-text-primary/);
+  assert.match(residualChromeClosure, /gridly-alert-trust-line\s*\{[^}]*--gridly-text-muted[^}]*opacity:\s*1 !important/);
+});
+
+test("LP185.6K keeps every Travel Brief category kicker on the unchanged Light accent", () => {
+  assert.match(residualChromeClosure, /#gridlyPortraitV2 \.gridly-brief-section-label\s*\{[^}]*color:\s*var\(--gridly-accent\) !important[^}]*opacity:\s*1 !important/);
+  assert.match(css, /--gridly-accent:\s*#066b70/);
+  assert.match(app, /#gridlyBriefInteractionPanel \.gridly-brief-section-label/);
+});
+
+test("LP185.6K normalizes the exact active route-card owner and hierarchy without geometry", () => {
+  assert.match(residualChromeClosure, /\.map-card > \.mobile-destination-command\.is-destination-panel:not\(\[hidden\]\):not\(\.is-command-card-suppressed\)\s*\{[^}]*background-color:\s*var\(--gridly-elevated\) !important[^}]*background-image:\s*none !important[^}]*border-color:\s*var\(--gridly-border-neutral\) !important[^}]*box-shadow:\s*var\(--gridly-shadow\) !important/);
+  assert.match(residualChromeClosure, /mobile-awareness-panel-kicker\s*\{[^}]*--gridly-accent/);
+  assert.match(residualChromeClosure, /#mobileDestinationCommandTitle,[\s\S]*destination-route-impact-line[^{]*\{[^}]*--gridly-text-primary/);
+  assert.match(residualChromeClosure, /#mobileDestinationCommandMeta\s*\{[^}]*--gridly-text-secondary/);
+  assert.match(residualChromeClosure, /#mobileDestinationCommandBtn\s*\{[^}]*--gridly-control-bg/);
+  assert.doesNotMatch(residualChromeClosure, /(?:^|[;{]\s*)(?:position|width|height|top|right|bottom|left|padding|margin|gap)\s*:/m);
+});
+
+test("LP185.6K gives Destination Intelligence secondary, primary, disabled, and evidence roles", () => {
+  assert.match(residualChromeClosure, /gridly-destination-impact-actions[\s\S]*gridly-destination-impact-show-full-route[\s\S]*gridly-destination-impact-clear-route[\s\S]*gridly-destination-impact-done[^{]*\{[^}]*--gridly-control-bg[^}]*--gridly-text-primary/);
+  assert.match(residualChromeClosure, /gridly-destination-impact-manage-route:not\(:disabled\)\s*\{[^}]*--gridly-accent[^}]*--gridly-accent-foreground/);
+  assert.match(residualChromeClosure, /:is\(button, \.secondary-btn\):disabled\s*\{[^}]*--gridly-disabled[^}]*--gridly-disabled-foreground[^}]*opacity:\s*1 !important/);
+  assert.match(residualChromeClosure, /gridly-destination-impact-why \.gridly-unified-evidence summary\s*\{[^}]*--gridly-accent[^}]*opacity:\s*1 !important/);
+});
+
+test("LP185.6K is explicit/System-Light only and protects accepted runtime surfaces", () => {
+  assert.match(residualChromeClosure, /:is\(body\.gridly-theme-light, html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system\)/);
+  assert.doesNotMatch(residualChromeClosure, /gridly-theme-dark|effective-theme="dark"/);
+  assert.doesNotMatch(residualChromeClosure, /community-pulse-surface|report-use-location|gridly-v2-bottom-dock/);
+  assert.doesNotMatch(residualChromeClosure, /(?:display|visibility|pointer-events|touch-action)\s*:/);
   assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
   assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
 });
