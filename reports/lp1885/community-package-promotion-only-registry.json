@@ -1,0 +1,3788 @@
+{
+  "schemaVersion": "gridly.community-package.promotion-only-registry.lp1885.v1",
+  "purpose": "METADATA_ONLY_NOT_RUNTIME_ACTIVATION",
+  "records": [
+    {
+      "countyFips": "48001",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48003",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48005",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48007",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48009",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48011",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48013",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48015",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48017",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48019",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48021",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48023",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48025",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48027",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48029",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48031",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48033",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48035",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48037",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48039",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48041",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48043",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48045",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48047",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48049",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48051",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48053",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48055",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48057",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48059",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48061",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48063",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48065",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48067",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48069",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48071",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48073",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48075",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48077",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48079",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48081",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48083",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48085",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48087",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48089",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48091",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48093",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48095",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48097",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48099",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48101",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48103",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48105",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48107",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48109",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48111",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48113",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48115",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48117",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48119",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48121",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48123",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48125",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48127",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48129",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48131",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48133",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48135",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48137",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48139",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48141",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48143",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48145",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48147",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48149",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48151",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48153",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48155",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48157",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48159",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48161",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48163",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48165",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48167",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48169",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48171",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48173",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48175",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48177",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48179",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48181",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48183",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48185",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48187",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48189",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48191",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48193",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48195",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48197",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48199",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48201",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48203",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48205",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48207",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48209",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48211",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48213",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48215",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48217",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48219",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48221",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48223",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48225",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48227",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48229",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48231",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48233",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48235",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48237",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48239",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48241",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48243",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48245",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48247",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48249",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48251",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48253",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48255",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48257",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48259",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48261",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48263",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48265",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48267",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48269",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48271",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48273",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48275",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48277",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48279",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48281",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48283",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48285",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48287",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48289",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48291",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48293",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48295",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48297",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48299",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48301",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48303",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48305",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48307",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48309",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48311",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48313",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48315",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48317",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48319",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48321",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48323",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48325",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48327",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48329",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48331",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48333",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48335",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48337",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48339",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48341",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48343",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48345",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48347",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48349",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48351",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48353",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48355",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48357",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48359",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48361",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48363",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48365",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48367",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48369",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48371",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48373",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48375",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48377",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48379",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48381",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48383",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48385",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48387",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48389",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48391",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48393",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48395",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48397",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48399",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48401",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48403",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48405",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48407",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48409",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48411",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48413",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48415",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48417",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48419",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48421",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48423",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48425",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48427",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48429",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48431",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48433",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48435",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48437",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48439",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48441",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48443",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48445",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48447",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48449",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48451",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48453",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48455",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48457",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48459",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48461",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48463",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48465",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48467",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48469",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48471",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48473",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48475",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48477",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48479",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48481",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "CURRENT_OPERATIONAL_BASELINE_PRESERVED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED"
+      ]
+    },
+    {
+      "countyFips": "48483",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48485",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48487",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48489",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48491",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48493",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48495",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48497",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48499",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48501",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48503",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48505",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    },
+    {
+      "countyFips": "48507",
+      "packageIdentity": null,
+      "sha256": null,
+      "schemaVersion": null,
+      "certificationStatus": "LP1883_CERTIFIED_IDENTITY_PENDING_CAPTURE",
+      "promotionEligibilityStatus": "NOT_ELIGIBLE_OWNER_AUTHORIZATION_REQUIRED",
+      "promotionStatus": "NOT_PROMOTED",
+      "activationStatus": "NOT_ACTIVATED",
+      "blockingReasons": [
+        "AUTHORITATIVE_PACKAGE_IDENTITY_NOT_CAPTURED",
+        "PROMOTION_OWNER_AUTHORIZATION_NOT_RECORDED",
+        "ACTIVATION_GOVERNANCE_REMAINS_SEPARATE"
+      ]
+    }
+  ]
+}
