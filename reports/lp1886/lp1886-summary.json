@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "gridly.community-package.promotion-eligibility-certification.lp1886.v1",
+  "expectedCountyCount": 254,
+  "evaluatedCountyCount": 254,
+  "packageIdentityReadyCount": 254,
+  "structuralPromotionEligibleCount": 254,
+  "ownerAuthorizationRequiredCount": 254,
+  "ownerAuthorizationRecordedCount": 0,
+  "promotionAuthorizedCount": 0,
+  "promotedCount": 0,
+  "currentOperationalCount": 28,
+  "restrictedCountyCount": 11,
+  "newActivationEligibleCount": 0,
+  "newActivatedCount": 0,
+  "runtimeOperationalCountChanged": false,
+  "restrictedCountyStateChanged": false,
+  "runtimeIsolationPass": true,
+  "blockedPromotionCount": 254,
+  "overallClassification": "PROMOTION_ELIGIBILITY_CERTIFIED_OWNER_AUTHORIZATION_REQUIRED"
+}

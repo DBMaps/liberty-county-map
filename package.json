@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp1886": "node tools/lp1886/review-promotion-eligibility.mjs build",
+    "verify:lp1886": "node tools/lp1886/review-promotion-eligibility.mjs verify",
+    "test:lp1886": "node --test tests/lp1886-promotion-eligibility.test.mjs",
     "capture:lp1885": "node tools/lp1885/capture-community-package-identities.mjs",
     "verify:lp1885": "node --test tests/lp1885-community-package-identity-capture.test.mjs",
     "test:lp1885": "node --test tests/lp1885-community-package-identity-capture.test.mjs",

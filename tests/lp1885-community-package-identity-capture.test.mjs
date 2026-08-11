@@ -90,12 +90,12 @@ test('inventory is ordered and two captures produce byte-identical deterministic
   assert.doesNotMatch(stableJson(one), /\r/);
 });
 
-test('authoritative PASS requires exactly 254 identities and remains fail closed without Windows bytes', () => {
+test('committed authoritative Windows capture contains exactly 254 identities and passes', () => {
   assert.equal(certification.expectedCountyCount, 254);
-  assert.equal(certification.capturedPackageCount, 0);
-  assert.equal(certification.missingCountyPackages.length, 254);
-  assert.equal(certification.deterministicCapturePass, false);
-  assert.equal(certification.overallClassification, 'BLOCKED_AUTHORITATIVE_WINDOWS_PACKAGE_IDENTITY_CAPTURE_REQUIRED');
+  assert.equal(certification.capturedPackageCount, 254);
+  assert.equal(certification.missingCountyPackages.length, 0);
+  assert.equal(certification.deterministicCapturePass, true);
+  assert.equal(certification.overallClassification, 'PASS_PORTABLE_PACKAGE_IDENTITY_CAPTURED_PROMOTION_REGISTRY_ISOLATED_ACTIVATION_UNCHANGED');
 });
 
 test('promotion registry is metadata only, FIPS-keyed, blocked, and never implies promotion or activation', () => {
