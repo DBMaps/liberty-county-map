@@ -28,6 +28,12 @@ function Read-Features([string]$Path) {
     return @((Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json).features)
 }
 
+function Get-DeclaredEpsg([string]$OgrInfoText) {
+    $matches = [regex]::Matches($OgrInfoText, '(?:AUTHORITY|ID)\["EPSG",[" ]*(\d+)')
+    if ($matches.Count -eq 0) { return $null }
+    return $matches[$matches.Count - 1].Groups[1].Value
+}
+
 foreach ($required in @($PlaceSource, $CountySource, $PlaceZip)) {
     if (-not (Test-Path -LiteralPath $required -PathType Leaf)) { throw "Required source is absent: $required" }
 }
@@ -52,6 +58,8 @@ try {
     $countyText = Get-Content -LiteralPath $countyInfo -Raw
     if ($placeText -notmatch 'Feature Count:\s*1863' -or $placeText -notmatch 'STATEFP' -or $placeText -notmatch 'GEOID') { throw 'PLACE source contract failed.' }
     foreach ($field in @('STATEFP','COUNTYFP','GEOID','NAME')) { if ($countyText -notmatch "\b$field\b") { throw "COUNTY field is absent: $field" } }
+    $placeEpsg = Get-DeclaredEpsg $placeText
+    $countyEpsg = Get-DeclaredEpsg $countyText
 
     $db = Join-Path $scratch 'intersection.gpkg'
     # A Texas PLACE source can contain both POLYGON and MULTIPOLYGON features.
@@ -84,6 +92,59 @@ try {
     $nonTexas = @($canonical | Where-Object stateFips -ne '48')
     $membershipByPlace = $memberships | Group-Object placeGeoid -AsHashTable -AsString
     $unmatched = @($canonical | Where-Object { -not $membershipByPlace.ContainsKey($_.geoid) })
+    $unmatchedDiagnostics = @()
+    if ($unmatched.Count -gt 0) {
+        $unmatchedRaw = Join-Path $scratch 'unmatched-diagnostics.geojson'
+        $unmatchedGeoids = @($unmatched.geoid | Sort-Object)
+        $quotedGeoids = @($unmatchedGeoids | ForEach-Object { "'$($_.Replace("'", "''"))'" }) -join ','
+        # These observations are read-only. In particular, the Census internal
+        # point and nearest county never feed the governed membership query.
+        $unmatchedSql = @"
+SELECT p.GEOID AS geoid, p.PLACEFP AS placeFp, p.NAME AS officialName,
+ p.NAMELSAD AS nameLsad, p.LSAD AS lsad, p.CLASSFP AS classFp,
+ p.FUNCSTAT AS funcStat, p.INTPTLAT AS intptLat, p.INTPTLON AS intptLon,
+ p.ALAND AS aland, p.AWATER AS awater,
+ CASE WHEN EXISTS (SELECT 1 FROM counties c WHERE ST_Intersects(p.geom,c.geom)) THEN 1 ELSE 0 END AS intersectsAnyCounty,
+ CASE WHEN EXISTS (SELECT 1 FROM counties c WHERE ST_Touches(p.geom,c.geom)) THEN 1 ELSE 0 END AS touchesAnyCounty,
+ COALESCE((SELECT MAX(ST_Area(ST_Intersection(p.geom,c.geom))) FROM counties c WHERE ST_Intersects(p.geom,c.geom)),0) AS maximumIntersectionArea,
+ CASE WHEN EXISTS (SELECT 1 FROM counties c WHERE ST_Intersects(c.geom,MakePoint(CAST(p.INTPTLON AS REAL),CAST(p.INTPTLAT AS REAL),4269))) THEN 1 ELSE 0 END AS internalPointInOrOnCounty,
+ (SELECT c.GEOID FROM counties c ORDER BY ST_Distance(p.geom,c.geom),c.GEOID LIMIT 1) AS nearestCountyGeoid,
+ (SELECT c.NAME FROM counties c ORDER BY ST_Distance(p.geom,c.geom),c.GEOID LIMIT 1) AS nearestCountyName,
+ ST_IsEmpty(p.geom) AS geometryEmpty, ST_IsValid(p.geom) AS geometryValid,
+ GeometryType(p.geom) AS geometryType, ST_MinX(p.geom) AS bboxMinX,
+ ST_MinY(p.geom) AS bboxMinY, ST_MaxX(p.geom) AS bboxMaxX, ST_MaxY(p.geom) AS bboxMaxY
+FROM places p WHERE p.GEOID IN ($quotedGeoids) ORDER BY p.GEOID
+"@
+        Invoke-Ogr ogr2ogr @('-f','GeoJSON',$unmatchedRaw,$db,'-dialect','SQLITE','-sql',$unmatchedSql)
+        $unmatchedDiagnostics = @(Read-Features $unmatchedRaw | ForEach-Object {
+            $p = $_.properties
+            [pscustomobject][ordered]@{
+                geoid=$p.geoid; placeFp=$p.placeFp; officialName=$p.officialName; nameLsad=$p.nameLsad; lsad=$p.lsad; classFp=$p.classFp; funcStat=$p.funcStat
+                intptLat=$p.intptLat; intptLon=$p.intptLon; aland=$p.aland; awater=$p.awater
+                intersectsAnyCounty=([bool]$p.intersectsAnyCounty); touchesOnly=([bool]$p.touchesAnyCounty -and [double]$p.maximumIntersectionArea -le 0)
+                maximumIntersectionArea=$p.maximumIntersectionArea; internalPointInOrOnCounty=([bool]$p.internalPointInOrOnCounty)
+                nearestCountyGeoid=$p.nearestCountyGeoid; nearestCountyName=$p.nearestCountyName
+                geometryEmpty=([bool]$p.geometryEmpty); geometryValid=([bool]$p.geometryValid); geometryType=$p.geometryType
+                boundingBox=[ordered]@{ minX=$p.bboxMinX; minY=$p.bboxMinY; maxX=$p.bboxMaxX; maxY=$p.bboxMaxY }
+            }
+        } | Sort-Object geoid)
+        $diagnosticArtifact = "$OutputDirectory.unmatched-place-diagnostics.json"
+        $diagnosticReport = [ordered]@{
+            milestone='LP188.2A'; purpose='READ_ONLY_UNMATCHED_PLACE_RECONCILIATION'
+            membershipMethod='ST_Intersects AND ST_Area(ST_Intersection) > 0'
+            internalPointUsedForMembership=$false; nearestCountyUsedForMembership=$false
+            sourceContracts=[ordered]@{
+                place=[ordered]@{ source='TIGER/Line 2025 Texas Places'; expectedEpsg='4269'; detectedEpsg=$placeEpsg; recordCount=1863; zipSha256=$zipHash }
+                county=[ordered]@{ source='authoritative Census 2025 county shapefile'; expectedEpsg='4269'; detectedEpsg=$countyEpsg; texasRecordCount=254 }
+                projectionMismatchDetected=($placeEpsg -ne $countyEpsg -or $placeEpsg -ne '4269'); vintageMismatchDetected=$false
+                projectionOrVintageMismatchCouldExplainUnmatched=($placeEpsg -ne $countyEpsg -or $placeEpsg -ne '4269')
+            }
+            unmatchedPlaces=$unmatchedDiagnostics
+        }
+        Write-StableJson $diagnosticArtifact $diagnosticReport
+        Write-Host "Unmatched-place diagnostic artifact: $diagnosticArtifact"
+        Write-Host ($diagnosticReport | ConvertTo-Json -Depth 20)
+    }
     $invalidGeometry = [int](& ogrinfo -ro $db -dialect SQLITE -sql 'SELECT COUNT(*) AS n FROM places WHERE NOT ST_IsValid(geom)' 2>&1 | Select-String 'n \(Integer\) = (\d+)').Matches.Groups[1].Value
     $duplicates = @($canonical | Group-Object officialName | Where-Object Count -gt 1 | Sort-Object Name | ForEach-Object {
         $rows = @($_.Group | Sort-Object geoid)

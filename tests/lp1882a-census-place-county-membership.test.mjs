@@ -110,3 +110,48 @@ test('GIS operation and geometry promotion remain structurally locked', async ()
   assert.match(script, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
   assert.match(script, /'-nlt','PROMOTE_TO_MULTI'/);
 });
+
+test('unmatched records produce stable read-only spatial diagnostics before failure', async () => {
+  const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
+  const fields = [
+    'geoid', 'placeFp', 'officialName', 'nameLsad', 'lsad', 'classFp', 'funcStat',
+    'intptLat', 'intptLon', 'aland', 'awater', 'intersectsAnyCounty', 'touchesOnly',
+    'maximumIntersectionArea', 'internalPointInOrOnCounty', 'nearestCountyGeoid',
+    'nearestCountyName', 'geometryEmpty', 'geometryValid', 'geometryType', 'boundingBox',
+  ];
+  let previous = -1;
+  const diagnosticRecord = script.match(/\[pscustomobject\]\[ordered\]@\{\s*geoid=\$p\.geoid;[\s\S]*?boundingBox=\[ordered\]@\{[^\n]+\}\s*\}/)?.[0];
+  assert.ok(diagnosticRecord, 'ordered unmatched diagnostic record must be present');
+  for (const field of fields) {
+    const position = diagnosticRecord.indexOf(`${field}=`);
+    assert.ok(position > previous, `${field} must be present in deterministic order`);
+    previous = position;
+  }
+
+  for (const operation of [
+    'ST_Intersects(p.geom,c.geom)', 'ST_Touches(p.geom,c.geom)',
+    'MAX(ST_Area(ST_Intersection(p.geom,c.geom)))',
+    'MakePoint(CAST(p.INTPTLON AS REAL),CAST(p.INTPTLAT AS REAL),4269)',
+    'ORDER BY ST_Distance(p.geom,c.geom),c.GEOID', 'ST_IsEmpty(p.geom)',
+    'ST_IsValid(p.geom)', 'GeometryType(p.geom)', 'ST_MinX(p.geom)', 'ST_MaxY(p.geom)',
+  ]) assert.ok(script.includes(operation), `${operation} diagnostic must be present`);
+
+  assert.match(script, /unmatched\.geoid \| Sort-Object/);
+  assert.match(script, /unmatched-place-diagnostics\.json/);
+  assert.ok(script.indexOf('Write-StableJson $diagnosticArtifact') < script.indexOf("$failedGates = @()"));
+  assert.match(script, /internalPointUsedForMembership=\$false/);
+  assert.match(script, /nearestCountyUsedForMembership=\$false/);
+  assert.match(script, /projectionMismatchDetected=/);
+  assert.match(script, /vintageMismatchDetected=\$false/);
+  assert.match(script, /projectionOrVintageMismatchCouldExplainUnmatched=/);
+});
+
+test('diagnostics do not alter governed membership or add assignment fallbacks', async () => {
+  const script = await readFile(new URL('Gridly-Source-Data/Tools/Build-Scripts/Build-CensusPlaceCountyMemberships.ps1', root), 'utf8');
+  const membershipSql = script.match(/\$membershipSql = "([^"]+)"/)?.[1];
+  assert.ok(membershipSql);
+  assert.match(membershipSql, /JOIN counties c ON ST_Intersects\(p\.geom,c\.geom\)/);
+  assert.match(membershipSql, /ST_Area\(ST_Intersection\(p\.geom,c\.geom\)\) > 0/);
+  assert.doesNotMatch(membershipSql, /MakePoint|ST_Distance|ST_Touches|buffer|centroid/i);
+  assert.doesNotMatch(script, /membershipMethod='(?:INTERNAL_POINT|NEAREST|CENTROID|NAME)/);
+});
