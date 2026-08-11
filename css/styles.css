@@ -26679,12 +26679,12 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
 }
 
 :is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system) {
-  --gridly-app-bg: #f3f7fa;
-  --gridly-panel: #eaf2f7;
-  --gridly-elevated: #f8fbfd;
-  --gridly-nested: #e1ebf2;
-  --gridly-control-bg: #edf4f8;
-  --gridly-input-bg: #f7fafc;
+  --gridly-app-bg: #eef4f8;
+  --gridly-panel: #f2f7fa;
+  --gridly-elevated: #fbfdff;
+  --gridly-nested: #e3edf3;
+  --gridly-control-bg: #eaf2f6;
+  --gridly-input-bg: #edf4f8;
   --gridly-backdrop: rgba(10, 30, 48, 0.4);
   --gridly-accent: #066b70;
   --gridly-accent-soft: rgba(8, 127, 131, 0.13);
@@ -26695,6 +26695,8 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   --gridly-text-secondary: #3d5265;
   --gridly-text-muted: #536a7f;
   --gridly-shadow: 0 14px 36px rgba(25, 49, 71, 0.15);
+  --gridly-recipe-a-shadow: 0 18px 46px rgba(18, 42, 64, 0.16), 0 2px 8px rgba(18, 42, 64, 0.08);
+  --gridly-recipe-b-shadow: 0 8px 22px rgba(18, 42, 64, 0.12), 0 1px 4px rgba(18, 42, 64, 0.07);
   --gridly-disabled: rgba(61, 82, 101, 0.12);
   --gridly-disabled-foreground: #536a7f;
   color-scheme: light;
@@ -27236,4 +27238,97 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   #gridlyPortraitV2 .gridly-travel-brief-item h4 {
   color: var(--gridly-accent) !important;
   opacity: 1 !important;
+}
+
+/* LP185.7 — frosted daylight material and depth refinement.
+   Recipe A is the floating-intelligence shadow; Recipe B is the quieter compact
+   cluster shadow. Only explicit Light and effective System-Light consume this
+   closure, leaving the accepted Dark material contract byte-for-byte intact. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  /* CANVAS replaces the legacy navy top shield without changing its geometry. */
+  &.gridly-v2-surface-containment #gridlyPortraitV2::before {
+    background: var(--gridly-app-bg) !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* Awareness is one SURFACE family in quiet and active states. The inset edge
+     is semantic emphasis, not a second elevated card. */
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card,
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state] {
+    background-color: var(--gridly-panel) !important;
+    background-image: linear-gradient(180deg, rgba(93, 211, 220, 0.07), rgba(93, 211, 220, 0) 44%) !important;
+    border-color: color-mix(in srgb, var(--gridly-border-neutral) 72%, transparent) !important;
+    color: var(--gridly-text-primary) !important;
+    box-shadow: var(--gridly-recipe-b-shadow) !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="high"],
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-awareness-state="moderate"] {
+    background-color: var(--gridly-panel) !important;
+    border-color: color-mix(in srgb, var(--gridly-accent) 42%, var(--gridly-border-neutral)) !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card::before,
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card::after {
+    background: none !important;
+    box-shadow: none !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card strong { color: var(--gridly-text-primary) !important; }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card > span { color: var(--gridly-text-secondary) !important; }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card .gridly-v2-awareness-trust-line {
+    color: var(--gridly-text-muted) !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card[data-gridly-pulse-banner="true"] .gridly-v2-awareness-trust-line {
+    color: var(--gridly-accent) !important;
+  }
+  #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    background: var(--gridly-accent) !important;
+    color: var(--gridly-accent-foreground) !important;
+    box-shadow: none !important;
+  }
+
+  /* Recipe A — Floating Intelligence. */
+  #gridlyPortraitV2Sheet,
+  #gridlyPortraitV2 .gridly-brief-interaction-panel,
+  #gridlyPortraitV2 .gridly-v2-location-awareness-panel,
+  .map-card > .mobile-destination-command:is(.is-awareness-panel, .is-destination-panel):not([hidden]):not(.is-command-card-suppressed),
+  #gridlyDestinationImpactPane .gridly-destination-impact-card {
+    background-color: var(--gridly-elevated) !important;
+    border-color: color-mix(in srgb, var(--gridly-border-neutral) 78%, white) !important;
+    box-shadow: var(--gridly-recipe-a-shadow) !important;
+  }
+  #gridlyPortraitV2Sheet,
+  #gridlyPortraitV2 .gridly-brief-interaction-panel,
+  #gridlyDestinationImpactPane .gridly-destination-impact-card {
+    background-image: linear-gradient(180deg, rgba(93, 211, 220, 0.055), rgba(255, 255, 255, 0) 22%) !important;
+  }
+
+  /* Recipe B — Compact Cluster. Children remain shadowless CONTROL material. */
+  #gridlyPortraitV2 .gridly-v2-bottom-dock,
+  #gridlyPortraitV2 .gridly-v2-control-rail {
+    background: var(--gridly-panel) !important;
+    border-color: color-mix(in srgb, var(--gridly-border-neutral) 70%, white) !important;
+    box-shadow: var(--gridly-recipe-b-shadow) !important;
+  }
+  #gridlyPortraitV2 :is(.gridly-v2-bottom-dock button, .gridly-v2-control-rail button,
+    .gridly-v2-segments button),
+  #gridlyPortraitV2Sheet :is(.gridly-v2-report-action, .gridly-alert-row,
+    .settings-list-section, .settings-list-summary, .gridly-historical-intelligence-row),
+  #gridlySearchShell .gridly-search-result-item,
+  #gridlyDestinationImpactPane .gridly-destination-impact-actions button {
+    box-shadow: none !important;
+  }
+
+  #gridlySearchShell .gridly-search-card {
+    background-color: var(--gridly-elevated) !important;
+    background-image: linear-gradient(180deg, rgba(93, 211, 220, 0.045), rgba(255, 255, 255, 0) 18%) !important;
+    box-shadow: var(--gridly-recipe-a-shadow) !important;
+  }
+  #gridlySearchShell .gridly-search-input { background: var(--gridly-nested) !important; }
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail,
+  #gridlyPortraitV2 .gridly-unified-evidence,
+  #gridlyDestinationImpactPane .gridly-unified-evidence {
+    background: var(--gridly-nested) !important;
+    box-shadow: none !important;
+  }
 }
