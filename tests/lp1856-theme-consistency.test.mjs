@@ -11,6 +11,7 @@ const foregroundGrade = css.slice(css.indexOf("/* LP185.6H"), css.indexOf("/* LP
 const microContrast = css.slice(css.indexOf("/* LP185.6I"));
 const liveEvidenceClosure = css.slice(css.indexOf("/* LP185.6J"));
 const residualChromeClosure = css.slice(css.indexOf("/* LP185.6K"));
+const travelBriefKickerClosure = css.slice(css.indexOf("/* LP185.6L"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -271,4 +272,23 @@ test("LP185.6K is explicit/System-Light only and protects accepted runtime surfa
   assert.doesNotMatch(residualChromeClosure, /(?:display|visibility|pointer-events|touch-action)\s*:/);
   assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
   assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
+});
+
+test("LP185.6L maps only Travel Brief item H4 kickers to the full Light accent", () => {
+  assert.match(travelBriefKickerClosure, /:is\(body\.gridly-theme-light, html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system\)\[data-layout-mode="portrait"\][\s\S]*#gridlyPortraitV2 \.gridly-travel-brief-item h4\s*\{[^}]*color:\s*var\(--gridly-accent\) !important[^}]*opacity:\s*1 !important/);
+  assert.doesNotMatch(travelBriefKickerClosure, /rgba\(156,\s*255,\s*231,\s*0\.9\)|#066b70/i);
+  assert.match(css, /--gridly-accent:\s*#066b70/);
+});
+
+test("LP185.6L preserves the top kicker, evidence metadata, Dark, and protected releases", () => {
+  assert.match(residualChromeClosure, /#gridlyPortraitV2 \.gridly-brief-section-label\s*\{[^}]*color:\s*var\(--gridly-accent\) !important[^}]*opacity:\s*1 !important/);
+  assert.doesNotMatch(travelBriefKickerClosure, /gridly-brief-section-label|gridly-unified-evidence-item|\bdd\b|\bdt\b/);
+  assert.doesNotMatch(travelBriefKickerClosure, /gridly-theme-dark|effective-theme="dark"/);
+  assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
+  assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
+});
+
+test("LP185.6L is foreground-only and leaves accepted LP185.6 surfaces untouched", () => {
+  assert.doesNotMatch(travelBriefKickerClosure, /Alerts|route-card|Destination Intelligence|bottom-dock|Report|Settings|Historical Intelligence|Location Context|Destination Search|KBYG|filter strip|map controls|Awareness Brief/i);
+  assert.doesNotMatch(travelBriefKickerClosure, /(?:^|[;{]\s*)(?:display|visibility|position|width|height|top|right|bottom|left|padding|margin|gap|font-size|font-weight|line-height|background|border|box-shadow)\s*:/m);
 });
