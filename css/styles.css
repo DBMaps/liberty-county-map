@@ -26670,6 +26670,10 @@ body.gridly-theme-system {
   --gridly-backdrop: rgba(1, 7, 14, 0.72);
   --gridly-shadow: 0 16px 42px rgba(0, 0, 0, 0.38);
   --gridly-disabled: rgba(143, 164, 184, 0.16);
+  --gridly-nested: #12263a;
+  --gridly-accent: #22d3c5;
+  --gridly-accent-soft: rgba(34, 211, 197, 0.14);
+  --gridly-accent-foreground: #041b22;
   color-scheme: dark;
 }
 
@@ -26688,6 +26692,10 @@ body.gridly-theme-light {
   --gridly-backdrop: rgba(16, 34, 52, 0.38);
   --gridly-shadow: 0 16px 42px rgba(25, 49, 71, 0.16);
   --gridly-disabled: rgba(61, 82, 101, 0.12);
+  --gridly-nested: #e5eef5;
+  --gridly-accent: #087f83;
+  --gridly-accent-soft: rgba(8, 127, 131, 0.12);
+  --gridly-accent-foreground: #ffffff;
   color-scheme: light;
 }
 
@@ -26707,6 +26715,10 @@ body.gridly-theme-light {
     --gridly-backdrop: rgba(16, 34, 52, 0.38);
     --gridly-shadow: 0 16px 42px rgba(25, 49, 71, 0.16);
     --gridly-disabled: rgba(61, 82, 101, 0.12);
+    --gridly-nested: #e5eef5;
+    --gridly-accent: #087f83;
+    --gridly-accent-soft: rgba(8, 127, 131, 0.12);
+    --gridly-accent-foreground: #ffffff;
     color-scheme: light;
   }
 }
@@ -26904,4 +26916,135 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
   background-color: var(--gridly-panel) !important;
   border-color: var(--gridly-border-neutral) !important;
   color: var(--gridly-text-primary) !important;
+}
+
+/* LP185.6B — real-iPhone Light hierarchy and remaining runtime-owner closure.
+   Geometry and interaction declarations remain with their established owners. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 {
+  /* Location Context is the mounted .gridly-v2-location-awareness-panel. */
+  .gridly-v2-location-awareness-panel {
+    background: var(--gridly-elevated) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    color: var(--gridly-text-primary) !important;
+  }
+
+  /* KBYG remains branded, but uses a restrained theme-aware accent treatment. */
+  .gridly-brief-foundation-handle {
+    background: var(--gridly-accent-soft) !important;
+    border-color: var(--gridly-accent) !important;
+    color: var(--gridly-text-primary) !important;
+  }
+  .gridly-brief-foundation-handle :is(span, strong, .gridly-brief-foundation-handle-icon) {
+    color: var(--gridly-text-primary) !important;
+  }
+
+  /* The rail wrapper and every Gridly-owned button share one neutral chrome. */
+  .gridly-v2-control-rail {
+    background: color-mix(in srgb, var(--gridly-panel) 94%, transparent) !important;
+    border-color: var(--gridly-border-neutral) !important;
+  }
+  .gridly-v2-control-rail :is(button, .gridly-v2-map-control, [role="button"]) {
+    background: var(--gridly-elevated) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    color: var(--gridly-text-primary) !important;
+  }
+
+  /* Dock shell, items, glyphs and labels are one themed component. */
+  .gridly-v2-bottom-dock {
+    background: color-mix(in srgb, var(--gridly-panel) 96%, transparent) !important;
+    border-color: var(--gridly-border-neutral) !important;
+  }
+  .gridly-v2-bottom-dock button {
+    background: var(--gridly-elevated) !important;
+    border: 1px solid var(--gridly-border-neutral) !important;
+    color: var(--gridly-text-secondary) !important;
+  }
+  .gridly-v2-bottom-dock button :is(.dock-icon, em, svg) { color: inherit !important; }
+  .gridly-v2-bottom-dock button:is(:active, :focus-visible, [aria-current="page"], .is-active) {
+    background: var(--gridly-accent-soft) !important;
+    border-color: var(--gridly-accent) !important;
+    color: var(--gridly-text-primary) !important;
+  }
+}
+
+/* Shared sheet canvas and controls: close buttons and dividers stay visible. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet {
+  background: var(--gridly-panel) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet > header {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet > header button {
+  background: var(--gridly-control-bg) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+
+/* Alerts' active internal owner is .gridly-alert-empty-state, not the sheet shell. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="alerts"] :is(
+  .gridly-alert-empty-state, [data-gridly-alerts-panel-heading], .gridly-alerts-active
+) {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  box-shadow: none !important;
+}
+
+/* Settings uses separated accordion rows and nested controls rather than white-on-white. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
+  .settings-list-section { background: var(--gridly-elevated) !important; border-color: var(--gridly-border-neutral) !important; }
+  .settings-list-summary { background: var(--gridly-elevated) !important; border-color: var(--gridly-border-neutral) !important; }
+  .settings-list-summary::after { color: var(--gridly-accent) !important; opacity: 1 !important; }
+  .settings-list-detail { background: var(--gridly-panel) !important; border-color: var(--gridly-border-neutral) !important; }
+  :is(.settings-toggle-row, .settings-select-grid label, .settings-place-card, .gridly-v2-tile) {
+    background: var(--gridly-nested) !important;
+    border-color: var(--gridly-border-neutral) !important;
+  }
+  .settings-select-grid :is(select, input) {
+    background: var(--gridly-input-bg) !important;
+    border-color: var(--gridly-border-neutral) !important;
+    color: var(--gridly-text-primary) !important;
+  }
+}
+
+/* Travel Brief: canvas -> primary decision cards -> nested evidence metadata. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2 .gridly-travel-brief {
+  .gridly-brief-flow { background: var(--gridly-panel) !important; }
+  :is(.gridly-travel-brief-list, .gridly-travel-brief-item) { background: var(--gridly-elevated) !important; }
+  :is(.gridly-unified-evidence, .gridly-unified-evidence-item) { background: var(--gridly-nested) !important; }
+  :is(.gridly-travel-brief-source, dt, summary) { color: var(--gridly-text-secondary) !important; }
+}
+
+/* Report choices are deliberate tiles; cyan denotes selection and the primary action. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet[data-active-sheet="report"] {
+  .gridly-v2-report-picker { background: var(--gridly-panel) !important; }
+  .gridly-v2-report-action { background: var(--gridly-elevated) !important; border-color: var(--gridly-border-neutral) !important; }
+  .gridly-v2-report-action:is(.is-selected, [aria-pressed="true"], :active) {
+    background: var(--gridly-accent-soft) !important;
+    border-color: var(--gridly-accent) !important;
+  }
+  .gridly-v2-report-ctas { background: var(--gridly-elevated) !important; border-color: var(--gridly-border-neutral) !important; }
+  .gridly-v2-report-ctas .primary-btn:not(:disabled) { background: var(--gridly-accent) !important; color: var(--gridly-accent-foreground) !important; }
+}
+
+/* Historical Intelligence follows the same shared-sheet/card/divider contract. */
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet .gridly-historical-intelligence-sheet {
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet :is(
+  .gridly-historical-intelligence-row, .gridly-historical-intelligence-empty
+) {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) #gridlyPortraitV2Sheet :is(
+  .gridly-historical-intelligence-details, .gridly-historical-intelligence-line
+) {
+  background: var(--gridly-nested) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-secondary) !important;
 }

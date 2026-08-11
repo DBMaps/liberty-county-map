@@ -83,3 +83,46 @@ test("active portrait closure serves explicit and effective system light without
   assert.match(css, /@media \(prefers-color-scheme: light\)[\s\S]*body\.gridly-theme-system[\s\S]*--gridly-panel: #eef5fa/);
   assert.doesNotMatch(closure, /leaflet-tile|tile-layer|map-style|setUrl|mapStyle/);
 });
+
+test("LP185.6B closes the remaining real-iPhone runtime owners", () => {
+  const closure = css.slice(css.indexOf("/* LP185.6B"));
+  for (const owner of [
+    ".gridly-v2-location-awareness-panel",
+    ".gridly-brief-foundation-handle",
+    ".gridly-v2-control-rail",
+    ".gridly-v2-bottom-dock button",
+    '[data-active-sheet="alerts"]',
+    ".gridly-alert-empty-state",
+    '[data-active-sheet="settings"]',
+    ".settings-list-summary::after",
+    ".gridly-travel-brief-item",
+    '[data-active-sheet="report"]',
+    ".gridly-v2-report-action:is(.is-selected",
+    ".gridly-historical-intelligence-row"
+  ]) assert.ok(closure.includes(owner), `missing LP185.6B owner ${owner}`);
+});
+
+test("LP185.6B hierarchy is token governed and preserves semantic/product boundaries", () => {
+  const closure = css.slice(css.indexOf("/* LP185.6B"));
+  for (const token of ["nested", "accent", "accent-soft", "accent-foreground"])
+    assert.match(css, new RegExp(`--gridly-${token}:`));
+  assert.match(closure, /background: var\(--gridly-elevated\) !important/);
+  assert.match(closure, /background: var\(--gridly-nested\) !important/);
+  assert.match(closure, /border-color: var\(--gridly-border-neutral\) !important/);
+  assert.match(closure, /color: var\(--gridly-text-secondary\) !important/);
+  assert.match(closure, /background: var\(--gridly-accent-soft\) !important/);
+  assert.doesNotMatch(closure, /route-geometry|destination-routing|hazard-lifecycle|tile-provider|map-style/);
+});
+
+test("LP185.6B dark-mode protection comes from parallel hierarchy token definitions", () => {
+  const contractStart = css.indexOf("/* LP185.6 — neutral");
+  const darkStart = css.indexOf("body.gridly-theme-dark", contractStart);
+  const lightStart = css.indexOf("body.gridly-theme-light", darkStart);
+  const systemLightStart = css.indexOf("@media (prefers-color-scheme: light)", lightStart);
+  const dark = css.slice(darkStart, lightStart);
+  const light = css.slice(lightStart, systemLightStart);
+  for (const token of ["nested", "accent", "accent-soft", "accent-foreground"]) {
+    assert.match(dark, new RegExp(`--gridly-${token}:`));
+    assert.match(light, new RegExp(`--gridly-${token}:`));
+  }
+});
