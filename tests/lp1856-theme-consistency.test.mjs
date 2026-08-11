@@ -9,6 +9,7 @@ const authority = css.slice(css.indexOf("/* LP185.6F"));
 const legacyClosure = css.slice(css.indexOf("/* LP185.6G"));
 const foregroundGrade = css.slice(css.indexOf("/* LP185.6H"), css.indexOf("/* LP185.6G"));
 const microContrast = css.slice(css.indexOf("/* LP185.6I"));
+const liveEvidenceClosure = css.slice(css.indexOf("/* LP185.6J"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -194,6 +195,39 @@ test("LP185.6I is Light-only, layout-neutral, and preserves protected LP185 work
   assert.match(microContrast, /body\.gridly-theme-light/);
   assert.doesNotMatch(microContrast, /gridly-theme-dark|effective-theme="dark"/);
   assert.doesNotMatch(microContrast, /(?:^|[;{]\s*)(?:width|height|top|right|bottom|left|padding|margin|font-size)\s*:/m);
+  assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
+  assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
+});
+
+test("LP185.6J makes the bottom-region parent Light canvas without changing geometry or dock architecture", () => {
+  assert.match(liveEvidenceClosure, /:is\(body\.gridly-theme-light, html\[data-gridly-effective-theme="light"\] body\.gridly-theme-system\)\[data-layout-mode="portrait"\]/);
+  assert.match(liveEvidenceClosure, /#gridlyPortraitBottomRegion\.gridly-v2-bottom-region\s*\{[^}]*background-color:\s*var\(--gridly-app-bg\) !important[^}]*background-image:\s*none !important[^}]*border-color:\s*transparent !important[^}]*box-shadow:\s*none !important/);
+  assert.doesNotMatch(liveEvidenceClosure, /gridly-v2-bottom-dock\s*\{/);
+  assert.doesNotMatch(liveEvidenceClosure, /(?:^|[;{]\s*)(?:position|width|height|top|right|bottom|left|padding|margin|gap)\s*:/m);
+});
+
+test("LP185.6J assigns the Report prompt and helper hierarchy without touching the enabled CTA", () => {
+  assert.match(liveEvidenceClosure, /gridly-v2-report-prompt\s*\{[^}]*color:\s*inherit !important/);
+  assert.match(liveEvidenceClosure, /gridly-v2-report-prompt strong\s*\{[^}]*--gridly-text-primary/);
+  assert.match(liveEvidenceClosure, /gridly-v2-report-prompt span,[\s\S]*data-v2-precondition-helper\][^{]*\{[^}]*--gridly-text-secondary[^}]*opacity:\s*1 !important/);
+  assert.doesNotMatch(liveEvidenceClosure, /report-use-location"\]:not\(:disabled\)/);
+  assert.match(microContrast, /report-use-location"\]:not\(:disabled\)[^{]*\{[^}]*--gridly-accent[^}]*--gridly-accent-foreground[^}]*opacity:\s*1 !important[^}]*filter:\s*none !important/);
+});
+
+test("LP185.6J keeps disabled Report placement readable and unavailable", () => {
+  assert.match(liveEvidenceClosure, /report-use-location"\]:disabled\s*\{[^}]*background:\s*var\(--gridly-disabled\) !important[^}]*color:\s*var\(--gridly-disabled-foreground\) !important[^}]*opacity:\s*1 !important[^}]*filter:\s*none !important/);
+});
+
+test("LP185.6J corrects only foreground contrast on the retained dark Community Pulse surface", () => {
+  assert.match(liveEvidenceClosure, /community-pulse-kicker\s*\{[^}]*color:\s*var\(--gridly-accent-foreground\) !important[^}]*opacity:\s*1 !important/);
+  assert.match(liveEvidenceClosure, /#gridlyCommunityPulseSubline\s*\{[^}]*color:\s*color-mix\(in srgb, var\(--gridly-accent-foreground\) 84%, var\(--gridly-accent\)\) !important[^}]*opacity:\s*1 !important/);
+  assert.doesNotMatch(liveEvidenceClosure, /#8eefff|rgba\(220,\s*234,\s*248,\s*0\.72\)/i);
+  assert.doesNotMatch(liveEvidenceClosure, /community-pulse-surface\s*\{/);
+});
+
+test("LP185.6J is Light-only, behavior-neutral, and retains LP185.5/LP185.4", () => {
+  assert.doesNotMatch(liveEvidenceClosure, /gridly-theme-dark|effective-theme="dark"/);
+  assert.doesNotMatch(liveEvidenceClosure, /(?:display|visibility|pointer-events|touch-action)\s*:/);
   assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
   assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
 });
