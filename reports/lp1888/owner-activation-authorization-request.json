@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "gridly.owner-activation-authorization-request.lp1888.v1",
+  "milestone": "LP188.8",
+  "authorizationStatus": "NOT_REQUESTED_NO_STRUCTURALLY_ELIGIBLE_COUNTIES",
+  "authorizationScope": "EXPLICIT_COUNTY_FIPS",
+  "countyFips": [],
+  "activationAuthorized": false,
+  "deploymentAuthorized": false,
+  "runtimeMutationAuthorized": false,
+  "requirement": "After structural readiness, supply explicit owner authority and the exact ascending FIPS scope; promotion authorization is never accepted."
+}
