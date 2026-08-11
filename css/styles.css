@@ -29,6 +29,7 @@
   --shadow: 0 26px 60px rgba(0, 0, 0, 0.72);
 }
 
+
 * {
   box-sizing: border-box;
 }
@@ -26650,3 +26651,138 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
     line-clamp: unset !important;
   }
 }
+
+/* LP185.6 — neutral presentation contract. Semantic, marker, route and provider
+   colors deliberately remain owned by their existing feature contracts. */
+body.gridly-theme-dark,
+body.gridly-theme-system {
+  --gridly-app-bg: #06101f;
+  --gridly-elevated: #0b1929;
+  --gridly-panel: #0d1d2e;
+  --gridly-surface-strong: #12263a;
+  --gridly-surface-soft: rgba(255, 255, 255, 0.055);
+  --gridly-border-neutral: rgba(190, 214, 235, 0.2);
+  --gridly-text-primary: #f4f8fc;
+  --gridly-text-secondary: #c5d3e0;
+  --gridly-text-muted: #8fa4b8;
+  --gridly-control-bg: #091827;
+  --gridly-input-bg: #071522;
+  --gridly-backdrop: rgba(1, 7, 14, 0.72);
+  --gridly-shadow: 0 16px 42px rgba(0, 0, 0, 0.38);
+  --gridly-disabled: rgba(143, 164, 184, 0.16);
+  color-scheme: dark;
+}
+
+body.gridly-theme-light {
+  --gridly-app-bg: #f4f8fb;
+  --gridly-elevated: #ffffff;
+  --gridly-panel: #eef5fa;
+  --gridly-surface-strong: #e3edf4;
+  --gridly-surface-soft: rgba(27, 58, 87, 0.055);
+  --gridly-border-neutral: rgba(27, 58, 87, 0.2);
+  --gridly-text-primary: #0d1b2a;
+  --gridly-text-secondary: #3d5265;
+  --gridly-text-muted: #61778c;
+  --gridly-control-bg: #f8fbfd;
+  --gridly-input-bg: #ffffff;
+  --gridly-backdrop: rgba(16, 34, 52, 0.38);
+  --gridly-shadow: 0 16px 42px rgba(25, 49, 71, 0.16);
+  --gridly-disabled: rgba(61, 82, 101, 0.12);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  body.gridly-theme-system {
+    --gridly-app-bg: #f4f8fb;
+    --gridly-elevated: #ffffff;
+    --gridly-panel: #eef5fa;
+    --gridly-surface-strong: #e3edf4;
+    --gridly-surface-soft: rgba(27, 58, 87, 0.055);
+    --gridly-border-neutral: rgba(27, 58, 87, 0.2);
+    --gridly-text-primary: #0d1b2a;
+    --gridly-text-secondary: #3d5265;
+    --gridly-text-muted: #61778c;
+    --gridly-control-bg: #f8fbfd;
+    --gridly-input-bg: #ffffff;
+    --gridly-backdrop: rgba(16, 34, 52, 0.38);
+    --gridly-shadow: 0 16px 42px rgba(25, 49, 71, 0.16);
+    --gridly-disabled: rgba(61, 82, 101, 0.12);
+    color-scheme: light;
+  }
+}
+
+/* Shared application, portrait, sheet, modal, card and status chrome. */
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) {
+  background-color: var(--gridly-app-bg);
+  color: var(--gridly-text-primary);
+}
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(
+  .app-header, .mobile-live-brand, .top-status-card, .awareness-brief, .community-pulse,
+  .filter-strip, .map-control-rail, .location-card, .route-card, .mobile-destination-command,
+  .mobile-bottom-nav, .gridly-v2-sheet, .gridly-settings-sheet, .settings-modal-card,
+  .settings-modal-section, .settings-list-section, .gridly-welcome-sheet,
+  .gridly-destination-impact-card, .gridly-alert-row, .gridly-alert-intel-card,
+  .report-card, .search-card, .confirmation-card, .toast
+) {
+  background-color: var(--gridly-panel);
+  border-color: var(--gridly-border-neutral);
+  color: var(--gridly-text-primary);
+  box-shadow: var(--gridly-shadow);
+}
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(
+  .subtext, .muted, small, .settings-modal-subtitle, .settings-list-meta,
+  .gridly-alert-subtitle, .gridly-alert-context-line, .gridly-alert-location-line,
+  [data-gridly-alerts-panel-heading-location], [data-gridly-alerts-panel-heading-evidence]
+) { color: var(--gridly-text-secondary) !important; }
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(.gridly-alert-title, [data-gridly-alert-title-text]) {
+  color: var(--gridly-text-primary) !important;
+}
+
+/* Native chrome: placed after legacy high-specificity dark declarations. */
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(input, select, textarea, .gridly-premium-select) {
+  background-color: var(--gridly-input-bg) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+  color-scheme: inherit;
+}
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(input, textarea)::placeholder {
+  color: var(--gridly-text-muted) !important;
+  opacity: 1;
+}
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(button, input, select, textarea):disabled {
+  background-color: var(--gridly-disabled) !important;
+  color: var(--gridly-text-muted) !important;
+}
+body.gridly-theme-light .settings-select-grid select,
+body.gridly-theme-light select.gridly-premium-select { color-scheme: light !important; }
+body.gridly-theme-dark .settings-select-grid select,
+body.gridly-theme-dark select.gridly-premium-select { color-scheme: dark !important; }
+@media (prefers-color-scheme: light) {
+  body.gridly-theme-system .settings-select-grid select,
+  body.gridly-theme-system select.gridly-premium-select { color-scheme: light !important; }
+}
+
+/* CSS-themeable Leaflet chrome and Gridly popup shells. */
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(
+  .leaflet-bar a, .leaflet-control-layers, .leaflet-control-attribution,
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip
+) {
+  background: var(--gridly-elevated) !important;
+  border-color: var(--gridly-border-neutral) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body:is(.gridly-theme-light, .gridly-theme-dark, .gridly-theme-system) :is(.leaflet-popup-content, .leaflet-popup-close-button) {
+  color: var(--gridly-text-primary) !important;
+}
+
+.gridly-pwa-update-notice {
+  position: fixed; left: 1rem; right: 1rem; bottom: 1rem; z-index: 9999;
+  display: flex; gap: .75rem; align-items: center; justify-content: space-between;
+  padding: .85rem 1rem; border: 1px solid var(--gridly-border-neutral); border-radius: 16px;
+  background: var(--gridly-elevated); color: var(--gridly-text-primary); box-shadow: var(--gridly-shadow);
+  font: 14px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.gridly-pwa-update-actions { display: flex; gap: .5rem; flex-shrink: 0; }
+.gridly-pwa-update-notice button { border-radius: 999px; padding: .5rem .75rem; }
+.gridly-pwa-update-notice [data-gridly-pwa-update-later] { border: 1px solid var(--gridly-border-neutral); background: transparent; color: inherit; }
+.gridly-pwa-update-notice [data-gridly-pwa-update-now] { border: 0; background: #38bdf8; color: #04111f; font-weight: 700; }

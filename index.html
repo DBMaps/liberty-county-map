@@ -2,6 +2,37 @@
 <html lang="en" class="gridly-prepaint-lock">
 <head>
 
+  <script id="gridly-early-theme">
+    /* Presentation-only prepaint hint. gridlySettingsV1 remains authoritative. */
+    (function initializeGridlyThemeBeforePaint() {
+      var preference = "system";
+      try {
+        var saved = JSON.parse(window.localStorage.getItem("gridlySettingsV1") || "null");
+        var candidate = saved && saved.display && String(saved.display.theme || "").toLowerCase();
+        if (candidate === "light" || candidate === "dark" || candidate === "system") preference = candidate;
+      } catch (error) { /* Storage and malformed JSON must never block startup. */ }
+      var systemLight = false;
+      try { systemLight = Boolean(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches); } catch (error) {}
+      var effective = preference === "system" ? (systemLight ? "light" : "dark") : preference;
+      var root = document.documentElement;
+      root.dataset.gridlyTheme = preference;
+      root.dataset.gridlyEffectiveTheme = effective;
+      root.style.colorScheme = effective;
+      try {
+        var media = window.matchMedia("(prefers-color-scheme: light)");
+        media.addEventListener("change", function (event) {
+          if (root.dataset.gridlyTheme !== "system") return;
+          var next = event.matches ? "light" : "dark";
+          root.dataset.gridlyEffectiveTheme = next;
+          root.style.colorScheme = next;
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+            meta.setAttribute("content", next === "light" ? "#f4f8fb" : "#071426");
+          });
+        });
+      } catch (error) {}
+    })();
+  </script>
+
   <script>
     (function gridlyHostnameGate() {
       var hostname = String(window.location.hostname || "").toLowerCase();
@@ -38,7 +69,7 @@
   <style id="gridly-prepaint-startup-guard">
     html.gridly-prepaint-lock body {
       margin: 0;
-      background: #020812;
+      background: var(--gridly-prepaint-background, #020812);
     }
 
     html.gridly-prepaint-lock body::before {
@@ -49,7 +80,12 @@
       pointer-events: none;
       background:
         radial-gradient(circle at 50% 18%, rgba(67, 230, 160, 0.16), transparent 30%),
-        linear-gradient(180deg, #020812 0%, #04070b 100%);
+        linear-gradient(180deg, var(--gridly-prepaint-background, #020812) 0%, var(--gridly-prepaint-elevated, #04070b) 100%);
+    }
+
+    html[data-gridly-effective-theme="light"] {
+      --gridly-prepaint-background: #f4f8fb;
+      --gridly-prepaint-elevated: #e9f0f5;
     }
 
     html.gridly-prepaint-lock .app-header,

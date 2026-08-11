@@ -7153,8 +7153,8 @@ function gridlyEnsurePwaUpdateNotice() {
   notice.setAttribute("role", "status");
   notice.setAttribute("aria-live", "polite");
   notice.hidden = true;
-  notice.style.cssText = "position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:9999;display:flex;gap:.75rem;align-items:center;justify-content:space-between;padding:.85rem 1rem;border:1px solid rgba(148,163,184,.35);border-radius:16px;background:rgba(2,8,18,.96);color:#f8fafc;box-shadow:0 18px 45px rgba(0,0,0,.35);font:14px/1.35 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
-  notice.innerHTML = '<div><strong>A new version of Gridly is available.</strong><br><span>Update now for the latest improvements.</span></div><div style="display:flex;gap:.5rem;flex-shrink:0;"><button type="button" data-gridly-pwa-update-later style="border:1px solid rgba(148,163,184,.5);border-radius:999px;background:transparent;color:#f8fafc;padding:.5rem .75rem;">Later</button><button type="button" data-gridly-pwa-update-now style="border:0;border-radius:999px;background:#38bdf8;color:#04111f;font-weight:700;padding:.5rem .8rem;">Update Now</button></div>';
+  notice.className = "gridly-pwa-update-notice";
+  notice.innerHTML = '<div><strong>A new version of Gridly is available.</strong><br><span>Update now for the latest improvements.</span></div><div class="gridly-pwa-update-actions"><button type="button" data-gridly-pwa-update-later>Later</button><button type="button" data-gridly-pwa-update-now>Update Now</button></div>';
   document.body?.appendChild(notice);
   notice.querySelector("[data-gridly-pwa-update-later]")?.addEventListener("click", () => {
     gridlyPwaInstallReadinessState.updatePromptDismissed = true;
@@ -91751,6 +91751,11 @@ function applyGridlySettingsDisplayPreferences(display = {}, source = "settings"
   }
   if (root) {
     root.dataset.gridlyTheme = normalized.theme;
+    const systemLight = normalized.theme === "system" && Boolean(window.matchMedia?.("(prefers-color-scheme: light)")?.matches);
+    const effectiveTheme = normalized.theme === "system" ? (systemLight ? "light" : "dark") : normalized.theme;
+    root.dataset.gridlyEffectiveTheme = effectiveTheme;
+    root.style.colorScheme = effectiveTheme;
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute("content", effectiveTheme === "light" ? "#f4f8fb" : "#071426"));
     root.dataset.gridlyTextSize = normalized.textSize;
     root.style.setProperty("--gridly-app-font-scale", String(textScale));
     root.style.setProperty("--gridly-settings-text-scale", String(textScale));
