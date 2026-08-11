@@ -28415,10 +28415,11 @@ function computeLayoutModeSignals() {
   const commandWidth = commandCenter?.getBoundingClientRect?.().width || shellWidth;
   const hasHorizontalOverflow = document.documentElement.scrollWidth - document.documentElement.clientWidth > 2;
   const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches === true;
-  return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer };
+  const finePointer = window.matchMedia?.("(pointer: fine)")?.matches === true;
+  return { viewportWidth, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, finePointer };
 }
 
-function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, orientationLandscape }) {
+function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandWidth, hasHorizontalOverflow, coarsePointer, finePointer, orientationLandscape }) {
   const tacticalLandscapeByHeight =
     orientationLandscape &&
     viewportWidth <= 1100 &&
@@ -28431,13 +28432,23 @@ function resolveLayoutMode({ viewportWidth, viewportHeight, shellWidth, commandW
       forcedDesktop: false
     };
   }
+  const desktopStyleLandscape = orientationLandscape && finePointer && !coarsePointer;
+  if (desktopStyleLandscape) {
+    return {
+      nextMode: "desktop",
+      tacticalLandscapeByHeight,
+      desktopStyleLandscape,
+      forcedPortrait: false,
+      forcedDesktop: true
+    };
+  }
   const mobileByWidth = viewportWidth <= 980;
   const desktopByWidth = viewportWidth >= 1160;
   const containerCollapsed = shellWidth <= 1020 || commandWidth <= 760;
   const forcedPortrait = mobileByWidth || containerCollapsed || (hasHorizontalOverflow && viewportWidth < 1220);
   const forcedDesktop = desktopByWidth && !containerCollapsed && !hasHorizontalOverflow && !coarsePointer;
   const nextMode = forcedPortrait ? "portrait" : forcedDesktop ? "desktop" : activeLayoutMode;
-  return { nextMode, tacticalLandscapeByHeight, forcedPortrait, forcedDesktop };
+  return { nextMode, tacticalLandscapeByHeight, desktopStyleLandscape, forcedPortrait, forcedDesktop };
 }
 
 function evaluateLayoutMode() {
@@ -28450,11 +28461,39 @@ function evaluateLayoutMode() {
     commandWidth: s.commandWidth,
     hasHorizontalOverflow: s.hasHorizontalOverflow,
     coarsePointer: s.coarsePointer,
+    finePointer: s.finePointer,
     orientationLandscape
   });
-  const { nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight } = resolved;
-  lastLayoutSignal = { ...s, nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight };
+  const { nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight, desktopStyleLandscape } = resolved;
+  lastLayoutSignal = { ...s, nextMode, forcedPortrait, forcedDesktop, tacticalLandscapeByHeight, desktopStyleLandscape };
   return nextMode;
+}
+
+function deactivateGridlyPortraitV2Owner() {
+  const shell = document.getElementById("gridlyPortraitV2");
+  const sheet = document.getElementById("gridlyPortraitV2Sheet");
+  const sheetBody = document.getElementById("gridlyPortraitV2SheetBody");
+  const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
+  shell?.setAttribute("hidden", "");
+  shell?.classList.remove("visible", "is-open", "active", "open");
+  if (sheet) {
+    sheet.hidden = true;
+    sheet.removeAttribute("data-active-sheet");
+    sheet.style.display = "none";
+    sheet.style.pointerEvents = "none";
+    sheet.classList.remove("visible", "is-open", "active", "open");
+  }
+  if (sheetBody) {
+    sheetBody.hidden = true;
+    sheetBody.classList.remove("visible", "is-open", "active", "open");
+  }
+  if (backdrop) {
+    backdrop.hidden = true;
+    backdrop.style.display = "none";
+    backdrop.style.pointerEvents = "none";
+    backdrop.classList.remove("visible", "is-open", "active", "open");
+  }
+  document.body?.classList.remove("gridly-brief-expanded", "modal-open");
 }
 
 function applyLayoutMode(nextMode) {
@@ -28477,6 +28516,8 @@ function applyLayoutMode(nextMode) {
   }
   if (activeLayoutMode === "portrait" && typeof activateGridlyPortraitV2StartupOwner === "function") {
     activateGridlyPortraitV2StartupOwner("applyLayoutMode");
+  } else if (activeLayoutMode !== "portrait") {
+    deactivateGridlyPortraitV2Owner();
   }
   syncTacticalMapSurfaceVisibility();
 }
@@ -28526,6 +28567,7 @@ window.gridlyLayoutDebug = function gridlyLayoutDebug() {
     commandWidth: s.commandWidth,
     hasHorizontalOverflow: s.hasHorizontalOverflow,
     coarsePointer: s.coarsePointer,
+    finePointer: s.finePointer,
     orientationLandscape: orientation === "landscape"
   });
   return {
@@ -28533,6 +28575,7 @@ window.gridlyLayoutDebug = function gridlyLayoutDebug() {
     height,
     orientation,
     coarsePointer: s.coarsePointer,
+    finePointer: s.finePointer,
     detectedMode: resolved.nextMode,
     bodyDataset: {
       layoutMode: document.body?.dataset?.layoutMode || null,
@@ -108965,6 +109008,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function openGridlyPortraitV2Sheet(sheetName, templateOverride = null) {
+    const portraitAuthorization = getGridlyPortraitCleanupGateState(getCanonicalGridlyPortraitLayoutMode());
+    if (!portraitAuthorization.isStrictPortraitMobile) {
+      deactivateGridlyPortraitV2Owner();
+      return false;
+    }
     gridlyLp017AuditRecordSheetOpen(sheetName, templateOverride);
     window.gridlyStartupDiagnostics?.markInteractionProbe?.("surfaceOpen");
     window.gridlyBriefInteractionCollapseForPanel?.(`portrait-v2-sheet:${sheetName || "unknown"}`);
