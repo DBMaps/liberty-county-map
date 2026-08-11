@@ -27032,3 +27032,61 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
     background-image: none !important;
   }
 }
+
+/* LP185.6I — Light-only primary-action and residual foreground closure.
+   Runtime-specific selectors close legacy paint/opacity ownership without
+   changing the accepted surfaces, geometry, type scale, or Dark contract. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  #gridlyPortraitV2Sheet[data-active-sheet="report"] #gridlyPortraitV2SheetBody
+    .gridly-v2-report-ctas [data-v2-action="report-use-location"]:not(:disabled) {
+    background: var(--gridly-accent) !important;
+    border-color: var(--gridly-accent) !important;
+    color: var(--gridly-accent-foreground) !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  #gridlyPortraitV2 .gridly-v2-awareness-brief-card .gridly-v2-awareness-trust-line {
+    color: var(--gridly-text-muted) !important;
+    opacity: 1 !important;
+  }
+
+  #gridlyPortraitV2Sheet[data-active-sheet="history"] {
+    .gridly-historical-intelligence-subtitle,
+    .gridly-historical-intelligence-line,
+    .gridly-historical-intelligence-row p:not(.gridly-historical-intelligence-context-note),
+    .gridly-historical-intelligence-detail-title em {
+      color: var(--gridly-text-secondary) !important;
+      opacity: 1 !important;
+    }
+    .gridly-historical-intelligence-row :is(strong, .gridly-historical-intelligence-location),
+    .gridly-historical-intelligence-detail-title span {
+      color: var(--gridly-text-primary) !important;
+      opacity: 1 !important;
+    }
+    :is(.gridly-historical-intelligence-note, .gridly-historical-intelligence-context-note) {
+      color: var(--gridly-text-muted) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  #gridlyPortraitV2Sheet[data-active-sheet="settings"]
+    :is(.settings-list-meta, .settings-placeholder-note, .settings-list-detail p,
+      .settings-list-detail small, .settings-feedback-helper, .settings-feedback-prompt) {
+    color: var(--gridly-text-secondary) !important;
+    opacity: 1 !important;
+  }
+
+  #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    color: var(--gridly-text-secondary) !important;
+    opacity: 1 !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-bottom-dock button :is(.dock-icon, span, em, svg, img) {
+    color: inherit !important;
+    opacity: 1 !important;
+  }
+  #gridlyPortraitV2 .gridly-v2-bottom-dock button:is(.is-active, [aria-current="page"], [aria-pressed="true"]) {
+    color: var(--gridly-accent) !important;
+    opacity: 1 !important;
+  }
+}

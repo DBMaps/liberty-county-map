@@ -8,6 +8,7 @@ const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
 const authority = css.slice(css.indexOf("/* LP185.6F"));
 const legacyClosure = css.slice(css.indexOf("/* LP185.6G"));
 const foregroundGrade = css.slice(css.indexOf("/* LP185.6H"), css.indexOf("/* LP185.6G"));
+const microContrast = css.slice(css.indexOf("/* LP185.6I"));
 const lp1855 = readFileSync(new URL("lp1855-route-watch-start-location-recenter.test.mjs", import.meta.url), "utf8");
 const lp1854 = readFileSync(new URL("lp185/incident-location-identity.test.mjs", import.meta.url), "utf8");
 const roleTokens = ["app-bg", "panel", "elevated", "nested", "accent", "accent-soft", "accent-foreground", "control-bg", "backdrop"];
@@ -164,4 +165,35 @@ test("theme remains independent of map/provider and protected behavior", () => {
 
 test("consolidation introduces no layout geometry declarations", () => {
   assert.doesNotMatch(authority, /(?:^|[;{]\s*)(?:width|height|top|right|bottom|left|padding|margin)\s*:/m);
+});
+
+test("LP185.6I gives the enabled Report primary CTA undiluted governed accent ownership", () => {
+  assert.match(microContrast, /data-v2-action="report-use-location"\]:not\(:disabled\)[^{]*\{[^}]*background:\s*var\(--gridly-accent\) !important/);
+  assert.match(microContrast, /data-v2-action="report-use-location"\]:not\(:disabled\)[^{]*\{[^}]*color:\s*var\(--gridly-accent-foreground\) !important/);
+  assert.match(microContrast, /data-v2-action="report-use-location"\]:not\(:disabled\)[^{]*\{[^}]*opacity:\s*1 !important[^}]*filter:\s*none !important/);
+  assert.doesNotMatch(microContrast, /data-v2-action="report-use-location"[^}]*--gridly-accent-soft/);
+});
+
+test("LP185.6I keeps Community Pulse support readable and subordinate", () => {
+  assert.match(microContrast, /gridly-v2-awareness-trust-line[^{]*\{[^}]*--gridly-text-muted[^}]*opacity:\s*1 !important/);
+});
+
+test("LP185.6I closes Historical and Settings secondary hierarchy", () => {
+  assert.match(microContrast, /data-active-sheet="history"[\s\S]*gridly-historical-intelligence-line[\s\S]*--gridly-text-secondary/);
+  assert.match(microContrast, /gridly-historical-intelligence-context-note[\s\S]*--gridly-text-muted/);
+  assert.match(microContrast, /data-active-sheet="settings"[\s\S]*settings-list-meta[\s\S]*settings-feedback-helper[\s\S]*--gridly-text-secondary/);
+});
+
+test("LP185.6I gives dock inactive and active content explicit undiluted roles", () => {
+  assert.match(microContrast, /bottom-dock button\s*\{[^}]*--gridly-text-secondary[^}]*opacity:\s*1 !important/);
+  assert.match(microContrast, /bottom-dock button:is\([^{]*\{[^}]*--gridly-accent[^}]*opacity:\s*1 !important/);
+  assert.match(microContrast, /bottom-dock button :is\(\.dock-icon, span, em, svg, img\)[^{]*\{[^}]*opacity:\s*1 !important/);
+});
+
+test("LP185.6I is Light-only, layout-neutral, and preserves protected LP185 work", () => {
+  assert.match(microContrast, /body\.gridly-theme-light/);
+  assert.doesNotMatch(microContrast, /gridly-theme-dark|effective-theme="dark"/);
+  assert.doesNotMatch(microContrast, /(?:^|[;{]\s*)(?:width|height|top|right|bottom|left|padding|margin|font-size)\s*:/m);
+  assert.match(lp1855, /focusGridlyRouteWatchStartOnce/);
+  assert.match(lp1854, /getGridlyIncidentLocationPresentation/);
 });
