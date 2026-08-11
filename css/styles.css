@@ -26674,6 +26674,7 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   --gridly-text-muted: #8fa4b8;
   --gridly-shadow: 0 16px 42px rgba(0, 0, 0, 0.38);
   --gridly-disabled: rgba(143, 164, 184, 0.16);
+  --gridly-disabled-foreground: #8fa4b8;
   color-scheme: dark;
 }
 
@@ -26685,16 +26686,17 @@ body[data-layout-mode="portrait"] .gridly-v2-segments button {
   --gridly-control-bg: #edf4f8;
   --gridly-input-bg: #f7fafc;
   --gridly-backdrop: rgba(10, 30, 48, 0.4);
-  --gridly-accent: #087f83;
+  --gridly-accent: #066b70;
   --gridly-accent-soft: rgba(8, 127, 131, 0.13);
   --gridly-accent-foreground: #f7ffff;
   --gridly-border-neutral: rgba(27, 58, 87, 0.18);
   --gridly-divider: rgba(27, 58, 87, 0.12);
   --gridly-text-primary: #0d1b2a;
   --gridly-text-secondary: #3d5265;
-  --gridly-text-muted: #61778c;
+  --gridly-text-muted: #536a7f;
   --gridly-shadow: 0 14px 36px rgba(25, 49, 71, 0.15);
   --gridly-disabled: rgba(61, 82, 101, 0.12);
+  --gridly-disabled-foreground: #536a7f;
   color-scheme: light;
 }
 
@@ -26967,6 +26969,45 @@ body[data-layout-mode="portrait"]:is(.gridly-theme-light, .gridly-theme-dark, .g
 #gridlyPortraitV2 .gridly-v2-brand img[data-gridly-logo-theme="light"] {
   object-fit: cover;
   object-position: 50% 13%;
+}
+
+/* LP185.6H — Light foreground color grade. Pale cyan remains a tint or
+   decoration; readable content is owned by navy, slate, or the deep accent.
+   These declarations intentionally change no material or geometry. */
+:is(body.gridly-theme-light, html[data-gridly-effective-theme="light"] body.gridly-theme-system)[data-layout-mode="portrait"] {
+  #gridlyPortraitV2 {
+    .gridly-v2-location-awareness-kicker,
+    .gridly-brief-section-label,
+    .gridly-unified-evidence summary {
+      color: var(--gridly-accent) !important;
+      opacity: 1 !important;
+    }
+
+    .gridly-v2-bottom-dock button:is(.is-active, [aria-current="page"], [aria-pressed="true"]) {
+      color: var(--gridly-accent) !important;
+    }
+
+    .gridly-v2-awareness-trust-line,
+    .gridly-v2-control-rail {
+      opacity: 1 !important;
+    }
+  }
+
+  .mobile-destination-command.is-awareness-panel .mobile-awareness-panel-kicker,
+  &.gridly-mobile-awareness-panel-present .map-card > .mobile-destination-command .mobile-awareness-panel-kicker {
+    color: var(--gridly-accent) !important;
+    opacity: 1 !important;
+  }
+
+  #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-v2-sheet-copy {
+    color: var(--gridly-text-secondary) !important;
+    opacity: 1 !important;
+  }
+
+  #gridlyPortraitV2Sheet :is(button, .gridly-v2-report-action):disabled,
+  #gridlyPortraitV2Sheet [aria-disabled="true"] {
+    color: var(--gridly-disabled-foreground) !important;
+  }
 }
 
 /* LP185.6G — live-proven legacy Location Context surface closure.
