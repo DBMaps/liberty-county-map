@@ -98568,6 +98568,7 @@ function gridlyLp019ViewportCompletionThreshold(mapRef) {
 }
 
 function gridlyLp019ReadCrossingVisibilitySnapshot(reason = "unspecified") {
+  const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
   const activeInventoryRecords = (Array.isArray(crossings) ? crossings : []).filter((crossing) => {
     try { return typeof isActiveTrainDelayCrossing === "function" && isActiveTrainDelayCrossing(crossing); } catch (_error) { return false; }
   });
