@@ -1322,7 +1322,7 @@ const GRIDLY_COMMUNITY_TRAVEL_CONTEXT = Object.freeze({
   })
 ,
   // LP189 GENERATED START 48001
-  "anderson-tx": Object.freeze({ id: "anderson-tx", countyFips: "48001", canonicalCountyIdentity: "FIPS", name: "Anderson County", state: "TX", stage: GRIDLY_COUNTY_STAGE_OPERATIONAL, operational: true, productionEnabled: true, selectable: true, boundaryPath: "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", communityAvailabilitySource: "LP188.3 manufactured censusPlaces/communities collections", communityPackagePath: "counties/48001.json", communityAvailability: Object.freeze({ nonEmpty: true, source: "LP188.3 manufactured package", censusIdentity: "PLACE_GEOID" }), runtimeSourceAvailability: Object.freeze({ boundary: "available", roads: "not-claimed", crossings: "not-claimed", awarenessAreas: "available" }) }),
+  "anderson-tx": Object.freeze({ id: "anderson-tx", countyFips: "48001", canonicalCountyIdentity: "FIPS", name: "Anderson County", state: "TX", stage: GRIDLY_COUNTY_STAGE_OPERATIONAL, operational: true, productionEnabled: true, selectable: true, boundaryPath: "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", communityAvailabilitySource: "LP188.3 manufactured censusPlaces/communities collections", communityPackagePath: "counties/48001.json", defaultAwarenessAreas: Object.freeze(["Anderson County", "Palestine"]), consumerAwarenessAreas: Object.freeze([{ placeGeoid: "4854708", displayName: "Palestine", canonicalIdentity: "PLACE_GEOID" }]), communityAvailability: Object.freeze({ nonEmpty: true, source: "LP188.3 manufactured package", censusIdentity: "PLACE_GEOID" }), runtimeSourceAvailability: Object.freeze({ boundary: "available", roads: "not-claimed", crossings: "not-claimed", awarenessAreas: "available" }) }),
   // LP189 GENERATED END 48001
   // LP189 GENERATED START 48003
   "andrews-tx": Object.freeze({ id: "andrews-tx", countyFips: "48003", canonicalCountyIdentity: "FIPS", name: "Andrews County", state: "TX", stage: GRIDLY_COUNTY_STAGE_OPERATIONAL, operational: true, productionEnabled: true, selectable: true, boundaryPath: "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", communityAvailabilitySource: "LP188.3 manufactured censusPlaces/communities collections", communityPackagePath: "counties/48003.json", communityAvailability: Object.freeze({ nonEmpty: true, source: "LP188.3 manufactured package", censusIdentity: "PLACE_GEOID" }), runtimeSourceAvailability: Object.freeze({ boundary: "available", roads: "not-claimed", crossings: "not-claimed", awarenessAreas: "available" }) }),
@@ -16254,11 +16254,15 @@ function gridlyBuildRegistryCommunityAwarenessArea(countyId, config, communityNa
   const lat = Number.isFinite(Number(harrisSupport?.lat)) ? Number(harrisSupport.lat) : (Number.isFinite(Number(v905Focus?.lat)) ? Number(v905Focus.lat) : (bounds ? (Number(bounds.south) + Number(bounds.north)) / 2 : 30.2));
   const lng = Number.isFinite(Number(harrisSupport?.lng)) ? Number(harrisSupport.lng) : (Number.isFinite(Number(v905Focus?.lng)) ? Number(v905Focus.lng) : (bounds ? (Number(bounds.west) + Number(bounds.east)) / 2 : -94.9));
   const keyBase = `${countyId}-${String(communityName || "community").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+  const canonicalCommunity = (config.consumerAwarenessAreas || []).find((community) => normalizeGridlyAwarenessAreaLookupText(community?.displayName) === normalizedCommunity) || null;
   return {
     key: keyBase || `${countyId}-community-${index}`,
     label: communityName,
     storageValue: communityName,
     countyId,
+    communityId: canonicalCommunity?.placeGeoid || keyBase,
+    placeGeoid: canonicalCommunity?.placeGeoid || null,
+    canonicalCommunityIdentity: canonicalCommunity?.canonicalIdentity || null,
     lat,
     lng,
     radiusMiles: 7,
@@ -16280,6 +16284,7 @@ gridlyGetSelectableOperationalCountyIds().forEach((countyId) => {
 
 
 const GRIDLY_LP051_ZIP_AWARENESS_RECORDS = Object.freeze([
+  Object.freeze({ zip: "75801", state: "TX", countyId: "anderson-tx", countyName: "Anderson County", awarenessAreaKey: "anderson-tx-palestine", communityId: "4854708", communityName: "Palestine", consumerLabel: "Palestine", resolutionStatus: "resolved", zipType: "usps_zip_governed_assignment", provenance: "LP189.2 consumer bridge to LP188.3 PLACE GEOID 4854708", authorityLimitations: "Consumer assignment; ZIP/ZCTA boundaries are not treated as identical." }),
   Object.freeze({ zip: "77535", state: "TX", countyId: "liberty-tx", countyName: "Liberty County", awarenessAreaKey: "dayton", communityId: "dayton", communityName: "Dayton", consumerLabel: "Dayton", resolutionStatus: "resolved", zipType: "usps_zip_governed_assignment", provenance: "LP051 seed + Gridly governed launch assignment", authorityLimitations: "Consumer assignment; ZIP/ZCTA boundaries are not treated as identical." }),
   Object.freeze({ zip: "77575", state: "TX", countyId: "liberty-tx", countyName: "Liberty County", awarenessAreaKey: "liberty", communityId: "liberty", communityName: "Liberty", consumerLabel: "Liberty", resolutionStatus: "resolved", zipType: "usps_zip_governed_assignment", provenance: "LP051 seed + Gridly governed launch assignment", authorityLimitations: "Consumer assignment; ZIP/ZCTA boundaries are not treated as identical." }),
   Object.freeze({ zip: "77327", state: "TX", countyId: "liberty-tx", countyName: "Liberty County", awarenessAreaKey: "cleveland", communityId: "cleveland", communityName: "Cleveland", consumerLabel: "Cleveland", resolutionStatus: "resolved_by_governance", zipType: "usps_zip_governed_assignment", provenance: "Gridly community registry + governed launch ZIP index", authorityLimitations: "Cleveland-area postal use can cross county context; Gridly assigns this record to existing Liberty/Cleveland consumer awareness." }),
