@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const AUDIT_PATH = 'reports/lp190/restricted-county-lp130-recovery-audit.json';
@@ -7,7 +8,10 @@ const EXPECTED = ['48061','48073','48113','48121','48135','48229','48329','48377
 const EXACT = new Set(['EXACT_GOVERNED_PAYLOAD_RECOVERABLE_FROM_REPOSITORY','EXACT_GOVERNED_PAYLOAD_RECOVERABLE_FROM_GIT_HISTORY','EXACT_GOVERNED_PAYLOAD_PRESENT_REQUIRES_RECONCILIATION']);
 const ALLOWED = new Set([...EXACT,'OWNER_LOCAL_EVIDENCE_REQUIRED','EXTERNAL_SOURCE_RECOVERY_REQUIRED','INSUFFICIENT_EVIDENCE_FAIL_CLOSED']);
 const PROTECTED = ['js/app.js','assets/package-registry/runtime-package-registry.json','js/gridlyPackageRegistry.js','assets/location-resolution/gridly-authoritative-county-geometry-v1.json','assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json'];
-const sha = path => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex');
+const git = args => execFileSync('git', args, { encoding: 'utf8' }).trim();
+const gitBlob = (commit, path) => git(['rev-parse', `${commit}:${path}`]);
+const gitBlobBytes = blob => execFileSync('git', ['cat-file', 'blob', blob], { maxBuffer: 1024 * 1024 * 1024 });
+const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
 export function verifyLp190() {
   const audit = JSON.parse(fs.readFileSync(AUDIT_PATH, 'utf8'));
@@ -19,6 +23,10 @@ export function verifyLp190() {
   assert.equal(audit.protectedProduction.changed, false);
   assert.equal(audit.protectedProduction.operationalCountyCount, 243);
   assert.equal(audit.protectedProduction.restrictedCountyCount, 11);
+  assert.equal(audit.protectedProduction.identitySource, 'CANONICAL_GIT_BLOB');
+  assert.equal(audit.protectedProduction.workingTreeBytes, 'IGNORED');
+  assert.equal(audit.protectedProduction.baselineCommit, audit.baseline.commit);
+  assert.equal(audit.protectedProduction.comparisonCommit, 'HEAD');
   for (const county of audit.counties) {
     assert.ok(ALLOWED.has(county.recoveryClassification), `invalid classification for ${county.countyFips}`);
     assert.match(county.expectedSha256, /^[a-f0-9]{64}$/);
@@ -30,7 +38,17 @@ export function verifyLp190() {
       assert.equal(county.exactByteIdentityProven, false, `unknown evidence must remain fail-closed for ${county.countyFips}`);
     }
   }
-  for (const path of PROTECTED) assert.equal(sha(path), audit.protectedProduction.files[path], `protected production surface changed: ${path}`);
+  for (const path of PROTECTED) {
+    const recorded = audit.protectedProduction.files[path];
+    const expectedGitBlob = gitBlob(audit.protectedProduction.baselineCommit, path);
+    const actualGitBlob = gitBlob(audit.protectedProduction.comparisonCommit, path);
+    assert.equal(recorded.expectedGitBlob, expectedGitBlob, `recorded baseline Git blob identity drifted: ${path}`);
+    assert.equal(recorded.actualGitBlob, actualGitBlob, `recorded HEAD Git blob identity drifted: ${path}`);
+    assert.equal(recorded.expectedCanonicalBlobContentSha256, sha256(gitBlobBytes(expectedGitBlob)), `recorded baseline canonical blob SHA-256 drifted: ${path}`);
+    assert.equal(recorded.actualCanonicalBlobContentSha256, sha256(gitBlobBytes(actualGitBlob)), `recorded HEAD canonical blob SHA-256 drifted: ${path}`);
+    assert.equal(recorded.pass, expectedGitBlob === actualGitBlob, `recorded protected identity result is inconsistent: ${path}`);
+    assert.equal(actualGitBlob, expectedGitBlob, `protected production surface changed: ${path}`);
+  }
   return { pass: true, auditedCountyCount: 11, operationalCountyCount: 243, restrictedCountyCount: 11, exactRecoveryClaims: audit.counties.filter(c => EXACT.has(c.recoveryClassification)).length, protectedProductionSurfaceChanges: 0 };
 }
 
