@@ -18,6 +18,7 @@
     "test:lp18812": "node --test tests/lp18812-statewide-validation-closure.test.mjs",
     "wave0:lp18812": "playwright test -c playwright.lp18812.config.mjs",
     "reconcile:lp18812": "node tools/lp18812/statewide-validation-closure.mjs reconcile",
+    "ingest:lp18812": "node tools/lp18812/statewide-validation-closure.mjs ingest",
     "build:lp18811f4": "node tools/lp18811/govern-wave0-journeys.mjs build",
     "verify:lp18811f4": "node tools/lp18811/govern-wave0-journeys.mjs verify",
     "test:lp18811f4": "node --test tests/lp18811f4-wave0-journey-governance.test.mjs",
