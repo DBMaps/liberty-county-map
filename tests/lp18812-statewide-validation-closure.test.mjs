@@ -19,6 +19,12 @@ test('blocked mutation classification is exact, sanitized, and fail-closed',()=>
   }
   const telemetry=classifyBlockedMutation('POST','https://cloudflareinsights.com/cdn-cgi/rum?secret=discarded',protectedOrigin);
   assert.deepEqual(telemetry,{method:'POST',origin:'https://cloudflareinsights.com',pathname:'/cdn-cgi/rum',category:'THIRD_PARTY_TELEMETRY',blocked:true,productionMutationObserved:false});
+  const governedRum=classifyBlockedMutation('POST',`${protectedOrigin}/cdn-cgi/rum?secret=discarded`,protectedOrigin);
+  assert.deepEqual(governedRum,{method:'POST',origin:protectedOrigin,pathname:'/cdn-cgi/rum',category:'CLOUDFLARE_MANAGED_RUM_TELEMETRY',blocked:true,productionMutationObserved:false});
+  assert.equal(classifyBlockedMutation('POST',`${protectedOrigin}/api/state`,protectedOrigin).productionMutationObserved,true);
+  for(const method of ['PUT','PATCH','DELETE']) assert.deepEqual(classifyBlockedMutation(method,`${protectedOrigin}/cdn-cgi/rum`,protectedOrigin),{method,origin:protectedOrigin,pathname:'/cdn-cgi/rum',category:'PROTECTED_APPLICATION_MUTATION',blocked:true,productionMutationObserved:true});
+  assert.equal(classifyBlockedMutation('POST',`${protectedOrigin}/cdn-cgi/other`,protectedOrigin).productionMutationObserved,true);
+  assert.equal(classifyBlockedMutation('POST','https://preview.gridlygo.com.lookalike.example/cdn-cgi/rum',protectedOrigin).productionMutationObserved,true);
   for(const url of ['https://cloudflareinsights.com/not-rum','https://static.cloudflareinsights.com/cdn-cgi/rum','https://unknown.example/collect']) assert.equal(classifyBlockedMutation('POST',url,protectedOrigin).productionMutationObserved,true);
   assert.equal(classifyBlockedMutation('PUT','https://cloudflareinsights.com/cdn-cgi/rum',protectedOrigin).productionMutationObserved,true);
   assert.throws(()=>classifyBlockedMutation('GET','https://unknown.example/',protectedOrigin),/method_is_not_mutating/);

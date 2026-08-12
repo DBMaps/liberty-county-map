@@ -11,6 +11,7 @@ export const MUTATING_METHODS = Object.freeze(['POST','PUT','PATCH','DELETE']);
 export const BLOCKED_NON_APPLICATION_MUTATIONS = Object.freeze([
   Object.freeze({method:'POST',origin:'https://cloudflareinsights.com',pathname:'/cdn-cgi/rum',category:'THIRD_PARTY_TELEMETRY'})
 ]);
+const CLOUDFLARE_MANAGED_RUM = Object.freeze({method:'POST',pathname:'/cdn-cgi/rum',category:'CLOUDFLARE_MANAGED_RUM_TELEMETRY'});
 export const SECRET_NAMES = Object.freeze(['GRIDLY_VALIDATOR_ACCESS_CLIENT_ID','GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET']);
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const canonical = (v) => `${JSON.stringify(v,null,2)}\n`;
@@ -50,6 +51,10 @@ export function classifyBlockedMutation(method, requestUrl, protectedOrigin) {
   if (!MUTATING_METHODS.includes(normalizedMethod)) throw Error('method_is_not_mutating');
   const url=new URL(requestUrl);
   const record={method:normalizedMethod,origin:url.origin,pathname:url.pathname,category:'UNKNOWN_MUTATING_ORIGIN',blocked:true,productionMutationObserved:true};
+  // On a proxied governed hostname, Cloudflare owns this exact POST endpoint and
+  // uses it for Web Analytics/Browser Insights RUM beacons. It is still blocked,
+  // but it is not an application mutation. No other method, path, or origin is exempt.
+  if (normalizedMethod===CLOUDFLARE_MANAGED_RUM.method && url.origin===protectedOrigin && url.pathname===CLOUDFLARE_MANAGED_RUM.pathname) return {...record,category:CLOUDFLARE_MANAGED_RUM.category,productionMutationObserved:false};
   if (url.origin===protectedOrigin) return {...record,category:'PROTECTED_APPLICATION_MUTATION'};
   if (url.hostname==='supabase.co' || url.hostname.endsWith('.supabase.co')) return {...record,category:'SUPABASE_APPLICATION_DATA_MUTATION'};
   const telemetry=BLOCKED_NON_APPLICATION_MUTATIONS.find(x=>x.method===normalizedMethod&&x.origin===url.origin&&x.pathname===url.pathname);
