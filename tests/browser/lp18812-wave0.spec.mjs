@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import { contract, validateEnvironment, reconcile, MUTATING_METHODS } from '../../tools/lp18812/statewide-validation-closure.mjs';
 
+// Canonical Gridly portrait-validation viewport (LP185.9A and V856/V857 validation).
+const GOVERNED_MOBILE_PORTRAIT_VIEWPORT=Object.freeze({width:390,height:844});
+
 const c=contract();
 test.beforeAll(()=>validateEnvironment(process.env,c));
 test('exact governed Wave 0 is read-only',async({browser})=>{
@@ -12,8 +15,9 @@ test('exact governed Wave 0 is read-only',async({browser})=>{
     const fips=fixture.applicableFips[0];
     const awarenessInput=fixture.input.awarenessAreaInput;
     expect(awarenessInput).toMatchObject({type:'ZIP',resolver:'resolveGridlyAwarenessAreaQuery'});
-    const context=await browser.newContext();
+    const context=await browser.newContext({viewport:GOVERNED_MOBILE_PORTRAIT_VIEWPORT});
     const page=await context.newPage();
+    expect(page.viewportSize()).toEqual(GOVERNED_MOBILE_PORTRAIT_VIEWPORT);
     await page.route('**/*',route=>{ const request=route.request(),method=request.method(); if(MUTATING_METHODS.includes(method)){mutation=true; return route.abort('blockedbyclient');} if(new URL(request.url()).origin===protectedOrigin)return route.continue({headers:{...request.headers(),'CF-Access-Client-Id':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_ID,'CF-Access-Client-Secret':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET}}); return route.continue(); });
     await page.goto(process.env.GRIDLY_PROTECTED_URL,{waitUntil:'domcontentloaded'});
     const build=await page.evaluate(async()=>await (await fetch('/gridly-protected-build-identity.json')).text()); expect(build).toContain(c.target.buildIdentity);
