@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18811c": "node tools/lp18811/provision-protected-environment.mjs build",
+    "verify:lp18811c": "node tools/lp18811/provision-protected-environment.mjs verify",
+    "test:lp18811c": "node --test tests/lp18811c-protected-environment-provisioning.test.mjs",
     "test:lp18811b": "node --test tests/lp18811b-protected-validation-harness.test.mjs",
     "build:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs build",
     "verify:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs verify",
