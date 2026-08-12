@@ -1,0 +1,3133 @@
+{
+  "schemaVersion": "gridly.lp18812.wave0-remaining-fixture-contract.v1",
+  "milestone": "LP188.12",
+  "designOnly": true,
+  "ownerExecutionEvidenceCreated": false,
+  "authoritativeOwnerState": {
+    "wave0Result": "PENDING",
+    "completedWave0Assertions": [
+      "OPERATIONAL_COUNTY_RESULT_STABILITY"
+    ],
+    "missingWave0Assertions": [
+      "CERTIFIED_ARTIFACT_STABILITY",
+      "COUNTY_BOUNDARY_ISOLATION",
+      "CONSUMER_RESULT_STABILITY",
+      "FALLBACK_BEHAVIOR_STABILITY",
+      "ROUTE_AWARENESS_STABILITY"
+    ],
+    "sourceArtifactDigest": "sha256:8c4e1d4bf9a99f49f5c181d693d3a9ed35edf14290364cbf8c556e6b2af34da9",
+    "ownerExecutionClassification": "OWNER_EXECUTION_PASSED_LEGACY_SCHEMA"
+  },
+  "controls": {
+    "operationalJourneyMustNotRerun": true,
+    "productionMutation": false,
+    "cloudflareDeployment": false,
+    "countyActivation": false,
+    "operationalCountyCount": 28,
+    "restrictionCount": 11,
+    "failClosed": true,
+    "browserViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "serviceAuth": "origin-scoped Cloudflare Service Auth; credentials memory-only",
+    "mutationBlocking": [
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE"
+    ]
+  },
+  "fixtures": [
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48015",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48015.json",
+        "requestedCountyFips": "48015"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2527,
+        "sha256": "sha256:917ea6d0bee6de11d6ef5ffa56e3a3404135f61cc45739118bbd41fd01b66ea2",
+        "countyFips": "48015",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48015"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48039",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48039.json",
+        "requestedCountyFips": "48039"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 8390,
+        "sha256": "sha256:d9a0ab9546fb5a20fbbc6ad5c019fc3915edb3bc793ddb6bd50f40bcab57d5ab",
+        "countyFips": "48039",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48039"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48041",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48041.json",
+        "requestedCountyFips": "48041"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1969,
+        "sha256": "sha256:e2e356c825a6664e0ed297e2306ef8b0a756a3a25ec8345877c288d59241232f",
+        "countyFips": "48041",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48041"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48057",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48057.json",
+        "requestedCountyFips": "48057"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1977,
+        "sha256": "sha256:afc6cd859ca4e25d24679b97c23c54b5fafb3b3f3098116700f4a6d6efe4b273",
+        "countyFips": "48057",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48057"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48071",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48071.json",
+        "requestedCountyFips": "48071"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 4109,
+        "sha256": "sha256:eacfd2b56606ea2250095c0b633f4a8e16706ee81a6fde764d10e24389e2c1e6",
+        "countyFips": "48071",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48071"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48089",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48089.json",
+        "requestedCountyFips": "48089"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2539,
+        "sha256": "sha256:246da6b25278f6bfdf0d825c7fe396b44ec8430c260055a94caf1c9c26f73ced",
+        "countyFips": "48089",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48089"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48149",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48149.json",
+        "requestedCountyFips": "48149"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2525,
+        "sha256": "sha256:332fa51afa3f90c65569e8c96d0f044836275a2e54caf21be5ae7ca9dd0beec2",
+        "countyFips": "48149",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48149"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48157",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48157.json",
+        "requestedCountyFips": "48157"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 8528,
+        "sha256": "sha256:f9c472532cae8600a04ae755337b26c2208ae4bed4b8573798e888e3e40103f3",
+        "countyFips": "48157",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48157"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48167",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48167.json",
+        "requestedCountyFips": "48167"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 4925,
+        "sha256": "sha256:7994d3e9c86de75e32b97eec2345f6d6d104e10bfbc37481dffe2f3ed7687f89",
+        "countyFips": "48167",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48167"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48185",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48185.json",
+        "requestedCountyFips": "48185"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2836,
+        "sha256": "sha256:d3771ee6d9b54aaf6bd7fefa47c64f188153580df4e4ae0144e430250c5723c7",
+        "countyFips": "48185",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48185"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48199",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48199.json",
+        "requestedCountyFips": "48199"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2269,
+        "sha256": "sha256:bad8420117b8a843d5a6ba1ebb955a2a94d04810e13e439cde15a0896c17d889",
+        "countyFips": "48199",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48199"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48201",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48201.json",
+        "requestedCountyFips": "48201"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 13991,
+        "sha256": "sha256:5bcbfc443dd4c0a47fade6c8f2e26445db2ff04add95446aa79723a3d0083bf8",
+        "countyFips": "48201",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48201"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48239",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48239.json",
+        "requestedCountyFips": "48239"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1655,
+        "sha256": "sha256:5f80bb8f1be594f16b6723b67b1bff383bfd570d2f0e22ae1aa86a6b61d673b8",
+        "countyFips": "48239",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48239"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48241",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48241.json",
+        "requestedCountyFips": "48241"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1953,
+        "sha256": "sha256:b257b69728199023b181c09eeb137f40a66946f1bb4505d09163dbf791ab0bb2",
+        "countyFips": "48241",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48241"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48245",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48245.json",
+        "requestedCountyFips": "48245"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 4015,
+        "sha256": "sha256:f237432b1f0cdba14eff00b85ecdf07938039d670b5cd1bf6857bd8ceea653a7",
+        "countyFips": "48245",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48245"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48285",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48285.json",
+        "requestedCountyFips": "48285"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1380,
+        "sha256": "sha256:1f3585d3418128ca9a72c8d42b38e86a4b8f689636bcc6461fcfebeb38ae1ff4",
+        "countyFips": "48285",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48285"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48291",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48291.json",
+        "requestedCountyFips": "48291"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 5673,
+        "sha256": "sha256:f2529dcc95479bbef99b0a253bebde31f3c29e23953b5fbce8d8f379e488ab9e",
+        "countyFips": "48291",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48291"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48321",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48321.json",
+        "requestedCountyFips": "48321"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2842,
+        "sha256": "sha256:867dfe17ae0eb36a4338ab2053ff1ef7cc6833e13245be284e1d4856a63421f4",
+        "countyFips": "48321",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48321"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48339",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48339.json",
+        "requestedCountyFips": "48339"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 7084,
+        "sha256": "sha256:271ea06c5625537b1eed575ef5930567e249019dff68b4042d200e21e99cbf81",
+        "countyFips": "48339",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48339"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48351",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48351.json",
+        "requestedCountyFips": "48351"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1094,
+        "sha256": "sha256:2f3e0d7f96aa64d27dc2077161e7288108aa49c7853467fb3b00dd196be76930",
+        "countyFips": "48351",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48351"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48361",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48361.json",
+        "requestedCountyFips": "48361"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 3436,
+        "sha256": "sha256:9b2eba0d23d2121166b59a4418f8a0cf2ea26c84da8b74036592ef3dc8895cff",
+        "countyFips": "48361",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48361"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48373",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48373.json",
+        "requestedCountyFips": "48373"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 3172,
+        "sha256": "sha256:719a19f1a4ad48be79f15f610322c56ea504173e3037439aabc09bfa4c20d412",
+        "countyFips": "48373",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48373"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48407",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48407.json",
+        "requestedCountyFips": "48407"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2712,
+        "sha256": "sha256:8c967bdd03462499f6c492b946a95d5427c397cd82b9a3179513b58974c99bc8",
+        "countyFips": "48407",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48407"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48457",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48457.json",
+        "requestedCountyFips": "48457"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1964,
+        "sha256": "sha256:62c2192a384fd55f2ba72853fefe9b2a197074e37e86c7dcf538bcab22874220",
+        "countyFips": "48457",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48457"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48471",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48471.json",
+        "requestedCountyFips": "48471"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 1081,
+        "sha256": "sha256:364327c8d18ce8af1b26705a9f980654c8f014d1f8e8d32d31482a3d58bd9835",
+        "countyFips": "48471",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48471"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48473",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48473.json",
+        "requestedCountyFips": "48473"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2620,
+        "sha256": "sha256:a765d3d099e11c5696942cb788d269afdb7b15232fa283c2b5135519c9a513b1",
+        "countyFips": "48473",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48473"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48477",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48477.json",
+        "requestedCountyFips": "48477"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 788,
+        "sha256": "sha256:0542c411c885a94f7e5642dfd0d8c18f795b75a46362ef40fb5482226dd91599",
+        "countyFips": "48477",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48477"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "fixtureId": "W0-ARTIFACT-48481",
+      "input": {
+        "method": "GET",
+        "protectedRelativeUrl": "/counties/48481.json",
+        "requestedCountyFips": "48481"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "byteLength": 2245,
+        "sha256": "sha256:3f6a0bc6a2768f740b88389f37aa2d66fea1788e9563b1d050a1f8014f6dead1",
+        "countyFips": "48481",
+        "schemaVersion": "gridly.community-package.identity.v1"
+      },
+      "prohibitedResult": {
+        "runtimeValidationStateOnly": true,
+        "hashOrLengthMismatch": true,
+        "redirectOrAuthenticationHtml": true
+      },
+      "applicableFips": [
+        "48481"
+      ],
+      "authoritativeSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811f4/wave0-fixture-authority.json"
+      ],
+      "executionMechanism": "DIRECT_PROTECTED_AUTHENTICATED_GET_RAW_BYTES",
+      "browserRequired": false,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "protectedOrigin",
+        "relativeUrl",
+        "httpStatus",
+        "responseByteLength",
+        "responseSha256",
+        "expectedByteLength",
+        "expectedSha256",
+        "byteLengthMatched",
+        "sha256Matched",
+        "countyFips",
+        "executedAt",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "fixtureId": "W0-BOUNDARY-LIBERTY-HARDIN-LIBERTY",
+      "input": {
+        "coordinate": {
+          "longitude": -94.73265294,
+          "latitude": 30.4892656
+        },
+        "resolver": "protected runtime county geometry resolver",
+        "sharedBoundaryCoordinate": [
+          -94.732465,
+          30.489334
+        ],
+        "governedInteriorOffsetDegrees": 0.0002
+      },
+      "expectedResult": {
+        "resolvedCountyFips": "48291",
+        "resolutionCount": 1,
+        "boundaryOwnership": "UNAMBIGUOUS_INTERIOR"
+      },
+      "prohibitedResult": {
+        "resolvedCountyFips": "48199",
+        "multipleCountyResolution": true,
+        "noCountyResolution": true
+      },
+      "applicableFips": [
+        "48291",
+        "48199"
+      ],
+      "authoritativeSource": [
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_COORDINATE_RESOLUTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "inputCoordinate",
+        "resolvedCountyFips",
+        "resolutionCount",
+        "prohibitedCountyAbsent",
+        "runtimeResolver",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "fixtureId": "W0-BOUNDARY-LIBERTY-HARDIN-HARDIN",
+      "input": {
+        "coordinate": {
+          "longitude": -94.732465,
+          "latitude": 30.489534
+        },
+        "resolver": "protected runtime county geometry resolver",
+        "sharedBoundaryCoordinate": [
+          -94.732465,
+          30.489334
+        ],
+        "governedInteriorOffsetDegrees": 0.0002
+      },
+      "expectedResult": {
+        "resolvedCountyFips": "48199",
+        "resolutionCount": 1,
+        "boundaryOwnership": "UNAMBIGUOUS_INTERIOR"
+      },
+      "prohibitedResult": {
+        "resolvedCountyFips": "48291",
+        "multipleCountyResolution": true,
+        "noCountyResolution": true
+      },
+      "applicableFips": [
+        "48199",
+        "48291"
+      ],
+      "authoritativeSource": [
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/hardin-county-2025-wgs84.geojson"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_COORDINATE_RESOLUTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "inputCoordinate",
+        "resolvedCountyFips",
+        "resolutionCount",
+        "prohibitedCountyAbsent",
+        "runtimeResolver",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "fixtureId": "W0-BOUNDARY-LIBERTY-CHAMBERS-LIBERTY",
+      "input": {
+        "coordinate": {
+          "longitude": -94.97698249,
+          "latitude": 29.88450397
+        },
+        "resolver": "protected runtime county geometry resolver",
+        "sharedBoundaryCoordinate": [
+          -94.976979,
+          29.884304
+        ],
+        "governedInteriorOffsetDegrees": 0.0002
+      },
+      "expectedResult": {
+        "resolvedCountyFips": "48291",
+        "resolutionCount": 1,
+        "boundaryOwnership": "UNAMBIGUOUS_INTERIOR"
+      },
+      "prohibitedResult": {
+        "resolvedCountyFips": "48071",
+        "multipleCountyResolution": true,
+        "noCountyResolution": true
+      },
+      "applicableFips": [
+        "48291",
+        "48071"
+      ],
+      "authoritativeSource": [
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/chambers-county-2025-wgs84.geojson"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_COORDINATE_RESOLUTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "inputCoordinate",
+        "resolvedCountyFips",
+        "resolutionCount",
+        "prohibitedCountyAbsent",
+        "runtimeResolver",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "fixtureId": "W0-BOUNDARY-LIBERTY-CHAMBERS-CHAMBERS",
+      "input": {
+        "coordinate": {
+          "longitude": -94.976979,
+          "latitude": 29.884104
+        },
+        "resolver": "protected runtime county geometry resolver",
+        "sharedBoundaryCoordinate": [
+          -94.976979,
+          29.884304
+        ],
+        "governedInteriorOffsetDegrees": 0.0002
+      },
+      "expectedResult": {
+        "resolvedCountyFips": "48071",
+        "resolutionCount": 1,
+        "boundaryOwnership": "UNAMBIGUOUS_INTERIOR"
+      },
+      "prohibitedResult": {
+        "resolvedCountyFips": "48291",
+        "multipleCountyResolution": true,
+        "noCountyResolution": true
+      },
+      "applicableFips": [
+        "48071",
+        "48291"
+      ],
+      "authoritativeSource": [
+        "Gridly-Source-Data/Census/liberty-county-2025-wgs84.geojson",
+        "Gridly-Source-Data/Census/chambers-county-2025-wgs84.geojson"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_COORDINATE_RESOLUTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "inputCoordinate",
+        "resolvedCountyFips",
+        "resolutionCount",
+        "prohibitedCountyAbsent",
+        "runtimeResolver",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48015",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77418"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48015",
+        "consumerCountyName": "Austin County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48015"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48015"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48039",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77515"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48039",
+        "consumerCountyName": "Brazoria County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48039"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48039"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48041",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77803"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48041",
+        "consumerCountyName": "Brazos County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48041"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48041"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48057",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77979"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48057",
+        "consumerCountyName": "Calhoun County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48057"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48057"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48071",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77514"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48071",
+        "consumerCountyName": "Chambers County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48071"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48071"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48089",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "78934"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48089",
+        "consumerCountyName": "Colorado County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48089"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48089"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48149",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "78945"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48149",
+        "consumerCountyName": "Fayette County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48149"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48149"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48157",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77469"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48157",
+        "consumerCountyName": "Fort Bend County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48157"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48157"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48167",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77550"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48167",
+        "consumerCountyName": "Galveston County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48167"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48167"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48185",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77868"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48185",
+        "consumerCountyName": "Grimes County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48185"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48185"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48199",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77625"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48199",
+        "consumerCountyName": "Hardin County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48199"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48199"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48201",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77002"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48201",
+        "consumerCountyName": "Harris County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48201"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48201"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48239",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77957"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48239",
+        "consumerCountyName": "Jackson County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48239"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48239"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48241",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "75951"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48241",
+        "consumerCountyName": "Jasper County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48241"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48241"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48245",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77701"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48245",
+        "consumerCountyName": "Jefferson County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48245"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48245"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48285",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77964"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48285",
+        "consumerCountyName": "Lavaca County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48285"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48285"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48291",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77535"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48291",
+        "consumerCountyName": "Liberty County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48291"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48291"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48321",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77414"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48321",
+        "consumerCountyName": "Matagorda County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48321"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48321"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48339",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77301"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48339",
+        "consumerCountyName": "Montgomery County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48339"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48339"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48351",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "75966"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48351",
+        "consumerCountyName": "Newton County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48351"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48351"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48361",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77630"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48361",
+        "consumerCountyName": "Orange County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48361"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48361"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48373",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77351"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48373",
+        "consumerCountyName": "Polk County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48373"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48373"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48407",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77331"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48407",
+        "consumerCountyName": "San Jacinto County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48407"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48407"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48457",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "75979"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48457",
+        "consumerCountyName": "Tyler County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48457"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48457"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48471",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77340"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48471",
+        "consumerCountyName": "Walker County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48471"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48471"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48473",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77445"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48473",
+        "consumerCountyName": "Waller County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48473"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48473"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48477",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77833"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48477",
+        "consumerCountyName": "Washington County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48477"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48477"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "fixtureId": "W0-CONSUMER-48481",
+      "input": {
+        "surface": "awareness area query preview (resolve only; do not apply selection)",
+        "queryType": "ZIP",
+        "query": "77488"
+      },
+      "expectedResult": {
+        "status": "single_match",
+        "resolved": true,
+        "consumerCountyFips": "48481",
+        "consumerCountyName": "Wharton County",
+        "candidateCount": 1
+      },
+      "prohibitedResult": {
+        "applyCountySelection": true,
+        "consumerCountyFipsOutside": [
+          "48481"
+        ],
+        "nearbyCountySubstitution": true,
+        "ambiguousOrManualFallback": true
+      },
+      "applicableFips": [
+        "48481"
+      ],
+      "authoritativeSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f4/wave0-fixture-authority.json",
+        "js/app.js#resolveGridlyAwarenessAreaQuery"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_QUERY_PREVIEW_WITHOUT_SELECTION",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerCountyFips",
+        "consumerCountyName",
+        "prohibitedCountyAbsent",
+        "selectionApplied",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "FALLBACK_BEHAVIOR_STABILITY",
+      "fixtureId": "W0-FALLBACK-UNKNOWN-ZIP-00000",
+      "input": {
+        "surface": "awareness area query preview",
+        "queryType": "ZIP",
+        "query": "00000",
+        "action": "resolve only; do not apply selection"
+      },
+      "expectedResult": {
+        "status": "manual_fallback",
+        "resolved": false,
+        "consumerAction": "manual setup",
+        "candidateCount": 0,
+        "activeCountyUnchanged": true
+      },
+      "prohibitedResult": {
+        "countySubstitution": true,
+        "nearbyZipSubstitution": true,
+        "activeCountyChanged": true,
+        "productionRequestMutation": true
+      },
+      "applicableFips": [
+        "WAVE_0_SHARED_RESOLVER"
+      ],
+      "authoritativeSource": [
+        "js/app.js#gridlyResolveHomeZipAwareness",
+        "js/app.js#gridlyLp0516Continue",
+        "js/app.js#gridlyLp0516MapStatusToStep"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_READ_ONLY_UNKNOWN_ZIP_PREVIEW",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "query",
+        "resolverStatus",
+        "resolved",
+        "candidateCount",
+        "consumerAction",
+        "activeCountyFipsBefore",
+        "activeCountyFipsAfter",
+        "substitutionObserved",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    },
+    {
+      "assertionId": "ROUTE_AWARENESS_STABILITY",
+      "fixtureId": "W0-ROUTE-TALCO-GOODRICH-RELEVANCE",
+      "input": {
+        "surface": "Destination Intelligence route preview -> Route Watch",
+        "route": {
+          "source": {
+            "label": "Current Location",
+            "latitude": 30.05,
+            "longitude": -94.89
+          },
+          "destination": {
+            "id": "talco-city-hall",
+            "label": "Talco City Hall",
+            "latitude": 33.36,
+            "longitude": -95.1
+          },
+          "geometry": [
+            [
+              30.05,
+              -94.89
+            ],
+            [
+              30.60925,
+              -94.9466
+            ],
+            [
+              33.36,
+              -95.1
+            ]
+          ]
+        },
+        "readOnlyIncidents": [
+          {
+            "id": "goodrich-road-closed",
+            "source": "community",
+            "latitude": 30.60925,
+            "longitude": -94.9466
+          },
+          {
+            "id": "remote-community",
+            "source": "community",
+            "latitude": 31.5,
+            "longitude": -97.0
+          }
+        ]
+      },
+      "expectedResult": {
+        "routeWatchActivatedInBrowserSession": true,
+        "routeGeometryPointCount": 3,
+        "routeRelevantIncidentIds": [
+          "goodrich-road-closed"
+        ],
+        "routeIrrelevantIncidentIds": [
+          "remote-community"
+        ],
+        "awarenessAreaUnchanged": true
+      },
+      "prohibitedResult": {
+        "productionHazardCreated": true,
+        "activeAwarenessAreaChangedToRouteDestination": true,
+        "routeRelevantIncidentIds": [
+          "remote-community"
+        ],
+        "routeGeometryRebuilt": true,
+        "externalProviderRequired": true
+      },
+      "applicableFips": [
+        "48291",
+        "48373",
+        "48449"
+      ],
+      "authoritativeSource": [
+        "tests/lp1781-talco-route-watch-start-repair.test.mjs",
+        "tests/lp1782-statewide-route-intelligence-geometry-bridge.test.mjs",
+        "tests/lp1785-live-route-progress-propagation.test.mjs",
+        "js/app.js#startGridlyRouteWatchFromRouteDetails"
+      ],
+      "executionMechanism": "PROTECTED_MOBILE_BROWSER_SESSION_LOCAL_READ_ONLY_GOVERNED_ROUTE_FIXTURE",
+      "browserRequired": true,
+      "evidenceFieldsRequired": [
+        "fixtureId",
+        "assertionId",
+        "routeSource",
+        "routeDestination",
+        "routeGeometrySha256",
+        "routeGeometryPointCount",
+        "routeWatchSessionState",
+        "relevantIncidentIds",
+        "irrelevantIncidentIds",
+        "awarenessAreaBefore",
+        "awarenessAreaAfter",
+        "productionHazardCreated",
+        "viewport",
+        "executedAt",
+        "screenshotReference",
+        "sanitizedRequestAuditReference"
+      ]
+    }
+  ],
+  "fixtureCountByAssertion": {
+    "CERTIFIED_ARTIFACT_STABILITY": 28,
+    "COUNTY_BOUNDARY_ISOLATION": 4,
+    "CONSUMER_RESULT_STABILITY": 28,
+    "FALLBACK_BEHAVIOR_STABILITY": 1,
+    "ROUTE_AWARENESS_STABILITY": 1
+  },
+  "fixtureGovernanceGaps": [
+    {
+      "gap": "LP188.3/5/6/10/11 contained no protected boundary edge, consumer preview, safe fallback, or protected route fixture contract.",
+      "resolution": "Closed in this design contract from committed Census geometry, the LP153/LP188.11F4 ZIP authority and runtime resolver, and LP178 Talco/Goodrich fixtures. Values remain independently repository-verifiable."
+    }
+  ],
+  "executionPlan": {
+    "futureOwnerExecutionCount": 2,
+    "executions": [
+      {
+        "executionId": "W0-REMAINING-ARTIFACT-BYTES",
+        "mechanism": "direct authenticated GET batch",
+        "assertions": [
+          "CERTIFIED_ARTIFACT_STABILITY"
+        ],
+        "fixtureCount": 28,
+        "browser": false,
+        "timeoutBudgetMs": 120000
+      },
+      {
+        "executionId": "W0-REMAINING-PROTECTED-BROWSER",
+        "mechanism": "one protected Chromium mobile execution; no county selection",
+        "assertions": [
+          "COUNTY_BOUNDARY_ISOLATION",
+          "CONSUMER_RESULT_STABILITY",
+          "FALLBACK_BEHAVIOR_STABILITY",
+          "ROUTE_AWARENESS_STABILITY"
+        ],
+        "fixtureCount": 34,
+        "browser": true,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "timeoutBudgetMs": 300000
+      }
+    ],
+    "smallestSurfaceRationale": "Raw bytes need no UI; runtime semantics share one mobile execution without repeating the completed operational selection journey."
+  },
+  "reconciliation": {
+    "ingestionModel": "Append one structured assertionOutcome per newly executed family only after every fixture in that family passes.",
+    "requiredOutcomeShape": {
+      "assertionId": "<family>",
+      "outcome": "PASS",
+      "executed": true,
+      "evidenceChecks": "non-empty passed checks with evidenceReference"
+    },
+    "preserveAssertionOutcome": "OPERATIONAL_COUNTY_RESULT_STABILITY from evidence/lp18812/wave0-owner-execution-migration.json",
+    "wave0PassRule": "All six owned families have executed PASS outcomes and every existing fail-closed gate remains satisfied.",
+    "partialOrMissingResult": "PENDING"
+  }
+}
