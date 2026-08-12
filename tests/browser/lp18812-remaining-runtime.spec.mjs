@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { classifyBlockedMutation, validateEnvironment } from '../../tools/lp18812/statewide-validation-closure.mjs';
+import { consumerProhibitedCountyAbsent } from '../../tools/lp18812/consumer-result-stability.mjs';
 
 const fixtureContract=JSON.parse(fs.readFileSync('reports/lp18812/wave0-remaining-fixture-contract.json','utf8'));
 const OUTPUT='evidence/lp18812/wave0-remaining-runtime-owner.local.json';
@@ -21,6 +22,7 @@ test('owner executes only governed remaining protected runtime assertions',async
   const capture=async fixtureId=>{const screenshotReference=`evidence/lp18812/screenshots.local/${fixtureId}.png`;fs.mkdirSync('evidence/lp18812/screenshots.local',{recursive:true});await page.screenshot({path:screenshotReference,fullPage:false});return screenshotReference;};
   await page.route('**/*',route=>{const request=route.request(),method=request.method(); if(['POST','PUT','PATCH','DELETE'].includes(method)){const audit=classifyBlockedMutation(method,request.url(),protectedOrigin);blockedMutatingRequests.push(audit);productionMutationObserved||=audit.productionMutationObserved;return route.abort('blockedbyclient');} const url=new URL(request.url()); return url.origin===protectedOrigin?route.continue({headers:{...request.headers(),'CF-Access-Client-Id':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_ID,'CF-Access-Client-Secret':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET}}):route.continue();});
   await page.goto(process.env.GRIDLY_PROTECTED_URL,{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>window.gridlyLp0361cRuntimeCountyGeometryPackageLoader.load());
 
   for(const fixture of fixtures('COUNTY_BOUNDARY_ISOLATION')) {
     const result=await page.evaluate(({latitude,longitude})=>{const r=gridlyResolveCountyIdForCoordinate(latitude,longitude); return {countyId:r.countyId,resolutionCount:r.countyId?1:0};},fixture.input.coordinate);
@@ -30,10 +32,10 @@ test('owner executes only governed remaining protected runtime assertions',async
   }
   for(const fixture of fixtures('CONSUMER_RESULT_STABILITY')) {
     const before=await page.evaluate(()=>gridlyGetActiveCountyId());
-    const result=await page.evaluate(query=>{const r=window.resolveGridlyAwarenessAreaQuery(query),candidate=r.candidates?.[0]; return {...r,countyFips:candidate?.countyId?gridlyExtractCountyGeoid(GRIDLY_COUNTY_REGISTRY[candidate.countyId]):''};},fixture.input.query);
+    const result=await page.evaluate(query=>{const r=window.resolveGridlyAwarenessAreaQuery(query),candidate=r.candidates?.[0]; return {...r,countyFips:candidate?.countyId?gridlyExtractCountyGeoid(GRIDLY_COUNTY_REGISTRY[candidate.countyId]):'',candidateCountyFips:(r.candidates||[]).map(item=>item.countyId?gridlyExtractCountyGeoid(GRIDLY_COUNTY_REGISTRY[item.countyId]):'')};},fixture.input.query);
     const after=await page.evaluate(()=>gridlyGetActiveCountyId());
     const actual={resolverStatus:result.status==='RESOLVED_OPERATIONAL'?'single_match':result.status,resolved:result.status==='RESOLVED_OPERATIONAL',candidateCount:Number(result.candidates?.length??0),consumerCountyFips:String(result.countyFips||''),consumerCountyName:String(result.county||'')};
-    const expected=fixture.expectedResult, selectionApplied=before!==after, prohibitedCountyAbsent=!fixture.prohibitedResult.consumerCountyFipsOutside.includes(actual.consumerCountyFips);
+    const expected=fixture.expectedResult, selectionApplied=before!==after, prohibitedCountyAbsent=consumerProhibitedCountyAbsent(fixture,result.candidateCountyFips);
     const passed=actual.resolverStatus===expected.status&&actual.resolved===expected.resolved&&actual.candidateCount===expected.candidateCount&&actual.consumerCountyFips===expected.consumerCountyFips&&actual.consumerCountyName===expected.consumerCountyName&&prohibitedCountyAbsent&&!selectionApplied;
     observations.push({fixtureId:fixture.fixtureId,assertionId:fixture.assertionId,query:fixture.input.query,...actual,prohibitedCountyAbsent,selectionApplied,viewport:{width:390,height:844},screenshotReference:await capture(fixture.fixtureId),passed});
   }

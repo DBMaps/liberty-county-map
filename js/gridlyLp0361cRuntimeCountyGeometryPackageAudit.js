@@ -10,6 +10,12 @@
   let loadPromise = null;
   let lastLoadError = null;
 
+  function installRuntimeCountyGeometryPackage(pkg) {
+    if (!pkg || !Array.isArray(pkg.counties)) throw new Error("Invalid runtime county geometry package");
+    parsedPackageCache = Object.freeze(pkg);
+    return parsedPackageCache;
+  }
+
   async function fetchJson(path) {
     const response = await fetch(path, { cache: "force-cache" });
     if (!response || !response.ok) throw new Error(`Unable to load ${path}: ${response ? response.status : "no response"}`);
@@ -22,8 +28,7 @@
     lastLoadError = null;
     loadPromise = fetchJson(PACKAGE_PATH)
       .then((pkg) => {
-        parsedPackageCache = Object.freeze(pkg);
-        return parsedPackageCache;
+        return installRuntimeCountyGeometryPackage(pkg);
       })
       .catch((error) => {
         lastLoadError = error;
@@ -134,22 +139,22 @@
       pwaOfflineConfigured: true,
       capacitorWwwConfigured: true,
       androidPublicConfigured: true,
-      dormantLoaderAvailable: true,
+      dormantLoaderAvailable: false,
       parsedCacheLimit: PARSED_CACHE_LIMIT,
-      productionResolverIntegrated: false,
-      productionContainmentChanged: false,
+      productionResolverIntegrated: true,
+      productionContainmentChanged: true,
       implementationReadyForLp0361d: certificationPassed,
       implementationReadyForLp0362: false,
       stateWritesAttempted: false,
       storageWritesAttempted: false,
       runtimeActivationAttempted: false,
       mapMovementAttempted: false,
-      networkRefreshAttempted: false,
+      networkRefreshAttempted: true,
       notes: Object.freeze([
-        "LP036.1C provides tooling, packaging configuration, a dormant one-package loader, and audit reporting only.",
+        "LP188.12 activates the governed one-package loader for authoritative coordinate-to-county containment.",
         "LP139 fetches the LP138 contract only when this read-only audit is explicitly invoked; startup, caching, and production resolution are unchanged.",
         "The unchanged manifest has count/hash metadata; exact membership is verified from the package and contract, so manifest membership fields are deferred to a future authorized milestone.",
-        lastLoadError ? `Dormant loader last error: ${lastLoadError.message || String(lastLoadError)}` : "Dormant loader has not changed production county resolution."
+        lastLoadError ? `Runtime geometry loader last error: ${lastLoadError.message || String(lastLoadError)}` : "Runtime geometry loader is available to production county resolution."
       ]),
       blockers: Object.freeze(blockers)
     });
@@ -157,7 +162,12 @@
 
   window.gridlyLp0361cRuntimeCountyGeometryPackageLoader = Object.freeze({
     load: loadRuntimeCountyGeometryPackage,
+    install: installRuntimeCountyGeometryPackage,
+    getCandidateGeometries: (countyIds) => parsedPackageCache && Array.isArray(countyIds)
+      ? countyIds.map((countyId) => parsedPackageCache.counties.find((county) => county.countyId === countyId)).filter(Boolean)
+      : null,
     getState: () => Object.freeze({ cached: Boolean(parsedPackageCache), loading: Boolean(loadPromise), error: lastLoadError ? (lastLoadError.message || String(lastLoadError)) : null, parsedCacheLimit: PARSED_CACHE_LIMIT })
   });
   window.gridlyLp0361cRuntimeCountyGeometryPackageAudit = auditRuntimeCountyGeometryPackage;
+  loadRuntimeCountyGeometryPackage().catch(() => null);
 })();

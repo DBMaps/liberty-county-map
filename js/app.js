@@ -6626,6 +6626,43 @@ function gridlyCoordinateInsideCountyBounds(lat, lng, countyId = GRIDLY_DEFAULT_
     && numericLng <= Number(bounds.east);
 }
 
+function gridlyAuthoritativePointOnSegment(point, start, end) {
+  const cross = (point[1] - start[1]) * (end[0] - start[0]) - (point[0] - start[0]) * (end[1] - start[1]);
+  return Math.abs(cross) <= 1e-10
+    && point[0] >= Math.min(start[0], end[0]) - 1e-10 && point[0] <= Math.max(start[0], end[0]) + 1e-10
+    && point[1] >= Math.min(start[1], end[1]) - 1e-10 && point[1] <= Math.max(start[1], end[1]) + 1e-10;
+}
+
+function gridlyAuthoritativePointInRing(point, ring) {
+  if (!Array.isArray(ring) || ring.length < 4) return "outside";
+  let inside = false;
+  for (let index = 0, previous = ring.length - 1; index < ring.length; previous = index, index += 1) {
+    const current = ring[index], prior = ring[previous];
+    if (gridlyAuthoritativePointOnSegment(point, prior, current)) return "boundary";
+    if (((current[1] > point[1]) !== (prior[1] > point[1])) && point[0] < (prior[0] - current[0]) * (point[1] - current[1]) / (prior[1] - current[1]) + current[0]) inside = !inside;
+  }
+  return inside ? "inside" : "outside";
+}
+
+function gridlyAuthoritativePointInGeometry(lat, lng, geometry) {
+  if (!geometry || !Array.isArray(geometry.coordinates)) return "outside";
+  const point = [Number(lng), Number(lat)], polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.type === "MultiPolygon" ? geometry.coordinates : [];
+  let inside = false;
+  for (const polygon of polygons) {
+    const outer = gridlyAuthoritativePointInRing(point, polygon[0]);
+    if (outer === "boundary") return "boundary";
+    if (outer !== "inside") continue;
+    let excluded = false;
+    for (const hole of polygon.slice(1)) {
+      const position = gridlyAuthoritativePointInRing(point, hole);
+      if (position === "boundary") return "boundary";
+      if (position === "inside") excluded = true;
+    }
+    if (!excluded) inside = true;
+  }
+  return inside ? "inside" : "outside";
+}
+
 function gridlyResolveCountyIdForCoordinate(lat, lng) {
   const numericLat = Number(lat);
   const numericLng = Number(lng);
@@ -6638,17 +6675,19 @@ function gridlyResolveCountyIdForCoordinate(lat, lng) {
       matchedBoundsSource: null
     });
   }
-  const matches = Object.values(GRIDLY_COUNTY_REGISTRY)
+  const boundsMatches = Object.values(GRIDLY_COUNTY_REGISTRY)
     .filter((config) => config?.operational === true && gridlyCoordinateInsideCountyBounds(numericLat, numericLng, config.id));
-  const activeCountyId = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : GRIDLY_DEFAULT_COUNTY_ID;
-  const activeCountyMatch = matches.find((config) => config?.id === activeCountyId) || null;
-  const selected = activeCountyMatch || matches[0] || null;
+  const geometryRecords = typeof window !== "undefined" ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader?.getCandidateGeometries(boundsMatches.map((config) => config.id)) : null;
+  const polygonMatches = Array.isArray(geometryRecords) ? geometryRecords.filter((record) => gridlyAuthoritativePointInGeometry(numericLat, numericLng, record.geometry) === "inside") : [];
+  const selected = polygonMatches.length === 1 ? GRIDLY_COUNTY_REGISTRY[polygonMatches[0].countyId] : null;
   return Object.freeze({
     countyId: selected?.id || null,
     state: selected?.state || null,
     coordinateCountyResolutionAvailable: Object.keys(gridlyGetAvailableCountyAwarenessBounds()).length > 0,
     coordinateInsideSupportedCounty: Boolean(selected),
-    matchedBoundsSource: selected ? (gridlyGetAvailableCountyAwarenessBounds()[selected.id]?.source || null) : null
+    matchedBoundsSource: selected ? (gridlyGetAvailableCountyAwarenessBounds()[selected.id]?.source || null) : null,
+    authoritativeGeometryAvailable: Array.isArray(geometryRecords) && geometryRecords.length === boundsMatches.length,
+    ambiguousCountyResolution: polygonMatches.length > 1
   });
 }
 
