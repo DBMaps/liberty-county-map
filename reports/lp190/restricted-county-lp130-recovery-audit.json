@@ -358,11 +358,41 @@
     "operationalCountyCount": 243,
     "restrictedCountyCount": 11,
     "files": {
-      "js/app.js": "70f937f0f319efcf4445897cc3bfcbd8f728ec7f5efd361486ca71396e70517f",
-      "assets/package-registry/runtime-package-registry.json": "0a1f81b8210899c17ec2c7a134378283bf86fd1e2ac60c1168aede536369b912",
-      "js/gridlyPackageRegistry.js": "a2e148f4b400ca6ba152ba03c758048bb642e1f489946efc702ddd1c2f523839",
-      "assets/location-resolution/gridly-authoritative-county-geometry-v1.json": "28b7d926975a8d7201892f61b6508cd3c7a6b78006c0e62a44e457548c1aab1d",
-      "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json": "ab34da832ef7bff95c6393606a52a567d845ebab06b2cb0b686c0c034e080527"
+      "js/app.js": {
+        "expectedGitBlob": "0daeacc4b81180d6c417104bb17455bfd7ea7859",
+        "actualGitBlob": "0daeacc4b81180d6c417104bb17455bfd7ea7859",
+        "expectedCanonicalBlobContentSha256": "70f937f0f319efcf4445897cc3bfcbd8f728ec7f5efd361486ca71396e70517f",
+        "actualCanonicalBlobContentSha256": "70f937f0f319efcf4445897cc3bfcbd8f728ec7f5efd361486ca71396e70517f",
+        "pass": true
+      },
+      "assets/package-registry/runtime-package-registry.json": {
+        "expectedGitBlob": "62904da64e325e6c59de040c2af9f7a1bbdd3ba6",
+        "actualGitBlob": "62904da64e325e6c59de040c2af9f7a1bbdd3ba6",
+        "expectedCanonicalBlobContentSha256": "0a1f81b8210899c17ec2c7a134378283bf86fd1e2ac60c1168aede536369b912",
+        "actualCanonicalBlobContentSha256": "0a1f81b8210899c17ec2c7a134378283bf86fd1e2ac60c1168aede536369b912",
+        "pass": true
+      },
+      "js/gridlyPackageRegistry.js": {
+        "expectedGitBlob": "eab040b29aafd38ee118dbac5b81bb407fc29f4a",
+        "actualGitBlob": "eab040b29aafd38ee118dbac5b81bb407fc29f4a",
+        "expectedCanonicalBlobContentSha256": "a2e148f4b400ca6ba152ba03c758048bb642e1f489946efc702ddd1c2f523839",
+        "actualCanonicalBlobContentSha256": "a2e148f4b400ca6ba152ba03c758048bb642e1f489946efc702ddd1c2f523839",
+        "pass": true
+      },
+      "assets/location-resolution/gridly-authoritative-county-geometry-v1.json": {
+        "expectedGitBlob": "af011175d256852a73166ed6783755af9fba3ff3",
+        "actualGitBlob": "af011175d256852a73166ed6783755af9fba3ff3",
+        "expectedCanonicalBlobContentSha256": "28b7d926975a8d7201892f61b6508cd3c7a6b78006c0e62a44e457548c1aab1d",
+        "actualCanonicalBlobContentSha256": "28b7d926975a8d7201892f61b6508cd3c7a6b78006c0e62a44e457548c1aab1d",
+        "pass": true
+      },
+      "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json": {
+        "expectedGitBlob": "9b809639c3560591c3bece99d3ab8afdb9e8ffa2",
+        "actualGitBlob": "9b809639c3560591c3bece99d3ab8afdb9e8ffa2",
+        "expectedCanonicalBlobContentSha256": "ab34da832ef7bff95c6393606a52a567d845ebab06b2cb0b686c0c034e080527",
+        "actualCanonicalBlobContentSha256": "ab34da832ef7bff95c6393606a52a567d845ebab06b2cb0b686c0c034e080527",
+        "pass": true
+      }
     },
     "systemsUnchanged": [
       "crossing production packages",
@@ -373,7 +403,14 @@
       "Hazard Lifecycle",
       "Alert Generation",
       "Shared Reports"
-    ]
+    ],
+    "identitySource": "CANONICAL_GIT_BLOB",
+    "workingTreeBytes": "IGNORED",
+    "baselineCommit": "7d7eeda31e6eff7db8ef89d9502d908a4a8dec71",
+    "comparisonCommit": "HEAD",
+    "comparisonCommitBehavior": "Resolved by the verifier at execution time; the committed canonical Git blob at HEAD is compared with the pinned baseline blob.",
+    "gitObjectFormat": "sha1",
+    "canonicalBlobContentDigest": "sha256 (explicitly distinct from Git object identity)"
   },
   "evidenceReferences": [
     "evidence/lp130/final-reconciliation.json",
