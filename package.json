@@ -435,6 +435,8 @@
     "apply:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --apply",
     "verify:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --verify",
     "test:lp189": "node --test tests/lp189-statewide-runtime-activation-guarded.test.mjs tests/lp1895-statewide-boundary-fallback-startup.test.mjs",
-    "test:lp1896": "node --test tests/lp1896-28-county-production-rail-runtime-verification.test.mjs"
+    "test:lp1896": "node --test tests/lp1896-28-county-production-rail-runtime-verification.test.mjs",
+    "test:lp190": "node --test tests/lp190-restricted-county-recovery-audit.test.mjs",
+    "verify:lp190": "node tools/lp190-verify-restricted-county-recovery-audit.mjs"
   }
 }
