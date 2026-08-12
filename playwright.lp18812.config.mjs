@@ -6,5 +6,5 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: 'line',
-  use: { browserName: 'chromium', headless: true, serviceWorkers: 'block', trace: 'off', video: 'off' }
+  use: { browserName: 'chromium', channel: 'chromium', headless: true, serviceWorkers: 'block', trace: 'off', video: 'off' }
 });
