@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { isDirectExecution } from './verify-certified-artifacts.mjs';
 import { contract, reconcile, validateMigration } from './statewide-validation-closure.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const FIXTURE_PATH='reports/lp18812/wave0-remaining-fixture-contract.json';
@@ -41,4 +42,4 @@ export function ingestRemainingEvidence({artifactPath=DEFAULT_ARTIFACT_PATH,runt
   const input={...partial,assertionOutcomes:[...outcomes,...migration.assertionOutcomes]};
   const result=reconcile(input,c); fs.writeFileSync(path.resolve(ROOT,resultPath),canonical(result),{mode:0o600}); return result;
 }
-if(import.meta.url===`file://${process.argv[1]}`){try{const result=ingestRemainingEvidence({artifactPath:process.argv[2]||DEFAULT_ARTIFACT_PATH,runtimePath:process.argv[3]||DEFAULT_RUNTIME_PATH}); console.log(`LP188.12 remaining evidence reconciled: ${result.wave0Result}`);}catch(error){console.error(`LP188.12 remaining evidence rejected: ${error.message}`);process.exitCode=1;}}
+if(isDirectExecution(import.meta.url,process.argv[1])){try{const result=ingestRemainingEvidence({artifactPath:process.argv[2]||DEFAULT_ARTIFACT_PATH,runtimePath:process.argv[3]||DEFAULT_RUNTIME_PATH}); console.log(`LP188.12 remaining evidence reconciled: ${result.wave0Result}`);}catch(error){console.error(`LP188.12 remaining evidence rejected: ${error.message}`);process.exitCode=1;}}
