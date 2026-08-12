@@ -9,6 +9,15 @@ test('Wave 0 uses the current V858/V950 first-run consumer journey',()=>{
   for(const removedSelector of ['gridlyWelcomeCountySelect','gridlyWelcomeHomeAreaSelect']) assert.doesNotMatch(source,new RegExp(removedSelector));
 });
 
+test('every Wave 0 fixture uses the canonical governed mobile portrait viewport',()=>{
+  const source=fs.readFileSync(new URL('./browser/lp18812-wave0.spec.mjs',import.meta.url),'utf8');
+  assert.match(source,/const GOVERNED_MOBILE_PORTRAIT_VIEWPORT=Object\.freeze\(\{width:390,height:844\}\)/);
+  assert.match(source,/browser\.newContext\(\{viewport:GOVERNED_MOBILE_PORTRAIT_VIEWPORT\}\)/);
+  assert.match(source,/expect\(page\.viewportSize\(\)\)\.toEqual\(GOVERNED_MOBILE_PORTRAIT_VIEWPORT\)/);
+  assert.doesNotMatch(source,/browser\.newContext\(\s*\)/);
+  assert.doesNotMatch(source,/devices\[/);
+});
+
 test('all 28 exact operational fixtures provide governed current-resolver ZIP input',()=>{
   const fixtures=contract().governedFixtures.filter(({assertionId})=>assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY');
   assert.equal(fixtures.length,28);
