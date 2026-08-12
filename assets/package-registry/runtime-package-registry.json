@@ -1,354 +1,2719 @@
-﻿{
-    "registryType":  "Runtime Package Registry",
-    "generatedAt":  "2026-06-27T13:30:06.7126797-05:00",
-    "packageTypes":  [
-                         {
-                             "packageType":  "Community",
-                             "packageCount":  28
-                         },
-                         {
-                             "packageType":  "Crossing",
-                             "packageCount":  28
-                         }
-                     ],
-    "packages":  [
-                     {
-                         "packageType":  "Community",
-                         "county":  "Liberty",
-                         "status":  "operational",
-                         "manifest":  "Community-Packages/liberty/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Montgomery",
-                         "status":  "operational",
-                         "manifest":  "Community-Packages/montgomery/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "San Jacinto",
-                         "status":  "operational",
-                         "manifest":  "Community-Packages/san-jacinto/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Chambers",
-                         "status":  "roads_extracted",
-                         "manifest":  "Community-Packages/chambers/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Jefferson",
-                         "status":  "building",
-                         "manifest":  "Community-Packages/jefferson/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Hardin",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/hardin/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Polk",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/polk/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Walker",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/walker/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Harris",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/harris/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Orange",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/orange/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Jasper",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/jasper/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Newton",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/newton/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Tyler",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/tyler/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Galveston",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/galveston/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Brazoria",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/brazoria/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Fort Bend",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/fort-bend/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Waller",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/waller/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Austin",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/austin/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Washington",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/washington/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Brazos",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/brazos/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Grimes",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/grimes/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Wharton",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/wharton/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Colorado",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/colorado/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Fayette",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/fayette/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Lavaca",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/lavaca/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Jackson",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/jackson/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Matagorda",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/matagorda/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Community",
-                         "county":  "Calhoun",
-                         "status":  "roads_complete",
-                         "manifest":  "Community-Packages/calhoun/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Austin",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/austin/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Brazoria",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/brazoria/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Brazos",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/brazos/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Calhoun",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/calhoun/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Chambers",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/chambers/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Colorado",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/colorado/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Fayette",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/fayette/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Fort Bend",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/fort-bend/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Galveston",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/galveston/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Grimes",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/grimes/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Hardin",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/hardin/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Harris",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/harris/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Jackson",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/jackson/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Jasper",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/jasper/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Jefferson",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/jefferson/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Lavaca",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/lavaca/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Liberty",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/liberty/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Matagorda",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/matagorda/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Montgomery",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/montgomery/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Newton",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/newton/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Orange",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/orange/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Polk",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/polk/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "San Jacinto",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/san-jacinto/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Tyler",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/tyler/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Walker",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/walker/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Waller",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/waller/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Washington",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/washington/package-manifest.json"
-                     },
-                     {
-                         "packageType":  "Crossing",
-                         "county":  "Wharton",
-                         "status":  "manufactured",
-                         "manifest":  "Crossing-Packages/wharton/package-manifest.json"
-                     }
-                 ],
-    "totalPackageTypes":  2,
-    "totalPackages":  56
+{
+  "registryType": "Runtime Package Registry",
+  "generatedAt": "2026-06-27T13:30:06.7126797-05:00",
+  "packageTypes": [
+    {
+      "packageType": "Community",
+      "packageCount": 243
+    },
+    {
+      "packageType": "Crossing",
+      "packageCount": 28
+    }
+  ],
+  "packages": [
+    {
+      "packageType": "Community",
+      "county": "Liberty",
+      "status": "operational",
+      "manifest": "Community-Packages/liberty/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Montgomery",
+      "status": "operational",
+      "manifest": "Community-Packages/montgomery/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "San Jacinto",
+      "status": "operational",
+      "manifest": "Community-Packages/san-jacinto/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Chambers",
+      "status": "roads_extracted",
+      "manifest": "Community-Packages/chambers/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jefferson",
+      "status": "building",
+      "manifest": "Community-Packages/jefferson/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hardin",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/hardin/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Polk",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/polk/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Walker",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/walker/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Harris",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/harris/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Orange",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/orange/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jasper",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/jasper/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Newton",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/newton/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Tyler",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/tyler/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Galveston",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/galveston/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Brazoria",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/brazoria/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Fort Bend",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/fort-bend/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Waller",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/waller/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Austin",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/austin/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Washington",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/washington/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Brazos",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/brazos/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Grimes",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/grimes/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wharton",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/wharton/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Colorado",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/colorado/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Fayette",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/fayette/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lavaca",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/lavaca/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jackson",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/jackson/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Matagorda",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/matagorda/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Calhoun",
+      "status": "roads_complete",
+      "manifest": "Community-Packages/calhoun/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Austin",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/austin/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Brazoria",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/brazoria/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Brazos",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/brazos/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Calhoun",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/calhoun/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Chambers",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/chambers/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Colorado",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/colorado/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Fayette",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/fayette/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Fort Bend",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/fort-bend/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Galveston",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/galveston/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Grimes",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/grimes/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Hardin",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/hardin/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Harris",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/harris/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Jackson",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/jackson/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Jasper",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/jasper/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Jefferson",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/jefferson/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Lavaca",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/lavaca/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Liberty",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/liberty/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Matagorda",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/matagorda/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Montgomery",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/montgomery/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Newton",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/newton/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Orange",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/orange/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Polk",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/polk/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "San Jacinto",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/san-jacinto/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Tyler",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/tyler/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Walker",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/walker/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Waller",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/waller/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Washington",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/washington/package-manifest.json"
+    },
+    {
+      "packageType": "Crossing",
+      "county": "Wharton",
+      "status": "manufactured",
+      "manifest": "Crossing-Packages/wharton/package-manifest.json"
+    },
+    {
+      "packageType": "Community",
+      "county": "Anderson",
+      "countyFips": "48001",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48001.json",
+      "sha256": "2c9d257820e2503cb5902f1dc2e2d4cb48cd95726b0ff5d630d62afc2cf8c34f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Andrews",
+      "countyFips": "48003",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48003.json",
+      "sha256": "0c0b27f15b77af0bd27e1ac9b55877357e6df5f9ce1359eef8ce8d1210a01aa9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Angelina",
+      "countyFips": "48005",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48005.json",
+      "sha256": "9b01dbe42bbc224147bdf3d82e79800c40dc4b8914d542cf96b60be7953e858d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Aransas",
+      "countyFips": "48007",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48007.json",
+      "sha256": "6991b827bc0d54380198e705be674211d5cc36ad74c940991d372a2a9ff16548",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Archer",
+      "countyFips": "48009",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48009.json",
+      "sha256": "f270590cd2f20ce0d1095836d0c43750086b522c2aa1ede91a4b277b6f9ddbf7",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Armstrong",
+      "countyFips": "48011",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48011.json",
+      "sha256": "0c94ee0dd27bfd5effaeae0e43985346076f4bf2d82c76a9d6aec753c21e580c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Atascosa",
+      "countyFips": "48013",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48013.json",
+      "sha256": "dfc80a34dedb4be9b6ca310e262a516b23eb1d5e47fb9a0788c12cdb12bd0792",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bailey",
+      "countyFips": "48017",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48017.json",
+      "sha256": "76fda034a54602184a3d389a38a0daa919d94e3aa928eeffbc0fcabde0b185a4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bandera",
+      "countyFips": "48019",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48019.json",
+      "sha256": "e6ff55785496fdb9a009bd3b4f6b8bda402e5e4392566528a0b4a5a6cd7e3539",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bastrop",
+      "countyFips": "48021",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48021.json",
+      "sha256": "e68ffba5c9c7c523e4234466a0ec1f9f173b33779846e52b2a9e6113f4f87268",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Baylor",
+      "countyFips": "48023",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48023.json",
+      "sha256": "e6595b7f7f675799ecc2b57b68adeb2c31e37b130f61f134ee4837d61743b654",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bee",
+      "countyFips": "48025",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48025.json",
+      "sha256": "5262385f728c9d001383e7e2fcba5d8d86b926179e815319f91c415addbc5850",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bell",
+      "countyFips": "48027",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48027.json",
+      "sha256": "5c3981d27e3c5a938a9007f77ffbec3d6a9fb0ff6759aa06d6aa00f6e2b1d4d2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bexar",
+      "countyFips": "48029",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48029.json",
+      "sha256": "610174dcdcb0ae0efc5a250812c682a34005800f2394ed0de62af840576daf75",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Blanco",
+      "countyFips": "48031",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48031.json",
+      "sha256": "014f080cbe78ec20d7dde82c5fb31b8580269e89547af8e54a97fd1d08a4ac74",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Borden",
+      "countyFips": "48033",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48033.json",
+      "sha256": "1e6c4af1cc48d4bb0770aa82ee1cb2692238c9d2fb6702a622e34d679040f6df",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bosque",
+      "countyFips": "48035",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48035.json",
+      "sha256": "79d180f61230cbed3a97e5ce38984c206a31c77eb491344e210e6cf3494243af",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Bowie",
+      "countyFips": "48037",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48037.json",
+      "sha256": "19c20dce2b93d649ff06c073dbfc764eb0acce88c3094913445e7a772aa04bc7",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Brewster",
+      "countyFips": "48043",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48043.json",
+      "sha256": "b0e0bd146787009f58c0f39247208e7501eb7dfd97ada5297bc0f33db18ad74f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Briscoe",
+      "countyFips": "48045",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48045.json",
+      "sha256": "2401ef90f9deebd29be2e8668006872fe9a742bcee0ca316bd4887475f76124f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Brooks",
+      "countyFips": "48047",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48047.json",
+      "sha256": "9da3d9b6e8655f3f9ec12a3b967c1a7dff5c5472c80c2ae6ade475d3658f8ea9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Brown",
+      "countyFips": "48049",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48049.json",
+      "sha256": "692abef12750c771bbe102e6efc03052a1a8aa44a40c7ecf38b4509339c391a2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Burleson",
+      "countyFips": "48051",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48051.json",
+      "sha256": "2113705570b15fee5196bb7453848803cb3b4957366f69a5e384b999991b5cc1",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Burnet",
+      "countyFips": "48053",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48053.json",
+      "sha256": "6c9a967a3a8c8249e43c86dea9ff2b65f25351ed339448eb15782d4645614b04",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Caldwell",
+      "countyFips": "48055",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48055.json",
+      "sha256": "4569e16e959bcc57ea76d0a61db2a752a59241891e1591e3d56a968f256a9ed3",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Callahan",
+      "countyFips": "48059",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48059.json",
+      "sha256": "03870040d134b3aff3138b79a05b37cbc8f88df42b1a36295202d372fa58fcec",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Camp",
+      "countyFips": "48063",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48063.json",
+      "sha256": "d10ea2eb229669a579c73e6b3301cacad8b8d690104c1388ee80e05f2c15e250",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Carson",
+      "countyFips": "48065",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48065.json",
+      "sha256": "fd104be1d455b11999e2b71ae49242908925aaa417201bf0f4ea6c440d0f47ba",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cass",
+      "countyFips": "48067",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48067.json",
+      "sha256": "f09c1f8eff9fac7c9ef8c0f688adf8d147e78a5eb98f261cf31d648ddcf7aa7a",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Castro",
+      "countyFips": "48069",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48069.json",
+      "sha256": "48cc74c108ddc230fd74c0dd1eb7c20c05d596e746498e1ca7f5e1410998227b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Childress",
+      "countyFips": "48075",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48075.json",
+      "sha256": "1e1fa85b79d22a984daec2d9bdada5be67071f73db93f6e8c3deb270eba93795",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Clay",
+      "countyFips": "48077",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48077.json",
+      "sha256": "8b944d0860c298a1e3b0d8551182e1ed9ce77195db161fa607da7d13cfb0e069",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cochran",
+      "countyFips": "48079",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48079.json",
+      "sha256": "3d3a2c7ccc15c083ee6eb3e534ad46af539bea19875c5f261b65cf598811fd28",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Coke",
+      "countyFips": "48081",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48081.json",
+      "sha256": "b61b89e39173d0631609e12d1d2e0fd94b4c0d2ac7037857246f607c7ab31808",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Coleman",
+      "countyFips": "48083",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48083.json",
+      "sha256": "e170774b3bde80e3fce3454506aa8ea6b48b5a4e1764dde6a676eb7d8874ad06",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Collin",
+      "countyFips": "48085",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48085.json",
+      "sha256": "b3003d811ba636d2f6f432fe9599a51aae12c165ab58fbe7e040f94785d9da71",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Collingsworth",
+      "countyFips": "48087",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48087.json",
+      "sha256": "46b2b9e4ece2a62e0c5c0e22695610c737d7216e81bc257ad5abac985a0e5f36",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Comal",
+      "countyFips": "48091",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48091.json",
+      "sha256": "4735e72ad0b7dabe02c0cbbebcabe0ce811721f0e17a326b1df44820cb617c2a",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Comanche",
+      "countyFips": "48093",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48093.json",
+      "sha256": "30559412cd944ce1430acefa396289ac1d4e0d6f99761dc447584e96ba9744ad",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Concho",
+      "countyFips": "48095",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48095.json",
+      "sha256": "201d497d7be27d61cb7e57370970e49826761059557ddab2eb2b83adaf1a5e4e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cooke",
+      "countyFips": "48097",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48097.json",
+      "sha256": "1f908a390308f11f4c258e4ed642a60aa9cabe24d7c7480ace4feb31ce9efcbb",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Coryell",
+      "countyFips": "48099",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48099.json",
+      "sha256": "54fd2a38afb4bf16745c8b705616fba944190b1c94acde4bc36fb171c109a254",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cottle",
+      "countyFips": "48101",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48101.json",
+      "sha256": "c383abca37fb8d9cac4dfef33f398b4a99be6eb223fd2a85e74b3fdb2672d92c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Crane",
+      "countyFips": "48103",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48103.json",
+      "sha256": "31fd5eb063137359ea623388046c4454a4d6de99c1990a9add5019fd8ce4e107",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Crockett",
+      "countyFips": "48105",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48105.json",
+      "sha256": "683672241d5bbd701290ad2588c40a159fede36693f5a269e44d66e43fd446ef",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Crosby",
+      "countyFips": "48107",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48107.json",
+      "sha256": "b6007641498b2a63a9070384c68c306a0a11506ff5e2f708828d5c333668531c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Culberson",
+      "countyFips": "48109",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48109.json",
+      "sha256": "7d0f65ddbd60b161a7feecbc532b643beb5b5bdb44d6f839b12a4db6488e6df6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Dallam",
+      "countyFips": "48111",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48111.json",
+      "sha256": "d844df8b7b6822fdd34fe3d94d23f949556898b75776fc58426299bdded06c1f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Dawson",
+      "countyFips": "48115",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48115.json",
+      "sha256": "74737b79ccbea05645d48ff84f8c6a2a0b4af60d35b01cd2afc2ccd2a68c61bc",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Deaf Smith",
+      "countyFips": "48117",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48117.json",
+      "sha256": "6fe0c85f10cdc3c52b66b4c72668617c7f0a3d8f4abc292a2f5a938eb22ef411",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Delta",
+      "countyFips": "48119",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48119.json",
+      "sha256": "557c3d245293517213624e691d1b137e2845e79de30f689a94ef7310d4bd9560",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "DeWitt",
+      "countyFips": "48123",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48123.json",
+      "sha256": "c6a235afbb89108524da211aba5f6f6fba493fca2c387e5c5e4db00cea1c7e1b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Dickens",
+      "countyFips": "48125",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48125.json",
+      "sha256": "94082ee72912a58cf9bd9deac78e180f8b1d623b7225772e81147209dc338855",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Dimmit",
+      "countyFips": "48127",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48127.json",
+      "sha256": "21a8db3427c92fec3857b3dd9009ae36fa6848ae609d482c933ac36893ff2def",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Donley",
+      "countyFips": "48129",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48129.json",
+      "sha256": "07ab8e968c70cc2f27fbbacf231cb4beba9dc2a84486bc7ae76dd169b27df190",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Duval",
+      "countyFips": "48131",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48131.json",
+      "sha256": "b73faa8c3794ee8782c5803b39664cdc7eedf06d33f4ce241ad7838155882f0f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Eastland",
+      "countyFips": "48133",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48133.json",
+      "sha256": "ea07f366904890814997f7c4a68e39c7ea7dcab91a7a2b529268b462be7845c1",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Edwards",
+      "countyFips": "48137",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48137.json",
+      "sha256": "3a312d45dc0b2f34950b6af8279ff0f53aac3d1434b53e11f1efae8ba115eb1e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Ellis",
+      "countyFips": "48139",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48139.json",
+      "sha256": "205f2db4d42eb5c3ea8409637966f233823a9df371a716017cee1bb1f8175987",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "El Paso",
+      "countyFips": "48141",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48141.json",
+      "sha256": "711a3a20b1d23735ca117970ba9dba0fa065ca658d1836ee6d31ac4ccdce24d5",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Erath",
+      "countyFips": "48143",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48143.json",
+      "sha256": "4e9addfbc19cb8e295b7e791f64a79a8c26956f7ba2b453f6457f649c80069ec",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Falls",
+      "countyFips": "48145",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48145.json",
+      "sha256": "7feacfd242a83e9aeb8d61217d03b19dc8e50406e942c61e82c57adbe613efca",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Fannin",
+      "countyFips": "48147",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48147.json",
+      "sha256": "ddb40116fb9085058501ecf80889c4047f59e4c2f3d8ab8a2e06df25d5f26d38",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Fisher",
+      "countyFips": "48151",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48151.json",
+      "sha256": "100ea6731faac8fb14029b5eba95ba72a4a02ee8f0e5e0ce97b1220cdad4f3c4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Floyd",
+      "countyFips": "48153",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48153.json",
+      "sha256": "96c16374c2bfb1e1231f9de953529c35dd1454708d248f41530b56f8cbc896a1",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Foard",
+      "countyFips": "48155",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48155.json",
+      "sha256": "9d7c04530329c253a46bf1aa6aa04515a177c5457b066793d5af4e2493f730a4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Franklin",
+      "countyFips": "48159",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48159.json",
+      "sha256": "19b77882339533d96e10252933391143f42f6af0316ee7eaecb69da2c6dcca4c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Freestone",
+      "countyFips": "48161",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48161.json",
+      "sha256": "7c9489e42a0ac9c58224837cd03748974c8160ae7fc603d5a8ef9308850d1cfe",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Frio",
+      "countyFips": "48163",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48163.json",
+      "sha256": "09b9e4baddd1b6942e77aef76926dc516f1a988d41f49301134edf5c959dfeb8",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Gaines",
+      "countyFips": "48165",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48165.json",
+      "sha256": "36b1ad87cbd1b47e64ae50a02560224352199cc62a7dbf6d5239fead8cf94aec",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Garza",
+      "countyFips": "48169",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48169.json",
+      "sha256": "fb9de1092ac1453516b3741c84bab4df8f27f84b6c8485b66b36061d02995de6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Gillespie",
+      "countyFips": "48171",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48171.json",
+      "sha256": "df52e663ae930f0de29163733ee531fe15acb0a57eb747cdd5f444d6d0f328a9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Glasscock",
+      "countyFips": "48173",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48173.json",
+      "sha256": "d74758345c84cd8ff6e76d20cdfbcfa8ada7f86637d8c0ac59d886974b1c4d2e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Goliad",
+      "countyFips": "48175",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48175.json",
+      "sha256": "7a0966afe7abd2f16c4cf51f9980f830f3bd945d7b81b36ec905109f1d8ecc19",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Gonzales",
+      "countyFips": "48177",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48177.json",
+      "sha256": "3601baf937e3a84d14244723d53b0347b81f5ac50dd332ea56085989046b0bb5",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Gray",
+      "countyFips": "48179",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48179.json",
+      "sha256": "f4b6a18c36b83dd79ebc8544ff4a3a136c4242a76e893221e305ee8e006ad7c2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Grayson",
+      "countyFips": "48181",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48181.json",
+      "sha256": "cb49d6adf845e2ff037eeb2a5ebe8b300a800d049ee695ecf00b653e9633d1a8",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Gregg",
+      "countyFips": "48183",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48183.json",
+      "sha256": "8e1376865eeee531f73963421110c08b942b0060e07e030682a503a7abcfe481",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Guadalupe",
+      "countyFips": "48187",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48187.json",
+      "sha256": "aba7b1e604cb17425b54a8c105fae5b8836782730a737802db9f3c1141151db2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hale",
+      "countyFips": "48189",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48189.json",
+      "sha256": "c98c23b3973e1eb217fa2ea649447e94adb649209ec3e1e51bfc468b001212c0",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hall",
+      "countyFips": "48191",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48191.json",
+      "sha256": "c9ae084c2b666d70df17f5ccc8f7e65e2d14f8f8fe239f99957c9d001048ba23",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hamilton",
+      "countyFips": "48193",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48193.json",
+      "sha256": "710a1c8359dac547e755d4e75648b93b1b974815d01cfa1cd8e5cdcf8219a817",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hansford",
+      "countyFips": "48195",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48195.json",
+      "sha256": "e12753d517e1eb9c92d4a0b4024560dc5fcdfb268ab4bb32688a5d8b90181b93",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hardeman",
+      "countyFips": "48197",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48197.json",
+      "sha256": "0422815ed34693b4e88bada22a26f2b2a5e2f9ca1d766221b18ba82303dcbea6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Harrison",
+      "countyFips": "48203",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48203.json",
+      "sha256": "9853a079b39ee86406a99c7da2f6525a9f3906e7ab1f47f6504f636c7c1e7719",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hartley",
+      "countyFips": "48205",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48205.json",
+      "sha256": "55590fcb91f81ee541279858b30e5e0153f861adba69b92cb0e2b06c62b0af71",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Haskell",
+      "countyFips": "48207",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48207.json",
+      "sha256": "bc74fec81dbb117fc1aa6f638d1dfb163afb3a6a2ecbe1402027d380e62b16ad",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hays",
+      "countyFips": "48209",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48209.json",
+      "sha256": "ebdfad740dce7e832dc2c86614aa043ae934f8de76bdb9df3202c6ec9ed437e0",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hemphill",
+      "countyFips": "48211",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48211.json",
+      "sha256": "ec731e0bccbcc8473b10aa04968e2e5da35a854eccb5f3ecb98a022cfeacc16e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Henderson",
+      "countyFips": "48213",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48213.json",
+      "sha256": "2bc20d997a801a17d8d1e0b81a529f5249dba9cdfd997271d76ac0f66f41f011",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hidalgo",
+      "countyFips": "48215",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48215.json",
+      "sha256": "8a55534fa050575845e5c188446fac95ba7782f83786940cffd84fdfd9b40947",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hill",
+      "countyFips": "48217",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48217.json",
+      "sha256": "292951e467f140ebba29c11b1553010e895a1e9fda2ecabb576eaa858d66d429",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hockley",
+      "countyFips": "48219",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48219.json",
+      "sha256": "23fa75f499831fc7618fef6d980d676167e4b0ab73ee0f7ab405c3a828b12563",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hood",
+      "countyFips": "48221",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48221.json",
+      "sha256": "e030a2b11dbe60974ec9660d9e55fbb4dd624d29e7159b5a3c3ff508d87d2c18",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hopkins",
+      "countyFips": "48223",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48223.json",
+      "sha256": "d7aa009da6fdfd77aa420493aca52b567cda9bf9323111cdc8c3ae6c2806db61",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Houston",
+      "countyFips": "48225",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48225.json",
+      "sha256": "445527fbaff03fd263ff0c1c6465028489d42e2eecb88086aa45b0691fdbef29",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Howard",
+      "countyFips": "48227",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48227.json",
+      "sha256": "a1c5350233bf7b42909cdc1c2c0eb04504b83783d737abfc0b3e524904802d7d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hunt",
+      "countyFips": "48231",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48231.json",
+      "sha256": "5dcdf8d7645bec976cb06716c924684ff122003a68d9ad0f64b222d97d9ec02e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hutchinson",
+      "countyFips": "48233",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48233.json",
+      "sha256": "2517f89fca277ef668025dc2fd663b4554b35d35d339ecbf93c8a4976e545205",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Irion",
+      "countyFips": "48235",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48235.json",
+      "sha256": "35afa1bbd5487cf333bdbf2498f375ad5d3a0cdff439bed0f46b241c5fdc783b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jack",
+      "countyFips": "48237",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48237.json",
+      "sha256": "839c4aee0fe3d1fd91755e9dfe83da9e5619a0f7f545e98c6778b312a8952b56",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jeff Davis",
+      "countyFips": "48243",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48243.json",
+      "sha256": "78a5a778a5764faf39ba5dacbabd8a8e2a00bb8c180b7970419851bc157c1bc2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jim Hogg",
+      "countyFips": "48247",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48247.json",
+      "sha256": "b910c8b4f9b778a41f8aa003e0d11e62d74a7ca0eaf891af0ef7a5106c391469",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jim Wells",
+      "countyFips": "48249",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48249.json",
+      "sha256": "809dbeea3a84f305b41abd622e5983533b2b96486ef6cdf0653942cd5917c2f6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Johnson",
+      "countyFips": "48251",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48251.json",
+      "sha256": "35a06799dad3cd6c6710642eedf3de1a4955db4a4f5cb297056b96e75afad26c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Jones",
+      "countyFips": "48253",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48253.json",
+      "sha256": "926529fea554c2492c9fd43c0389d9e2fb65b69bc30168c87d06baec3d3fc471",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Karnes",
+      "countyFips": "48255",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48255.json",
+      "sha256": "1b9a20b6463da0add33c9eb57586e99fc6d1b2d63e2aab5a7b4ace449c8e1b7e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kaufman",
+      "countyFips": "48257",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48257.json",
+      "sha256": "3da87ec5deb25c007e1a822bb1c32b8077d8740bc523f1bd24a59957427ec7e6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kendall",
+      "countyFips": "48259",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48259.json",
+      "sha256": "73a5258c68a39063b8ce2dcfae84b49862c7fe20828fdf5971007c181ef4a164",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kenedy",
+      "countyFips": "48261",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48261.json",
+      "sha256": "4a27c4a2dd3f95518bd5ad87eb0cd41573cd48884219e890bf4f754aa32a5de9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kent",
+      "countyFips": "48263",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48263.json",
+      "sha256": "a4c94f1852ef980ed60ef064486700c07f65489b2d9c4589a70331c622e3d407",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kerr",
+      "countyFips": "48265",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48265.json",
+      "sha256": "2203e5180f1ee74a17e248f415e4835d5956b451f5b3ce7ae8eec92562672339",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kimble",
+      "countyFips": "48267",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48267.json",
+      "sha256": "b921b806159f1dfe7f0a0845e0254d6803a8e81248b41b7cffb01e3cf72d83da",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "King",
+      "countyFips": "48269",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48269.json",
+      "sha256": "fabb4cfaad8fae156985c59bf3f8e061c01da37f946af7ba67413ed3b586a633",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kinney",
+      "countyFips": "48271",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48271.json",
+      "sha256": "325dc00056071708a3774c34aa848eb02477ad6e75e957ada0fda2ffaa09221e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Kleberg",
+      "countyFips": "48273",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48273.json",
+      "sha256": "47a9fe0877501b4dc42564800b1f1b50d1c338772f53ef0c5d1af80173c4f34e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Knox",
+      "countyFips": "48275",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48275.json",
+      "sha256": "ed5b21f8a2cfadf979168256b84645e47a91c86da57cfbb1b375bdeb24c51334",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lamar",
+      "countyFips": "48277",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48277.json",
+      "sha256": "698dfb858b568645c81ce7cbcb9ed78239599e7a7016f2ee0755c40dd15d1287",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lamb",
+      "countyFips": "48279",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48279.json",
+      "sha256": "d888989f6bb603de20c49fc0795a36c68f4a230057b505d02fac5a2a895b4dd2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lampasas",
+      "countyFips": "48281",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48281.json",
+      "sha256": "ebae31850e6d07428335682b6b8fab04b09c93b897a04174c98a4eafc66d02fd",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "La Salle",
+      "countyFips": "48283",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48283.json",
+      "sha256": "38fb58f5b36ccadc2e57c781d106d6d714bf691dac7bfa6bdcf288f12a42a846",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lee",
+      "countyFips": "48287",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48287.json",
+      "sha256": "1274b31f383f0abc7849a6b5916cd7aac6f9884a604bd4d90503ec0c4a582eee",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Leon",
+      "countyFips": "48289",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48289.json",
+      "sha256": "45758d52a036fdd54a4271f07b8d1551c8db869bde01df5ec3188138119c607a",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Limestone",
+      "countyFips": "48293",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48293.json",
+      "sha256": "55f28681ca3405290fbcf1663721b8f7c6bb58ee2f20746cadec12d90cdc934e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lipscomb",
+      "countyFips": "48295",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48295.json",
+      "sha256": "73e91dce1a4c8212147e2a8cdadd4cf10fcaad0e5ae0e4b4ade64b3c678175f6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Live Oak",
+      "countyFips": "48297",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48297.json",
+      "sha256": "6386def7bf2ec6567f103f317b673e250e7746fd96952ad2387aac119b1bf5e3",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Llano",
+      "countyFips": "48299",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48299.json",
+      "sha256": "5fe1ae9a51297495ff7c019af67d7d712aa8ddda1f7795c48bc5c35b717a667e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Loving",
+      "countyFips": "48301",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48301.json",
+      "sha256": "20be5a7e833bf7d94c1da01ccc5feb24bcfec87d9074856639a8720ade2a5bc9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lubbock",
+      "countyFips": "48303",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48303.json",
+      "sha256": "32a4827cfcc923c5640399556d1764ae90f726074b6535dd2eca6a14d4325afa",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Lynn",
+      "countyFips": "48305",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48305.json",
+      "sha256": "b65bea2abe049dd055e3c39bec0b1de671ba152747139f4731dbc40d8eeeace9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "McCulloch",
+      "countyFips": "48307",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48307.json",
+      "sha256": "fbbe5f05c0ee4a6babc0b029d0db08348e39e12e1fa9e5c6d2f5067a4ace3f73",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "McLennan",
+      "countyFips": "48309",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48309.json",
+      "sha256": "e66fc0189a563fd60cce269818655abb9b6bad8759543c2bcd471afa0d652ff0",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "McMullen",
+      "countyFips": "48311",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48311.json",
+      "sha256": "e8cd04d891e09fa47ebfa88d7922bd20b2a6d6a1a5dac738d791f6d7ad628d68",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Madison",
+      "countyFips": "48313",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48313.json",
+      "sha256": "3f85dc86c547e0b9c69ffc94d1976811646568c6146bb33c2e516575a5540489",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Marion",
+      "countyFips": "48315",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48315.json",
+      "sha256": "ef2a5dc606dad77747cde61a4084446f58a9939b7a64ddbd51253454ac7b0464",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Martin",
+      "countyFips": "48317",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48317.json",
+      "sha256": "6dca507c4d7744961e4b135cd71ee465bc964a2aae7497a22f8e9a5bb7eaf5e7",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Mason",
+      "countyFips": "48319",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48319.json",
+      "sha256": "91cd1cc40951c6c431a9e32a24390582ae4b3419fc7ae73d280df2ccb44fcddd",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Maverick",
+      "countyFips": "48323",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48323.json",
+      "sha256": "e196350a3f865988acc2712b8e64cb0a157be95be881b137f0e3c8bc3cd59c81",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Medina",
+      "countyFips": "48325",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48325.json",
+      "sha256": "66feaa85d07470bc4153af3759ee0c294b7158e0a14eb572a5351f31f4040426",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Menard",
+      "countyFips": "48327",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48327.json",
+      "sha256": "c36f7f7d4c29170ab77e6fa4daec72afbcdd2fd9de6d5746db9c2117f0818ec5",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Milam",
+      "countyFips": "48331",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48331.json",
+      "sha256": "8f30da23e5e6d6450f6c74a65d05eee2175a89807483d6d2387b93dd3b105099",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Mills",
+      "countyFips": "48333",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48333.json",
+      "sha256": "a6f99ae208c27e7c178109552e1be6c8b9e9f3027193d410705337cbaf8ac97b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Mitchell",
+      "countyFips": "48335",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48335.json",
+      "sha256": "58ce125f96606b6c7a5fc934125adf20cd8636ef44564e1cd5f4133ba84b95a6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Montague",
+      "countyFips": "48337",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48337.json",
+      "sha256": "d19ee1bbcfc4994867af9817a0fd8abdeb3631a79fdfdbd9c3a9a1c836b70a80",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Moore",
+      "countyFips": "48341",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48341.json",
+      "sha256": "4478d4048403f0a04a6dacd296c3d9741974a85d6a8d0eee235d4f126c94eb68",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Morris",
+      "countyFips": "48343",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48343.json",
+      "sha256": "eb19f32a6d5c3c494f56a7990e3af907cf39d66a0cd3bc97228d6bc2a4874a0f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Motley",
+      "countyFips": "48345",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48345.json",
+      "sha256": "932d8c199624d8a2df18f54c14501bde6c5b0b0998112037d35c6a4573523899",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Nacogdoches",
+      "countyFips": "48347",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48347.json",
+      "sha256": "9e0c47b2185b8cd8877303c930c1efec9dd4671f2ef86d4f82f8248ec8c95c7e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Navarro",
+      "countyFips": "48349",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48349.json",
+      "sha256": "7261eabd2219a51d4fc923019bac45bb147f094ae5d2edea5ded2061e45e0d33",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Nolan",
+      "countyFips": "48353",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48353.json",
+      "sha256": "9be95eac014b7c3927f5cfe4316f0ad8134a093e236cc6257adf2ca12e53cbe9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Nueces",
+      "countyFips": "48355",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48355.json",
+      "sha256": "eabbe89436e96b04e198f57f09163ff870fc76c74df3a4d4cc27b2f01c0c1552",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Ochiltree",
+      "countyFips": "48357",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48357.json",
+      "sha256": "130571fb9fe1741ece488ed99bc1a828572a5837ece25557748e3d03cb9f3563",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Oldham",
+      "countyFips": "48359",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48359.json",
+      "sha256": "2fec47e7c8d1f6c3a0723c3f6721c1ba44b45174f10d381c1d581c1a95a021d2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Palo Pinto",
+      "countyFips": "48363",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48363.json",
+      "sha256": "dfd5ad73e515a97af512ba2430ad5b97dd0e2e8b78a038623e599cf808b130ae",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Panola",
+      "countyFips": "48365",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48365.json",
+      "sha256": "d849ed53d7e97146bf8631418ae0b3517b8915d36875f13cb4e6e46306106f90",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Parker",
+      "countyFips": "48367",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48367.json",
+      "sha256": "09dc9caba0ec5a08e3852977c65baa53ac5c15d08d34c0ddd9982d57cf572f23",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Parmer",
+      "countyFips": "48369",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48369.json",
+      "sha256": "e1990a03d1156d1515291977e2794d7e819459f3c8ec2cde0d8d0bb43e123e11",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Pecos",
+      "countyFips": "48371",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48371.json",
+      "sha256": "14af6b195cc1ca460375223959340c13e8ac80429a920337e5a00e17f1950034",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Potter",
+      "countyFips": "48375",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48375.json",
+      "sha256": "59c623c30fbc2216a092255cfc22a8e62018fa9b96c3d6b6ab305c385a57001e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Rains",
+      "countyFips": "48379",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48379.json",
+      "sha256": "5ac22373ce297108d1260ee7339eff36df25e96a4e9ef8dffabebff14e37ad9d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Randall",
+      "countyFips": "48381",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48381.json",
+      "sha256": "84542ac6628ac80702a55c06918cfd41cefc2116cee3d941666d7dc89f4e8caf",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Reagan",
+      "countyFips": "48383",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48383.json",
+      "sha256": "9e0b03113826c403af5badde0bc809902c66a2ee25b6fe2c899c6cdbab637702",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Real",
+      "countyFips": "48385",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48385.json",
+      "sha256": "645c775561497f351f146d0f837dbf37f4e075e810e2881d51c787c656289c3f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Red River",
+      "countyFips": "48387",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48387.json",
+      "sha256": "eeb7a08ea6ba830e17b539b677d7c6b3e98fcf32857a9cc81cc551cc368967b8",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Reeves",
+      "countyFips": "48389",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48389.json",
+      "sha256": "9ac36450debfe92205b3738037f131e0bfffec7b39ccb5c93be90aaaca0cd6a4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Refugio",
+      "countyFips": "48391",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48391.json",
+      "sha256": "a461f281a148d13de504dcaaa334998c05b7e98aa40d4e93434dd6bdd86d5342",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Roberts",
+      "countyFips": "48393",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48393.json",
+      "sha256": "736f5f43779eedbc98f212609c6d25f7217fc6b22191845210e85d2b3669d6c4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Robertson",
+      "countyFips": "48395",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48395.json",
+      "sha256": "27cf8a39f3e48809ce4fa91128c5acc68295c7361e696d31fd26e431c4486c49",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Rockwall",
+      "countyFips": "48397",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48397.json",
+      "sha256": "c063258903513b13463b2d83f327489735c8a1a2ef6b4ed42cda7bc80a19dd24",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Runnels",
+      "countyFips": "48399",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48399.json",
+      "sha256": "f361d6afd9535f6e546f93d58a8bfa3a1733b21d08b021957dd44bc4ae47e49f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Sabine",
+      "countyFips": "48403",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48403.json",
+      "sha256": "b9aaa73799c7878e10a02c677d76d2395568707c41ed33ced82cf5c2124c8dba",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "San Augustine",
+      "countyFips": "48405",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48405.json",
+      "sha256": "d68a4c3bec6a718e0c9dc0b49a0a3dcd1cc2e72dc54056582245545b48b1dcaa",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "San Patricio",
+      "countyFips": "48409",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48409.json",
+      "sha256": "7cf6016549b9b31da8abe872127c1a18ff7523c55c2ea23107c7d22e0112c0e3",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "San Saba",
+      "countyFips": "48411",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48411.json",
+      "sha256": "feb9f2f7035e03669120f782bb48f8ef4848837f4553767c02a8af641545d08d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Schleicher",
+      "countyFips": "48413",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48413.json",
+      "sha256": "a5a6a9f3dc5ec760940647cd2f43a6324b80781781877f84ab7cc1279bf758c1",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Scurry",
+      "countyFips": "48415",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48415.json",
+      "sha256": "eae25adeaa657ff69afcba3a3b931cf942fc9f1a4e1ca6392e68ca98fe4c35ea",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Shackelford",
+      "countyFips": "48417",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48417.json",
+      "sha256": "113f77b3a81741defd1b6edc7c158ee975a8665252490c044fc99041cd32bbcb",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Shelby",
+      "countyFips": "48419",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48419.json",
+      "sha256": "c6f2043a70b643a4c2b38c46eb033f83251444a52b8687787416b2d9ab31c54c",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Sherman",
+      "countyFips": "48421",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48421.json",
+      "sha256": "31ea10ff3e8e5e8b8adde96175fa293193e214afdfc67a1a0ba4d12cd20a3477",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Smith",
+      "countyFips": "48423",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48423.json",
+      "sha256": "0e60bdcd75615a3f705a4aff3967ae236263cfd20f0423ef84c431b083497f49",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Starr",
+      "countyFips": "48427",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48427.json",
+      "sha256": "f8cba8a93acc0e4a00ededf2dd6f11a77aaf5f8f7f3a9ccb5e4936301c9d19fb",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Stephens",
+      "countyFips": "48429",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48429.json",
+      "sha256": "58bfb0352c46cd56319bfe8466d3817b9a1aa90f484eee14a10e3709a7823d62",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Sterling",
+      "countyFips": "48431",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48431.json",
+      "sha256": "230cf094dc5343e581809641e683a316afd3a3ae8c9fa138438ebe256d033cc0",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Stonewall",
+      "countyFips": "48433",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48433.json",
+      "sha256": "3479af98ec0ec7e4ae4473991a1df5f0f586ec7fc17a48cf9d7422c3a3298c5f",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Sutton",
+      "countyFips": "48435",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48435.json",
+      "sha256": "be70dd5778384b05f40c0968a323afbdd4f3691e0b17a2119cbbd7ede2c593cd",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Swisher",
+      "countyFips": "48437",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48437.json",
+      "sha256": "ffcaff03c03b9915111f646898753d8820439b015fb7388907ef2735042bacc9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Tarrant",
+      "countyFips": "48439",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48439.json",
+      "sha256": "5bdd3d4ea8dc80861f057a861902fb3cb190759d8a59144c97d1fd16ddd42924",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Terrell",
+      "countyFips": "48443",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48443.json",
+      "sha256": "ec82a95dcf909b85d4283187456245d63bd52c7091bd332333ec167c04caf2e5",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Terry",
+      "countyFips": "48445",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48445.json",
+      "sha256": "af8e983c76b11019135d6485bff83e7fa146e078814886fefc5214262eb3401e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Throckmorton",
+      "countyFips": "48447",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48447.json",
+      "sha256": "b50d8cae34c290078375d825950e5bf14a14d0aaa8903093132cd67248220896",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Titus",
+      "countyFips": "48449",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48449.json",
+      "sha256": "2b5281049ece7f1d71baee907b547d92264524effea705f481304ac0acec1963",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Tom Green",
+      "countyFips": "48451",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48451.json",
+      "sha256": "ff1b036b5abd58890a105886740e1e6093b0eaab20f9e13fc413f29712c43088",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Travis",
+      "countyFips": "48453",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48453.json",
+      "sha256": "16fe8810c4e1a9a57fb8318d35c6667a55ba3731db02965b04f8cfaad9e509a3",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Trinity",
+      "countyFips": "48455",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48455.json",
+      "sha256": "e2e8e93f2b55e9951cf3ef48986ffc469062ad8281b68a90fbdc01e9548fb4de",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Upshur",
+      "countyFips": "48459",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48459.json",
+      "sha256": "6f51228d59b3da0e11e8cdda3fc971d9ca4f9490a695ddbb40b91993e750d3da",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Upton",
+      "countyFips": "48461",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48461.json",
+      "sha256": "7c06a8953c8bec912c635812cba8f25bb3b278c416702f054853cea245e0236d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Uvalde",
+      "countyFips": "48463",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48463.json",
+      "sha256": "13a7264cc1d65b2a4161394049d0d50fb96b089003c62ee1f4d415ebd11b2ff7",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Val Verde",
+      "countyFips": "48465",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48465.json",
+      "sha256": "67bdb8ec590dbd629ebecd3a8a004585559d43f96fad6154f9a9bc710e2228cf",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Van Zandt",
+      "countyFips": "48467",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48467.json",
+      "sha256": "05ce926d88a5497366f4686d1b58c2af690d691fb86b0b2d332f35b442377254",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Victoria",
+      "countyFips": "48469",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48469.json",
+      "sha256": "34635d61cf79d6a2a9da9e91bd217647992ee99b74b7cb6c1459b7c33fbc5386",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Ward",
+      "countyFips": "48475",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48475.json",
+      "sha256": "d91a4b2729eea89d92e850080647dc5f05245cd91c0bcbc4be6a1258314a04b9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Webb",
+      "countyFips": "48479",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48479.json",
+      "sha256": "d89d9b225c9d45f6d639724f00604298435e3dca7011742ec3471b9de76413e9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wheeler",
+      "countyFips": "48483",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48483.json",
+      "sha256": "4dbeee27348ebee074abde6ffeb19fe720f223623b6ce2dc60750996b30f05df",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wichita",
+      "countyFips": "48485",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48485.json",
+      "sha256": "afa7e057fac5f7928efad656995a39688007fd7c081599bff8ec38c1ca8ca5c4",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wilbarger",
+      "countyFips": "48487",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48487.json",
+      "sha256": "8294b01c643e2564dfd34adb5ad782be926a01f71d3457ee8e801ef99dae0fdd",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Willacy",
+      "countyFips": "48489",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48489.json",
+      "sha256": "03ec6b301d34962c31862b22ecdde6a8b2836c64c28fda7d1b005d535e207116",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Williamson",
+      "countyFips": "48491",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48491.json",
+      "sha256": "5ebeb1e5cc39437fe0e54981b63b522b14e0c542db219faed1aa7d18cafc742e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wilson",
+      "countyFips": "48493",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48493.json",
+      "sha256": "62b7084a8bcb0c920868e1f01595f70ab58e4a53da7735fc9cc2809dbc450592",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Winkler",
+      "countyFips": "48495",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48495.json",
+      "sha256": "ee06951ae860957c1352878349a324fb48697b80de302afafdcd6a7fcd25075b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wise",
+      "countyFips": "48497",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48497.json",
+      "sha256": "2764a05329c584d936faead6cdfafad9ffcba68dc560e6ab2c40f41a16f28438",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Wood",
+      "countyFips": "48499",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48499.json",
+      "sha256": "413144cb2fe843c7331c7a59db9e84fb6577f56efe2f8ac53a678d5e401bee1e",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Yoakum",
+      "countyFips": "48501",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48501.json",
+      "sha256": "45e67883334ecb82a3bf2a110fe6f42530ddb31adc67756dd13eab9f86132903",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Young",
+      "countyFips": "48503",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48503.json",
+      "sha256": "1c75c1704de39a11417401303dcb5f8a25973c30f3d55f3b0f422335f40fe61b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Zapata",
+      "countyFips": "48505",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48505.json",
+      "sha256": "9932949269c7c51464465ca0c1017adef7d469295012d90c39a63f75437a8162",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Zavala",
+      "countyFips": "48507",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48507.json",
+      "sha256": "0e220fba281867cd02c84d5d9d59c01b262d72548308fdb7f5fbad10a608413e",
+      "communityAvailability": "non-empty-manufactured-package"
+    }
+  ],
+  "totalPackageTypes": 2,
+  "totalPackages": 271
 }
