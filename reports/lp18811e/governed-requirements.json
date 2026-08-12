@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "gridly.lp18811e.remaining-validation.v1",
+  "milestone": "LP188.11E",
+  "waveId": "LP18810-NP-001",
+  "requirements": {
+    "regression": {
+      "classification": "AUTOMATABLE_WITH_EXISTING_PROTECTED_ENVIRONMENT",
+      "scope": "EXACT_WAVE_WITH_PER_FIPS_RESULTS",
+      "requirement": "Run the established regression assertions read-only against the existing protected deployment, compare with the Wave 0 control, record assertions executed/passed and zero open severity-1/2 defects; do not redeploy or repeat package-byte/runtime/boundary proof."
+    },
+    "consumer": {
+      "classification": "OWNER_OBSERVATION_REQUIRED",
+      "scope": "COUNTY_SPECIFIC_RESULTS_MAY_SHARE_ONE_WAVE_ARTIFACT",
+      "requirement": "Record executed county-specific approved-user consumer behavior for discovery/search, community and awareness presentation, location/package context, fallback/error handling, and restricted-county non-leakage; an untested statewide inference is forbidden."
+    },
+    "telemetry": {
+      "classification": "OWNER_OBSERVATION_REQUIRED",
+      "scope": "EXACT_WAVE_MAY_SHARE_ONE_OBSERVATION",
+      "requirement": "Inspect protected-environment error, latency/load, alert and availability signals for the governed execution and compare them with the Wave 0 control; record signal references and threshold outcomes."
+    },
+    "rollback": {
+      "classification": "OWNER_OBSERVATION_REQUIRED",
+      "scope": "EXACT_WAVE_MAY_SHARE_ONE_REVERSIBILITY_ARTIFACT",
+      "requirement": "Prove the protected-only withdrawal and restore procedure, change/rollback plan, and production isolation. Do not perform a production rollback and do not discard the successful execution evidence."
+    },
+    "operational": {
+      "classification": "OWNER_OBSERVATION_REQUIRED",
+      "scope": "COUNTY_SPECIFIC_RESULTS_MAY_SHARE_ONE_WAVE_ARTIFACT",
+      "requirement": "After regression, consumer, telemetry, and rollback pass, record operational-owner, runbook, alert, support, sustained observation, and Wave 0 comparison evidence."
+    },
+    "independentReview": {
+      "classification": "INDEPENDENT_REVIEW_REQUIRED",
+      "scope": "ONE_EXACT_WAVE_REVIEW_PERMITTED",
+      "requirement": "A reviewer other than the executor must review the complete identity-bound evidence set and record PASS/REJECTED, reviewer reference and review time; the executor and harness cannot self-certify."
+    }
+  }
+}
