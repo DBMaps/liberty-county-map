@@ -12,7 +12,7 @@ const fixtures = async () => ({ matrix: await json('reports/lp18810/county-membe
 const document = (pkg, overrides={}) => ({ schemaVersion:EVIDENCE_SCHEMA,waveId:WAVE,environmentClassification:'OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION',productionDeployment:false,productionActivation:false,results:[{countyFips:pkg.countyFips,packageSha256:pkg.sha256,schemaVersion:pkg.schemaVersion,executionStatus:'ATTEMPTED',deploymentResult:'PASS',runtimeResult:'PASS',regressionResult:'PASS',consumerResult:'PASS',boundaryResult:'PASS',telemetryResult:'PASS',rollbackResult:'PASS',operationalResult:'PASS',evidenceReferences:Object.fromEntries(['deployment','runtime','regression','consumer','boundary','telemetry','rollback','operational'].map(x=>[x,`portable/${x}.json`])),executor:{status:'PRESENT',identityReference:'owner-controlled-reference'},independentReview:{status:'COMPLETE',reviewerReference:'independent-reference'},...overrides}]});
 
 test('pending reconciliation preserves exact scope, baselines, blockers, and non-activation boundary', async () => {
-  const made=build(), baseline=await json('reports/lp1888/statewide-county-activation-readiness.json');
+  const f=await fixtures(), made=ingest({...f,evidenceDocuments:[]}), baseline=await json('reports/lp1888/statewide-county-activation-readiness.json');
   assert.equal(made.matrix.records.length,215); assert.ok(made.matrix.records.every((r,i,a)=>(!i||a[i-1].countyFips<r.countyFips)&&r.membershipApproved&&r.deploymentPrepared&&r.executionAuthorized&&!r.deploymentConfirmed&&!r.runtimeValidated&&r.blockingReasons.length&&r.activationStatus==='NOT_ACTIVATED'));
   const operational=new Set(baseline.records.filter(r=>r.currentOperationalStatus==='ALREADY_OPERATIONAL').map(r=>r.countyFips)), restricted=new Set(baseline.records.filter(r=>r.restrictionStatus==='ACTIVE_PRESERVED').map(r=>r.countyFips));
   assert.equal(operational.size,28); assert.equal(restricted.size,11); assert.ok(made.matrix.records.every(r=>!operational.has(r.countyFips)&&!restricted.has(r.countyFips)));
@@ -36,7 +36,8 @@ test('approval and execution authorization are mandatory and authorization/prepa
   const f=await fixtures(), pkg=f.identities.packages.find(p=>p.countyFips===f.matrix.records[0].countyFips);
   const noApproval=structuredClone(f); noApproval.matrix.records[0].ownerMembershipDecision='PENDING'; assert.throws(()=>ingest({...noApproval,evidenceDocuments:[document(pkg)]}),/authorization absent/);
   const noExecution=structuredClone(f); noExecution.matrix.records[0].nonProductionExecutionAuthorization='NOT_AUTHORIZED'; assert.throws(()=>ingest({...noExecution,evidenceDocuments:[]}),/authorization absent/);
-  assert.ok(build().matrix.records.every(r=>r.deploymentPrepared&&!r.deploymentConfirmed&&!r.runtimeValidated));
+  const pending=ingest({...f,evidenceDocuments:[]});
+  assert.ok(pending.matrix.records.every(r=>r.deploymentPrepared&&!r.deploymentConfirmed&&!r.runtimeValidated));
 });
 
 test('failed evidence has explicit blockers and does not leak PASS across counties', async()=>{
