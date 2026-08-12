@@ -434,6 +434,6 @@
     "plan:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --whatif",
     "apply:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --apply",
     "verify:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --verify",
-    "test:lp189": "node --test tests/lp189-statewide-runtime-activation-guarded.test.mjs"
+    "test:lp189": "node --test tests/lp189-statewide-runtime-activation-guarded.test.mjs tests/lp1895-statewide-boundary-fallback-startup.test.mjs"
   }
 }
