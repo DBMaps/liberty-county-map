@@ -10,6 +10,19 @@ export const OVERALL_BUDGET_MS=120000;
 const contract=()=>JSON.parse(fs.readFileSync(path.join(ROOT,'reports/lp18812/wave0-remaining-fixture-contract.json'),'utf8'));
 const sha256=bytes=>`sha256:${crypto.createHash('sha256').update(bytes).digest('hex')}`;
 
+export function isDirectExecution(moduleUrl,argvPath,{platform=process.platform}={}) {
+  if(!argvPath) return false;
+  const pathApi=platform==='win32'?path.win32:path;
+  let modulePath=fileURLToPath(moduleUrl);
+  // fileURLToPath returns a native Windows path on Windows. The leading slash
+  // adjustment keeps the platform-injected regression test representative when
+  // it runs on a POSIX CI host.
+  if(platform==='win32'&&/^\/[a-zA-Z]:\//.test(modulePath)) modulePath=modulePath.slice(1);
+  const normalize=value=>pathApi.resolve(value).replaceAll('/',pathApi.sep);
+  const expected=normalize(modulePath), actual=normalize(argvPath);
+  return platform==='win32'?actual.toLowerCase()===expected.toLowerCase():actual===expected;
+}
+
 export function inspectArtifactResponse(fixture,response,bytes) {
   const type=String(response.headers?.get?.('content-type')||'').toLowerCase();
   const prefix=Buffer.from(bytes).subarray(0,512).toString('utf8').trimStart().toLowerCase();
@@ -40,7 +53,7 @@ export async function executeArtifactVerification({env=process.env,fetchImpl=fet
   return {schemaVersion:'gridly.lp18812.certified-artifact-owner-execution.v1',executionId:'W0-REMAINING-ARTIFACT-BYTES',executedAt:now(),fixtureContractDigest:sha256(fs.readFileSync(path.join(ROOT,'reports/lp18812/wave0-remaining-fixture-contract.json'))),failures:observations.filter(x=>!x.passed).length,productionMutationObserved:false,activationObserved:false,observations,assertionOutcomes:[{assertionId:'CERTIFIED_ARTIFACT_STABILITY',outcome:passed?'PASS':'FAIL',executed:true,evidenceChecks:observations.map(x=>({fixtureId:x.fixtureId,passed:x.passed,evidenceReference:`observations#${x.fixtureId}`}))}]};
 }
 
-if(import.meta.url===`file://${process.argv[1]}`) {
+if(isDirectExecution(import.meta.url,process.argv[1])) {
   const output=path.join(ROOT,OUTPUT_PATH), temp=`${output}.tmp-${process.pid}`;
   try { const evidence=await executeArtifactVerification(); fs.mkdirSync(path.dirname(output),{recursive:true}); fs.writeFileSync(temp,`${JSON.stringify(evidence,null,2)}\n`,{mode:0o600}); fs.renameSync(temp,output); if(evidence.failures) process.exitCode=1; }
   catch(error) { try{fs.unlinkSync(temp);}catch{} console.error(`LP188.12 artifact verification failed: ${error.message}`); process.exitCode=1; }

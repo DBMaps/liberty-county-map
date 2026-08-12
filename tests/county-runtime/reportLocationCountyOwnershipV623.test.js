@@ -3,12 +3,16 @@ const fs = require('fs');
 const vm = require('vm');
 
 const source = fs.readFileSync('js/app.js', 'utf8');
+const geometryLoaderSource = fs.readFileSync('js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js', 'utf8');
+const geometryPackage = JSON.parse(fs.readFileSync('assets/location-resolution/gridly-authoritative-county-geometry-v1.json', 'utf8'));
 const cutoff = source.indexOf('const GRIDLY_AWARENESS_AREA_DEFINITIONS = [');
 assert.ok(cutoff > 0, 'runtime county bounds block is present before awareness definitions');
 
 function loadRuntime(activeCounty = 'montgomery-tx') {
-  const sandbox = { Object, String, Number, Boolean, Array, console, window: { GRIDLY_ACTIVE_COUNTY_ID: activeCounty, addEventListener() {}, removeEventListener() {}, setInterval() { return 0; }, clearInterval() {}, setTimeout() { return 0; }, clearTimeout() {} }, setInterval() { return 0; }, clearInterval() {}, setTimeout() { return 0; }, clearTimeout() {} };
+  const sandbox = { Object, String, Number, Boolean, Array, Math, console, fetch: async () => ({ ok: true, json: async () => geometryPackage }), gridlyPostV818CountySwitchingAudit() { return {}; }, gridlyPostV818FiveCountySwitchingAudit() { return {}; }, gridlyRegionalRuntimeCertification() { return {}; }, window: { GRIDLY_ACTIVE_COUNTY_ID: activeCounty, addEventListener() {}, removeEventListener() {}, setInterval() { return 0; }, clearInterval() {}, setTimeout() { return 0; }, clearTimeout() {} }, setInterval() { return 0; }, clearInterval() {}, setTimeout() { return 0; }, clearTimeout() {} };
   vm.createContext(sandbox);
+  vm.runInContext(geometryLoaderSource, sandbox);
+  sandbox.window.gridlyLp0361cRuntimeCountyGeometryPackageLoader.install(geometryPackage);
   vm.runInContext(`${source.slice(0, cutoff)}\nthis.api = { gridlyGetActiveCountyId, gridlyResolveCountyIdForCoordinate, gridlyGetCoordinateScopedReportMetadata, gridlyCoordinateInsideCountyBounds, gridlyGetCountyScopedReportMetadata, gridlyReportMatchesActiveCounty };`, sandbox);
   return sandbox.api;
 }
@@ -33,7 +37,7 @@ assert(source.includes('function gridlyReportLocationCountyOwnershipAudit()'), '
 assert(source.includes('window.gridlyReportLocationCountyOwnershipAudit = gridlyReportLocationCountyOwnershipAudit;'), 'Location county ownership audit helper is exposed');
 assert(source.includes('activeCountyForced'), 'Audit detects activeCounty-forced report ownership');
 assert(source.includes('acceptedOutsideActiveCounty'), 'Audit reports accepted outside active county ownership');
-assert(source.includes('Hazard report location is outside Gridly\'s supported county coverage.'), 'Unsupported hazard coordinates fail closed');
+assert(source.includes('Report location is outside Gridly\'s supported county coverage.'), 'Unsupported hazard coordinates fail closed');
 assert(source.includes('historicalReadsEnabled: false'), 'protected historicalReadsEnabled boundary remains false');
 assert(source.includes('historyUiEnabled: false'), 'protected historyUiEnabled boundary remains false');
 assert(source.includes('DriveTexasPaused: true'), 'DriveTexas remains paused');
