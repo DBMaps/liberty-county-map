@@ -5,14 +5,14 @@
   "environmentClassification": "OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION",
   "targetCountyCount": 215,
   "executionAuthorizedCount": 215,
-  "executionAttemptedCount": 0,
-  "executionPendingCount": 215,
+  "executionAttemptedCount": 215,
+  "executionPendingCount": 0,
   "executionFailureCount": 0,
-  "deploymentConfirmedCount": 0,
-  "runtimeValidatedCount": 0,
+  "deploymentConfirmedCount": 215,
+  "runtimeValidatedCount": 215,
   "regressionValidatedCount": 0,
   "consumerValidatedCount": 0,
-  "boundaryValidatedCount": 0,
+  "boundaryValidatedCount": 215,
   "telemetryValidatedCount": 0,
   "rollbackValidatedCount": 0,
   "operationallyValidatedCount": 0,
@@ -25,6 +25,6 @@
   "newActivatedCount": 0,
   "runtimeOperationalCountChanged": false,
   "restrictedCountyStateChanged": false,
-  "overallClassification": "AUTHORIZED_NON_PRODUCTION_EXECUTION_PENDING_EXTERNAL_EVIDENCE",
-  "nextMilestone": "OWNER_EXECUTE_LP18810_NP_001_AND_RETURN_PORTABLE_EVIDENCE"
+  "overallClassification": "PARTIAL_NON_PRODUCTION_VALIDATION_EVIDENCE_INGESTED_REMEDIATION_AND_FINAL_OWNER_AUTHORIZATION_REQUIRED",
+  "nextMilestone": "LP188_11_EVIDENCE_REMEDIATION_AND_REINGESTION"
 }
