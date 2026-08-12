@@ -52,6 +52,7 @@ test('build is byte deterministic and does not mutate runtime, awareness, Supaba
 test('owner invocation preserves every non-production authorization boundary', async()=>{
   const source=await readFile(new URL('tools/lp18811/invoke-owner-validation.ps1',root),'utf8');
   for (const guard of ['--no-production-deployment','--no-activation','--no-public-launch','--no-supabase-production-mutation','--no-restriction-clearing','--no-runtime-operational-membership-mutation']) assert.match(source,new RegExp(guard));
-  assert.match(source,/Get-Command \$EstablishedProtectedValidationCommand/);
+  assert.match(source,/tools\/lp18811\/protected-validation-harness\.mjs/);
+  assert.match(source,/GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET/);
   assert.match(source,/OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION/);
 });
