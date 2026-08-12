@@ -430,6 +430,10 @@
     "build:lp174": "node tools/lp174/reassess-operational-readiness.mjs build",
     "verify:lp174": "node tools/lp174/reassess-operational-readiness.mjs verify",
     "test:lp174": "node --test tests/lp174/*.test.mjs",
-    "test:lp1786": "node --test tests/lp1786-cleared-route-convergence.test.mjs"
+    "test:lp1786": "node --test tests/lp1786-cleared-route-convergence.test.mjs",
+    "plan:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --whatif",
+    "apply:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --apply",
+    "verify:lp189": "node scripts/lp189-statewide-runtime-activation-guarded.mjs --verify",
+    "test:lp189": "node --test tests/lp189-statewide-runtime-activation-guarded.test.mjs"
   }
 }
