@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { governedInputs } from './protected-validation-harness.mjs';
+import { stage as stageDeployableRuntime } from '../lp1831/prepare-cloudflare-preview-artifact.mjs';
 
 export const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 export const CLASSIFICATION='OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION';
@@ -26,6 +27,7 @@ export function buildEvidence(root=ROOT){
     infrastructureAudit:{provider:'Cloudflare Pages plus Cloudflare Access',pagesProject:'gridly-preview',protectedHostname:'preview.gridlygo.com',existingDeploymentId:'458fa7f4-ba68-44c7-82ea-c5e6475e456e',existingDeploymentArtifactIdentity:'sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f',reuseDecision:'REUSE_PROJECT_HOSTNAME_AND_ACCESS_APPLICATION_NEW_IMMUTABLE_DIRECT_UPLOAD_REQUIRED',existingAccessApplication:'preview',existingAccessPolicy:'Gridly Preview Approved Testers',existingPolicyAuthentication:'ONE_TIME_PIN_EMAIL_ALLOWLIST_SERVICE_TOKEN_POLICY_NOT_PROVEN'},
     selectedEnvironment:{rootUrl:'https://preview.gridlygo.com',buildIdentityUrl:'https://preview.gridlygo.com/gridly-protected-build-identity.json',countyPackageUrlPattern:'https://preview.gridlygo.com/counties/{FIPS}.json',buildIdentity},
     protectedUrlConfigured:false,deploymentIdentityConfigured:false,buildIdentityConfigured:true,buildIdentityDocumentRequired:true,
+    runtimeStagingContract:{source:'LP183.1 canonical tracked deployable runtime',stager:'tools/lp1831/prepare-cloudflare-preview-artifact.mjs',compositionMode:'DEPLOYABLE_RUNTIME_PLUS_PROTECTED_ARTIFACTS'},
     packageExposureContract:{source:'LP188.3 exact package bytes certified by LP188.5',pathPattern:'counties/{FIPS}.json',targetCount:215,copyMode:'BYTE_FOR_BYTE_NO_TRANSFORMATION',sha256Authority:'reports/lp1885/community-package-identity-inventory.json',sourceBytesPresentInRepository:false},
     accessControlRequired:true,serviceTokenRequired:true,executorIdentityReferenceRequired:true,
     requiredEnvironmentVariables:['GRIDLY_PROTECTED_URL','GRIDLY_PROTECTED_DEPLOYMENT_ID','GRIDLY_PROTECTED_BUILD_IDENTITY','GRIDLY_VALIDATOR_ACCESS_CLIENT_ID','GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET','GRIDLY_EXECUTOR_IDENTITY_REFERENCE'],
@@ -41,13 +43,18 @@ export function stage({source,output,deploymentId,root=ROOT}){
   if(!source||!output||!deploymentId)throw Error('stage requires --source, --output, and immutable --deployment-id');
   if(/^(latest|current|preview)$/i.test(deploymentId))throw Error('ambiguous deployment identity rejected');
   const governed=governedInputs(root), {manifest,buildIdentity}=cohortIdentity(root);
-  fs.rmSync(output,{recursive:true,force:true});fs.mkdirSync(path.join(output,'counties'),{recursive:true});
-  for(const pkg of governed.packages){const input=path.join(source,pkg.relativePackagePath),bytes=fs.readFileSync(input);if(bytes.length!==pkg.byteLength||sha(bytes)!==pkg.sha256)throw Error(`LP188.5 package identity mismatch: ${pkg.countyFips}`);fs.writeFileSync(path.join(output,pkg.relativePackagePath),bytes);}
+  const packages=governed.packages.map(pkg=>{const bytes=fs.readFileSync(path.join(source,pkg.relativePackagePath));if(bytes.length!==pkg.byteLength||sha(bytes)!==pkg.sha256)throw Error(`LP188.5 package identity mismatch: ${pkg.countyFips}`);return {...pkg,bytes};});
+  return composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root});
+}
+
+export function composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root=ROOT}){
+  const runtime=stageDeployableRuntime(output,root);
+  fs.mkdirSync(path.join(output,'counties'),{recursive:true});
+  for(const pkg of packages)fs.writeFileSync(path.join(output,pkg.relativePackagePath),pkg.bytes);
   const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
   fs.writeFileSync(path.join(output,'gridly-protected-build-identity.json'),stable(identity));
-  fs.writeFileSync(path.join(output,'index.html'),'<!doctype html><meta charset="utf-8"><title>Gridly protected validation</title>\n');
   fs.writeFileSync(path.join(output,'gridly-protected-cohort-manifest.json'),stable(manifest));
-  return {deploymentId,buildIdentity,countyCount:215,output};
+  return {deploymentId,buildIdentity,countyCount:packages.length,output,runtimeArtifactIdentity:runtime.artifactIdentity,runtimeFileCount:runtime.files.length};
 }
 
 export function verify(root=ROOT){const a=stable(buildEvidence(root)),b=stable(buildEvidence(root));if(a!==b)throw Error('non-deterministic provisioning evidence');const expected=fs.readFileSync(path.join(root,REPORT),'utf8');if(expected!==a)throw Error('LP188.11C provisioning evidence drift');return true;}
