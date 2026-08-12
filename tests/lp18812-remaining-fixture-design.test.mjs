@@ -19,17 +19,20 @@ test('design preserves immutable owner state and has no execution evidence',()=>
 });
 
 test('every fixture has the governed contract fields and exact family counts',()=>{
-  assert.deepEqual(contract.fixtureCountByAssertion,{CERTIFIED_ARTIFACT_STABILITY:28,COUNTY_BOUNDARY_ISOLATION:4,CONSUMER_RESULT_STABILITY:28,FALLBACK_BEHAVIOR_STABILITY:1,ROUTE_AWARENESS_STABILITY:1});
+  assert.deepEqual(contract.fixtureCountByAssertion,{CERTIFIED_ARTIFACT_STABILITY:215,COUNTY_BOUNDARY_ISOLATION:4,CONSUMER_RESULT_STABILITY:28,FALLBACK_BEHAVIOR_STABILITY:1,ROUTE_AWARENESS_STABILITY:1});
   for (const fixture of contract.fixtures) for (const field of ['assertionId','fixtureId','input','expectedResult','prohibitedResult','applicableFips','authoritativeSource','executionMechanism','browserRequired','evidenceFieldsRequired']) assert.ok(fixture[field] !== undefined, `${fixture.fixtureId}.${field}`);
   assert.equal(new Set(contract.fixtures.map(x=>x.fixtureId)).size,contract.fixtures.length);
   assert.equal(contract.fixtures.some(x=>x.assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY'),false);
 });
 
 test('artifact authority binds every protected URL to both length and SHA-256',()=>{
-  const prior=read('reports/lp18811f4/wave0-fixture-authority.json').priorFixtures.filter(x=>x.assertionId==='CERTIFIED_ARTIFACT_STABILITY');
+  const governed=read('reports/lp18810/validation-waves.json').waves[0].countyFips;
+  const identities=read('reports/lp1885/community-package-identity-inventory.json').packages;
   const fixtures=contract.fixtures.filter(x=>x.assertionId==='CERTIFIED_ARTIFACT_STABILITY');
-  assert.equal(fixtures.length,28);
-  for(const fixture of fixtures){ const source=prior.find(x=>x.fixtureId===fixture.fixtureId); assert.ok(source); assert.equal(fixture.input.protectedRelativeUrl,`/${source.input.relativeUrl}`); assert.equal(fixture.expectedResult.byteLength,source.expectedResult.byteLength); assert.equal(fixture.expectedResult.sha256,source.expectedResult.sha256); assert.match(fixture.expectedResult.sha256,/^sha256:[a-f0-9]{64}$/); assert.equal(fixture.browserRequired,false); }
+  assert.equal(fixtures.length,215);
+  assert.deepEqual(fixtures.map(x=>x.expectedResult.countyFips),governed);
+  assert.equal(governed.includes('48015'),false);
+  for(const fixture of fixtures){ const source=identities.find(x=>x.countyFips===fixture.expectedResult.countyFips); assert.ok(source); assert.equal(fixture.input.protectedRelativeUrl,`/${source.relativePackagePath}`); assert.equal(fixture.expectedResult.byteLength,source.byteLength); assert.equal(fixture.expectedResult.sha256,`sha256:${source.sha256}`); assert.match(fixture.expectedResult.sha256,/^sha256:[a-f0-9]{64}$/); assert.equal(fixture.browserRequired,false); }
 });
 
 test('boundary offsets are interior to expected county and outside the prohibited adjacent county',()=>{

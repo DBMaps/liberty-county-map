@@ -35,7 +35,9 @@ export function inspectArtifactResponse(fixture,response,bytes) {
 
 export async function executeArtifactVerification({env=process.env,fetchImpl=fetch,now=()=>new Date().toISOString()}={}) {
   for(const key of ['GRIDLY_PROTECTED_URL','GRIDLY_VALIDATOR_ACCESS_CLIENT_ID','GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET']) if(!env[key]) throw Error(`missing_${key}`);
-  const base=new URL(env.GRIDLY_PROTECTED_URL), fixtures=contract().fixtures.filter(x=>x.assertionId==='CERTIFIED_ARTIFACT_STABILITY');
+  const base=new URL(env.GRIDLY_PROTECTED_URL), fixtureContract=contract(), fixtures=fixtureContract.fixtures.filter(x=>x.assertionId==='CERTIFIED_ARTIFACT_STABILITY');
+  const governedFips=JSON.parse(fs.readFileSync(path.join(ROOT,'reports/lp18810/validation-waves.json'),'utf8')).waves[0].countyFips;
+  if(fixtures.length!==governedFips.length||fixtures.some((fixture,index)=>fixture.expectedResult.countyFips!==governedFips[index])) throw Error('artifact_fixture_cohort_mismatch');
   const governedBase=new URL(JSON.parse(fs.readFileSync(path.join(ROOT,'reports/lp18811c/protected-environment-provisioning.json'),'utf8')).selectedEnvironment.rootUrl);
   if(base.origin!==governedBase.origin||!/preview/i.test(base.hostname)) throw Error('production_or_wrong_protected_origin');
   const controller=new AbortController(), timer=setTimeout(()=>controller.abort(Error('artifact_execution_budget_exceeded')),OVERALL_BUDGET_MS);
@@ -49,7 +51,7 @@ export async function executeArtifactVerification({env=process.env,fetchImpl=fet
       observations.push(inspectArtifactResponse(fixture,response,bytes));
     }
   } finally { clearTimeout(timer); }
-  const passed=observations.length===28&&observations.every(x=>x.passed);
+  const passed=observations.length===fixtures.length&&observations.every(x=>x.passed);
   return {schemaVersion:'gridly.lp18812.certified-artifact-owner-execution.v1',executionId:'W0-REMAINING-ARTIFACT-BYTES',executedAt:now(),fixtureContractDigest:sha256(fs.readFileSync(path.join(ROOT,'reports/lp18812/wave0-remaining-fixture-contract.json'))),failures:observations.filter(x=>!x.passed).length,productionMutationObserved:false,activationObserved:false,observations,assertionOutcomes:[{assertionId:'CERTIFIED_ARTIFACT_STABILITY',outcome:passed?'PASS':'FAIL',executed:true,evidenceChecks:observations.map(x=>({fixtureId:x.fixtureId,passed:x.passed,evidenceReference:`observations#${x.fixtureId}`}))}]};
 }
 
