@@ -9,6 +9,9 @@ export const OUT = 'reports/lp18811f3';
 const read = (root, file) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
 export const canonical = value => `${JSON.stringify(value, null, 2)}\n`;
 export const digest = value => `sha256:${crypto.createHash('sha256').update(canonical(value)).digest('hex')}`;
+export const WAVE0_AWARENESS_ZIP_BY_FIPS = Object.freeze({
+  '48015':'77418','48039':'77515','48041':'77803','48057':'77979','48071':'77514','48089':'78934','48149':'78945','48157':'77469','48167':'77550','48185':'77868','48199':'77625','48201':'77002','48239':'77957','48241':'75951','48245':'77701','48285':'77964','48291':'77535','48321':'77414','48339':'77301','48351':'75966','48361':'77630','48373':'77351','48407':'77331','48457':'75979','48471':'77340','48473':'77445','48477':'77833','48481':'77488'
+});
 
 export function generate(root = ROOT) {
   const authority = read(root, 'reports/lp18811f2/wave0-authority-contract.json');
@@ -24,7 +27,9 @@ export function generate(root = ROOT) {
     const pkg = packages.get(countyFips), county = counties.get(countyFips);
     if (!pkg || !county?.currentOperational) throw Error(`governed Wave 0 source missing for ${countyFips}`);
     fixtures.push({fixtureId:`W0-ARTIFACT-${countyFips}`,assertionId:'CERTIFIED_ARTIFACT_STABILITY',applicableFips:[countyFips],inputType:'PROTECTED_COUNTY_PACKAGE_GET',input:{relativeUrl:pkg.relativePackagePath,requestedCountyFips:countyFips},expectedResult:{httpStatus:200,sha256:`sha256:${pkg.sha256}`,byteLength:pkg.byteLength,schemaVersion:pkg.schemaVersion,countyFips,consumerAcceptance:'REQUIRED_NOT_YET_AUTOMATABLE'},comparisonMode:'HTTP_BYTES_AND_RUNTIME_ACCEPTANCE',evidenceSource:['reports/lp1885/community-package-identity-inventory.json','reports/lp18811c/protected-environment-provisioning.json'],severityOnFailure:'SEVERITY_1'});
-    fixtures.push({fixtureId:`W0-OPERATIONAL-${countyFips}`,assertionId:'OPERATIONAL_COUNTY_RESULT_STABILITY',applicableFips:[countyFips],inputType:'GOVERNED_OPERATIONAL_COUNTY_SELECTION',input:{countyFips,countyName:county.countyName},expectedResult:{selectedCountyFips:countyFips,selectedCountyName:county.countyName,currentOperational:true,resultCountyFipsExclusive:[countyFips]},comparisonMode:'EXACT_CONSUMER_STATE',evidenceSource:['data/lp153/operational-execution-registry.json','reports/lp18811f2/wave0-authority-contract.json'],severityOnFailure:'SEVERITY_2'});
+    const awarenessZip=WAVE0_AWARENESS_ZIP_BY_FIPS[countyFips];
+    if(!awarenessZip) throw Error(`governed Wave 0 awareness ZIP missing for ${countyFips}`);
+    fixtures.push({fixtureId:`W0-OPERATIONAL-${countyFips}`,assertionId:'OPERATIONAL_COUNTY_RESULT_STABILITY',applicableFips:[countyFips],inputType:'GOVERNED_OPERATIONAL_COUNTY_SELECTION',input:{countyFips,countyName:county.countyName,awarenessAreaInput:{type:'ZIP',value:awarenessZip,resolver:'resolveGridlyAwarenessAreaQuery'}},expectedResult:{selectedCountyFips:countyFips,selectedCountyName:county.countyName,currentOperational:true,resultCountyFipsExclusive:[countyFips]},comparisonMode:'EXACT_CONSUMER_STATE',evidenceSource:['data/lp153/operational-execution-registry.json','reports/lp18811f2/wave0-authority-contract.json'],severityOnFailure:'SEVERITY_2'});
   }
   const blockers = [
     ['CERTIFIED_ARTIFACT_STABILITY','CONSUMER_ACCEPTANCE_OBSERVATION_NOT_EXPOSED','Governed bytes and identity exist, but no governed adapter can prove that the protected consumer accepted the package rather than merely retrieving it.'],

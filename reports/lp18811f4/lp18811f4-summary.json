@@ -1,8 +1,8 @@
 {
   "schemaVersion": "gridly.lp18811f4.summary.v1",
   "milestone": "LP188.11F4",
-  "fixtureContractDigest": "sha256:c3b44929a1a3b48b76a95de12dc631632ea11c7215fcab32b174612a43a09ccf",
-  "journeyContractDigest": "sha256:199fa1d23e4c7ed0696632665c1da35f511f36e4e505785da98118b91771b6e7",
+  "fixtureContractDigest": "sha256:61144c5e4831beec1f32956d6e672ac51e654e53e6b07ea148a49657ab227616",
+  "journeyContractDigest": "sha256:2c06ad38fa89dfdbf8a64a205bb677b9f38943de7cc88a8063d9f6a6d4a8aaa5",
   "fixtureAuthorityResult": {
     "CERTIFIED_ARTIFACT_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",
     "OPERATIONAL_COUNTY_RESULT_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",

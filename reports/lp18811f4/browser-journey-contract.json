@@ -5,7 +5,7 @@
   "deploymentId": "458fa7f4-ba68-44c7-82ea-c5e6475e456e",
   "buildIdentity": "sha256:1f277cfa3a7512d3df8dd0ec11bdf54bfcfd98b45e140b45640e8e50156979a5",
   "wave0ContractDigest": "sha256:a05d8fbb07bcdf1ee4b067d0aacbe6e690a8531f160396472f76757f3beeb257",
-  "fixtureContractDigest": "sha256:c3b44929a1a3b48b76a95de12dc631632ea11c7215fcab32b174612a43a09ccf",
+  "fixtureContractDigest": "sha256:61144c5e4831beec1f32956d6e672ac51e654e53e6b07ea148a49657ab227616",
   "journeys": [
     {
       "journeyId": "W0-JOURNEY-PACKAGE-ACCEPTANCE",
@@ -46,7 +46,7 @@
         "read-only journey authorization"
       ],
       "steps": [
-        "Select the governed county through #gridlyWelcomeCountySelect.",
+        "Advance the V950 first-run pages with #gridlyV950NextBtn, enter the fixture ZIP through #gridlyV858LocationInput, and activate the real Continue control.",
         "Observe runtime package acceptance through the owner-approved identity hook."
       ],
       "expectedResults": [
@@ -60,7 +60,7 @@
         "DOM identity record",
         "network package URL/status with credential headers removed"
       ],
-      "selectorReadiness": "SELECTOR_HOOK_REQUIRED",
+      "selectorReadiness": "CURRENT_ONBOARDING_CONTROLS_READY",
       "executionStatus": "NOT_EXECUTED_OWNER_FIXTURE_AUTHORITY_BLOCKED"
     },
     {
@@ -102,7 +102,8 @@
         "read-only journey authorization"
       ],
       "steps": [
-        "Select each governed registry option through #gridlyWelcomeCountySelect.",
+        "Advance the V950 first-run pages with #gridlyV950NextBtn.",
+        "Enter each governed fixture ZIP through #gridlyV858LocationInput and activate the real Continue control.",
         "Observe selected county through the owner-approved active identity hook."
       ],
       "expectedResults": [
@@ -113,10 +114,10 @@
       ],
       "evidenceRequirements": [
         "sanitized screenshot",
-        "selected option value",
+        "fixture ZIP input",
         "active identity record"
       ],
-      "selectorReadiness": "SELECTOR_HOOK_REQUIRED",
+      "selectorReadiness": "CURRENT_ONBOARDING_CONTROLS_READY",
       "executionStatus": "NOT_EXECUTED_OWNER_FIXTURE_AUTHORITY_BLOCKED"
     },
     {
