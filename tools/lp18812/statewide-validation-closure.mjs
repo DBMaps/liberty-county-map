@@ -8,6 +8,9 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const APPROVED_ASSERTIONS = Object.freeze(['CERTIFIED_ARTIFACT_STABILITY','OPERATIONAL_COUNTY_RESULT_STABILITY','COUNTY_BOUNDARY_ISOLATION','CONSUMER_RESULT_STABILITY','FALLBACK_BEHAVIOR_STABILITY','ROUTE_AWARENESS_STABILITY']);
 export const COMPLETED_DIMENSIONS = Object.freeze(['deployment','runtime','boundary']);
 export const MUTATING_METHODS = Object.freeze(['POST','PUT','PATCH','DELETE']);
+export const BLOCKED_NON_APPLICATION_MUTATIONS = Object.freeze([
+  Object.freeze({method:'POST',origin:'https://cloudflareinsights.com',pathname:'/cdn-cgi/rum',category:'THIRD_PARTY_TELEMETRY'})
+]);
 export const SECRET_NAMES = Object.freeze(['GRIDLY_VALIDATOR_ACCESS_CLIENT_ID','GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET']);
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const canonical = (v) => `${JSON.stringify(v,null,2)}\n`;
@@ -41,6 +44,17 @@ export function sanitize(value) {
   let text=JSON.stringify(value);
   for (const key of SECRET_NAMES) if (process.env[key]) text=text.split(process.env[key]).join('[REDACTED]');
   return JSON.parse(text.replace(/CF-Access-Client-(Id|Secret)/gi,'redacted-header'));
+}
+export function classifyBlockedMutation(method, requestUrl, protectedOrigin) {
+  const normalizedMethod=String(method).toUpperCase();
+  if (!MUTATING_METHODS.includes(normalizedMethod)) throw Error('method_is_not_mutating');
+  const url=new URL(requestUrl);
+  const record={method:normalizedMethod,origin:url.origin,pathname:url.pathname,category:'UNKNOWN_MUTATING_ORIGIN',blocked:true,productionMutationObserved:true};
+  if (url.origin===protectedOrigin) return {...record,category:'PROTECTED_APPLICATION_MUTATION'};
+  if (url.hostname==='supabase.co' || url.hostname.endsWith('.supabase.co')) return {...record,category:'SUPABASE_APPLICATION_DATA_MUTATION'};
+  const telemetry=BLOCKED_NON_APPLICATION_MUTATIONS.find(x=>x.method===normalizedMethod&&x.origin===url.origin&&x.pathname===url.pathname);
+  if (telemetry) return {...record,category:telemetry.category,productionMutationObserved:false};
+  return record;
 }
 export function reconcile(input,c=contract()) {
   const seen=[...new Set(input.results?.map(x=>x.fips) || [])].sort();

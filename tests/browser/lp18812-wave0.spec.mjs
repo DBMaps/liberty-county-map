@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
-import { contract, validateEnvironment, reconcile, MUTATING_METHODS } from '../../tools/lp18812/statewide-validation-closure.mjs';
+import { classifyBlockedMutation, contract, validateEnvironment, reconcile, MUTATING_METHODS } from '../../tools/lp18812/statewide-validation-closure.mjs';
 
 // Canonical Gridly portrait-validation viewport (LP185.9A and V856/V857 validation).
 const GOVERNED_MOBILE_PORTRAIT_VIEWPORT=Object.freeze({width:390,height:844});
@@ -16,7 +16,8 @@ const GOVERNED_WAVE0_TEST_TIMEOUT_MS=(governedFixtures.length*GOVERNED_FIXTURE_E
 test.beforeAll(()=>validateEnvironment(process.env,c));
 test('exact governed Wave 0 is read-only',async({browser})=>{
   test.setTimeout(GOVERNED_WAVE0_TEST_TIMEOUT_MS);
-  let mutation=false;
+  let productionMutationObserved=false;
+  const blockedMutatingRequests=[];
   const protectedOrigin=new URL(process.env.GRIDLY_PROTECTED_URL).origin;
   const results=[];
   for(const fixture of governedFixtures){
@@ -26,7 +27,7 @@ test('exact governed Wave 0 is read-only',async({browser})=>{
     const context=await browser.newContext({viewport:GOVERNED_MOBILE_PORTRAIT_VIEWPORT});
     const page=await context.newPage();
     expect(page.viewportSize()).toEqual(GOVERNED_MOBILE_PORTRAIT_VIEWPORT);
-    await page.route('**/*',route=>{ const request=route.request(),method=request.method(); if(MUTATING_METHODS.includes(method)){mutation=true; return route.abort('blockedbyclient');} if(new URL(request.url()).origin===protectedOrigin)return route.continue({headers:{...request.headers(),'CF-Access-Client-Id':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_ID,'CF-Access-Client-Secret':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET}}); return route.continue(); });
+    await page.route('**/*',route=>{ const request=route.request(),method=request.method(); if(MUTATING_METHODS.includes(method)){const audit=classifyBlockedMutation(method,request.url(),protectedOrigin);blockedMutatingRequests.push(audit);productionMutationObserved ||= audit.productionMutationObserved;return route.abort('blockedbyclient');} if(new URL(request.url()).origin===protectedOrigin)return route.continue({headers:{...request.headers(),'CF-Access-Client-Id':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_ID,'CF-Access-Client-Secret':process.env.GRIDLY_VALIDATOR_ACCESS_CLIENT_SECRET}}); return route.continue(); });
     await page.goto(process.env.GRIDLY_PROTECTED_URL,{waitUntil:'domcontentloaded'});
     const build=await page.evaluate(async()=>await (await fetch('/gridly-protected-build-identity.json')).text()); expect(build).toContain(c.target.buildIdentity);
     await expect(page.locator('#gridlyWelcomeOnboarding')).toBeVisible();
@@ -41,7 +42,10 @@ test('exact governed Wave 0 is read-only',async({browser})=>{
     results.push({fips,assertions:['CERTIFIED_ARTIFACT_STABILITY','OPERATIONAL_COUNTY_RESULT_STABILITY','CONSUMER_RESULT_STABILITY']});
     await context.close();
   }
-  expect(mutation).toBe(false);
+  // This intentionally contains only method, origin, sanitized pathname,
+  // classification, and blocking outcome. Never add request metadata or payloads.
+  console.log('LP188.12 blocked mutation audit',JSON.stringify(blockedMutatingRequests));
+  expect(productionMutationObserved).toBe(false);
   fs.mkdirSync('evidence/lp18812',{recursive:true});
-  fs.writeFileSync('evidence/lp18812/wave0-partial-result.json',JSON.stringify(reconcile({results,failures:0,openS1:0,openS2:0,productionMutationObserved:mutation,activationObserved:false}),null,2)+'\n');
+  fs.writeFileSync('evidence/lp18812/wave0-partial-result.json',JSON.stringify(reconcile({results,failures:0,openS1:0,openS2:0,productionMutationObserved,blockedMutatingRequests,activationObserved:false}),null,2)+'\n');
 });
