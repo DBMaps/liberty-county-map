@@ -13,6 +13,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "verify:lp18811f1": "node tools/lp18811/audit-regression-authorities.mjs verify",
+    "test:lp18811f1": "node --test tests/lp18811f1-regression-authority-audit.test.mjs",
     "build:lp18811e": "node tools/lp18811/prepare-remaining-validation.mjs build",
     "verify:lp18811e": "node tools/lp18811/prepare-remaining-validation.mjs verify",
     "test:lp18811e": "node --test tests/lp18811e-remaining-validation.test.mjs",

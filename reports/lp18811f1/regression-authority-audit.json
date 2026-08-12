@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "gridly.lp18811f1.regression-authority-audit.v1",
+  "milestone": "LP188.11F1",
+  "waveId": "LP18810-NP-001",
+  "targetCountyCount": 215,
+  "implementationPath": "WAVE0_AUTHORITY_MISSING_BLOCKS_RUNNER",
+  "wave0Audit": {
+    "planningScopeReference": "reports/lp187/texas-activation-wave-plan.json",
+    "planningCountyFips": [
+      "48015",
+      "48039",
+      "48041",
+      "48057",
+      "48071",
+      "48089",
+      "48149",
+      "48157",
+      "48167",
+      "48185",
+      "48199",
+      "48201",
+      "48239",
+      "48241",
+      "48245",
+      "48285",
+      "48291",
+      "48321",
+      "48339",
+      "48351",
+      "48361",
+      "48373",
+      "48407",
+      "48457",
+      "48471",
+      "48473",
+      "48477",
+      "48481"
+    ],
+    "planningCountyCount": 28,
+    "executionAuthorized": false,
+    "governedComparisonAuthorityFound": false,
+    "missingFields": [
+      "runtimeBuildIdentity",
+      "assertionDefinitions",
+      "expectedResults",
+      "executedControlEvidence"
+    ],
+    "conclusion": "LP187 names the current operational counties as a proposed regression-baseline cohort, but supplies no executed comparison authority. LP132 earlier described a one-county control. Neither is an identity-bound Wave 0 result."
+  },
+  "defectAudit": {
+    "governedAuthorityFound": false,
+    "policyReference": "LP132-TEXAS-STATEWIDE-ACTIVATION-ROADMAP.md",
+    "knownSemantics": [
+      "unresolved severity-1/2 correctness, integrity, security, privacy, or rollback-readiness issue is a no-go"
+    ],
+    "missingFields": [
+      "severity1Definition",
+      "severity2Definition",
+      "findingInventory",
+      "openClosedStatusAuthority",
+      "countyAndWaveScope"
+    ],
+    "conclusion": "The repository states the zero-open gate but has no governed severity taxonomy or status inventory from which counts can be derived."
+  },
+  "assertionInventory": [
+    {
+      "area": "protected access and package endpoint checks",
+      "classification": "REMOTE_PROTECTED_EXECUTABLE",
+      "selected": false,
+      "reason": "already used for deployment/runtime/package/boundary certification; relabeling is forbidden"
+    },
+    {
+      "area": "county discovery/search, community resolution, awareness, location context, route/watch, consumer fallback",
+      "classification": "LOCAL_ONLY_NOT_VALID_FOR_PROTECTED_REGRESSION",
+      "selected": false,
+      "reason": "repository tests use local DOM/module fixtures and are not an established protected HTTP contract"
+    },
+    {
+      "area": "LP188.5 package hash identity",
+      "classification": "STATIC_ONLY",
+      "selected": false,
+      "reason": "valid prerequisite already certified, not regression behavior"
+    },
+    {
+      "area": "restricted-county isolation",
+      "classification": "STATIC_ONLY",
+      "selected": false,
+      "reason": "existing governance/state assertions do not execute protected consumer behavior"
+    },
+    {
+      "area": "production-only operational checks",
+      "classification": "PRODUCTION_ONLY",
+      "selected": false,
+      "reason": "production execution is prohibited"
+    }
+  ],
+  "runner": {
+    "implemented": false,
+    "path": null,
+    "executionCommand": null,
+    "placeholdersRemain": false,
+    "reason": "fail-closed: both comparison and defect authorities are absent"
+  },
+  "ingestion": {
+    "changed": false,
+    "reason": "no valid regression evidence can be produced; authoritative owner-result.json remains complementary and untouched"
+  },
+  "state": {
+    "deploymentId": "lp18811c-c5cc6370-412c-487e-b3d3-3ff8350b6f98",
+    "buildIdentity": "sha256:1f277cfa3a7512d3df8dd0ec11bdf54bfcfd98b45e140b45640e8e50156979a5",
+    "currentOperationalCount": 28,
+    "restrictedCountyCount": 11,
+    "newActivatedCount": 0,
+    "runtimeOperationalCountChanged": false,
+    "restrictedCountyStateChanged": false
+  },
+  "overallClassification": "PROTECTED_REGRESSION_BLOCKED_GOVERNED_WAVE0_AND_DEFECT_AUTHORITIES_REQUIRED",
+  "nextAction": "Governance owner must publish immutable Wave 0 executed control evidence (exact FIPS, build/runtime identity, assertions and expected results) and an authoritative S1/S2 taxonomy plus open/closed defect inventory; then provision the read-only adapter."
+}
