@@ -40,21 +40,35 @@ export function buildEvidence(root=ROOT){
 }
 
 export function stage({source,output,deploymentId,root=ROOT}){
-  if(!source||!output||!deploymentId)throw Error('stage requires --source, --output, and immutable --deployment-id');
-  if(/^(latest|current|preview)$/i.test(deploymentId))throw Error('ambiguous deployment identity rejected');
-  const governed=governedInputs(root), {manifest,buildIdentity}=cohortIdentity(root);
-  const packages=governed.packages.map(pkg=>{const bytes=fs.readFileSync(path.join(source,pkg.relativePackagePath));if(bytes.length!==pkg.byteLength||sha(bytes)!==pkg.sha256)throw Error(`LP188.5 package identity mismatch: ${pkg.countyFips}`);return {...pkg,bytes};});
-  return composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root});
+  try {
+    if(!source||!output||!deploymentId)throw Error('stage requires --source, --output, and immutable --deployment-id');
+    if(/^(latest|current|preview)$/i.test(deploymentId))throw Error('ambiguous deployment identity rejected');
+    const governed=governedInputs(root), {manifest,buildIdentity}=cohortIdentity(root);
+    const packages=governed.packages.map(pkg=>{const bytes=fs.readFileSync(path.join(source,pkg.relativePackagePath));if(bytes.length!==pkg.byteLength||sha(bytes)!==pkg.sha256)throw Error(`LP188.5 package identity mismatch: ${pkg.countyFips}`);return {...pkg,bytes};});
+    return composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root});
+  } catch (error) {
+    if(output)fs.rmSync(output,{recursive:true,force:true});
+    throw error;
+  }
 }
 
 export function composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root=ROOT}){
-  const runtime=stageDeployableRuntime(output,root);
-  fs.mkdirSync(path.join(output,'counties'),{recursive:true});
-  for(const pkg of packages)fs.writeFileSync(path.join(output,pkg.relativePackagePath),pkg.bytes);
-  const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
-  fs.writeFileSync(path.join(output,'gridly-protected-build-identity.json'),stable(identity));
-  fs.writeFileSync(path.join(output,'gridly-protected-cohort-manifest.json'),stable(manifest));
-  return {deploymentId,buildIdentity,countyCount:packages.length,output,runtimeArtifactIdentity:runtime.artifactIdentity,runtimeFileCount:runtime.files.length};
+  const temporary=`${output}.protected-tmp-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
+  try {
+    const runtime=stageDeployableRuntime(temporary,root);
+    fs.mkdirSync(path.join(temporary,'counties'),{recursive:true});
+    for(const pkg of packages)fs.writeFileSync(path.join(temporary,pkg.relativePackagePath),pkg.bytes);
+    const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
+    fs.writeFileSync(path.join(temporary,'gridly-protected-build-identity.json'),stable(identity));
+    fs.writeFileSync(path.join(temporary,'gridly-protected-cohort-manifest.json'),stable(manifest));
+    fs.rmSync(output,{recursive:true,force:true});
+    fs.renameSync(temporary,output);
+    return {deploymentId,buildIdentity,countyCount:packages.length,output,runtimeArtifactIdentity:runtime.artifactIdentity,runtimeFileCount:runtime.files.length};
+  } catch(error) {
+    fs.rmSync(temporary,{recursive:true,force:true});
+    fs.rmSync(output,{recursive:true,force:true});
+    throw error;
+  }
 }
 
 export function verify(root=ROOT){const a=stable(buildEvidence(root)),b=stable(buildEvidence(root));if(a!==b)throw Error('non-deterministic provisioning evidence');const expected=fs.readFileSync(path.join(root,REPORT),'utf8');if(expected!==a)throw Error('LP188.11C provisioning evidence drift');return true;}
