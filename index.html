@@ -1472,6 +1472,12 @@
   <script src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script src="js/gridlyPackageDiscovery.js"></script>
 <script src="js/gridlyPackageLoader.js"></script>
     <script src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
+    <!-- The V783 crossing provider must exist before app.js registers its
+         DOMContentLoaded production inventory load. Keep this provider stack
+         in dependency order: validation -> adapter -> provider. -->
+    <script src="js/gridlyCrossingPackageValidationAudit.js"></script>
+    <script src="js/gridlyCrossingPackageAdapter.js"></script>
+    <script src="js/gridlyCrossingProvider.js"></script>
 
   <script src="js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"></script>
   <script src="js/lp097-curated-destinations.js?v=097"></script>
@@ -1493,9 +1499,6 @@
 
     <script src="js/gridlyRuntimeSourceComparisonAudit.js"></script>
     <script src="js/gridlyRuntimeSourceBridgeActivation.js"></script>
-    <script src="js/gridlyCrossingPackageValidationAudit.js"></script>
-    <script src="js/gridlyCrossingPackageAdapter.js"></script>
-    <script src="js/gridlyCrossingProvider.js"></script>
   <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
   <script src="js/gridlyLp0941LaunchSurfaceAudit.js"></script>
   <script src="js/gridlyLp095UnifiedPresentationAudit.js"></script>
