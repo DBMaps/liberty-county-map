@@ -17875,6 +17875,7 @@ let gridlyAwarenessRadiusLayer;
 let gridlyAwarenessIdentityLabelLayer;
 let gridlyCountyBoundaryGeoJson = null;
 const GRIDLY_COUNTY_BOUNDARY_OVERLAY_COUNTY_IDS = Object.freeze(gridlyGetOperationalCountyIds());
+const GRIDLY_AUTHORITATIVE_PRODUCTION_COUNTY_GEOMETRY_PATH = "assets/location-resolution/gridly-authoritative-county-geometry-v1.json";
 const GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_SOURCE_PATH = "assets/county-implementation/chambers/boundary/chambers-county-boundary.geojson";
 const GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_PAYLOAD_SCOPE = "standard_texas_counties_static_geojson";
 const GRIDLY_ACTIVE_COUNTY_BOUNDARY_PAYLOAD_SCOPE = "county_specific_runtime_geojson";
@@ -47476,35 +47477,40 @@ function renderGridlyCountyBoundaryOverlay(reason = "unknown") {
 async function loadGridlyCountyBoundaryOverlay() {
   if (gridlyCountyBoundaryOverlayGeoJsonById.__standardTexasLoaded) return renderGridlyCountyBoundaryOverlay("county-boundary-overlay-load");
   try {
-    const response = await fetch(GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_SOURCE_PATH, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Standard Texas county boundary returned ${response.status}`);
-    const geojson = await response.json();
-    const features = Array.isArray(geojson?.features) ? geojson.features : [];
-    if (!features.length) throw new Error("Standard Texas county boundary GeoJSON has no features.");
+    const packageLoader = typeof window !== "undefined" ? window.gridlyLp0361cRuntimeCountyGeometryPackageLoader : null;
+    if (!packageLoader?.load) throw new Error("Authoritative production county geometry loader is unavailable.");
+    const geometryPackage = await packageLoader.load();
+    const packagedCounties = Array.isArray(geometryPackage?.counties) ? geometryPackage.counties : [];
+    const supportedCountyIds = new Set(getGridlyCountyBoundaryOverlaySupportedCountyIds());
     gridlyCountyBoundaryOverlayGeoJsonById = { __standardTexasLoaded: true };
     gridlyCountyBoundaryOverlaySourceMetadataById = {};
-    await Promise.all(getGridlyCountyBoundaryOverlaySupportedCountyIds().map(async (countyId) => {
-      const countyBoundaryPath = gridlyGetCountyRuntimeSources(countyId)?.boundarySource || null;
-      const fallbackFeature = findGridlyCountyBoundaryOverlayFeatureForCounty(features, countyId);
-      if (fallbackFeature) {
-        gridlyCountyBoundaryOverlayGeoJsonById[countyId] = { type: "FeatureCollection", features: [fallbackFeature] };
-        gridlyCountyBoundaryOverlaySourceMetadataById[countyId] = { sourceType: "statewide_active_fallback", sourcePath: GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_SOURCE_PATH, payloadScope: GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_PAYLOAD_SCOPE };
+    for (const county of packagedCounties) {
+      const countyId = String(county?.countyId || "").trim().toLowerCase();
+      if (!supportedCountyIds.has(countyId) || !county?.geometry) continue;
+      const feature = { type: "Feature", properties: { geoid: county.countyFips, name: GRIDLY_COUNTY_REGISTRY[countyId]?.name, countyId }, geometry: county.geometry };
+      gridlyCountyBoundaryOverlayGeoJsonById[countyId] = { type: "FeatureCollection", features: [feature] };
+      gridlyCountyBoundaryOverlaySourceMetadataById[countyId] = { sourceType: "authoritative_production_package", sourcePath: GRIDLY_AUTHORITATIVE_PRODUCTION_COUNTY_GEOMETRY_PATH, payloadScope: "governed_operational_counties" };
+    }
+
+    const activeCountyId = gridlyGetActiveCountyId();
+    if (!gridlyCountyBoundaryOverlayGeoJsonById[activeCountyId]) {
+      const countyBoundaryPath = gridlyGetCountyRuntimeSources(activeCountyId)?.boundarySource || null;
+      if (countyBoundaryPath && countyBoundaryPath !== GRIDLY_AUTHORITATIVE_PRODUCTION_COUNTY_GEOMETRY_PATH) {
+        try {
+          const countyResponse = await fetch(countyBoundaryPath, { cache: "no-store" });
+          if (!countyResponse.ok) throw new Error(`County-specific boundary returned ${countyResponse.status}`);
+          const countyGeojson = await countyResponse.json();
+          const expectedGeoid = getGridlyCountyBoundaryOverlayCountyGeoid(activeCountyId);
+          const countyFeatures = (Array.isArray(countyGeojson?.features) ? countyGeojson.features : [])
+            .filter((feature) => !expectedGeoid || getGridlyCountyBoundaryOverlayFeatureGeoid(feature) === expectedGeoid);
+          if (!countyFeatures.length) throw new Error("County-specific boundary GeoJSON has no active county features.");
+          gridlyCountyBoundaryOverlayGeoJsonById[activeCountyId] = { ...countyGeojson, type: "FeatureCollection", features: countyFeatures };
+          gridlyCountyBoundaryOverlaySourceMetadataById[activeCountyId] = { sourceType: "county_specific_active", sourcePath: countyBoundaryPath, payloadScope: GRIDLY_ACTIVE_COUNTY_BOUNDARY_PAYLOAD_SCOPE };
+        } catch (countyError) {
+          console.warn(`[Gridly] County-specific boundary fallback failed for ${activeCountyId}`, countyError);
+        }
       }
-      if (!countyBoundaryPath || countyBoundaryPath === GRIDLY_STANDARD_TEXAS_COUNTY_BOUNDARY_SOURCE_PATH) return;
-      try {
-        const countyResponse = await fetch(countyBoundaryPath, { cache: "no-store" });
-        if (!countyResponse.ok) throw new Error(`County-specific boundary returned ${countyResponse.status}`);
-        const countyGeojson = await countyResponse.json();
-        const expectedGeoid = getGridlyCountyBoundaryOverlayCountyGeoid(countyId);
-        const countyFeatures = (Array.isArray(countyGeojson?.features) ? countyGeojson.features : [])
-          .filter((feature) => !expectedGeoid || getGridlyCountyBoundaryOverlayFeatureGeoid(feature) === expectedGeoid);
-        if (!countyFeatures.length) throw new Error("County-specific boundary GeoJSON has no active county features.");
-        gridlyCountyBoundaryOverlayGeoJsonById[countyId] = { ...countyGeojson, type: "FeatureCollection", features: countyFeatures };
-        gridlyCountyBoundaryOverlaySourceMetadataById[countyId] = { sourceType: "county_specific_active", sourcePath: countyBoundaryPath, payloadScope: GRIDLY_ACTIVE_COUNTY_BOUNDARY_PAYLOAD_SCOPE };
-      } catch (countyError) {
-        console.warn(`[Gridly] County-specific boundary fallback failed for ${countyId}`, countyError);
-      }
-    }));
+    }
     gridlyCountyBoundaryGeoJson = gridlyCountyBoundaryOverlayGeoJsonById[gridlyGetActiveCountyId()] || null;
   } catch (error) {
     console.warn("[Gridly] County boundary overlay load failed", error);
