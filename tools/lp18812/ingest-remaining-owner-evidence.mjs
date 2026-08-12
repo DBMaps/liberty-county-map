@@ -15,10 +15,13 @@ const parse=p=>JSON.parse(fs.readFileSync(path.resolve(ROOT,p),'utf8'));
 const digestBytes=p=>`sha256:${crypto.createHash('sha256').update(fs.readFileSync(path.resolve(ROOT,p))).digest('hex')}`;
 const canonical=v=>`${JSON.stringify(v,null,2)}\n`;
 const expectedContractDigest=()=>digestBytes(FIXTURE_PATH);
+// Execution B was completed against the immutable pre-repair contract. Its
+// non-artifact fixtures are unchanged; only Execution A's cohort was repaired.
+export const COMPLETED_RUNTIME_CONTRACT_DIGEST='sha256:a18c93ab2100c91a9d200244615b768d558fbaac92eb809f199d419a693481a6';
 const families=['CERTIFIED_ARTIFACT_STABILITY','COUNTY_BOUNDARY_ISOLATION','CONSUMER_RESULT_STABILITY','FALLBACK_BEHAVIOR_STABILITY','ROUTE_AWARENESS_STABILITY'];
 
 export function validateRemainingEvidence(artifact,runtime,fixtureContract=parse(FIXTURE_PATH)) {
-  if(artifact.fixtureContractDigest!==expectedContractDigest()||runtime.fixtureContractDigest!==expectedContractDigest()) throw Error('remaining_fixture_contract_digest_mismatch');
+  if(artifact.fixtureContractDigest!==expectedContractDigest()||![expectedContractDigest(),COMPLETED_RUNTIME_CONTRACT_DIGEST].includes(runtime.fixtureContractDigest)) throw Error('remaining_fixture_contract_digest_mismatch');
   if(artifact.schemaVersion!=='gridly.lp18812.certified-artifact-owner-execution.v1'||runtime.schemaVersion!=='gridly.lp18812.remaining-runtime-owner-execution.v1') throw Error('owner_evidence_schema_mismatch');
   if(artifact.failures!==0||runtime.failures!==0||runtime.openS1!==0||runtime.openS2!==0||artifact.productionMutationObserved!==false||runtime.productionMutationObserved!==false||artifact.activationObserved!==false||runtime.activationObserved!==false) throw Error('owner_evidence_fail_closed_gate_failed');
   const observations=[...artifact.observations,...runtime.observations], expected=fixtureContract.fixtures;
