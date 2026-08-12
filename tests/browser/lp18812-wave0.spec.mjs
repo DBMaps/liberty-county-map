@@ -39,7 +39,10 @@ test('exact governed Wave 0 is read-only',async({browser})=>{
     await expect.poll(async()=>page.locator('html').getAttribute('data-gridly-package-identity')).not.toBeNull();
     const identity=JSON.parse(await page.locator('html').getAttribute('data-gridly-package-identity'));
     expect(identity.validationState).toBe('valid');
-    results.push({fips,assertions:['CERTIFIED_ARTIFACT_STABILITY','OPERATIONAL_COUNTY_RESULT_STABILITY','CONSUMER_RESULT_STABILITY']});
+    // This journey proves county selection only. Package `validationState` is a
+    // useful observation, but it does not compare the governed response bytes,
+    // SHA-256, and length; nor does selection exercise a consumer-result fixture.
+    results.push({fips,journeyObservations:{activeCountyFipsMatched:true,packageValidationState:identity.validationState}});
     await context.close();
   }
   // This intentionally contains only method, origin, sanitized pathname,
@@ -47,5 +50,6 @@ test('exact governed Wave 0 is read-only',async({browser})=>{
   console.log('LP188.12 blocked mutation audit',JSON.stringify(blockedMutatingRequests));
   expect(productionMutationObserved).toBe(false);
   fs.mkdirSync('evidence/lp18812',{recursive:true});
-  fs.writeFileSync('evidence/lp18812/wave0-partial-result.json',JSON.stringify(reconcile({results,failures:0,openS1:0,openS2:0,productionMutationObserved,blockedMutatingRequests,activationObserved:false}),null,2)+'\n');
+  const assertionOutcomes=[{assertionId:'OPERATIONAL_COUNTY_RESULT_STABILITY',outcome:'PASS',executed:true,evidenceChecks:results.map(result=>({passed:result.journeyObservations.activeCountyFipsMatched,evidenceReference:`owner-wave0-county-selection:${result.fips}`}))}];
+  fs.writeFileSync('evidence/lp18812/wave0-partial-result.json',JSON.stringify(reconcile({results,assertionOutcomes,failures:0,openS1:0,openS2:0,productionMutationObserved,blockedMutatingRequests,activationObserved:false}),null,2)+'\n');
 });
