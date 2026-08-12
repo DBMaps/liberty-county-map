@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18811e": "node tools/lp18811/prepare-remaining-validation.mjs build",
+    "verify:lp18811e": "node tools/lp18811/prepare-remaining-validation.mjs verify",
+    "test:lp18811e": "node --test tests/lp18811e-remaining-validation.test.mjs",
     "build:lp18811c": "node tools/lp18811/provision-protected-environment.mjs build",
     "verify:lp18811c": "node tools/lp18811/provision-protected-environment.mjs verify",
     "test:lp18811c": "node --test tests/lp18811c-protected-environment-provisioning.test.mjs",
