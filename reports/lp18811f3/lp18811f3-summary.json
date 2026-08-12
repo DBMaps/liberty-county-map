@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "gridly.lp18811f3.summary.v1",
+  "milestone": "LP188.11F3",
+  "fixtureContractDigest": "sha256:756cb4bbb819435506cd9aa5b52176616a8d0693bc8b642c8240971b74c38166",
+  "defectInventoryDigest": "sha256:735b0595dcb770938bbcb1d9baf9ed6bc9bba34ac78158a9908c107c0d10cb25",
+  "fixtureCount": 56,
+  "fixtureCountByAssertion": {
+    "CERTIFIED_ARTIFACT_STABILITY": 28,
+    "OPERATIONAL_COUNTY_RESULT_STABILITY": 28,
+    "COUNTY_BOUNDARY_ISOLATION": 0,
+    "CONSUMER_RESULT_STABILITY": 0,
+    "FALLBACK_BEHAVIOR_STABILITY": 0,
+    "ROUTE_AWARENESS_STABILITY": 0
+  },
+  "assertionsLackingDeterministicFixtureAuthority": [
+    "CERTIFIED_ARTIFACT_STABILITY",
+    "OPERATIONAL_COUNTY_RESULT_STABILITY",
+    "COUNTY_BOUNDARY_ISOLATION",
+    "CONSUMER_RESULT_STABILITY",
+    "FALLBACK_BEHAVIOR_STABILITY",
+    "ROUTE_AWARENESS_STABILITY"
+  ],
+  "fixtureAuthorityComplete": false,
+  "browserInfrastructure": "NONE",
+  "newDependencyRequiredForBrowserExecution": true,
+  "runnerImplemented": false,
+  "existingProtectedDeploymentSufficient": false,
+  "wave0CanExecute": false,
+  "state": {
+    "currentOperationalCount": 28,
+    "restrictedCountyCount": 11,
+    "newActivatedCount": 0,
+    "runtimeOperationalCountChanged": false,
+    "restrictedCountyStateChanged": false
+  },
+  "overallClassification": "WAVE0_FIXTURE_AUTHORITY_INCOMPLETE",
+  "nextAction": "Owner must govern exact edge, consumer, fallback, and route/watch inputs and expected outputs, and decide whether to authorize Playwright or expose an equivalent read-only journey interface; do not redeploy or execute Wave 0 until both decisions are complete."
+}

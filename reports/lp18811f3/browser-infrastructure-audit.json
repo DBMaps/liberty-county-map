@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "gridly.lp18811f3.browser-infrastructure-audit.v1",
+  "searchTerms": [
+    "Playwright",
+    "Puppeteer",
+    "WebDriver",
+    "Chromium",
+    "browser test",
+    "e2e",
+    "end-to-end",
+    "DOM automation",
+    "protected preview journeys",
+    "consumer smoke tests"
+  ],
+  "discovery": "NO_BROWSER_AUTOMATION_FRAMEWORK_OR_EXECUTABLE_HARNESS",
+  "packageManifestChecked": "package.json",
+  "newDependencyAdded": false,
+  "classifications": [
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "HTTP proves reachability and bytes but not consumer/runtime acceptance or non-substitution."
+    },
+    {
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "Approved semantics require consumer selection, visible result, fallback, boundary, or route/watch state not exposed by protected HTTP contracts."
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "Approved semantics require consumer selection, visible result, fallback, boundary, or route/watch state not exposed by protected HTTP contracts."
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "Approved semantics require consumer selection, visible result, fallback, boundary, or route/watch state not exposed by protected HTTP contracts."
+    },
+    {
+      "assertionId": "FALLBACK_BEHAVIOR_STABILITY",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "Approved semantics require consumer selection, visible result, fallback, boundary, or route/watch state not exposed by protected HTTP contracts."
+    },
+    {
+      "assertionId": "ROUTE_AWARENESS_STABILITY",
+      "executionClassification": "BROWSER_REQUIRED",
+      "reason": "Approved semantics require consumer selection, visible result, fallback, boundary, or route/watch state not exposed by protected HTTP contracts."
+    }
+  ],
+  "httpOnlySufficientForAllControls": false,
+  "candidateFramework": "Playwright",
+  "candidateRationale": "A Chromium-capable DOM journey framework would match the static web/Capacitor application, but no dependency is authorized.",
+  "ownerDecisionRequired": true,
+  "runnerImplemented": false
+}

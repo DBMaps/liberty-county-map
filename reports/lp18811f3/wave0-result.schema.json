@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gridly.lp18811f3.wave0-result.schema.json",
+  "title": "Gridly Wave 0 portable execution result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "waveId",
+    "environmentClassification",
+    "deploymentId",
+    "buildIdentity",
+    "wave0ContractDigest",
+    "fixtureContractDigest",
+    "severityTaxonomyDigest",
+    "defectInventoryDigest",
+    "targetCountyCount",
+    "assertionCount",
+    "assertionPassCount",
+    "assertionFailCount",
+    "countyResults",
+    "severity1OpenCount",
+    "severity2OpenCount",
+    "executorEvidenceReference",
+    "productionMutationObserved",
+    "activationObserved",
+    "overallOutcome"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "gridly.wave0-result.v1"
+    },
+    "waveId": {
+      "const": "WAVE_0"
+    },
+    "environmentClassification": {
+      "const": "OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION"
+    },
+    "deploymentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "buildIdentity": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "wave0ContractDigest": {
+      "const": "sha256:a05d8fbb07bcdf1ee4b067d0aacbe6e690a8531f160396472f76757f3beeb257"
+    },
+    "fixtureContractDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "severityTaxonomyDigest": {
+      "const": "sha256:f920f96e8a6175f594368e400bef26717662aa4e316503acd4c867fc95654329"
+    },
+    "defectInventoryDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "targetCountyCount": {
+      "const": 28
+    },
+    "assertionCount": {
+      "const": 6
+    },
+    "assertionPassCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "assertionFailCount": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "countyResults": {
+      "type": "array",
+      "minItems": 28,
+      "maxItems": 28,
+      "items": {
+        "type": "object",
+        "required": [
+          "countyFips",
+          "fixtureResults",
+          "assertionResults",
+          "overallOutcome"
+        ]
+      }
+    },
+    "severity1OpenCount": {
+      "const": 0
+    },
+    "severity2OpenCount": {
+      "const": 0
+    },
+    "executorEvidenceReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "productionMutationObserved": {
+      "const": false
+    },
+    "activationObserved": {
+      "const": false
+    },
+    "overallOutcome": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "NOT_EXECUTED"
+      ]
+    }
+  }
+}
