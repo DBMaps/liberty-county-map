@@ -6569,6 +6569,23 @@ function gridlyGetActiveCountyId(preResolvedAwarenessArea) {
   return GRIDLY_DEFAULT_COUNTY_ID;
 }
 
+// LP188.12 owner-approved, non-visible validation identity. Values are projected
+// exclusively from the same runtime county and package registries used by Gridly.
+function gridlyPublishValidationIdentity() {
+  if (typeof document === "undefined") return;
+  const countyId = gridlyGetActiveCountyId();
+  const county = GRIDLY_COUNTY_REGISTRY[countyId];
+  const fips = gridlyExtractCountyGeoid(county);
+  const pkg = typeof window !== "undefined" && window.gridlyPackageRegistry?.getCommunityPackage
+    ? window.gridlyPackageRegistry.getCommunityPackage(countyId)
+    : null;
+  const root = document.documentElement;
+  if (fips) root.setAttribute("data-gridly-active-county-fips", fips);
+  else root.removeAttribute("data-gridly-active-county-fips");
+  if (pkg) root.setAttribute("data-gridly-package-identity", JSON.stringify({ id: pkg.id, version: pkg.version, status: pkg.status, validationState: pkg.validationState }));
+  else root.removeAttribute("data-gridly-package-identity");
+}
+
 function gridlyGetActiveCountyConfig() {
   return GRIDLY_COUNTY_REGISTRY[gridlyGetActiveCountyId()] || GRIDLY_COUNTY_REGISTRY[GRIDLY_DEFAULT_COUNTY_ID];
 }
@@ -44061,6 +44078,7 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID) {
   const previousCountyId = gridlyGetActiveCountyId();
   const normalized = gridlyNormalizeCountyId(countyId);
   if (typeof window !== "undefined") window.GRIDLY_ACTIVE_COUNTY_ID = normalized;
+  gridlyPublishValidationIdentity();
   if (previousCountyId !== normalized) {
     gridlyClearStaleAwarenessAreaForCountyContext(normalized, "active-county-change");
     gridlyCrossingInventoryCountyId = null;
