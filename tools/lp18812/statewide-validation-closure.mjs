@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const APPROVED_ASSERTIONS = Object.freeze(['CERTIFIED_ARTIFACT_STABILITY','OPERATIONAL_COUNTY_RESULT_STABILITY','COUNTY_BOUNDARY_ISOLATION','CONSUMER_RESULT_STABILITY','FALLBACK_BEHAVIOR_STABILITY','ROUTE_AWARENESS_STABILITY']);
+export const ASSERTION_OWNERSHIP = Object.freeze(Object.fromEntries(APPROVED_ASSERTIONS.map(assertionId=>[assertionId,'WAVE_0'])));
 export const COMPLETED_DIMENSIONS = Object.freeze(['deployment','runtime','boundary']);
 export const MUTATING_METHODS = Object.freeze(['POST','PUT','PATCH','DELETE']);
 export const BLOCKED_NON_APPLICATION_MUTATIONS = Object.freeze([
@@ -31,7 +32,7 @@ export function contract() {
   const ownerEvidence = read('evidence/lp18811/execution-results/owner-result.json');
   const statewide = read('reports/lp18811e/remaining-validation-matrix.json');
   const exactFips = wave.exactFipsScope || wave.fipsScope;
-  return Object.freeze({ schemaVersion:'gridly.lp18812.closure-contract.v1', milestone:'LP188.12', target:governedTarget(ownerEvidence,env), exactWave0Fips:exactFips, assertions:APPROVED_ASSERTIONS, governedFixtures:fixtures.priorFixtures, wave0ContractDigest:digest(wave), defectInventoryDigest:digest(defect), statewideFips:statewide.records.map(x=>x.countyFips).sort(), completedDimensionsNotToRerun:COMPLETED_DIMENSIONS, network:{ allowedMethods:['GET','HEAD','OPTIONS'], rejectedMethods:MUTATING_METHODS }, state:{currentOperationalCount:28,restrictedCountyCount:11,newActivatedCount:0}, authorization:{production:false,activation:false,mutation:false} });
+  return Object.freeze({ schemaVersion:'gridly.lp18812.closure-contract.v1', milestone:'LP188.12', target:governedTarget(ownerEvidence,env), exactWave0Fips:exactFips, assertions:APPROVED_ASSERTIONS, assertionOwnership:ASSERTION_OWNERSHIP, wave0Assertions:APPROVED_ASSERTIONS, governedFixtures:fixtures.priorFixtures, wave0ContractDigest:digest(wave), defectInventoryDigest:digest(defect), statewideFips:statewide.records.map(x=>x.countyFips).sort(), completedDimensionsNotToRerun:COMPLETED_DIMENSIONS, remainingClosureDimensions:['regression','consumer','telemetry','rollback','operational','independentReview'], network:{ allowedMethods:['GET','HEAD','OPTIONS'], rejectedMethods:MUTATING_METHODS }, state:{currentOperationalCount:28,restrictedCountyCount:11,newActivatedCount:0}, authorization:{production:false,activation:false,mutation:false} });
 }
 export function validateEnvironment(env, c=contract()) {
   const url = new URL(env.GRIDLY_PROTECTED_URL || 'https://invalid.invalid');
@@ -63,9 +64,12 @@ export function classifyBlockedMutation(method, requestUrl, protectedOrigin) {
 }
 export function reconcile(input,c=contract()) {
   const seen=[...new Set(input.results?.map(x=>x.fips) || [])].sort();
-  const families=[...new Set(input.results?.flatMap(x=>x.assertions || []) || [])].sort();
-  const pass=JSON.stringify(seen)===JSON.stringify([...c.exactWave0Fips].sort()) && APPROVED_ASSERTIONS.every(x=>families.includes(x)) && input.failures===0 && input.openS1===0 && input.openS2===0 && input.productionMutationObserved===false && input.activationObserved===false;
-  return {...sanitize(input),schemaVersion:'gridly.lp18812.wave0-result.v1',contractDigest:digest(c),wave0Result:pass?'PASS':'FAIL'};
+  const owned=c.wave0Assertions || Object.entries(c.assertionOwnership || {}).filter(([,owner])=>owner==='WAVE_0').map(([id])=>id);
+  const outcomes=input.assertionOutcomes || [];
+  const outcomeById=new Map(outcomes.map(x=>[x.assertionId,x]));
+  const completed=owned.filter(id=>{const x=outcomeById.get(id);return x?.outcome==='PASS'&&x.executed===true&&Array.isArray(x.evidenceChecks)&&x.evidenceChecks.length>0&&x.evidenceChecks.every(check=>check?.passed===true&&typeof check.evidenceReference==='string'&&check.evidenceReference.length>0)});
+  const pass=JSON.stringify(seen)===JSON.stringify([...c.exactWave0Fips].sort()) && completed.length===owned.length && input.failures===0 && input.openS1===0 && input.openS2===0 && input.productionMutationObserved===false && input.activationObserved===false;
+  return {...sanitize(input),schemaVersion:'gridly.lp18812.wave0-result.v1',contractDigest:digest(c),reconciliationClassification:pass?'WAVE0_COMPLETE':'WAVE0_EXECUTION_EVIDENCE_INCOMPLETE',wave0OwnedAssertions:owned,completedWave0Assertions:completed,missingWave0Assertions:owned.filter(x=>!completed.includes(x)),wave0Result:pass?'PASS':'PENDING'};
 }
 if(process.argv[2]==='contract') process.stdout.write(canonical(contract()));
 if(process.argv[2]==='reconcile') { const input=read(process.argv[3] || 'evidence/lp18812/wave0-result.input.json'); fs.mkdirSync(path.join(ROOT,'evidence/lp18812'),{recursive:true}); fs.writeFileSync(path.join(ROOT,'evidence/lp18812/wave0-result.json'),canonical(reconcile(input))); }
