@@ -19,6 +19,7 @@
     "test:lp18812:fixtures": "node --test tests/lp18812-remaining-fixture-design.test.mjs",
     "test:lp18812:remaining": "node --test tests/lp18812-remaining-owner-harnesses.test.mjs",
     "test:lp18812:resolver": "node --test tests/lp18812-authoritative-county-resolver.test.mjs",
+    "test:lp18812:routing": "node --test tests/lp18811c-protected-environment-provisioning.test.mjs",
     "owner:lp18812:artifacts": "node tools/lp18812/verify-certified-artifacts.mjs",
     "owner:lp18812:remaining-runtime": "playwright test -c playwright.lp18812-remaining.config.mjs",
     "ingest:lp18812:remaining": "node tools/lp18812/ingest-remaining-owner-evidence.mjs",

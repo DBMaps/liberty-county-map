@@ -10,6 +10,7 @@ export const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../
 export const CLASSIFICATION='OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION';
 export const REPORT='reports/lp18811c/protected-environment-provisioning.json';
 export const STATUS='PROTECTED_ENVIRONMENT_OWNER_PROVISIONING_ACTION_REQUIRED';
+export const PROTECTED_PAGES_ROUTER='tools/lp18811/protected-pages-router.mjs';
 const stable=value=>`${JSON.stringify(value,null,2)}\n`;
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 
@@ -56,6 +57,10 @@ export function composeProtectedBundle({output,deploymentId,buildIdentity,manife
   const temporary=`${output}.protected-tmp-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
   try {
     const runtime=stageDeployableRuntime(temporary,root);
+    // Pages' implicit SPA fallback is not an asset-first routing contract. Use
+    // advanced mode only in this protected composition so ASSETS decides every
+    // real file before an HTML-navigation fallback is considered.
+    fs.copyFileSync(path.join(root,PROTECTED_PAGES_ROUTER),path.join(temporary,'_worker.js'));
     fs.mkdirSync(path.join(temporary,'counties'),{recursive:true});
     for(const pkg of packages)fs.writeFileSync(path.join(temporary,pkg.relativePackagePath),pkg.bytes);
     const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
@@ -63,7 +68,7 @@ export function composeProtectedBundle({output,deploymentId,buildIdentity,manife
     fs.writeFileSync(path.join(temporary,'gridly-protected-cohort-manifest.json'),stable(manifest));
     fs.rmSync(output,{recursive:true,force:true});
     fs.renameSync(temporary,output);
-    return {deploymentId,buildIdentity,countyCount:packages.length,output,runtimeArtifactIdentity:runtime.artifactIdentity,runtimeFileCount:runtime.files.length};
+    return {deploymentId,buildIdentity,countyCount:packages.length,output,runtimeArtifactIdentity:runtime.artifactIdentity,runtimeFileCount:runtime.files.length,protectedRouting:'ASSET_FIRST_THEN_HTML_NAVIGATION_FALLBACK'};
   } catch(error) {
     fs.rmSync(temporary,{recursive:true,force:true});
     fs.rmSync(output,{recursive:true,force:true});
