@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "gridly.lp18811f4.selector-audit.v1",
+  "governedExistingSelectors": [
+    "#gridlyWelcomeCountySelect",
+    "[data-gridly-county-select]",
+    "#gridlyWelcomeTownStatus",
+    "#gridlyAddressSearchInput",
+    "#gridlySearchResults",
+    "#routeWatchStartSelect",
+    "#routeWatchDestinationSelect",
+    "#routeWatchStartBtn",
+    "#routeWatchLivePill"
+  ],
+  "journeys": [
+    {
+      "journeyId": "W0-JOURNEY-PACKAGE-ACCEPTANCE",
+      "selectorReadiness": "SELECTOR_HOOK_REQUIRED"
+    },
+    {
+      "journeyId": "W0-JOURNEY-COUNTY-SELECTION",
+      "selectorReadiness": "SELECTOR_HOOK_REQUIRED"
+    },
+    {
+      "journeyId": "W0-JOURNEY-BOUNDARY",
+      "selectorReadiness": "NOT_EXECUTABLE_WITH_CURRENT_UI"
+    },
+    {
+      "journeyId": "W0-JOURNEY-CONSUMER-RESULT",
+      "selectorReadiness": "SELECTOR_HOOK_REQUIRED"
+    },
+    {
+      "journeyId": "W0-JOURNEY-FALLBACK",
+      "selectorReadiness": "NOT_EXECUTABLE_WITH_CURRENT_UI"
+    },
+    {
+      "journeyId": "W0-JOURNEY-ROUTE-AWARENESS",
+      "selectorReadiness": "NOT_EXECUTABLE_WITH_CURRENT_UI"
+    }
+  ],
+  "missingHooks": [
+    {
+      "hook": "data-gridly-active-county-fips",
+      "neededBy": [
+        "W0-JOURNEY-PACKAGE-ACCEPTANCE",
+        "W0-JOURNEY-COUNTY-SELECTION",
+        "W0-JOURNEY-CONSUMER-RESULT"
+      ],
+      "purpose": "Expose canonical active FIPS without relying on display text."
+    },
+    {
+      "hook": "data-gridly-package-identity",
+      "neededBy": [
+        "W0-JOURNEY-PACKAGE-ACCEPTANCE",
+        "W0-JOURNEY-CONSUMER-RESULT"
+      ],
+      "purpose": "Expose accepted package FIPS, sha256, and load state without credentials."
+    }
+  ],
+  "uiModified": false
+}
