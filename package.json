@@ -13,6 +13,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp18811b": "node --test tests/lp18811b-protected-validation-harness.test.mjs",
     "build:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs build",
     "verify:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs verify",
     "test:lp18811": "node --test tests/lp18811-validation-evidence.test.mjs",
