@@ -16,6 +16,16 @@ const readJson = p => JSON.parse(readText(p).replace(/^\uFEFF/,''));
 const json = value => `${JSON.stringify(value,null,2)}\n`;
 const assert = (condition,message) => { if (!condition) throw new Error(`LP189 fail closed: ${message}`); };
 const slug = name => name.replace(/ County$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-tx';
+export function consumerAvailabilityFromPackage(pkg) {
+  assert(/^48\d{3}$/.test(pkg?.county?.countyFips || ''),'community package county identity must be a FIPS');
+  const places=(pkg.censusPlaces || []).filter(place=>place?.consumerEligible === true).map(place=>{
+    assert(/^48\d{5}$/.test(place?.placeGeoid || ''),'consumer community identity must be a PLACE GEOID');
+    assert(typeof place?.displayName === 'string'&&place.displayName.trim(),'consumer community must have a display name');
+    return Object.freeze({ placeGeoid:place.placeGeoid, displayName:place.displayName.trim(), canonicalIdentity:'PLACE_GEOID' });
+  });
+  assert(places.length>0,`manufactured package ${pkg.county.countyFips} has no eligible Census communities`);
+  return Object.freeze({ defaultAwarenessAreas:Object.freeze([`${pkg.county.displayName} County`,...places.map(place=>place.displayName)]), consumerAwarenessAreas:Object.freeze(places) });
+}
 function boundsOf(coordinates, out={west:Infinity,south:Infinity,east:-Infinity,north:-Infinity}) { for (const v of coordinates) Array.isArray(v[0]) ? boundsOf(v,out) : (out.west=Math.min(out.west,v[0]),out.east=Math.max(out.east,v[0]),out.south=Math.min(out.south,v[1]),out.north=Math.max(out.north,v[1])); return out; }
 function base() {
   const decision=readJson(SOURCE.cohort), cohort=decision.approvedCountyFips;
