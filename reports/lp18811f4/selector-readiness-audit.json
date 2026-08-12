@@ -1,9 +1,12 @@
 {
   "schemaVersion": "gridly.lp18811f4.selector-audit.v1",
   "governedExistingSelectors": [
-    "#gridlyWelcomeCountySelect",
-    "[data-gridly-county-select]",
-    "#gridlyWelcomeTownStatus",
+    "#gridlyWelcomeOnboarding",
+    "#gridlyV950NextBtn",
+    "#gridlyV858LocationInput",
+    "#gridlyV858ManualLocationForm",
+    "#gridlyV894CFirstRunSkipBtn",
+    "#gridlyV894C2FirstRunFinishBtn",
     "#gridlyAddressSearchInput",
     "#gridlySearchResults",
     "#routeWatchStartSelect",
@@ -14,11 +17,11 @@
   "journeys": [
     {
       "journeyId": "W0-JOURNEY-PACKAGE-ACCEPTANCE",
-      "selectorReadiness": "SELECTOR_HOOK_REQUIRED"
+      "selectorReadiness": "CURRENT_ONBOARDING_CONTROLS_READY"
     },
     {
       "journeyId": "W0-JOURNEY-COUNTY-SELECTION",
-      "selectorReadiness": "SELECTOR_HOOK_REQUIRED"
+      "selectorReadiness": "CURRENT_ONBOARDING_CONTROLS_READY"
     },
     {
       "journeyId": "W0-JOURNEY-BOUNDARY",

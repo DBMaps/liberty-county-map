@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.lp18811f3.summary.v1",
   "milestone": "LP188.11F3",
-  "fixtureContractDigest": "sha256:756cb4bbb819435506cd9aa5b52176616a8d0693bc8b642c8240971b74c38166",
+  "fixtureContractDigest": "sha256:dacfb937e483bd843e7d390df4665ebf469e222897fcf140bfc5c099f9fdbb08",
   "defectInventoryDigest": "sha256:735b0595dcb770938bbcb1d9baf9ed6bc9bba34ac78158a9908c107c0d10cb25",
   "fixtureCount": 56,
   "fixtureCountByAssertion": {

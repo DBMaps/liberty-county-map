@@ -69,7 +69,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48015",
-        "countyName": "Austin County"
+        "countyName": "Austin County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77418",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48015",
@@ -121,7 +126,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48039",
-        "countyName": "Brazoria County"
+        "countyName": "Brazoria County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77515",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48039",
@@ -173,7 +183,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48041",
-        "countyName": "Brazos County"
+        "countyName": "Brazos County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77803",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48041",
@@ -225,7 +240,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48057",
-        "countyName": "Calhoun County"
+        "countyName": "Calhoun County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77979",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48057",
@@ -277,7 +297,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48071",
-        "countyName": "Chambers County"
+        "countyName": "Chambers County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77514",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48071",
@@ -329,7 +354,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48089",
-        "countyName": "Colorado County"
+        "countyName": "Colorado County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "78934",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48089",
@@ -381,7 +411,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48149",
-        "countyName": "Fayette County"
+        "countyName": "Fayette County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "78945",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48149",
@@ -433,7 +468,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48157",
-        "countyName": "Fort Bend County"
+        "countyName": "Fort Bend County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77469",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48157",
@@ -485,7 +525,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48167",
-        "countyName": "Galveston County"
+        "countyName": "Galveston County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77550",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48167",
@@ -537,7 +582,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48185",
-        "countyName": "Grimes County"
+        "countyName": "Grimes County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77868",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48185",
@@ -589,7 +639,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48199",
-        "countyName": "Hardin County"
+        "countyName": "Hardin County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77625",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48199",
@@ -641,7 +696,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48201",
-        "countyName": "Harris County"
+        "countyName": "Harris County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77002",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48201",
@@ -693,7 +753,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48239",
-        "countyName": "Jackson County"
+        "countyName": "Jackson County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77957",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48239",
@@ -745,7 +810,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48241",
-        "countyName": "Jasper County"
+        "countyName": "Jasper County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "75951",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48241",
@@ -797,7 +867,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48245",
-        "countyName": "Jefferson County"
+        "countyName": "Jefferson County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77701",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48245",
@@ -849,7 +924,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48285",
-        "countyName": "Lavaca County"
+        "countyName": "Lavaca County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77964",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48285",
@@ -901,7 +981,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48291",
-        "countyName": "Liberty County"
+        "countyName": "Liberty County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77535",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48291",
@@ -953,7 +1038,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48321",
-        "countyName": "Matagorda County"
+        "countyName": "Matagorda County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77414",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48321",
@@ -1005,7 +1095,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48339",
-        "countyName": "Montgomery County"
+        "countyName": "Montgomery County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77301",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48339",
@@ -1057,7 +1152,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48351",
-        "countyName": "Newton County"
+        "countyName": "Newton County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "75966",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48351",
@@ -1109,7 +1209,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48361",
-        "countyName": "Orange County"
+        "countyName": "Orange County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77630",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48361",
@@ -1161,7 +1266,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48373",
-        "countyName": "Polk County"
+        "countyName": "Polk County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77351",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48373",
@@ -1213,7 +1323,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48407",
-        "countyName": "San Jacinto County"
+        "countyName": "San Jacinto County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77331",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48407",
@@ -1265,7 +1380,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48457",
-        "countyName": "Tyler County"
+        "countyName": "Tyler County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "75979",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48457",
@@ -1317,7 +1437,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48471",
-        "countyName": "Walker County"
+        "countyName": "Walker County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77340",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48471",
@@ -1369,7 +1494,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48473",
-        "countyName": "Waller County"
+        "countyName": "Waller County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77445",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48473",
@@ -1421,7 +1551,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48477",
-        "countyName": "Washington County"
+        "countyName": "Washington County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77833",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48477",
@@ -1473,7 +1608,12 @@
       "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
       "input": {
         "countyFips": "48481",
-        "countyName": "Wharton County"
+        "countyName": "Wharton County",
+        "awarenessAreaInput": {
+          "type": "ZIP",
+          "value": "77488",
+          "resolver": "resolveGridlyAwarenessAreaQuery"
+        }
       },
       "expectedResult": {
         "selectedCountyFips": "48481",
