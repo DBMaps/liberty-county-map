@@ -71,4 +71,5 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 # LP183.1 generated Cloudflare Pages staging is local/recreatable.
 # LP183.7 preserved failed-wrapper attempt markers are owner-local diagnostics.
 /.artifacts/lp1831/
+/.artifacts/lp18811c/
 /evidence/lp1837/.upload-attempted.wrapper-failure-*.local
