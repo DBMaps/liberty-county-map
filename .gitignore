@@ -74,3 +74,9 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /.artifacts/lp18811c/
 /evidence/lp1837/.upload-attempted.wrapper-failure-*.local
 /evidence/lp18812/wave0-partial-result.json
+/evidence/lp18812/wave0-certified-artifact-owner.local.json
+/evidence/lp18812/wave0-remaining-runtime-owner.local.json
+/evidence/lp18812/wave0-remaining-owner-ingestion.local.json
+/evidence/lp18812/wave0-final-result.local.json
+/evidence/lp18812/*.tmp-*
+/evidence/lp18812/screenshots.local/
