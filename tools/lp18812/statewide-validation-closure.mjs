@@ -12,14 +12,22 @@ export const SECRET_NAMES = Object.freeze(['GRIDLY_VALIDATOR_ACCESS_CLIENT_ID','
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const canonical = (v) => `${JSON.stringify(v,null,2)}\n`;
 export const digest = (v) => `sha256:${crypto.createHash('sha256').update(canonical(v)).digest('hex')}`;
+export function governedTarget(ownerEvidence, provisioningEvidence) {
+  const deploymentIdentity = ownerEvidence?.deploymentIdentity;
+  const selectedEnvironment = provisioningEvidence?.selectedEnvironment;
+  if (!deploymentIdentity?.deploymentId) throw Error('missing_governed_deployment_identity');
+  if (!deploymentIdentity.expectedBuildIdentity || !selectedEnvironment?.buildIdentity || deploymentIdentity.expectedBuildIdentity !== selectedEnvironment.buildIdentity) throw Error('governed_build_identity_mismatch');
+  return Object.freeze({ classification:'OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION', url:selectedEnvironment.rootUrl, deploymentId:deploymentIdentity.deploymentId, buildIdentity:deploymentIdentity.expectedBuildIdentity });
+}
 export function contract() {
   const wave = read('reports/lp18811f2/wave0-authority-contract.json');
   const fixtures = read('reports/lp18811f4/wave0-fixture-authority.json');
   const defect = read('reports/lp18811f2/defect-inventory.json');
   const env = read('reports/lp18811c/protected-environment-provisioning.json');
+  const ownerEvidence = read('evidence/lp18811/execution-results/owner-result.json');
   const statewide = read('reports/lp18811e/remaining-validation-matrix.json');
   const exactFips = wave.exactFipsScope || wave.fipsScope;
-  return Object.freeze({ schemaVersion:'gridly.lp18812.closure-contract.v1', milestone:'LP188.12', target:{ classification:'OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION', url:env.selectedEnvironment.rootUrl, deploymentId:env.infrastructureAudit.existingDeploymentId, buildIdentity:env.selectedEnvironment.buildIdentity }, exactWave0Fips:exactFips, assertions:APPROVED_ASSERTIONS, governedFixtures:fixtures.priorFixtures, wave0ContractDigest:digest(wave), defectInventoryDigest:digest(defect), statewideFips:statewide.records.map(x=>x.countyFips).sort(), completedDimensionsNotToRerun:COMPLETED_DIMENSIONS, network:{ allowedMethods:['GET','HEAD','OPTIONS'], rejectedMethods:MUTATING_METHODS }, state:{currentOperationalCount:28,restrictedCountyCount:11,newActivatedCount:0}, authorization:{production:false,activation:false,mutation:false} });
+  return Object.freeze({ schemaVersion:'gridly.lp18812.closure-contract.v1', milestone:'LP188.12', target:governedTarget(ownerEvidence,env), exactWave0Fips:exactFips, assertions:APPROVED_ASSERTIONS, governedFixtures:fixtures.priorFixtures, wave0ContractDigest:digest(wave), defectInventoryDigest:digest(defect), statewideFips:statewide.records.map(x=>x.countyFips).sort(), completedDimensionsNotToRerun:COMPLETED_DIMENSIONS, network:{ allowedMethods:['GET','HEAD','OPTIONS'], rejectedMethods:MUTATING_METHODS }, state:{currentOperationalCount:28,restrictedCountyCount:11,newActivatedCount:0}, authorization:{production:false,activation:false,mutation:false} });
 }
 export function validateEnvironment(env, c=contract()) {
   const url = new URL(env.GRIDLY_PROTECTED_URL || 'https://invalid.invalid');
