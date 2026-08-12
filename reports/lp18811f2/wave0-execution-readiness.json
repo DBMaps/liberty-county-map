@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "gridly.lp18811f2.wave0-execution-readiness.v1",
+  "authorizationReference": "reports/lp18811f2/owner-governance-decision.json",
+  "authorized": true,
+  "existingDeployment": {
+    "deploymentId": "lp18811c-c5cc6370-412c-487e-b3d3-3ff8350b6f98",
+    "buildIdentity": "sha256:1f277cfa3a7512d3df8dd0ec11bdf54bfcfd98b45e140b45640e8e50156979a5",
+    "validatedCapabilities": [
+      "protected root reachability",
+      "build identity document",
+      "read-only county package retrieval",
+      "package identity comparison"
+    ],
+    "evidenceReference": "evidence/lp18811/execution-results/owner-result.json"
+  },
+  "approvedAssertionCapability": [
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "support": "PARTIAL_PACKAGE_IDENTITY_ONLY",
+      "blocker": "Existing evidence proves package retrieval/identity, not consumer-loadability."
+    },
+    {
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "support": "NOT_EXPOSED_BY_EXISTING_PROTECTED_HARNESS",
+      "blocker": "No governed fixture inputs, expected fixture outputs, browser journey adapter, or assertion-specific protected evidence endpoint is established."
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "support": "NOT_EXPOSED_BY_EXISTING_PROTECTED_HARNESS",
+      "blocker": "No governed fixture inputs, expected fixture outputs, browser journey adapter, or assertion-specific protected evidence endpoint is established."
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "support": "NOT_EXPOSED_BY_EXISTING_PROTECTED_HARNESS",
+      "blocker": "No governed fixture inputs, expected fixture outputs, browser journey adapter, or assertion-specific protected evidence endpoint is established."
+    },
+    {
+      "assertionId": "FALLBACK_BEHAVIOR_STABILITY",
+      "support": "NOT_EXPOSED_BY_EXISTING_PROTECTED_HARNESS",
+      "blocker": "No governed fixture inputs, expected fixture outputs, browser journey adapter, or assertion-specific protected evidence endpoint is established."
+    },
+    {
+      "assertionId": "ROUTE_AWARENESS_STABILITY",
+      "support": "NOT_EXPOSED_BY_EXISTING_PROTECTED_HARNESS",
+      "blocker": "No governed fixture inputs, expected fixture outputs, browser journey adapter, or assertion-specific protected evidence endpoint is established."
+    }
+  ],
+  "executionReady": false,
+  "executed": false,
+  "stopReason": "EXISTING_PROTECTED_DEPLOYMENT_CONTRACT_EXPOSES_ONLY_ROOT_BUILD_IDENTITY_AND_COUNTY_PACKAGE_FILES; IT CANNOT TRUTHFULLY EXECUTE THE SIX APPROVED CONSUMER REGRESSION CONTROLS WITHOUT A SEPARATELY GOVERNED FIXTURE/EXPECTED-RESULT AUTHORITY AND READ-ONLY BROWSER EXECUTION ADAPTER. REDEPLOYMENT OR RUNTIME MUTATION IS NOT AUTHORIZED.",
+  "runnerImplemented": false
+}

@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18811f2": "node tools/lp18811/govern-wave0-defects.mjs build",
+    "verify:lp18811f2": "node tools/lp18811/govern-wave0-defects.mjs verify",
+    "test:lp18811f2": "node --test tests/lp18811f2-wave0-defect-authority.test.mjs",
     "verify:lp18811f1": "node tools/lp18811/audit-regression-authorities.mjs verify",
     "test:lp18811f1": "node --test tests/lp18811f1-regression-authority-audit.test.mjs",
     "build:lp18811e": "node tools/lp18811/prepare-remaining-validation.mjs build",

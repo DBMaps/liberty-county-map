@@ -1,0 +1,301 @@
+{
+  "schemaVersion": "gridly.defect-inventory.v1",
+  "authorityStatus": "TECHNICAL_COMPLETENESS_REVIEW_COMPLETE",
+  "scope": {
+    "scopeType": "WAVE_AND_EXACT_FIPS",
+    "applicableFips": [
+      "48015",
+      "48039",
+      "48041",
+      "48057",
+      "48071",
+      "48089",
+      "48149",
+      "48157",
+      "48167",
+      "48185",
+      "48199",
+      "48201",
+      "48239",
+      "48241",
+      "48245",
+      "48285",
+      "48291",
+      "48321",
+      "48339",
+      "48351",
+      "48361",
+      "48373",
+      "48407",
+      "48457",
+      "48471",
+      "48473",
+      "48477",
+      "48481"
+    ],
+    "waveIds": [
+      "WAVE_0",
+      "LP18810-NP-001"
+    ],
+    "environmentClassification": "PROTECTED_NON_PRODUCTION"
+  },
+  "sourceAudit": {
+    "reviewAuthorityReference": "reports/lp18811f2/owner-governance-decision.json",
+    "reviewMethod": "Deterministic review of governed blocker, readiness, protected-preview, correctness, integrity, privacy/security, rollback, statewide runtime, county restriction, LP185 hit-list, remediation, and LP188 protected-validation sources; every identified candidate has an explicit taxonomy disposition.",
+    "reviewedSourceCount": 16,
+    "reviewedArtifactCount": 41,
+    "sources": [
+      {
+        "sourceId": "ACTIVATION_AND_LAUNCH_BLOCKER_REGISTERS",
+        "references": [
+          "reports/lp167/blocker-register.json",
+          "reports/lp176/authorization-decision-report.json",
+          "reports/lp177/prerequisite-matrix.json",
+          "reports/lp178/launch-readiness-report.json",
+          "reports/lp179/launch-readiness-reassessment.json"
+        ],
+        "candidateIds": [
+          "LP167-B001",
+          "LP167-B002",
+          "LP167-B003",
+          "LP167-B005",
+          "LP167-B008"
+        ],
+        "technicalDisposition": "Reviewed all correctness, runtime, device, and rollback candidates; later scope/remediation evidence and candidate dispositions below determine Wave 0 applicability."
+      },
+      {
+        "sourceId": "PRODUCTION_READINESS_AND_CONFIGURATION",
+        "references": [
+          "reports/lp168/missing-prerequisites.json",
+          "reports/lp169/configuration-blockers.json"
+        ],
+        "candidateIds": [
+          "LP169-B007",
+          "LP169-B008",
+          "LP169-B009"
+        ],
+        "technicalDisposition": "Production evidence gaps are outside the protected non-production Wave 0 defect scope and are not observed security/privacy breaches."
+      },
+      {
+        "sourceId": "OPERATIONAL_AND_ROLLBACK_READINESS",
+        "references": [
+          "reports/lp170/operational-blockers.json",
+          "reports/lp171/operational-blockers.json",
+          "reports/lp174/operational-evidence-summary.json"
+        ],
+        "candidateIds": [
+          "LP170-B004",
+          "LP171-B006"
+        ],
+        "technicalDisposition": "Production operational-evidence gaps are outside Wave 0; LP174 reports zero remaining operational blockers, so no supported unresolved Wave 0 rollback defect exists."
+      },
+      {
+        "sourceId": "STATEWIDE_ROUTING",
+        "references": [
+          "reports/lp163/lp163-summary.json",
+          "reports/lp178/lp178-summary.json"
+        ],
+        "candidateIds": [
+          "LP167-B002"
+        ],
+        "technicalDisposition": "The launch-window attestation requirement is production-only; later governed route repairs do not establish an open protected Wave 0 defect."
+      },
+      {
+        "sourceId": "STATEWIDE_AWARENESS",
+        "references": [
+          "reports/lp164/lp164-summary.json",
+          "reports/lp178/lp178-summary.json"
+        ],
+        "candidateIds": [
+          "LP167-B003"
+        ],
+        "technicalDisposition": "Quiet/active/cleared production observation was an evidence prerequisite, not a reproduced protected Wave 0 correctness defect."
+      },
+      {
+        "sourceId": "CONSUMER_EXPERIENCE",
+        "references": [
+          "reports/lp166/lp166-summary.json",
+          "reports/lp1837/physical-device-validation.json"
+        ],
+        "candidateIds": [
+          "LP167-B005"
+        ],
+        "technicalDisposition": "Missing packaged-device evidence is distribution scope; protected browser validation later passed and no Wave 0 consumer defect is recorded."
+      },
+      {
+        "sourceId": "PROTECTED_PREVIEW",
+        "references": [
+          "reports/lp1835/deployment-blockers.json",
+          "reports/lp1836/lp1836-summary.json",
+          "reports/lp1837/lp1837-summary.json"
+        ],
+        "candidateIds": [
+          "LP1835-PREDEPLOYMENT"
+        ],
+        "technicalDisposition": "Predeployment authorization/access prerequisites were superseded by LP1837 protected-preview PASS; they are not open defects against the LP188.11C deployment."
+      },
+      {
+        "sourceId": "PROTECTED_ARTIFACT_REMEDIATION",
+        "references": [
+          "reports/lp1832/resolution-options.json",
+          "reports/lp18321/cross-platform-asset-identity.json",
+          "reports/lp1833/artifact-compatibility-verification.json"
+        ],
+        "candidateIds": [
+          "LP1832-FRA",
+          "LP1832-HARRIS",
+          "LP1832-MONTGOMERY"
+        ],
+        "technicalDisposition": "Artifact inclusion/compression candidates were technically repaired and verified before the later protected artifact; no unresolved finding binds the approved Wave 0 build."
+      },
+      {
+        "sourceId": "PRIVACY_AUDIT",
+        "references": [
+          "reports/lp1841a/location-privacy-audit.json",
+          "reports/lp1841a/community-reporting-privacy-audit.json",
+          "reports/lp1841b/store-privacy-uncertainty-register.json",
+          "reports/lp1841d/legal-readiness-reassessment.json"
+        ],
+        "candidateIds": [
+          "LP1841-STORE-UNCERTAINTIES"
+        ],
+        "technicalDisposition": "Store declarations, retention policy, and counsel questions are launch/legal uncertainties, not evidence of a reproduced security/privacy integrity breach in protected Wave 0."
+      },
+      {
+        "sourceId": "POST_PREVIEW_PRODUCT_HIT_LIST",
+        "references": [
+          "reports/lp185/post-preview-launch-readiness-reconciliation.json"
+        ],
+        "candidateIds": [
+          "LP185-G02",
+          "LP185-G03",
+          "LP185-G04",
+          "LP185-G05",
+          "LP185-G06",
+          "LP185-G07",
+          "LP185-G08",
+          "LP185-G09",
+          "LP185-G10",
+          "LP185-G11",
+          "LP185-G12",
+          "LP185-G13",
+          "LP185-G14",
+          "LP185-G15",
+          "LP185-G16",
+          "LP185-G17",
+          "LP185-G18"
+        ],
+        "technicalDisposition": "All 17 remaining gates were reviewed: they govern legal, store, native distribution, production, unrestricted statewide claims, operations, public web, or authorization; none records a reproduced defect in the exact protected 28-FIPS Wave 0 scope."
+      },
+      {
+        "sourceId": "COUNTY_RESTRICTIONS",
+        "references": [
+          "reports/lp186/county-restriction-reconciliation.json",
+          "reports/lp1888/restricted-county-readiness.json"
+        ],
+        "candidateIds": [
+          "LP167-B001"
+        ],
+        "technicalDisposition": "The 11 restricted counties are not in the exact approved Wave 0 FIPS scope; restrictions remain preserved and no bypass is recorded."
+      },
+      {
+        "sourceId": "WAVE_PLANNING",
+        "references": [
+          "reports/lp187/texas-activation-wave-plan.json",
+          "reports/lp187/texas-county-activation-prerequisite-matrix.json"
+        ],
+        "candidateIds": [],
+        "technicalDisposition": "Planning and prerequisites are not executed findings and were not converted into defects."
+      },
+      {
+        "sourceId": "COMMUNITY_PACKAGE_GOVERNANCE",
+        "references": [
+          "reports/lp1884/texas-community-package-promotion-readiness.json",
+          "reports/lp1885/community-package-identity-inventory.json",
+          "reports/lp1886/county-promotion-eligibility-review.json",
+          "reports/lp1887/lp1887-summary.json"
+        ],
+        "candidateIds": [],
+        "technicalDisposition": "Package identities and promotion evidence contain no supported unresolved S1/S2 finding for the approved scope."
+      },
+      {
+        "sourceId": "STATEWIDE_ACTIVATION_READINESS",
+        "references": [
+          "reports/lp1888/statewide-county-activation-readiness.json",
+          "reports/lp1889/county-readiness.json"
+        ],
+        "candidateIds": [],
+        "technicalDisposition": "Activation-readiness gaps are preserved authorization prerequisites, not reproduced defects in the already-operational Wave 0 scope."
+      },
+      {
+        "sourceId": "PROTECTED_DEPLOYMENT_VALIDATION",
+        "references": [
+          "reports/lp18811/lp18811-summary.json",
+          "reports/lp18811/county-validation-matrix.json",
+          "reports/lp18811e/remaining-validation-matrix.json"
+        ],
+        "candidateIds": [],
+        "technicalDisposition": "All 215 deployment/runtime/boundary results passed; regression and consumer evidence remain absent rather than failed. No S1/S2 defect is inferred from an unexecuted control."
+      },
+      {
+        "sourceId": "REGRESSION_AUTHORITY_AUDIT",
+        "references": [
+          "LP188.11F1-PROTECTED-REGRESSION-AUTHORITY-AUDIT.md",
+          "reports/lp18811f1/regression-authority-audit.json"
+        ],
+        "candidateIds": [],
+        "technicalDisposition": "Authority absence was a governance blocker, not a reproduced product defect; this milestone supplies the approved contracts."
+      }
+    ],
+    "candidateDispositions": [
+      {
+        "candidateId": "LP167-B001",
+        "classification": "OUTSIDE_WAVE0_SCOPE",
+        "technicalDisposition": "Eleven known restricted counties are disjoint from the exact 28-FIPS scope; restriction state remains enforced."
+      },
+      {
+        "candidateId": "LP167-B002",
+        "classification": "OUTSIDE_PROTECTED_WAVE0_SCOPE",
+        "technicalDisposition": "Production launch-window route attestation prerequisite; no protected Wave 0 failure evidence."
+      },
+      {
+        "candidateId": "LP167-B003",
+        "classification": "OUTSIDE_PROTECTED_WAVE0_SCOPE",
+        "technicalDisposition": "Production live-source observation prerequisite; no protected Wave 0 failure evidence."
+      },
+      {
+        "candidateId": "LP167-B005",
+        "classification": "OUTSIDE_WAVE0_DEFECT_TAXONOMY",
+        "technicalDisposition": "Packaged-app/device distribution evidence gap; not a reproduced correctness defect."
+      },
+      {
+        "candidateId": "LP167-B008",
+        "classification": "SUPERSEDED_NO_OPEN_DEFECT",
+        "technicalDisposition": "Production rollback evidence was reconciled by LP174 with zero remaining operational blockers; also outside protected Wave 0."
+      },
+      {
+        "candidateId": "LP1832-ASSET-REPAIRS",
+        "classification": "CLOSED_BEFORE_APPROVED_BUILD",
+        "technicalDisposition": "LP1833 technically verifies the repaired compatibility artifact used by later preview evidence; no unresolved defect against approved build identity."
+      },
+      {
+        "candidateId": "LP1841-STORE-UNCERTAINTIES",
+        "classification": "OUTSIDE_WAVE0_DEFECT_TAXONOMY",
+        "technicalDisposition": "Legal/store disclosure uncertainty is not a reproduced security/privacy integrity breach."
+      },
+      {
+        "candidateId": "LP185-G02-G18",
+        "classification": "OUTSIDE_PROTECTED_WAVE0_SCOPE",
+        "technicalDisposition": "Seventeen post-preview gates concern launch/legal/store/native/production/authorization scopes; LP185-G15 preserves restrictions and does not report an operational-cohort defect."
+      }
+    ],
+    "reviewComplete": true
+  },
+  "defects": [],
+  "derivedCounts": {
+    "severity1OpenCount": 0,
+    "severity2OpenCount": 0
+  },
+  "completeness": "COMPLETE",
+  "completenessConclusion": "All identified governed in-scope source families and candidate findings were reviewed under the owner-approved taxonomy. No supported OPEN or CLOSED S1/S2 defect record applies to the exact protected 28-FIPS Wave 0 scope. Counts are authoritative for this immutable inventory snapshot only."
+}
