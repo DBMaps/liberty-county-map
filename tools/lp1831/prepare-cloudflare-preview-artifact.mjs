@@ -69,6 +69,26 @@ export function build(root = ROOT) {
 
 const REPORTS = { 'deployable-artifact-manifest.json': 'manifest', 'cloudflare-pages-command-plan.json': 'commands', 'rollback-plan.json': 'rollback', 'platform-readiness.json': 'readiness', 'lp1831-summary.json': 'summary' };
 export function writeReports(output = path.join(ROOT, REPORT_DIR), root = ROOT) { const made = build(root); fs.mkdirSync(output, { recursive: true }); for (const [name, key] of Object.entries(REPORTS)) fs.writeFileSync(path.join(output, name), json(made[key])); return made; }
-export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) { const inv = inventory(root); const tracked = new Set(trackedPaths(root)); const trackedIncluded = inv.files.filter(file => tracked.has(file.path)).map(file => file.path); const blobs = canonicalBlobs(root, trackedIncluded); fs.rmSync(output, { recursive: true, force: true }); for (const file of inv.files) { const target = path.join(output, file.path); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, blobs.get(file.path) || fs.readFileSync(path.join(root, file.path))); } return inv; }
+export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) {
+  const temporary = `${output}.tmp-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
+  try {
+    const inv = inventory(root);
+    const tracked = new Set(trackedPaths(root));
+    const trackedIncluded = inv.files.filter(file => tracked.has(file.path)).map(file => file.path);
+    const blobs = canonicalBlobs(root, trackedIncluded);
+    for (const file of inv.files) {
+      const target = path.join(temporary, file.path);
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.writeFileSync(target, blobs.get(file.path) || fs.readFileSync(path.join(root, file.path)));
+    }
+    fs.rmSync(output, { recursive: true, force: true });
+    fs.renameSync(temporary, output);
+    return inv;
+  } catch (error) {
+    fs.rmSync(temporary, { recursive: true, force: true });
+    fs.rmSync(output, { recursive: true, force: true });
+    throw error;
+  }
+}
 export function verify(root = ROOT) { const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'lp1831-')); try { const a = path.join(temp, 'a'); const b = path.join(temp, 'b'); writeReports(a, root); writeReports(b, root); for (const name of Object.keys(REPORTS)) { const x = fs.readFileSync(path.join(a, name)); if (!x.equals(fs.readFileSync(path.join(b, name))) || !x.equals(fs.readFileSync(path.join(root, REPORT_DIR, name)))) throw Error(`deterministic report drift: ${name}`); if (x.includes(13) || (x[0] === 0xef && x[1] === 0xbb && x[2] === 0xbf)) throw Error(`non-canonical encoding: ${name}`); } return true; } finally { fs.rmSync(temp, { recursive: true, force: true }); } }
 if (process.argv[1] === fileURLToPath(import.meta.url)) { const mode = process.argv[2] || 'build'; const outputFlag = process.argv.indexOf('--output'); const output = outputFlag < 0 ? undefined : path.resolve(process.argv[outputFlag + 1]); if (outputFlag >= 0 && !process.argv[outputFlag + 1]) throw Error('--output requires a directory'); if (mode === 'build') writeReports(output); else if (mode === 'stage') stage(output); else if (mode === 'verify') verify(); else throw Error(`unknown mode: ${mode}`); console.log(`LP183.1 ${mode} PASS; no Cloudflare command executed.`); }
