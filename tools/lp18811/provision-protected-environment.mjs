@@ -11,6 +11,7 @@ export const CLASSIFICATION='OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION';
 export const REPORT='reports/lp18811c/protected-environment-provisioning.json';
 export const STATUS='PROTECTED_ENVIRONMENT_OWNER_PROVISIONING_ACTION_REQUIRED';
 export const PROTECTED_PAGES_ROUTER='tools/lp18811/protected-pages-router.mjs';
+export const PROTECTED_NOT_FOUND_CONTROL='404.html';
 const stable=value=>`${JSON.stringify(value,null,2)}\n`;
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 
@@ -61,6 +62,9 @@ export function composeProtectedBundle({output,deploymentId,buildIdentity,manife
     // advanced mode only in this protected composition so ASSETS decides every
     // real file before an HTML-navigation fallback is considered.
     fs.copyFileSync(path.join(root,PROTECTED_PAGES_ROUTER),path.join(temporary,'_worker.js'));
+    // A top-level 404.html disables Pages' implicit index.html SPA fallback.
+    // The protected Worker, rather than the ASSETS binding, owns SPA fallback.
+    fs.writeFileSync(path.join(temporary,PROTECTED_NOT_FOUND_CONTROL),'Gridly protected preview: asset not found.\n');
     fs.mkdirSync(path.join(temporary,'counties'),{recursive:true});
     for(const pkg of packages)fs.writeFileSync(path.join(temporary,pkg.relativePackagePath),pkg.bytes);
     const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
