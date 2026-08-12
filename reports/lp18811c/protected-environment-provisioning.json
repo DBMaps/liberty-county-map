@@ -26,6 +26,11 @@
   "deploymentIdentityConfigured": false,
   "buildIdentityConfigured": true,
   "buildIdentityDocumentRequired": true,
+  "runtimeStagingContract": {
+    "source": "LP183.1 canonical tracked deployable runtime",
+    "stager": "tools/lp1831/prepare-cloudflare-preview-artifact.mjs",
+    "compositionMode": "DEPLOYABLE_RUNTIME_PLUS_PROTECTED_ARTIFACTS"
+  },
   "packageExposureContract": {
     "source": "LP188.3 exact package bytes certified by LP188.5",
     "pathPattern": "counties/{FIPS}.json",
