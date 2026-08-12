@@ -18,6 +18,22 @@ test('every Wave 0 fixture uses the canonical governed mobile portrait viewport'
   assert.doesNotMatch(source,/devices\[/);
 });
 
+test('the one-test Wave 0 run has an explicit timeout budget derived for all 28 fixtures',()=>{
+  const source=fs.readFileSync(new URL('./browser/lp18812-wave0.spec.mjs',import.meta.url),'utf8');
+  const config=fs.readFileSync(new URL('../playwright.lp18812.config.mjs',import.meta.url),'utf8');
+  assert.match(source,/const governedFixtures=c\.governedFixtures\.filter\(x=>x\.assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY'\)/);
+  assert.match(source,/const GOVERNED_FIXTURE_EXECUTION_BUDGET_MS=30_000/);
+  assert.match(source,/const GOVERNED_WAVE0_OVERHEAD_BUDGET_MS=60_000/);
+  assert.match(source,/const GOVERNED_WAVE0_TEST_TIMEOUT_MS=\(governedFixtures\.length\*GOVERNED_FIXTURE_EXECUTION_BUDGET_MS\)\+GOVERNED_WAVE0_OVERHEAD_BUDGET_MS/);
+  assert.match(source,/test\.setTimeout\(GOVERNED_WAVE0_TEST_TIMEOUT_MS\)/);
+  assert.doesNotMatch(source,/setTimeout\(0\)|timeout\s*:\s*0/);
+  assert.doesNotMatch(config,/(?:actionTimeout|navigationTimeout|globalTimeout|timeout)\s*:/);
+
+  const fixtureCount=contract().governedFixtures.filter(({assertionId})=>assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY').length;
+  assert.equal(fixtureCount,28);
+  assert.equal((fixtureCount*30_000)+60_000,900_000);
+});
+
 test('all 28 exact operational fixtures provide governed current-resolver ZIP input',()=>{
   const fixtures=contract().governedFixtures.filter(({assertionId})=>assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY');
   assert.equal(fixtures.length,28);

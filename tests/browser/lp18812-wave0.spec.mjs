@@ -6,12 +6,20 @@ import { contract, validateEnvironment, reconcile, MUTATING_METHODS } from '../.
 const GOVERNED_MOBILE_PORTRAIT_VIEWPORT=Object.freeze({width:390,height:844});
 
 const c=contract();
+const governedFixtures=c.governedFixtures.filter(x=>x.assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY');
+// The enclosing test owns all 28 isolated journeys. Keep Playwright's bounded
+// per-action/navigation/expect defaults, but budget 30 seconds per fixture plus
+// one minute for browser/test setup, teardown, and final reconciliation.
+const GOVERNED_FIXTURE_EXECUTION_BUDGET_MS=30_000;
+const GOVERNED_WAVE0_OVERHEAD_BUDGET_MS=60_000;
+const GOVERNED_WAVE0_TEST_TIMEOUT_MS=(governedFixtures.length*GOVERNED_FIXTURE_EXECUTION_BUDGET_MS)+GOVERNED_WAVE0_OVERHEAD_BUDGET_MS;
 test.beforeAll(()=>validateEnvironment(process.env,c));
 test('exact governed Wave 0 is read-only',async({browser})=>{
+  test.setTimeout(GOVERNED_WAVE0_TEST_TIMEOUT_MS);
   let mutation=false;
   const protectedOrigin=new URL(process.env.GRIDLY_PROTECTED_URL).origin;
   const results=[];
-  for(const fixture of c.governedFixtures.filter(x=>x.assertionId==='OPERATIONAL_COUNTY_RESULT_STABILITY')){
+  for(const fixture of governedFixtures){
     const fips=fixture.applicableFips[0];
     const awarenessInput=fixture.input.awarenessAreaInput;
     expect(awarenessInput).toMatchObject({type:'ZIP',resolver:'resolveGridlyAwarenessAreaQuery'});
