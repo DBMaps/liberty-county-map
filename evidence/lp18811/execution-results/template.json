@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp18811.protected-validation-evidence.v1",
+  "waveId": "LP18810-NP-001",
+  "environmentClassification": "OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION",
+  "productionDeployment": false,
+  "productionActivation": false,
+  "results": [
+    {
+      "countyFips": "REPLACE_WITH_GOVERNED_FIPS",
+      "packageSha256": "REPLACE_WITH_LP1885_SHA256",
+      "schemaVersion": "gridly.community-package.identity.v1",
+      "executionStatus": "ATTEMPTED",
+      "deploymentResult": "NOT_RUN",
+      "runtimeResult": "NOT_RUN",
+      "regressionResult": "NOT_RUN",
+      "consumerResult": "NOT_RUN",
+      "boundaryResult": "NOT_RUN",
+      "telemetryResult": "NOT_RUN",
+      "rollbackResult": "NOT_RUN",
+      "operationalResult": "NOT_RUN",
+      "evidenceReferences": {},
+      "executor": { "status": "ABSENT", "identityReference": null },
+      "independentReview": { "status": "PENDING", "reviewerReference": null }
+    }
+  ]
+}

@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs build",
+    "verify:lp18811": "node tools/lp18811/ingest-validation-evidence.mjs verify",
+    "test:lp18811": "node --test tests/lp18811-validation-evidence.test.mjs",
     "build:lp18810": "node tools/lp18810/govern-owner-membership.mjs build",
     "verify:lp18810": "node tools/lp18810/govern-owner-membership.mjs verify",
     "test:lp18810": "node --test tests/lp18810-owner-membership.test.mjs",
