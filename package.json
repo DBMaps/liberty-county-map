@@ -13,6 +13,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp18811f4": "node tools/lp18811/govern-wave0-journeys.mjs build",
+    "verify:lp18811f4": "node tools/lp18811/govern-wave0-journeys.mjs verify",
+    "test:lp18811f4": "node --test tests/lp18811f4-wave0-journey-governance.test.mjs",
     "build:lp18811f3": "node tools/lp18811/provision-wave0-fixtures.mjs build",
     "verify:lp18811f3": "node tools/lp18811/provision-wave0-fixtures.mjs verify",
     "test:lp18811f3": "node --test tests/lp18811f3-wave0-fixture-provisioning.test.mjs",

@@ -1,0 +1,1564 @@
+{
+  "schemaVersion": "gridly.lp18811f4.wave0-fixture-authority.v1",
+  "waveId": "WAVE_0",
+  "wave0ContractDigest": "sha256:a05d8fbb07bcdf1ee4b067d0aacbe6e690a8531f160396472f76757f3beeb257",
+  "severityTaxonomyDigest": "sha256:f920f96e8a6175f594368e400bef26717662aa4e316503acd4c867fc95654329",
+  "priorFixtureContractDigest": "sha256:756cb4bbb819435506cd9aa5b52176616a8d0693bc8b642c8240971b74c38166",
+  "exactFipsScope": [
+    "48015",
+    "48039",
+    "48041",
+    "48057",
+    "48071",
+    "48089",
+    "48149",
+    "48157",
+    "48167",
+    "48185",
+    "48199",
+    "48201",
+    "48239",
+    "48241",
+    "48245",
+    "48285",
+    "48291",
+    "48321",
+    "48339",
+    "48351",
+    "48361",
+    "48373",
+    "48407",
+    "48457",
+    "48471",
+    "48473",
+    "48477",
+    "48481"
+  ],
+  "priorFixtures": [
+    {
+      "fixtureId": "W0-ARTIFACT-48015",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48015"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48015.json",
+        "requestedCountyFips": "48015"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:917ea6d0bee6de11d6ef5ffa56e3a3404135f61cc45739118bbd41fd01b66ea2",
+        "byteLength": 2527,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48015",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48015",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48015"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48015",
+        "countyName": "Austin County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48015",
+        "selectedCountyName": "Austin County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48015"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48039",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48039"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48039.json",
+        "requestedCountyFips": "48039"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:d9a0ab9546fb5a20fbbc6ad5c019fc3915edb3bc793ddb6bd50f40bcab57d5ab",
+        "byteLength": 8390,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48039",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48039",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48039"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48039",
+        "countyName": "Brazoria County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48039",
+        "selectedCountyName": "Brazoria County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48039"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48041",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48041"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48041.json",
+        "requestedCountyFips": "48041"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:e2e356c825a6664e0ed297e2306ef8b0a756a3a25ec8345877c288d59241232f",
+        "byteLength": 1969,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48041",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48041",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48041"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48041",
+        "countyName": "Brazos County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48041",
+        "selectedCountyName": "Brazos County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48041"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48057",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48057"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48057.json",
+        "requestedCountyFips": "48057"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:afc6cd859ca4e25d24679b97c23c54b5fafb3b3f3098116700f4a6d6efe4b273",
+        "byteLength": 1977,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48057",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48057",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48057"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48057",
+        "countyName": "Calhoun County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48057",
+        "selectedCountyName": "Calhoun County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48057"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48071",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48071"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48071.json",
+        "requestedCountyFips": "48071"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:eacfd2b56606ea2250095c0b633f4a8e16706ee81a6fde764d10e24389e2c1e6",
+        "byteLength": 4109,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48071",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48071",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48071"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48071",
+        "countyName": "Chambers County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48071",
+        "selectedCountyName": "Chambers County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48071"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48089",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48089"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48089.json",
+        "requestedCountyFips": "48089"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:246da6b25278f6bfdf0d825c7fe396b44ec8430c260055a94caf1c9c26f73ced",
+        "byteLength": 2539,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48089",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48089",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48089"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48089",
+        "countyName": "Colorado County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48089",
+        "selectedCountyName": "Colorado County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48089"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48149",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48149"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48149.json",
+        "requestedCountyFips": "48149"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:332fa51afa3f90c65569e8c96d0f044836275a2e54caf21be5ae7ca9dd0beec2",
+        "byteLength": 2525,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48149",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48149",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48149"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48149",
+        "countyName": "Fayette County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48149",
+        "selectedCountyName": "Fayette County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48149"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48157",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48157"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48157.json",
+        "requestedCountyFips": "48157"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:f9c472532cae8600a04ae755337b26c2208ae4bed4b8573798e888e3e40103f3",
+        "byteLength": 8528,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48157",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48157",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48157"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48157",
+        "countyName": "Fort Bend County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48157",
+        "selectedCountyName": "Fort Bend County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48157"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48167",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48167"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48167.json",
+        "requestedCountyFips": "48167"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:7994d3e9c86de75e32b97eec2345f6d6d104e10bfbc37481dffe2f3ed7687f89",
+        "byteLength": 4925,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48167",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48167",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48167"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48167",
+        "countyName": "Galveston County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48167",
+        "selectedCountyName": "Galveston County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48167"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48185",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48185"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48185.json",
+        "requestedCountyFips": "48185"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:d3771ee6d9b54aaf6bd7fefa47c64f188153580df4e4ae0144e430250c5723c7",
+        "byteLength": 2836,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48185",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48185",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48185"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48185",
+        "countyName": "Grimes County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48185",
+        "selectedCountyName": "Grimes County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48185"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48199",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48199"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48199.json",
+        "requestedCountyFips": "48199"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:bad8420117b8a843d5a6ba1ebb955a2a94d04810e13e439cde15a0896c17d889",
+        "byteLength": 2269,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48199",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48199",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48199"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48199",
+        "countyName": "Hardin County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48199",
+        "selectedCountyName": "Hardin County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48199"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48201",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48201"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48201.json",
+        "requestedCountyFips": "48201"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:5bcbfc443dd4c0a47fade6c8f2e26445db2ff04add95446aa79723a3d0083bf8",
+        "byteLength": 13991,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48201",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48201",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48201"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48201",
+        "countyName": "Harris County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48201",
+        "selectedCountyName": "Harris County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48201"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48239",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48239"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48239.json",
+        "requestedCountyFips": "48239"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:5f80bb8f1be594f16b6723b67b1bff383bfd570d2f0e22ae1aa86a6b61d673b8",
+        "byteLength": 1655,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48239",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48239",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48239"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48239",
+        "countyName": "Jackson County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48239",
+        "selectedCountyName": "Jackson County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48239"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48241",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48241"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48241.json",
+        "requestedCountyFips": "48241"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:b257b69728199023b181c09eeb137f40a66946f1bb4505d09163dbf791ab0bb2",
+        "byteLength": 1953,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48241",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48241",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48241"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48241",
+        "countyName": "Jasper County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48241",
+        "selectedCountyName": "Jasper County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48241"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48245",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48245"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48245.json",
+        "requestedCountyFips": "48245"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:f237432b1f0cdba14eff00b85ecdf07938039d670b5cd1bf6857bd8ceea653a7",
+        "byteLength": 4015,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48245",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48245",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48245"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48245",
+        "countyName": "Jefferson County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48245",
+        "selectedCountyName": "Jefferson County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48245"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48285",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48285"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48285.json",
+        "requestedCountyFips": "48285"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:1f3585d3418128ca9a72c8d42b38e86a4b8f689636bcc6461fcfebeb38ae1ff4",
+        "byteLength": 1380,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48285",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48285",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48285"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48285",
+        "countyName": "Lavaca County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48285",
+        "selectedCountyName": "Lavaca County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48285"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48291",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48291"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48291.json",
+        "requestedCountyFips": "48291"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:f2529dcc95479bbef99b0a253bebde31f3c29e23953b5fbce8d8f379e488ab9e",
+        "byteLength": 5673,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48291",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48291",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48291"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48291",
+        "countyName": "Liberty County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48291",
+        "selectedCountyName": "Liberty County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48291"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48321",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48321"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48321.json",
+        "requestedCountyFips": "48321"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:867dfe17ae0eb36a4338ab2053ff1ef7cc6833e13245be284e1d4856a63421f4",
+        "byteLength": 2842,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48321",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48321",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48321"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48321",
+        "countyName": "Matagorda County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48321",
+        "selectedCountyName": "Matagorda County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48321"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48339",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48339"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48339.json",
+        "requestedCountyFips": "48339"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:271ea06c5625537b1eed575ef5930567e249019dff68b4042d200e21e99cbf81",
+        "byteLength": 7084,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48339",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48339",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48339"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48339",
+        "countyName": "Montgomery County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48339",
+        "selectedCountyName": "Montgomery County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48339"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48351",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48351"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48351.json",
+        "requestedCountyFips": "48351"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:2f3e0d7f96aa64d27dc2077161e7288108aa49c7853467fb3b00dd196be76930",
+        "byteLength": 1094,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48351",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48351",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48351"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48351",
+        "countyName": "Newton County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48351",
+        "selectedCountyName": "Newton County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48351"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48361",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48361"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48361.json",
+        "requestedCountyFips": "48361"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:9b2eba0d23d2121166b59a4418f8a0cf2ea26c84da8b74036592ef3dc8895cff",
+        "byteLength": 3436,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48361",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48361",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48361"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48361",
+        "countyName": "Orange County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48361",
+        "selectedCountyName": "Orange County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48361"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48373",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48373"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48373.json",
+        "requestedCountyFips": "48373"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:719a19f1a4ad48be79f15f610322c56ea504173e3037439aabc09bfa4c20d412",
+        "byteLength": 3172,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48373",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48373",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48373"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48373",
+        "countyName": "Polk County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48373",
+        "selectedCountyName": "Polk County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48373"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48407",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48407"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48407.json",
+        "requestedCountyFips": "48407"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:8c967bdd03462499f6c492b946a95d5427c397cd82b9a3179513b58974c99bc8",
+        "byteLength": 2712,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48407",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48407",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48407"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48407",
+        "countyName": "San Jacinto County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48407",
+        "selectedCountyName": "San Jacinto County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48407"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48457",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48457"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48457.json",
+        "requestedCountyFips": "48457"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:62c2192a384fd55f2ba72853fefe9b2a197074e37e86c7dcf538bcab22874220",
+        "byteLength": 1964,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48457",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48457",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48457"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48457",
+        "countyName": "Tyler County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48457",
+        "selectedCountyName": "Tyler County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48457"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48471",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48471"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48471.json",
+        "requestedCountyFips": "48471"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:364327c8d18ce8af1b26705a9f980654c8f014d1f8e8d32d31482a3d58bd9835",
+        "byteLength": 1081,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48471",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48471",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48471"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48471",
+        "countyName": "Walker County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48471",
+        "selectedCountyName": "Walker County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48471"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48473",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48473"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48473.json",
+        "requestedCountyFips": "48473"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:a765d3d099e11c5696942cb788d269afdb7b15232fa283c2b5135519c9a513b1",
+        "byteLength": 2620,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48473",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48473",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48473"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48473",
+        "countyName": "Waller County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48473",
+        "selectedCountyName": "Waller County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48473"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48477",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48477"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48477.json",
+        "requestedCountyFips": "48477"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:0542c411c885a94f7e5642dfd0d8c18f795b75a46362ef40fb5482226dd91599",
+        "byteLength": 788,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48477",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48477",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48477"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48477",
+        "countyName": "Washington County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48477",
+        "selectedCountyName": "Washington County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48477"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    },
+    {
+      "fixtureId": "W0-ARTIFACT-48481",
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "applicableFips": [
+        "48481"
+      ],
+      "inputType": "PROTECTED_COUNTY_PACKAGE_GET",
+      "input": {
+        "relativeUrl": "counties/48481.json",
+        "requestedCountyFips": "48481"
+      },
+      "expectedResult": {
+        "httpStatus": 200,
+        "sha256": "sha256:3f6a0bc6a2768f740b88389f37aa2d66fea1788e9563b1d050a1f8014f6dead1",
+        "byteLength": 2245,
+        "schemaVersion": "gridly.community-package.identity.v1",
+        "countyFips": "48481",
+        "consumerAcceptance": "REQUIRED_NOT_YET_AUTOMATABLE"
+      },
+      "comparisonMode": "HTTP_BYTES_AND_RUNTIME_ACCEPTANCE",
+      "evidenceSource": [
+        "reports/lp1885/community-package-identity-inventory.json",
+        "reports/lp18811c/protected-environment-provisioning.json"
+      ],
+      "severityOnFailure": "SEVERITY_1"
+    },
+    {
+      "fixtureId": "W0-OPERATIONAL-48481",
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "applicableFips": [
+        "48481"
+      ],
+      "inputType": "GOVERNED_OPERATIONAL_COUNTY_SELECTION",
+      "input": {
+        "countyFips": "48481",
+        "countyName": "Wharton County"
+      },
+      "expectedResult": {
+        "selectedCountyFips": "48481",
+        "selectedCountyName": "Wharton County",
+        "currentOperational": true,
+        "resultCountyFipsExclusive": [
+          "48481"
+        ]
+      },
+      "comparisonMode": "EXACT_CONSUMER_STATE",
+      "evidenceSource": [
+        "data/lp153/operational-execution-registry.json",
+        "reports/lp18811f2/wave0-authority-contract.json"
+      ],
+      "severityOnFailure": "SEVERITY_2"
+    }
+  ],
+  "priorFixtureCount": 56,
+  "fixtureCountByAssertion": {
+    "CERTIFIED_ARTIFACT_STABILITY": 28,
+    "OPERATIONAL_COUNTY_RESULT_STABILITY": 28,
+    "COUNTY_BOUNDARY_ISOLATION": 0,
+    "CONSUMER_RESULT_STABILITY": 0,
+    "FALLBACK_BEHAVIOR_STABILITY": 0,
+    "ROUTE_AWARENESS_STABILITY": 0
+  },
+  "scopeDecisions": {
+    "CERTIFIED_ARTIFACT_STABILITY": {
+      "classification": "PER_FIPS_FIXTURE",
+      "reason": "Package bytes and identity differ for every governed county; consumer acceptance must therefore be observed for each of the 28 identities."
+    },
+    "OPERATIONAL_COUNTY_RESULT_STABILITY": {
+      "classification": "PER_FIPS_FIXTURE",
+      "reason": "The operational registry independently binds every county name and FIPS; discovery and selection must cover each binding."
+    },
+    "COUNTY_BOUNDARY_ISOLATION": {
+      "classification": "REPRESENTATIVE_GOVERNED_FIXTURES",
+      "reason": "Representative edge coverage could be sufficient only after the owner approves existing stable boundary points and adjacent-county expectations."
+    },
+    "CONSUMER_RESULT_STABILITY": {
+      "classification": "PER_FIPS_FIXTURE",
+      "reason": "No evidence authorizes extrapolating one county consumer result to the other package identities."
+    },
+    "FALLBACK_BEHAVIOR_STABILITY": {
+      "classification": "ONE_WAVE_LEVEL_FIXTURE",
+      "reason": "One runtime-governed deterministic trigger could govern the shared fallback path, but no safe protected trigger/result pair is presently authorized."
+    },
+    "ROUTE_AWARENESS_STABILITY": {
+      "classification": "REPRESENTATIVE_GOVERNED_FIXTURES",
+      "reason": "Existing Talco and Goodrich route tests are governed offline inputs, but protected external-provider execution and exact visible results are not authorized."
+    }
+  },
+  "ownerFixtureDecisionsRequired": [
+    {
+      "assertionId": "CERTIFIED_ARTIFACT_STABILITY",
+      "decisionRequired": "Authorize a protected DOM identity observation contract for each FIPS, including the exact visible county label and accepted package FIPS/sha256; current evidence proves only retrieval.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    },
+    {
+      "assertionId": "OPERATIONAL_COUNTY_RESULT_STABILITY",
+      "decisionRequired": "Authorize the exact protected selection completion state and a stable active-county FIPS observation hook for all 28 registry entries.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    },
+    {
+      "assertionId": "COUNTY_BOUNDARY_ISOLATION",
+      "decisionRequired": "Select and approve named existing county-boundary test coordinates with an expected Wave 0 county and explicitly prohibited adjacent county; repository evidence contains no governed Wave 0 edge pair.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    },
+    {
+      "assertionId": "CONSUMER_RESULT_STABILITY",
+      "decisionRequired": "Approve exact per-FIPS protected consumer inputs and visible outputs on one supported surface; certification narratives do not bind exact browser results.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    },
+    {
+      "assertionId": "FALLBACK_BEHAVIOR_STABILITY",
+      "decisionRequired": "Approve a deterministic, safe runtime-supported protected trigger plus exact visible fallback and prohibited substitution; no such pair is governed.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    },
+    {
+      "assertionId": "ROUTE_AWARENESS_STABILITY",
+      "decisionRequired": "Approve a deterministic protected route/provider substitute and exact expected visible state, or authorize an owner-supplied route fixture; offline Talco/Goodrich tests do not authorize provider invocation.",
+      "status": "OWNER_FIXTURE_DECISION_REQUIRED"
+    }
+  ],
+  "fixtureAuthorityComplete": false,
+  "noInventedInputs": true
+}

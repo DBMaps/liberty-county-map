@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "gridly.lp18811f4.browser-harness-decision.v1",
+  "browserHarnessDecision": null,
+  "allowedValues": [
+    "OWNER_APPROVED_PLAYWRIGHT",
+    "OWNER_REJECTED_PLAYWRIGHT",
+    "OWNER_SUPPLIED_EQUIVALENT_HARNESS"
+  ],
+  "decisionStatus": "OWNER_DECISION_REQUIRED",
+  "recommendation": "PLAYWRIGHT_CHROMIUM_ONLY",
+  "authorizationBoundary": [
+    "development/test dependency only",
+    "protected non-production read-only journeys only",
+    "no production runtime dependency",
+    "no runtime bundle inclusion",
+    "no activation",
+    "no deployment mutation"
+  ],
+  "compatibility": {
+    "auditedNodeVersion": "v24.15.0",
+    "nodeCompatible": "EXPECTED_COMPATIBLE_OWNER_INSTALL_VERIFICATION_REQUIRED",
+    "packageFootprint": "playwright test/dev package plus separately installed Chromium binary and OS dependencies",
+    "browserInstallation": "Explicit playwright install chromium step required; package installation alone must not silently govern browser download.",
+    "windowsOwnerHost": "Supported candidate; owner must validate installed Node and Chromium prerequisites on the Windows host.",
+    "ci": "Requires browser cache/install and secret injection; portable artifacts must redact headers/cookies.",
+    "chromiumOnlySufficient": true,
+    "cloudflareAccessHeaders": "Supported through browser-context extra HTTP headers; values must come from environment and never evidence.",
+    "screenshotsAndEvidence": "Supported; screenshots, traces, and network evidence require sanitization.",
+    "readOnlyEnforcement": "Harness contract and request interception must reject non-GET/HEAD and deployment mutation; Playwright does not enforce read-only behavior by itself.",
+    "registryMetadataAudit": "BLOCKED_HTTP_403"
+  },
+  "newDependencyInstalled": false,
+  "implementationAuthorized": false
+}

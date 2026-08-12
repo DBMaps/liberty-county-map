@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "gridly.lp18811f4.summary.v1",
+  "milestone": "LP188.11F4",
+  "fixtureContractDigest": "sha256:c3b44929a1a3b48b76a95de12dc631632ea11c7215fcab32b174612a43a09ccf",
+  "journeyContractDigest": "sha256:199fa1d23e4c7ed0696632665c1da35f511f36e4e505785da98118b91771b6e7",
+  "fixtureAuthorityResult": {
+    "CERTIFIED_ARTIFACT_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",
+    "OPERATIONAL_COUNTY_RESULT_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",
+    "COUNTY_BOUNDARY_ISOLATION": "OWNER_FIXTURE_DECISION_REQUIRED",
+    "CONSUMER_RESULT_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",
+    "FALLBACK_BEHAVIOR_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED",
+    "ROUTE_AWARENESS_STABILITY": "OWNER_FIXTURE_DECISION_REQUIRED"
+  },
+  "fixtureCountByAssertion": {
+    "CERTIFIED_ARTIFACT_STABILITY": 28,
+    "OPERATIONAL_COUNTY_RESULT_STABILITY": 28,
+    "COUNTY_BOUNDARY_ISOLATION": 0,
+    "CONSUMER_RESULT_STABILITY": 0,
+    "FALLBACK_BEHAVIOR_STABILITY": 0,
+    "ROUTE_AWARENESS_STABILITY": 0
+  },
+  "fixtureAuthorityComplete": false,
+  "browserHarnessDecision": "OWNER_DECISION_REQUIRED",
+  "newDependencyInstalled": false,
+  "wave0Executed": false,
+  "regression215Executed": false,
+  "redeploymentOccurred": false,
+  "activationOccurred": false,
+  "state": {
+    "currentOperationalCount": 28,
+    "restrictedCountyCount": 11,
+    "newActivatedCount": 0,
+    "runtimeOperationalCountChanged": false,
+    "restrictedCountyStateChanged": false
+  },
+  "wave0ImplementationReady": false,
+  "overallClassification": "WAVE0_JOURNEY_FIXTURE_OWNER_DECISION_REQUIRED",
+  "nextAction": "Owner must resolve the six exact fixture decisions, authorize the two identity hooks, and record one allowed browserHarnessDecision; do not install or execute before approval."
+}
