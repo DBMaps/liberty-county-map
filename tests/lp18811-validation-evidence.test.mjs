@@ -48,3 +48,10 @@ test('build is byte deterministic and does not mutate runtime, awareness, Supaba
   const before=await Promise.all(protectedFiles.map(sha)); assert.equal(stableJson(build()),stableJson(build())); assert.deepEqual(await Promise.all(protectedFiles.map(sha)),before);
   const source=await readFile(new URL('tools/lp18811/ingest-validation-evidence.mjs',root),'utf8'); assert.doesNotMatch(source,/defaultAwarenessAreas|supabase\.from|manufacture|Census/);
 });
+
+test('owner invocation preserves every non-production authorization boundary', async()=>{
+  const source=await readFile(new URL('tools/lp18811/invoke-owner-validation.ps1',root),'utf8');
+  for (const guard of ['--no-production-deployment','--no-activation','--no-public-launch','--no-supabase-production-mutation','--no-restriction-clearing','--no-runtime-operational-membership-mutation']) assert.match(source,new RegExp(guard));
+  assert.match(source,/Get-Command \$EstablishedProtectedValidationCommand/);
+  assert.match(source,/OWNER_CONTROLLED_PROTECTED_NON_PRODUCTION/);
+});
