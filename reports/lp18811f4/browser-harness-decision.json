@@ -17,7 +17,7 @@
     "no deployment mutation"
   ],
   "compatibility": {
-    "auditedNodeVersion": "v24.15.0",
+    "nodeCompatibilityRequirement": "Node.js 18 or newer",
     "nodeCompatible": "EXPECTED_COMPATIBLE_OWNER_INSTALL_VERIFICATION_REQUIRED",
     "packageFootprint": "playwright test/dev package plus separately installed Chromium binary and OS dependencies",
     "browserInstallation": "Explicit playwright install chromium step required; package installation alone must not silently govern browser download.",
