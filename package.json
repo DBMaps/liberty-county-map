@@ -16,6 +16,7 @@
   "scripts": {
     "check:package-lock-portability": "node tools/check-package-lock-portability.mjs",
     "test:lp18812": "node --test tests/lp18812-statewide-validation-closure.test.mjs",
+    "test:lp18812:fixtures": "node --test tests/lp18812-remaining-fixture-design.test.mjs",
     "wave0:lp18812": "playwright test -c playwright.lp18812.config.mjs",
     "reconcile:lp18812": "node tools/lp18812/statewide-validation-closure.mjs reconcile",
     "ingest:lp18812": "node tools/lp18812/statewide-validation-closure.mjs ingest",
