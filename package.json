@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:statewide-place-presentation": "node tools/build-statewide-place-presentation-v1.mjs",
+    "test:statewide-place-presentation": "node --test tests/statewide-place-presentation-generator.test.mjs",
     "build:statewide-consumer-community-projection": "node tools/build-statewide-consumer-community-projection.mjs",
     "test:statewide-consumer-community-projection": "node --test tests/statewide-consumer-community-projection-generator.test.mjs",
     "integrate:statewide-consumer-community-runtime": "node tools/integrate-statewide-consumer-community-runtime.mjs",
