@@ -9,7 +9,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const SOURCE_IDENTITY = Object.freeze({ filename: 'tl_2025_48_place.zip', bytes: 9782040, sha256: '5a0c4d49641f69028ee9f5c343bf09936ec00a378e5e6393115b106bab935e13' });
 export const WORKING_CRS = Object.freeze({ authority: 'EPSG', code: 3083, name: 'NAD83 / Texas Centric Albers Equal Area', linearUnit: 'metre', areaUnit: 'square metre' });
-export const EXPECTED_GDAL = 'GDAL 3.11.';
+export const EXPECTED_GDAL_MAJOR = 3;
+export const EXPECTED_GDAL_MINOR = 13;
 export const DEFAULTS = Object.freeze({
   projection: path.join(ROOT, 'data/generated/gridly-statewide-consumer-community-projection-v1.json'),
   focus: path.join(ROOT, 'data/generated/gridly-statewide-place-presentation-v1.json'),
@@ -52,6 +53,14 @@ function executable(name, env = process.env) {
   const bin = env.GRIDLY_GDAL_BIN;
   return bin ? path.join(bin, process.platform === 'win32' ? `${name}.exe` : name) : name;
 }
+
+export function validateGdalVersion(version) {
+  const match = /^GDAL (\d+)\.(\d+)\.(\d+)(?:\s|$)/.exec(version);
+  if (!match || Number(match[1]) !== EXPECTED_GDAL_MAJOR || Number(match[2]) !== EXPECTED_GDAL_MINOR) {
+    fail(`GDAL version must be the governed QGIS 3.44.11 GDAL 3.13.x line; found ${version}`);
+  }
+  return version;
+}
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024, ...options });
   if (result.error) fail(`${path.basename(command)} is unavailable; install/use the LP188.2A QGIS 3.44.11 GDAL path or set GRIDLY_GDAL_BIN (${result.error.message})`);
@@ -62,7 +71,7 @@ function run(command, args, options = {}) {
 export function verifyGdal(env = process.env) {
   const ogrinfo = executable('ogrinfo', env), ogr2ogr = executable('ogr2ogr', env);
   const version = run(ogrinfo, ['--version']).trim();
-  if (!version.startsWith(EXPECTED_GDAL)) fail(`GDAL version must be the governed QGIS 3.44.11 ${EXPECTED_GDAL}x line; found ${version}`);
+  validateGdalVersion(version);
   run(ogr2ogr, ['--version']);
   return { ogrinfo, ogr2ogr, version, qgisDistribution: 'QGIS 3.44.11', geometryEngine: 'GEOS through GDAL/OGR SQLite dialect', projectionEngine: 'PROJ through GDAL/OGR' };
 }
