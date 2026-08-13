@@ -3,24 +3,61 @@
   "milestone": "LP190.4",
   "preActivationOperationalCount": 243,
   "preActivationRestrictedCount": 11,
-  "activatedCountyCount": 0,
-  "postActivationOperationalCount": 243,
-  "postActivationRestrictedCount": 11,
-  "exactActivatedFips": [],
-  "intendedActivationFips": ["48061", "48073", "48113", "48121", "48135", "48229", "48329", "48377", "48401", "48425", "48441"],
-  "lp1903EvidenceIdentity": {
-    "path": "reports/lp1903/final-11-county-activation-reconciliation.json",
-    "status": "COMMITTED_RECONCILIATION_PRESENT"
+  "activatedCountyCount": 11,
+  "postActivationOperationalCount": 254,
+  "postActivationRestrictedCount": 0,
+  "exactActivatedFips": ["48061", "48073", "48113", "48121", "48135", "48229", "48329", "48377", "48401", "48425", "48441"],
+  "lp1903EligibilitySatisfied": true,
+  "registryCounts": {
+    "app": 254,
+    "runtimeCommunity": 254,
+    "jsCommunity": 254,
+    "explicitCountyFips": 226,
+    "validLegacyIdentities": 28,
+    "resolvedUniqueFips": 254,
+    "unresolvedIdentities": 0,
+    "duplicateFips": 0
   },
-  "productionSurfacesChanged": [],
-  "productionSurfacesPlanned": ["js/app.js", "assets/package-registry/runtime-package-registry.json", "js/gridlyPackageRegistry.js", "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json"],
-  "geometryIdentity": {"countyCount": 243, "changed": false},
-  "manifestIdentity": {"changed": false},
-  "registryCounts": {"county": 243, "community": 243},
-  "communityAvailabilityResult": "NOT_ACTIVATED",
-  "crossingRegressionResult": "UNCHANGED_BY_FAIL_CLOSED_STOP",
-  "protectedSystemResult": "UNCHANGED",
-  "activationPerformed": false,
-  "blockingCondition": "The eleven governedTargetPath LP190.2 payload files are owner-local ignored artifacts and are unavailable in this checkout; exact bytes and SHA-256 cannot be revalidated.",
-  "overallClassification": "OWNER_EXECUTION_REQUIRED_MISSING_GOVERNED_INPUTS_FAIL_CLOSED"
+  "geometryIdentity": {
+    "countyCount": 254,
+    "manifestSynchronized": true
+  },
+  "resolverInvariants": {
+    "resolverLogicUnchanged": true,
+    "boundsCandidatePrefilterOnly": true,
+    "polygonContainmentCertified": true
+  },
+  "crossingRegression": {
+    "crossingPackagesUnchanged": true,
+    "libertyCrossingCount": 115,
+    "tylerClassification": "PRE_EXISTING_CERTIFIED_ZERO_CROSSING_DATA_QUALITY_CONDITION"
+  },
+  "protectedSystemChangeCount": 0,
+  "activationPerformed": true,
+  "overallClassification": "TEXAS_STATEWIDE_RUNTIME_ACTIVATION_COMPLETE",
+  "verification": {
+    "operationalUniqueFips": 254,
+    "allTexasCountiesOperational": true,
+    "final11Operational": true,
+    "original243Operational": true,
+    "runtimeRestrictedCountyCount": 0,
+    "lp1903EligibilitySatisfied": true,
+    "communityMetadata": true,
+    "communityAvailability": true,
+    "countyIdentityFips": true,
+    "censusIdentityPlaceGeoid": true,
+    "runtimeJsRegistrySynchronized": true,
+    "productionGeometryCountyCount": true,
+    "productionManifestCountyCount": true,
+    "manifestPackageByteLength": true,
+    "manifestPackageSha256": true,
+    "manifestPackagePath": true,
+    "restrictedGeometryExcludedCount": 0,
+    "resolverLogicUnchanged": true,
+    "boundsCandidatePrefilterOnly": true,
+    "polygonContainmentCertified": true,
+    "crossingPackagesUnchanged": true,
+    "protectedSystemsUnchanged": true,
+    "pass": true
+  }
 }

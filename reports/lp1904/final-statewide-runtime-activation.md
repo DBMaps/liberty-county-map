@@ -2,33 +2,39 @@
 
 ## Determination
 
-**APPLY was not executed.** The guarded executor audited the LP190.3 reconciliation, then failed closed because the eleven LP190.2 `governedTargetPath` payloads are ignored, owner-local files and are absent from this checkout. LP190.4 must re-hash those exact payload bytes before WHATIF or APPLY can authorize activation.
+The one authorized production activation was completed successfully. Runtime advanced from **243 operational / 11 restricted** to **254 operational / 0 restricted**. No second APPLY is required or permitted for this reconciliation.
 
-Runtime therefore remains **243 operational / 11 restricted**. No production, crossing, resolver, or protected-system surface was changed.
+- Activation performed: **YES**
+- Activated county count: **11**
+- Activated FIPS: `48061`, `48073`, `48113`, `48121`, `48135`, `48229`, `48329`, `48377`, `48401`, `48425`, `48441`
+- LP190.3 eligibility: **PASS**
+- Classification: **TEXAS_STATEWIDE_RUNTIME_ACTIVATION_COMPLETE**
 
-## Exact owner PowerShell execution block
+## Runtime and identity verification
 
-Run from the repository root only after restoring all eleven governed LP190.2 target payloads:
+| Check | Result |
+| --- | ---: |
+| App registry records | 254 |
+| Runtime community records | 254 |
+| JavaScript community records | 254 |
+| Explicit `countyFips` identities | 226 |
+| Valid legacy identities | 28 |
+| Resolved unique authoritative FIPS | 254 |
+| Unresolved identities | 0 |
+| Duplicate FIPS | 0 |
+| Production geometry counties | 254 |
+| Runtime restricted counties | 0 |
 
-```powershell
-$ErrorActionPreference = 'Stop'
-npm run verify:lp1902
-npm run verify:lp1903
-node scripts/lp1904-final-statewide-runtime-activation-guarded.mjs --whatif --json
-node scripts/lp1904-final-statewide-runtime-activation-guarded.mjs --apply --json
-npm run verify:lp1904
-npm run test:lp1904
-npm run test:lp1896
-git status --short
-```
+The original 243 and final 11 cohorts are operational. Community metadata, community availability, county FIPS identity, Census PLACE GEOID identity, and JSON/JavaScript registry synchronization all pass. Geometry and manifest byte length, SHA-256, package path, and county counts are synchronized.
 
-## Post-activation consumer smoke plan
+## Preserved invariants
 
-1. Enter Dallas ZIP **75201**. Confirm Dallas County resolution, a Dallas community/area confirmation, and active Dallas context instead of “Gridly isn’t available for this ZIP yet”.
-2. Enter Liberty ZIP **77575**. Confirm existing Liberty County/Liberty awareness area and active context remain unchanged; confirm Liberty still exposes its certified **115** crossings.
-3. Select a smaller final-11 ZIP/community from the restored governed owner payload evidence before running the smoke. This checkout cannot safely derive that value because the governing payload bytes are the missing inputs; do not guess it.
-4. During all cases, inspect startup logs for boundary-warning fan-out and confirm none occurs. Confirm coordinate county resolution uses polygon containment, with bounds only as a candidate prefilter.
+- Resolver logic is unchanged; bounds remain a candidate prefilter only, and polygon containment remains certified.
+- Crossing packages are unchanged. Liberty retains its certified baseline of **115** crossings.
+- Tyler remains `PRE_EXISTING_CERTIFIED_ZERO_CROSSING_DATA_QUALITY_CONDITION`.
+- Crossing and protected-system changes: **0**.
+- Historical LP190.2 and LP190.3 evidence remains unchanged.
 
-## Classification
+## Determinism
 
-`OWNER_EXECUTION_REQUIRED_MISSING_GOVERNED_INPUTS_FAIL_CLOSED`
+The JSON report uses stable field ordering and an LF-terminated representation. Verification compares parsed report data and byte lengths/hashes calculated from the exact production bytes, avoiding platform newline normalization dependencies.
