@@ -9,11 +9,17 @@
   "repositoryRootSafeForUpload": false,
   "requiredStaging": true,
   "identityMethod": "SHA-256 over UTF-8 records sorted by path: path NUL byte-length NUL file-SHA-256 LF",
-  "artifactIdentity": "sha256:c292ce65fd06f5f3265be988fa3fa8d152dbb0309aaf306e799646dd34b56a7f",
-  "fileCount": 493,
-  "totalBytes": 155746432,
+  "artifactIdentity": "sha256:1338877a8eee9974f9f4de873dc226bfdfdc1c0893e88c91cc07aa31249e1841",
+  "fileCount": 497,
+  "totalBytes": 201659000,
   "missingRequired": [],
-  "cloudflarePagesOversizedFiles": [],
+  "cloudflarePagesOversizedFiles": [
+    {
+      "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+      "bytes": 47911048,
+      "limitBytes": 26214400
+    }
+  ],
   "files": [
     {
       "path": "Community-Packages/COMMUNITY-PACKAGE-SPEC.md",
@@ -49,6 +55,11 @@
       "path": "Community-Packages/colorado/package-manifest.json",
       "bytes": 426,
       "sha256": "ac95b22fc0bc655812b6bce56aa3f91cea02335d4c460a59704f1cd0e71babe1"
+    },
+    {
+      "path": "Community-Packages/community-package-identity-contract.schema.json",
+      "bytes": 3334,
+      "sha256": "ae07bfbb1f9effc8cafe1581e7b31e1f987c38ba8b5337f384e38e1938d341a9"
     },
     {
       "path": "Community-Packages/county-manifest.json",
@@ -1276,6 +1287,11 @@
       "sha256": "87d15847f53dc54d7106c44f6209e6d08bae2bebfda41494900a79df91399c0c"
     },
     {
+      "path": "assets/gridly-logo-horizontal-lite-mode.png",
+      "bytes": 228940,
+      "sha256": "fa0a02d27ee1cab21add0828aaf916d971f831345eec0f4021a4a538e54fc56a"
+    },
+    {
       "path": "assets/gridly-logo-primary.png",
       "bytes": 2065520,
       "sha256": "72670c549ced0a7b7eedba03eac76e5532155ee3b04965230bf9cb5758b15a12"
@@ -1327,13 +1343,13 @@
     },
     {
       "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
-      "bytes": 2756121,
-      "sha256": "ba0e44fbaf1a396909f7aad98ace7d55a20f86a23ca9352c980f39116ed32461"
+      "bytes": 47911048,
+      "sha256": "891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316"
     },
     {
       "path": "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json",
-      "bytes": 1294,
-      "sha256": "7f7088e7250fca468f95edb5dd33a39bb3703e12781c9845ffe702b7d6539fe2"
+      "bytes": 913,
+      "sha256": "16dbcb2fb7719e3fff89ac1c065262a60cdf900b04da1cf9ed75c847db6e5812"
     },
     {
       "path": "assets/location-resolution/gridly-authoritative-texas-county-geometry-v1.json",
@@ -1542,8 +1558,8 @@
     },
     {
       "path": "assets/package-registry/runtime-package-registry.json",
-      "bytes": 16764,
-      "sha256": "99008734b46594b14767f221d0a6d210c3ea7067c47acb2d14cb9f7adf4bfbc6"
+      "bytes": 103170,
+      "sha256": "c710e936e75afaa59741cafcfa11c243be59293ccd83a42539054474b078bcee"
     },
     {
       "path": "assets/state-boundaries/Texas_Counties_Cartographic_Boundary_Map_20260620.geojson",
@@ -1672,8 +1688,8 @@
     },
     {
       "path": "css/styles.css",
-      "bytes": 797063,
-      "sha256": "33c810886125eb58d20e72c8e4e7a93e93478f9839f6cabb3f325c03e95d7b8f"
+      "bytes": 846889,
+      "sha256": "1b2c2c2ac40764004bdc410198be260f3518ebba15f391666dffa723c2ea95c4"
     },
     {
       "path": "data/generated/lp104/txgio-addresses/liberty-48291.addresses.jsonl.gz",
@@ -1962,13 +1978,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 86357,
-      "sha256": "439f9edf6d81159c46dae339b269b0e33ca7b9c48028b2621dade835bcac3842"
+      "bytes": 91894,
+      "sha256": "9eda9a4c498b4efb28817ca2d8e71bcdd10d0b32c440a707fbd8cb9751b623b8"
     },
     {
       "path": "js/app.js",
-      "bytes": 7223637,
-      "sha256": "ed021dddd6e5355520077e1469c47d8d38c7926558a9419b383cc5d3d529f36f"
+      "bytes": 7435762,
+      "sha256": "0ac084a53a889a55065d3568e49133723860c088abdd68d324959c7cfd2543c8"
     },
     {
       "path": "js/gridly-geocoding-client.js",
@@ -1982,8 +1998,8 @@
     },
     {
       "path": "js/gridlyAlertsPublishedAwareness.js",
-      "bytes": 15204,
-      "sha256": "33f5f0aebfb077a28d79d272f474af9ae0522b9cad9d41fdb815f0a81ea59cff"
+      "bytes": 15044,
+      "sha256": "5b7f3cf4f139f848840f9f6e6f5e1d5cdc91f0457e9ca1a21e8e4da54b20bc2a"
     },
     {
       "path": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
@@ -2071,6 +2087,11 @@
       "sha256": "8e584a051fb1f95839b4dd2e0e1e1b3051bc5380c3c182c92a6c7ce63be5ab22"
     },
     {
+      "path": "js/gridlyIncidentLocationIdentity.js",
+      "bytes": 4976,
+      "sha256": "082bfd4bfc6e1e1e39968245a54b2520d2a3dc2c61f5b26381839dcda46cb625"
+    },
+    {
       "path": "js/gridlyIntelligenceActivationReadiness.js",
       "bytes": 6392,
       "sha256": "76a9744eaa0675adfd4ca20f79c729126eac3958724caa969ac8466b5bf075cd"
@@ -2082,8 +2103,8 @@
     },
     {
       "path": "js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
-      "bytes": 10070,
-      "sha256": "38dbabdba25252ec5e1ac40901481a05ff93ec961863253a935588f4438b557e"
+      "bytes": 14516,
+      "sha256": "8696a53c22be3e96a6efae2952adf23cb8f86010d898c0bcf2969d49f2e45b95"
     },
     {
       "path": "js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js",
@@ -2132,8 +2153,8 @@
     },
     {
       "path": "js/gridlyPackageRegistry.js",
-      "bytes": 67977,
-      "sha256": "0449a5612a748edca4f36b74320b3ebe3954342ba5faeb81133375de105523be"
+      "bytes": 230002,
+      "sha256": "cea7717337a4f7ad0c998e44a4b5a45e9d17a8d8dcf8f4dce405b76d94303326"
     },
     {
       "path": "js/gridlyRouteWatchGeometryRuntimeShadowAudit.js",
@@ -2144,6 +2165,11 @@
       "path": "js/gridlyRouteWatchGeometryShadowScoring.js",
       "bytes": 13002,
       "sha256": "22052df921ddeafb1d8f169a68fdc432c743e642a007dc91dacd1e42ddf3f2ba"
+    },
+    {
+      "path": "js/gridlyRuntimeEnvironmentConfig.js",
+      "bytes": 567,
+      "sha256": "1803236165cbe4d57c1deff1ab84b2026989776092cba1ca280141580a2f3019"
     },
     {
       "path": "js/gridlyRuntimeSourceBridgeActivation.js",
@@ -2473,7 +2499,7 @@
     {
       "path": "manifest.json",
       "bytes": 569,
-      "sha256": "4af4612435de51747dcd47d0da46ec3631d2c683ca37ef00e6e991d7e53d7394"
+      "sha256": "10a8da6ba34595cec8a7bd573c2385af47cd11d096a6b98c150b4e758b684499"
     },
     {
       "path": "service-worker.js",

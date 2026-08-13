@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { governedInputs } from './protected-validation-harness.mjs';
 import { stage as stageDeployableRuntime } from '../lp1831/prepare-cloudflare-preview-artifact.mjs';
 
@@ -12,8 +13,11 @@ export const REPORT='reports/lp18811c/protected-environment-provisioning.json';
 export const STATUS='PROTECTED_ENVIRONMENT_OWNER_PROVISIONING_ACTION_REQUIRED';
 export const PROTECTED_PAGES_ROUTER='tools/lp18811/protected-pages-router.mjs';
 export const PROTECTED_NOT_FOUND_CONTROL='404.html';
+export const GEOMETRY_CANONICAL_PATH='assets/location-resolution/gridly-authoritative-county-geometry-v1.json';
+export const PROTECTED_GEOMETRY_DESCRIPTOR=Object.freeze({mode:'REMOTE_PUBLIC_IMMUTABLE_OBJECT',url:'https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-runtime-geometry/geometry/891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316.json',expectedBytes:47911048,expectedSha256:'891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316',expectedCountyCount:254});
 const stable=value=>`${JSON.stringify(value,null,2)}\n`;
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const protectedRuntimeConfig=()=>Buffer.from(`(function () {\n  "use strict";\n  window.GRIDLY_RUNTIME_CONFIG = Object.freeze({\n    authoritativeCountyGeometry: Object.freeze(${JSON.stringify(PROTECTED_GEOMETRY_DESCRIPTOR, null, 6).replace(/^/gm,'    ').trimStart()})\n  });\n})();\n`);
 
 export function cohortIdentity(root=ROOT){
   const governed=governedInputs(root);
@@ -57,7 +61,7 @@ export function stage({source,output,deploymentId,root=ROOT}){
 export function composeProtectedBundle({output,deploymentId,buildIdentity,manifest,packages,root=ROOT}){
   const temporary=`${output}.protected-tmp-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
   try {
-    const runtime=stageDeployableRuntime(temporary,root);
+    const runtime=stageDeployableRuntime(temporary,root,{geometryDescriptor:PROTECTED_GEOMETRY_DESCRIPTOR,runtimeConfigBytes:protectedRuntimeConfig()});
     // Pages' implicit SPA fallback is not an asset-first routing contract. Use
     // advanced mode only in this protected composition so ASSETS decides every
     // real file before an HTML-navigation fallback is considered.
@@ -67,7 +71,13 @@ export function composeProtectedBundle({output,deploymentId,buildIdentity,manife
     fs.writeFileSync(path.join(temporary,PROTECTED_NOT_FOUND_CONTROL),'Gridly protected preview: asset not found.\n');
     fs.mkdirSync(path.join(temporary,'counties'),{recursive:true});
     for(const pkg of packages)fs.writeFileSync(path.join(temporary,pkg.relativePackagePath),pkg.bytes);
-    const identity={deploymentId,buildIdentity,environmentClassification:CLASSIFICATION};
+    const registry=JSON.parse(fs.readFileSync(path.join(root,'assets/package-registry/runtime-package-registry.json'),'utf8'));
+    const communityRuntimePackageCount=registry.packageTypes.find(entry=>entry.packageType==='Community')?.packageCount;
+    const crossingRuntimePackageCount=registry.packageTypes.find(entry=>entry.packageType==='Crossing')?.packageCount;
+    const dallas48113Present=registry.packages.some(entry=>entry.packageType==='Community'&&entry.countyFips==='48113');
+    if(communityRuntimePackageCount!==254||crossingRuntimePackageCount!==28||registry.totalPackages!==282||!dallas48113Present)throw Error('PROTECTED_BUILD_RUNTIME_REGISTRY_IDENTITY_MISMATCH');
+    const sourceGitCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+    const identity={deploymentId,buildIdentity,sourceGitCommit,runtimeArtifactIdentity:runtime.artifactIdentity,environmentClassification:CLASSIFICATION,geometryTransportMode:PROTECTED_GEOMETRY_DESCRIPTOR.mode,geometryCanonicalPath:GEOMETRY_CANONICAL_PATH,geometryRemoteUrl:PROTECTED_GEOMETRY_DESCRIPTOR.url,geometryExpectedBytes:PROTECTED_GEOMETRY_DESCRIPTOR.expectedBytes,geometryExpectedSha256:PROTECTED_GEOMETRY_DESCRIPTOR.expectedSha256,geometryExpectedCountyCount:PROTECTED_GEOMETRY_DESCRIPTOR.expectedCountyCount,communityRuntimePackageCount,crossingRuntimePackageCount,totalRuntimePackages:registry.totalPackages,dallas48113Present};
     fs.writeFileSync(path.join(temporary,'gridly-protected-build-identity.json'),stable(identity));
     fs.writeFileSync(path.join(temporary,'gridly-protected-cohort-manifest.json'),stable(manifest));
     fs.rmSync(output,{recursive:true,force:true});
