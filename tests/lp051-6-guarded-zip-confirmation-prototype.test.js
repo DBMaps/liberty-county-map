@@ -3,7 +3,10 @@ const vm = require('vm');
 const assert = require('assert');
 
 const app = fs.readFileSync('js/app.js', 'utf8');
+const statewideResolver = fs.readFileSync('js/gridly-statewide-zip-resolver.js', 'utf8');
 const doc = fs.readFileSync('docs/LP051-6-GUARDED-ZIP-CONFIRMATION-UX-PROTOTYPE.md', 'utf8');
+
+(async () => {
 
 assert(app.includes('GRIDLY_LP0516_ZIP_CONFIRMATION_PROTOTYPE_ENABLED = false'), 'prototype feature flag is default-off');
 assert(app.includes('window.gridlyOpenLp0516ZipConfirmationPrototype = gridlyOpenLp0516ZipConfirmationPrototype'), 'open helper is exposed');
@@ -36,9 +39,27 @@ const noop = () => {};
 const makeNode = () => ({ style: {}, dataset: {}, hidden: true, innerHTML: '', classList: { add: noop, remove: noop, toggle: noop, contains: () => false }, appendChild: noop, setAttribute: noop, removeAttribute: noop, getAttribute: () => null, querySelector: () => null, querySelectorAll: () => [], addEventListener: noop, removeEventListener: noop, contains: () => false, getClientRects: () => [], focus: noop, remove: noop });
 const nodes = {};
 const document = { addEventListener: noop, removeEventListener: noop, querySelector: () => null, querySelectorAll: () => [], getElementById: (id) => nodes[id] || null, createElement: (tag) => makeNode(), head: { appendChild: noop }, documentElement: { scrollWidth: 390, clientWidth: 390, classList: { add: noop, remove: noop, toggle: noop, contains: () => false } }, body: { ...makeNode(), appendChild(node) { if (node.id) nodes[node.id] = node; } }, activeElement: null };
-const sandbox = { window: { addEventListener: noop, removeEventListener: noop, location: { search: '' } }, document, localStorage: { data: {}, get length() { return Object.keys(this.data).length; }, getItem(k) { return this.data[k] || null; }, setItem(k, v) { this.data[k] = String(v); }, removeItem(k) { delete this.data[k]; } }, sessionStorage: { data: {}, get length() { return Object.keys(this.data).length; }, getItem(k) { return this.data[k] || null; }, setItem(k, v) { this.data[k] = String(v); }, removeItem(k) { delete this.data[k]; } }, navigator: { serviceWorker: null, userAgent: 'node' }, innerWidth: 390, innerHeight: 844, location: { search: '' }, console, setTimeout, clearTimeout, requestAnimationFrame: (fn) => fn(), crypto: { randomUUID: () => 'test-uuid' }, URLSearchParams, getComputedStyle: () => ({ display: 'block', visibility: 'visible' }), ResizeObserver: class { observe() {} disconnect() {} }, MutationObserver: class { observe() {} disconnect() {} }, fetch: async () => ({ ok: false, json: async () => ({}) }) };
+const sandbox = { window: { addEventListener: noop, removeEventListener: noop, location: { search: '' } }, document, localStorage: { data: {}, get length() { return Object.keys(this.data).length; }, getItem(k) { return this.data[k] || null; }, setItem(k, v) { this.data[k] = String(v); }, removeItem(k) { delete this.data[k]; } }, sessionStorage: { data: {}, get length() { return Object.keys(this.data).length; }, getItem(k) { return this.data[k] || null; }, setItem(k, v) { this.data[k] = String(v); }, removeItem(k) { delete this.data[k]; } }, navigator: { serviceWorker: null, userAgent: 'node' }, innerWidth: 390, innerHeight: 844, location: { search: '' }, console, setTimeout, clearTimeout, requestAnimationFrame: (fn) => fn(), crypto: { randomUUID: () => 'test-uuid' }, URLSearchParams, getComputedStyle: () => ({ display: 'block', visibility: 'visible' }), ResizeObserver: class { observe() {} disconnect() {} }, MutationObserver: class { observe() {} disconnect() {} }, fetch: async (path) => ({ ok: true, json: async () => JSON.parse(fs.readFileSync(path, 'utf8')) }) };
 sandbox.window = Object.assign(sandbox.window, sandbox);
+vm.runInNewContext(statewideResolver, sandbox, { timeout: 5000 });
 vm.runInNewContext(app, sandbox, { timeout: 5000 });
+
+let pendingResolution = null;
+const resolver = sandbox.window.GridlyStatewideZipResolver;
+sandbox.window.GridlyStatewideZipResolver = Object.freeze({
+  ...resolver,
+  resolve(zip) {
+    pendingResolution = resolver.resolve(zip);
+    return pendingResolution;
+  }
+});
+const continueZip = async () => {
+  nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'continue' } } });
+  assert(pendingResolution, 'continue starts the statewide resolver lifecycle');
+  await pendingResolution;
+  await Promise.resolve();
+  pendingResolution = null;
+};
 
 assert.strictEqual(sandbox.window.GRIDLY_ZIP_CONFIRMATION_PROTOTYPE_ENABLED, false, 'browser flag is default-off');
 assert.strictEqual(typeof sandbox.window.gridlyOpenLp0516ZipConfirmationPrototype, 'function');
@@ -107,36 +128,21 @@ assert.strictEqual(before, after, 'open/audit/close performs no storage writes')
 sandbox.window.gridlyOpenLp0516ZipConfirmationPrototype();
 const flowState = sandbox.window.__gridlyLp0516PrototypeState;
 flowState.zipInput = '77535';
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'continue' } } });
-assert.strictEqual(flowState.step, 'resolved', '77535 reaches resolved confirmation');
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'confirm' } } });
+await continueZip();
+assert.strictEqual(flowState.step, 'requires_confirmation', '77535 reaches current statewide confirmation');
+const daytonIndex = flowState.candidateOptions.findIndex((candidate) => candidate.countyId === 'liberty-tx' && candidate.consumerLabel === 'Dayton');
+assert.notStrictEqual(daytonIndex, -1, '77535 retains its governed Liberty/Dayton candidate');
+nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { optionIndex: String(daytonIndex) } } });
+nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'confirmSelection' } } });
 assert.strictEqual(flowState.step, 'ready', 'confirm reaches ready');
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'preview' } } });
-assert.strictEqual(flowState.step, 'preview_complete', 'Preview selection reaches preview_complete');
-assert.strictEqual(flowState.prototypeResult.previewed, true, 'prototype result records previewed');
-assert.strictEqual(flowState.prototypeResult.saved, false, 'prototype result remains unsaved');
-assert.strictEqual(flowState.prototypeResult.confirmationMethod, 'prototype_preview', 'preview method is recorded');
-const previewAudit = sandbox.window.gridlyLp0516ZipConfirmationPrototypeAudit();
-assert.strictEqual(previewAudit.previewActionCompleted, true);
-assert.strictEqual(previewAudit.prototypeResultPreviewed, true);
-assert.strictEqual(previewAudit.previewActionPass, true);
-assert.strictEqual(previewAudit.productionStorageWrites, 0);
-assert.strictEqual(previewAudit.activeAwarenessMutations, 0);
-assert.strictEqual(previewAudit.onboardingCompletionChanged, false);
-assert.strictEqual(previewAudit.mapFocusMutations, 0);
-assert.strictEqual(previewAudit.providerRefreshes, 0);
-assert.strictEqual(previewAudit.routeIntelligenceTouched, false);
-const persistedPreviewResult = sandbox.window.__gridlyLp0516PrototypeResult;
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'done' } } });
-assert.strictEqual(flowState.open, false, 'Done closes cleanly');
-assert.strictEqual(sandbox.window.__gridlyLp0516PrototypeResult, persistedPreviewResult, 'Done preserves prototype result');
+assert.strictEqual(JSON.stringify(sandbox.localStorage.data) + JSON.stringify(sandbox.sessionStorage.data), before, 'confirmation does not apply before the explicit apply action');
+nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'back' } } });
+assert.strictEqual(flowState.step, 'entry', 'Back preserves context and returns to ZIP entry');
 
 sandbox.window.gridlyOpenLp0516ZipConfirmationPrototype();
 const retryState = sandbox.window.__gridlyLp0516PrototypeState;
 retryState.zipInput = '77535';
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'continue' } } });
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'confirm' } } });
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'preview' } } });
+await continueZip();
 nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'tryAnotherZip' } } });
 assert.strictEqual(retryState.step, 'entry', 'Try another ZIP returns to entry');
 assert.strictEqual(retryState.zipInput, '', 'Try another ZIP clears prototype ZIP input');
@@ -145,7 +151,7 @@ assert.strictEqual(retryState.prototypeResult, null, 'Try another ZIP clears pro
 assert.strictEqual(sandbox.window.__gridlyLp0516PrototypeResult, null, 'Try another ZIP clears window prototype result');
 
 retryState.zipInput = '77535';
-nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'continue' } } });
+await continueZip();
 nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'manual' } } });
 assert.strictEqual(retryState.open, false, 'manual fallback closes via existing safe path');
 const finalAfter = JSON.stringify(sandbox.localStorage.data) + JSON.stringify(sandbox.sessionStorage.data);
@@ -154,3 +160,7 @@ assert.strictEqual(before, finalAfter, 'preview/done/retry/manual flows perform 
 assert(doc.includes('window.gridlyOpenLp0516ZipConfirmationPrototype?.()'), 'doc includes owner launch command');
 assert(doc.includes('safeForProductionActivation remains false'), 'doc blocks production activation');
 assert(doc.includes('Selection preview ready'), 'doc describes preview-complete screen');
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
