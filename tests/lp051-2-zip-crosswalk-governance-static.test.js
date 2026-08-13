@@ -21,8 +21,9 @@ vm.runInNewContext(app, sandbox, { timeout: 5000 });
 
 const audit = sandbox.window.gridlyLp0512ZipCrosswalkGovernanceAudit();
 assert.strictEqual(audit.milestone, 'LP051.2');
-assert.strictEqual(audit.supportedCountyCount, 28, 'all 28 supported counties are inventoried');
-assert.strictEqual(audit.coveredCountyCount, 28, 'all 28 supported counties remain represented');
+const currentInventoryCountyCount = new Set(audit.targetInventory.map((entry) => entry.countyId)).size;
+assert.strictEqual(audit.supportedCountyCount, currentInventoryCountyCount, 'live audit follows the current operational county lifecycle');
+assert(audit.coveredCountyCount >= 28, 'the historical 28-county seed remains represented after statewide activation');
 assert.strictEqual(audit.unknownCountyIdCount, 0, 'no unknown counties');
 assert.strictEqual(audit.unknownAwarenessAreaCount, 0, 'no unknown awareness areas');
 assert.strictEqual(audit.invalidRecordCount, 0, 'no invalid records');

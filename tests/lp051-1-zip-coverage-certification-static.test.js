@@ -39,12 +39,16 @@ const tupleRecords = Array.from(app.matchAll(/\["(\d{5})","([^"]+)","([^"]+)","(
 ['polk-tx-livingston', 'houston-downtown-midtown', 'houston-north', 'houston-southeast-hobby', 'harris-tx-baytown', 'harris-tx-katy'].forEach((key) => awarenessKeys.add(key));
 tupleRecords.forEach((record) => { if (record.awarenessAreaKey.startsWith(`${record.countyId}-`)) awarenessKeys.add(record.awarenessAreaKey); });
 const runtimeRecords = [...explicitRecords, ...tupleRecords];
-const unknownCountyRecords = runtimeRecords.filter((record) => !representativeCountyIds.includes(record.countyId));
-const unknownAreaRecords = runtimeRecords.filter((record) => !awarenessKeys.has(record.awarenessAreaKey));
-const coveredCountyIds = new Set(runtimeRecords.filter((record) => representativeCountyIds.includes(record.countyId) && !unknownAreaRecords.includes(record)).map((record) => record.countyId));
+// LP051.1 certified a 34-record/28-county historical seed. The later LP189.2
+// 75801 PLACE-GEOID bridge is current lifecycle state, not part of that fixture.
+const historicalRuntimeRecords = runtimeRecords.filter((record) => record.zip !== '75801');
+const unknownCountyRecords = historicalRuntimeRecords.filter((record) => !representativeCountyIds.includes(record.countyId));
+const unknownAreaRecords = historicalRuntimeRecords.filter((record) => !awarenessKeys.has(record.awarenessAreaKey));
+const coveredCountyIds = new Set(historicalRuntimeRecords.filter((record) => representativeCountyIds.includes(record.countyId) && !unknownAreaRecords.includes(record)).map((record) => record.countyId));
 const missingCounties = representativeCountyIds.filter((countyId) => !coveredCountyIds.has(countyId));
 
-assert.strictEqual(runtimeRecords.length, 34, 'static contract sees the governed 34-record ZIP dataset');
+assert.strictEqual(historicalRuntimeRecords.length, 34, 'LP051.1 historical fixture remains the governed 34-record ZIP dataset');
+assert(runtimeRecords.some((record) => record.zip === '75801' && record.countyId === 'anderson-tx'), 'current lifecycle retains the later LP189.2 Anderson ZIP bridge');
 assert.strictEqual(representativeCountyIds.length, 28, 'static contract covers the 28-county representative seed');
 assert.strictEqual(coveredCountyIds.size, representativeCountyIds.length, 'coveredCountyCount must match supportedCountyCount for representative seed');
 assert.deepStrictEqual(missingCounties, [], 'missingCounties must remain empty for representative seed');

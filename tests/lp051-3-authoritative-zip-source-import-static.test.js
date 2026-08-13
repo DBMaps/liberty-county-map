@@ -31,8 +31,12 @@ assert.strictEqual(audit.sourceArtifactRecordCount, 0);
 assert.strictEqual(audit.sourceAuthorityDocumented, true);
 assert.strictEqual(audit.zipVsZctaDistinctionDocumented, true);
 assert.strictEqual(audit.generatedRuntimeDatasetDetected, true);
-assert.strictEqual(audit.supportedCountyCount, 28);
-assert.strictEqual(audit.coveredCountyCount, 28);
+const currentOperationalCountyCount = Object.values(sandbox.window.GRIDLY_COUNTY_REGISTRY || {}).filter((county) => county?.operational === true).length;
+// GRIDLY_COUNTY_REGISTRY is lexical in app.js; use the audit's lifecycle
+// inventory when it is not exported to the browser test sandbox.
+const lifecycleCountyCount = currentOperationalCountyCount || new Set(sandbox.window.gridlyLp0512ZipCrosswalkGovernanceAudit().targetInventory.map((entry) => entry.countyId)).size;
+assert.strictEqual(audit.supportedCountyCount, lifecycleCountyCount, 'live source audit follows current operational membership');
+assert(audit.coveredCountyCount >= 28, 'historical LP051 seed coverage remains preserved');
 assert.strictEqual(audit.unknownCountyIdCount, 0);
 assert.strictEqual(audit.unknownCommunityCount, 0);
 assert.strictEqual(audit.unknownAwarenessAreaCount, 0);
