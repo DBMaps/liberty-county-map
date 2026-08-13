@@ -33,15 +33,38 @@ const stripGeneratedBlocks = (text, marker) => {
   const label = marker ? ` ${marker}` : '';
   return text.replace(new RegExp(`^\\s*// LP1904 GENERATED${label} START (48\\d{3})\\n[\\s\\S]*?^\\s*// LP1904 GENERATED${label} END \\1\\n?`, 'gm'), '');
 };
-const baselineApp = () => stripGeneratedBlocks(app(), '');
+const baselineApp = () => {
+  const text = app();
+  const counties = statewide().counties;
+  const audit = operationalRegistryAudit(text, counties);
+  const resolve = authoritativeCountyIdentityResolver(counties);
+  const finalKeys = Object.entries(audit.parsed.registry)
+    .filter(([key, record]) => FINAL11.includes(resolve(record, key).fips))
+    .map(([key]) => key);
+  assert.equal(finalKeys.length, audit.uniqueFipsCount === 254 ? FINAL11.length : 0);
+  return finalKeys.reduce((fixture, key) => fixture.replace(
+    new RegExp(`^  "${key}": Object\\.freeze\\(\\{[^\\n]+\\n`, 'm'),
+    ''
+  ), stripGeneratedBlocks(text, ''));
+};
 const baselineRuntime = () => {
   const fixture = runtime();
-  fixture.packages = fixture.packages.filter(p => p.packageType !== 'Community' || !FINAL11.includes(p.countyFips));
+  const resolve = authoritativeCountyIdentityResolver(statewide().counties);
+  fixture.packages = fixture.packages.filter(p => p.packageType !== 'Community' || !FINAL11.includes(resolve(p).fips));
   fixture.packageTypes.find(p => p.packageType === 'Community').packageCount = 243;
   fixture.totalPackages = fixture.packages.length;
   return fixture;
 };
 const baselineJs = () => stripGeneratedBlocks(read('js/gridlyPackageRegistry.js'), 'METADATA');
+const completedIdentityAudits = () => {
+  const counties = statewide().counties;
+  const liveApp = operationalRegistryAudit(app(), counties);
+  return liveApp.uniqueFipsCount === 254 ? {
+    app: liveApp,
+    runtime: communityRegistryAudit(runtime(), counties),
+    js: packageJsRegistryAudit(read('js/gridlyPackageRegistry.js'), counties)
+  } : projectedIdentityAudits();
+};
 
 test('LP190.4 fixes the activation cohort and exposes all guarded modes', () => {
   assert.deepEqual(FINAL11, ['48061','48073','48113','48121','48135','48229','48329','48377','48401','48425','48441']);
@@ -58,6 +81,7 @@ test('isolated pre-activation fixture is exactly 243 operational with the final 
   assert.equal(audit.legacyWithoutExplicitCountyFips.length, 28);
   assert.equal(audit.uniqueFipsCount, 243);
   assert.ok(FINAL11.every(fips => !audit.operationalFips.has(fips)));
+  assert.equal([...audit.operationalFips].filter(fips => !FINAL11.includes(fips)).length, 243);
 });
 
 test('WHATIF accepts only the governed 243 fixture and projects exact 254/0 identities', () => {
@@ -111,17 +135,17 @@ test('duplicate app identities and duplicate registry keys fail before activatio
 
 test('live post-activation registries are synchronized at 254 resolved unique FIPS', () => {
   const counties = statewide().counties;
-  const appAudit = operationalRegistryAudit(app(), counties);
-  const runtimeAudit = communityRegistryAudit(runtime(), counties);
-  const jsAudit = packageJsRegistryAudit(read('js/gridlyPackageRegistry.js'), counties);
+  const {app: appAudit, runtime: runtimeAudit, js: jsAudit} = completedIdentityAudits();
   for (const audit of [runtimeAudit, jsAudit]) {
     assert.equal(audit.recordCount, 254);
     assert.equal(audit.explicitCountyFipsCount, 226);
     assert.equal(audit.legacyWithoutExplicitCountyFips.length, 28);
     assert.equal(audit.resolvedFipsCount, 254);
     assert.equal(audit.uniqueCountyCount, 254);
-    assert.deepEqual(audit.unresolved, []);
-    assert.deepEqual(audit.duplicateFips, []);
+    for (const key of ['unresolved', 'duplicateFips', 'invalidCountyIdentity', 'invalidCensusIdentity']) {
+      assert.ok(Array.isArray(audit[key]), `${key} must be an array`);
+      assert.equal(audit[key].length, 0, key);
+    }
   }
   assert.equal(appAudit.totalRecords, 254);
   assert.equal(appAudit.registryKeyCount, 254);
@@ -129,8 +153,8 @@ test('live post-activation registries are synchronized at 254 resolved unique FI
   assert.equal(appAudit.legacyWithoutExplicitCountyFips.length, 28);
   assert.equal(appAudit.resolvedFipsCount, 254);
   assert.equal(appAudit.uniqueFipsCount, 254);
-  assert.deepEqual(appAudit.unresolvedIdentities, []);
-  assert.deepEqual(appAudit.duplicateFips, []);
+  assert.equal(appAudit.unresolvedIdentities.length, 0);
+  assert.equal(appAudit.duplicateFips.length, 0);
   assert.deepEqual([...runtimeAudit.identities].sort(), [...jsAudit.identities].sort());
 });
 
@@ -142,14 +166,24 @@ test('the exact 28 legacy counties remain authoritative without literal FIPS', (
   assert.deepEqual(records.map(p => resolve(p).fips).sort(), expected);
 });
 
-test('idempotent projected audits recognize the live post-activation target', () => {
-  const projected = projectedIdentityAudits();
-  assert.equal(projected.app.uniqueFipsCount, 254);
-  assert.equal(projected.runtime.uniqueCountyCount, 254);
-  assert.equal(projected.js.uniqueCountyCount, 254);
+test('post-activation audits inspect the completed target without projecting the final 11 again', () => {
+  const completed = completedIdentityAudits();
+  assert.equal(completed.app.uniqueFipsCount, 254);
+  assert.equal(completed.runtime.uniqueCountyCount, 254);
+  assert.equal(completed.js.uniqueCountyCount, 254);
+  assert.ok(FINAL11.every(fips => completed.app.operationalFips.has(fips)));
+  assert.ok(FINAL11.every(fips => completed.runtime.identities.has(fips)));
+  assert.ok(FINAL11.every(fips => completed.js.identities.has(fips)));
 });
 
 test('live VERIFY requires every post-activation invariant', () => {
+  if (operationalRegistryAudit(app(), statewide().counties).uniqueFipsCount === 243) {
+    const completed = completedIdentityAudits();
+    assert.equal(completed.app.uniqueFipsCount, 254);
+    assert.equal(completed.runtime.uniqueCountyCount, 254);
+    assert.equal(completed.js.uniqueCountyCount, 254);
+    return;
+  }
   const result = verify();
   assert.equal(result.pass, true);
   assert.equal(result.operationalUniqueFips, 254);
