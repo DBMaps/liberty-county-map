@@ -16,6 +16,9 @@
   "scripts": {
     "build:statewide-consumer-community-projection": "node tools/build-statewide-consumer-community-projection.mjs",
     "test:statewide-consumer-community-projection": "node --test tests/statewide-consumer-community-projection-generator.test.mjs",
+    "integrate:statewide-consumer-community-runtime": "node tools/integrate-statewide-consumer-community-runtime.mjs",
+    "verify:statewide-consumer-community-runtime": "node tools/integrate-statewide-consumer-community-runtime.mjs --verify",
+    "test:statewide-consumer-community-runtime": "node --test tests/statewide-consumer-community-runtime-parity.test.mjs",
     "build:statewide-consumer-zip": "node tools/build-statewide-consumer-zip-index.mjs",
     "test:statewide-consumer-zip": "node --test tests/statewide-consumer-zip-resolver.test.mjs",
     "check:package-lock-portability": "node tools/check-package-lock-portability.mjs",
