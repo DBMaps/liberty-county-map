@@ -23,9 +23,33 @@ const EXCLUDE = [
 ];
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const json = value => `${JSON.stringify(value, null, 2)}\n`;
+export const REMOTE_GEOMETRY = Object.freeze({
+  canonicalPath: 'assets/location-resolution/gridly-authoritative-county-geometry-v1.json',
+  bytes: 47911048,
+  sha256: '891652f2e63459451ef10e0b723bcf90378dc22a275945978cd73aa8d8e40316',
+  countyCount: 254
+});
 export const isIncluded = file => (ENTRY.includes(file) || FAMILIES.some(x => file.startsWith(x))) && !EXCLUDE.some(x => x.test(file)) && (!file.startsWith('data/generated/lp104/txgio-addresses/') || runtimeAddressPaths.has(file)) && !supersededCompressedSources.has(file);
 
-export function inventory(root = ROOT) {
+function remoteGeometryException(root, descriptor, files) {
+  if (!descriptor) return false;
+  const geometry = files.find(file => file.path === REMOTE_GEOMETRY.canonicalPath);
+  const manifestPath = `${REMOTE_GEOMETRY.canonicalPath.replace(/\.json$/, '')}.manifest.json`;
+  const manifestBytes = canonicalBlobs(root, [manifestPath]).get(manifestPath);
+  let manifest;
+  try { manifest = JSON.parse(manifestBytes.toString('utf8')); } catch { throw Error('REMOTE_GEOMETRY_MANIFEST_INVALID'); }
+  const certification = manifest.certification || {};
+  const immutableUrl = typeof descriptor.url === 'string' && descriptor.url === `https://nhwhkbkludzkuyxmkkcj.supabase.co/storage/v1/object/public/gridly-runtime-geometry/geometry/${REMOTE_GEOMETRY.sha256}.json`;
+  const valid = geometry && geometry.bytes === REMOTE_GEOMETRY.bytes && geometry.sha256 === REMOTE_GEOMETRY.sha256 &&
+    manifest.packagePath === REMOTE_GEOMETRY.canonicalPath && manifest.packageByteLength === REMOTE_GEOMETRY.bytes && manifest.packageSha256 === REMOTE_GEOMETRY.sha256 &&
+    manifest.expectedOperationalCountyCount === 254 && manifest.operationalCountyCount === 254 && manifest.packagedCountyCount === 254 && manifest.restrictedCountyCount === 0 &&
+    certification.passed === true && certification.polygonContainmentRequired === true && certification.polygonSupported === true && certification.boundsRole === 'candidate-prefilter-only' &&
+    descriptor.mode === 'REMOTE_PUBLIC_IMMUTABLE_OBJECT' && descriptor.expectedBytes === REMOTE_GEOMETRY.bytes && descriptor.expectedSha256 === REMOTE_GEOMETRY.sha256 && descriptor.expectedCountyCount === REMOTE_GEOMETRY.countyCount && immutableUrl;
+  if (!valid) throw Error('REMOTE_GEOMETRY_EXCEPTION_IDENTITY_MISMATCH');
+  return true;
+}
+
+export function inventory(root = ROOT, options = {}) {
   const paths = trackedPaths(root).filter(isIncluded);
   const blobs = canonicalBlobs(root, paths);
   const files = paths.map(file => {
@@ -41,6 +65,8 @@ export function inventory(root = ROOT) {
     files.push({ path: generated.path, bytes: bytes.length, sha256: sha(bytes) });
   }
   files.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  const omitGeometry = remoteGeometryException(root, options.geometryDescriptor, files);
+  if (omitGeometry) files.splice(files.findIndex(file => file.path === REMOTE_GEOMETRY.canonicalPath), 1);
   const missingRequired = ENTRY.filter(x => !files.some(f => f.path === x));
   const oversized = files.filter(x => x.bytes > 25 * 1024 * 1024).map(x => ({ path: x.path, bytes: x.bytes, limitBytes: 25 * 1024 * 1024 }));
   const identityInput = files.map(({ path: p, bytes, sha256 }) => `${p}\0${bytes}\0${sha256}\n`).join('');
@@ -69,10 +95,11 @@ export function build(root = ROOT) {
 
 const REPORTS = { 'deployable-artifact-manifest.json': 'manifest', 'cloudflare-pages-command-plan.json': 'commands', 'rollback-plan.json': 'rollback', 'platform-readiness.json': 'readiness', 'lp1831-summary.json': 'summary' };
 export function writeReports(output = path.join(ROOT, REPORT_DIR), root = ROOT) { const made = build(root); fs.mkdirSync(output, { recursive: true }); for (const [name, key] of Object.entries(REPORTS)) fs.writeFileSync(path.join(output, name), json(made[key])); return made; }
-export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) {
+export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT, options = {}) {
   const temporary = `${output}.tmp-${process.pid}-${crypto.randomBytes(8).toString('hex')}`;
   try {
-    const inv = inventory(root);
+    const inv = inventory(root, options);
+    if (options.geometryDescriptor && inv.oversized.length) throw Error(`PAGES_25_MIB_LIMIT:${inv.oversized[0].path}`);
     const tracked = new Set(trackedPaths(root));
     const trackedIncluded = inv.files.filter(file => tracked.has(file.path)).map(file => file.path);
     const blobs = canonicalBlobs(root, trackedIncluded);
@@ -81,6 +108,7 @@ export function stage(output = path.join(ROOT, STAGE_DIR), root = ROOT) {
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, blobs.get(file.path) || fs.readFileSync(path.join(root, file.path)));
     }
+    if (options.runtimeConfigBytes) fs.writeFileSync(path.join(temporary, 'js/gridlyRuntimeEnvironmentConfig.js'), options.runtimeConfigBytes);
     fs.rmSync(output, { recursive: true, force: true });
     fs.renameSync(temporary, output);
     return inv;

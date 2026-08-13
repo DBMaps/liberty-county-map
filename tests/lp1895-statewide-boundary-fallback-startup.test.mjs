@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import { run } from '../scripts/lp189-statewide-runtime-activation-guarded.mjs';
 
 const appSource = fs.readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const geometryPackage = JSON.parse(fs.readFileSync(new URL('../assets/location-resolution/gridly-authoritative-county-geometry-v1.json', import.meta.url)));
 const manifest = JSON.parse(fs.readFileSync(new URL('../assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json', import.meta.url)));
+const completedLifecycle = JSON.parse(fs.readFileSync(new URL('../reports/lp1904/final-statewide-runtime-activation.json', import.meta.url)));
 const loaderSource = appSource.slice(appSource.indexOf('async function loadGridlyCountyBoundaryOverlay()'), appSource.indexOf('\nfunction gridlyGetStaleRuntimeBoundaryAssetPaths'));
 
 async function runOverlay({ activeCountyId, pkg = geometryPackage, boundaryPath = 'assets/location-resolution/gridly-authoritative-county-geometry-v1.json', fallbackPayload = null }) {
@@ -65,13 +65,18 @@ test('a genuinely absent active county alone follows the existing fail-closed co
   assert.equal(result.overlays['parker-tx'], undefined);
 });
 
-test('LP189 membership and authoritative resolver contracts remain unchanged', () => {
-  const verification = run('verify');
-  assert.equal(verification.operationalUniqueFips, 243);
-  assert.equal(verification.restrictedExcluded, true);
-  assert.equal(geometryPackage.counties.some((county) => county.countyId === 'dallas-tx' || county.countyFips === '48113'), false);
-  assert.equal(geometryPackage.counties.length, 243);
-  assert.equal(manifest.packagedCountyCount, 243);
+test('LP189 historical membership and completed lifecycle resolver contracts remain certified', () => {
+  assert.equal(completedLifecycle.preActivationOperationalCount, 243);
+  assert.equal(completedLifecycle.preActivationRestrictedCount, 11);
+  assert.equal(completedLifecycle.activationPerformed, true);
+  assert.equal(completedLifecycle.overallClassification, 'TEXAS_STATEWIDE_RUNTIME_ACTIVATION_COMPLETE');
+  assert.equal(completedLifecycle.verification.operationalUniqueFips, completedLifecycle.postActivationOperationalCount);
+  assert.equal(completedLifecycle.verification.runtimeRestrictedCountyCount, completedLifecycle.postActivationRestrictedCount);
+  assert.equal(completedLifecycle.verification.original243Operational, true);
+  assert.equal(completedLifecycle.verification.final11Operational, true);
+  assert.equal(geometryPackage.counties.some((county) => county.countyId === 'dallas-tx' || county.countyFips === '48113'), true);
+  assert.equal(geometryPackage.counties.length, completedLifecycle.postActivationOperationalCount);
+  assert.equal(manifest.packagedCountyCount, completedLifecycle.postActivationOperationalCount);
   assert.equal(manifest.packageSha256.length, 64);
   assert.match(appSource, /const boundsMatches[\s\S]*getCandidateGeometries\(boundsMatches\.map/);
   assert.match(appSource, /const selected = polygonMatches\.length === 1/);
