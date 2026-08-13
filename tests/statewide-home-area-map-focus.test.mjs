@@ -63,7 +63,7 @@ test("required identities focus the Leaflet camera at their governed coordinates
 
 test("successive selections never reuse the previous map target", () => {
   const map = { center: { lat: 30, lng: -95 }, setView([lat, lng]) { this.center = { lat, lng }; } };
-  for (const sequence of [["Liberty", "Dallas"], ["Dallas", "San Antonio"], ["San Antonio", "Laredo"], ["Laredo", "Palestine"]]) {
+  for (const sequence of [["Liberty", "Dallas"], ["Dallas", "San Antonio"], ["San Antonio", "Brownsville"], ["Brownsville", "Palestine"]]) {
     select(sequence[0], map);
     const result = select(sequence[1], map);
     assert.notDeepEqual(result.before, result.after, sequence.join(" -> "));
