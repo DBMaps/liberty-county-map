@@ -30,6 +30,9 @@ function entryRanges(source, range) {
 
 export function integrateRuntime(source, projection, geometry) {
   if (projection?.schemaVersion !== 'gridly.statewide-consumer-community-projection.v1' || projection.counties?.length !== 254) throw new Error('governed projection must contain 254 counties');
+  // Match the checkout's materialized line endings so a current registry stays
+  // byte-for-byte current on both Windows (CRLF) and Unix (LF).
+  const eol = source.match(/\r\n|\n|\r/)?.[0] || '\n';
   const registryRange = countyRegistryRange(source);
   const context = {};
   vm.runInNewContext(`${source.slice(0, registryRange.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, context);
@@ -51,10 +54,10 @@ export function integrateRuntime(source, projection, geometry) {
       ...(priorFocus.has(item.placeGeoid) ? { focus: priorFocus.get(item.placeGeoid) } : {})
     }));
     let body = source.slice(entry.open + 1, entry.close);
-    body = body.replace(/^    defaultAwarenessAreas:.*\n/m, '');
-    body = body.replace(/^    consumerAwarenessAreas:.*\n/m, '');
+    body = body.replace(/^    defaultAwarenessAreas:.*(?:\r\n|\n|\r)/m, '');
+    body = body.replace(/^    consumerAwarenessAreas:.*(?:\r\n|\n|\r)/m, '');
     const comma = body.trimEnd().endsWith(',') ? '' : ',';
-    body = `${body.trimEnd()}${comma}\n    defaultAwarenessAreas: Object.freeze(${JSON.stringify([`${governed.displayName} County`, ...communities.map(item => item.displayName)])}),\n    consumerAwarenessAreas: Object.freeze(${JSON.stringify(communities)})\n  `;
+    body = `${body.trimEnd()}${comma}${eol}    defaultAwarenessAreas: Object.freeze(${JSON.stringify([`${governed.displayName} County`, ...communities.map(item => item.displayName)])}),${eol}    consumerAwarenessAreas: Object.freeze(${JSON.stringify(communities)})${eol}  `;
     return { start: entry.open + 1, end: entry.close, body };
   });
   if (edits.length !== 254) throw new Error(`runtime registry must contain 254 counties, found ${edits.length}`);
