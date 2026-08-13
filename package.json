@@ -441,6 +441,8 @@
     "test:lp1901": "node --test tests/lp1901-owner-remote-payload-recovery-probe.test.mjs",
     "verify:lp1901": "node scripts/lp1901-owner-remote-payload-recovery-probe.mjs --whatif --json",
     "test:lp1902": "node --test tests/lp1902-governed-payload-restoration.test.mjs",
-    "verify:lp1902": "node scripts/lp1902-restore-governed-payloads.mjs --verify --json"
+    "verify:lp1902": "node scripts/lp1902-restore-governed-payloads.mjs --verify --json",
+    "test:lp1903": "node --test tests/lp1903-activation-reconciliation.test.mjs",
+    "verify:lp1903": "node scripts/lp1903-reconcile-final-restricted-counties.mjs --verify --json"
   }
 }
