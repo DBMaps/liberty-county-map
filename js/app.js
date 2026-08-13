@@ -17067,7 +17067,7 @@ function gridlyLp0516MapStatusToStep(result, zip) {
   if (["po_box_not_supported", "unique_zip_not_supported", "military_zip_not_supported", "not_zip_addressable", "unsupported"].includes(result?.status)) return result.status;
   return "manual_fallback";
 }
-function gridlyLp0516InitialState() { return { open: false, step: "entry", zipInput: "", resolverResult: null, candidateOptions: [], selectedCandidate: null, prototypeResult: null, writeAttempts: [], activeStateBeforeOpen: null, activeStateAfterClose: null }; }
+function gridlyLp0516InitialState() { return { open: false, step: "entry", previousStep: null, zipInput: "", resolverResult: null, candidateOptions: [], selectedCandidate: null, prototypeResult: null, writeAttempts: [], activeStateBeforeOpen: null, activeStateAfterClose: null }; }
 function gridlyLp0516StorageSnapshot() { try { return { localStorageLength: window.localStorage?.length || 0, sessionStorageLength: window.sessionStorage?.length || 0 }; } catch (_) { return { localStorageLength: 0, sessionStorageLength: 0 }; } }
 function gridlyLp0516EnsureState() { if (typeof window === "undefined") return gridlyLp0516InitialState(); if (!window.__gridlyLp0516PrototypeState) window.__gridlyLp0516PrototypeState = gridlyLp0516InitialState(); return window.__gridlyLp0516PrototypeState; }
 function gridlyLp0516SetPrototypeResult(option, method, updates = {}) { const state = gridlyLp0516EnsureState(); const result = state.resolverResult || {}; const selected = option || state.selectedCandidate || result; const prototypeResult = { zip: state.zipInput, countyId: selected.countyId || result.countyId || null, countyName: selected.countyName || result.countyName || null, communityKey: selected.communityKey || result.communityKey || null, communityLabel: selected.communityLabel || result.communityLabel || selected.consumerLabel || null, awarenessAreaKey: selected.awarenessAreaKey || result.awarenessAreaKey || null, consumerLabel: selected.consumerLabel || result.consumerLabel || selected.communityLabel || null, resolutionStatus: result.status || state.step, confirmationMethod: method, prototypeOnly: true, saved: false, ...updates }; state.prototypeResult = prototypeResult; if (typeof window !== "undefined") window.__gridlyLp0516PrototypeResult = prototypeResult; return prototypeResult; }
@@ -17103,20 +17103,33 @@ function gridlyLp0516QueueZipInputFocus() {
 }
 
 function gridlyLp0516OpenManualAwarenessAreaPicker() {
-  gridlyCloseLp0516ZipConfirmationPrototype();
-  openSettingsSurfaceFromDock?.("zip_confirmation_manual");
-  const openPicker = () => {
-    const settingsRoot = document.getElementById("gridlyPortraitV2SheetBody") || document.getElementById("settingsModal") || document;
-    const opened = openGridlySettingsAvailableAreaPicker?.(settingsRoot) === true;
-    const chooser = settingsRoot.querySelector?.("[data-gridly-settings-awareness-options], #settingsAwarenessAreaChooser");
-    const section = chooser?.closest?.("details");
-    if (section) section.open = true;
-    return opened;
-  };
-  if (!openPicker()) {
-    if (typeof requestAnimationFrame === "function") requestAnimationFrame(openPicker);
-    setTimeout(openPicker, 0);
-  }
+  const state = gridlyLp0516EnsureState();
+  if (state.step !== "manual_picker") state.previousStep = state.step;
+  state.step = "manual_picker";
+  gridlySettingsManualAwarenessQuery = "";
+  gridlySettingsManualAwarenessPending = "";
+  gridlyLp0516Render();
+}
+
+function gridlyLp0516ApplyManualAwarenessArea(value = "") {
+  const state = gridlyLp0516EnsureState();
+  const area = resolveGridlyAwarenessArea(value);
+  if (!area || area.countyWide === true || area.fallback === true) return false;
+  const governedCommunity = GRIDLY_COUNTY_REGISTRY?.[area.countyId]?.consumerAwarenessAreas?.find((community) => normalizeGridlyAwarenessAreaLookupText(community.displayName) === normalizeGridlyAwarenessAreaLookupText(area.label));
+  const result = gridlyApplyConfirmedHomePersonalization({
+    zip: state.zipInput,
+    countyId: area.countyId,
+    countyName: GRIDLY_COUNTY_REGISTRY?.[area.countyId]?.name || "",
+    communityKey: governedCommunity?.placeGeoid || area.placeGeoid || area.communityKey || area.key,
+    communityLabel: area.label,
+    awarenessAreaKey: area.key,
+    consumerLabel: area.label,
+    resolutionStatus: "manual_confirmed"
+  }, { completeOnboarding: true, resolutionMethod: "manual_governed_area" });
+  state.prototypeResult = result;
+  state.step = result.success ? "apply_complete" : "apply_error";
+  gridlyLp0516Render();
+  return result.success;
 }
 
 function gridlyLp0516Render() {
@@ -17131,6 +17144,7 @@ function gridlyLp0516Render() {
   const county = state.selectedCandidate?.countyName || state.resolverResult?.countyName || "Gridly coverage area";
   let body = "";
   if (state.step === "entry") body = `<h2 id="gridly-lp0516-title">What’s your ZIP Code?</h2><p>We’ll use it to find the Gridly communities and awareness areas near you.</p><label for="gridly-lp0516-zip-input">Five-digit ZIP code</label><input id="gridly-lp0516-zip-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="postal-code" pattern="[0-9]*" maxlength="10" value="${state.zipInput || ''}" aria-describedby="gridly-lp0516-error"><div class="gridly-lp0516-validation" id="gridly-lp0516-error" aria-live="polite">${state.error || ''}</div>${btn('Continue','continue',true)}${btn('Choose manually','manual',false)}${btn('Close','close',false,'tertiary')}`;
+  else if (state.step === "manual_picker") body = `<h2 id="gridly-lp0516-title">Choose your home area</h2><p>Search for your Texas community.</p><div data-gridly-lp0516-manual-picker></div>${btn('Back','manualBack',false,'tertiary')}`;
   else if (state.step === "resolved") body = `<h2 id="gridly-lp0516-title">We found your area</h2><h3>${label}</h3><p>${county}</p><p>Gridly will use ${label} for local awareness.</p><small>Based on ZIP ${state.zipInput}</small>${btn(`Confirm ${label}`,'confirm',true)}${btn('Choose manually','manual',false)}${btn('Back','back',false)}`;
   else if (state.step === "requires_confirmation") body = `<h2 id="gridly-lp0516-title">Which area feels most like home?</h2><p>ZIP codes can cover more than one community. Choose the area you want Gridly to watch.</p>${state.candidateOptions.length ? optionList()+btn('Continue','confirmSelection',true) : '<p>Choose manually to continue with the existing setup path.</p>'}${btn('Choose manually','manual',false)}${btn('Back','back',false)}`;
   else if (state.step === "ambiguous") body = `<h2 id="gridly-lp0516-title">Your ZIP covers more than one Gridly area</h2><p>Choose the community or awareness area you want Gridly to watch.</p>${state.candidateOptions.length ? optionList()+btn('Choose an area','confirmSelection',true) : '<p>Choose manually to continue with the existing setup path.</p>'}${btn('Choose manually','manual',false)}${btn('Back','back',false)}`;
@@ -17144,7 +17158,9 @@ function gridlyLp0516Render() {
   else if (state.step === "unavailable") body = `<h2 id="gridly-lp0516-title">Gridly isn’t available for this ZIP yet</h2><p>This ZIP is outside the available Texas evidence.</p>${btn('Choose manually','manual',true)}${btn('Try another ZIP','back',false)}${btn('Close','close',false,'tertiary')}`;
   else body = `<h2 id="gridly-lp0516-title">Choose your area manually</h2><p>ZIP evidence could not safely identify a community. Your existing setup is unchanged.</p>${btn('Choose manually','manual',true)}${btn('Try another ZIP','back',false)}${btn('Close','close',false,'tertiary')}`;
   root.innerHTML = `<style>#gridly-lp0516-zip-prototype{--lp0516-bg:var(--bg,#050505);--lp0516-sheet:var(--card,rgba(16,18,21,.92));--lp0516-sheet-strong:var(--gridly-surface-strong,#081827);--lp0516-border:var(--border,rgba(255,255,255,.14));--lp0516-border-accent:var(--gridly-border,rgba(0,245,240,.28));--lp0516-text:var(--text,#fff);--lp0516-muted:var(--muted,#a4acb8);--lp0516-accent:var(--accent,#39f3a4);--lp0516-focus:var(--blue,#66e8ff);position:fixed;inset:0;z-index:2147483647;background:rgba(2,8,18,.72);display:flex;align-items:flex-end;justify-content:center;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;pointer-events:auto;touch-action:manipulation;color:var(--lp0516-text)}.gridly-lp0516-sheet{position:relative;z-index:1;width:min(100%,430px);max-height:min(86vh,760px);overflow-y:auto;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025)),var(--lp0516-sheet);border:1px solid var(--lp0516-border-accent);border-bottom:0;border-radius:28px 28px 0 0;padding:28px 22px calc(28px + env(safe-area-inset-bottom));box-shadow:var(--shadow,0 26px 60px rgba(0,0,0,.72)),var(--gridly-cyan-glow,0 0 26px rgba(0,245,240,.14));backdrop-filter:blur(18px)}#gridly-lp0516-title{font-size:1.55rem;line-height:1.05;margin:0 0 10px;color:var(--lp0516-text);letter-spacing:-.02em}.gridly-lp0516-sheet h3{margin:8px 0;color:var(--lp0516-text);font-size:1.15rem}.gridly-lp0516-sheet p,.gridly-lp0516-sheet small{color:var(--lp0516-muted);line-height:1.45}.gridly-lp0516-sheet label{display:block;margin-top:16px;color:var(--lp0516-muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}#gridly-lp0516-zip-input{box-sizing:border-box;width:100%;font-size:1.25rem;padding:16px;border:1px solid var(--lp0516-border);border-radius:16px;margin:8px 0 6px;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035)),var(--lp0516-sheet-strong);opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}#gridly-lp0516-zip-input::placeholder{color:var(--lp0516-muted);opacity:.82;-webkit-text-fill-color:var(--lp0516-muted)}#gridly-lp0516-zip-input::selection{background:var(--lp0516-focus);color:#02070a;-webkit-text-fill-color:#02070a}#gridly-lp0516-zip-input:-webkit-autofill,#gridly-lp0516-zip-input:-webkit-autofill:focus{-webkit-text-fill-color:var(--lp0516-text);caret-color:var(--lp0516-focus);box-shadow:0 0 0 1000px var(--lp0516-sheet-strong) inset;border-color:var(--lp0516-border-accent)}#gridly-lp0516-zip-input:disabled{opacity:1;color:var(--lp0516-text);-webkit-text-fill-color:var(--lp0516-text)}.gridly-lp0516-validation{min-height:20px;color:var(--warning,#ffbf47);font-size:.9rem;font-weight:750}.gridly-lp0516-btn,.gridly-lp0516-option{width:100%;min-height:48px;border-radius:16px;border:1px solid var(--lp0516-border);margin-top:10px;font-weight:900;cursor:pointer}.gridly-lp0516-primary{background:linear-gradient(135deg,var(--blue,#66e8ff),#3dcfe8);color:#02070a;border-color:transparent}.gridly-lp0516-secondary,.gridly-lp0516-option{background:rgba(255,255,255,.07);color:var(--lp0516-text)}.gridly-lp0516-tertiary{background:transparent;color:var(--lp0516-muted);border-color:rgba(255,255,255,.1)}.gridly-lp0516-options{display:grid;gap:10px;margin:14px 0}.gridly-lp0516-option{text-align:left;padding:14px 16px}.gridly-lp0516-option[aria-checked="true"]{border-color:var(--lp0516-accent);background:linear-gradient(135deg,rgba(57,243,164,.22),rgba(102,232,255,.12));color:var(--lp0516-text);box-shadow:0 0 0 1px rgba(57,243,164,.18) inset}.gridly-lp0516-option:focus,.gridly-lp0516-btn:focus,#gridly-lp0516-zip-input:focus{outline:3px solid var(--lp0516-focus);outline-offset:2px;border-color:var(--lp0516-focus)}</style><div class="gridly-lp0516-sheet">${body}</div>`;
-  root.onclick = (event) => { const target = event.target; const action = target?.dataset?.action; if (target?.dataset && Object.prototype.hasOwnProperty.call(target.dataset, 'optionIndex')) { state.selectedCandidate = state.candidateOptions[Number(target.dataset.optionIndex)]; gridlyLp0516Render(); return; } if (!action) return; if (action === 'continue') gridlyLp0516Continue(); else if (action === 'back') { state.step = 'entry'; state.error = ''; gridlyLp0516Render(); } else if (action === 'confirm') { gridlyLp0516SetPrototypeResult(null, 'explicit_confirm'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'confirmSelection') { if (!state.selectedCandidate) { state.error = 'Choose an area to continue.'; return; } gridlyLp0516SetPrototypeResult(state.selectedCandidate, 'explicit_candidate_selection'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'manual') { gridlyLp0516OpenManualAwarenessAreaPicker(); } else if (action === 'preview' || action === 'apply') { state.step = 'applying'; gridlyLp0516Render(); setTimeout(() => gridlyLp0517ConfirmSelection(), 0); } else if (action === 'done') { gridlyCloseLp0516ZipConfirmationPrototype(); } else if (action === 'tryAnotherZip') { gridlyLp0516ResetPrototypeSelectionState(); gridlyLp0516Render(); } else if (action === 'close') gridlyCloseLp0516ZipConfirmationPrototype(); };
+  root.onclick = (event) => { const target = event.target; const action = target?.dataset?.action; if (target?.dataset && Object.prototype.hasOwnProperty.call(target.dataset, 'optionIndex')) { state.selectedCandidate = state.candidateOptions[Number(target.dataset.optionIndex)]; gridlyLp0516Render(); return; } if (!action) return; if (action === 'continue') gridlyLp0516Continue(); else if (action === 'back') { state.step = 'entry'; state.error = ''; gridlyLp0516Render(); } else if (action === 'manualBack') { state.step = state.previousStep || 'entry'; state.previousStep = null; gridlySettingsManualAwarenessQuery = ''; gridlySettingsManualAwarenessPending = ''; gridlyLp0516Render(); } else if (action === 'confirm') { gridlyLp0516SetPrototypeResult(null, 'explicit_confirm'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'confirmSelection') { if (!state.selectedCandidate) { state.error = 'Choose an area to continue.'; return; } gridlyLp0516SetPrototypeResult(state.selectedCandidate, 'explicit_candidate_selection'); state.step = 'ready'; gridlyLp0516Render(); } else if (action === 'manual') { gridlyLp0516OpenManualAwarenessAreaPicker(); } else if (action === 'preview' || action === 'apply') { state.step = 'applying'; gridlyLp0516Render(); setTimeout(() => gridlyLp0517ConfirmSelection(), 0); } else if (action === 'done') { gridlyCloseLp0516ZipConfirmationPrototype(); } else if (action === 'tryAnotherZip') { gridlyLp0516ResetPrototypeSelectionState(); gridlyLp0516Render(); } else if (action === 'close') gridlyCloseLp0516ZipConfirmationPrototype(); };
+  const manualPicker = root.querySelector?.("[data-gridly-lp0516-manual-picker]");
+  if (manualPicker) renderGridlyManualAwarenessAreaPicker(manualPicker, { focusSearch: true, apply: gridlyLp0516ApplyManualAwarenessArea, consumerFlow: true });
   const input = document.getElementById("gridly-lp0516-zip-input"); if (input) { input.oninput = () => { state.zipInput = input.value; state.error = ''; }; input.onkeydown = (event) => { if (event.key === 'Enter') gridlyLp0516Continue(); }; input.disabled = false; input.readOnly = false; input.onpointerdown = () => gridlyLp0516QueueZipInputFocus(); input.onmousedown = () => gridlyLp0516QueueZipInputFocus(); input.ontouchstart = () => gridlyLp0516QueueZipInputFocus(); gridlyLp0516QueueZipInputFocus(); }
 }
 async function gridlyLp0516Continue() { const state = gridlyLp0516EnsureState(); const zip = window.GridlyStatewideZipResolver?.normalize(state.zipInput) || ""; state.zipInput = zip; if (!zip) { state.error = "Enter an exact 5-digit ZIP or valid ZIP+4."; state.step = "entry"; gridlyLp0516Render(); return; } state.step = "applying"; gridlyLp0516Render(); const result = await (window.GridlyStatewideZipResolver?.resolve(zip) || Promise.resolve({ status: "manual_fallback", resolved: false, zip, manualFallbackAvailable: true })); state.resolverResult = result; state.candidateOptions = gridlyLp0516CandidateOptions(result, zip); state.selectedCandidate = null; state.step = gridlyLp0516MapStatusToStep(result, zip); gridlyLp0516Render(); }
@@ -92973,7 +92989,7 @@ function resolveGridlyManualAwarenessAreaSearch(query = "") {
   return Object.freeze({ status: "RESULTS", groups: Object.freeze(filterGridlyManualAwarenessAreas(normalizedQuery)) });
 }
 
-function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending) {
+function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gridlySettingsManualAwarenessQuery, pendingValue = gridlySettingsManualAwarenessPending, options = {}) {
   const selectedArea = resolveGridlyAwarenessArea(selectedValue || getGridlyHomeTownPreference?.() || "");
   const pendingArea = resolveGridlyAwarenessArea(pendingValue);
   const normalizedQuery = String(query || "").trim();
@@ -92985,7 +93001,7 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
       const title = community.countyWide ? `Watch all of ${group.countyLabel}` : community.label;
       return `<button type="button" class="settings-manual-area-result${isCurrent ? " is-current" : ""}${isPending ? " is-pending" : ""}" data-gridly-manual-awareness-value="${escapeGridlySettingsAttribute(community.value)}" aria-pressed="${isPending ? "true" : "false"}"${isCurrent ? " disabled" : ""}><span>${escapeGridlySettingsAttribute(title)}</span><small>${escapeGridlySettingsAttribute(group.countyLabel)}</small>${isCurrent ? '<em class="settings-manual-area-state">Currently watching</em>' : (isPending ? '<em class="settings-manual-area-state">Selected</em>' : "")}</button>`;
     })).join("");
-  const pendingHtml = pendingArea ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingArea.label || pendingArea.storageValue)}</strong><small>${escapeGridlySettingsAttribute(GRIDLY_COUNTY_REGISTRY[pendingArea.countyId]?.name || "")}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>Watch this area</button></div>` : "";
+  const pendingHtml = pendingArea ? `<div class="settings-manual-pending"><span>Selected area</span><strong>${escapeGridlySettingsAttribute(pendingArea.label || pendingArea.storageValue)}</strong><small>${escapeGridlySettingsAttribute(GRIDLY_COUNTY_REGISTRY[pendingArea.countyId]?.name || "")}</small><button type="button" class="primary-btn" data-gridly-manual-awareness-apply>${options.consumerFlow ? "Use this home area" : "Watch this area"}</button></div>` : "";
   const emptyResult = search.status === "INVALID_ZIP"
     ? "Enter a valid 5-digit ZIP code."
     : search.status === "RESOLVED_NOT_OPERATIONAL" || (search.status === "NOT_FOUND" && /^\d{5}$/.test(normalizedQuery))
@@ -92996,26 +93012,29 @@ function buildGridlySettingsAwarenessOptionsHtml(selectedValue = "", query = gri
   const results = normalizedQuery
     ? `<div class="settings-manual-results"><span class="settings-manual-results-label">Results</span><div class="settings-manual-county-list" aria-live="polite">${resultHtml || `<p class="settings-manual-no-results" role="status">${emptyResult}</p>`}</div></div>`
     : '<p class="settings-manual-search-instruction">Start typing to find an available Gridly area.</p>';
-  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true"><h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p><label>Search ZIP, town, or county<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
+  return `<div class="settings-awareness-manual-picker" data-gridly-manual-awareness-picker="true">${options.consumerFlow ? "" : '<h3>Choose from available areas</h3><p class="settings-manual-search-helper">Search an available Gridly area by ZIP, town, or county.</p>'}<label>${options.consumerFlow ? "Search Texas community" : "Search ZIP, town, or county"}<input data-gridly-manual-awareness-search type="search" inputmode="search" autocomplete="off" placeholder="77535, Dayton, or Liberty County" value="${escapeGridlySettingsAttribute(query)}"></label>${pendingHtml}${results}</div>`;
 }
 
 function renderGridlyManualAwarenessAreaPicker(container, options = {}) {
   if (!container) return;
   const display = getGridlySettingsAwarenessAreaDisplay();
-  container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue, gridlySettingsManualAwarenessQuery, gridlySettingsManualAwarenessPending);
+  container.innerHTML = buildGridlySettingsAwarenessOptionsHtml(display.storageValue, gridlySettingsManualAwarenessQuery, gridlySettingsManualAwarenessPending, options);
   const input = container.querySelector("[data-gridly-manual-awareness-search]");
   input?.addEventListener("input", (event) => {
     gridlySettingsManualAwarenessQuery = String(event.target.value || "");
     gridlySettingsManualAwarenessPending = "";
-    renderGridlyManualAwarenessAreaPicker(container, { focusSearch: true });
+    renderGridlyManualAwarenessAreaPicker(container, { ...options, focusSearch: true });
   });
   container.querySelectorAll("[data-gridly-manual-awareness-value]").forEach((button) => button.addEventListener("click", () => {
     gridlySettingsManualAwarenessPending = button.dataset.gridlyManualAwarenessValue || "";
-    renderGridlyManualAwarenessAreaPicker(container);
+    renderGridlyManualAwarenessAreaPicker(container, options);
   }));
   container.querySelector("[data-gridly-manual-awareness-apply]")?.addEventListener("click", () => {
     if (!gridlySettingsManualAwarenessPending) return;
-    if (selectGridlySettingsAwarenessArea(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container)) {
+    const applied = options.apply
+      ? options.apply(gridlySettingsManualAwarenessPending)
+      : selectGridlySettingsAwarenessArea(gridlySettingsManualAwarenessPending, "settings_manual_awareness_area", container);
+    if (applied) {
       gridlySettingsManualAwarenessPending = "";
       renderGridlyManualAwarenessAreaPicker(container);
     }

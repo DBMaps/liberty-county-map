@@ -153,7 +153,11 @@ assert.strictEqual(sandbox.window.__gridlyLp0516PrototypeResult, null, 'Try anot
 retryState.zipInput = '77535';
 await continueZip();
 nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'manual' } } });
-assert.strictEqual(retryState.open, false, 'manual fallback closes via existing safe path');
+assert.strictEqual(retryState.open, true, 'manual fallback remains inside the ZIP confirmation flow');
+assert.strictEqual(retryState.step, 'manual_picker', 'manual fallback opens the focused picker instead of Settings');
+nodes['gridly-lp0516-zip-prototype'].onclick({ target: { dataset: { action: 'manualBack' } } });
+assert.strictEqual(retryState.step, 'requires_confirmation', 'manual Back restores the prior ZIP confirmation step');
+assert.strictEqual(retryState.zipInput, '77535', 'manual Back preserves the prior ZIP input');
 const finalAfter = JSON.stringify(sandbox.localStorage.data) + JSON.stringify(sandbox.sessionStorage.data);
 assert.strictEqual(before, finalAfter, 'preview/done/retry/manual flows perform no storage writes');
 
