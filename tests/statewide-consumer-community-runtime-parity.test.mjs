@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 import { countyRegistryRange } from '../scripts/lp189-statewide-runtime-activation-guarded.mjs';
+import { integrateRuntime } from '../tools/integrate-statewide-consumer-community-runtime.mjs';
 
 const source = fs.readFileSync('js/app.js', 'utf8');
 const projection = JSON.parse(fs.readFileSync('data/generated/gridly-statewide-consumer-community-projection-v1.json', 'utf8'));
@@ -13,6 +14,14 @@ vm.runInNewContext(`${source.slice(0, range.end)};this.registry=GRIDLY_COUNTY_RE
 const registry = context.registry;
 const idByFips = new Map(geometry.counties.map(county => [county.fips, county.countyId]));
 const runtimeMemberships = Object.values(registry).flatMap(county => county.consumerAwarenessAreas || []);
+
+test('runtime integration is byte-idempotent for LF and CRLF checkouts', () => {
+  const lfSource = source.replace(/\r\n/g, '\n');
+  const crlfSource = lfSource.replace(/\n/g, '\r\n');
+
+  assert.equal(integrateRuntime(lfSource, projection, geometry), lfSource);
+  assert.equal(integrateRuntime(crlfSource, projection, geometry), crlfSource);
+});
 
 test('runtime counts exactly equal the governed portable projection', () => {
   assert.equal(Object.keys(registry).length, 254);
