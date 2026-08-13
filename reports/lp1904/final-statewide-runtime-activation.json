@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "gridly.lp1904.final-statewide-runtime-activation.v1",
+  "milestone": "LP190.4",
+  "preActivationOperationalCount": 243,
+  "preActivationRestrictedCount": 11,
+  "activatedCountyCount": 0,
+  "postActivationOperationalCount": 243,
+  "postActivationRestrictedCount": 11,
+  "exactActivatedFips": [],
+  "intendedActivationFips": ["48061", "48073", "48113", "48121", "48135", "48229", "48329", "48377", "48401", "48425", "48441"],
+  "lp1903EvidenceIdentity": {
+    "path": "reports/lp1903/final-11-county-activation-reconciliation.json",
+    "status": "COMMITTED_RECONCILIATION_PRESENT"
+  },
+  "productionSurfacesChanged": [],
+  "productionSurfacesPlanned": ["js/app.js", "assets/package-registry/runtime-package-registry.json", "js/gridlyPackageRegistry.js", "assets/location-resolution/gridly-authoritative-county-geometry-v1.json", "assets/location-resolution/gridly-authoritative-county-geometry-v1.manifest.json"],
+  "geometryIdentity": {"countyCount": 243, "changed": false},
+  "manifestIdentity": {"changed": false},
+  "registryCounts": {"county": 243, "community": 243},
+  "communityAvailabilityResult": "NOT_ACTIVATED",
+  "crossingRegressionResult": "UNCHANGED_BY_FAIL_CLOSED_STOP",
+  "protectedSystemResult": "UNCHANGED",
+  "activationPerformed": false,
+  "blockingCondition": "The eleven governedTargetPath LP190.2 payload files are owner-local ignored artifacts and are unavailable in this checkout; exact bytes and SHA-256 cannot be revalidated.",
+  "overallClassification": "OWNER_EXECUTION_REQUIRED_MISSING_GOVERNED_INPUTS_FAIL_CLOSED"
+}
