@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Rusk County",
+  "countyFips": "48401",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 782267,
+  "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74",
+  "indexedAddressCount": 26402,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.0079000000259839
+  },
+  "exactSample": {
+    "providerIdentity": "fe285ca90659cc3294b3",
+    "houseNumber": "1",
+    "canonicalRoad": "FLOREY LAKE ROAD",
+    "city": "",
+    "zip": "",
+    "county": "Rusk County",
+    "countyFips": "48401",
+    "query": "1 FLOREY LAKE ROAD TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 26402,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 303.968899999978,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 303.968899999978,
+  "certificationStatus": "PASS",
+  "failures": []
+}

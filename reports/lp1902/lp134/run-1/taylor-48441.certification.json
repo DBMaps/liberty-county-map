@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Taylor County",
+  "countyFips": "48441",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2563385,
+  "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff",
+  "indexedAddressCount": 77597,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.00809999997727573
+  },
+  "exactSample": {
+    "providerIdentity": "b9fc962a85db96b7123c",
+    "houseNumber": "1",
+    "canonicalRoad": "AMANDA LN",
+    "city": "ABILENE",
+    "zip": "",
+    "county": "Taylor County",
+    "countyFips": "48441",
+    "query": "1 AMANDA LN ABILENE TX",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 77597,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 877.890699999989,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 877.890699999989,
+  "certificationStatus": "PASS",
+  "failures": []
+}

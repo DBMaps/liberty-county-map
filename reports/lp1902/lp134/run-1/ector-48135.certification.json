@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Ector County",
+  "countyFips": "48135",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2044691,
+  "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9",
+  "indexedAddressCount": 68256,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.008199999982025474
+  },
+  "exactSample": {
+    "providerIdentity": "6320056a6802bb5a77ef",
+    "houseNumber": "1",
+    "canonicalRoad": "ALCOVE CT",
+    "city": "Odessa",
+    "zip": "79762",
+    "county": "Ector County",
+    "countyFips": "48135",
+    "query": "1 ALCOVE CT Odessa TX 79762",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 1,
+    "variantsTested": 3,
+    "variantsPassed": 3
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 68256,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 799.220500000054,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 799.220500000054,
+  "certificationStatus": "PASS",
+  "failures": []
+}

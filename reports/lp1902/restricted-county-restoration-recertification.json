@@ -1,7 +1,7 @@
 {
   "schemaVersion": "gridly.lp1902.restricted-county-restoration-recertification.v1",
   "milestone": "LP190.2",
-  "mode": "PREPARATION",
+  "mode": "verify",
   "scope": "EXACT_RESTORATION_AND_CERTIFICATION_ONLY",
   "activationPerformed": false,
   "runtime": {
@@ -12,201 +12,388 @@
   "aggregate": {
     "expectedCountyCount": 11,
     "restoredExactCount": 0,
-    "alreadyRestoredExactCount": 0,
+    "alreadyRestoredExactCount": 11,
     "restorationFailures": 0,
-    "lp134DoublePassCount": 0,
+    "lp134DoublePassCount": 11,
     "lp134Failures": 0,
-    "reconciliationReadyCount": 0,
+    "reconciliationReadyCount": 11,
     "stillRestrictedCount": 11,
-    "safeForActivationReconciliation": false
+    "safeForActivationReconciliation": true
   },
   "counties": [
     {
       "countyFips": "48061",
       "countyName": "Cameron",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/cameron-48061.addresses.jsonl.gz",
+      "expectedByteLength": 5373433,
+      "expectedSha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b",
+      "remoteObjectKey": "lp104/txgio-addresses/cameron-48061.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-02/certificates/cameron-48061.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/cameron-48061.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/cameron-48061.addresses.jsonl.gz",
-      "expectedByteLength": 5373433,
-      "actualByteLength": null,
-      "expectedSha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 5373433,
+      "actualSha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/cameron-48061.certification.json",
+        "artifactIdentity": {
+          "byteLength": 5373433,
+          "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/cameron-48061.certification.json",
+        "artifactIdentity": {
+          "byteLength": 5373433,
+          "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48073",
       "countyName": "Cherokee",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/cherokee-48073.addresses.jsonl.gz",
+      "expectedByteLength": 1066374,
+      "expectedSha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d",
+      "remoteObjectKey": "lp104/txgio-addresses/cherokee-48073.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-02/certificates/cherokee-48073.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/cherokee-48073.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/cherokee-48073.addresses.jsonl.gz",
-      "expectedByteLength": 1066374,
-      "actualByteLength": null,
-      "expectedSha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 1066374,
+      "actualSha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/cherokee-48073.certification.json",
+        "artifactIdentity": {
+          "byteLength": 1066374,
+          "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/cherokee-48073.certification.json",
+        "artifactIdentity": {
+          "byteLength": 1066374,
+          "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48113",
       "countyName": "Dallas",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/dallas-48113.addresses.jsonl.gz",
+      "expectedByteLength": 32972921,
+      "expectedSha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953",
+      "remoteObjectKey": "lp104/txgio-addresses/dallas-48113.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-02/certificates/dallas-48113.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/dallas-48113.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/dallas-48113.addresses.jsonl.gz",
-      "expectedByteLength": 32972921,
-      "actualByteLength": null,
-      "expectedSha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 32972921,
+      "actualSha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/dallas-48113.certification.json",
+        "artifactIdentity": {
+          "byteLength": 32972921,
+          "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/dallas-48113.certification.json",
+        "artifactIdentity": {
+          "byteLength": 32972921,
+          "sha256": "354653cea266e863b13f49f28bd4ae76a17ac84b84ae804f50110a8c1ef48953"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48121",
       "countyName": "Denton",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/denton-48121.addresses.jsonl.gz",
+      "expectedByteLength": 11819588,
+      "expectedSha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17",
+      "remoteObjectKey": "lp104/txgio-addresses/denton-48121.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-03/certificates/denton-48121.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/denton-48121.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/denton-48121.addresses.jsonl.gz",
-      "expectedByteLength": 11819588,
-      "actualByteLength": null,
-      "expectedSha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 11819588,
+      "actualSha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/denton-48121.certification.json",
+        "artifactIdentity": {
+          "byteLength": 11819588,
+          "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/denton-48121.certification.json",
+        "artifactIdentity": {
+          "byteLength": 11819588,
+          "sha256": "15e99627ae0a0698536881db9499d18b3c324ed7d5d20cbbf02875da99da7b17"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48135",
       "countyName": "Ector",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/ector-48135.addresses.jsonl.gz",
+      "expectedByteLength": 2044691,
+      "expectedSha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9",
+      "remoteObjectKey": "lp104/txgio-addresses/ector-48135.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-03/certificates/ector-48135.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/ector-48135.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/ector-48135.addresses.jsonl.gz",
-      "expectedByteLength": 2044691,
-      "actualByteLength": null,
-      "expectedSha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 2044691,
+      "actualSha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/ector-48135.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2044691,
+          "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/ector-48135.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2044691,
+          "sha256": "a1a74ead55eb8e50fa0ebf52fbb664f18ec7b3b55d847a0607d2bc31e14293f9"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48229",
       "countyName": "Hudspeth",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/hudspeth-48229.addresses.jsonl.gz",
+      "expectedByteLength": 166512,
+      "expectedSha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe",
+      "remoteObjectKey": "lp104/txgio-addresses/hudspeth-48229.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-05/certificates/hudspeth-48229.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/hudspeth-48229.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/hudspeth-48229.addresses.jsonl.gz",
-      "expectedByteLength": 166512,
-      "actualByteLength": null,
-      "expectedSha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 166512,
+      "actualSha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/hudspeth-48229.certification.json",
+        "artifactIdentity": {
+          "byteLength": 166512,
+          "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/hudspeth-48229.certification.json",
+        "artifactIdentity": {
+          "byteLength": 166512,
+          "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48329",
       "countyName": "Midland",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/midland-48329.addresses.jsonl.gz",
+      "expectedByteLength": 2879318,
+      "expectedSha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600",
+      "remoteObjectKey": "lp104/txgio-addresses/midland-48329.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-06/certificates/midland-48329.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/midland-48329.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/midland-48329.addresses.jsonl.gz",
-      "expectedByteLength": 2879318,
-      "actualByteLength": null,
-      "expectedSha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 2879318,
+      "actualSha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/midland-48329.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2879318,
+          "sha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/midland-48329.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2879318,
+          "sha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48377",
       "countyName": "Presidio",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/presidio-48377.addresses.jsonl.gz",
+      "expectedByteLength": 183109,
+      "expectedSha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce",
+      "remoteObjectKey": "lp104/txgio-addresses/presidio-48377.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-07/certificates/presidio-48377.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/presidio-48377.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/presidio-48377.addresses.jsonl.gz",
-      "expectedByteLength": 183109,
-      "actualByteLength": null,
-      "expectedSha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 183109,
+      "actualSha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/presidio-48377.certification.json",
+        "artifactIdentity": {
+          "byteLength": 183109,
+          "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/presidio-48377.certification.json",
+        "artifactIdentity": {
+          "byteLength": 183109,
+          "sha256": "adc34e30fb7c83338e25c04421c3bda0ef73ec809f716b813fbad53305206cce"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48401",
       "countyName": "Rusk",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/rusk-48401.addresses.jsonl.gz",
+      "expectedByteLength": 782267,
+      "expectedSha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74",
+      "remoteObjectKey": "lp104/txgio-addresses/rusk-48401.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-07/certificates/rusk-48401.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/rusk-48401.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/rusk-48401.addresses.jsonl.gz",
-      "expectedByteLength": 782267,
-      "actualByteLength": null,
-      "expectedSha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 782267,
+      "actualSha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/rusk-48401.certification.json",
+        "artifactIdentity": {
+          "byteLength": 782267,
+          "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/rusk-48401.certification.json",
+        "artifactIdentity": {
+          "byteLength": 782267,
+          "sha256": "1f13a56fe4f95fd45825f81c0011de2e86bc2d6788f020efed92049429782e74"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48425",
       "countyName": "Somervell",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/somervell-48425.addresses.jsonl.gz",
+      "expectedByteLength": 164537,
+      "expectedSha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1",
+      "remoteObjectKey": "lp104/txgio-addresses/somervell-48425.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-08/certificates/somervell-48425.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/somervell-48425.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/somervell-48425.addresses.jsonl.gz",
-      "expectedByteLength": 164537,
-      "actualByteLength": null,
-      "expectedSha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 164537,
+      "actualSha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/somervell-48425.certification.json",
+        "artifactIdentity": {
+          "byteLength": 164537,
+          "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/somervell-48425.certification.json",
+        "artifactIdentity": {
+          "byteLength": 164537,
+          "sha256": "f0c9536c27942ad01390d7a65fe0cb5b5efa22feef63669ee691e6225f1c3ad1"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     },
     {
       "countyFips": "48441",
       "countyName": "Taylor",
+      "lp130ExpectedArtifact": "data/generated/lp104/txgio-addresses/taylor-48441.addresses.jsonl.gz",
+      "expectedByteLength": 2563385,
+      "expectedSha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff",
+      "remoteObjectKey": "lp104/txgio-addresses/taylor-48441.addresses.jsonl.gz",
+      "lp130RuntimeCertificatePath": "reports/lp130-statewide-addresses/batch-08/certificates/taylor-48441.runtime-certificate.json",
       "quarantineSourcePath": "evidence/lp1901/recovered-payloads.local/taylor-48441.addresses.jsonl.gz",
       "governedTargetPath": "data/generated/lp104/txgio-addresses/taylor-48441.addresses.jsonl.gz",
-      "expectedByteLength": 2563385,
-      "actualByteLength": null,
-      "expectedSha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff",
-      "actualSha256": null,
-      "restorationClassification": "OWNER_EXECUTION_REQUIRED",
-      "lp134Run1": null,
-      "lp134Run2": null,
-      "lp134Deterministic": false,
-      "restrictionCanBeCleared": false,
-      "remainingBlocker": "Owner-local LP190.1 evidence and quarantined bytes are intentionally not committed.",
-      "nextRequiredAction": "Run the governed LP190.2 owner execution block."
+      "actualByteLength": 2563385,
+      "actualSha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff",
+      "restorationClassification": "ALREADY_RESTORED_EXACT",
+      "remainingBlocker": null,
+      "lp134Run1": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-1/taylor-48441.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2563385,
+          "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff"
+        }
+      },
+      "lp134Run2": {
+        "status": "PASS",
+        "evidencePath": "reports/lp1902/lp134/run-2/taylor-48441.certification.json",
+        "artifactIdentity": {
+          "byteLength": 2563385,
+          "sha256": "aaaba945f9368feeabc05c10237331039084d162f69249d8ad33938eb81aafff"
+        }
+      },
+      "lp134Deterministic": true,
+      "restrictionCanBeCleared": true,
+      "nextRequiredAction": "READY_FOR_ACTIVATION_RECONCILIATION; owner-governed LP135/LP186-LP189 reconciliation remains separate."
     }
   ]
 }
