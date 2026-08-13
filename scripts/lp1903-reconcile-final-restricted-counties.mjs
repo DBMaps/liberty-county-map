@@ -12,6 +12,12 @@ export const PROTECTED_RUNTIME = Object.freeze(['js/app.js','assets/package-regi
 const read = (p, root=ROOT) => fs.readFileSync(path.join(root,p));
 const readJson = (p, root=ROOT) => JSON.parse(read(p,root));
 const stable = value => `${JSON.stringify(value,null,2)}\n`;
+const canonicalMarkdown = value => value.replace(/\r\n/g,'\n');
+
+export function reportContentMatches(reportPath, actual, expected) {
+  if (reportPath === OUTPUT_MD) return canonicalMarkdown(actual) === canonicalMarkdown(expected);
+  return actual === expected;
+}
 
 export function evidenceComplete(row, root=ROOT) {
   if (!row || !EXPECTED_FIPS.includes(row.countyFips) || row.restrictionCanBeCleared !== true || row.lp134Deterministic !== true) return false;
@@ -49,6 +55,6 @@ export function buildReport(input, root=ROOT) {
 
 function markdown(r){const rows=r.counties.map(x=>`| ${x.countyFips} | ${x.countyName} | ${x.priorRestrictionReason} | ${x.reconciliationClassification} | ${x.activationEligible?'YES':'NO'} | ${x.remainingBlocker ?? 'NONE'} |`).join('\n');return `# LP190.3 final 11-county activation reconciliation\n\nLP190.3 reconciles governance only. It supersedes the obsolete LP135 package-availability restriction using committed LP190.2 evidence; it does not rewrite historical evidence or activate runtime. Runtime remains **243 operational / 11 restricted**.\n\n**Safe for guarded runtime activation:** ${r.aggregate.safeForGuardedRuntimeActivation?'YES':'NO'}\n\n| FIPS | County | Prior reason | Classification | Activation eligible | Remaining blocker |\n|---|---|---|---|---|---|\n${rows}\n`}
 export function outputs(root=ROOT){const report=buildReport(readJson(INPUT,root),root);return new Map([[OUTPUT_JSON,stable(report)],[OUTPUT_MD,markdown(report)]]);}
-export function run(mode='whatif',root=ROOT){const planned=outputs(root), report=JSON.parse(planned.get(OUTPUT_JSON));if(mode==='apply'){for(const [p,v] of planned){fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),v);}}if(mode==='verify'){for(const [p,v] of planned){if(!fs.existsSync(path.join(root,p)) || read(p,root).toString()!==v) throw new Error(`LP190.3 fail closed: stale or missing ${p}`);}}return {...report,mode:mode.toUpperCase(),filesThatWouldChange:[...planned.keys()]};}
+export function run(mode='whatif',root=ROOT){const planned=outputs(root), report=JSON.parse(planned.get(OUTPUT_JSON));if(mode==='apply'){for(const [p,v] of planned){fs.mkdirSync(path.dirname(path.join(root,p)),{recursive:true});fs.writeFileSync(path.join(root,p),v);}}if(mode==='verify'){for(const [p,v] of planned){if(!fs.existsSync(path.join(root,p)) || !reportContentMatches(p,read(p,root).toString(),v)) throw new Error(`LP190.3 fail closed: stale or missing ${p}`);}}return {...report,mode:mode.toUpperCase(),filesThatWouldChange:[...planned.keys()]};}
 
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){try{const flags=new Set(process.argv.slice(2)), modes=['--whatif','--apply','--verify'].filter(x=>flags.has(x));if([...flags].some(x=>!['--whatif','--apply','--verify','--json'].includes(x))||modes.length>1)throw new Error('LP190.3 fail closed: choose one supported mode');const mode=flags.has('--apply')?'apply':flags.has('--verify')?'verify':'whatif';const result=run(mode);process.stdout.write(flags.has('--json')?stable(result):`${mode.toUpperCase()} ${JSON.stringify(result,null,2)}\n`);if(!result.aggregate.safeForGuardedRuntimeActivation)process.exitCode=1;}catch(e){process.stderr.write(`${e.message}\n`);process.exitCode=1;}}
