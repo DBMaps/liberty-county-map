@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "audit:statewide-place-presentation-geometry": "node tools/audit-statewide-place-presentation-geometry.mjs",
+    "test:statewide-place-presentation-geometry-audit": "node --test tests/statewide-place-presentation-geometry-audit.test.mjs",
     "build:statewide-place-presentation": "node tools/build-statewide-place-presentation-v1.mjs",
     "test:statewide-place-presentation": "node --test tests/statewide-place-presentation-generator.test.mjs",
     "build:statewide-consumer-community-projection": "node tools/build-statewide-consumer-community-projection.mjs",
