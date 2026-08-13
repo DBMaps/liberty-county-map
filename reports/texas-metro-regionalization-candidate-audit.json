@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "gridly.texas-metro-regionalization-candidate-audit.v1",
+  "auditStatus": "BLOCKED_PENDING_GOVERNED_GEOMETRY_EVIDENCE",
+  "governance": {
+    "auditOnly": true,
+    "productionChangeAuthorized": false,
+    "regionalizationImplementationAuthorized": false
+  },
+  "houstonReferenceModel": {
+    "controlGeoid": "4835000",
+    "role": "reference only; excluded from decision candidates",
+    "childRegionCount": 15,
+    "sourceLocation": "js/app.js GRIDLY_LP035_HOUSTON_REGION_MODEL"
+  },
+  "inputEvidence": {
+    "required": "reports/statewide-place-presentation-geometry-audit.json",
+    "present": false,
+    "projectionSchemaVersion": "gridly.statewide-consumer-community-projection.v1"
+  },
+  "candidateSelectionAlgorithm": {
+    "requiredGeoids": [
+      "4865000",
+      "4819000",
+      "4805000",
+      "4824000",
+      "4827000",
+      "4817000",
+      "4804000",
+      "4845000",
+      "4841464"
+    ],
+    "expansion": "100_plus_square_miles OR multi-county OR (multipart AND >=10 square miles) OR top-25 disagreement OR extreme computed bounds sprawl",
+    "deduplication": "GEOID set",
+    "ordering": "ascending GEOID"
+  },
+  "classificationAlgorithm": {
+    "implementation": "tools/audit-texas-metro-regionalization-candidates.mjs",
+    "executionStatus": "not executed without governed geometry"
+  },
+  "candidateCount": 9,
+  "candidates": [
+    {
+      "geoid": "4804000",
+      "name": "Arlington",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4805000",
+      "name": "Austin",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4817000",
+      "name": "Corpus Christi",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4819000",
+      "name": "Dallas",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4824000",
+      "name": "El Paso",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4827000",
+      "name": "Fort Worth",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4841464",
+      "name": "Laredo",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4845000",
+      "name": "Lubbock",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    },
+    {
+      "geoid": "4865000",
+      "name": "San Antonio",
+      "currentGovernedType": "INCORPORATED_PLACE",
+      "classification": "REVIEW",
+      "auditStatus": "INPUT_EVIDENCE_REQUIRED",
+      "reason": "The governed statewide geometry audit is not present; area, geometry, expansion, and classification must not be invented."
+    }
+  ],
+  "classificationSummary": {
+    "REGIONALIZE_LIKE_HOUSTON": 0,
+    "KEEP_SINGLE_PLACE_WITH_DYNAMIC_ZOOM": 0,
+    "REVIEW": 9,
+    "NO_CHANGE_NEEDED": 0
+  },
+  "recommendedNextStageSequencing": [
+    "Run the governed statewide geometry audit owner-locally.",
+    "Run this candidate audit and review generated classifications."
+  ],
+  "limitations": [
+    "Candidate expansion and geometry-derived classification are intentionally blocked until governed geometry evidence exists.",
+    "No population evidence is governed in the available inputs.",
+    "No child regions, coordinates, registry entries, or runtime changes are created."
+  ],
+  "ownerPowerShellCommand": "npm run audit:statewide-place-presentation-geometry -- \"C:\\path\\to\\tl_2025_48_place.zip\"; if ($LASTEXITCODE -eq 0) { npm run audit:texas-metro-regionalization }"
+}
