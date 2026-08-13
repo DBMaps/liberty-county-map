@@ -107,35 +107,24 @@ test("all 254 operational counties have non-default authoritative geometry focus
   }
 });
 
-test("diverse counties outside both legacy focus cohorts use selected geometry bounds", () => {
+test("diverse counties outside legacy focus cohorts use semantic county geometry dispatch", () => {
   for (const countyId of ["el-paso-tx", "potter-tx", "nueces-tx", "bowie-tx", "webb-tx"]) {
     assert.equal(historicalBoundsCountyIds.has(countyId), false, countyId);
-    assert.equal(Boolean(registry[countyId].consumerAwarenessAreas?.some((community) => community.focus)), false, countyId);
     const bounds = geometryBounds(countyId);
     assert.ok(bounds.west < bounds.east && bounds.south < bounds.north, countyId);
   }
-  assert.match(source, /function gridlyFocusConfirmedHomeSelection\(area, countyId\)/);
-  assert.match(source, /const bounds = gridlyGetAuthoritativeCountyGeometryFocusBounds\(normalized\)/);
-  assert.match(source, /map\.fitBounds\(bounds/);
-  assert.match(source, /gridlyNormalizeCountyId\(current\?\.countyId \|\| ""\) === normalized/);
-  const focusStart = source.indexOf("function gridlyFocusConfirmedHomeSelection");
-  const focusEnd = source.indexOf("\n}\n", focusStart) + 2;
-  assert.doesNotMatch(source.slice(focusStart, focusEnd), /30\.2|-94\.9/);
+  assert.match(source, /const bounds = gridlyGetAuthoritativeCountyGeometryFocusBounds\(canonicalCountyId\)/);
+  assert.match(source, /map\.fitBounds\(bounds, \{ \.\.\.getGridlyAwarenessFitPadding\(\), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM \}\)/);
 });
 
-test("unresolved statewide PLACE presentation never manufactures a southeast-Texas camera target", () => {
-  const builderStart = source.indexOf("function gridlyBuildRegistryCommunityAwarenessArea");
-  const builderEnd = source.indexOf("\n}\n", builderStart) + 2;
-  const builder = source.slice(builderStart, builderEnd);
-  assert.match(builder, /bounds \? \(Number\(bounds\.south\) \+ Number\(bounds\.north\)\) \/ 2 : null/);
-  assert.match(builder, /bounds \? \(Number\(bounds\.west\) \+ Number\(bounds\.east\)\) \/ 2 : null/);
-  assert.doesNotMatch(builder, /30\.2|-94\.9/);
-
-  const focusStart = source.indexOf("function gridlyFocusConfirmedHomeSelection");
-  const focusEnd = source.indexOf("\n}\n", focusStart) + 2;
-  const focus = source.slice(focusStart, focusEnd);
-  assert.match(focus, /if \(applyGeometryFocus\(\)\) return true/);
-  assert.match(focus, /return false;\n}/, "a deferred geometry request is not reported as a completed Leaflet invocation");
+test("unresolved PLACE presentation fails closed without county or default substitution", () => {
+  const dispatchStart = source.indexOf("function gridlyDispatchSemanticCamera");
+  const dispatchEnd = source.indexOf("\n\nfunction gridlyFocusConfirmedHomeSelection", dispatchStart);
+  const dispatch = source.slice(dispatchStart, dispatchEnd);
+  const placeBranch = dispatch.slice(dispatch.indexOf("if (placeGeoid)"), dispatch.indexOf("if (area.countyWide !== true)"));
+  assert.match(placeBranch, /if \(!target[^;]+\) return false/);
+  assert.doesNotMatch(placeBranch, /fitBounds|defaultCenter|countyBounds|governedFocus/);
+  assert.match(source, /function gridlyFocusConfirmedHomeSelection\(area, countyId\)[\s\S]*gridlyDispatchSemanticCamera/);
 });
 
 test("El Paso authoritative county fallback resolves to El Paso County rather than the prior Palestine camera", () => {

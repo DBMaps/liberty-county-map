@@ -18649,7 +18649,7 @@ const GRIDLY_HOME_AREA_OPTIONS_BY_COUNTY = Object.freeze({
   "chambers-tx": [GRIDLY_CHAMBERS_COUNTY_WIDE_HOME_TOWN, "Anahuac", "Mont Belvieu", "Winnie", "Beach City", "Cove"],
   "jefferson-tx": ["Jefferson County", "Beaumont", "Port Arthur", "Nederland", "Port Neches"]
 });
-const GRIDLY_TOWN_STARTUP_ZOOM = 14;
+const GRIDLY_TOWN_STARTUP_ZOOM = 13;
 const GRIDLY_COUNTY_STARTUP_ZOOM = 10;
 const SAVED_PLACES_STORAGE_KEY = "gridlySavedPlacesV1";
 const SELECTED_PLACE_STORAGE_KEY = "gridlySelectedPlaceIdV1";
@@ -43765,6 +43765,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateLastUpdated();
   const initialHomeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   activeGeoFilter = initialHomeTownAnchor ? ((initialHomeTownAnchor.countyWide || initialHomeTownAnchor.fallback) ? "county" : "town") : activeGeoFilter;
+  await runStartupStage("statewide PLACE presentation loading", gridlyLoadStatewidePlacePresentation, { blocking: true, dependency: "governed Census PLACE presentation targets", degradeOnFailure: true });
   await runStartupStage("map initialization", async () => { initMap(); }, { blocking: true, dependency: "Leaflet map shell" });
   {
     const mapReadyStage = startupDiagnostics?.beginStage?.("map initialized", { blocking: true, dependency: "Leaflet map shell" });
@@ -45178,6 +45179,7 @@ function getGridlyHomeTownAwarenessAnchor() {
     lat: area.lat,
     lng: area.lng,
     radiusMiles: area.radiusMiles,
+    placeGeoid: area.placeGeoid || area.communityId || null,
     startupZoom: area.startupZoom,
     source: area.countyWide ? "awareness_county" : (area.fallback ? "awareness_fallback" : "awareness_area"),
     countyWide: area.countyWide === true,
@@ -45414,35 +45416,64 @@ function gridlyGetAuthoritativeCountyGeometryFocusBounds(countyId) {
   return bounds.isValid() ? bounds : null;
 }
 
-function gridlyFocusConfirmedHomeSelection(area, countyId) {
-  if (!map) return false;
-  const normalized = gridlyNormalizeCountyId(countyId || area?.countyId || "");
-  const county = GRIDLY_COUNTY_REGISTRY[normalized] || null;
-  const governedCommunity = (county?.consumerAwarenessAreas || []).find((community) => community?.placeGeoid && community.placeGeoid === (area?.placeGeoid || area?.communityId)) || null;
-  const governedFocus = governedCommunity?.focus || null;
-  if (Number.isFinite(Number(governedFocus?.lat)) && Number.isFinite(Number(governedFocus?.lng))) {
-    return setGridlyAwarenessView(governedFocus, governedFocus.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM, { animate: false });
+const GRIDLY_PLACE_PRESENTATION_URL = "data/generated/gridly-statewide-place-presentation-v1.json";
+let gridlyPlacePresentationTargets = null;
+let gridlyPlacePresentationLoadPromise = null;
+let gridlySemanticCameraSequence = 0;
+let gridlyCommittedSemanticCamera = null;
+
+async function gridlyLoadStatewidePlacePresentation() {
+  if (gridlyPlacePresentationTargets) return gridlyPlacePresentationTargets;
+  if (!gridlyPlacePresentationLoadPromise) {
+    gridlyPlacePresentationLoadPromise = fetch(GRIDLY_PLACE_PRESENTATION_URL, { cache: "force-cache" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`PLACE presentation load failed (${response.status})`);
+        return response.json();
+      })
+      .then((artifact) => {
+        if (artifact?.schemaVersion !== "gridly.statewide-place-presentation.v1" || artifact?.counts?.presentationTargetCount !== 1859 || !artifact?.places) {
+          throw new Error("Invalid governed PLACE presentation artifact");
+        }
+        gridlyPlacePresentationTargets = Object.freeze(artifact.places);
+        return gridlyPlacePresentationTargets;
+      });
   }
-  const applyGeometryFocus = () => {
-    const bounds = gridlyGetAuthoritativeCountyGeometryFocusBounds(normalized);
-    if (!bounds || !map) return false;
+  return gridlyPlacePresentationLoadPromise;
+}
+
+function gridlyResolveCanonicalPlaceGeoid(area) {
+  const geoid = String(area?.placeGeoid || area?.communityId || "").trim();
+  return /^48\d{5}$/.test(geoid) ? geoid : null;
+}
+
+function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
+  if (!map || !area) return false;
+  const sequence = ++gridlySemanticCameraSequence;
+  const placeGeoid = area.countyWide === true || area.fallback === true ? null : gridlyResolveCanonicalPlaceGeoid(area);
+  if (placeGeoid) {
+    const target = gridlyPlacePresentationTargets?.[placeGeoid];
+    if (!target || !Number.isFinite(Number(target.lat)) || !Number.isFinite(Number(target.lon))) return false;
+    const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lon) }, GRIDLY_TOWN_STARTUP_ZOOM, { animate: options.animate === true });
+    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lon) }), zoom: GRIDLY_TOWN_STARTUP_ZOOM, source: options.source || "unknown" });
+    return issued;
+  }
+  if (area.countyWide !== true) return false;
+  const canonicalCountyId = gridlyNormalizeCountyId(countyId || area.countyId || "");
+  const issueCountyFit = () => {
+    if (sequence !== gridlySemanticCameraSequence || !map) return false;
+    const bounds = gridlyGetAuthoritativeCountyGeometryFocusBounds(canonicalCountyId);
+    if (!bounds) return false;
     map.fitBounds(bounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
+    gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "COUNTYWIDE", countyId: canonicalCountyId, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM, source: options.source || "unknown" });
     return true;
   };
-  if (applyGeometryFocus()) return true;
-  if (typeof loadGridlyCountyBoundaryOverlay !== "function") return false;
-  void Promise.resolve(loadGridlyCountyBoundaryOverlay()).then(() => {
-    const current = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
-    if (gridlyNormalizeCountyId(current?.countyId || "") === normalized && applyGeometryFocus()) {
-      const result = typeof window !== "undefined" ? window.__gridlyLp0517LastHomePersonalizationResult : null;
-      if (result?.success && gridlyNormalizeCountyId(result.countyId || "") === normalized) {
-        result.mapFocused = true;
-        gridlyLp0517IntegrationMetrics.mapFocusCompleted += 1;
-        gridlyLp0517RecordMetric("mapFocusOperations", { awarenessAreaKey: result.awarenessAreaKey, completed: true, deferred: true });
-      }
-    }
-  }).catch(() => {});
+  if (issueCountyFit()) return true;
+  if (typeof loadGridlyCountyBoundaryOverlay === "function") void Promise.resolve(loadGridlyCountyBoundaryOverlay()).then(issueCountyFit).catch(() => {});
   return false;
+}
+
+function gridlyFocusConfirmedHomeSelection(area, countyId) {
+  return gridlyDispatchSemanticCamera(area, countyId, { source: "confirmed_home" });
 }
 
 
@@ -45774,23 +45805,7 @@ if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("grid
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLp0361bAuthoritativeCountyGeometryAudit", gridlyLp0361bAuthoritativeCountyGeometryAudit);
 
 function gridlyFitMapToActiveCountyContext(countyId = gridlyGetActiveCountyId(), reason = "active-county-context") {
-  if (!map) return false;
-  const focusArea = gridlyGetCanonicalMapFocusArea(countyId);
-  if (gridlyMapFocusAreaIsCommunity(focusArea)) {
-    const zoom = focusArea.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM;
-    return setGridlyAwarenessView(focusArea, zoom, { animate: false });
-  }
-  const bounds = gridlyGetCountyBounds(countyId);
-  if (bounds) {
-    map.fitBounds(bounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
-    return true;
-  }
-  const raw = GRIDLY_COUNTY_AWARENESS_BOUNDS_BY_ID[gridlyNormalizeCountyId(countyId)] || null;
-  if (raw && Number.isFinite(Number(raw.south)) && Number.isFinite(Number(raw.north)) && Number.isFinite(Number(raw.west)) && Number.isFinite(Number(raw.east))) {
-    map.setView([(Number(raw.south) + Number(raw.north)) / 2, (Number(raw.west) + Number(raw.east)) / 2], GRIDLY_COUNTY_STARTUP_ZOOM, { animate: false });
-    return true;
-  }
-  return false;
+  return gridlyDispatchSemanticCamera(gridlyGetCanonicalMapFocusArea(countyId), countyId, { source: reason });
 }
 
 function gridlyClearStaleAwarenessAreaForCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID, reason = "active-county-change") {
@@ -48709,9 +48724,8 @@ function setGridlyAwarenessView(center, zoom, options = {}) {
 
 function initMap() {
   const startupAnchor = getGridlyHomeTownAwarenessAnchor();
-  const startupCenter = startupAnchor ? [startupAnchor.lat, startupAnchor.lng] : defaultCenter;
-  const startupZoom = (startupAnchor?.countyWide || startupAnchor?.fallback) ? GRIDLY_COUNTY_STARTUP_ZOOM : (startupAnchor ? (startupAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM) : 13);
-  map = L.map("map", { zoomControl: false }).setView(startupCenter, startupZoom);
+  map = L.map("map", { zoomControl: false });
+  if (!startupAnchor) map.setView(defaultCenter, 13);
   window.gridlyMapInstance = map;
   map.on("popupopen popupclose", () => {
     if (typeof syncMobileDestinationCommandCard === "function") {
@@ -49348,61 +49362,17 @@ function summarizeGridlyAwarenessIntelligenceForDisplay(summary = {}) {
 function applyGridlyHomeTownAwarenessContext({ source = "unknown", fitMap = false } = {}) {
   const homeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   if (!map || !homeTownAnchor) return false;
-  if (homeTownAnchor.countyWide && userLocation) return false;
   if (activeGeoFilter === "nearby") {
-    activeGeoFilter = (homeTownAnchor.countyWide || homeTownAnchor.fallback) ? "county" : "town";
+    activeGeoFilter = homeTownAnchor.countyWide ? "county" : "town";
     crossingRenderFilterVersion += 1;
   }
-  if ((homeTownAnchor.countyWide || homeTownAnchor.fallback) && activeGeoFilter === "town") {
+  if (homeTownAnchor.countyWide && activeGeoFilter === "town") {
     activeGeoFilter = "county";
     crossingRenderFilterVersion += 1;
   }
   renderGridlyAwarenessMapIdentity("home-town-awareness-context");
-  if (!fitMap || !Array.isArray(crossings) || !crossings.length) {
-    if (source === "map_init" || !Array.isArray(crossings) || !crossings.length) {
-      setGridlyAwarenessView(homeTownAnchor, (homeTownAnchor.countyWide || homeTownAnchor.fallback) ? GRIDLY_COUNTY_STARTUP_ZOOM : (homeTownAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM), { animate: false });
-    }
-    return true;
-  }
-
-  if (homeTownAnchor.countyWide !== true && homeTownAnchor.fallback !== true) {
-    setGridlyAwarenessView(homeTownAnchor, homeTownAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM, { animate: false });
-    return true;
-  }
-
-  const townCrossings = getGridlyHomeTownCrossings(homeTownAnchor);
-  const latLngs = townCrossings
-    .map((crossing) => [Number(crossing.lat), Number(crossing.lng)])
-    .filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
-  if (!latLngs.length) {
-    if (homeTownAnchor.countyWide || homeTownAnchor.fallback) {
-      const countyBounds = gridlyGetCountyBounds(gridlyResolveCountyIdForAwarenessArea(homeTownAnchor.storageValue));
-      if (countyBounds) {
-        map.fitBounds(countyBounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
-        return true;
-      }
-    }
-    setGridlyAwarenessView(homeTownAnchor, (homeTownAnchor.countyWide || homeTownAnchor.fallback) ? GRIDLY_COUNTY_STARTUP_ZOOM : (homeTownAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM), { animate: false });
-    return true;
-  }
-  const bounds = L.latLngBounds(latLngs);
-  if (!bounds.isValid()) return false;
-  const countyMode = homeTownAnchor.countyWide || homeTownAnchor.fallback;
-  if (countyMode) {
-    const countyBounds = gridlyGetCountyBounds(gridlyResolveCountyIdForAwarenessArea(homeTownAnchor.storageValue));
-    if (countyBounds) {
-      map.fitBounds(countyBounds, { ...getGridlyAwarenessFitPadding(), animate: false, maxZoom: GRIDLY_COUNTY_STARTUP_ZOOM });
-      return true;
-    }
-    setGridlyAwarenessView(homeTownAnchor, GRIDLY_COUNTY_STARTUP_ZOOM, { animate: false });
-    return true;
-  }
-  map.fitBounds(bounds, {
-    ...getGridlyAwarenessFitPadding(),
-    animate: false,
-    maxZoom: homeTownAnchor.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM
-  });
-  return true;
+  if (source === "crossings_loaded" && gridlyCommittedSemanticCamera?.semanticLevel === "PLACE" && gridlyCommittedSemanticCamera.placeGeoid === gridlyResolveCanonicalPlaceGeoid(homeTownAnchor)) return true;
+  return gridlyDispatchSemanticCamera(homeTownAnchor, homeTownAnchor.countyId, { source });
 }
 
 function installLayerPickerDebugDiagnostics() {
@@ -93996,11 +93966,8 @@ function selectGridlySettingsAwarenessArea(value = "", source = "settings_awaren
   const resolvedCountyId = typeof gridlyResolveCountyIdForAwarenessArea === "function" ? gridlyResolveCountyIdForAwarenessArea(saved) : GRIDLY_DEFAULT_COUNTY_ID;
   if (typeof gridlySetActiveCountyContext === "function") gridlySetActiveCountyContext(resolvedCountyId);
   const selectedArea = typeof resolveGridlyAwarenessArea === "function" ? resolveGridlyAwarenessArea(saved) : null;
-  if (selectedArea && selectedArea.countyWide !== true && selectedArea.fallback !== true && typeof applyGridlyHomeTownAwarenessContext === "function") {
-    applyGridlyHomeTownAwarenessContext({ source, fitMap: true });
-    if (typeof setGridlyAwarenessView === "function") {
-      setGridlyAwarenessView(selectedArea, selectedArea.startupZoom || GRIDLY_TOWN_STARTUP_ZOOM, { animate: false });
-    }
+  if (selectedArea && typeof gridlyDispatchSemanticCamera === "function") {
+    gridlyDispatchSemanticCamera(selectedArea, resolvedCountyId, { source });
   }
   const scope = root || (typeof document !== "undefined" ? document : null);
   scope?.querySelectorAll?.("[data-gridly-awareness-community-select]")?.forEach((select) => {
