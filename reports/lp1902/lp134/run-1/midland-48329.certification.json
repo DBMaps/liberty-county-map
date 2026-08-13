@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Midland County",
+  "countyFips": "48329",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 2879318,
+  "sha256": "88ee7296cce7c9dbd729a2709426a9e5dcc8b3857d567c2c7ba0c2b3c8899600",
+  "indexedAddressCount": 84982,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.009599999990314245
+  },
+  "exactSample": {
+    "providerIdentity": "630cf2aff7e492b9f0b0",
+    "houseNumber": "0",
+    "canonicalRoad": "ANN DRIVE",
+    "city": "MIDLAND",
+    "zip": "79705",
+    "county": "Midland County",
+    "countyFips": "48329",
+    "query": "0 ANN DRIVE MIDLAND TX 79705",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 39,
+    "variantsTested": 117,
+    "variantsPassed": 117
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 84982,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 1045.3923999999533,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 1045.3923999999533,
+  "certificationStatus": "PASS",
+  "failures": []
+}

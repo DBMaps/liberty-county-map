@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Hudspeth County",
+  "countyFips": "48229",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 166512,
+  "sha256": "b8010daa4a0615780e91c4b5c91871808f7328bb6e91e63163553aa729ce92fe",
+  "indexedAddressCount": 4315,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.007500000006984919
+  },
+  "exactSample": {
+    "providerIdentity": "7f816a2693f6e94ba5da",
+    "houseNumber": "1",
+    "canonicalRoad": "DODGE RANCH ROAD",
+    "city": "SIERRA BLANCA",
+    "zip": "79851",
+    "county": "Hudspeth County",
+    "countyFips": "48229",
+    "query": "1 DODGE RANCH ROAD SIERRA BLANCA TX 79851",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 232,
+    "variantsTested": 696,
+    "variantsPassed": 696
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 4315,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 51.97950000001583,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 51.97950000001583,
+  "certificationStatus": "PASS",
+  "failures": []
+}

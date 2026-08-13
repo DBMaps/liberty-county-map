@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Cameron County",
+  "countyFips": "48061",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 5373433,
+  "sha256": "24ec5d503dd9b9d370b8f6d40116e1ee37d10c48b26354d14f3621793bc7490b",
+  "indexedAddressCount": 177956,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.011099999996076804
+  },
+  "exactSample": {
+    "providerIdentity": "46c6810310f13d2e581e",
+    "houseNumber": "0",
+    "canonicalRoad": "AGAR LN",
+    "city": "SAN BENITO",
+    "zip": "78586",
+    "county": "Cameron County",
+    "countyFips": "48061",
+    "query": "0 AGAR LN SAN BENITO TX 78586",
+    "completeAddressMatchCount": 3
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 177956,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 2356.215400000001,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 2356.215400000001,
+  "certificationStatus": "PASS",
+  "failures": []
+}

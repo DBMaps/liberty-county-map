@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "gridly-texas-address-certification-v1",
+  "county": "Cherokee County",
+  "countyFips": "48073",
+  "packageVersion": "LP105.1-candidate",
+  "packageSize": 1066374,
+  "sha256": "1a92af50ff47ba5c1f7d7555c96c844ef0e39349473d043c138ff30b10829f2d",
+  "indexedAddressCount": 32034,
+  "exactMatchStatistics": {
+    "sampled": 3000,
+    "passed": 3000,
+    "failed": 0,
+    "p95LookupMs": 0.009599999997590203
+  },
+  "exactSample": {
+    "providerIdentity": "90b0caca2df3d9af9497",
+    "houseNumber": "1",
+    "canonicalRoad": "MAY STREET",
+    "city": "WELLS",
+    "zip": "75976",
+    "county": "Cherokee County",
+    "countyFips": "48073",
+    "query": "1 MAY STREET WELLS TX 75976",
+    "completeAddressMatchCount": 1
+  },
+  "rejectionStatistics": {
+    "sampledIncorrectHouseNumbers": 3000,
+    "truthfulNoResults": 3000,
+    "interpolationAccepted": 0,
+    "nearbyHouseSubstitutions": 0,
+    "roadOnlyAddressesTested": 3000,
+    "roadOnlyResidentialPromotions": 0,
+    "invalidAddressesTested": 3000,
+    "invalidAddressesAccepted": 0
+  },
+  "normalizationStatistics": {
+    "status": "PASS",
+    "eligibleRecords": 3000,
+    "variantsTested": 9000,
+    "variantsPassed": 9000
+  },
+  "integrityStatistics": {
+    "duplicateIdentities": 0,
+    "outsideCounty": 0,
+    "invalidRecords": 0,
+    "packageLoadCount": 1
+  },
+  "performanceGate": {
+    "type": "MAX_INDEXED_RECORDS",
+    "limit": 1100000,
+    "actual": 32034,
+    "status": "PASS",
+    "runtimeLoadDurationMs": 422.79189999999653,
+    "runtimeDurationIsDiagnosticOnly": true
+  },
+  "runtimeLoadDurationMs": 422.79189999999653,
+  "certificationStatus": "PASS",
+  "failures": []
+}

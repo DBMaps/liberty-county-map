@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "gridly.lp1901.restricted-county-remote-recovery-readiness.v1",
+  "milestone": "LP190.1",
+  "overallClassification": "OWNER_EXECUTION_REQUIRED",
+  "remoteProvider": "Supabase Storage",
+  "bucket": "certified-addresses",
+  "objectPrefix": "lp104/txgio-addresses/",
+  "credentialRequirement": "SUPABASE_URL (GRIDLY_SUPABASE_URL fallback) and SUPABASE_SERVICE_ROLE_KEY",
+  "metadataAloneProvesExactIdentity": false,
+  "byteDownloadRequired": true,
+  "aggregate": {
+    "expectedCountyCount": 11,
+    "remoteObjectsPresent": 0,
+    "remoteObjectsMissing": 0,
+    "metadataMatches": 0,
+    "metadataMismatches": 0,
+    "exactMatches": 0,
+    "byteLengthMismatches": 0,
+    "sha256Mismatches": 0,
+    "probeErrors": 0,
+    "ownerCredentialsRequired": 11,
+    "safeForGovernedRestoration": false
+  },
+  "countyMatrix": [
+    {"countyFips":"48061","countyName":"Cameron","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48073","countyName":"Cherokee","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48113","countyName":"Dallas","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48121","countyName":"Denton","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48135","countyName":"Ector","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48229","countyName":"Hudspeth","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48329","countyName":"Midland","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48377","countyName":"Presidio","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48401","countyName":"Rusk","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48425","countyName":"Somervell","classification":"OWNER_CREDENTIALS_REQUIRED"},
+    {"countyFips":"48441","countyName":"Taylor","classification":"OWNER_CREDENTIALS_REQUIRED"}
+  ],
+  "productionWritesPerformed": false,
+  "countiesActivated": 0,
+  "operationalCountyCount": 243,
+  "restrictedCountyCount": 11,
+  "nextMilestoneIfAllExact": "LP190.2 — Exact Governed Payload Restoration + LP134 Recertification Preparation"
+}
