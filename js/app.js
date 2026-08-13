@@ -17811,7 +17811,7 @@ function gridlyBuildHomePersonalizationRecord(selection = {}, method = "zip_conf
 let gridlyLp0517ApplyInFlight = false;
 function gridlyApplyConfirmedHomePersonalization(selectionInput = {}, options = {}) { if (gridlyLp0517ApplyInFlight) { gridlyLp0517IntegrationMetrics.duplicateApplyBlocked += 1; return { success: false, error: "duplicate_apply_blocked" }; } gridlyLp0517ApplyInFlight = true; const previous = { record: gridlySafeLocalStorageGet(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY), homeTown: gridlySafeLocalStorageGet("gridlyHomeTown"), settings: gridlySafeLocalStorageGet(GRIDLY_SETTINGS_STORAGE_KEY), profile: gridlySafeLocalStorageGet(GRIDLY_PROFILE_STORAGE_KEY), countyId: typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null }; try { const selection = gridlyLp0517NormalizeSelectedOption(selectionInput, options.resolverResult || {}, selectionInput.zip || options.zip || ""); const validation = gridlyLp0517ValidateHomeRecord({ ...gridlyBuildHomePersonalizationRecord(selection), schemaVersion: GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION }); if (!validation.valid) throw new Error("invalid_selected_identity"); const record = gridlyBuildHomePersonalizationRecord(selection, options.resolutionMethod || "zip_confirmed"); localStorage.setItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, JSON.stringify(record)); gridlyLp0517IntegrationMetrics.canonicalHomeWrites += 1; gridlyLp0517IntegrationMetrics.productionSetupWrites += 1; gridlyLp0517RecordMetric("writeOperations", { key: GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, kind: "canonical_home" }); const savedTown = saveGridlyHomeTownPreference(record.consumerLabel, { source: "lp0517_zip_personalization" }); if (!savedTown) throw new Error("compatibility_setup_apply_failed"); gridlyLp0517IntegrationMetrics.compatibilitySetupWrites += 3; gridlyLp0517IntegrationMetrics.activeCountyUpdates += 1; gridlyLp0517IntegrationMetrics.activeCommunityUpdates += 1; gridlyLp0517IntegrationMetrics.activeAwarenessUpdates += 1; gridlyLp0517RecordMetric("stateTransitions", { toCountyId: record.countyId, toCommunityKey: record.communityKey, toAwarenessAreaKey: record.awarenessAreaKey }); let mapFocused = false; try { gridlyLp0517IntegrationMetrics.mapFocusRequests += 1; mapFocused = Boolean(gridlyFocusConfirmedHomeSelection?.(validation.area, record.countyId)); if (mapFocused) gridlyLp0517IntegrationMetrics.mapFocusCompleted += 1; gridlyLp0517RecordMetric("mapFocusOperations", { awarenessAreaKey: record.awarenessAreaKey, completed: mapFocused }); } catch (error) { gridlyLp0517RecordMetric("mapFocusOperations", { awarenessAreaKey: record.awarenessAreaKey, completed: false, error: error?.message || String(error) }); }
       syncGridlyAwarenessAreaSurfacesImmediately?.("lp0517_zip_personalization", { summaryOptions: { awarenessArea: validation.area } }); gridlyLp0517IntegrationMetrics.providerRefreshRequests += 1; gridlyLp0517RecordMetric("refreshOperations", { owner: "syncGridlyAwarenessAreaSurfacesImmediately", awarenessAreaKey: record.awarenessAreaKey }); renderGridlySettingsPanel?.(); gridlyLp0517IntegrationMetrics.settingsRenderUpdates += 1; if (options.completeOnboarding !== false) { markGridlyWelcomeSeen?.(); saveGridlyUserProfile?.({ setupComplete: true, setupSkipped: false }); gridlyLp0517IntegrationMetrics.onboardingCompletionWrites += 1; } const result = { success: true, zip: record.zip, countyId: record.countyId, communityKey: record.communityKey, awarenessAreaKey: record.awarenessAreaKey, consumerLabel: record.consumerLabel, persisted: true, activeAwarenessUpdated: true, mapFocused, settingsUpdated: true, onboardingCompleted: options.completeOnboarding !== false, routeIntelligenceTouched: false }; window.__gridlyLp0517LastHomePersonalizationResult = result; return result; } catch (error) { try { previous.record === null ? localStorage.removeItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY) : localStorage.setItem(GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY, previous.record); previous.homeTown === null ? localStorage.removeItem("gridlyHomeTown") : localStorage.setItem("gridlyHomeTown", previous.homeTown); previous.settings === null ? localStorage.removeItem(GRIDLY_SETTINGS_STORAGE_KEY) : localStorage.setItem(GRIDLY_SETTINGS_STORAGE_KEY, previous.settings); previous.profile === null ? localStorage.removeItem(GRIDLY_PROFILE_STORAGE_KEY) : localStorage.setItem(GRIDLY_PROFILE_STORAGE_KEY, previous.profile); if (previous.countyId) gridlySetActiveCountyContext?.(previous.countyId); gridlyLp0517IntegrationMetrics.rollbackCount += 1; } catch (_) {} const result = { success: false, error: error?.message || String(error), persisted: false, onboardingCompleted: false, routeIntelligenceTouched: false }; window.__gridlyLp0517LastHomePersonalizationResult = result; return result; } finally { gridlyLp0517ApplyInFlight = false; } }
-function gridlyRestoreHomePersonalizationOnStartup() { const record = gridlyReadHomePersonalizationRecord(); if (!record) return { restored: false, reason: "no_valid_home_personalization" }; const result = gridlyApplyConfirmedHomePersonalization(record, { completeOnboarding: false, resolutionMethod: record.resolutionMethod || "startup_restore" }); return { restored: Boolean(result.success), record, result }; }
+function gridlyRestoreHomePersonalizationOnStartup() { return gridlyHydratePersistedSemanticContextOnStartup(gridlyStartupSemanticContext || gridlyResolvePersistedSemanticContextForStartup()); }
 function gridlyLp0516PreviewSelection() { return gridlyLp0517ConfirmSelection(); }
 function gridlyLp0517ConfirmSelection() { const state = gridlyLp0516EnsureState(); const result = gridlyApplyConfirmedHomePersonalization({ ...(state.selectedCandidate || state.resolverResult || {}), zip: state.zipInput }, { resolverResult: state.resolverResult, completeOnboarding: true }); state.prototypeResult = result; state.step = result.success ? "apply_complete" : "apply_error"; gridlyLp0516Render(); return result; }
 function gridlyLp0516FocusZipInput() {
@@ -43766,6 +43766,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const initialHomeTownAnchor = getGridlyHomeTownAwarenessAnchor();
   activeGeoFilter = initialHomeTownAnchor ? ((initialHomeTownAnchor.countyWide || initialHomeTownAnchor.fallback) ? "county" : "town") : activeGeoFilter;
   await runStartupStage("statewide PLACE presentation loading", gridlyLoadStatewidePlacePresentation, { blocking: true, dependency: "governed Census PLACE presentation targets", degradeOnFailure: true });
+  gridlyStartupSemanticContext = gridlyResolvePersistedSemanticContextForStartup();
+  if (gridlyStartupSemanticContext) {
+    window.GRIDLY_ACTIVE_COUNTY_ID = gridlyStartupSemanticContext.countyId;
+    await runStartupStage("startup authoritative county geometry loading", loadGridlyCountyBoundaryOverlay, { blocking: true, dependency: "authoritative county geometry", degradeOnFailure: true });
+  }
   await runStartupStage("map initialization", async () => { initMap(); }, { blocking: true, dependency: "Leaflet map shell" });
   {
     const mapReadyStage = startupDiagnostics?.beginStage?.("map initialized", { blocking: true, dependency: "Leaflet map shell" });
@@ -43781,6 +43786,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSmartAlertsPreferences();
   loadGridlySettingsPreferences({ render: true, applyDisplay: true });
   gridlyRestoreHomePersonalizationOnStartup?.();
+  gridlyStartupContextFinalized = true;
   initDailyDestinationHero();
   updateMobileWatchHeader();
   updateProfileUI();
@@ -45421,6 +45427,9 @@ let gridlyPlacePresentationTargets = null;
 let gridlyPlacePresentationLoadPromise = null;
 let gridlySemanticCameraSequence = 0;
 let gridlyCommittedSemanticCamera = null;
+let gridlyStartupSemanticContext = null;
+let gridlyPrimaryMapCameraInitialized = false;
+let gridlyStartupContextFinalized = false;
 
 async function gridlyLoadStatewidePlacePresentation() {
   if (gridlyPlacePresentationTargets) return gridlyPlacePresentationTargets;
@@ -45474,6 +45483,22 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
 
 function gridlyFocusConfirmedHomeSelection(area, countyId) {
   return gridlyDispatchSemanticCamera(area, countyId, { source: "confirmed_home" });
+}
+
+function gridlyResolvePersistedSemanticContextForStartup() {
+  const record = gridlyReadHomePersonalizationRecord?.();
+  if (!record) return null;
+  const validation = gridlyLp0517ValidateHomeRecord(record);
+  if (!validation.valid || !validation.area) return null;
+  return Object.freeze({ record, area: validation.area, countyId: gridlyNormalizeCountyId(record.countyId) });
+}
+
+function gridlyHydratePersistedSemanticContextOnStartup(context = gridlyStartupSemanticContext) {
+  if (!context?.area || !context?.countyId) return { restored: false, reason: "no_valid_home_personalization" };
+  if (typeof window !== "undefined") window.GRIDLY_ACTIVE_COUNTY_ID = context.countyId;
+  activeGeoFilter = (context.area.fallback || context.area.countyWide) ? "county" : "town";
+  invalidateGridlySelectedAwarenessAreaResolutionCache?.("startup-semantic-hydration");
+  return { restored: true, record: context.record, result: { success: true, persisted: false, mapFocused: gridlyPrimaryMapCameraInitialized, onboardingCompleted: false, routeIntelligenceTouched: false } };
 }
 
 
@@ -45852,7 +45877,7 @@ function gridlySetActiveCountyContext(countyId = GRIDLY_DEFAULT_COUNTY_ID) {
     gridlyCrossingInventoryCountyId = null;
     if (Array.isArray(crossings)) crossings = [];
     resetGridlyCrossingRuntimeAuditStateForCounty(normalized, "active-county-change");
-    ensureGridlyActiveCountyCrossingInventory("active-county-change");
+    if (gridlyStartupContextFinalized) ensureGridlyActiveCountyCrossingInventory("active-county-change");
     if (typeof gridlyActivateRoadwayDatasetForActiveCounty === "function") gridlyActivateRoadwayDatasetForActiveCounty("active-county-change");
     resyncGridlyActiveCountyVisibleSurfaces("active-county-change");
   }
@@ -48723,9 +48748,13 @@ function setGridlyAwarenessView(center, zoom, options = {}) {
 }
 
 function initMap() {
-  const startupAnchor = getGridlyHomeTownAwarenessAnchor();
+  const startupAnchor = gridlyStartupSemanticContext?.area || getGridlyHomeTownAwarenessAnchor();
   map = L.map("map", { zoomControl: false });
-  if (!startupAnchor) map.setView(defaultCenter, 13);
+  const startupCameraIssued = startupAnchor
+    ? gridlyDispatchSemanticCamera(startupAnchor, gridlyStartupSemanticContext?.countyId || startupAnchor.countyId, { source: "initial_map_construction" })
+    : false;
+  if (!startupCameraIssued) map.setView(defaultCenter, 13);
+  gridlyPrimaryMapCameraInitialized = Boolean(map.getCenter?.() && Number.isFinite(Number(map.getZoom?.())));
   window.gridlyMapInstance = map;
   map.on("popupopen popupclose", () => {
     if (typeof syncMobileDestinationCommandCard === "function") {
