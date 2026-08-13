@@ -4,7 +4,7 @@
   "packageTypes": [
     {
       "packageType": "Community",
-      "packageCount": 243
+      "packageCount": 254
     },
     {
       "packageType": "Crossing",
@@ -2712,8 +2712,129 @@
       "manifest": "counties/48507.json",
       "sha256": "0e220fba281867cd02c84d5d9d59c01b262d72548308fdb7f5fbad10a608413e",
       "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cameron",
+      "countyFips": "48061",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48061.json",
+      "sha256": "ebf460678460babe07105db3ceb50f257e715714191f6658a9fb4c9859c13ede",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Cherokee",
+      "countyFips": "48073",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48073.json",
+      "sha256": "efd4d84b861911b9c4c27612baaae7cc42d0793225d543fd42558f00cfe630a2",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Dallas",
+      "countyFips": "48113",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48113.json",
+      "sha256": "fc6eeda9cbde02dca4d7fb5570235f0a907ab6e98fdb41fb39279d51c5f389df",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Denton",
+      "countyFips": "48121",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48121.json",
+      "sha256": "0a2606baaf22bb1a0754126ce30a986e1f5c99dcde9053bf1a704b85b5327c5d",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Ector",
+      "countyFips": "48135",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48135.json",
+      "sha256": "640e2658b80901585db786b889b66a807fe90beb3f014561017d14aa6f871d82",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Hudspeth",
+      "countyFips": "48229",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48229.json",
+      "sha256": "9c022d19a4db6c7d259e0480f9cb2cfe9e934073005aea8506cdc6a8cd197ee9",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Midland",
+      "countyFips": "48329",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48329.json",
+      "sha256": "8ffa4632d346315c162a2d2151de2226f26e619fb330bc794d3658b8082f7ffa",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Presidio",
+      "countyFips": "48377",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48377.json",
+      "sha256": "fdfe5aea4964d43066111a2824a98d9201dbd124145bccdb0ae0f10290ec8cb6",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Rusk",
+      "countyFips": "48401",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48401.json",
+      "sha256": "993e6d0262938f3541f04d3ccebc0e7b31a3bcf6f2460963cc486b3f34688c8b",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Somervell",
+      "countyFips": "48425",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48425.json",
+      "sha256": "71bcef8364e535e06ba6d84a6ec6f23453970db56abd790620daa80f33a1e091",
+      "communityAvailability": "non-empty-manufactured-package"
+    },
+    {
+      "packageType": "Community",
+      "county": "Taylor",
+      "countyFips": "48441",
+      "canonicalCountyIdentity": "FIPS",
+      "censusCommunityIdentity": "PLACE_GEOID",
+      "status": "operational",
+      "manifest": "counties/48441.json",
+      "sha256": "3f4f89f2e518bcdbce06aa2890ddfbceaf67b9dc53e78c27d16cdbb6cd6c5aed",
+      "communityAvailability": "non-empty-manufactured-package"
     }
   ],
   "totalPackageTypes": 2,
-  "totalPackages": 271
+  "totalPackages": 282
 }
