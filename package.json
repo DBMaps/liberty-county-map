@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:statewide-consumer-zip": "node tools/build-statewide-consumer-zip-index.mjs",
+    "test:statewide-consumer-zip": "node --test tests/statewide-consumer-zip-resolver.test.mjs",
     "check:package-lock-portability": "node tools/check-package-lock-portability.mjs",
     "test:lp18812": "node --test tests/lp18812-statewide-validation-closure.test.mjs",
     "test:lp18812:fixtures": "node --test tests/lp18812-remaining-fixture-design.test.mjs",

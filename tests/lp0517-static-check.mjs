@@ -9,8 +9,11 @@ const checks = [
   ['no prototype primary action', !app.includes("btn('Preview selection','preview',true)")],
   ['use area action', app.includes("'Use ' + label")],
   ['audit helper', app.includes('gridlyLp0517ZipPersonalizationProductionIntegrationAudit')],
-  ['settings home zip', html.includes('settingsHomeZipValue')],
-  ['change home zip copy', html.includes('Change home ZIP')],
+  // LP051.7 Settings moved from the legacy static shell to the current dynamic
+  // Settings renderer. Keep the consumer-copy contract, but assert it at its
+  // lifecycle owner instead of requiring obsolete index.html placeholders.
+  ['settings home zip', app.includes('data-gridly-settings-home-zip') && app.includes('Home ZIP')],
+  ['change home zip copy', app.includes('Change home ZIP') && app.includes('settings-change-home-zip')],
   ['documentation contract', doc.includes('Canonical home-personalization contract')],
   ['route intelligence untouched diagnostic', app.includes('routeIntelligenceTouched: false')]
 ];
