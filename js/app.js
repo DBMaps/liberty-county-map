@@ -45462,7 +45462,10 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
   if (placeGeoid) {
     const target = gridlyPlacePresentationTargets?.[placeGeoid];
     if (!target || !Number.isFinite(Number(target.lat)) || !Number.isFinite(Number(target.lon))) return false;
-    const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lon) }, GRIDLY_TOWN_STARTUP_ZOOM, { animate: options.animate === true });
+    const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lon) }, GRIDLY_TOWN_STARTUP_ZOOM, {
+      animate: options.animate === true,
+      compensateForChrome: false
+    });
     if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lon) }), zoom: GRIDLY_TOWN_STARTUP_ZOOM, source: options.source || "unknown" });
     return issued;
   }
@@ -48735,6 +48738,7 @@ function setGridlyAwarenessView(center, zoom, options = {}) {
   if (!map || !center || center.lat === null || center.lat === undefined || center.lat === "" || center.lng === null || center.lng === undefined || center.lng === "" || !Number.isFinite(Number(center.lat)) || !Number.isFinite(Number(center.lng))) return false;
   const targetZoom = Math.max(1, Number(zoom) || GRIDLY_TOWN_STARTUP_ZOOM);
   map.setView([Number(center.lat), Number(center.lng)], targetZoom, { animate: options.animate === true });
+  if (options.compensateForChrome === false) return true;
   const insets = getGridlyVisibleMapChromeInsets(map);
   const containerPoint = map.latLngToContainerPoint([Number(center.lat), Number(center.lng)]);
   const size = map.getSize();
