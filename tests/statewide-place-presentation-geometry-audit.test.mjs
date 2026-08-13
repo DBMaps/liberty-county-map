@@ -1,11 +1,17 @@
 import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import os from 'node:os'; import path from 'node:path'; import { test } from 'node:test';
-import { buildAudit, GEOMETRY_SQL, loadGovernance, serializeReports, validateSource } from '../tools/audit-statewide-place-presentation-geometry.mjs';
+import { buildAudit, GEOMETRY_SQL, loadGovernance, serializeReports, validateGdalVersion, validateSource } from '../tools/audit-statewide-place-presentation-geometry.mjs';
 
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/statewide-place-presentation-geometry/places.geojson',import.meta.url)));
 const analyzed=(geoid, overrides={})=>({GEOID:geoid,INTPTLAT:1,INTPTLON:1,areaSquareMeters:1_000_000,componentCount:1,minX:0,minY:0,maxX:2,maxY:2,centroidLat:1,centroidLon:1,centroidContained:1,surfaceLat:1,surfaceLon:1,...overrides});
 const governance=(ids, excluded=[])=>({eligible:new Map(ids.map(id=>[id,{placeGeoid:id,displayName:`Place ${id}`,governedType:'INCORPORATED_PLACE',countyMemberships:['48001']}])),excluded:new Set(excluded)});
+
+test('GDAL gate accepts only parseable versions on the governed 3.13.x line',()=>{
+  assert.equal(validateGdalVersion('GDAL 3.13.0 "Iowa City", released 2026/05/04'),'GDAL 3.13.0 "Iowa City", released 2026/05/04');
+  assert.equal(validateGdalVersion('GDAL 3.13.1'),'GDAL 3.13.1');
+  for(const version of ['GDAL 3.11.0','GDAL 3.12.0','GDAL 3.14.0','GDAL 4.0.0','GDAL unknown',''])assert.throws(()=>validateGdalVersion(version),/GDAL version must be the governed QGIS 3\.44\.11 GDAL 3\.13\.x line/);
+});
 
 test('controlled geometry fixtures cover compact, exterior-centroid concavity, multipart, holes, and stable ordering',()=>{
   assert.deepEqual(fixture.features.map(f=>f.properties.case),['compact polygon','concave polygon with exterior centroid','multipart PLACE','hole']);
