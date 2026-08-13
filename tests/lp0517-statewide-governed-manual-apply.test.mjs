@@ -141,3 +141,9 @@ test("countywide manual apply retains FIPS-backed county identity without a fabr
   assert.equal(registry[result.countyId].countyFips, "48141");
   assert.equal(JSON.parse(storage.get("gridlyHomePersonalizationV1")).communityKey, null);
 });
+
+test("manual apply completion copy retains the committed governed label independently of picker state", () => {
+  const render = extractFunction("gridlyLp0516Render");
+  assert.match(render, /state\.prototypeResult\?\.consumerLabel \|\| state\.selectedCandidate\?\.consumerLabel/);
+  assert.match(render, /Your home area is set/);
+});

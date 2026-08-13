@@ -17209,8 +17209,8 @@ function gridlyBuildRegistryCommunityAwarenessArea(countyId, config, communityNa
   const v905Focus = GRIDLY_V905_COMMUNITY_MAP_FOCUS?.[countyId]?.[normalizedCommunity] || null;
   const canonicalCommunity = (config.consumerAwarenessAreas || []).find((community) => normalizeGridlyAwarenessAreaLookupText(community?.displayName) === normalizedCommunity) || null;
   const governedFocus = canonicalCommunity?.focus || null;
-  const lat = Number.isFinite(Number(governedFocus?.lat)) ? Number(governedFocus.lat) : (Number.isFinite(Number(harrisSupport?.lat)) ? Number(harrisSupport.lat) : (Number.isFinite(Number(v905Focus?.lat)) ? Number(v905Focus.lat) : (bounds ? (Number(bounds.south) + Number(bounds.north)) / 2 : 30.2)));
-  const lng = Number.isFinite(Number(governedFocus?.lng)) ? Number(governedFocus.lng) : (Number.isFinite(Number(harrisSupport?.lng)) ? Number(harrisSupport.lng) : (Number.isFinite(Number(v905Focus?.lng)) ? Number(v905Focus.lng) : (bounds ? (Number(bounds.west) + Number(bounds.east)) / 2 : -94.9)));
+  const lat = Number.isFinite(Number(governedFocus?.lat)) ? Number(governedFocus.lat) : (Number.isFinite(Number(harrisSupport?.lat)) ? Number(harrisSupport.lat) : (Number.isFinite(Number(v905Focus?.lat)) ? Number(v905Focus.lat) : (bounds ? (Number(bounds.south) + Number(bounds.north)) / 2 : null)));
+  const lng = Number.isFinite(Number(governedFocus?.lng)) ? Number(governedFocus.lng) : (Number.isFinite(Number(harrisSupport?.lng)) ? Number(harrisSupport.lng) : (Number.isFinite(Number(v905Focus?.lng)) ? Number(v905Focus.lng) : (bounds ? (Number(bounds.west) + Number(bounds.east)) / 2 : null)));
   const keyBase = `${countyId}-${String(communityName || "community").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
   return {
     key: keyBase || `${countyId}-community-${index}`,
@@ -17868,7 +17868,7 @@ function gridlyLp0516Render() {
   if (!root) { root = document.createElement("section"); root.id = "gridly-lp0516-zip-prototype"; root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-labelledby", "gridly-lp0516-title"); document.body?.appendChild(root); }
   const btn = (label, action, primary, tone = 'secondary') => `<button class="gridly-lp0516-btn ${primary ? 'gridly-lp0516-primary' : tone === 'tertiary' ? 'gridly-lp0516-tertiary' : 'gridly-lp0516-secondary'}" data-action="${action}">${label}</button>`;
   const optionList = () => `<div class="gridly-lp0516-options" role="radiogroup" aria-label="Gridly area choices">${state.candidateOptions.map((o,i)=>`<button class="gridly-lp0516-option" data-option-index="${i}" role="radio" aria-checked="${state.selectedCandidate===o}">${o.consumerLabel}</button>`).join("")}</div>`;
-  const label = state.selectedCandidate?.consumerLabel || state.resolverResult?.consumerLabel || "this area";
+  const label = state.prototypeResult?.consumerLabel || state.selectedCandidate?.consumerLabel || state.resolverResult?.consumerLabel || "this area";
   const county = state.selectedCandidate?.countyName || state.resolverResult?.countyName || "Gridly coverage area";
   let body = "";
   if (state.step === "entry") body = `<h2 id="gridly-lp0516-title">What’s your ZIP Code?</h2><p>We’ll use it to find the Gridly communities and awareness areas near you.</p><label for="gridly-lp0516-zip-input">Five-digit ZIP code</label><input id="gridly-lp0516-zip-input" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="postal-code" pattern="[0-9]*" maxlength="10" value="${state.zipInput || ''}" aria-describedby="gridly-lp0516-error"><div class="gridly-lp0516-validation" id="gridly-lp0516-error" aria-live="polite">${state.error || ''}</div>${btn('Continue','continue',true)}${btn('Choose manually','manual',false)}${btn('Close','close',false,'tertiary')}`;
@@ -45433,9 +45433,16 @@ function gridlyFocusConfirmedHomeSelection(area, countyId) {
   if (typeof loadGridlyCountyBoundaryOverlay !== "function") return false;
   void Promise.resolve(loadGridlyCountyBoundaryOverlay()).then(() => {
     const current = typeof gridlyReadHomePersonalizationRecord === "function" ? gridlyReadHomePersonalizationRecord() : null;
-    if (gridlyNormalizeCountyId(current?.countyId || "") === normalized) applyGeometryFocus();
+    if (gridlyNormalizeCountyId(current?.countyId || "") === normalized && applyGeometryFocus()) {
+      const result = typeof window !== "undefined" ? window.__gridlyLp0517LastHomePersonalizationResult : null;
+      if (result?.success && gridlyNormalizeCountyId(result.countyId || "") === normalized) {
+        result.mapFocused = true;
+        gridlyLp0517IntegrationMetrics.mapFocusCompleted += 1;
+        gridlyLp0517RecordMetric("mapFocusOperations", { awarenessAreaKey: result.awarenessAreaKey, completed: true, deferred: true });
+      }
+    }
   }).catch(() => {});
-  return true;
+  return false;
 }
 
 
@@ -48685,7 +48692,7 @@ function getGridlyAwarenessFitPadding(mapInstance = map) {
 }
 
 function setGridlyAwarenessView(center, zoom, options = {}) {
-  if (!map || !center || !Number.isFinite(Number(center.lat)) || !Number.isFinite(Number(center.lng))) return false;
+  if (!map || !center || center.lat === null || center.lat === undefined || center.lat === "" || center.lng === null || center.lng === undefined || center.lng === "" || !Number.isFinite(Number(center.lat)) || !Number.isFinite(Number(center.lng))) return false;
   const targetZoom = Math.max(1, Number(zoom) || GRIDLY_TOWN_STARTUP_ZOOM);
   map.setView([Number(center.lat), Number(center.lng)], targetZoom, { animate: options.animate === true });
   const insets = getGridlyVisibleMapChromeInsets(map);

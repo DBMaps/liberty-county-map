@@ -63,7 +63,7 @@ test("required identities focus the Leaflet camera at their governed coordinates
 
 test("successive selections never reuse the previous map target", () => {
   const map = { center: { lat: 30, lng: -95 }, setView([lat, lng]) { this.center = { lat, lng }; } };
-  for (const sequence of [["Liberty", "Dallas"], ["Dallas", "San Antonio"], ["San Antonio", "Palestine"]]) {
+  for (const sequence of [["Liberty", "Dallas"], ["Dallas", "San Antonio"], ["San Antonio", "Laredo"], ["Laredo", "Palestine"]]) {
     select(sequence[0], map);
     const result = select(sequence[1], map);
     assert.notDeepEqual(result.before, result.after, sequence.join(" -> "));
@@ -121,4 +121,27 @@ test("diverse counties outside both legacy focus cohorts use selected geometry b
   const focusStart = source.indexOf("function gridlyFocusConfirmedHomeSelection");
   const focusEnd = source.indexOf("\n}\n", focusStart) + 2;
   assert.doesNotMatch(source.slice(focusStart, focusEnd), /30\.2|-94\.9/);
+});
+
+test("unresolved statewide PLACE presentation never manufactures a southeast-Texas camera target", () => {
+  const builderStart = source.indexOf("function gridlyBuildRegistryCommunityAwarenessArea");
+  const builderEnd = source.indexOf("\n}\n", builderStart) + 2;
+  const builder = source.slice(builderStart, builderEnd);
+  assert.match(builder, /bounds \? \(Number\(bounds\.south\) \+ Number\(bounds\.north\)\) \/ 2 : null/);
+  assert.match(builder, /bounds \? \(Number\(bounds\.west\) \+ Number\(bounds\.east\)\) \/ 2 : null/);
+  assert.doesNotMatch(builder, /30\.2|-94\.9/);
+
+  const focusStart = source.indexOf("function gridlyFocusConfirmedHomeSelection");
+  const focusEnd = source.indexOf("\n}\n", focusStart) + 2;
+  const focus = source.slice(focusStart, focusEnd);
+  assert.match(focus, /if \(applyGeometryFocus\(\)\) return true/);
+  assert.match(focus, /return false;\n}/, "a deferred geometry request is not reported as a completed Leaflet invocation");
+});
+
+test("El Paso authoritative county fallback resolves to El Paso County rather than the prior Palestine camera", () => {
+  const bounds = geometryBounds("el-paso-tx");
+  const center = { lat: (bounds.south + bounds.north) / 2, lng: (bounds.west + bounds.east) / 2 };
+  assert.ok(center.lat > 31.5 && center.lat < 32.1, center);
+  assert.ok(center.lng < -105.9 && center.lng > -106.8, center);
+  assert.ok(Math.abs(center.lat - 31.7621) > 0.1 || Math.abs(center.lng + 95.6308) > 0.1);
 });
