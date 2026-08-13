@@ -84,3 +84,4 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 # LP190.1 owner credentialed probe results and recovered governed bytes stay local.
 /evidence/lp1901/owner-remote-payload-probe.local.json
 /evidence/lp1901/recovered-payloads.local/
+/owner-local/lp1883-community-packages/
