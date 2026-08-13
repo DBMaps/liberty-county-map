@@ -36,16 +36,19 @@ function select(name, map) {
   return { before, after: { ...map.center }, expected: { lat, lng } };
 }
 
-test("every governed statewide community has presentation-only focus metadata", () => {
+test("every governed statewide community has canonical identity and legacy focus metadata remains presentation-only", () => {
   const governed = Object.values(registry).flatMap((county) => county.consumerAwarenessAreas || []);
-  assert.equal(governed.length, 15);
+  assert.equal(governed.length, 2058);
   for (const community of governed) {
     assert.match(community.placeGeoid, /^48\d{5}$/);
     assert.equal(community.canonicalIdentity, "PLACE_GEOID");
-    assert.ok(Number.isFinite(community.focus?.lat), community.displayName);
-    assert.ok(Number.isFinite(community.focus?.lng), community.displayName);
-    assert.equal(community.focus.source, "governed statewide community focus bridge");
+    if (community.focus) {
+      assert.ok(Number.isFinite(community.focus.lat), community.displayName);
+      assert.ok(Number.isFinite(community.focus.lng), community.displayName);
+      assert.equal(community.focus.source, "governed statewide community focus bridge");
+    }
   }
+  assert.equal(governed.filter((community) => community.focus).length, 12);
 });
 
 test("required identities focus the Leaflet camera at their governed coordinates", () => {

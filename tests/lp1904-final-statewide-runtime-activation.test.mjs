@@ -127,9 +127,9 @@ test('malformed, conflicting, and duplicate identities fail closed', () => {
 
 test('duplicate app identities and duplicate registry keys fail before activation', () => {
   const fixture = baselineApp();
-  const duplicatedFips = fixture.replace(/(  "anderson-tx": Object\.freeze\(\{[^\n]+\n)/, '$1  "anderson-alias-tx": Object.freeze({ id: "anderson-alias-tx", countyFips: "48001", operational: true }),\n');
+  const duplicatedFips = fixture.replace(/(  "anderson-tx": Object\.freeze\(\{)/, '  "anderson-alias-tx": Object.freeze({ id: "anderson-alias-tx", countyFips: "48001", operational: true }),\n$1');
   assert.throws(() => assertOperationalRegistryUnique(operationalRegistryAudit(duplicatedFips, statewide().counties)), /operational FIPS must be unique: 48001/);
-  const duplicatedKey = fixture.replace(/(  "anderson-tx": Object\.freeze\(\{[^\n]+\n)/, '$1  "anderson-tx": Object.freeze({ id: "anderson-tx", countyFips: "48001", operational: true }),\n');
+  const duplicatedKey = fixture.replace(/(  "anderson-tx": Object\.freeze\(\{)/, '  "anderson-tx": Object.freeze({ id: "anderson-tx", countyFips: "48001", operational: true }),\n$1');
   assert.throws(() => operationalRegistryAudit(duplicatedKey, statewide().counties), /runtime registry duplicate keys: anderson-tx/);
 });
 
