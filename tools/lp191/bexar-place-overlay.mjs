@@ -12,6 +12,8 @@ export const WEST_ID='4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e';
 export const SOURCE={bytes:1864489,sha256:'bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d'};
 export const PLACE_SOURCE={bytes:9782040,sha256:'5a0c4d49641f69028ee9f5c343bf09936ec00a378e5e6393115b106bab935e13'};
 export const WEST={bytes:427909,sha256:'1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181'};
+export const ATOMIC_TARGET_FIELDS=Object.freeze(['GlobalID','Name']);
+export const WEST_SOURCE_FIELDS=Object.freeze(['GlobalID','Name']);
 export const PATHS={identity:'reports/metro-child-area-evidence-governance-audit.json',working:'reports/san-antonio-sa-tomorrow-working-geometry-governance.json',west:'evidence/san-antonio-sa-tomorrow-derived-repairs/west-northwest/repaired.geojson'};
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p)));
 const digest=p=>{const b=fs.readFileSync(p);return {bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')}};
@@ -85,6 +87,13 @@ export function validateIdentitySet(actual,expected,label){
   if(actual.some(x=>!wanted.has(x)))throw Error(`${label}_UNEXPECTED_IDENTITY`);
 }
 
+export function westNorthwestAppendArgs(gpkg,westArtifact){
+  if(ATOMIC_TARGET_FIELDS.length!==WEST_SOURCE_FIELDS.length||ATOMIC_TARGET_FIELDS.some((field,index)=>field!==WEST_SOURCE_FIELDS[index]))throw Error('WEST_NORTHWEST_APPEND_SCHEMA_MAPPING_UNSAFE');
+  const fieldMap=WEST_SOURCE_FIELDS.map(field=>ATOMIC_TARGET_FIELDS.indexOf(field));
+  if(fieldMap.some(index=>index<0)||new Set(fieldMap).size!==fieldMap.length)throw Error('WEST_NORTHWEST_APPEND_SCHEMA_MAPPING_UNSAFE');
+  return ['-f','GPKG','-update','-append',gpkg,westArtifact,'-nln','atomic_3083','-t_srs','EPSG:3083','-fieldmap',fieldMap.join(',')];
+}
+
 export function executeOwnerOverlay({audit=auditGovernedInputs(),run=createGdalRunner(),tempRoot=os.tmpdir()}={}){
   if(!audit.ready)throw Error(`AUTHORITATIVE_GEOMETRY_INPUTS_MISSING: ${audit.missing.join(', ')}`);
   const gdalVersion=requireGdal(run),workspace=fs.mkdtempSync(path.join(tempRoot,'lp191-overlay-'));
@@ -102,13 +111,15 @@ export function executeOwnerOverlay({audit=auditGovernedInputs(),run=createGdalR
 
     const originalIds=audit.usable.filter(x=>x.globalId!==WEST_ID).map(x=>x.globalId);
     const atomicWhere=`GlobalID IN (${originalIds.map(sqlString).join(',')})`;
-    run('ogr2ogr',['-f','GPKG','-update',gpkg,audit.ownerSaGeometry,'-nln','atomic_3083','-t_srs','EPSG:3083','-where',atomicWhere,'-select','GlobalID,Name'],'extract 28 governed original atomic geometries');
-    run('ogr2ogr',['-f','GPKG','-update','-append',gpkg,audit.westArtifact,'-nln','atomic_3083','-t_srs','EPSG:3083','-select','GlobalID,Name'],'append certified West Northwest geometry');
+    run('ogr2ogr',['-f','GPKG','-update',gpkg,audit.ownerSaGeometry,'-nln','atomic_3083','-t_srs','EPSG:3083','-where',atomicWhere,'-select',ATOMIC_TARGET_FIELDS.join(',')],'extract 28 governed original atomic geometries');
+    run('ogr2ogr',westNorthwestAppendArgs(gpkg,audit.westArtifact),'append certified West Northwest geometry');
     run('ogr2ogr',['-f','GeoJSON',atomicJson,gpkg,'atomic_3083','-sql','SELECT GlobalID, Name, ST_IsValid(geom) AS valid_geometry, ST_IsEmpty(geom) AS empty_geometry, ST_Area(geom) AS area_m2 FROM atomic_3083','-dialect','SQLite'],'validate usable atomic geometries');
     const atomics=loadFeatures(atomicJson).map(x=>x.properties);
     const usableIds=audit.usable.map(x=>x.globalId);
     validateIdentitySet(atomics.map(x=>String(x.GlobalID).toLowerCase()),usableIds,'USABLE_ATOMIC');
     if(atomics.some(x=>String(x.GlobalID).toLowerCase()===FAR_ID))throw Error('FAR_SOUTHWEST_MUST_NOT_ENTER_USABLE_OVERLAY');
+    const west=atomics.filter(x=>String(x.GlobalID).toLowerCase()===WEST_ID);
+    if(west.length!==1||west[0].Name!=='West Northwest')throw Error('WEST_NORTHWEST_DESTINATION_IDENTITY_MAPPING_FAILED');
     if(atomics.some(x=>!bool(x.valid_geometry)||bool(x.empty_geometry)||number(x.area_m2)<=0))throw Error('ATOMIC_GEOMETRY_INVALID_EMPTY_OR_ZERO_AREA');
 
     const pairSql=`SELECT p.GEOID AS placeGeoid, p.NAME AS placeName, a.GlobalID AS atomicGlobalId, a.Name AS atomicName, ST_Disjoint(p.geom,a.geom) AS disjoint, ST_Intersects(p.geom,a.geom) AS intersects, ST_Touches(p.geom,a.geom) AS boundariesTouch, ST_Within(p.geom,a.geom) AS placeWithinAtomic, ST_Within(a.geom,p.geom) AS atomicWithinPlace, ST_Dimension(ST_Intersection(p.geom,a.geom)) AS intersectionDimension, ST_Area(ST_Intersection(p.geom,a.geom)) AS intersectionAreaM2, ST_Area(p.geom) AS placeAreaM2, ST_Area(a.geom) AS atomicAreaM2 FROM places_3083 p CROSS JOIN atomic_3083 a`;
