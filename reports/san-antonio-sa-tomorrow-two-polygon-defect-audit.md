@@ -1,29 +1,29 @@
 # San Antonio SA Tomorrow two-polygon defect audit
 
-**Status:** `OWNER_EXECUTION_REQUIRED`
+**Status:** COMPLETE
 
-The environment does not contain the owner-certified source or GDAL 3.13.0, and could not resolve the City service host. Exact validity reasons, MakeValid measurements, GlobalIDs, and geometry comparisons therefore remain deliberately unasserted rather than inferred.
+This audit is evidence-only. No governed geometry was replaced, no consolidation occurred, and no consumer region or name was created.
 
-## Preserved certified findings
+## Design note
 
-| City name | Source mi² | Original calculated mi² | Projected status | Preserved observation |
-|---|---:|---:|---|---|
-| Far Southwest | 23.12700182 | 28.432135320718697 | INVALID | Material source/calculated discrepancy; owner review required |
-| West Northwest | 39.40309223 | 39.43385203383007 | INVALID | Centroid is outside; area values are relatively close |
+`GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL`
 
-These provisional classifications are intentionally independent. They must be replaced by measurements from the deterministic owner run: Far Southwest is `OWNER_REVIEW_REQUIRED` / `REQUIRE_CITY_SOURCE_CLARIFICATION`; West Northwest is `SOURCE_GEOMETRY_INVALID_BUT_STABLE` / `KEEP_ORIGINAL_WITH_DOCUMENTED_EXCEPTION`.
+## Far Southwest
 
-## Exact owner PowerShell command
+- GlobalID: `0a54b85a-6d66-4887-8a12-19dff06070c8`
+- Source/projected validity: **INVALID / INVALID**
+- Exact reason: Nested shells[1644697.73375798 7235631.57136394]
+- Original / MakeValid miÂ²: 28.432135320718697 / 28.131124557838966
+- MakeValid delta: -1.0586991074862466%
+- Classification: `OWNER_REVIEW_REQUIRED`
+- Future path: `REQUIRE_CITY_SOURCE_CLARIFICATION`
 
-```powershell
-$env:GRIDLY_GDAL_BIN = 'C:\Program Files\QGIS 3.44.11\bin'
-npm run audit:san-antonio-two-polygon-defects -- --source 'C:\GitHub\Gridly-Source-Data\SanAntonio\SATomorrow\SATomorrowSubAreaPlans-CoSAGIS-Opendata.geojson' --current-url '<EXPLICIT_CURRENT_LAYER_0_QUERY_GEOJSON_URL>' --second-url '<EXPLICIT_UPDATED_LAYER_11_QUERY_GEOJSON_URL>'
-```
+## West Northwest
 
-The URL arguments must be explicit GeoJSON query URLs supplied by the owner. The tool performs no service rediscovery.
-
-## Governance boundaries
-
-No governed geometry was replaced. No consolidation occurred. No consumer region or consumer name was created. Runtime, `js/app.js`, awareness areas, semantic camera behavior, and Houston were not modified.
-
-Design note only: `GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL`.
+- GlobalID: `4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e`
+- Source/projected validity: **INVALID / INVALID**
+- Exact reason: Ring Self-intersection[1627540.43352733 7270466.3643979]
+- Original / MakeValid miÂ²: 39.43385203383007 / 39.4338520338304
+- MakeValid delta: 8.288555177648982e-13%
+- Classification: `SOURCE_GEOMETRY_INVALID_REPAIRABLE_DETERMINISTICALLY`
+- Future path: `CERTIFY_DETERMINISTIC_DERIVED_REPAIR`

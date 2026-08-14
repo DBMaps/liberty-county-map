@@ -1,7 +1,10 @@
-# San Antonio SA Tomorrow TOPOLOGY ANALYSIS
+# San Antonio SA Tomorrow topology analysis
 
-**Status:** BLOCKED_FAIL_CLOSED
+**TOPOLOGY_ANALYSIS_CERTIFIED**
 
-**Fail-closed condition:** `TOPOLOGY_ANALYSIS_INCOMPLETE`
-
-No geometry result is certified. Official source bytes were unavailable; no values were fabricated. No consolidation, child identity, camera, zoom, radius, awareness, or runtime change occurred. Analysis requires exact City-controlled source acquisition followed by EPSG:3083 owner execution.
+* Valid: 28; invalid: 2
+* Pairwise overlaps: 0
+* Duplicate geometries: 0
+* Union area (m²): 1324958473.6108906
+* Relationship: NON_OVERLAPPING_ATOMIC_PARTITION
+* Gap finding: NOT_DETERMINISTIC_WITHOUT_GOVERNED_CITY_LIMIT_BOUNDARY

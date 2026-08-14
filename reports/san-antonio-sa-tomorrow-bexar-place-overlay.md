@@ -1,7 +1,5 @@
-# San Antonio SA Tomorrow BEXAR PLACE CDP OVERLAY
+# San Antonio SA Tomorrow / Bexar PLACE-CDP overlay
 
-**Status:** BLOCKED_FAIL_CLOSED
+**PLACE_CDP_OVERLAY_PENDING_GOVERNED_GEOMETRY**
 
-**Fail-closed condition:** `PLACE_CDP_GEOMETRY_UNAVAILABLE`
-
-No geometry result is certified. Official source bytes were unavailable; no values were fabricated. No consolidation, child identity, camera, zoom, radius, awareness, or runtime change occurred. Analysis requires exact City-controlled source acquisition followed by EPSG:3083 owner execution.
+The 33 governed identities remain unchanged. Exact governed PLACE/CDP geometry was not locally supplied, so no overlay relationship is fabricated and source certification remains valid.

@@ -1,19 +1,2914 @@
 {
-  "milestone": "SAN_ANTONIO_SA_TOMORROW_GEOMETRY_CERTIFICATION",
-  "status": "BLOCKED_FAIL_CLOSED",
-  "deterministic": true,
-  "runtimeMutationPerformed": false,
   "consolidationPerformed": false,
-  "workingCrs": "EPSG:3083",
-  "reportType": "SOURCE_CERTIFICATION",
-  "failure": "OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED",
-  "finding": "Official portal access returned HTTP 403 in this environment; no source bytes were fabricated or accepted.",
-  "sources": [],
-  "rawArtifacts": [],
+  "currentNameTypeStatusTable": [
+    {
+      "absoluteAreaDeltaSquareMiles": 0.009683064217476556,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 34572482.30522394,
+      "calculatedSquareMiles": 13.348510044217477,
+      "centroid": [
+        1651921.593764349,
+        7249070.088159805
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Brooks",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 8412.037315413589,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07259307157964617,
+      "phase": 1,
+      "planStatus": "Adopted by City Council (2019)",
+      "pointOnSurface": [
+        1652191.5641849858,
+        7249032.126120185
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1647788.8097836168,
+        7245114.644390389,
+        1656200.8470990304,
+        7252930.379309058
+      ],
+      "sourceBounds": [
+        -98.4752964267979,
+        29.3157147218442,
+        -98.3890475394802,
+        29.3865747192631
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+        "OBJECTID": 28,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+      "sourceName": "Brooks",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 13.33882698,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.004697919617950852,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 16434488.720736783,
+      "calculatedSquareMiles": 6.345391569617951,
+      "centroid": [
+        1646084.9852079365,
+        7255853.241972111
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Downtown",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 6044.985677121207,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07409157226750503,
+      "phase": 1,
+      "planStatus": "Adopted by City Council (2019)",
+      "pointOnSurface": [
+        1646079.796430388,
+        7255809.306604056
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1644209.3878334144,
+        7252788.3846535925,
+        1647714.9005902067,
+        7258833.370330714
+      ],
+      "sourceBounds": [
+        -98.5120339774589,
+        29.3858742060093,
+        -98.4751919731271,
+        29.4402630351454
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+        "OBJECTID": 10,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+      "sourceName": "Downtown",
+      "sourcePlanType": "Regional Center Plan",
+      "sourceSquareMiles": 6.34069365,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.004937041797393071,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 17480646.695362654,
+      "calculatedSquareMiles": 6.749315421797393,
+      "centroid": [
+        1649592.8369605832,
+        7256792.306445865
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Eastside",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 5348.591097115772,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07320232524369535,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2024)",
+      "pointOnSurface": [
+        1650119.716171362,
+        7256732.118537059
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1647572.7539681785,
+        7254053.00124637,
+        1652921.3450652943,
+        7259397.866758232
+      ],
+      "sourceBounds": [
+        -98.4765807531415,
+        29.3970974019616,
+        -98.4215348469507,
+        29.444934995413
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+        "OBJECTID": 1,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+      "sourceName": "Eastside",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 6.74437838,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.928899055700704,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 50969642.59042299,
+      "calculatedSquareMiles": 19.679489024299297,
+      "centroid": [
+        1659019.6789832513,
+        7258095.016890615
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Far East",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 21279.243636652594,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 4.507383363001498,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1660026.8979680939,
+        7259124.856672683
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1650764.0564312907,
+        7253645.634456223,
+        1672043.3000679433,
+        7264598.228476026
+      ],
+      "sourceBounds": [
+        -98.4441563596808,
+        29.3919928620507,
+        -98.223011714419,
+        29.4888193462081
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+        "OBJECTID": 20,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+      "sourceName": "Far East",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 20.60838808,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.017068846041176755,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 58820151.43809279,
+      "calculatedSquareMiles": 22.710587436041177,
+      "centroid": [
+        1641040.5816742263,
+        7273754.878979115
+      ],
+      "centroidContained": true,
+      "componentCount": 10,
+      "currentCityName": "Far North",
+      "geometryStatus": "VALID",
+      "geometryType": "MultiPolygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 14189.49932152778,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 0.07521462999879719,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1641371.0031372104,
+        7272644.725462955
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1636296.138008141,
+        7265550.177564011,
+        1646394.2678551811,
+        7279739.676885539
+      ],
+      "sourceBounds": [
+        -98.5911323085769,
+        29.5015315065396,
+        -98.4866633153431,
+        29.6294458383127
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+        "OBJECTID": 16,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+      "sourceName": "Far North",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 22.69351859,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 2.1849335278880844,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 57735563.46341289,
+      "calculatedSquareMiles": 22.291825677888085,
+      "centroid": [
+        1654799.9610195807,
+        7239159.339438077
+      ],
+      "centroidContained": false,
+      "componentCount": 5,
+      "currentCityName": "Far South",
+      "geometryStatus": "VALID",
+      "geometryType": "MultiPolygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 15433.964928360656,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 10.866589981127861,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1657038.2391406733,
+        7238290.70989438
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1650132.8558173408,
+        7230417.221970681,
+        1659274.6398443934,
+        7245851.186899042
+      ],
+      "sourceBounds": [
+        -98.4541498988272,
+        29.1838593615491,
+        -98.3586349648514,
+        29.3226879135592
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+        "OBJECTID": 8,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+      "sourceName": "Far South",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 20.10689215,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 5.305133500718696,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 73638892.43212566,
+      "calculatedSquareMiles": 28.432135320718697,
+      "centroid": [
+        1637459.1761760185,
+        7241374.010848812
+      ],
+      "centroidContained": true,
+      "componentCount": 7,
+      "currentCityName": "Far Southwest",
+      "geometryStatus": "INVALID",
+      "geometryType": "MultiPolygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 15109.429057454923,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 22.939132110634723,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1637304.4850987643,
+        7240623.249114443
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1630882.2393389253,
+        7233826.623805108,
+        1645991.6683963803,
+        7247423.083640791
+      ],
+      "sourceBounds": [
+        -98.6505085157704,
+        29.2154801979492,
+        -98.4957999413996,
+        29.3390686514252
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+        "OBJECTID": 14,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+      "sourceName": "Far Southwest",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 23.12700182,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.01803357910579706,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 60508592.4598307,
+      "calculatedSquareMiles": 23.362498159105797,
+      "centroid": [
+        1630619.7737735538,
+        7257615.614538037
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Far West",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 12010.176300784806,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 0.07724991525934179,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1630079.7298759148,
+        7257134.015413377
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1623680.8237737312,
+        7251494.102593133,
+        1635691.000074516,
+        7262811.557004095
+      ],
+      "sourceBounds": [
+        -98.7239913806786,
+        29.3767855174763,
+        -98.5996073479313,
+        29.4781132853741
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "27a862da-469c-4c78-a61e-9791748ade78",
+        "OBJECTID": 24,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "27a862da-469c-4c78-a61e-9791748ade78",
+      "sourceName": "Far West",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 23.34446458,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.01083132057799574,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 38887147.555087805,
+      "calculatedSquareMiles": 15.014411610577996,
+      "centroid": [
+        1653263.2001519972,
+        7260581.088977135
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Fort Sam Houston",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 10956.340797651326,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07219157273557497,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1652174.938272124,
+        7260498.164377853
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1647820.351299743,
+        7257121.123265445,
+        1658776.6920973943,
+        7263877.460284246
+      ],
+      "sourceBounds": [
+        -98.4738674656497,
+        29.4241882173401,
+        -98.3607335746676,
+        29.4848699953285
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+        "OBJECTID": 4,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+      "sourceName": "Fort Sam Houston",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 15.00358029,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.006006301121384894,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 59684275.83547953,
+      "calculatedSquareMiles": 23.044227731121385,
+      "centroid": [
+        1647474.089687697,
+        7270228.580895896
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Greater Airport Area",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 10752.21121459012,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.026071027833613862,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1647598.5815736647,
+        7269293.324840167
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1641928.0067783925,
+        7264087.546202529,
+        1652680.2179929826,
+        7274485.969011911
+      ],
+      "sourceBounds": [
+        -98.533189299935,
+        29.4875617196517,
+        -98.4217907386114,
+        29.5815018987133
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "acd1e5de-56a1-4120-a323-2cac36172053",
+        "OBJECTID": 30,
+        "SubPlanID": " "
+      },
+      "sourceGlobalID": "acd1e5de-56a1-4120-a323-2cac36172053",
+      "sourceName": "Greater Airport Area",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 23.03822143,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.0066156706660205344,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 21999049.61093931,
+      "calculatedSquareMiles": 8.493880540666021,
+      "centroid": [
+        1626193.2418704676,
+        7261790.881832072
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Highway 151 and Loop 1604",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 6811.311370008625,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07794820554505134,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2022)",
+      "pointOnSurface": [
+        1626399.2017563856,
+        7261329.1725399
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1623252.1470159865,
+        7257931.020127194,
+        1629404.6037120486,
+        7264742.331497203
+      ],
+      "sourceBounds": [
+        -98.7272251609596,
+        29.4346874157532,
+        -98.6635513973617,
+        29.4959821486144
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+        "OBJECTID": 3,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+      "sourceName": "Highway 151 and Loop 1604",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 8.48726487,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.007341870795954719,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 25048115.030760095,
+      "calculatedSquareMiles": 9.671131280795954,
+      "centroid": [
+        1637532.4865512901,
+        7266627.222745561
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Medical Center",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 6859.400117462501,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07597300069843636,
+      "phase": 1,
+      "planStatus": "Adopted by City Council (2019)",
+      "pointOnSurface": [
+        1637331.791642801,
+        7266869.180742515
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1634224.1571433868,
+        7263442.922700425,
+        1640397.8910508177,
+        7270302.322817887
+      ],
+      "sourceBounds": [
+        -98.6133102742804,
+        29.4831063684301,
+        -98.5496581817453,
+        29.5446649950272
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+        "OBJECTID": 19,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+      "sourceName": "Medical Center",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 9.66378941,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.002730382400165432,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 9583306.517550573,
+      "calculatedSquareMiles": 3.7001353324001656,
+      "centroid": [
+        1647039.0475983126,
+        7260042.940492963
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Midtown",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 6365.900467623491,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07384591185137651,
+      "phase": 1,
+      "planStatus": "Adopted by City Council (2019)",
+      "pointOnSurface": [
+        1647990.32410909,
+        7260215.694527989
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1643757.484903559,
+        7257885.793547578,
+        1650123.3853711826,
+        7262527.495549656
+      ],
+      "sourceBounds": [
+        -98.5157310866784,
+        29.4319151562886,
+        -98.4497192957558,
+        29.4734101724737
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+        "OBJECTID": 13,
+        "SubPlanID": "MARCP1"
+      },
+      "sourceGlobalID": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+      "sourceName": "Midtown",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 3.69740495,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.004972763743293918,
+      "aliasOrRenameStatus": "OFFICIAL_ALIAS_FORMAT_VARIANT",
+      "areaSquareMeters": 17954486.242482897,
+      "calculatedSquareMiles": 6.932265893743294,
+      "centroid": [
+        1654636.6337232934,
+        7269724.7866054885
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "NE I-35 and Loop 410",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 7129.083070979454,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07178509195400423,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2022)",
+      "pointOnSurface": [
+        1655286.371860345,
+        7269608.034927275
+      ],
+      "priorCertifiedName": "Northeast I-35 and Loop 410",
+      "projectedBounds": [
+        1650888.0664073322,
+        7266579.822296066,
+        1658017.1494783117,
+        7272637.478149419
+      ],
+      "sourceBounds": [
+        -98.4406140322892,
+        29.5091261421111,
+        -98.366937087349,
+        29.5638215351326
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+        "OBJECTID": 17,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+      "sourceName": "NE I-35 and Loop 410",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 6.92729313,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.33608590676835526,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 20485220.224167287,
+      "calculatedSquareMiles": 7.909387746768355,
+      "centroid": [
+        1643211.099513726,
+        7261225.502720162
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Near North",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 8028.264404184185,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 4.437772504896692,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1644171.055908632,
+        7261628.485690247
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1639812.713893088,
+        7259221.360043732,
+        1647840.9782972722,
+        7264054.658762685
+      ],
+      "sourceBounds": [
+        -98.555975679043,
+        29.4441224323677,
+        -98.4733340196528,
+        29.4880054187152
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+        "OBJECTID": 9,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+      "sourceName": "Near North",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 7.57330184,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.004290646626060379,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_SUPERSEDES_PRIOR_REGISTRY",
+      "areaSquareMeters": 41821484.57181162,
+      "calculatedSquareMiles": 16.14736546662606,
+      "centroid": [
+        1654159.2785762434,
+        7265415.217357091
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Near Northeast",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 12702.909859527135,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.02657886848634689,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1651689.9581992314,
+        7265441.647767581
+      ],
+      "priorCertifiedName": "Near North Central",
+      "projectedBounds": [
+        1648441.8778942686,
+        7260790.272385863,
+        1661144.7877537957,
+        7270094.28150104
+      ],
+      "sourceBounds": [
+        -98.46658232685,
+        29.4565373038258,
+        -98.3352029203624,
+        29.5409289090583
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+        "OBJECTID": 29,
+        "SubPlanID": " "
+      },
+      "sourceGlobalID": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+      "sourceName": "Near Northeast",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 16.14307482,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.007713690383678085,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_SUPERSEDES_PRIOR_REGISTRY",
+      "areaSquareMeters": 26296931.953742195,
+      "calculatedSquareMiles": 10.153302190383679,
+      "centroid": [
+        1637256.240235382,
+        7261641.965078155
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Near Northwest",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 7938.606692109257,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07602999455061758,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1637504.540985896,
+        7262378.0709818015
+      ],
+      "priorCertifiedName": "Near West",
+      "projectedBounds": [
+        1632678.0614507357,
+        7259578.138288786,
+        1640616.668142845,
+        7265161.580143938
+      ],
+      "sourceBounds": [
+        -98.6300973061721,
+        29.4477605780848,
+        -98.5477730055061,
+        29.498045396026
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "3d2409d8-81a8-4543-a591-827b08d784c1",
+        "OBJECTID": 11,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "3d2409d8-81a8-4543-a591-827b08d784c1",
+      "sourceName": "Near Northwest",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 10.1455885,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.007286915028480223,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 25349189.375102945,
+      "calculatedSquareMiles": 9.78737673502848,
+      "centroid": [
+        1644239.6494249594,
+        7264640.991041293
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "North Central",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 7558.848060460761,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07450764934263378,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1643778.1552985539,
+        7264537.323299872
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1640282.1358500407,
+        7261646.447998105,
+        1647840.9839105015,
+        7267439.284730442
+      ],
+      "sourceBounds": [
+        -98.5509063777407,
+        29.4655349343646,
+        -98.4732126978854,
+        29.5177846762249
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+        "OBJECTID": 7,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+      "sourceName": "North Central",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 9.78008982,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.02041522040650534,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 73753988.49855421,
+      "calculatedSquareMiles": 28.476574160406507,
+      "centroid": [
+        1654681.7422666554,
+        7275643.288055785
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Northeast",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 13620.130518074147,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 0.07174271288528775,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1653830.450992555,
+        7275840.342664259
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1647272.7730004499,
+        7269030.856203477,
+        1660105.3470458155,
+        7282650.986721551
+      ],
+      "sourceBounds": [
+        -98.4773927608183,
+        29.5306967776624,
+        -98.3437439501081,
+        29.6531591749416
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+        "OBJECTID": 26,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+      "sourceName": "Northeast",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 28.45615894,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.0240909626676995,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 81191766.99505928,
+      "calculatedSquareMiles": 31.3483164926677,
+      "centroid": [
+        1632479.5329122555,
+        7275485.036578237
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Northwest",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 24910.48950028699,
+      "normalizedStatus": "PLANNED_FUTURE",
+      "percentAreaDelta": 0.07690840638542518,
+      "phase": 5,
+      "planStatus": "Beginning 2026-2027",
+      "pointOnSurface": [
+        1632733.3330939678,
+        7278467.061089641
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1627534.7036560862,
+        7266017.353286492,
+        1637525.8747616124,
+        7290927.842786779
+      ],
+      "sourceBounds": [
+        -98.6816655994425,
+        29.5066176240655,
+        -98.5786930861613,
+        29.730892995119
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+        "OBJECTID": 25,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+      "sourceName": "Northwest",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 31.32422553,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.01447049659374855,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 49054316.96650719,
+      "calculatedSquareMiles": 18.939977666593748,
+      "centroid": [
+        1634964.0395235776,
+        7250941.79121483
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Port San Antonio",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 13695.848828947637,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07646028433355084,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2021)",
+      "pointOnSurface": [
+        1633871.9533759803,
+        7250151.477426029
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1628846.8573609884,
+        7245211.580169031,
+        1642542.706189936,
+        7255100.035437688
+      ],
+      "sourceBounds": [
+        -98.6712060207132,
+        29.3194305359011,
+        -98.5290733709161,
+        29.4078663981966
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "fd1c2919-e760-491c-a737-b11533605636",
+        "OBJECTID": 18,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "fd1c2919-e760-491c-a737-b11533605636",
+      "sourceName": "Port San Antonio",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 18.92550717,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.004359036449569587,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 16041372.598979346,
+      "calculatedSquareMiles": 6.19360858644957,
+      "centroid": [
+        1659148.2343127856,
+        7276051.060116396
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Rolling Oaks",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 7227.297219810775,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07042915969626054,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1658895.8897427744,
+        7275870.150871186
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1655914.8194876127,
+        7273416.3055674685,
+        1663142.1167074235,
+        7278323.355439489
+      ],
+      "sourceBounds": [
+        -98.3876670871491,
+        29.5700357905685,
+        -98.3129273640556,
+        29.6142850085918
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+        "OBJECTID": 23,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+      "sourceName": "Rolling Oaks",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 6.18924955,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.12970387423399288,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 54966139.6723347,
+      "calculatedSquareMiles": 21.222545174233993,
+      "centroid": [
+        1647321.642355426,
+        7246247.721132654
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "South",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 16412.702086318284,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.614918930973955,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1647924.0818766777,
+        7245659.787048232
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1644971.7451127963,
+        7237416.701732828,
+        1651977.932581146,
+        7253829.403819147
+      ],
+      "sourceBounds": [
+        -98.5042915042409,
+        29.2471841477328,
+        -98.4329301919818,
+        29.3951140033675
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+        "OBJECTID": 6,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+      "sourceName": "South",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 21.0928413,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.010355519624420495,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 37334239.99503421,
+      "calculatedSquareMiles": 14.41483064962442,
+      "centroid": [
+        1654384.487487492,
+        7252293.692784454
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Southeast",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 15918.08173548663,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.0718909889528234,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2022)",
+      "pointOnSurface": [
+        1655677.277054424,
+        7251447.608846958
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1647468.9681950912,
+        7248153.713035518,
+        1663387.0499305779,
+        7254742.299957843
+      ],
+      "sourceBounds": [
+        -98.478285949963,
+        29.342880795597,
+        -98.3147531056074,
+        29.4029235341932
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+        "OBJECTID": 22,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+      "sourceName": "Southeast",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 14.40447513,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.01953728509324648,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 67157204.61905344,
+      "calculatedSquareMiles": 25.929541665093247,
+      "centroid": [
+        1640298.6717924622,
+        7248556.31810867
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Southwest",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 11688.996038958896,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.0754044067562079,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1640418.9435087391,
+        7249498.009262443
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1633420.7721252302,
+        7244854.2848591525,
+        1645109.768164189,
+        7254120.942870734
+      ],
+      "sourceBounds": [
+        -98.6240536000598,
+        29.3155792699065,
+        -98.5032748588985,
+        29.3983397151304
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+        "OBJECTID": 15,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+      "sourceName": "Southwest",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 25.91000438,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.017730809012032722,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 62514574.718075685,
+      "calculatedSquareMiles": 24.137012239012034,
+      "centroid": [
+        1648118.8811255076,
+        7280504.708263226
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Stone Oak",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 13963.572615576908,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07351300685922932,
+      "phase": 3,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1645403.3281809874,
+        7282746.040919572
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1642888.4320908012,
+        7275767.327355452,
+        1652966.660586939,
+        7289730.899971029
+      ],
+      "sourceBounds": [
+        -98.5215531614767,
+        29.5922423182048,
+        -98.4182065917498,
+        29.7181432240376
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+        "OBJECTID": 5,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+      "sourceName": "Stone Oak",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 24.11928143,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.011277699908147198,
+      "aliasOrRenameStatus": "OFFICIAL_ALIAS_FORMAT_VARIANT",
+      "areaSquareMeters": 39082037.81318481,
+      "calculatedSquareMiles": 15.089659159908146,
+      "centroid": [
+        1643244.6714972786,
+        7240692.52602914
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Texas AM - San Antonio",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 9388.035114840604,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07479383604974268,
+      "phase": 2,
+      "planStatus": "Adopted by City Council (2024)",
+      "pointOnSurface": [
+        1643142.5137203068,
+        7240831.051782596
+      ],
+      "priorCertifiedName": "Texas A&M-San Antonio",
+      "projectedBounds": [
+        1640625.2566738038,
+        7236112.184079478,
+        1646518.915209365,
+        7245500.219194318
+      ],
+      "sourceBounds": [
+        -98.5508763536472,
+        29.2363025731515,
+        -98.4901620127509,
+        29.3203523050016
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+        "OBJECTID": 12,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+      "sourceName": "Texas AM - San Antonio",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 15.07838146,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.012070634976481642,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 40947982.09536146,
+      "calculatedSquareMiles": 15.810104274976482,
+      "centroid": [
+        1635234.5323866196,
+        7275574.928199506
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "UTSA",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 8378.915966489352,
+      "normalizedStatus": "ADOPTED",
+      "percentAreaDelta": 0.07640593286191814,
+      "phase": 1,
+      "planStatus": "Adopted by City Council (2019)",
+      "pointOnSurface": [
+        1635419.7981637358,
+        7275799.065633125
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1630541.7776987976,
+        7271633.641836375,
+        1638920.693665287,
+        7279966.978369913
+      ],
+      "sourceBounds": [
+        -98.6505202268322,
+        29.5571832435875,
+        -98.5634669355061,
+        29.6318622040108
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+        "OBJECTID": 27,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+      "sourceName": "UTSA",
+      "sourcePlanType": "Regional Center",
+      "sourceSquareMiles": 15.79803364,
+      "type": "REGIONAL_CENTER"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.030759803830072485,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 102133207.91236898,
+      "calculatedSquareMiles": 39.43385203383007,
+      "centroid": [
+        1624846.8158005967,
+        7269292.828893054
+      ],
+      "centroidContained": false,
+      "componentCount": 1,
+      "currentCityName": "West Northwest",
+      "geometryStatus": "INVALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 20450.39350045356,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 0.07806444136547526,
+      "phase": 4,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1629009.991198094,
+        7269036.982171873
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1614790.9776841307,
+        7260075.700049073,
+        1635241.3711845842,
+        7277992.0960063385
+      ],
+      "sourceBounds": [
+        -98.8134589459122,
+        29.4531124185886,
+        -98.603215163296,
+        29.6156710310079
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+        "OBJECTID": 21,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+      "sourceName": "West Northwest",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 39.40309223,
+      "type": "COMMUNITY_AREA"
+    },
+    {
+      "absoluteAreaDeltaSquareMiles": 0.317467767433552,
+      "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+      "areaSquareMeters": 43901797.25116196,
+      "calculatedSquareMiles": 16.950578682566448,
+      "centroid": [
+        1640229.0074556768,
+        7257023.278419182
+      ],
+      "centroidContained": true,
+      "componentCount": 1,
+      "currentCityName": "Westside",
+      "geometryStatus": "VALID",
+      "geometryType": "Polygon",
+      "globalIdPreservation": "PRESERVED_NORMALIZED",
+      "longAxisExtentMeters": 9875.072722567478,
+      "normalizedStatus": "IN_PROGRESS",
+      "percentAreaDelta": 1.8384695011840904,
+      "phase": 1,
+      "planStatus": "In Progress",
+      "pointOnSurface": [
+        1640048.5749399057,
+        7256836.4181989655
+      ],
+      "priorCertifiedName": null,
+      "projectedBounds": [
+        1635338.5862280945,
+        7253908.029211093,
+        1645213.658950662,
+        7259815.728961115
+      ],
+      "sourceBounds": [
+        -98.6027020982163,
+        29.3962257979183,
+        -98.501343060709,
+        29.4501951977291
+      ],
+      "sourceFeatureIdentity": {
+        "GlobalID": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+        "OBJECTID": 2,
+        "SubPlanID": null
+      },
+      "sourceGlobalID": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+      "sourceName": "Westside",
+      "sourcePlanType": "Community",
+      "sourceSquareMiles": 17.26804645,
+      "type": "COMMUNITY_AREA"
+    }
+  ],
+  "deterministic": true,
+  "gridlyChildRegionsCreated": false,
   "reconciliation": {
-    "expectedCount": 30,
-    "regionalCenterCount": 13,
+    "actualCount": 30,
     "communityAreaCount": 17,
-    "status": "NOT_EXECUTED_SOURCE_UNAVAILABLE"
-  }
+    "duplicateIdentities": [],
+    "expectedCount": 30,
+    "missingCurrentIdentities": [],
+    "regionalCenterCount": 13,
+    "rows": [
+      {
+        "absoluteAreaDeltaSquareMiles": 0.009683064217476556,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 34572482.30522394,
+        "calculatedSquareMiles": 13.348510044217477,
+        "centroid": [
+          1651921.593764349,
+          7249070.088159805
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Brooks",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 8412.037315413589,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07259307157964617,
+        "phase": 1,
+        "planStatus": "Adopted by City Council (2019)",
+        "pointOnSurface": [
+          1652191.5641849858,
+          7249032.126120185
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1647788.8097836168,
+          7245114.644390389,
+          1656200.8470990304,
+          7252930.379309058
+        ],
+        "sourceBounds": [
+          -98.4752964267979,
+          29.3157147218442,
+          -98.3890475394802,
+          29.3865747192631
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+          "OBJECTID": 28,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+        "sourceName": "Brooks",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 13.33882698,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.004697919617950852,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 16434488.720736783,
+        "calculatedSquareMiles": 6.345391569617951,
+        "centroid": [
+          1646084.9852079365,
+          7255853.241972111
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Downtown",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 6044.985677121207,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07409157226750503,
+        "phase": 1,
+        "planStatus": "Adopted by City Council (2019)",
+        "pointOnSurface": [
+          1646079.796430388,
+          7255809.306604056
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1644209.3878334144,
+          7252788.3846535925,
+          1647714.9005902067,
+          7258833.370330714
+        ],
+        "sourceBounds": [
+          -98.5120339774589,
+          29.3858742060093,
+          -98.4751919731271,
+          29.4402630351454
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+          "OBJECTID": 10,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+        "sourceName": "Downtown",
+        "sourcePlanType": "Regional Center Plan",
+        "sourceSquareMiles": 6.34069365,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.004937041797393071,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 17480646.695362654,
+        "calculatedSquareMiles": 6.749315421797393,
+        "centroid": [
+          1649592.8369605832,
+          7256792.306445865
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Eastside",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 5348.591097115772,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07320232524369535,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2024)",
+        "pointOnSurface": [
+          1650119.716171362,
+          7256732.118537059
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1647572.7539681785,
+          7254053.00124637,
+          1652921.3450652943,
+          7259397.866758232
+        ],
+        "sourceBounds": [
+          -98.4765807531415,
+          29.3970974019616,
+          -98.4215348469507,
+          29.444934995413
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+          "OBJECTID": 1,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+        "sourceName": "Eastside",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 6.74437838,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.928899055700704,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 50969642.59042299,
+        "calculatedSquareMiles": 19.679489024299297,
+        "centroid": [
+          1659019.6789832513,
+          7258095.016890615
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Far East",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 21279.243636652594,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 4.507383363001498,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1660026.8979680939,
+          7259124.856672683
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1650764.0564312907,
+          7253645.634456223,
+          1672043.3000679433,
+          7264598.228476026
+        ],
+        "sourceBounds": [
+          -98.4441563596808,
+          29.3919928620507,
+          -98.223011714419,
+          29.4888193462081
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+          "OBJECTID": 20,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+        "sourceName": "Far East",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 20.60838808,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.017068846041176755,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 58820151.43809279,
+        "calculatedSquareMiles": 22.710587436041177,
+        "centroid": [
+          1641040.5816742263,
+          7273754.878979115
+        ],
+        "centroidContained": true,
+        "componentCount": 10,
+        "currentCityName": "Far North",
+        "geometryStatus": "VALID",
+        "geometryType": "MultiPolygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 14189.49932152778,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 0.07521462999879719,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1641371.0031372104,
+          7272644.725462955
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1636296.138008141,
+          7265550.177564011,
+          1646394.2678551811,
+          7279739.676885539
+        ],
+        "sourceBounds": [
+          -98.5911323085769,
+          29.5015315065396,
+          -98.4866633153431,
+          29.6294458383127
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+          "OBJECTID": 16,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+        "sourceName": "Far North",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 22.69351859,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 2.1849335278880844,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 57735563.46341289,
+        "calculatedSquareMiles": 22.291825677888085,
+        "centroid": [
+          1654799.9610195807,
+          7239159.339438077
+        ],
+        "centroidContained": false,
+        "componentCount": 5,
+        "currentCityName": "Far South",
+        "geometryStatus": "VALID",
+        "geometryType": "MultiPolygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 15433.964928360656,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 10.866589981127861,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1657038.2391406733,
+          7238290.70989438
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1650132.8558173408,
+          7230417.221970681,
+          1659274.6398443934,
+          7245851.186899042
+        ],
+        "sourceBounds": [
+          -98.4541498988272,
+          29.1838593615491,
+          -98.3586349648514,
+          29.3226879135592
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+          "OBJECTID": 8,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+        "sourceName": "Far South",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 20.10689215,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 5.305133500718696,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 73638892.43212566,
+        "calculatedSquareMiles": 28.432135320718697,
+        "centroid": [
+          1637459.1761760185,
+          7241374.010848812
+        ],
+        "centroidContained": true,
+        "componentCount": 7,
+        "currentCityName": "Far Southwest",
+        "geometryStatus": "INVALID",
+        "geometryType": "MultiPolygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 15109.429057454923,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 22.939132110634723,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1637304.4850987643,
+          7240623.249114443
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1630882.2393389253,
+          7233826.623805108,
+          1645991.6683963803,
+          7247423.083640791
+        ],
+        "sourceBounds": [
+          -98.6505085157704,
+          29.2154801979492,
+          -98.4957999413996,
+          29.3390686514252
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+          "OBJECTID": 14,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+        "sourceName": "Far Southwest",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 23.12700182,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.01803357910579706,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 60508592.4598307,
+        "calculatedSquareMiles": 23.362498159105797,
+        "centroid": [
+          1630619.7737735538,
+          7257615.614538037
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Far West",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 12010.176300784806,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 0.07724991525934179,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1630079.7298759148,
+          7257134.015413377
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1623680.8237737312,
+          7251494.102593133,
+          1635691.000074516,
+          7262811.557004095
+        ],
+        "sourceBounds": [
+          -98.7239913806786,
+          29.3767855174763,
+          -98.5996073479313,
+          29.4781132853741
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "27a862da-469c-4c78-a61e-9791748ade78",
+          "OBJECTID": 24,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "27a862da-469c-4c78-a61e-9791748ade78",
+        "sourceName": "Far West",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 23.34446458,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.01083132057799574,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 38887147.555087805,
+        "calculatedSquareMiles": 15.014411610577996,
+        "centroid": [
+          1653263.2001519972,
+          7260581.088977135
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Fort Sam Houston",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 10956.340797651326,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07219157273557497,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1652174.938272124,
+          7260498.164377853
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1647820.351299743,
+          7257121.123265445,
+          1658776.6920973943,
+          7263877.460284246
+        ],
+        "sourceBounds": [
+          -98.4738674656497,
+          29.4241882173401,
+          -98.3607335746676,
+          29.4848699953285
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+          "OBJECTID": 4,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+        "sourceName": "Fort Sam Houston",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 15.00358029,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.006006301121384894,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 59684275.83547953,
+        "calculatedSquareMiles": 23.044227731121385,
+        "centroid": [
+          1647474.089687697,
+          7270228.580895896
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Greater Airport Area",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 10752.21121459012,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.026071027833613862,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1647598.5815736647,
+          7269293.324840167
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1641928.0067783925,
+          7264087.546202529,
+          1652680.2179929826,
+          7274485.969011911
+        ],
+        "sourceBounds": [
+          -98.533189299935,
+          29.4875617196517,
+          -98.4217907386114,
+          29.5815018987133
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "acd1e5de-56a1-4120-a323-2cac36172053",
+          "OBJECTID": 30,
+          "SubPlanID": " "
+        },
+        "sourceGlobalID": "acd1e5de-56a1-4120-a323-2cac36172053",
+        "sourceName": "Greater Airport Area",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 23.03822143,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.0066156706660205344,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 21999049.61093931,
+        "calculatedSquareMiles": 8.493880540666021,
+        "centroid": [
+          1626193.2418704676,
+          7261790.881832072
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Highway 151 and Loop 1604",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 6811.311370008625,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07794820554505134,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2022)",
+        "pointOnSurface": [
+          1626399.2017563856,
+          7261329.1725399
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1623252.1470159865,
+          7257931.020127194,
+          1629404.6037120486,
+          7264742.331497203
+        ],
+        "sourceBounds": [
+          -98.7272251609596,
+          29.4346874157532,
+          -98.6635513973617,
+          29.4959821486144
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+          "OBJECTID": 3,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+        "sourceName": "Highway 151 and Loop 1604",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 8.48726487,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.007341870795954719,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 25048115.030760095,
+        "calculatedSquareMiles": 9.671131280795954,
+        "centroid": [
+          1637532.4865512901,
+          7266627.222745561
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Medical Center",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 6859.400117462501,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07597300069843636,
+        "phase": 1,
+        "planStatus": "Adopted by City Council (2019)",
+        "pointOnSurface": [
+          1637331.791642801,
+          7266869.180742515
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1634224.1571433868,
+          7263442.922700425,
+          1640397.8910508177,
+          7270302.322817887
+        ],
+        "sourceBounds": [
+          -98.6133102742804,
+          29.4831063684301,
+          -98.5496581817453,
+          29.5446649950272
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+          "OBJECTID": 19,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+        "sourceName": "Medical Center",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 9.66378941,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.002730382400165432,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 9583306.517550573,
+        "calculatedSquareMiles": 3.7001353324001656,
+        "centroid": [
+          1647039.0475983126,
+          7260042.940492963
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Midtown",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 6365.900467623491,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07384591185137651,
+        "phase": 1,
+        "planStatus": "Adopted by City Council (2019)",
+        "pointOnSurface": [
+          1647990.32410909,
+          7260215.694527989
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1643757.484903559,
+          7257885.793547578,
+          1650123.3853711826,
+          7262527.495549656
+        ],
+        "sourceBounds": [
+          -98.5157310866784,
+          29.4319151562886,
+          -98.4497192957558,
+          29.4734101724737
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+          "OBJECTID": 13,
+          "SubPlanID": "MARCP1"
+        },
+        "sourceGlobalID": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+        "sourceName": "Midtown",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 3.69740495,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.004972763743293918,
+        "aliasOrRenameStatus": "OFFICIAL_ALIAS_FORMAT_VARIANT",
+        "areaSquareMeters": 17954486.242482897,
+        "calculatedSquareMiles": 6.932265893743294,
+        "centroid": [
+          1654636.6337232934,
+          7269724.7866054885
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "NE I-35 and Loop 410",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 7129.083070979454,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07178509195400423,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2022)",
+        "pointOnSurface": [
+          1655286.371860345,
+          7269608.034927275
+        ],
+        "priorCertifiedName": "Northeast I-35 and Loop 410",
+        "projectedBounds": [
+          1650888.0664073322,
+          7266579.822296066,
+          1658017.1494783117,
+          7272637.478149419
+        ],
+        "sourceBounds": [
+          -98.4406140322892,
+          29.5091261421111,
+          -98.366937087349,
+          29.5638215351326
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+          "OBJECTID": 17,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+        "sourceName": "NE I-35 and Loop 410",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 6.92729313,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.33608590676835526,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 20485220.224167287,
+        "calculatedSquareMiles": 7.909387746768355,
+        "centroid": [
+          1643211.099513726,
+          7261225.502720162
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Near North",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 8028.264404184185,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 4.437772504896692,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1644171.055908632,
+          7261628.485690247
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1639812.713893088,
+          7259221.360043732,
+          1647840.9782972722,
+          7264054.658762685
+        ],
+        "sourceBounds": [
+          -98.555975679043,
+          29.4441224323677,
+          -98.4733340196528,
+          29.4880054187152
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+          "OBJECTID": 9,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+        "sourceName": "Near North",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 7.57330184,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.004290646626060379,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_SUPERSEDES_PRIOR_REGISTRY",
+        "areaSquareMeters": 41821484.57181162,
+        "calculatedSquareMiles": 16.14736546662606,
+        "centroid": [
+          1654159.2785762434,
+          7265415.217357091
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Near Northeast",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 12702.909859527135,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.02657886848634689,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1651689.9581992314,
+          7265441.647767581
+        ],
+        "priorCertifiedName": "Near North Central",
+        "projectedBounds": [
+          1648441.8778942686,
+          7260790.272385863,
+          1661144.7877537957,
+          7270094.28150104
+        ],
+        "sourceBounds": [
+          -98.46658232685,
+          29.4565373038258,
+          -98.3352029203624,
+          29.5409289090583
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+          "OBJECTID": 29,
+          "SubPlanID": " "
+        },
+        "sourceGlobalID": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+        "sourceName": "Near Northeast",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 16.14307482,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.007713690383678085,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_SUPERSEDES_PRIOR_REGISTRY",
+        "areaSquareMeters": 26296931.953742195,
+        "calculatedSquareMiles": 10.153302190383679,
+        "centroid": [
+          1637256.240235382,
+          7261641.965078155
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Near Northwest",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 7938.606692109257,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07602999455061758,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1637504.540985896,
+          7262378.0709818015
+        ],
+        "priorCertifiedName": "Near West",
+        "projectedBounds": [
+          1632678.0614507357,
+          7259578.138288786,
+          1640616.668142845,
+          7265161.580143938
+        ],
+        "sourceBounds": [
+          -98.6300973061721,
+          29.4477605780848,
+          -98.5477730055061,
+          29.498045396026
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "3d2409d8-81a8-4543-a591-827b08d784c1",
+          "OBJECTID": 11,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "3d2409d8-81a8-4543-a591-827b08d784c1",
+        "sourceName": "Near Northwest",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 10.1455885,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.007286915028480223,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 25349189.375102945,
+        "calculatedSquareMiles": 9.78737673502848,
+        "centroid": [
+          1644239.6494249594,
+          7264640.991041293
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "North Central",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 7558.848060460761,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07450764934263378,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1643778.1552985539,
+          7264537.323299872
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1640282.1358500407,
+          7261646.447998105,
+          1647840.9839105015,
+          7267439.284730442
+        ],
+        "sourceBounds": [
+          -98.5509063777407,
+          29.4655349343646,
+          -98.4732126978854,
+          29.5177846762249
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+          "OBJECTID": 7,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+        "sourceName": "North Central",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 9.78008982,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.02041522040650534,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 73753988.49855421,
+        "calculatedSquareMiles": 28.476574160406507,
+        "centroid": [
+          1654681.7422666554,
+          7275643.288055785
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Northeast",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 13620.130518074147,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 0.07174271288528775,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1653830.450992555,
+          7275840.342664259
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1647272.7730004499,
+          7269030.856203477,
+          1660105.3470458155,
+          7282650.986721551
+        ],
+        "sourceBounds": [
+          -98.4773927608183,
+          29.5306967776624,
+          -98.3437439501081,
+          29.6531591749416
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+          "OBJECTID": 26,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+        "sourceName": "Northeast",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 28.45615894,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.0240909626676995,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 81191766.99505928,
+        "calculatedSquareMiles": 31.3483164926677,
+        "centroid": [
+          1632479.5329122555,
+          7275485.036578237
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Northwest",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 24910.48950028699,
+        "normalizedStatus": "PLANNED_FUTURE",
+        "percentAreaDelta": 0.07690840638542518,
+        "phase": 5,
+        "planStatus": "Beginning 2026-2027",
+        "pointOnSurface": [
+          1632733.3330939678,
+          7278467.061089641
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1627534.7036560862,
+          7266017.353286492,
+          1637525.8747616124,
+          7290927.842786779
+        ],
+        "sourceBounds": [
+          -98.6816655994425,
+          29.5066176240655,
+          -98.5786930861613,
+          29.730892995119
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+          "OBJECTID": 25,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+        "sourceName": "Northwest",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 31.32422553,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.01447049659374855,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 49054316.96650719,
+        "calculatedSquareMiles": 18.939977666593748,
+        "centroid": [
+          1634964.0395235776,
+          7250941.79121483
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Port San Antonio",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 13695.848828947637,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07646028433355084,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2021)",
+        "pointOnSurface": [
+          1633871.9533759803,
+          7250151.477426029
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1628846.8573609884,
+          7245211.580169031,
+          1642542.706189936,
+          7255100.035437688
+        ],
+        "sourceBounds": [
+          -98.6712060207132,
+          29.3194305359011,
+          -98.5290733709161,
+          29.4078663981966
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "fd1c2919-e760-491c-a737-b11533605636",
+          "OBJECTID": 18,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "fd1c2919-e760-491c-a737-b11533605636",
+        "sourceName": "Port San Antonio",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 18.92550717,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.004359036449569587,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 16041372.598979346,
+        "calculatedSquareMiles": 6.19360858644957,
+        "centroid": [
+          1659148.2343127856,
+          7276051.060116396
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Rolling Oaks",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 7227.297219810775,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07042915969626054,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1658895.8897427744,
+          7275870.150871186
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1655914.8194876127,
+          7273416.3055674685,
+          1663142.1167074235,
+          7278323.355439489
+        ],
+        "sourceBounds": [
+          -98.3876670871491,
+          29.5700357905685,
+          -98.3129273640556,
+          29.6142850085918
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+          "OBJECTID": 23,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+        "sourceName": "Rolling Oaks",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 6.18924955,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.12970387423399288,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 54966139.6723347,
+        "calculatedSquareMiles": 21.222545174233993,
+        "centroid": [
+          1647321.642355426,
+          7246247.721132654
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "South",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 16412.702086318284,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.614918930973955,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1647924.0818766777,
+          7245659.787048232
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1644971.7451127963,
+          7237416.701732828,
+          1651977.932581146,
+          7253829.403819147
+        ],
+        "sourceBounds": [
+          -98.5042915042409,
+          29.2471841477328,
+          -98.4329301919818,
+          29.3951140033675
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+          "OBJECTID": 6,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+        "sourceName": "South",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 21.0928413,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.010355519624420495,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 37334239.99503421,
+        "calculatedSquareMiles": 14.41483064962442,
+        "centroid": [
+          1654384.487487492,
+          7252293.692784454
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Southeast",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 15918.08173548663,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.0718909889528234,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2022)",
+        "pointOnSurface": [
+          1655677.277054424,
+          7251447.608846958
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1647468.9681950912,
+          7248153.713035518,
+          1663387.0499305779,
+          7254742.299957843
+        ],
+        "sourceBounds": [
+          -98.478285949963,
+          29.342880795597,
+          -98.3147531056074,
+          29.4029235341932
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+          "OBJECTID": 22,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+        "sourceName": "Southeast",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 14.40447513,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.01953728509324648,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 67157204.61905344,
+        "calculatedSquareMiles": 25.929541665093247,
+        "centroid": [
+          1640298.6717924622,
+          7248556.31810867
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Southwest",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 11688.996038958896,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.0754044067562079,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1640418.9435087391,
+          7249498.009262443
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1633420.7721252302,
+          7244854.2848591525,
+          1645109.768164189,
+          7254120.942870734
+        ],
+        "sourceBounds": [
+          -98.6240536000598,
+          29.3155792699065,
+          -98.5032748588985,
+          29.3983397151304
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+          "OBJECTID": 15,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+        "sourceName": "Southwest",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 25.91000438,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.017730809012032722,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 62514574.718075685,
+        "calculatedSquareMiles": 24.137012239012034,
+        "centroid": [
+          1648118.8811255076,
+          7280504.708263226
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Stone Oak",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 13963.572615576908,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07351300685922932,
+        "phase": 3,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1645403.3281809874,
+          7282746.040919572
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1642888.4320908012,
+          7275767.327355452,
+          1652966.660586939,
+          7289730.899971029
+        ],
+        "sourceBounds": [
+          -98.5215531614767,
+          29.5922423182048,
+          -98.4182065917498,
+          29.7181432240376
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+          "OBJECTID": 5,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+        "sourceName": "Stone Oak",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 24.11928143,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.011277699908147198,
+        "aliasOrRenameStatus": "OFFICIAL_ALIAS_FORMAT_VARIANT",
+        "areaSquareMeters": 39082037.81318481,
+        "calculatedSquareMiles": 15.089659159908146,
+        "centroid": [
+          1643244.6714972786,
+          7240692.52602914
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Texas AM - San Antonio",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 9388.035114840604,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07479383604974268,
+        "phase": 2,
+        "planStatus": "Adopted by City Council (2024)",
+        "pointOnSurface": [
+          1643142.5137203068,
+          7240831.051782596
+        ],
+        "priorCertifiedName": "Texas A&M-San Antonio",
+        "projectedBounds": [
+          1640625.2566738038,
+          7236112.184079478,
+          1646518.915209365,
+          7245500.219194318
+        ],
+        "sourceBounds": [
+          -98.5508763536472,
+          29.2363025731515,
+          -98.4901620127509,
+          29.3203523050016
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+          "OBJECTID": 12,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+        "sourceName": "Texas AM - San Antonio",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 15.07838146,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.012070634976481642,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 40947982.09536146,
+        "calculatedSquareMiles": 15.810104274976482,
+        "centroid": [
+          1635234.5323866196,
+          7275574.928199506
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "UTSA",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 8378.915966489352,
+        "normalizedStatus": "ADOPTED",
+        "percentAreaDelta": 0.07640593286191814,
+        "phase": 1,
+        "planStatus": "Adopted by City Council (2019)",
+        "pointOnSurface": [
+          1635419.7981637358,
+          7275799.065633125
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1630541.7776987976,
+          7271633.641836375,
+          1638920.693665287,
+          7279966.978369913
+        ],
+        "sourceBounds": [
+          -98.6505202268322,
+          29.5571832435875,
+          -98.5634669355061,
+          29.6318622040108
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+          "OBJECTID": 27,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+        "sourceName": "UTSA",
+        "sourcePlanType": "Regional Center",
+        "sourceSquareMiles": 15.79803364,
+        "type": "REGIONAL_CENTER"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.030759803830072485,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 102133207.91236898,
+        "calculatedSquareMiles": 39.43385203383007,
+        "centroid": [
+          1624846.8158005967,
+          7269292.828893054
+        ],
+        "centroidContained": false,
+        "componentCount": 1,
+        "currentCityName": "West Northwest",
+        "geometryStatus": "INVALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 20450.39350045356,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 0.07806444136547526,
+        "phase": 4,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1629009.991198094,
+          7269036.982171873
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1614790.9776841307,
+          7260075.700049073,
+          1635241.3711845842,
+          7277992.0960063385
+        ],
+        "sourceBounds": [
+          -98.8134589459122,
+          29.4531124185886,
+          -98.603215163296,
+          29.6156710310079
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+          "OBJECTID": 21,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+        "sourceName": "West Northwest",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 39.40309223,
+        "type": "COMMUNITY_AREA"
+      },
+      {
+        "absoluteAreaDeltaSquareMiles": 0.317467767433552,
+        "aliasOrRenameStatus": "CURRENT_CITY_NAME_UNCHANGED",
+        "areaSquareMeters": 43901797.25116196,
+        "calculatedSquareMiles": 16.950578682566448,
+        "centroid": [
+          1640229.0074556768,
+          7257023.278419182
+        ],
+        "centroidContained": true,
+        "componentCount": 1,
+        "currentCityName": "Westside",
+        "geometryStatus": "VALID",
+        "geometryType": "Polygon",
+        "globalIdPreservation": "PRESERVED_NORMALIZED",
+        "longAxisExtentMeters": 9875.072722567478,
+        "normalizedStatus": "IN_PROGRESS",
+        "percentAreaDelta": 1.8384695011840904,
+        "phase": 1,
+        "planStatus": "In Progress",
+        "pointOnSurface": [
+          1640048.5749399057,
+          7256836.4181989655
+        ],
+        "priorCertifiedName": null,
+        "projectedBounds": [
+          1635338.5862280945,
+          7253908.029211093,
+          1645213.658950662,
+          7259815.728961115
+        ],
+        "sourceBounds": [
+          -98.6027020982163,
+          29.3962257979183,
+          -98.501343060709,
+          29.4501951977291
+        ],
+        "sourceFeatureIdentity": {
+          "GlobalID": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+          "OBJECTID": 2,
+          "SubPlanID": null
+        },
+        "sourceGlobalID": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+        "sourceName": "Westside",
+        "sourcePlanType": "Community",
+        "sourceSquareMiles": 17.26804645,
+        "type": "COMMUNITY_AREA"
+      }
+    ],
+    "status": "RECONCILED",
+    "unresolvedMappings": []
+  },
+  "runtimeMutationPerformed": false,
+  "schemaVersion": "gridly.san-antonio-sa-tomorrow-geometry.v2",
+  "source": {
+    "byteLength": 1864489,
+    "featureCount": 30,
+    "filename": "SATomorrowSubAreaPlans-CoSAGIS-Opendata.geojson",
+    "geoJsonType": "FeatureCollection",
+    "itemId": "4e67cbcf249a464cb8cef0738ddbb1b1",
+    "layer": 0,
+    "layerName": "SATomorrowSubAreaPlans",
+    "sha256": "bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d",
+    "sourcePath": "C:\\GitHub\\Gridly-Source-Data\\SanAntonio\\SATomorrow\\SATomorrowSubAreaPlans-CoSAGIS-Opendata.geojson"
+  },
+  "status": "SOURCE_CERTIFIED_OWNER_SUPPLIED_CITY_OPEN_DATA",
+  "workingCrs": "EPSG:3083"
 }
