@@ -14,6 +14,7 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "test:lp197": "node --test tests/lp197-governed-place-consumer-presentation-cameras.test.mjs",
     "build:lp195": "node tools/lp195/build-texas-major-metro-consumer-coverage-audit.mjs --write",
     "verify:lp195": "node tools/lp195/build-texas-major-metro-consumer-coverage-audit.mjs --verify",
     "test:lp195": "node --test tests/lp195-texas-major-metro-consumer-coverage-audit.test.mjs",

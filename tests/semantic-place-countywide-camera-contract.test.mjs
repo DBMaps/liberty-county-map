@@ -43,7 +43,7 @@ test('PLACE dispatcher owns an exact zoom-13 setView and never fits county data'
   const dispatch = body('gridlyDispatchSemanticCamera', 'function gridlyFocusConfirmedHomeSelection');
   const placeBranch = dispatch.slice(dispatch.indexOf('if (placeGeoid)'), dispatch.indexOf('if (area.countyWide !== true)'));
   assert.match(placeBranch, /gridlyPlacePresentationTargets\?\.\[placeGeoid\]/);
-  assert.match(placeBranch, /setGridlyAwarenessView\([^;]+GRIDLY_TOWN_STARTUP_ZOOM/);
+  assert.match(placeBranch, /setGridlyAwarenessView\([^;]+targetZoom/);
   assert.match(placeBranch, /compensateForChrome: false/);
   assert.doesNotMatch(placeBranch, /fitBounds|County|defaultCenter|prior|governedFocus/);
   assert.match(app, /const GRIDLY_TOWN_STARTUP_ZOOM = 13;/);

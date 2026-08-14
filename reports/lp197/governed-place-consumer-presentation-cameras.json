@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "gridly.governed-place-consumer-presentation-cameras.v1",
+  "intent": "Owner-approved presentation-only centers for recognizable PLACE labels in the current mobile Gridly usable viewport; these are not geographic centroids.",
+  "cameras": [
+    { "placeGeoid": "4805000", "label": "Austin", "lat": 30.274931186653326, "lng": -97.74415969848634, "zoom": 13, "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA", "ownerApproved": true },
+    { "placeGeoid": "4819000", "label": "Dallas", "lat": 32.78294501748632, "lng": -96.79538726806642, "zoom": 13, "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA", "ownerApproved": true },
+    { "placeGeoid": "4824000", "label": "El Paso", "lat": 31.765537409484374, "lng": -106.48704528808595, "zoom": 13, "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA", "ownerApproved": true },
+    { "placeGeoid": "4827000", "label": "Fort Worth", "lat": 32.757685346479455, "lng": -97.33182907104494, "zoom": 13, "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA", "ownerApproved": true }
+  ]
+}
