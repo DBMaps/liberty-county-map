@@ -486,6 +486,9 @@
     "certify:san-antonio-sa-tomorrow-geometry-offline": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --certify-offline",
     "verify:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --verify",
     "analyze:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --analyze",
-    "recover:lp191-west-northwest": "node tools/lp191/recover-west-northwest-artifact.mjs --verify"
+    "recover:lp191-west-northwest": "node tools/lp191/recover-west-northwest-artifact.mjs --verify",
+    "build:lp193": "node tools/lp193/build-san-antonio-consumer-region-readiness.mjs --build",
+    "verify:lp193": "node tools/lp193/build-san-antonio-consumer-region-readiness.mjs",
+    "test:lp193": "node --test tests/lp193/*.test.mjs"
   }
 }
