@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import {authority,discover,sha256,serialize,reconcile,validateGeometry,validateProposal,FAIL_CLOSED} from '../tools/acquire-certify-san-antonio-regionalization-sources.mjs';
+import {authority,discover,getJson,sha256,serialize,reconcile,validateGeometry,validateProposal,FAIL_CLOSED} from '../tools/acquire-certify-san-antonio-regionalization-sources.mjs';
 
 const portal={id:'CITY-ORG'};
 const official={id:'official-item',title:'SA Tomorrow Regional Centers and Community Areas',owner:'CoSAGIS',orgId:'CITY-ORG',type:'Feature Service',url:'https://services.arcgis.com/example/arcgis/rest/services/areas/FeatureServer'};
@@ -33,6 +33,26 @@ function discoveryReader({duplicate=false}={}){
   };
 }
 test('exact authoritative item/service path succeeds without portal orgId',async()=>{const result=await discover({readJson:discoveryReader()});assert.equal(result.organizationId,null);assert.equal(result.authorityBasis,'DIRECT_ARCGIS_ITEM_AND_SERVICE_METADATA');assert.equal(result.candidates.communityAreas[0].authority.certified,true);});
+test('network failure reports the portal metadata stage, exact URL, method, and underlying cause',async()=>{
+  const cause=Object.assign(new Error('getaddrinfo ENOTFOUND'),{code:'ENOTFOUND',errno:-3008,syscall:'getaddrinfo',hostname:'cosagis.maps.arcgis.com'});
+  const fetchError=new TypeError('fetch failed',{cause});
+  await assert.rejects(discover({readJson:async()=>{throw fetchError;}}),error=>{
+    assert.deepEqual(error.networkDiagnostic,{stage:'PORTAL_METADATA',url:'https://cosagis.maps.arcgis.com/sharing/rest/portals/self?f=json',method:'GET',status:null,errorName:'TypeError',errorMessage:'fetch failed',causeCode:'ENOTFOUND',causeErrno:-3008,causeSyscall:'getaddrinfo',causeHostname:'cosagis.maps.arcgis.com'});
+    assert.match(error.message,/NETWORK_FETCH_FAILURE/);return true;
+  });
+});
+test('network failure preserves the search stage and exact requested URL',async()=>{
+  await assert.rejects(discover({readJson:async url=>{if(url.includes('/portals/self'))return {};throw new TypeError('socket disconnected');}}),error=>{
+    assert.equal(error.networkDiagnostic.stage,'SEARCH');assert.equal(error.networkDiagnostic.method,'GET');assert.equal(error.networkDiagnostic.status,null);assert.equal(error.networkDiagnostic.errorName,'TypeError');assert.equal(error.networkDiagnostic.errorMessage,'socket disconnected');
+    assert.match(error.networkDiagnostic.url,/^https:\/\/cosagis\.maps\.arcgis\.com\/sharing\/rest\/search\?f=json&num=100&q=/);return true;
+  });
+});
+test('HTTP network failure reports response status with its stage and URL',async()=>{
+  const prior=globalThis.fetch;globalThis.fetch=async()=>({ok:false,status:503,statusText:'Service Unavailable'});
+  try{await assert.rejects(getJson('https://example.invalid/metadata?f=json','ITEM_METADATA'),error=>{
+    assert.deepEqual(error.networkDiagnostic,{stage:'ITEM_METADATA',url:'https://example.invalid/metadata?f=json',method:'GET',status:503,errorName:'HTTPResponseError',errorMessage:'HTTP 503 Service Unavailable'});return true;
+  });}finally{globalThis.fetch=prior;}
+});
 test('ambiguous multiple authoritative candidates fail closed',async()=>assert.rejects(discover({readJson:discoveryReader({duplicate:true})}),/SOURCE_LAYER_IDENTITY_AMBIGUOUS/));
 test('source hashes exact bytes deterministically',()=>assert.equal(sha256(Buffer.from('source\n')),crypto.createHash('sha256').update('source\n').digest('hex')));
 test('Community Area stable IDs must be unique',()=>{const x=records(17);x[16].stableId=1;assert.deepEqual(reconcile('communityAreas',x).duplicateIds,['1']);assert.equal(reconcile('communityAreas',x).certified,false);});
