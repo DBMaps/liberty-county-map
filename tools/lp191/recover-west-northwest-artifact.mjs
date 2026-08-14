@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import {TextDecoder} from 'node:util';
 import {fileURLToPath} from 'node:url';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
@@ -9,6 +10,28 @@ export const WRAPPER_IDENTITY={bytes:6735560,sha256:'d46219d2f61d26d40111bb37565
 export const RECOVERED_IDENTITY={bytes:427909,sha256:'1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181'};
 export const WEST={name:'West Northwest',globalId:'4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e'};
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+
+function identifyWrapper(raw,expected){
+  const rawSha256=sha(raw);
+  if(raw.length===expected.bytes&&rawSha256===expected.sha256)return {rawWrapperBytes:raw.length,rawWrapperSha256:rawSha256,wrapperMaterialization:'CANONICAL_LF_WRAPPER',normalized:raw};
+
+  // Decode strictly before considering line endings. Buffer.toString() would silently
+  // replace malformed UTF-8 and is therefore not an acceptable identity gate.
+  let text;
+  try{text=new TextDecoder('utf-8',{fatal:true}).decode(raw);}catch{throw Error('ACCIDENTAL_WRAPPER_INVALID_UTF8');}
+  let crlfCount=0;
+  for(let i=0;i<raw.length;i++){
+    if(raw[i]===13){
+      if(raw[i+1]!==10)throw Error('ACCIDENTAL_WRAPPER_LONE_CR');
+      crlfCount++;i++;
+    }
+  }
+  if(crlfCount===0)throw Error('ACCIDENTAL_WRAPPER_IDENTITY_MISMATCH');
+  const normalized=Buffer.from(text.replaceAll('\r\n','\n'),'utf8');
+  const normalizedSha256=sha(normalized);
+  if(normalized.length!==expected.bytes||normalizedSha256!==expected.sha256)throw Error('ACCIDENTAL_WRAPPER_IDENTITY_MISMATCH');
+  return {rawWrapperBytes:raw.length,rawWrapperSha256:rawSha256,wrapperMaterialization:'WINDOWS_CRLF_MATERIALIZATION_OF_CANONICAL_WRAPPER',normalized};
+}
 
 export function reconstructWrapper(wrapper,{bytes=RECOVERED_IDENTITY.bytes,sha256=RECOVERED_IDENTITY.sha256,validateGeoJson=true}={}){
   if(!wrapper||typeof wrapper!=='object'||Array.isArray(wrapper))throw Error('BUFFER_WRAPPER_JSON_OBJECT_REQUIRED');
@@ -43,11 +66,10 @@ export function reconstructWrapper(wrapper,{bytes=RECOVERED_IDENTITY.bytes,sha25
 export function verifyWrapperFile(file=ARTIFACT_PATH,options={}){
   const raw=fs.readFileSync(file);
   const expectedWrapper=options.wrapperIdentity??WRAPPER_IDENTITY;
-  const wrapperHash=sha(raw);
-  if(raw.length!==expectedWrapper.bytes||wrapperHash!==expectedWrapper.sha256)throw Error('ACCIDENTAL_WRAPPER_IDENTITY_MISMATCH');
-  let wrapper;try{wrapper=JSON.parse(raw);}catch{throw Error('ACCIDENTAL_WRAPPER_NOT_JSON');}
+  const identity=identifyWrapper(raw,expectedWrapper);
+  let wrapper;try{wrapper=JSON.parse(identity.normalized);}catch{throw Error('ACCIDENTAL_WRAPPER_NOT_JSON');}
   const recovered=reconstructWrapper(wrapper,options.recoveredIdentity);
-  return {status:'RECOVERY_METHOD_CERTIFIED',mode:'VERIFY_NON_DESTRUCTIVE',artifactPath:file,wrapper:{bytes:raw.length,sha256:wrapperHash},reconstructed:{bytes:recovered.length,sha256:sha(recovered)},buffer:recovered};
+  return {status:'RECOVERY_METHOD_CERTIFIED',mode:'VERIFY_NON_DESTRUCTIVE',artifactPath:file,rawWrapperBytes:identity.rawWrapperBytes,rawWrapperSha256:identity.rawWrapperSha256,wrapperMaterialization:identity.wrapperMaterialization,normalizedWrapperBytes:identity.normalized.length,normalizedWrapperSha256:sha(identity.normalized),recoveredBytes:recovered.length,recoveredSha256:sha(recovered),buffer:recovered};
 }
 
 export function recoverWrapperFile(file=ARTIFACT_PATH,options={}){
@@ -63,6 +85,6 @@ function main(){
   if(recover&&verify)throw Error('RECOVERY_MODES_MUTUALLY_EXCLUSIVE');
   const result=recover?recoverWrapperFile():verifyWrapperFile();
   const output={...result,buffer:undefined};
-  console.log(process.argv.includes('--json')?JSON.stringify(output,null,2):`${output.status}: ${output.reconstructed.bytes}/${output.reconstructed.sha256}`);
+  console.log(process.argv.includes('--json')?JSON.stringify(output,null,2):`${output.status}: ${output.recoveredBytes}/${output.recoveredSha256}`);
 }
 if(process.argv[1]===fileURLToPath(import.meta.url))try{main();}catch(error){console.error(error.message);process.exitCode=1;}
