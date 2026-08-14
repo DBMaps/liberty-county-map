@@ -11,17 +11,25 @@ export const EXPECTED={communityAreas:17,regionalCenters:13};
 export const EXPECTED_CENTERS=Object.freeze(['Brooks','Downtown','Fort Sam Houston','Greater Airport Area','Highway 151 and Loop 1604','Medical Center','Midtown','Northeast I-35 and Loop 410','Port San Antonio','Rolling Oaks','Stone Oak','Texas A&M-San Antonio','UTSA']);
 export const FAIL_CLOSED=Object.freeze(['OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED','SOURCE_LAYER_IDENTITY_AMBIGUOUS','COMMUNITY_AREA_REGISTRY_NOT_CERTIFIED','DUPLICATE_STABLE_IDS','REQUIRED_GEOMETRY_MISSING','SOURCE_IDENTITY_NOT_HASHED_OR_PRESERVED','EXPECTED_COUNT_CONFLICT_UNRECONCILED','TOPOLOGY_PREVENTS_DETERMINISTIC_CONSOLIDATION','NON_AUTHORITATIVE_SOURCE_REQUIRED']);
 const TYPES={communityAreas:['community area','community areas'],regionalCenters:['regional center','regional centers']};
+const CITY_OWNERS=new Set(['cosagis','cityofsanantonio']);
+const ARCGIS_SERVICE_HOST=/^(?:services\d*|utility)\.arcgis\.com$/i;
 
 export function sha256(bytes){return crypto.createHash('sha256').update(bytes).digest('hex');}
 export function stable(value){if(Array.isArray(value))return value.map(stable);if(value&&typeof value==='object')return Object.fromEntries(Object.keys(value).sort().map(k=>[k,stable(value[k])]));return value;}
 export function serialize(value){return JSON.stringify(stable(value),null,2)+'\n';}
-export function authority(item,portal){
-  const url=new URL(item.url||OFFICIAL_PORTAL);
-  const approvedHost=new URL(OFFICIAL_PORTAL).hostname;
-  const ownerOk=typeof item.owner==='string'&&/^(cosagis|cityofsanantonio)$/i.test(item.owner);
-  const orgOk=Boolean(portal?.id)&&item.orgId===portal.id;
-  const serviceOk=/^https:\/\//.test(item.url||'')&&(/\.arcgis\.com$/.test(url.hostname)||url.hostname==='gis.sanantonio.gov');
-  return {certified:ownerOk&&orgOk&&serviceOk,ownerOk,orgOk,serviceOk,portalId:portal?.id||null,reason:ownerOk&&orgOk&&serviceOk?'CITY_CONTROLLED_ARCGIS_IDENTITY_CONFIRMED':'OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED'};
+export function authority(item,portal,service={}){
+  let serviceHost=null;try{serviceHost=new URL(item.url).hostname.toLowerCase();}catch{}
+  const owner=typeof item.owner==='string'?item.owner:null;
+  const ownerOk=Boolean(owner)&&CITY_OWNERS.has(owner.toLowerCase());
+  const portalId=portal?.id||null, itemOrgId=item.orgId||null;
+  const orgOk=portalId&&itemOrgId?itemOrgId===portalId:true;
+  const serviceHostOk=serviceHost==='gis.sanantonio.gov'||ARCGIS_SERVICE_HOST.test(serviceHost||'');
+  const serviceTypeOk=/^(?:Feature|Map) Service$/i.test(item.type||'')&&Array.isArray(service.layers);
+  const serviceItemId=service.serviceItemId||null;
+  const serviceIdentityOk=Boolean(serviceItemId)&&serviceItemId===item.id;
+  const serviceUrlOk=typeof item.url==='string'&&/^https:\/\//.test(item.url)&&/\/(?:Feature|Map)Server\/?$/i.test(item.url);
+  const certified=ownerOk&&orgOk&&serviceHostOk&&serviceTypeOk&&serviceIdentityOk&&serviceUrlOk;
+  return {certified,ownerOk,orgOk,serviceHostOk,serviceTypeOk,serviceIdentityOk,serviceUrlOk,evidence:{itemId:item.id||null,itemTitle:item.title||null,itemOwner:owner,itemOrganizationId:itemOrgId,portalOrganizationId:portalId,portalOrganizationName:portal?.name||null,serviceUrl:item.url||null,serviceHost,serviceItemId,serviceName:service.name||service.mapName||null,serviceLayerCount:Array.isArray(service.layers)?service.layers.length:null},reason:certified?'CITY_CONTROLLED_ARCGIS_ITEM_AND_SERVICE_CONFIRMED':'OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED'};
 }
 export function reconcile(kind,records,nameField='NAME'){
   const expected=EXPECTED[kind], ids=records.map(x=>String(x.stableId)), names=records.map(x=>String(x[nameField]));
@@ -41,13 +49,17 @@ export function validateProposal(groups,atomicIds){
 }
 function args(argv){const modes=argv.filter(x=>['--discover','--acquire','--verify'].includes(x));if(modes.length!==1)throw new Error('Exactly one of --discover, --acquire, or --verify is required');return {mode:modes[0].slice(2),json:argv.includes('--json')};}
 async function getJson(url){const r=await fetch(url,{headers:{'user-agent':'Gridly-owner-source-certification/1'}});if(!r.ok)throw new Error(`HTTP ${r.status}: ${url}`);return r.json();}
-async function portal(){return getJson(`${OFFICIAL_PORTAL}/sharing/rest/portals/self?f=json`);}
-async function candidates(portalId,term){const q=encodeURIComponent(`orgid:${portalId} (${term.map(x=>`title:\"${x}\"`).join(' OR ')}) type:\"Feature Service\"`);return (await getJson(`${OFFICIAL_PORTAL}/sharing/rest/search?f=json&num=100&q=${q}`)).results||[];}
-async function layerDetails(item){const service=await getJson(`${item.url}?f=json`);const layers=[];for(const x of service.layers||[])layers.push({...x,metadata:await getJson(`${item.url}/${x.id}?f=json`)});return {service,layers};}
-export async function discover(){
-  const p=await portal();if(!p.id)throw new Error('OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED: portal has no organization id');const found={};
-  for(const [kind,terms] of Object.entries(TYPES)){const items=await candidates(p.id,terms);const certified=[];for(const item of items){const a=authority(item,p);if(a.certified)certified.push({...item,authority:a,details:await layerDetails(item)});}found[kind]=certified;}
-  return {schemaVersion:'gridly.san-antonio-source-discovery.v1',officialPortal:OFFICIAL_PORTAL,organizationId:p.id,organizationName:p.name||null,candidates:found,writePerformed:false};
+async function portal(read=getJson){try{return await read(`${OFFICIAL_PORTAL}/sharing/rest/portals/self?f=json`);}catch{return {};}}
+async function candidates(portalId,terms,read=getJson){const scope=portalId?`orgid:${portalId} `:'';const q=encodeURIComponent(`${scope}(${terms.map(x=>`title:\"${x}\"`).join(' OR ')} OR title:\"SA Tomorrow Regional Centers and Community Areas\") (type:\"Feature Service\" OR type:\"Map Service\")`);return (await read(`${OFFICIAL_PORTAL}/sharing/rest/search?f=json&num=100&q=${q}`)).results||[];}
+async function itemDetails(id,read=getJson){return read(`${OFFICIAL_PORTAL}/sharing/rest/content/items/${encodeURIComponent(id)}?f=json`);}
+async function layerDetails(item,read=getJson){const service=await read(`${item.url}?f=json`);const layers=[];for(const x of service.layers||[])layers.push({...x,metadata:await read(`${item.url}/${x.id}?f=json`)});return {service,layers};}
+function candidateTitle(item,terms){const title=String(item.title||'').toLowerCase();return title==='sa tomorrow regional centers and community areas'||terms.some(term=>title.includes(term));}
+export async function discover({readJson=getJson}={}){
+  const p=await portal(readJson),found={};
+  for(const [kind,terms] of Object.entries(TYPES)){const leads=await candidates(p.id,terms,readJson),certified=[];for(const lead of leads){if(!lead.id)continue;const item=await itemDetails(lead.id,readJson);if(item.id!==lead.id||!candidateTitle(item,terms))continue;const details=await layerDetails(item,readJson);const a=authority(item,p,details.service);if(a.certified)certified.push({...item,authority:a,details});}found[kind]=certified;}
+  const result={schemaVersion:'gridly.san-antonio-source-discovery.v2',officialPortal:OFFICIAL_PORTAL,organizationId:p.id||null,organizationName:p.name||null,authorityBasis:'DIRECT_ARCGIS_ITEM_AND_SERVICE_METADATA',candidates:found,writePerformed:false};
+  const chosen=selectedLayers(result);for(const kind of Object.keys(TYPES))if(chosen.filter(x=>x.kind===kind).length!==1)throw new Error(`SOURCE_LAYER_IDENTITY_AMBIGUOUS: ${kind}`);
+  return result;
 }
 function selectedLayers(discovery){const out=[];for(const [kind,items] of Object.entries(discovery.candidates)){for(const item of items)for(const layer of item.details.layers){const n=(layer.metadata.name||'').toLowerCase();if(TYPES[kind].some(t=>n.includes(t)))out.push({kind,item,layer});}}return out;}
 async function queryBytes(serviceUrl,layerId){const params=new URLSearchParams({f:'geojson',where:'1=1',outFields:'*',returnGeometry:'true',outSR:'4326',orderByFields:'OBJECTID ASC'});const url=`${serviceUrl}/${layerId}/query?${params}`;const r=await fetch(url);if(!r.ok)throw new Error(`HTTP ${r.status}: ${url}`);return {url,params:Object.fromEntries(params),bytes:Buffer.from(await r.arrayBuffer())};}
