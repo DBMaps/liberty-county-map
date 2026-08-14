@@ -38,7 +38,9 @@ function query(ogrinfo,dataset,sql,runner){
 }
 
 const FEATURE_SQL=`SELECT
-  COALESCE(GlobalID, CAST(SubPlanID AS TEXT), CAST(OBJECTID AS TEXT)) AS sourceFeatureIdentity,
+  Name AS sourceName,
+  GlobalID AS sourceGlobalID,
+  PlanType AS sourcePlanType,
   GeometryType(geom) AS geometryType,
   ST_NumGeometries(geom) AS componentCount,
   ST_IsValid(geom) AS geometryValid,
@@ -51,14 +53,14 @@ const FEATURE_SQL=`SELECT
   ST_Contains(geom, ST_Centroid(geom)) AS centroidContained,
   ST_X(ST_PointOnSurface(geom)) AS pointOnSurfaceX,
   ST_Y(ST_PointOnSurface(geom)) AS pointOnSurfaceY
-FROM areas ORDER BY Name COLLATE NOCASE, sourceFeatureIdentity`;
+FROM areas ORDER BY Name COLLATE NOCASE`;
 
 const OVERLAP_SQL=`SELECT
   a.Name AS firstName, b.Name AS secondName,
   a.PlanType AS firstPlanType, b.PlanType AS secondPlanType,
   ST_Area(ST_Intersection(a.geom,b.geom)) AS overlapAreaSquareMeters,
   ST_Equals(a.geom,b.geom) AS duplicateGeometry
-FROM areas a JOIN areas b ON a.fid < b.fid
+FROM areas a JOIN areas b ON a.Name COLLATE NOCASE < b.Name COLLATE NOCASE
 WHERE ST_Intersects(a.geom,b.geom)
 ORDER BY firstName COLLATE NOCASE, secondName COLLATE NOCASE`;
 
@@ -68,8 +70,8 @@ export function analyzeWithGdal(sourceFile,{bin=process.env.GRIDLY_GDAL_BIN,runn
   const work=fs.mkdtempSync(path.join(tempRoot,'gridly-sa-tomorrow-'));
   const projected=path.join(work,'sa-tomorrow-epsg-3083.gpkg');
   try{
-    execute(binaries.ogr2ogr,['-f','GPKG',projected,sourceFile,'-nln','areas','-t_srs',WORKING_CRS,'-nlt','PROMOTE_TO_MULTI','-lco','SPATIAL_INDEX=YES'],runner,'ogr2ogr');
-    const features=query(binaries.ogrinfo,projected,FEATURE_SQL,runner).map(p=>({sourceFeatureIdentity:String(p.sourceFeatureIdentity),geometryType:p.geometryType,componentCount:Number(p.componentCount),geometryStatus:Number(p.geometryValid)===1?'VALID':'INVALID',areaSquareMeters:Number(p.areaSquareMeters),calculatedSquareMiles:Number(p.calculatedSquareMiles),projectedBounds:[Number(p.minX),Number(p.minY),Number(p.maxX),Number(p.maxY)],centroid:[Number(p.centroidX),Number(p.centroidY)],centroidContained:Number(p.centroidContained)===1,pointOnSurface:[Number(p.pointOnSurfaceX),Number(p.pointOnSurfaceY)],longAxisExtentMeters:Math.max(Number(p.maxX)-Number(p.minX),Number(p.maxY)-Number(p.minY))}));
+    execute(binaries.ogr2ogr,['-f','GPKG',projected,sourceFile,'-nln','areas','-select','Name,GlobalID,PlanType','-t_srs',WORKING_CRS,'-nlt','PROMOTE_TO_MULTI','-lco','SPATIAL_INDEX=YES'],runner,'ogr2ogr');
+    const features=query(binaries.ogrinfo,projected,FEATURE_SQL,runner).map(p=>({sourceName:String(p.sourceName),sourceGlobalID:p.sourceGlobalID==null?null:String(p.sourceGlobalID),sourcePlanType:String(p.sourcePlanType),geometryType:p.geometryType,componentCount:Number(p.componentCount),geometryStatus:Number(p.geometryValid)===1?'VALID':'INVALID',areaSquareMeters:Number(p.areaSquareMeters),calculatedSquareMiles:Number(p.calculatedSquareMiles),projectedBounds:[Number(p.minX),Number(p.minY),Number(p.maxX),Number(p.maxY)],centroid:[Number(p.centroidX),Number(p.centroidY)],centroidContained:Number(p.centroidContained)===1,pointOnSurface:[Number(p.pointOnSurfaceX),Number(p.pointOnSurfaceY)],longAxisExtentMeters:Math.max(Number(p.maxX)-Number(p.minX),Number(p.maxY)-Number(p.minY))}));
     const pairs=query(binaries.ogrinfo,projected,OVERLAP_SQL,runner);
     const pairwiseOverlaps=pairs.filter(p=>Number(p.overlapAreaSquareMeters)>0.01).map(p=>({first:p.firstName,second:p.secondName,firstPlanType:p.firstPlanType,secondPlanType:p.secondPlanType,overlapAreaSquareMeters:Number(p.overlapAreaSquareMeters)}));
     const duplicateGeometries=pairs.filter(p=>Number(p.duplicateGeometry)===1).map(p=>[p.firstName,p.secondName]);
@@ -77,7 +79,7 @@ export function analyzeWithGdal(sourceFile,{bin=process.env.GRIDLY_GDAL_BIN,runn
     const crossTypeOverlapCount=pairwiseOverlaps.filter(p=>(p.firstPlanType==='Community')!==(p.secondPlanType==='Community')).length;
     const sameTypeOverlapCount=pairwiseOverlaps.length-crossTypeOverlapCount;
     const regionalCenterCommunityAreaRelationship=crossTypeOverlapCount?'CROSS_TYPE_OVERLAY_PRESENT':pairwiseOverlaps.length?'SAME_TYPE_OVERLAP_PRESENT':'NON_OVERLAPPING_ATOMIC_PARTITION';
-    return {gdalVersions:versions,features,topology:{pairwiseOverlaps,pairwiseOverlapCount:pairwiseOverlaps.length,crossTypeOverlapCount,sameTypeOverlapCount,duplicateGeometries,disconnectedGeometries:features.filter(x=>x.componentCount>1).map(x=>x.sourceFeatureIdentity),totalUnionAreaSquareMeters:Number(union?.totalUnionAreaSquareMeters),regionalCenterCommunityAreaRelationship,gaps:{status:'NOT_DETERMINISTIC_WITHOUT_GOVERNED_CITY_LIMIT_BOUNDARY',areaSquareMeters:null}}};
+    return {gdalVersions:versions,features,topology:{pairwiseOverlaps,pairwiseOverlapCount:pairwiseOverlaps.length,crossTypeOverlapCount,sameTypeOverlapCount,duplicateGeometries,disconnectedGeometries:features.filter(x=>x.componentCount>1).map(x=>x.sourceName),totalUnionAreaSquareMeters:Number(union?.totalUnionAreaSquareMeters),regionalCenterCommunityAreaRelationship,gaps:{status:'NOT_DETERMINISTIC_WITHOUT_GOVERNED_CITY_LIMIT_BOUNDARY',areaSquareMeters:null}}};
   } finally {
     fs.rmSync(work,{recursive:true,force:true});
   }
