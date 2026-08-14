@@ -14,6 +14,10 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "lp194:whatif": "node tools/lp194/activate-san-antonio-runtime.mjs --whatif",
+    "lp194:apply": "node tools/lp194/activate-san-antonio-runtime.mjs --apply",
+    "verify:lp194": "node tools/lp194/activate-san-antonio-runtime.mjs --verify",
+    "test:lp194": "node --test tests/lp194-san-antonio-runtime-activation.test.mjs",
     "lp191:whatif": "node tools/lp191/bexar-place-overlay.mjs --whatif",
     "lp191:apply": "node tools/lp191/bexar-place-overlay.mjs --apply",
     "verify:lp191": "node tools/lp191/bexar-place-overlay.mjs --verify",

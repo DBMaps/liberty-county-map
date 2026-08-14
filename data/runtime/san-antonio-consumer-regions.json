@@ -1,0 +1,179 @@
+{
+  "schemaVersion": "gridly.san-antonio-consumer-regions.runtime.v1",
+  "status": "SAN_ANTONIO_CONSUMER_REGIONS_RUNTIME_ACTIVE_WITH_SELECTIVE_FAR_SOUTHWEST_LIMITATION",
+  "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+  "geometrySource": {
+    "path": "evidence/lp193/san-antonio-consumer-region-design-geometry.geojson",
+    "bytes": 3577612,
+    "sha256": "c8aa67df96e0ac21a9c339eb3eebf67d528522786ab662d8f330eb883dcedfae",
+    "features": 9
+  },
+  "independentPlaceCdpCount": 33,
+  "farSouthwestActivated": false,
+  "regions": [
+    {
+      "regionId": "central-san-antonio",
+      "consumerLabel": "Central San Antonio",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.43715940524094,
+        "longitude": -98.52110359096712
+      },
+      "startupZoom": 11.16,
+      "atomicMembership": [
+        "Downtown",
+        "Eastside",
+        "Midtown",
+        "Near North",
+        "Westside"
+      ],
+      "geometryFeatureId": "central-san-antonio",
+      "limitation": null
+    },
+    {
+      "regionId": "medical-region",
+      "consumerLabel": "Medical Region",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.495636300789577,
+        "longitude": -98.51516602675414
+      },
+      "startupZoom": 11.36,
+      "atomicMembership": [
+        "Medical Center",
+        "Near Northwest",
+        "North Central"
+      ],
+      "geometryFeatureId": "medical-region",
+      "limitation": null
+    },
+    {
+      "regionId": "airport-fort-sam",
+      "consumerLabel": "Airport / Fort Sam",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.502531081732176,
+        "longitude": -98.44027413969336
+      },
+      "startupZoom": 11.03,
+      "atomicMembership": [
+        "Fort Sam Houston",
+        "Greater Airport Area",
+        "Near Northeast"
+      ],
+      "geometryFeatureId": "airport-fort-sam",
+      "limitation": null
+    },
+    {
+      "regionId": "stone-oak-far-north",
+      "consumerLabel": "Stone Oak / Far North",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.610029480200975,
+        "longitude": -98.49512037206648
+      },
+      "startupZoom": 11.22,
+      "atomicMembership": [
+        "Far North",
+        "Stone Oak"
+      ],
+      "geometryFeatureId": "stone-oak-far-north",
+      "limitation": null
+    },
+    {
+      "regionId": "utsa-northwest",
+      "consumerLabel": "UTSA / Northwest",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.591886635851893,
+        "longitude": -98.61471921652927
+      },
+      "startupZoom": 10.69,
+      "atomicMembership": [
+        "Northwest",
+        "UTSA",
+        "West Northwest"
+      ],
+      "geometryFeatureId": "utsa-northwest",
+      "limitation": null
+    },
+    {
+      "regionId": "far-west-alamo-ranch",
+      "consumerLabel": "Far West / Alamo Ranch",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.435772836272815,
+        "longitude": -98.65764791813613
+      },
+      "startupZoom": 11.66,
+      "atomicMembership": [
+        "Far West",
+        "Highway 151 and Loop 1604"
+      ],
+      "geometryFeatureId": "far-west-alamo-ranch",
+      "limitation": null
+    },
+    {
+      "regionId": "northeast-san-antonio",
+      "consumerLabel": "Northeast San Antonio",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.581475901424064,
+        "longitude": -98.40784840163508
+      },
+      "startupZoom": 10.67,
+      "atomicMembership": [
+        "Far East",
+        "NE I-35 and Loop 410",
+        "Northeast",
+        "Rolling Oaks"
+      ],
+      "geometryFeatureId": "northeast-san-antonio",
+      "limitation": null
+    },
+    {
+      "regionId": "southside-brooks",
+      "consumerLabel": "Southside / Brooks",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.295473924732278,
+        "longitude": -98.50839898231199
+      },
+      "startupZoom": 10.77,
+      "atomicMembership": [
+        "Brooks",
+        "Far South",
+        "South",
+        "Southeast",
+        "Texas AM - San Antonio"
+      ],
+      "geometryFeatureId": "southside-brooks",
+      "limitation": null
+    },
+    {
+      "regionId": "southwest-port-san-antonio",
+      "consumerLabel": "Southwest / Port San Antonio",
+      "parentCity": "San Antonio",
+      "countyId": "bexar-tx",
+      "semanticCenter": {
+        "latitude": 29.36192203964279,
+        "longitude": -98.57515605724419
+      },
+      "startupZoom": 11.27,
+      "atomicMembership": [
+        "Port San Antonio",
+        "Southwest"
+      ],
+      "geometryFeatureId": "southwest-port-san-antonio",
+      "limitation": "PARTIAL_CERTIFIED_REGION_PENDING_FAR_SOUTHWEST_CLARIFICATION"
+    }
+  ]
+}
