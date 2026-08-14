@@ -472,8 +472,7 @@
     "acquire:san-antonio-regionalization-source": "node tools/acquire-certify-san-antonio-regionalization-sources.mjs --acquire",
     "verify:san-antonio-regionalization-source": "node tools/acquire-certify-san-antonio-regionalization-sources.mjs --verify",
     "test:san-antonio-sa-tomorrow-geometry": "node --test tests/san-antonio-sa-tomorrow-geometry-certification.test.mjs",
-    "discover:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --discover",
-    "acquire:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --acquire",
+    "certify:san-antonio-sa-tomorrow-geometry-offline": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --certify-offline",
     "verify:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --verify",
     "analyze:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --analyze"
   }
