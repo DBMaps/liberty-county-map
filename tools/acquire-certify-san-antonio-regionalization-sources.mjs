@@ -48,11 +48,27 @@ export function validateProposal(groups,atomicIds){
   if(new Set(used).size!==used.length)throw new Error('DUPLICATE_CONSOLIDATION_MEMBERSHIP');if(used.length!==atomicIds.length)throw new Error('INCOMPLETE_CONSOLIDATION_MEMBERSHIP');return true;
 }
 function args(argv){const modes=argv.filter(x=>['--discover','--acquire','--verify'].includes(x));if(modes.length!==1)throw new Error('Exactly one of --discover, --acquire, or --verify is required');return {mode:modes[0].slice(2),json:argv.includes('--json')};}
-async function getJson(url){const r=await fetch(url,{headers:{'user-agent':'Gridly-owner-source-certification/1'}});if(!r.ok)throw new Error(`HTTP ${r.status}: ${url}`);return r.json();}
-async function portal(read=getJson){try{return await read(`${OFFICIAL_PORTAL}/sharing/rest/portals/self?f=json`);}catch{return {};}}
-async function candidates(portalId,terms,read=getJson){const scope=portalId?`orgid:${portalId} `:'';const q=encodeURIComponent(`${scope}(${terms.map(x=>`title:\"${x}\"`).join(' OR ')} OR title:\"SA Tomorrow Regional Centers and Community Areas\") (type:\"Feature Service\" OR type:\"Map Service\")`);return (await read(`${OFFICIAL_PORTAL}/sharing/rest/search?f=json&num=100&q=${q}`)).results||[];}
-async function itemDetails(id,read=getJson){return read(`${OFFICIAL_PORTAL}/sharing/rest/content/items/${encodeURIComponent(id)}?f=json`);}
-async function layerDetails(item,read=getJson){const service=await read(`${item.url}?f=json`);const layers=[];for(const x of service.layers||[])layers.push({...x,metadata:await read(`${item.url}/${x.id}?f=json`)});return {service,layers};}
+function networkFailure(error,{stage,url,method='GET',status=null}={}){
+  if(error?.networkDiagnostic)return error;
+  const cause=error?.cause;
+  const diagnostic={stage,url,method,status,errorName:error?.name||'Error',errorMessage:error?.message||String(error)};
+  if(cause?.code!==undefined)diagnostic.causeCode=cause.code;
+  if(cause?.errno!==undefined)diagnostic.causeErrno=cause.errno;
+  if(cause?.syscall!==undefined)diagnostic.causeSyscall=cause.syscall;
+  if(cause?.hostname!==undefined)diagnostic.causeHostname=cause.hostname;
+  const failure=new Error(`NETWORK_FETCH_FAILURE: ${JSON.stringify(diagnostic)}`);
+  failure.name='NetworkFetchDiagnosticError';failure.networkDiagnostic=diagnostic;failure.cause=error;return failure;
+}
+async function readAtStage(read,url,stage){try{return await read(url,stage);}catch(error){throw networkFailure(error,{stage,url});}}
+export async function getJson(url,stage){
+  let r;try{r=await fetch(url,{method:'GET',headers:{'user-agent':'Gridly-owner-source-certification/1'}});}catch(error){throw networkFailure(error,{stage,url});}
+  if(!r.ok){const error=new Error(`HTTP ${r.status}${r.statusText?` ${r.statusText}`:''}`);error.name='HTTPResponseError';throw networkFailure(error,{stage,url,status:r.status});}
+  try{return await r.json();}catch(error){throw networkFailure(error,{stage,url,status:r.status});}
+}
+async function portal(read=getJson){return readAtStage(read,`${OFFICIAL_PORTAL}/sharing/rest/portals/self?f=json`,'PORTAL_METADATA');}
+async function candidates(portalId,terms,read=getJson){const scope=portalId?`orgid:${portalId} `:'';const q=encodeURIComponent(`${scope}(${terms.map(x=>`title:\"${x}\"`).join(' OR ')} OR title:\"SA Tomorrow Regional Centers and Community Areas\") (type:\"Feature Service\" OR type:\"Map Service\")`);return (await readAtStage(read,`${OFFICIAL_PORTAL}/sharing/rest/search?f=json&num=100&q=${q}`,'SEARCH')).results||[];}
+async function itemDetails(id,read=getJson){return readAtStage(read,`${OFFICIAL_PORTAL}/sharing/rest/content/items/${encodeURIComponent(id)}?f=json`,'ITEM_METADATA');}
+async function layerDetails(item,read=getJson){const service=await readAtStage(read,`${item.url}?f=json`,'SERVICE_METADATA');const layers=[];for(const x of service.layers||[])layers.push({...x,metadata:await readAtStage(read,`${item.url}/${x.id}?f=json`,'LAYER_METADATA')});return {service,layers};}
 function candidateTitle(item,terms){const title=String(item.title||'').toLowerCase();return title==='sa tomorrow regional centers and community areas'||terms.some(term=>title.includes(term));}
 export async function discover({readJson=getJson}={}){
   const p=await portal(readJson),found={};
@@ -62,7 +78,7 @@ export async function discover({readJson=getJson}={}){
   return result;
 }
 function selectedLayers(discovery){const out=[];for(const [kind,items] of Object.entries(discovery.candidates)){for(const item of items)for(const layer of item.details.layers){const n=(layer.metadata.name||'').toLowerCase();if(TYPES[kind].some(t=>n.includes(t)))out.push({kind,item,layer});}}return out;}
-async function queryBytes(serviceUrl,layerId){const params=new URLSearchParams({f:'geojson',where:'1=1',outFields:'*',returnGeometry:'true',outSR:'4326',orderByFields:'OBJECTID ASC'});const url=`${serviceUrl}/${layerId}/query?${params}`;const r=await fetch(url);if(!r.ok)throw new Error(`HTTP ${r.status}: ${url}`);return {url,params:Object.fromEntries(params),bytes:Buffer.from(await r.arrayBuffer())};}
+async function queryBytes(serviceUrl,layerId){const params=new URLSearchParams({f:'geojson',where:'1=1',outFields:'*',returnGeometry:'true',outSR:'4326',orderByFields:'OBJECTID ASC'});const url=`${serviceUrl}/${layerId}/query?${params}`;let r;try{r=await fetch(url,{method:'GET'});}catch(error){throw networkFailure(error,{stage:'LAYER_METADATA',url});}if(!r.ok){const error=new Error(`HTTP ${r.status}${r.statusText?` ${r.statusText}`:''}`);error.name='HTTPResponseError';throw networkFailure(error,{stage:'LAYER_METADATA',url,status:r.status});}try{return {url,params:Object.fromEntries(params),bytes:Buffer.from(await r.arrayBuffer())};}catch(error){throw networkFailure(error,{stage:'LAYER_METADATA',url,status:r.status});}}
 export async function acquire(){
   const d=await discover(), chosen=selectedLayers(d);for(const kind of Object.keys(TYPES))if(chosen.filter(x=>x.kind===kind).length!==1)throw new Error(`SOURCE_LAYER_IDENTITY_AMBIGUOUS: ${kind}`);
   fs.mkdirSync(path.join(ROOT,EVIDENCE_DIR),{recursive:true});const sources=[];
