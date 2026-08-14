@@ -11,6 +11,8 @@ reports/*.json text eol=lf
 reports/**/*.json text eol=lf
 # LP185's generated Markdown is governed byte-deterministic evidence.
 reports/lp185/post-preview-launch-readiness-reconciliation.md text eol=lf
+# LP195's governed Markdown must remain byte-stable on every platform.
+reports/lp195/texas-major-metro-consumer-coverage-audit.md text eol=lf
 data/*.json text eol=lf
 data/**/*.json text eol=lf
 evidence/*.json text eol=lf
