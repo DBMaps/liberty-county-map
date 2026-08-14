@@ -20,7 +20,8 @@
         "latitude": 29.43715940524094,
         "longitude": -98.52110359096712
       },
-      "startupZoom": 11.16,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Downtown",
         "Eastside",
@@ -40,7 +41,8 @@
         "latitude": 29.495636300789577,
         "longitude": -98.51516602675414
       },
-      "startupZoom": 11.36,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Medical Center",
         "Near Northwest",
@@ -58,7 +60,8 @@
         "latitude": 29.502531081732176,
         "longitude": -98.44027413969336
       },
-      "startupZoom": 11.03,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Fort Sam Houston",
         "Greater Airport Area",
@@ -76,7 +79,8 @@
         "latitude": 29.610029480200975,
         "longitude": -98.49512037206648
       },
-      "startupZoom": 11.22,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Far North",
         "Stone Oak"
@@ -93,7 +97,8 @@
         "latitude": 29.591886635851893,
         "longitude": -98.61471921652927
       },
-      "startupZoom": 10.69,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Northwest",
         "UTSA",
@@ -111,7 +116,8 @@
         "latitude": 29.435772836272815,
         "longitude": -98.65764791813613
       },
-      "startupZoom": 11.66,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Far West",
         "Highway 151 and Loop 1604"
@@ -128,7 +134,8 @@
         "latitude": 29.581475901424064,
         "longitude": -98.40784840163508
       },
-      "startupZoom": 10.67,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Far East",
         "NE I-35 and Loop 410",
@@ -147,7 +154,8 @@
         "latitude": 29.295473924732278,
         "longitude": -98.50839898231199
       },
-      "startupZoom": 10.77,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Brooks",
         "Far South",
@@ -167,7 +175,8 @@
         "latitude": 29.36192203964279,
         "longitude": -98.57515605724419
       },
-      "startupZoom": 11.27,
+      "startupZoom": 13.5,
+      "startupZoomPolicy": "OWNER_APPROVED_RUNTIME_PRESENTATION_ZOOM",
       "atomicMembership": [
         "Port San Antonio",
         "Southwest"
