@@ -1,0 +1,9 @@
+{
+  "candidateConsolidations": [],
+  "namingStatus": "CONSUMER_NAME_REQUIRES_OWNER_APPROVAL",
+  "placePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+  "schemaVersion": "gridly.san-antonio-consolidation-proposal-template.v1",
+  "semanticCenterStatus": "BLOCKED_PENDING_CERTIFIED_GEOMETRY",
+  "startupZoomStatus": "STARTUP_ZOOM_REQUIRES_OWNER_BROWSER_VALIDATION",
+  "status": "NO_PROPOSAL_AUTHORIZED_PENDING_SOURCE_AND_TOPOLOGY_CERTIFICATION"
+}

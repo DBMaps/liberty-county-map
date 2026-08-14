@@ -1,0 +1,6 @@
+{
+  "analysis": null,
+  "requiredWorkingCrs": "EPSG:3083",
+  "schemaVersion": "gridly.san-antonio-geometry-analysis-template.v1",
+  "status": "BLOCKED_PENDING_CERTIFIED_SOURCE_BYTES"
+}

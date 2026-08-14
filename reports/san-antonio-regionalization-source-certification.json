@@ -1,0 +1,18 @@
+{
+  "failClosedGates": [
+    "OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED",
+    "SOURCE_LAYER_IDENTITY_AMBIGUOUS",
+    "COMMUNITY_AREA_REGISTRY_NOT_CERTIFIED",
+    "DUPLICATE_STABLE_IDS",
+    "REQUIRED_GEOMETRY_MISSING",
+    "SOURCE_IDENTITY_NOT_HASHED_OR_PRESERVED",
+    "EXPECTED_COUNT_CONFLICT_UNRECONCILED",
+    "TOPOLOGY_PREVENTS_DETERMINISTIC_CONSOLIDATION",
+    "NON_AUTHORITATIVE_SOURCE_REQUIRED"
+  ],
+  "officialPortal": "https://cosagis.maps.arcgis.com",
+  "ownerExecutionRequired": true,
+  "schemaVersion": "gridly.san-antonio-source-certification-template.v1",
+  "sources": [],
+  "status": "OFFICIAL_SOURCE_DISCOVERY_BLOCKED_NETWORK_OWNER_ACQUISITION_REQUIRED"
+}
