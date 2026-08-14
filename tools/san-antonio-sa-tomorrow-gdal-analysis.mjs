@@ -31,10 +31,16 @@ export function verifyGdalBinaries(binaries,{runner=spawnSync}={}){
   return {ogrinfoVersion:infoVersion,ogr2ogrVersion:convertVersion};
 }
 
-function query(ogrinfo,dataset,sql,runner){
-  const output=execute(ogrinfo,['-ro','-json','-geom=NO','-dialect','SQLite','-sql',sql,dataset],runner,'ogrinfo');
-  let parsed;try{parsed=JSON.parse(output);}catch{throw new Error('OGRINFO_JSON_OUTPUT_INVALID');}
-  return parsed.features?.map(feature=>feature.properties)||[];
+function query(ogr2ogr,dataset,sql,runner,work,index){
+  const result=path.join(work,`sql-result-${index}.geojson`);
+  try{
+    execute(ogr2ogr,['-f','GeoJSON',result,dataset,'-dialect','SQLite','-sql',sql],runner,'ogr2ogr');
+    let parsed;try{parsed=JSON.parse(fs.readFileSync(result,'utf8'));}catch{throw new Error('OGR2OGR_GEOJSON_OUTPUT_INVALID');}
+    if(parsed?.type!=='FeatureCollection'||!Array.isArray(parsed.features))throw new Error('OGR2OGR_GEOJSON_FEATURE_COLLECTION_REQUIRED');
+    return parsed.features.map(feature=>feature?.properties||{});
+  } finally {
+    fs.rmSync(result,{force:true});
+  }
 }
 
 const FEATURE_SQL=`SELECT
@@ -56,13 +62,13 @@ const FEATURE_SQL=`SELECT
 FROM areas ORDER BY Name COLLATE NOCASE`;
 
 const OVERLAP_SQL=`SELECT
-  a.Name AS firstName, b.Name AS secondName,
-  a.PlanType AS firstPlanType, b.PlanType AS secondPlanType,
-  ST_Area(ST_Intersection(a.geom,b.geom)) AS overlapAreaSquareMeters,
-  ST_Equals(a.geom,b.geom) AS duplicateGeometry
+  a.Name AS leftName, b.Name AS rightName,
+  a.PlanType AS leftPlanType, b.PlanType AS rightPlanType,
+  ST_Area(ST_Intersection(a.geom,b.geom)) AS overlapAreaSqM,
+  ST_Equals(a.geom,b.geom) AS isDuplicate
 FROM areas a JOIN areas b ON a.Name COLLATE NOCASE < b.Name COLLATE NOCASE
 WHERE ST_Intersects(a.geom,b.geom)
-ORDER BY firstName COLLATE NOCASE, secondName COLLATE NOCASE`;
+ORDER BY leftName COLLATE NOCASE, rightName COLLATE NOCASE`;
 
 export function analyzeWithGdal(sourceFile,{bin=process.env.GRIDLY_GDAL_BIN,runner=spawnSync,tempRoot=os.tmpdir()}={}){
   const binaries=resolveGdalBinaries(bin);
@@ -71,11 +77,11 @@ export function analyzeWithGdal(sourceFile,{bin=process.env.GRIDLY_GDAL_BIN,runn
   const projected=path.join(work,'sa-tomorrow-epsg-3083.gpkg');
   try{
     execute(binaries.ogr2ogr,['-f','GPKG',projected,sourceFile,'-nln','areas','-select','Name,GlobalID,PlanType','-t_srs',WORKING_CRS,'-nlt','PROMOTE_TO_MULTI','-lco','SPATIAL_INDEX=YES'],runner,'ogr2ogr');
-    const features=query(binaries.ogrinfo,projected,FEATURE_SQL,runner).map(p=>({sourceName:String(p.sourceName),sourceGlobalID:p.sourceGlobalID==null?null:String(p.sourceGlobalID),sourcePlanType:String(p.sourcePlanType),geometryType:p.geometryType,componentCount:Number(p.componentCount),geometryStatus:Number(p.geometryValid)===1?'VALID':'INVALID',areaSquareMeters:Number(p.areaSquareMeters),calculatedSquareMiles:Number(p.calculatedSquareMiles),projectedBounds:[Number(p.minX),Number(p.minY),Number(p.maxX),Number(p.maxY)],centroid:[Number(p.centroidX),Number(p.centroidY)],centroidContained:Number(p.centroidContained)===1,pointOnSurface:[Number(p.pointOnSurfaceX),Number(p.pointOnSurfaceY)],longAxisExtentMeters:Math.max(Number(p.maxX)-Number(p.minX),Number(p.maxY)-Number(p.minY))}));
-    const pairs=query(binaries.ogrinfo,projected,OVERLAP_SQL,runner);
-    const pairwiseOverlaps=pairs.filter(p=>Number(p.overlapAreaSquareMeters)>0.01).map(p=>({first:p.firstName,second:p.secondName,firstPlanType:p.firstPlanType,secondPlanType:p.secondPlanType,overlapAreaSquareMeters:Number(p.overlapAreaSquareMeters)}));
-    const duplicateGeometries=pairs.filter(p=>Number(p.duplicateGeometry)===1).map(p=>[p.firstName,p.secondName]);
-    const union=query(binaries.ogrinfo,projected,'SELECT ST_Area(ST_Union(geom)) AS totalUnionAreaSquareMeters FROM areas',runner)[0];
+    const features=query(binaries.ogr2ogr,projected,FEATURE_SQL,runner,work,1).map(p=>({sourceName:String(p.sourceName),sourceGlobalID:p.sourceGlobalID==null?null:String(p.sourceGlobalID),sourcePlanType:String(p.sourcePlanType),geometryType:p.geometryType,componentCount:Number(p.componentCount),geometryStatus:Number(p.geometryValid)===1?'VALID':'INVALID',areaSquareMeters:Number(p.areaSquareMeters),calculatedSquareMiles:Number(p.calculatedSquareMiles),projectedBounds:[Number(p.minX),Number(p.minY),Number(p.maxX),Number(p.maxY)],centroid:[Number(p.centroidX),Number(p.centroidY)],centroidContained:Number(p.centroidContained)===1,pointOnSurface:[Number(p.pointOnSurfaceX),Number(p.pointOnSurfaceY)],longAxisExtentMeters:Math.max(Number(p.maxX)-Number(p.minX),Number(p.maxY)-Number(p.minY))})).sort((a,b)=>a.sourceName.localeCompare(b.sourceName,'en'));
+    const pairs=query(binaries.ogr2ogr,projected,OVERLAP_SQL,runner,work,2);
+    const pairwiseOverlaps=pairs.filter(p=>Number(p.overlapAreaSqM)>0.01).map(p=>({first:p.leftName,second:p.rightName,firstPlanType:p.leftPlanType,secondPlanType:p.rightPlanType,overlapAreaSquareMeters:Number(p.overlapAreaSqM)})).sort((a,b)=>a.first.localeCompare(b.first,'en')||a.second.localeCompare(b.second,'en'));
+    const duplicateGeometries=pairs.filter(p=>Number(p.isDuplicate)===1).map(p=>[p.leftName,p.rightName]).sort((a,b)=>a[0].localeCompare(b[0],'en')||a[1].localeCompare(b[1],'en'));
+    const union=query(binaries.ogr2ogr,projected,'SELECT ST_Area(ST_Union(geom)) AS totalUnionAreaSquareMeters FROM areas',runner,work,3)[0];
     const crossTypeOverlapCount=pairwiseOverlaps.filter(p=>(p.firstPlanType==='Community')!==(p.secondPlanType==='Community')).length;
     const sameTypeOverlapCount=pairwiseOverlaps.length-crossTypeOverlapCount;
     const regionalCenterCommunityAreaRelationship=crossTypeOverlapCount?'CROSS_TYPE_OVERLAY_PRESENT':pairwiseOverlaps.length?'SAME_TYPE_OVERLAP_PRESENT':'NON_OVERLAPPING_ATOMIC_PARTITION';
