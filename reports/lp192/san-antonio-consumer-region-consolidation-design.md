@@ -1,8 +1,8 @@
 # LP192 — San Antonio consumer-region consolidation design
 
-**Status:** `DESIGN_READY_OWNER_NAMING_REVIEW_REQUIRED_WITH_FAR_SOUTHWEST_HOLD`
+**Status:** `CONSUMER_REGION_CONSOLIDATION_DESIGN_OWNER_APPROVED_WITH_PROVISIONAL_NAMING_AND_FAR_SOUTHWEST_HOLD`
 
-**Recommendation:** `READY_FOR_OWNER_LP192_DESIGN_REVIEW`
+**Recommendation:** `READY_TO_MERGE_LP192_DESIGN`
 
 ## Governance conclusion
 
@@ -51,14 +51,14 @@ The design uses LP191, the official registry, topology/working-geometry governan
 
 Far Southwest is included in the official inventory but has no certified working authority. Only 29 usable geometries participate in certified grouping continuity.
 
-## Option A — Recommended balanced consolidation
+## Option A — Owner-approved recommended balanced consolidation
 
 **Count:** 9
 
-### Downtown / Central San Antonio
+### Central San Antonio
 
 - Design key: `LP192-A-01` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `RECOMMENDED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Downtown; Eastside; Midtown; Near North; Westside
 - Rationale: Downtown civic, event, and inner-city activity core.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -68,7 +68,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Medical Region
 
 - Design key: `LP192-A-02` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `RECOMMENDED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Medical Center; Near Northwest; North Central
 - Rationale: Medical Center is the recognizable trip and employment anchor.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -78,7 +78,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Airport / Fort Sam
 
 - Design key: `LP192-A-03` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_PROVISIONAL_DESIGN_LABEL`
 - Atomic membership: Fort Sam Houston; Greater Airport Area; Near Northeast
 - Rationale: Airport and Fort Sam Houston anchor the central-northeast travel market.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -88,9 +88,9 @@ Far Southwest is included in the official inventory but has no certified working
 ### Stone Oak / Far North
 
 - Design key: `LP192-A-04` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Far North; Stone Oak
-- Rationale: Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.
+- Rationale: Stone Oak is the certified regional-center anchor for the broader unit.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
@@ -98,47 +98,47 @@ Far Southwest is included in the official inventory but has no certified working
 ### UTSA / Northwest
 
 - Design key: `LP192-A-05` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Northwest; UTSA; West Northwest
 - Rationale: UTSA anchors the northwest activity and travel cluster.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### Highway 151 / Far West
+### Far West / Alamo Ranch
 
 - Design key: `LP192-A-06` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Far West; Highway 151 and Loop 1604
 - Rationale: Highway 151 and Loop 1604 is the official corridor/activity anchor.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### NE I-35 / Rolling Oaks
+### Northeast San Antonio
 
 - Design key: `LP192-A-07` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Far East; NE I-35 and Loop 410; Northeast; Rolling Oaks
 - Rationale: The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### Brooks / Southside
+### Southside / Brooks
 
 - Design key: `LP192-A-08` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Brooks; Far South; South; Southeast; Texas AM - San Antonio
 - Rationale: Brooks and Texas AM - San Antonio are official activity anchors across the south geography.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### Port San Antonio / Southwest
+### Southwest / Port San Antonio
 
 - Design key: `LP192-A-09` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `OWNER_APPROVED_DESIGN_LABEL`
 - Atomic membership: Port San Antonio; Southwest
 - Rationale: Port San Antonio is the official regional-center anchor for the southwest-side pair.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -147,7 +147,7 @@ Far Southwest is included in the official inventory but has no certified working
 
 **Advantages:** Nine regions retain distinct, recognizable anchors without exposing 30 planning labels. Central, medical, airport, UTSA, Stone Oak, Port, Brooks, and major-corridor concepts remain distinguishable.
 
-**Disadvantages:** Seven labels require local-owner naming review. Enclave PLACE/CDP interactions remain visible but never become membership.
+**Disadvantages:** Airport / Fort Sam presentation wording remains eligible for later runtime naming review. Enclave PLACE/CDP interactions remain visible but never become membership.
 
 ## Option B — More consolidated
 
@@ -156,7 +156,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Central / Medical
 
 - Design key: `LP192-B-01` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `RECOMMENDED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Downtown; Eastside; Medical Center; Midtown; Near North; Near Northwest; North Central; Westside
 - Rationale: Combines the inner core and medical trip market for a six-region model.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -166,9 +166,9 @@ Far Southwest is included in the official inventory but has no certified working
 ### Airport / North Central
 
 - Design key: `LP192-B-02` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far North; Fort Sam Houston; Greater Airport Area; Near Northeast; Stone Oak
-- Rationale: Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.
+- Rationale: Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor for the broader unit.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
@@ -176,7 +176,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### UTSA / West
 
 - Design key: `LP192-B-03` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far West; Highway 151 and Loop 1604; Northwest; UTSA; West Northwest
 - Rationale: UTSA anchors the northwest activity and travel cluster. Highway 151 and Loop 1604 is the official corridor/activity anchor.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -186,7 +186,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### NE I-35 / Far East
 
 - Design key: `LP192-B-04` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far East; NE I-35 and Loop 410; Northeast; Rolling Oaks
 - Rationale: The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -196,7 +196,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Brooks / Southside
 
 - Design key: `LP192-B-05` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Brooks; Far South; South; Southeast; Texas AM - San Antonio
 - Rationale: Brooks and Texas AM - San Antonio are official activity anchors across the south geography.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -206,7 +206,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Port San Antonio / Southwest
 
 - Design key: `LP192-B-06` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Port San Antonio; Southwest
 - Rationale: Port San Antonio is the official regional-center anchor for the southwest-side pair.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -224,7 +224,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Downtown Core
 
 - Design key: `LP192-C-01` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `RECOMMENDED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Downtown; Midtown
 - Rationale: Downtown and Midtown form the central civic and event core.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -234,7 +234,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Inner San Antonio
 
 - Design key: `LP192-C-02` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Eastside; Near North; Westside
 - Rationale: The three inner community areas frame the Downtown / Midtown core.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -244,7 +244,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Medical Region
 
 - Design key: `LP192-C-03` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `RECOMMENDED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Medical Center; Near Northwest; North Central
 - Rationale: Medical Center is the recognizable trip and employment anchor.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -254,7 +254,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### Airport / Fort Sam
 
 - Design key: `LP192-C-04` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Fort Sam Houston; Greater Airport Area; Near Northeast
 - Rationale: Airport and Fort Sam Houston anchor the central-northeast travel market.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -264,9 +264,9 @@ Far Southwest is included in the official inventory but has no certified working
 ### Stone Oak / Far North
 
 - Design key: `LP192-C-05` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far North; Stone Oak
-- Rationale: Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.
+- Rationale: Stone Oak is the certified regional-center anchor for the broader unit.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
@@ -274,17 +274,17 @@ Far Southwest is included in the official inventory but has no certified working
 ### UTSA / Northwest
 
 - Design key: `LP192-C-06` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Northwest; UTSA; West Northwest
 - Rationale: UTSA anchors the northwest activity and travel cluster.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### Highway 151 / Far West
+### Far West / Alamo Ranch
 
 - Design key: `LP192-C-07` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far West; Highway 151 and Loop 1604
 - Rationale: Highway 151 and Loop 1604 is the official corridor/activity anchor.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -294,7 +294,7 @@ Far Southwest is included in the official inventory but has no certified working
 ### NE I-35 / Rolling Oaks
 
 - Design key: `LP192-C-08` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Far East; NE I-35 and Loop 410; Northeast; Rolling Oaks
 - Rationale: The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -304,17 +304,17 @@ Far Southwest is included in the official inventory but has no certified working
 ### Brooks / Southside
 
 - Design key: `LP192-C-09` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Brooks; Far South; South; Southeast; Texas AM - San Antonio
 - Rationale: Brooks and Texas AM - San Antonio are official activity anchors across the south geography.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
 - PLACE/CDP: LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.
 - Far Southwest: No certified Far Southwest geometric membership.
 
-### Port San Antonio / Southwest
+### Southwest / Port San Antonio
 
 - Design key: `LP192-C-10` (`NON_RUNTIME_DESIGN_IDENTIFIER`)
-- Label: `OWNER_NAMING_REVIEW_REQUIRED`
+- Label: `EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED`
 - Atomic membership: Port San Antonio; Southwest
 - Rationale: Port San Antonio is the official regional-center anchor for the southwest-side pair.
 - Continuity: Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.
@@ -345,10 +345,9 @@ Far Southwest remains `CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_C
 
 ## Owner decisions and future milestone
 
-- Approve or revise the seven Option A labels marked OWNER_NAMING_REVIEW_REQUIRED after local-market review.
-- Confirm whether Airport / Fort Sam is one consumer concept or should be separated in a later design revision.
-- Confirm whether Stone Oak appropriately represents Far North context.
+Option A is owner approved for LP192 design purposes. Its atomic memberships are unchanged and must not be reopened or split in this milestone. Airport / Fort Sam is `PROVISIONAL_LABEL_FINAL_RUNTIME_NAMING_REVIEW_ALLOWED`; naming work may revisit presentation wording later but must not silently change membership. Options B and C remain evaluated alternatives and were not selected.
+
 - Resolve City Far Southwest geometry before any certified boundary or membership decision.
-- Decide final runtime identities, geometry union rules, centers, zooms, awareness, ZIP, search, and presentation only in a later implementation milestone.
+- Decide runtime identities, geometry union rules, centers, zooms, awareness, ZIP, search, and presentation only in a separately authorized implementation milestone.
 
 A future, separately authorized implementation milestone must decide final runtime IDs, final labels, union/boundary behavior, semantic centers, startup zooms, awareness behavior, ZIP/search resolution, and UI presentation. None is authorized here.
