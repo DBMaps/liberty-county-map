@@ -11,6 +11,15 @@ export const RECOVERED_IDENTITY={bytes:427909,sha256:'1eed04031d6a0ccb13c5749fbc
 export const WEST={name:'West Northwest',globalId:'4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e'};
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 
+function validateRecoveredGeoJson(recovered){
+  let geojson;try{geojson=JSON.parse(recovered);}catch{throw Error('RECOVERED_BYTES_NOT_JSON');}
+  if(geojson?.type!=='FeatureCollection'||geojson.features?.length!==1)throw Error('RECOVERED_FEATURE_COLLECTION_IDENTITY_MISMATCH');
+  const feature=geojson.features[0];
+  if(feature?.properties?.Name!==WEST.name||feature?.properties?.GlobalID!==WEST.globalId||feature?.geometry?.type!=='Polygon')throw Error('RECOVERED_WEST_NORTHWEST_IDENTITY_MISMATCH');
+  if(!Array.isArray(feature.geometry.coordinates)||feature.geometry.coordinates.length===0)throw Error('RECOVERED_GEOMETRY_EMPTY');
+  return {type:geojson.type,featureCount:geojson.features.length,name:feature.properties.Name,globalId:feature.properties.GlobalID,geometryType:feature.geometry.type};
+}
+
 function identifyWrapper(raw,expected){
   const rawSha256=sha(raw);
   if(raw.length===expected.bytes&&rawSha256===expected.sha256)return {rawWrapperBytes:raw.length,rawWrapperSha256:rawSha256,wrapperMaterialization:'CANONICAL_LF_WRAPPER',normalized:raw};
@@ -53,27 +62,29 @@ export function reconstructWrapper(wrapper,{bytes=RECOVERED_IDENTITY.bytes,sha25
   if(recovered.length!==bytes)throw Error('RECOVERED_BYTE_LENGTH_MISMATCH');
   const actualHash=sha(recovered);
   if(actualHash!==sha256)throw Error(`RECOVERED_SHA256_MISMATCH: expected ${sha256}, received ${actualHash}`);
-  if(validateGeoJson){
-    let geojson;try{geojson=JSON.parse(recovered);}catch{throw Error('RECOVERED_BYTES_NOT_JSON');}
-    if(geojson?.type!=='FeatureCollection'||geojson.features?.length!==1)throw Error('RECOVERED_FEATURE_COLLECTION_IDENTITY_MISMATCH');
-    const feature=geojson.features[0];
-    if(feature?.properties?.Name!==WEST.name||feature?.properties?.GlobalID!==WEST.globalId||feature?.geometry?.type!=='Polygon')throw Error('RECOVERED_WEST_NORTHWEST_IDENTITY_MISMATCH');
-    if(!Array.isArray(feature.geometry.coordinates)||feature.geometry.coordinates.length===0)throw Error('RECOVERED_GEOMETRY_EMPTY');
-  }
+  if(validateGeoJson)validateRecoveredGeoJson(recovered);
   return recovered;
 }
 
 export function verifyWrapperFile(file=ARTIFACT_PATH,options={}){
   const raw=fs.readFileSync(file);
+  const expectedRecovered=options.recoveredIdentity??RECOVERED_IDENTITY;
+  const rawSha256=sha(raw);
+  if(raw.length===expectedRecovered.bytes&&rawSha256===expectedRecovered.sha256){
+    const contentIdentity=validateRecoveredGeoJson(raw);
+    return {status:'CERTIFIED_ARTIFACT_ALREADY_RECOVERED',artifactState:'CERTIFIED_ARTIFACT_ALREADY_RECOVERED',mode:'VERIFY_NON_DESTRUCTIVE',artifactPath:file,recoveredBytes:raw.length,recoveredSha256:rawSha256,contentIdentity,buffer:raw};
+  }
+  if(raw.length===expectedRecovered.bytes)throw Error(`RECOVERED_SHA256_MISMATCH: expected ${expectedRecovered.sha256}, received ${rawSha256}`);
   const expectedWrapper=options.wrapperIdentity??WRAPPER_IDENTITY;
   const identity=identifyWrapper(raw,expectedWrapper);
   let wrapper;try{wrapper=JSON.parse(identity.normalized);}catch{throw Error('ACCIDENTAL_WRAPPER_NOT_JSON');}
   const recovered=reconstructWrapper(wrapper,options.recoveredIdentity);
-  return {status:'RECOVERY_METHOD_CERTIFIED',mode:'VERIFY_NON_DESTRUCTIVE',artifactPath:file,rawWrapperBytes:identity.rawWrapperBytes,rawWrapperSha256:identity.rawWrapperSha256,wrapperMaterialization:identity.wrapperMaterialization,normalizedWrapperBytes:identity.normalized.length,normalizedWrapperSha256:sha(identity.normalized),recoveredBytes:recovered.length,recoveredSha256:sha(recovered),buffer:recovered};
+  return {status:'RECOVERY_METHOD_CERTIFIED',artifactState:identity.wrapperMaterialization,mode:'VERIFY_NON_DESTRUCTIVE',artifactPath:file,rawWrapperBytes:identity.rawWrapperBytes,rawWrapperSha256:identity.rawWrapperSha256,wrapperMaterialization:identity.wrapperMaterialization,normalizedWrapperBytes:identity.normalized.length,normalizedWrapperSha256:sha(identity.normalized),recoveredBytes:recovered.length,recoveredSha256:sha(recovered),contentIdentity:validateRecoveredGeoJson(recovered),buffer:recovered};
 }
 
 export function recoverWrapperFile(file=ARTIFACT_PATH,options={}){
   const result=verifyWrapperFile(file,options);
+  if(result.artifactState==='CERTIFIED_ARTIFACT_ALREADY_RECOVERED')return {...result,mode:'RECOVER'};
   fs.writeFileSync(file,result.buffer);
   const written=fs.readFileSync(file);
   if(!written.equals(result.buffer))throw Error('RECOVERY_POST_WRITE_IDENTITY_MISMATCH');
