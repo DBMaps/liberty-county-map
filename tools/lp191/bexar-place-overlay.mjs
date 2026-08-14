@@ -41,9 +41,9 @@ export function reconcileGovernance(){
   if(usable.length!==29||far?.workingGeometryAuthority!==null||west?.workingGeometryAuthority!=='CERTIFIED_DERIVED_MAKEVALID')throw Error('WORKING_GEOMETRY_GOVERNANCE_RECONCILIATION_FAILED');
   return {cohort:cohort.sort((a,b)=>a.placeGeoid.localeCompare(b.placeGeoid)),records:records.sort((a,b)=>a.globalId.localeCompare(b.globalId)),usable,pairEvaluationCount:33*29,precedence:PRECEDENCE};
 }
-export function auditGovernedInputs({ownerPlaceGeometry=process.env.GRIDLY_TEXAS_PLACE_ZIP,ownerSaGeometry=process.env.GRIDLY_SA_TOMORROW_GEOJSON}={}){
+export function auditGovernedInputs({ownerPlaceGeometry=process.env.GRIDLY_TEXAS_PLACE_ZIP,ownerSaGeometry=process.env.GRIDLY_SA_TOMORROW_GEOJSON,westArtifact=path.join(ROOT,PATHS.west)}={}){
   const governance=reconcileGovernance();
-  const westIdentity=digest(path.join(ROOT,PATHS.west));
+  const westIdentity=digest(westArtifact);
   if(westIdentity.bytes!==WEST.bytes||westIdentity.sha256!==WEST.sha256)throw Error(`WEST_NORTHWEST_CERTIFIED_ARTIFACT_RECOVERY_OWNER_EXECUTION_REQUIRED: expected ${WEST.bytes}/${WEST.sha256}, received ${westIdentity.bytes}/${westIdentity.sha256}`);
   const missing=[];
   if(!ownerPlaceGeometry||!fs.existsSync(ownerPlaceGeometry))missing.push('GRIDLY_TEXAS_PLACE_ZIP');

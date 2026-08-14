@@ -15,6 +15,7 @@ data/*.json text eol=lf
 data/**/*.json text eol=lf
 evidence/*.json text eol=lf
 evidence/**/*.json text eol=lf
+evidence/san-antonio-sa-tomorrow-derived-repairs/west-northwest/repaired.geojson text eol=lf
 
 # Oversized governed assets: text is always LF; compressed content is byte-exact.
 Crossing-Packages/Texas/fra-crossings-tx.geojson text eol=lf
