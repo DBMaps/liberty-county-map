@@ -18,6 +18,12 @@ const digest=p=>{const b=fs.readFileSync(p);return {bytes:b.length,sha256:crypto
 export const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
 export const serialize=v=>JSON.stringify(canonical(v),null,2)+'\n';
 
+export function gdalZipDatasource(sourcePath){
+  if(typeof sourcePath!=='string'||sourcePath.startsWith('/vsizip/'))return sourcePath;
+  if(!sourcePath.toLowerCase().endsWith('.zip'))return sourcePath;
+  return `/vsizip/${sourcePath.replaceAll('\\','/')}`;
+}
+
 export function classifyPair({intersectionArea,placeWithinAtomic=false,atomicWithinPlace=false,boundariesTouch=false}){
   if(!Number.isFinite(intersectionArea)||intersectionArea<0)throw Error('INVALID_INTERSECTION_AREA');
   if(intersectionArea===0)return boundariesTouch?'BOUNDARY_TOUCH_ONLY':'DISJOINT';
@@ -83,11 +89,12 @@ export function executeOwnerOverlay({audit=auditGovernedInputs(),run=createGdalR
   if(!audit.ready)throw Error(`AUTHORITATIVE_GEOMETRY_INPUTS_MISSING: ${audit.missing.join(', ')}`);
   const gdalVersion=requireGdal(run),workspace=fs.mkdtempSync(path.join(tempRoot,'lp191-overlay-'));
   const gpkg=path.join(workspace,'lp191.gpkg'),placesJson=path.join(workspace,'places.json'),atomicJson=path.join(workspace,'atomic.json'),pairsJson=path.join(workspace,'pairs.json');
+  const placeDatasource=gdalZipDatasource(audit.ownerPlaceGeometry);
   try{
-    run('ogrinfo',['-ro','-so',audit.ownerPlaceGeometry,'tl_2025_48_place'],'PLACE layer contract');
+    run('ogrinfo',['-ro','-so',placeDatasource,'tl_2025_48_place'],'PLACE layer contract');
     const placeIds=audit.cohort.map(x=>x.placeGeoid);
     const placeWhere=`GEOID IN (${placeIds.map(sqlString).join(',')})`;
-    run('ogr2ogr',['-f','GPKG',gpkg,audit.ownerPlaceGeometry,'tl_2025_48_place','-nln','places_3083','-t_srs','EPSG:3083','-where',placeWhere,'-select','GEOID,NAME'],'extract 33 governed PLACE geometries');
+    run('ogr2ogr',['-f','GPKG',gpkg,placeDatasource,'tl_2025_48_place','-nln','places_3083','-t_srs','EPSG:3083','-where',placeWhere,'-select','GEOID,NAME'],'extract 33 governed PLACE geometries');
     run('ogr2ogr',['-f','GeoJSON',placesJson,gpkg,'places_3083','-sql','SELECT GEOID, NAME, ST_IsValid(geom) AS valid_geometry, ST_IsEmpty(geom) AS empty_geometry, ST_Area(geom) AS area_m2 FROM places_3083','-dialect','SQLite'],'validate PLACE geometries');
     const places=loadFeatures(placesJson).map(x=>x.properties);
     validateIdentitySet(places.map(x=>String(x.GEOID)),placeIds,'PLACE_EXTRACTION');
