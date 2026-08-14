@@ -45504,6 +45504,23 @@ function gridlyGetAuthoritativeCountyGeometryFocusBounds(countyId) {
 }
 
 const GRIDLY_PLACE_PRESENTATION_URL = "data/generated/gridly-statewide-place-presentation-v1.json";
+// Owner-approved presentation-only cameras for the current mobile Gridly layout. These
+// points center the recognizable PLACE core between the top surfaces and Location
+// Context panel; they are not geographic centroids or canonical identity coordinates.
+const GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERA_SOURCE = "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA";
+const GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERAS = Object.freeze({
+  "4805000": Object.freeze({ lat: 30.274931186653326, lng: -97.74415969848634, zoom: 13, source: GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERA_SOURCE }),
+  "4819000": Object.freeze({ lat: 32.78294501748632, lng: -96.79538726806642, zoom: 13, source: GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERA_SOURCE }),
+  "4824000": Object.freeze({ lat: 31.765537409484374, lng: -106.48704528808595, zoom: 13, source: GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERA_SOURCE }),
+  "4827000": Object.freeze({ lat: 32.757685346479455, lng: -97.33182907104494, zoom: 13, source: GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERA_SOURCE })
+});
+
+function gridlyGetGovernedPlaceConsumerPresentationCamera(placeGeoid) {
+  const canonicalPlaceGeoid = String(placeGeoid || "").trim();
+  if (!/^48\d{5}$/.test(canonicalPlaceGeoid)) return null;
+  return GRIDLY_PLACE_CONSUMER_PRESENTATION_CAMERAS[canonicalPlaceGeoid] || null;
+}
+
 let gridlyPlacePresentationTargets = null;
 let gridlyPlacePresentationLoadPromise = null;
 let gridlySemanticCameraSequence = 0;
@@ -45548,13 +45565,17 @@ function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
   }
   const placeGeoid = area.countyWide === true || area.fallback === true ? null : gridlyResolveCanonicalPlaceGeoid(area);
   if (placeGeoid) {
-    const target = gridlyPlacePresentationTargets?.[placeGeoid];
-    if (!target || !Number.isFinite(Number(target.lat)) || !Number.isFinite(Number(target.lon))) return false;
-    const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(target.lon) }, GRIDLY_TOWN_STARTUP_ZOOM, {
+    const consumerCamera = typeof gridlyGetGovernedPlaceConsumerPresentationCamera === "function" ? gridlyGetGovernedPlaceConsumerPresentationCamera(placeGeoid) : null;
+    const canonicalTarget = gridlyPlacePresentationTargets?.[placeGeoid];
+    const target = consumerCamera || canonicalTarget;
+    const targetLng = consumerCamera ? target?.lng : target?.lon;
+    const targetZoom = consumerCamera ? target?.zoom : GRIDLY_TOWN_STARTUP_ZOOM;
+    if (!target || !Number.isFinite(Number(target.lat)) || !Number.isFinite(Number(targetLng)) || !Number.isFinite(Number(targetZoom))) return false;
+    const issued = setGridlyAwarenessView({ lat: Number(target.lat), lng: Number(targetLng) }, Number(targetZoom), {
       animate: options.animate === true,
       compensateForChrome: false
     });
-    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(target.lon) }), zoom: GRIDLY_TOWN_STARTUP_ZOOM, source: options.source || "unknown" });
+    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "PLACE", placeGeoid, target: Object.freeze({ lat: Number(target.lat), lng: Number(targetLng) }), zoom: Number(targetZoom), presentationSource: consumerCamera?.source || null, source: options.source || "unknown" });
     return issued;
   }
   if (area.countyWide !== true) return false;
