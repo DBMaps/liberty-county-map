@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp198": "node tools/lp198/build-statewide-consumer-geography-smoke-audit.mjs --write",
+    "verify:lp198": "node tools/lp198/build-statewide-consumer-geography-smoke-audit.mjs --verify",
+    "test:lp198": "node --test tests/lp198-statewide-consumer-geography-smoke-audit.test.mjs",
     "test:lp197": "node --test tests/lp197-governed-place-consumer-presentation-cameras.test.mjs",
     "build:lp195": "node tools/lp195/build-texas-major-metro-consumer-coverage-audit.mjs --write",
     "verify:lp195": "node tools/lp195/build-texas-major-metro-consumer-coverage-audit.mjs --verify",
