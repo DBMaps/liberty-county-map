@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "audit:metro-child-area-evidence": "node tools/audit-metro-child-area-evidence-governance.mjs",
+    "test:metro-child-area-evidence-audit": "node --test tests/metro-child-area-evidence-governance-audit.test.mjs",
     "audit:texas-metro-regionalization": "node tools/audit-texas-metro-regionalization-candidates.mjs",
     "test:texas-metro-regionalization-audit": "node --test tests/texas-metro-regionalization-candidate-audit.test.mjs",
     "audit:statewide-place-presentation-quality": "node tools/audit-statewide-place-presentation-quality.mjs",
