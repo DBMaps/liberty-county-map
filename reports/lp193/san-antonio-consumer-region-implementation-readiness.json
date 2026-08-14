@@ -13,8 +13,11 @@
   ],
   "geometryArtifact": {
     "path": "evidence/lp193/san-antonio-consumer-region-design-geometry.geojson",
-    "status": "OWNER_GDAL_EXECUTION_REQUIRED",
-    "expectedFeatureCount": 9
+    "featureCount": 9,
+    "bytes": 3577612,
+    "sha256": "c8aa67df96e0ac21a9c339eb3eebf67d528522786ab662d8f330eb883dcedfae",
+    "crsProvenance": "Union computed in EPSG:3083 and exported to RFC 7946 WGS84",
+    "generationMethod": "GDAL_3_13_OGR_SQLITE_ST_UNION_EXACT_MEMBERSHIP"
   },
   "coverageContract": {
     "officialAtomicCount": 30,
@@ -78,11 +81,23 @@
         "Near North",
         "Westside"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.51548378832913,
+        "latitude": 29.431987761496636
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.52110359096712,
+        "latitude": 29.43715940524094,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.16,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4801600",
@@ -118,7 +133,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "medical-region",
@@ -130,11 +145,23 @@
         "Near Northwest",
         "North Central"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.55750879875545,
+        "latitude": 29.490011869279815
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.51516602675414,
+        "latitude": 29.495636300789577,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.36,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4801600",
@@ -177,7 +204,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "airport-fort-sam",
@@ -189,11 +216,23 @@
         "Greater Airport Area",
         "Near Northeast"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.43935347296576,
+        "latitude": 29.50537848819688
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.44027413969336,
+        "latitude": 29.502531081732176,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.03,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4801600",
@@ -250,7 +289,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "stone-oak-far-north",
@@ -261,11 +300,23 @@
         "Far North",
         "Stone Oak"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.50371953789826,
+        "latitude": 29.60622630628159
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.49512037206648,
+        "latitude": 29.610029480200975,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.22,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4813276",
@@ -308,7 +359,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "utsa-northwest",
@@ -320,11 +371,23 @@
         "UTSA",
         "West Northwest"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.66126492627845,
+        "latitude": 29.56699245312639
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.61471921652927,
+        "latitude": 29.591886635851893,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 10.69,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4817811",
@@ -367,7 +430,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "far-west-alamo-ranch",
@@ -378,18 +441,30 @@
         "Far West",
         "Highway 151 and Loop 1604"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.66369982951508,
+        "latitude": 29.441338681782124
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.65764791813613,
+        "latitude": 29.435772836272815,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.66,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [],
       "awarenessContract": {
         "mayEventuallyAppearAsSelectableAwarenessGeography": true,
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "northeast-san-antonio",
@@ -402,11 +477,23 @@
         "Northeast",
         "Rolling Oaks"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.38254620600419,
+        "latitude": 29.5340075760066
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.40784840163508,
+        "latitude": 29.581475901424064,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 10.67,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4814716",
@@ -470,7 +557,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "southside-brooks",
@@ -484,11 +571,23 @@
         "Southeast",
         "Texas AM - San Antonio"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.44903508279671,
+        "latitude": 29.314252876634534
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.50839898231199,
+        "latitude": 29.295473924732278,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 10.77,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4814716",
@@ -503,7 +602,7 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED"
     },
     {
       "regionId": "southwest-port-san-antonio",
@@ -514,11 +613,23 @@
         "Port San Antonio",
         "Southwest"
       ],
-      "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
+      "geometryStatus": "CERTIFIED_VALID_NON_EMPTY_UNION",
       "farSouthwestImplication": "CERTIFIED_GEOMETRY_EXCLUDES_HELD_FAR_SOUTHWEST; FUTURE_BOUNDARY_EXTENSION_PENDING_CITY_CLARIFICATION",
-      "centroid": null,
-      "semanticCenter": null,
-      "startupZoom": null,
+      "centroid": {
+        "longitude": -98.57606677544813,
+        "latitude": 29.357818563713252
+      },
+      "semanticCenter": {
+        "method": "GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84",
+        "longitude": -98.57515605724419,
+        "latitude": 29.36192203964279,
+        "status": "INSIDE_OR_ON_REGION"
+      },
+      "startupZoom": {
+        "proposedZoom": 11.27,
+        "method": "WGS84_BOUNDING_BOX_WEB_MERCATOR_FIT_390x844_48PX_PADDING",
+        "status": "PROPOSED_NOT_ACTIVATED"
+      },
       "contextualNearbyOrIntersectingPlaces": [
         {
           "geoid": "4840036",
@@ -533,10 +644,10 @@
         "independentPlaceCdpExclusionRule": "NO_PLACE_CDP_IS_A_CONSUMER_REGION_MEMBER",
         "canonicalPrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
       },
-      "readinessClassification": "IMPLEMENTATION_READINESS_HOLD"
+      "readinessClassification": "IMPLEMENTATION_READY_NOT_ACTIVATED_WITH_FAR_SOUTHWEST_LIMITATION"
     }
   ],
-  "overallStatus": "SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READINESS_OWNER_GDAL_HOLD",
-  "recommendation": "NOT_READY",
+  "overallStatus": "SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READY_NOT_ACTIVATED_WITH_SELECTIVE_FAR_SOUTHWEST_LIMITATION",
+  "recommendation": "READY_FOR_GUARDED_SAN_ANTONIO_RUNTIME_ACTIVATION",
   "ownerCommand": "$env:PATH = 'C:\\Program Files\\QGIS 3.44.11\\bin;' + $env:PATH\n$env:GRIDLY_GDAL_BIN = 'C:\\Program Files\\QGIS 3.44.11\\bin'\n$env:GRIDLY_SA_TOMORROW_GEOJSON = 'C:\\GitHub\\Gridly-Source-Data\\SanAntonio\\SATomorrow\\SATomorrowSubAreaPlans-CoSAGIS-Opendata.geojson'\nnpm run build:lp193\nnpm run verify:lp193\nnpm run test:lp193"
 }

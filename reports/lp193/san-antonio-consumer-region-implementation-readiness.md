@@ -1,22 +1,22 @@
 # LP193 — San Antonio consumer-region implementation readiness
 
-**Status:** `SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READINESS_OWNER_GDAL_HOLD`
+**Status:** `SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READY_NOT_ACTIVATED_WITH_SELECTIVE_FAR_SOUTHWEST_LIMITATION`
 
-**Recommendation:** `NOT_READY`
+**Recommendation:** `READY_FOR_GUARDED_SAN_ANTONIO_RUNTIME_ACTIVATION`
 
 LP193 defines future contracts only; runtime behavior is untouched. Owner inputs select the fail-closed GDAL 3.13 certification path.
 
 | Production ID | Label | Geometry | Center | Zoom | Readiness |
 |---|---|---|---|---:|---|
-| `central-san-antonio` | Central San Antonio | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `medical-region` | Medical Region | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `airport-fort-sam` | Airport / Fort Sam | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `stone-oak-far-north` | Stone Oak / Far North | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `utsa-northwest` | UTSA / Northwest | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `far-west-alamo-ranch` | Far West / Alamo Ranch | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `northeast-san-antonio` | Northeast San Antonio | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `southside-brooks` | Southside / Brooks | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
-| `southwest-port-san-antonio` | Southwest / Port San Antonio | OWNER_GDAL_EXECUTION_REQUIRED | pending owner GDAL | pending | IMPLEMENTATION_READINESS_HOLD |
+| `central-san-antonio` | Central San Antonio | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.52110359096712,"latitude":29.43715940524094,"status":"INSIDE_OR_ON_REGION"} | 11.16 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `medical-region` | Medical Region | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.51516602675414,"latitude":29.495636300789577,"status":"INSIDE_OR_ON_REGION"} | 11.36 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `airport-fort-sam` | Airport / Fort Sam | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.44027413969336,"latitude":29.502531081732176,"status":"INSIDE_OR_ON_REGION"} | 11.03 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `stone-oak-far-north` | Stone Oak / Far North | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.49512037206648,"latitude":29.610029480200975,"status":"INSIDE_OR_ON_REGION"} | 11.22 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `utsa-northwest` | UTSA / Northwest | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.61471921652927,"latitude":29.591886635851893,"status":"INSIDE_OR_ON_REGION"} | 10.69 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `far-west-alamo-ranch` | Far West / Alamo Ranch | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.65764791813613,"latitude":29.435772836272815,"status":"INSIDE_OR_ON_REGION"} | 11.66 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `northeast-san-antonio` | Northeast San Antonio | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.40784840163508,"latitude":29.581475901424064,"status":"INSIDE_OR_ON_REGION"} | 10.67 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `southside-brooks` | Southside / Brooks | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.50839898231199,"latitude":29.295473924732278,"status":"INSIDE_OR_ON_REGION"} | 10.77 | IMPLEMENTATION_READY_NOT_ACTIVATED |
+| `southwest-port-san-antonio` | Southwest / Port San Antonio | CERTIFIED_VALID_NON_EMPTY_UNION | {"method":"GDAL_ST_POINTONSURFACE_EPSG3083_TO_WGS84","longitude":-98.57515605724419,"latitude":29.36192203964279,"status":"INSIDE_OR_ON_REGION"} | 11.27 | IMPLEMENTATION_READY_NOT_ACTIVATED_WITH_FAR_SOUTHWEST_LIMITATION |
 
 Far Southwest is excluded. `southwest-port-san-antonio` is `PARTIAL_CERTIFIED_REGION_PENDING_FAR_SOUTHWEST_CLARIFICATION`; Somerset 4868708 and Von Ormy 4875764 remain independent.
 

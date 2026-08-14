@@ -25,3 +25,4 @@ reports/lp192/san-antonio-consumer-region-consolidation-design.md text eol=lf
 reports/lp193/*.json text eol=lf
 reports/lp193/*.md text eol=lf
 evidence/lp193/*.geojson text eol=lf
+reports/lp193/san-antonio-consumer-region-implementation-readiness.md text eol=lf
