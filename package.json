@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "lp191:whatif": "node tools/lp191/bexar-place-overlay.mjs --whatif",
+    "verify:lp191": "node tools/lp191/bexar-place-overlay.mjs --verify",
+    "test:lp191": "node --test tests/lp191-bexar-place-overlay.test.mjs",
     "certify:san-antonio-working-geometry-governance": "node tools/certify-san-antonio-working-geometry-governance.mjs",
     "test:san-antonio-working-geometry-governance": "node --test tests/san-antonio-working-geometry-governance.test.mjs",
     "audit:san-antonio-two-polygon-defects": "node tools/audit-san-antonio-two-polygon-defects.mjs",
