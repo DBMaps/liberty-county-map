@@ -462,6 +462,8 @@
     "test:lp1903": "node --test tests/lp1903-activation-reconciliation.test.mjs",
     "verify:lp1903": "node scripts/lp1903-reconcile-final-restricted-counties.mjs --verify --json",
     "test:lp1904": "node --test tests/lp1904-final-statewide-runtime-activation.test.mjs",
-    "verify:lp1904": "node scripts/lp1904-final-statewide-runtime-activation-guarded.mjs --verify --json"
+    "verify:lp1904": "node scripts/lp1904-final-statewide-runtime-activation-guarded.mjs --verify --json",
+    "audit:san-antonio-regionalization-source": "node tools/audit-san-antonio-official-source-regionalization-design.mjs",
+    "test:san-antonio-regionalization-source-audit": "node --test tests/san-antonio-official-source-regionalization-design-audit.test.mjs"
   }
 }
