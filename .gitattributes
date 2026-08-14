@@ -21,3 +21,4 @@ evidence/san-antonio-sa-tomorrow-derived-repairs/west-northwest/repaired.geojson
 Crossing-Packages/Texas/fra-crossings-tx.geojson text eol=lf
 assets/county-implementation/montgomery/runtime-assets/montgomery-roads-raw.geojson text eol=lf
 data/generated/lp104/txgio-addresses/harris-48201.addresses.jsonl.gz binary
+reports/lp192/san-antonio-consumer-region-consolidation-design.md text eol=lf
