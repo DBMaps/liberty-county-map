@@ -1,0 +1,5131 @@
+{
+  "schemaVersion": "gridly.lp195.texas-major-metro-consumer-coverage-audit.v1",
+  "milestone": "LP195_TEXAS_MAJOR_METRO_CONSUMER_COVERAGE_AUDIT",
+  "generatedFrom": {
+    "communities": {
+      "path": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+      "sha256": "b679632faa34b8ea56228c715db295b5020deb5a7e565662ac846d284d9f8778"
+    },
+    "zips": {
+      "path": "data/generated/gridly-statewide-consumer-zip-index-v1.json",
+      "sha256": "b86fb8a65f5e6d835c57ab00eb45b45bd23ad535718ea7f91c54ca766048f9fc"
+    },
+    "presentation": {
+      "path": "data/generated/gridly-statewide-place-presentation-v1.json",
+      "sha256": "b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e"
+    },
+    "runtime": {
+      "path": "js/app.js",
+      "sha256": "49f4fd91f1157c0d43b1ada0311ff1743fbdcd41219126e3a52ff7b08fa02e49"
+    },
+    "externalResearchUsed": false
+  },
+  "scope": {
+    "auditOnly": true,
+    "runtimeMutation": false,
+    "newConsumerRegionIds": [],
+    "newMetroGeometry": false,
+    "principles": [
+      "GOVERNED_GEOGRAPHY_FOR_TRUTH",
+      "ZIP_COMMUNITY_PROJECTION_FOR_CONSUMER_EXPERIENCE",
+      "INDEPENDENT_GOVERNED_PLACE_WINS"
+    ]
+  },
+  "vocabularies": {
+    "classifications": [
+      "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "ZIP_COMMUNITY_REGIONALIZATION_RECOMMENDED",
+      "MULTI_CITY_METRO_MODEL_REQUIRED",
+      "GEOMETRY_GOVERNANCE_REQUIRED",
+      "NO_REGIONALIZATION_NEEDED",
+      "OWNER_REVIEW_REQUIRED"
+    ],
+    "implementationMethods": [
+      "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "ZIP_COMMUNITY_PROJECTION",
+      "ZIP_COMMUNITY_PROJECTION_WITH_PRESENTATION_REGIONS",
+      "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "GOVERNED_POLYGON_REGIONALIZATION",
+      "OWNER_PRODUCT_DECISION_REQUIRED"
+    ],
+    "priorities": [
+      "P0",
+      "P1",
+      "P2",
+      "P3"
+    ]
+  },
+  "auditedMetroCount": 8,
+  "metros": [
+    {
+      "id": "dallas-fort-worth",
+      "name": "Dallas–Fort Worth",
+      "cities": [
+        "Dallas",
+        "Fort Worth",
+        "Arlington",
+        "Plano",
+        "Irving",
+        "Garland",
+        "Grand Prairie",
+        "Frisco",
+        "McKinney",
+        "Denton"
+      ],
+      "multi": true,
+      "classification": "MULTI_CITY_METRO_MODEL_REQUIRED",
+      "method": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P1",
+      "reason": "The governed substrate preserves the major cities independently; a single DFW consumer identity would discard useful city context. Dallas and Fort Worth remain broad city identities and are candidates for separately scoped ZIP/community presentation work.",
+      "followUp": "LP196: owner-scope independent-city DFW model and decide whether Dallas and Fort Worth each warrant presentation-only sub-city design; do not create a metro-wide override.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48085",
+          "48113",
+          "48121",
+          "48139",
+          "48251",
+          "48257",
+          "48367",
+          "48397",
+          "48439",
+          "48497"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4819000",
+            "displayName": "Dallas",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48085",
+              "48113",
+              "48121",
+              "48257",
+              "48397"
+            ],
+            "awarenessAreaKey": "4819000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4827000",
+            "displayName": "Fort Worth",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48121",
+              "48251",
+              "48367",
+              "48439",
+              "48497"
+            ],
+            "awarenessAreaKey": "4827000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4804000",
+            "displayName": "Arlington",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48439"
+            ],
+            "awarenessAreaKey": "4804000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4858016",
+            "displayName": "Plano",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48085",
+              "48121"
+            ],
+            "awarenessAreaKey": "4858016",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4837000",
+            "displayName": "Irving",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48113"
+            ],
+            "awarenessAreaKey": "4837000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4829000",
+            "displayName": "Garland",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48085",
+              "48113"
+            ],
+            "awarenessAreaKey": "4829000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4830464",
+            "displayName": "Grand Prairie",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48113",
+              "48139",
+              "48251",
+              "48439"
+            ],
+            "awarenessAreaKey": "4830464",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4827684",
+            "displayName": "Frisco",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48085",
+              "48121"
+            ],
+            "awarenessAreaKey": "4827684",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4845744",
+            "displayName": "McKinney",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48085"
+            ],
+            "awarenessAreaKey": "4845744",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4819972",
+            "displayName": "Denton",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48121"
+            ],
+            "awarenessAreaKey": "4819972",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 183,
+        "distinctConsumerCommunities": [
+          "Dallas",
+          "Denton"
+        ],
+        "ambiguousRecordCount": 50,
+        "records": [
+          {
+            "zip": "75001",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75006",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75007",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              },
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75009",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75010",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75011",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              },
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75014",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75015",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75016",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75017",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75019",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              },
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75022",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75024",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75027",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75028",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75029",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75030",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75033",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75034",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75035",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75036",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75038",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75039",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75040",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75041",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75042",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75043",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75044",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75045",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75046",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75047",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75048",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75049",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75050",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75051",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75052",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75053",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75054",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75056",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75057",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75059",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75060",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75061",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75062",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75063",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75065",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75067",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              },
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75068",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75077",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75078",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75080",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75081",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75082",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75083",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75085",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75088",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75089",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75093",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75098",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75099",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75104",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75106",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75115",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75116",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75123",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75125",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75134",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75137",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75138",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75141",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75146",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75149",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75150",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75154",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75159",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75172",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75180",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75181",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75182",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75185",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75187",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75201",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75202",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75203",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75204",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75205",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75206",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75207",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75208",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75209",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75210",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75211",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75212",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75214",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75215",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75216",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75217",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75218",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75219",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75220",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75221",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75222",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75223",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75224",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75225",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75226",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75227",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75228",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75229",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75230",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75231",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75232",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75233",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75234",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75235",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75236",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75237",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75238",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75240",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75241",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75242",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75243",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75244",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75246",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75247",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75248",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75249",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75250",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75251",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75252",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75253",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75254",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75260",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75261",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75270",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75287",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              },
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75313",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75315",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75336",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75339",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75342",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75354",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75355",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75356",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75357",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75360",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75367",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75371",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75372",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75374",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75376",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75378",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75380",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75381",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75382",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75390",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "75398",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76051",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76052",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76065",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "dallas-tx",
+                "countyFips": "48113",
+                "countyName": "Dallas County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819000",
+                    "displayName": "Dallas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76078",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76092",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76177",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76201",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76202",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76203",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76204",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76205",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76206",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76207",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76208",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76209",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76210",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76226",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76227",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76234",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76247",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76249",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76258",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76259",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76262",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76266",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "76272",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "denton-tx",
+                "countyFips": "48121",
+                "countyName": "Denton County",
+                "communities": [
+                  {
+                    "placeGeoid": "4819972",
+                    "displayName": "Denton"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4819000",
+          "identity": "Dallas",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.7933334,
+            "lng": -96.7665128
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4827000",
+          "identity": "Fort Worth",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.7819538,
+            "lng": -97.3485732
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4804000",
+          "identity": "Arlington",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.7007082,
+            "lng": -97.1246912
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4858016",
+          "identity": "Plano",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 33.0507687,
+            "lng": -96.747944
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4837000",
+          "identity": "Irving",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.8577478,
+            "lng": -96.9700224
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4829000",
+          "identity": "Garland",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.9098262,
+            "lng": -96.6303341
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4830464",
+          "identity": "Grand Prairie",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 32.6789304,
+            "lng": -97.0207429
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4827684",
+          "identity": "Frisco",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 33.1554266,
+            "lng": -96.8225959
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4845744",
+          "identity": "McKinney",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 33.2011245,
+            "lng": -96.6641609
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4819972",
+          "identity": "Denton",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 33.2174488,
+            "lng": -97.1413455
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": true
+    },
+    {
+      "id": "austin",
+      "name": "Austin",
+      "cities": [
+        "Austin",
+        "Round Rock",
+        "Cedar Park",
+        "Pflugerville",
+        "Leander"
+      ],
+      "classification": "GEOMETRY_GOVERNANCE_REQUIRED",
+      "method": "GOVERNED_POLYGON_REGIONALIZATION",
+      "priority": "P1",
+      "reason": "Austin resolves as one broad PLACE while surrounding governed places remain distinct. The current governed ZIP index reaches none of the audited Austin identities, so repository evidence cannot support Houston-style ZIP projection today; any subdivision would require new governed evidence in a later milestone.",
+      "followUp": "After DFW, decide whether the product defect justifies an Austin governance/design milestone; first reassess governed ZIP acquisition, and use polygons only if the ZIP gap remains.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48021",
+          "48209",
+          "48453",
+          "48491"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4805000",
+            "displayName": "Austin",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48021",
+              "48209",
+              "48453",
+              "48491"
+            ],
+            "awarenessAreaKey": "4805000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4863500",
+            "displayName": "Round Rock",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48453",
+              "48491"
+            ],
+            "awarenessAreaKey": "4863500",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4813552",
+            "displayName": "Cedar Park",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48453",
+              "48491"
+            ],
+            "awarenessAreaKey": "4813552",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4857176",
+            "displayName": "Pflugerville",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48453",
+              "48491"
+            ],
+            "awarenessAreaKey": "4857176",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4842016",
+            "displayName": "Leander",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48453",
+              "48491"
+            ],
+            "awarenessAreaKey": "4842016",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4805000",
+          "identity": "Austin",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.2986219,
+            "lng": -97.7541339
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4863500",
+          "identity": "Round Rock",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.5261465,
+            "lng": -97.6635324
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4813552",
+          "identity": "Cedar Park",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.5101769,
+            "lng": -97.8186264
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4857176",
+          "identity": "Pflugerville",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.4477647,
+            "lng": -97.6021157
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4842016",
+          "identity": "Leander",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.5742732,
+            "lng": -97.8617408
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": true
+    },
+    {
+      "id": "el-paso",
+      "name": "El Paso",
+      "cities": [
+        "El Paso",
+        "Horizon City",
+        "Socorro",
+        "San Elizario",
+        "Vinton"
+      ],
+      "classification": "GEOMETRY_GOVERNANCE_REQUIRED",
+      "method": "GOVERNED_POLYGON_REGIONALIZATION",
+      "priority": "P1",
+      "reason": "El Paso is a single broad governed PLACE at the consumer layer, and the current governed ZIP index reaches none of the audited El Paso identities. Nearby incorporated places remain independent, but no repository-governed sub-city projection substrate exists.",
+      "followUp": "Run an El Paso evidence/governance design milestone only after owner browser confirmation that the broad city view is a material defect; do not infer subdivisions from ZIPs.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48141"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4824000",
+            "displayName": "El Paso",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48141"
+            ],
+            "awarenessAreaKey": "4824000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4834832",
+            "displayName": "Horizon City",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48141"
+            ],
+            "awarenessAreaKey": "4834832",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4868636",
+            "displayName": "Socorro",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48141"
+            ],
+            "awarenessAreaKey": "4868636",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4865360",
+            "displayName": "San Elizario",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48141"
+            ],
+            "awarenessAreaKey": "4865360",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4875668",
+            "displayName": "Vinton",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48141"
+            ],
+            "awarenessAreaKey": "4875668",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4824000",
+          "identity": "El Paso",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.8477804,
+            "lng": -106.4311055
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4834832",
+          "identity": "Horizon City",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.6796475,
+            "lng": -106.1910545
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4868636",
+          "identity": "Socorro",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.6384912,
+            "lng": -106.2574405
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4865360",
+          "identity": "San Elizario",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.5784361,
+            "lng": -106.2620195
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4875668",
+          "identity": "Vinton",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.959455,
+            "lng": -106.5935165
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": true
+    },
+    {
+      "id": "corpus-christi",
+      "name": "Corpus Christi",
+      "cities": [
+        "Corpus Christi",
+        "Portland",
+        "Robstown"
+      ],
+      "classification": "NO_REGIONALIZATION_NEEDED",
+      "method": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "reason": "Citywide Corpus Christi plus independently governed nearby places is proportionate to current evidence; ZIP records do not establish governed sub-city consumer labels.",
+      "followUp": "Monitor owner feedback after launch; open a design audit only if citywide context proves materially confusing.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48007",
+          "48273",
+          "48355",
+          "48409"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4817000",
+            "displayName": "Corpus Christi",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48007",
+              "48273",
+              "48355",
+              "48409"
+            ],
+            "awarenessAreaKey": "4817000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4858904",
+            "displayName": "Portland",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48355",
+              "48409"
+            ],
+            "awarenessAreaKey": "4858904",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4862600",
+            "displayName": "Robstown",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48355"
+            ],
+            "awarenessAreaKey": "4862600",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4817000",
+          "identity": "Corpus Christi",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.7542524,
+            "lng": -97.1733853
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4858904",
+          "identity": "Portland",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.8890482,
+            "lng": -97.3315975
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4862600",
+          "identity": "Robstown",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.793971,
+            "lng": -97.6691627
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": false
+    },
+    {
+      "id": "laredo",
+      "name": "Laredo",
+      "cities": [
+        "Laredo",
+        "Laredo Ranchettes",
+        "Laredo Ranchettes West"
+      ],
+      "classification": "NO_REGIONALIZATION_NEEDED",
+      "method": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "reason": "The city and nearby CDPs are independently governed; current ZIP evidence does not itself govern meaningful Laredo subdivisions.",
+      "followUp": "Monitor; preserve Laredo Ranchettes CDP precedence in any later proposal.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48479"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4841464",
+            "displayName": "Laredo",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48479"
+            ],
+            "awarenessAreaKey": "4841464",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4841473",
+            "displayName": "Laredo Ranchettes",
+            "governedType": "CENSUS_DESIGNATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48479"
+            ],
+            "awarenessAreaKey": "4841473",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4841475",
+            "displayName": "Laredo Ranchettes West",
+            "governedType": "CENSUS_DESIGNATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48479"
+            ],
+            "awarenessAreaKey": "4841475",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4841464",
+          "identity": "Laredo",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.5603789,
+            "lng": -99.4891809
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4841473",
+          "identity": "Laredo Ranchettes",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.491353,
+            "lng": -99.3597816
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4841475",
+          "identity": "Laredo Ranchettes West",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 27.4900378,
+            "lng": -99.3701427
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": false
+    },
+    {
+      "id": "rio-grande-valley",
+      "name": "Rio Grande Valley",
+      "cities": [
+        "McAllen",
+        "Edinburg",
+        "Mission",
+        "Pharr",
+        "Weslaco",
+        "Harlingen",
+        "Brownsville"
+      ],
+      "multi": true,
+      "classification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "method": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P3",
+      "reason": "The cluster already exposes multiple recognizable governed cities. A broad RGV identity would add little and could erase city/county context.",
+      "followUp": "No regional layer; monitor cross-county owner journeys and retain independent-city resolution.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48061",
+          "48215"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4845384",
+            "displayName": "McAllen",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48215"
+            ],
+            "awarenessAreaKey": "4845384",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4822660",
+            "displayName": "Edinburg",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48215"
+            ],
+            "awarenessAreaKey": "4822660",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4848768",
+            "displayName": "Mission",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48215"
+            ],
+            "awarenessAreaKey": "4848768",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4857200",
+            "displayName": "Pharr",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48215"
+            ],
+            "awarenessAreaKey": "4857200",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4877272",
+            "displayName": "Weslaco",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48215"
+            ],
+            "awarenessAreaKey": "4877272",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4832372",
+            "displayName": "Harlingen",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48061"
+            ],
+            "awarenessAreaKey": "4832372",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4810768",
+            "displayName": "Brownsville",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48061"
+            ],
+            "awarenessAreaKey": "4810768",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 23,
+        "distinctConsumerCommunities": [
+          "Brownsville"
+        ],
+        "ambiguousRecordCount": 4,
+        "records": [
+          {
+            "zip": "78520",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78521",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78522",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78523",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78526",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78535",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78550",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78551",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78552",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78553",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78559",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78566",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78567",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78568",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78569",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78570",
+            "countySelectionRequired": true,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78575",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78578",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78583",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78586",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78592",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78593",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "zip": "78597",
+            "countySelectionRequired": false,
+            "countyCandidates": [
+              {
+                "countyId": "cameron-tx",
+                "countyFips": "48061",
+                "countyName": "Cameron County",
+                "communities": [
+                  {
+                    "placeGeoid": "4810768",
+                    "displayName": "Brownsville"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4845384",
+          "identity": "McAllen",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.2249657,
+            "lng": -98.246083
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4822660",
+          "identity": "Edinburg",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.3183738,
+            "lng": -98.15348
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4848768",
+          "identity": "Mission",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.2040601,
+            "lng": -98.3252207
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4857200",
+          "identity": "Pharr",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.163436,
+            "lng": -98.1938896
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4877272",
+          "identity": "Weslaco",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.1605485,
+            "lng": -97.9876536
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4832372",
+          "identity": "Harlingen",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 26.191204,
+            "lng": -97.6973825
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4810768",
+          "identity": "Brownsville",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 25.9894042,
+            "lng": -97.4806255
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": false
+    },
+    {
+      "id": "beaumont-port-arthur",
+      "name": "Beaumont–Port Arthur",
+      "cities": [
+        "Beaumont",
+        "Port Arthur",
+        "Nederland",
+        "Port Neches",
+        "Groves"
+      ],
+      "multi": true,
+      "classification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "method": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "reason": "Beaumont, Port Arthur, and adjacent communities are independently governed and consumer eligible; subdivision is not demonstrated as necessary.",
+      "followUp": "No implementation milestone; monitor independent-city selection.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48245",
+          "48361"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4807000",
+            "displayName": "Beaumont",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48245"
+            ],
+            "awarenessAreaKey": "4807000",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4858820",
+            "displayName": "Port Arthur",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48245",
+              "48361"
+            ],
+            "awarenessAreaKey": "4858820",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4850580",
+            "displayName": "Nederland",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48245"
+            ],
+            "awarenessAreaKey": "4850580",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4858940",
+            "displayName": "Port Neches",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48245"
+            ],
+            "awarenessAreaKey": "4858940",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4831328",
+            "displayName": "Groves",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48245"
+            ],
+            "awarenessAreaKey": "4831328",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4807000",
+          "identity": "Beaumont",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 30.084912,
+            "lng": -94.1453303
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4858820",
+          "identity": "Port Arthur",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 29.9000079,
+            "lng": -93.8944195
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4850580",
+          "identity": "Nederland",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 29.969288,
+            "lng": -94.0017137
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4858940",
+          "identity": "Port Neches",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 29.9607676,
+            "lng": -93.9617904
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4831328",
+          "identity": "Groves",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 29.9459705,
+            "lng": -93.9166563
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": false
+    },
+    {
+      "id": "killeen-temple",
+      "name": "Killeen–Temple",
+      "cities": [
+        "Killeen",
+        "Temple",
+        "Belton",
+        "Harker Heights",
+        "Copperas Cove"
+      ],
+      "multi": true,
+      "classification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "method": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P3",
+      "reason": "Killeen, Temple, Belton, and nearby cities already retain useful independent PLACE identity; collapsing them would reduce granularity.",
+      "followUp": "No regional layer; monitor cross-county Copperas Cove precedence.",
+      "governedIdentityInventory": {
+        "counties": [
+          "48027",
+          "48099",
+          "48281"
+        ],
+        "places": [
+          {
+            "placeGeoid": "4839148",
+            "displayName": "Killeen",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48027"
+            ],
+            "awarenessAreaKey": "4839148",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4872176",
+            "displayName": "Temple",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48027"
+            ],
+            "awarenessAreaKey": "4872176",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4807492",
+            "displayName": "Belton",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48027"
+            ],
+            "awarenessAreaKey": "4807492",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4832312",
+            "displayName": "Harker Heights",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48027"
+            ],
+            "awarenessAreaKey": "4832312",
+            "canonicalIdentity": "PLACE_GEOID"
+          },
+          {
+            "placeGeoid": "4816624",
+            "displayName": "Copperas Cove",
+            "governedType": "INCORPORATED_PLACE",
+            "consumerEligible": true,
+            "countyMemberships": [
+              "48027",
+              "48099",
+              "48281"
+            ],
+            "awarenessAreaKey": "4816624",
+            "canonicalIdentity": "PLACE_GEOID"
+          }
+        ]
+      },
+      "currentRuntimeBehavior": {
+        "countyIdentity": "Canonical county FIPS/county-id context is retained.",
+        "placeIdentity": "Consumer-eligible Census PLACE/CDP projection; selection, search, home area, Current View and Location Context use the governed PLACE identity where resolved.",
+        "consumerRegionMachinery": "NONE_FOR_THIS_METRO",
+        "awarenessBehavior": "PLACE_GEOID-backed consumer awareness; no LP195-created keys.",
+        "independentPlacePrecedence": "INDEPENDENT_GOVERNED_PLACE_WINS"
+      },
+      "zipCommunityEvidence": {
+        "governedRecordCount": 0,
+        "distinctConsumerCommunities": [],
+        "ambiguousRecordCount": 0,
+        "records": []
+      },
+      "cameraEvidence": [
+        {
+          "placeGeoid": "4839148",
+          "identity": "Killeen",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.0776691,
+            "lng": -97.731952
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4872176",
+          "identity": "Temple",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.1049362,
+            "lng": -97.3885117
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4807492",
+          "identity": "Belton",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.0523452,
+            "lng": -97.4795422
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4832312",
+          "identity": "Harker Heights",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.0567082,
+            "lng": -97.6442214
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        },
+        {
+          "placeGeoid": "4816624",
+          "identity": "Copperas Cove",
+          "identityType": "PLACE",
+          "center": {
+            "lat": 31.1195749,
+            "lng": -97.9143974
+          },
+          "startupZoom": 13,
+          "startupZoomAuthority": "GRIDLY_TOWN_STARTUP_ZOOM / governed statewide community focus bridge",
+          "metroRegionSemantics": false
+        }
+      ],
+      "precedenceConcerns": [
+        "A metro or presentation layer must never replace an independently resolved incorporated place or CDP.",
+        "Multi-county PLACE and ambiguous ZIP records retain county-selection/context requirements."
+      ],
+      "followUpMilestoneNeeded": false
+    }
+  ],
+  "ownerBrowserTestMatrix": [
+    {
+      "metro": "Dallas–Fort Worth",
+      "input": "75001",
+      "inputType": "GOVERNED_ZIP",
+      "expectedGovernedIdentity": "PLACE 4819000 (Dallas)",
+      "expectedConsumerLabel": "Dallas",
+      "expectedCounty": "Dallas County",
+      "expectedCameraBehavior": "PLACE center 32.7933334, -96.7665128; startup zoom 13",
+      "precedenceConcern": "Do not replace this PLACE with a metro identity."
+    },
+    {
+      "metro": "Dallas–Fort Worth",
+      "input": "Fort Worth",
+      "inputType": "GOVERNED_TOWN_SEARCH",
+      "expectedGovernedIdentity": "PLACE 4827000 (Fort Worth)",
+      "expectedConsumerLabel": "Fort Worth",
+      "expectedCounty": "Tarrant County",
+      "expectedCameraBehavior": "PLACE center 32.7819538, -97.3485732; startup zoom 13",
+      "precedenceConcern": "No governed ZIP expectation exists; validate PLACE search only."
+    },
+    {
+      "metro": "Dallas–Fort Worth",
+      "input": "Arlington",
+      "inputType": "GOVERNED_TOWN_SEARCH",
+      "expectedGovernedIdentity": "PLACE 4804000 (Arlington)",
+      "expectedConsumerLabel": "Arlington",
+      "expectedCounty": "Tarrant County",
+      "expectedCameraBehavior": "PLACE center 32.7007082, -97.1246912; startup zoom 13",
+      "precedenceConcern": "No governed ZIP expectation exists; validate PLACE search only."
+    },
+    {
+      "metro": "Austin",
+      "input": "Austin",
+      "inputType": "GOVERNED_TOWN_SEARCH",
+      "expectedGovernedIdentity": "PLACE 4805000 (Austin)",
+      "expectedConsumerLabel": "Austin",
+      "expectedCounty": "Travis County",
+      "expectedCameraBehavior": "PLACE center 30.2986219, -97.7541339; startup zoom 13",
+      "precedenceConcern": "No governed ZIP expectation exists; validate PLACE search only."
+    },
+    {
+      "metro": "El Paso",
+      "input": "El Paso",
+      "inputType": "GOVERNED_TOWN_SEARCH",
+      "expectedGovernedIdentity": "PLACE 4824000 (El Paso)",
+      "expectedConsumerLabel": "El Paso",
+      "expectedCounty": "El Paso County",
+      "expectedCameraBehavior": "PLACE center 31.8477804, -106.4311055; startup zoom 13",
+      "precedenceConcern": "No governed ZIP expectation exists; validate PLACE search only."
+    }
+  ],
+  "decisionTable": [
+    {
+      "metro": "Dallas–Fort Worth",
+      "currentClassification": "MULTI_CITY_METRO_MODEL_REQUIRED",
+      "recommendedMethod": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P1",
+      "followUpMilestoneNeeded": true,
+      "reason": "The governed substrate preserves the major cities independently; a single DFW consumer identity would discard useful city context. Dallas and Fort Worth remain broad city identities and are candidates for separately scoped ZIP/community presentation work."
+    },
+    {
+      "metro": "Austin",
+      "currentClassification": "GEOMETRY_GOVERNANCE_REQUIRED",
+      "recommendedMethod": "GOVERNED_POLYGON_REGIONALIZATION",
+      "priority": "P1",
+      "followUpMilestoneNeeded": true,
+      "reason": "Austin resolves as one broad PLACE while surrounding governed places remain distinct. The current governed ZIP index reaches none of the audited Austin identities, so repository evidence cannot support Houston-style ZIP projection today; any subdivision would require new governed evidence in a later milestone."
+    },
+    {
+      "metro": "El Paso",
+      "currentClassification": "GEOMETRY_GOVERNANCE_REQUIRED",
+      "recommendedMethod": "GOVERNED_POLYGON_REGIONALIZATION",
+      "priority": "P1",
+      "followUpMilestoneNeeded": true,
+      "reason": "El Paso is a single broad governed PLACE at the consumer layer, and the current governed ZIP index reaches none of the audited El Paso identities. Nearby incorporated places remain independent, but no repository-governed sub-city projection substrate exists."
+    },
+    {
+      "metro": "Corpus Christi",
+      "currentClassification": "NO_REGIONALIZATION_NEEDED",
+      "recommendedMethod": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "followUpMilestoneNeeded": false,
+      "reason": "Citywide Corpus Christi plus independently governed nearby places is proportionate to current evidence; ZIP records do not establish governed sub-city consumer labels."
+    },
+    {
+      "metro": "Laredo",
+      "currentClassification": "NO_REGIONALIZATION_NEEDED",
+      "recommendedMethod": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "followUpMilestoneNeeded": false,
+      "reason": "The city and nearby CDPs are independently governed; current ZIP evidence does not itself govern meaningful Laredo subdivisions."
+    },
+    {
+      "metro": "Rio Grande Valley",
+      "currentClassification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "recommendedMethod": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P3",
+      "followUpMilestoneNeeded": false,
+      "reason": "The cluster already exposes multiple recognizable governed cities. A broad RGV identity would add little and could erase city/county context."
+    },
+    {
+      "metro": "Beaumont–Port Arthur",
+      "currentClassification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "recommendedMethod": "EXISTING_RUNTIME_ALREADY_SUFFICIENT",
+      "priority": "P3",
+      "followUpMilestoneNeeded": false,
+      "reason": "Beaumont, Port Arthur, and adjacent communities are independently governed and consumer eligible; subdivision is not demonstrated as necessary."
+    },
+    {
+      "metro": "Killeen–Temple",
+      "currentClassification": "ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY",
+      "recommendedMethod": "MULTI_CITY_INDEPENDENT_PLACE_MODEL",
+      "priority": "P3",
+      "followUpMilestoneNeeded": false,
+      "reason": "Killeen, Temple, Belton, and nearby cities already retain useful independent PLACE identity; collapsing them would reduce granularity."
+    }
+  ],
+  "recommendedNextMilestone": "LP196_DFW_INDEPENDENT_CITY_CONSUMER_MODEL_DESIGN"
+}
