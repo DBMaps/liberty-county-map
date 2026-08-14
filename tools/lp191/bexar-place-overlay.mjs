@@ -44,7 +44,7 @@ export function reconcileGovernance(){
 export function auditGovernedInputs({ownerPlaceGeometry=process.env.GRIDLY_TEXAS_PLACE_ZIP,ownerSaGeometry=process.env.GRIDLY_SA_TOMORROW_GEOJSON}={}){
   const governance=reconcileGovernance();
   const westIdentity=digest(path.join(ROOT,PATHS.west));
-  if(westIdentity.bytes!==WEST.bytes||westIdentity.sha256!==WEST.sha256)throw Error(`WEST_NORTHWEST_DERIVED_IDENTITY_MISMATCH: expected ${WEST.bytes}/${WEST.sha256}, received ${westIdentity.bytes}/${westIdentity.sha256}`);
+  if(westIdentity.bytes!==WEST.bytes||westIdentity.sha256!==WEST.sha256)throw Error(`WEST_NORTHWEST_CERTIFIED_ARTIFACT_RECOVERY_OWNER_EXECUTION_REQUIRED: expected ${WEST.bytes}/${WEST.sha256}, received ${westIdentity.bytes}/${westIdentity.sha256}`);
   const missing=[];
   if(!ownerPlaceGeometry||!fs.existsSync(ownerPlaceGeometry))missing.push('GRIDLY_TEXAS_PLACE_ZIP');
   if(!ownerSaGeometry||!fs.existsSync(ownerSaGeometry))missing.push('GRIDLY_SA_TOMORROW_GEOJSON');

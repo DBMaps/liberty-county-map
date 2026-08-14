@@ -1,0 +1,26 @@
+{
+  "artifactReplacement": "ARTIFACT_REPLACEMENT_OWNER_EXECUTION_PENDING",
+  "classification": "CERTIFICATION_METADATA_GENERATION_BUG",
+  "coordinateChanges": false,
+  "existingCertificationIdentityPreserved": true,
+  "geometryRegenerationPerformed": false,
+  "makeValidPerformed": false,
+  "milestone": "LP191_WEST_NORTHWEST_ARTIFACT_RECOVERY",
+  "reconstructedCertifiedIdentity": {
+    "bytes": 427909,
+    "featureCount": 1,
+    "featureName": "West Northwest",
+    "geometryType": "Polygon",
+    "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+    "sha256": "1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181"
+  },
+  "recoveryMethod": "RECOVERY_METHOD_CERTIFIED",
+  "recoveryProcedure": "Validate the accidental JSON Buffer wrapper has exactly numeric keys 0 through 427908 and byte values 0 through 255; reconstruct by wrapper[String(i)]; verify the certified byte length, SHA-256, and GeoJSON identity; then write those exact bytes without geometry processing.",
+  "rootCause": "The generic certification writer passed a Node Buffer through structured JSON serialization instead of writing its raw bytes.",
+  "status": "CERTIFIED_ARTIFACT_RECOVERY_METHOD_READY_OWNER_EXECUTION_PENDING",
+  "wrapperIdentity": {
+    "bytes": 6735560,
+    "propertyCount": 427909,
+    "sha256": "d46219d2f61d26d40111bb375651ec91a6ba286b2331e421d19d35f17d881c16"
+  }
+}

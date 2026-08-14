@@ -16,7 +16,7 @@
   "scripts": {
     "lp191:whatif": "node tools/lp191/bexar-place-overlay.mjs --whatif",
     "verify:lp191": "node tools/lp191/bexar-place-overlay.mjs --verify",
-    "test:lp191": "node --test tests/lp191-bexar-place-overlay.test.mjs",
+    "test:lp191": "node --test tests/lp191-bexar-place-overlay.test.mjs tests/lp191-west-northwest-artifact-recovery.test.mjs",
     "certify:san-antonio-working-geometry-governance": "node tools/certify-san-antonio-working-geometry-governance.mjs",
     "test:san-antonio-working-geometry-governance": "node --test tests/san-antonio-working-geometry-governance.test.mjs",
     "audit:san-antonio-two-polygon-defects": "node tools/audit-san-antonio-two-polygon-defects.mjs",
@@ -481,6 +481,7 @@
     "test:san-antonio-sa-tomorrow-geometry": "node --test tests/san-antonio-sa-tomorrow-geometry-certification.test.mjs",
     "certify:san-antonio-sa-tomorrow-geometry-offline": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --certify-offline",
     "verify:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --verify",
-    "analyze:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --analyze"
+    "analyze:san-antonio-sa-tomorrow-geometry": "node tools/acquire-certify-san-antonio-sa-tomorrow-geometry.mjs --analyze",
+    "recover:lp191-west-northwest": "node tools/lp191/recover-west-northwest-artifact.mjs --verify"
   }
 }
