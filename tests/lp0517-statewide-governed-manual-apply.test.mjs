@@ -10,6 +10,7 @@ const registryContext = {};
 vm.createContext(registryContext);
 vm.runInContext(`${source.slice(0, range.end)};this.registry=GRIDLY_COUNTY_REGISTRY`, registryContext);
 const registry = registryContext.registry;
+const sanAntonioRegistry = JSON.parse(fs.readFileSync(new URL("../data/runtime/san-antonio-consumer-regions.json", import.meta.url), "utf8"));
 
 function extractFunction(name) {
   const start = source.indexOf(`function ${name}(`);
@@ -49,11 +50,23 @@ function makeHarness() {
     areas[`${countyId}-${placeGeoid}`] = { key: `${countyId}-${placeGeoid}`, label: name, countyId, communityId: placeGeoid };
   }
   areas["el-paso-countywide"] = { key: "el-paso-countywide", label: "El Paso County", countyId: "el-paso-tx", countyWide: true };
+  const sanAntonioRegions = sanAntonioRegistry.regions.map((region) => ({
+    id: region.regionId, label: region.consumerLabel, countyId: region.countyId,
+    lat: region.semanticCenter.latitude, lng: region.semanticCenter.longitude,
+    startupZoom: region.startupZoom, geometryFeatureId: region.geometryFeatureId
+  }));
+  for (const region of sanAntonioRegions) areas[region.id] = {
+    key: region.id, label: region.label, awarenessRegionLabel: region.label,
+    awarenessRegionId: region.id, countyId: region.countyId, sanAntonioRegion: true,
+    lat: region.lat, lng: region.lng, startupZoom: region.startupZoom,
+    geometryFeatureId: region.geometryFeatureId
+  };
   const storage = new Map([["gridlyHomePersonalizationV1", JSON.stringify({ countyId: "anderson-tx", communityKey: "4854708" })]]);
   const context = {
     GRIDLY_COUNTY_REGISTRY: registry,
     GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID: Object.fromEntries(representatives.map(([, countyId, countyFips]) => [countyId, countyFips])),
     GRIDLY_AWARENESS_AREA_BY_KEY: areas,
+    GRIDLY_LP194_SAN_ANTONIO_REGION_LOOKUP: Object.fromEntries(sanAntonioRegions.map((region) => [region.id, region])),
     GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION: "LP051.7.home-personalization.v1",
     GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY: "gridlyHomePersonalizationV1",
     GRIDLY_SETTINGS_STORAGE_KEY: "gridlySettingsV2",
@@ -80,6 +93,7 @@ function makeHarness() {
   };
   vm.createContext(context);
   vm.runInContext([
+    extractFunction("gridlyLp194ResolveGovernedSelectedRegionIdentity"),
     extractFunction("gridlyLp0517ResolveGovernedSelectedIdentity"),
     extractFunction("gridlyLp0517ValidateHomeRecord"),
     extractFunction("gridlyBuildHomePersonalizationRecord"),
@@ -88,6 +102,42 @@ function makeHarness() {
   ].join("\n"), context);
   return { context, storage, areas };
 }
+
+test("all nine governed San Antonio consumer regions save and restore without PLACE identity", () => {
+  for (const region of sanAntonioRegistry.regions) {
+    const { context, storage } = makeHarness();
+    const result = context.gridlyApplyConfirmedHomePersonalization({
+      countyId: "bexar-tx", awarenessAreaKey: region.regionId,
+      consumerLabel: region.consumerLabel, communityLabel: region.consumerLabel,
+      resolutionStatus: "manual_confirmed"
+    }, { resolutionMethod: "manual_governed_area" });
+    assert.equal(result.success, true, `${region.regionId}: ${JSON.stringify(result)}`);
+    const saved = JSON.parse(storage.get("gridlyHomePersonalizationV1"));
+    assert.equal(saved.identityType, "SAN_ANTONIO_CONSUMER_REGION");
+    assert.equal(saved.canonicalRegionId, region.regionId);
+    assert.equal(saved.awarenessAreaKey, region.regionId);
+    assert.equal(saved.consumerLabel, region.consumerLabel);
+    assert.equal(saved.communityKey, null);
+    assert.equal(Object.hasOwn(saved, "placeGeoid"), false);
+    assert.equal(context.gridlyLp0517ValidateHomeRecord(saved).area.key, region.regionId);
+  }
+});
+
+test("San Antonio region governance fails closed and legacy blanket identity requires reselection", () => {
+  const invalid = [
+    { countyId: "bexar-tx", awarenessAreaKey: "arbitrary-tenth-region", consumerLabel: "Arbitrary San Antonio", resolutionStatus: "manual_confirmed" },
+    { countyId: "dallas-tx", awarenessAreaKey: "central-san-antonio", consumerLabel: "Central San Antonio", resolutionStatus: "manual_confirmed" },
+    { countyId: "bexar-tx", awarenessAreaKey: "bexar-tx-san-antonio", consumerLabel: "San Antonio", resolutionStatus: "manual_confirmed" }
+  ];
+  for (const selection of invalid) {
+    const { context } = makeHarness();
+    assert.equal(context.gridlyApplyConfirmedHomePersonalization(selection, { resolutionMethod: "manual_governed_area" }).error, "invalid_selected_identity");
+  }
+  const { context, areas } = makeHarness();
+  delete areas["medical-region"];
+  const missingRegistration = context.gridlyApplyConfirmedHomePersonalization({ countyId: "bexar-tx", awarenessAreaKey: "medical-region", consumerLabel: "Medical Region", resolutionStatus: "manual_confirmed" });
+  assert.equal(missingRegistration.error, "invalid_selected_identity");
+});
 
 test("explicit apply accepts every representative governed statewide PLACE identity", () => {
   for (const [name, countyId, countyFips, placeGeoid] of representatives) {
