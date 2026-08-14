@@ -1,0 +1,19 @@
+{
+  "milestone": "SAN_ANTONIO_SA_TOMORROW_GEOMETRY_CERTIFICATION",
+  "status": "BLOCKED_FAIL_CLOSED",
+  "deterministic": true,
+  "runtimeMutationPerformed": false,
+  "consolidationPerformed": false,
+  "workingCrs": "EPSG:3083",
+  "reportType": "SOURCE_CERTIFICATION",
+  "failure": "OFFICIAL_CITY_AUTHORITY_NOT_ESTABLISHED",
+  "finding": "Official portal access returned HTTP 403 in this environment; no source bytes were fabricated or accepted.",
+  "sources": [],
+  "rawArtifacts": [],
+  "reconciliation": {
+    "expectedCount": 30,
+    "regionalCenterCount": 13,
+    "communityAreaCount": 17,
+    "status": "NOT_EXECUTED_SOURCE_UNAVAILABLE"
+  }
+}

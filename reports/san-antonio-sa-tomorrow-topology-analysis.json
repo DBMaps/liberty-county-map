@@ -1,0 +1,24 @@
+{
+  "milestone": "SAN_ANTONIO_SA_TOMORROW_GEOMETRY_CERTIFICATION",
+  "status": "BLOCKED_FAIL_CLOSED",
+  "deterministic": true,
+  "runtimeMutationPerformed": false,
+  "consolidationPerformed": false,
+  "workingCrs": "EPSG:3083",
+  "reportType": "TOPOLOGY_ANALYSIS",
+  "failure": "TOPOLOGY_ANALYSIS_INCOMPLETE",
+  "geometryValidity": {
+    "status": "NOT_EXECUTED",
+    "valid": null,
+    "invalid": null
+  },
+  "overlaps": [],
+  "gaps": {
+    "status": "NOT_EXECUTED"
+  },
+  "cityLimitCoverage": {
+    "status": "NOT_EXECUTED",
+    "reason": "CITY_LIMIT_AUTHORITY_AMBIGUOUS"
+  },
+  "regionalCenterCommunityAreaRelationships": []
+}
