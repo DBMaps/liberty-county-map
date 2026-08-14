@@ -26,3 +26,5 @@ reports/lp193/*.json text eol=lf
 reports/lp193/*.md text eol=lf
 evidence/lp193/*.geojson text eol=lf
 reports/lp193/san-antonio-consumer-region-implementation-readiness.md text eol=lf
+data/runtime/san-antonio-consumer-regions.geojson text eol=lf
+js/app.js text eol=lf
