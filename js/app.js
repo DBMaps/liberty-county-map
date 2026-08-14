@@ -45479,6 +45479,13 @@ function gridlyResolveCanonicalPlaceGeoid(area) {
 function gridlyDispatchSemanticCamera(area, countyId, options = {}) {
   if (!map || !area) return false;
   const sequence = ++gridlySemanticCameraSequence;
+  const governedSanAntonioRegion = area.sanAntonioRegion === true ? GRIDLY_LP194_SAN_ANTONIO_REGION_LOOKUP?.[String(area.key || area.awarenessRegionId || "")] : null;
+  const canonicalSanAntonioArea = governedSanAntonioRegion ? GRIDLY_AWARENESS_AREA_BY_KEY?.[governedSanAntonioRegion.id] : null;
+  if (canonicalSanAntonioArea?.sanAntonioRegion === true && canonicalSanAntonioArea.key === governedSanAntonioRegion.id && canonicalSanAntonioArea.countyId === governedSanAntonioRegion.countyId && [governedSanAntonioRegion.lat, governedSanAntonioRegion.lng, governedSanAntonioRegion.startupZoom, canonicalSanAntonioArea.lat, canonicalSanAntonioArea.lng, canonicalSanAntonioArea.startupZoom].every(Number.isFinite) && canonicalSanAntonioArea.lat === governedSanAntonioRegion.lat && canonicalSanAntonioArea.lng === governedSanAntonioRegion.lng && canonicalSanAntonioArea.startupZoom === governedSanAntonioRegion.startupZoom) {
+    const issued = setGridlyAwarenessView({ lat: canonicalSanAntonioArea.lat, lng: canonicalSanAntonioArea.lng }, canonicalSanAntonioArea.startupZoom, { animate: options.animate === true, compensateForChrome: false });
+    if (issued) gridlyCommittedSemanticCamera = Object.freeze({ sequence, semanticLevel: "SAN_ANTONIO_REGION", regionId: governedSanAntonioRegion.id, target: Object.freeze({ lat: canonicalSanAntonioArea.lat, lng: canonicalSanAntonioArea.lng }), zoom: canonicalSanAntonioArea.startupZoom, source: options.source || "unknown" });
+    return issued;
+  }
   const placeGeoid = area.countyWide === true || area.fallback === true ? null : gridlyResolveCanonicalPlaceGeoid(area);
   if (placeGeoid) {
     const target = gridlyPlacePresentationTargets?.[placeGeoid];
