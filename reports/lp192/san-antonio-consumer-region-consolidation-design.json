@@ -822,7 +822,7 @@
   "options": {
     "A": {
       "optionId": "A",
-      "name": "Recommended balanced consolidation",
+      "name": "Owner-approved recommended balanced consolidation",
       "consumerRegionCount": 9,
       "heldAtomicUnits": [
         "Far Southwest"
@@ -832,8 +832,8 @@
         {
           "designKey": "LP192-A-01",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Downtown / Central San Antonio",
-          "labelStatus": "RECOMMENDED",
+          "candidateConsumerLabel": "Central San Antonio",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Downtown",
             "Eastside",
@@ -846,15 +846,15 @@
           "majorAnchorActivityRationale": "Downtown civic, event, and inner-city activity core.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-02",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Medical Region",
-          "labelStatus": "RECOMMENDED",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Medical Center",
             "Near Northwest",
@@ -865,15 +865,15 @@
           "majorAnchorActivityRationale": "Medical Center is the recognizable trip and employment anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-03",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Airport / Fort Sam",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "OWNER_APPROVED_PROVISIONAL_DESIGN_LABEL",
           "atomicUnits": [
             "Fort Sam Houston",
             "Greater Airport Area",
@@ -884,33 +884,33 @@
           "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-04",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Stone Oak / Far North",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Far North",
             "Stone Oak"
           ],
-          "rationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "rationale": "Stone Oak is the certified regional-center anchor for the broader unit.",
           "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
-          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor for the broader unit.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-05",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "UTSA / Northwest",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Northwest",
             "UTSA",
@@ -921,15 +921,15 @@
           "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-06",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Highway 151 / Far West",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Far West / Alamo Ranch",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Far West",
             "Highway 151 and Loop 1604"
@@ -939,15 +939,15 @@
           "majorAnchorActivityRationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-07",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "NE I-35 / Rolling Oaks",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Northeast San Antonio",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Far East",
             "NE I-35 and Loop 410",
@@ -959,15 +959,15 @@
           "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-08",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Brooks / Southside",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Southside / Brooks",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Brooks",
             "Far South",
@@ -980,15 +980,15 @@
           "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-A-09",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Port San Antonio / Southwest",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Southwest / Port San Antonio",
+          "labelStatus": "OWNER_APPROVED_DESIGN_LABEL",
           "atomicUnits": [
             "Port San Antonio",
             "Southwest"
@@ -998,8 +998,8 @@
           "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "PROVISIONAL_DESIGN_INTENT places Far Southwest in southwest-side naming review context only; certified membership is forbidden.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         }
       ],
@@ -1008,14 +1008,15 @@
         "Central, medical, airport, UTSA, Stone Oak, Port, Brooks, and major-corridor concepts remain distinguishable."
       ],
       "disadvantages": [
-        "Seven labels require local-owner naming review.",
+        "Airport / Fort Sam presentation wording remains eligible for later runtime naming review.",
         "Enclave PLACE/CDP interactions remain visible but never become membership."
       ],
-      "namingConfidence": "TWO_RECOMMENDED_LABELS; SEVEN_OWNER_NAMING_REVIEW_REQUIRED",
-      "likelyConsumerUsability": "HIGH_DESIGN_CONFIDENCE_PENDING_OWNER_NAMING_REVIEW",
+      "namingConfidence": "EIGHT_OWNER_APPROVED_DESIGN_LABELS; ONE_OWNER_APPROVED_PROVISIONAL_DESIGN_LABEL",
+      "likelyConsumerUsability": "OWNER_APPROVED_DESIGN",
       "governanceComplexity": "MODERATE",
       "placeCdpInteractionComplexity": "MODERATE",
-      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded.",
+      "selectionStatus": "OWNER_APPROVED_RECOMMENDED_OPTION"
     },
     "B": {
       "optionId": "B",
@@ -1030,7 +1031,7 @@
           "designKey": "LP192-B-01",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Central / Medical",
-          "labelStatus": "RECOMMENDED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Downtown",
             "Eastside",
@@ -1046,15 +1047,15 @@
           "majorAnchorActivityRationale": "Downtown civic, event, and inner-city activity core. Medical Center is the recognizable trip and employment anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-B-02",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Airport / North Central",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far North",
             "Fort Sam Houston",
@@ -1062,20 +1063,20 @@
             "Near Northeast",
             "Stone Oak"
           ],
-          "rationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "rationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor for the broader unit.",
           "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
-          "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor for the broader unit.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-B-03",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "UTSA / West",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far West",
             "Highway 151 and Loop 1604",
@@ -1088,15 +1089,15 @@
           "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster. Highway 151 and Loop 1604 is the official corridor/activity anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-B-04",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "NE I-35 / Far East",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far East",
             "NE I-35 and Loop 410",
@@ -1108,15 +1109,15 @@
           "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-B-05",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Brooks / Southside",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Brooks",
             "Far South",
@@ -1129,15 +1130,15 @@
           "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-B-06",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Port San Antonio / Southwest",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Port San Antonio",
             "Southwest"
@@ -1147,8 +1148,8 @@
           "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "Far Southwest is provisional southwest-side context only and has no certified membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         }
       ],
@@ -1163,7 +1164,8 @@
       "likelyConsumerUsability": "MODERATE; SIMPLE BUT OVERBROAD",
       "governanceComplexity": "LOW",
       "placeCdpInteractionComplexity": "HIGH_PER_REGION_BECAUSE_MORE_PLACE_INTERACTIONS_ARE_BUNDLED",
-      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded.",
+      "selectionStatus": "EVALUATED_ALTERNATIVE_NOT_SELECTED"
     },
     "C": {
       "optionId": "C",
@@ -1178,7 +1180,7 @@
           "designKey": "LP192-C-01",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Downtown Core",
-          "labelStatus": "RECOMMENDED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Downtown",
             "Midtown"
@@ -1188,15 +1190,15 @@
           "majorAnchorActivityRationale": "Downtown and Midtown form the central civic and event core.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-02",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Inner San Antonio",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Eastside",
             "Near North",
@@ -1207,15 +1209,15 @@
           "majorAnchorActivityRationale": "The three inner community areas frame the Downtown / Midtown core.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-03",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Medical Region",
-          "labelStatus": "RECOMMENDED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Medical Center",
             "Near Northwest",
@@ -1226,15 +1228,15 @@
           "majorAnchorActivityRationale": "Medical Center is the recognizable trip and employment anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-04",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Airport / Fort Sam",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Fort Sam Houston",
             "Greater Airport Area",
@@ -1245,33 +1247,33 @@
           "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-05",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Stone Oak / Far North",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far North",
             "Stone Oak"
           ],
-          "rationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "rationale": "Stone Oak is the certified regional-center anchor for the broader unit.",
           "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
-          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor for the broader unit.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-06",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "UTSA / Northwest",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Northwest",
             "UTSA",
@@ -1282,15 +1284,15 @@
           "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-07",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Highway 151 / Far West",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Far West / Alamo Ranch",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far West",
             "Highway 151 and Loop 1604"
@@ -1300,15 +1302,15 @@
           "majorAnchorActivityRationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-08",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "NE I-35 / Rolling Oaks",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Far East",
             "NE I-35 and Loop 410",
@@ -1320,15 +1322,15 @@
           "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-09",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
           "candidateConsumerLabel": "Brooks / Southside",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Brooks",
             "Far South",
@@ -1341,15 +1343,15 @@
           "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "No certified Far Southwest geometric membership.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         },
         {
           "designKey": "LP192-C-10",
           "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
-          "candidateConsumerLabel": "Port San Antonio / Southwest",
-          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "candidateConsumerLabel": "Southwest / Port San Antonio",
+          "labelStatus": "EVALUATED_ALTERNATIVE_LABEL_NOT_SELECTED",
           "atomicUnits": [
             "Port San Antonio",
             "Southwest"
@@ -1359,8 +1361,8 @@
           "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
           "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
           "farSouthwestImplications": "PROVISIONAL_DESIGN_INTENT places Far Southwest in southwest-side naming review context only; certified membership is forbidden.",
-          "unresolvedDesignQuestions": [
-            "Owner validation of market language and boundary comprehension remains required."
+          "futureNamingNotes": [
+            "Presentation wording may be reviewed only in a separately authorized runtime implementation milestone; atomic membership must not change silently."
           ]
         }
       ],
@@ -1375,7 +1377,8 @@
       "likelyConsumerUsability": "MODERATE; PRECISE BUT BUSIER",
       "governanceComplexity": "HIGH",
       "placeCdpInteractionComplexity": "MODERATE",
-      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded.",
+      "selectionStatus": "EVALUATED_ALTERNATIVE_NOT_SELECTED"
     }
   },
   "candidateCountAssessment": [
@@ -1464,12 +1467,15 @@
   },
   "recommendedOption": "A",
   "recommendedConsumerRegionCount": 9,
-  "unresolvedOwnerDecisions": [
-    "Approve or revise the seven Option A labels marked OWNER_NAMING_REVIEW_REQUIRED after local-market review.",
-    "Confirm whether Airport / Fort Sam is one consumer concept or should be separated in a later design revision.",
-    "Confirm whether Stone Oak appropriately represents Far North context.",
+  "ownerDecision": {
+    "status": "OPTION_A_APPROVED",
+    "atomicMemberships": "APPROVED_UNCHANGED_DO_NOT_REOPEN_OR_SPLIT",
+    "airportFortSamNamingStatus": "PROVISIONAL_LABEL_FINAL_RUNTIME_NAMING_REVIEW_ALLOWED",
+    "runtimeImplementationPerformed": false
+  },
+  "remainingFutureDecisions": [
     "Resolve City Far Southwest geometry before any certified boundary or membership decision.",
-    "Decide final runtime identities, geometry union rules, centers, zooms, awareness, ZIP, search, and presentation only in a later implementation milestone."
+    "Decide runtime identities, geometry union rules, centers, zooms, awareness, ZIP, search, and presentation only in a separately authorized implementation milestone."
   ],
   "prohibitedRuntimeClaims": [
     "NO_RUNTIME_IDS",
@@ -1481,6 +1487,6 @@
     "NO_STARTUP_ZOOMS",
     "NO_UI_LABEL_ACTIVATION"
   ],
-  "overallStatus": "DESIGN_READY_OWNER_NAMING_REVIEW_REQUIRED_WITH_FAR_SOUTHWEST_HOLD",
-  "recommendation": "READY_FOR_OWNER_LP192_DESIGN_REVIEW"
+  "overallStatus": "CONSUMER_REGION_CONSOLIDATION_DESIGN_OWNER_APPROVED_WITH_PROVISIONAL_NAMING_AND_FAR_SOUTHWEST_HOLD",
+  "recommendation": "READY_TO_MERGE_LP192_DESIGN"
 }
