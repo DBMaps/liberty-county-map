@@ -1,0 +1,230 @@
+{
+  "consolidationPerformed": false,
+  "consumerNamesCreated": false,
+  "consumerRegionsCreated": false,
+  "designRule": "GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL",
+  "milestone": "SAN_ANTONIO_SA_TOMORROW_WORKING_GEOMETRY_GOVERNANCE",
+  "nextMilestone": "BEXAR_PLACE_CDP_OVERLAY_AFTER_OWNER_CERTIFICATION",
+  "records": [
+    {
+      "globalId": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+      "name": "Brooks",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+      "name": "Downtown",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+      "name": "Eastside",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+      "name": "Far East",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+      "name": "Far North",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+      "name": "Far South",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+      "name": "Far Southwest",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": null,
+      "workingGeometryStatus": "GOVERNANCE_HOLD_NO_CERTIFIED_WORKING_GEOMETRY"
+    },
+    {
+      "globalId": "27a862da-469c-4c78-a61e-9791748ade78",
+      "name": "Far West",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+      "name": "Fort Sam Houston",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "acd1e5de-56a1-4120-a323-2cac36172053",
+      "name": "Greater Airport Area",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+      "name": "Highway 151 and Loop 1604",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+      "name": "Medical Center",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+      "name": "Midtown",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+      "name": "NE I-35 and Loop 410",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+      "name": "Near North",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+      "name": "Near Northeast",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "3d2409d8-81a8-4543-a591-827b08d784c1",
+      "name": "Near Northwest",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+      "name": "North Central",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+      "name": "Northeast",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+      "name": "Northwest",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "fd1c2919-e760-491c-a737-b11533605636",
+      "name": "Port San Antonio",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+      "name": "Rolling Oaks",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+      "name": "South",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+      "name": "Southeast",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+      "name": "Southwest",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+      "name": "Stone Oak",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+      "name": "Texas AM - San Antonio",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+      "name": "UTSA",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    },
+    {
+      "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+      "name": "West Northwest",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CERTIFIED_DERIVED_MAKEVALID",
+      "workingGeometryStatus": "CERTIFIED_DERIVED_MAKEVALID"
+    },
+    {
+      "globalId": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+      "name": "Westside",
+      "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID"
+    }
+  ],
+  "runtimeMutationPerformed": false,
+  "status": "ANALYSIS_READY_WITH_ONE_HELD_ATOMIC_UNIT",
+  "summary": {
+    "derivedRepair": 1,
+    "derivedRepairPending": 0,
+    "hold": 1,
+    "originalValid": 28,
+    "total": 30,
+    "usableGovernedWorkingGeometry": 29
+  }
+}

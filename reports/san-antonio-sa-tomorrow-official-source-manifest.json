@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "gridly.san-antonio-sa-tomorrow-official-source-manifest.v1",
+  "sources": [
+    {
+      "classification": "CITY_PRIMARY_CURRENT",
+      "title": "SA Tomorrow Area Planning",
+      "department": "City of San Antonio Planning Department",
+      "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+      "currentOrHistorical": "CURRENT"
+    },
+    {
+      "classification": "CITY_OFFICIAL_PDF",
+      "title": "SA Tomorrow Comprehensive Plan",
+      "department": "City of San Antonio Planning Department",
+      "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+      "publicationOrAdoptionDate": "2016-08-11",
+      "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+    },
+    {
+      "classification": "CITY_PRIMARY_CURRENT",
+      "title": "City of San Antonio GIS",
+      "department": "City of San Antonio Information Technology Services Department",
+      "url": "https://gis.sanantonio.gov/",
+      "currentOrHistorical": "CURRENT"
+    }
+  ],
+  "referenceOnly": [
+    {
+      "classification": "REFERENCE_ONLY_NON_AUTHORITY",
+      "title": "Maps San Antonio regions",
+      "url": "https://mapssanantonio.com/regions/",
+      "mayGovern": false
+    },
+    {
+      "classification": "REFERENCE_ONLY_NON_AUTHORITY",
+      "title": "Third-party ArcGIS copy: SA Tomorrow Regional Centers and Community Areas",
+      "url": null,
+      "mayGovern": false
+    }
+  ]
+}

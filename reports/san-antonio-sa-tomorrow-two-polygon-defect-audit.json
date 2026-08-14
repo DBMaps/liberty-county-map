@@ -1,0 +1,301 @@
+{
+  "consolidationPerformed": false,
+  "consumerNamesCreated": false,
+  "consumerRegionsCreated": false,
+  "designNote": "GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL",
+  "deterministic": true,
+  "governedGeometryMutationPerformed": false,
+  "milestone": "SAN_ANTONIO_TWO_POLYGON_GEOMETRY_DEFECT_AUDIT",
+  "records": [
+    {
+      "currentCityName": "Far Southwest",
+      "defectClassification": "OWNER_REVIEW_REQUIRED",
+      "globalId": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+      "makeValidWhatIf": {
+        "areaDeltaSquareMiles": -0.3010107628797307,
+        "bounds": [
+          1630882.2393389253,
+          7233826.623805108,
+          1645991.6683963803,
+          7247423.083640791
+        ],
+        "centroid": [
+          1637381.52635492,
+          7241441.782312848
+        ],
+        "centroidContained": true,
+        "componentCount": 4,
+        "geometryType": "MULTIPOLYGON",
+        "governedGeometryMutationPerformed": false,
+        "holeCount": null,
+        "invalidityLocation": null,
+        "materialRepair": true,
+        "percentAreaDelta": -1.0586991074862466,
+        "pointOnSurface": [
+          1637304.4850987643,
+          7240623.249114443
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 28.131124557838966,
+        "status": "VALID",
+        "valid": true,
+        "validityReason": "Valid Geometry",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "projectedGeometry": {
+        "bounds": [
+          1630882.2393389253,
+          7233826.623805108,
+          1645991.6683963803,
+          7247423.083640791
+        ],
+        "centroid": [
+          1637459.1761760185,
+          7241374.010848812
+        ],
+        "centroidContained": true,
+        "componentCount": 7,
+        "geometryType": "MULTIPOLYGON",
+        "holeCount": null,
+        "invalidityLocation": [
+          1644697.73375798,
+          7235631.57136394
+        ],
+        "pointOnSurface": [
+          1637304.4850987643,
+          7240623.249114443
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 28.432135320718697,
+        "status": "INVALID",
+        "valid": false,
+        "validityReason": "Nested shells[1644697.73375798 7235631.57136394]",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "recommendedFutureGovernancePath": "REQUIRE_CITY_SOURCE_CLARIFICATION",
+      "secondCityServiceComparison": {
+        "bounds": {
+          "current": [
+            -98.6505085157704,
+            29.2154801979492,
+            -98.4957999413996,
+            29.3390686514252
+          ],
+          "second": [
+            -98.6505085157702,
+            29.2154801979493,
+            -98.4957999413995,
+            29.3390686514252
+          ]
+        },
+        "correctedGeometry": false,
+        "fingerprint": {
+          "current": "a555163afde27daf5155f6feeece08f3a481ab7055e43ef72e70546cee1fd8d2",
+          "second": "9fcced7c8308ba55f4c42bd86783faad5b65a3e2bda1748262ffe7af6a30904e"
+        },
+        "geometryEqual": false,
+        "partCount": {
+          "current": 7,
+          "second": 7
+        },
+        "squareMiles": {
+          "current": 2.6398111369761684e-9,
+          "second": 2.6398111369757784e-9
+        },
+        "validityReason": {
+          "current": "Nested shells[-98.5094073166329 29.2315405266764]",
+          "second": "Nested shells[-98.5094073166328 29.2315405266765]"
+        },
+        "vertexCount": {
+          "current": 1303,
+          "second": 1303
+        }
+      },
+      "sourceGeometry": {
+        "bounds": [
+          -98.6505085157704,
+          29.2154801979492,
+          -98.4957999413996,
+          29.3390686514252
+        ],
+        "centroid": [
+          -98.58321950815619,
+          29.284125763575013
+        ],
+        "centroidContained": true,
+        "componentCount": 7,
+        "geometryType": "MULTIPOLYGON",
+        "holeCount": null,
+        "invalidityLocation": [
+          -98.5094073166329,
+          29.2315405266764
+        ],
+        "pointOnSurface": [
+          -98.5851339773966,
+          29.27721759987585
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 2.6398111369761684e-9,
+        "status": "INVALID",
+        "valid": false,
+        "validityReason": "Nested shells[-98.5094073166329 29.2315405266764]",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "sourceSquareMiles": 23.12700182
+    },
+    {
+      "currentCityName": "West Northwest",
+      "defectClassification": "SOURCE_GEOMETRY_INVALID_REPAIRABLE_DETERMINISTICALLY",
+      "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+      "makeValidWhatIf": {
+        "areaDeltaSquareMiles": 3.268496584496461e-13,
+        "bounds": [
+          1614790.9776841307,
+          7260075.700049073,
+          1635241.3711845842,
+          7277992.0960063385
+        ],
+        "centroid": [
+          1624846.815800587,
+          7269292.828893006
+        ],
+        "centroidContained": false,
+        "componentCount": 1,
+        "geometryType": "POLYGON",
+        "governedGeometryMutationPerformed": false,
+        "holeCount": null,
+        "invalidityLocation": null,
+        "materialRepair": false,
+        "percentAreaDelta": 8.288555177648982e-13,
+        "pointOnSurface": [
+          1629009.991198094,
+          7269036.982171873
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 39.4338520338304,
+        "status": "VALID",
+        "valid": true,
+        "validityReason": "Valid Geometry",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "projectedGeometry": {
+        "bounds": [
+          1614790.9776841307,
+          7260075.700049073,
+          1635241.3711845842,
+          7277992.0960063385
+        ],
+        "centroid": [
+          1624846.8158005967,
+          7269292.828893054
+        ],
+        "centroidContained": false,
+        "componentCount": 1,
+        "geometryType": "MULTIPOLYGON",
+        "holeCount": null,
+        "invalidityLocation": [
+          1627540.43352733,
+          7270466.3643979
+        ],
+        "pointOnSurface": [
+          1629009.991198094,
+          7269036.982171873
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 39.43385203383007,
+        "status": "INVALID",
+        "valid": false,
+        "validityReason": "Ring Self-intersection[1627540.43352733 7270466.3643979]",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "recommendedFutureGovernancePath": "CERTIFY_DETERMINISTIC_DERIVED_REPAIR",
+      "secondCityServiceComparison": {
+        "bounds": {
+          "current": [
+            -98.8134589459122,
+            29.4531124185886,
+            -98.603215163296,
+            29.6156710310079
+          ],
+          "second": [
+            -98.8134589459121,
+            29.4531124185887,
+            -98.6032151632959,
+            29.615671031008
+          ]
+        },
+        "correctedGeometry": false,
+        "fingerprint": {
+          "current": "a5bc1469a19fc92b4d85ee58bc7a15431d568a04fbfde357817dabd545896585",
+          "second": "8e599821df695cec59cceb1233a0cf443787ad02669df9afc423e4f335e645d9"
+        },
+        "geometryEqual": false,
+        "partCount": {
+          "current": 1,
+          "second": 1
+        },
+        "squareMiles": {
+          "current": 3.6702158826518856e-9,
+          "second": 3.67021588265209e-9
+        },
+        "validityReason": {
+          "current": "Ring Self-intersection[-98.6818606214905 29.5472553269509]",
+          "second": "Ring Self-intersection[-98.6818606214904 29.5472553269509]"
+        },
+        "vertexCount": {
+          "current": 4523,
+          "second": 4523
+        }
+      },
+      "sourceGeometry": {
+        "bounds": [
+          -98.8134589459122,
+          29.4531124185886,
+          -98.603215163296,
+          29.6156710310079
+        ],
+        "centroid": [
+          -98.70987138525928,
+          29.536974665769108
+        ],
+        "centroidContained": false,
+        "componentCount": 1,
+        "geometryType": "POLYGON",
+        "holeCount": null,
+        "invalidityLocation": [
+          -98.6818606214905,
+          29.5472553269509
+        ],
+        "pointOnSurface": [
+          -98.66698640560291,
+          29.53442175463385
+        ],
+        "ringCount": null,
+        "ringMetricsEvidence": "RING_METRICS_UNAVAILABLE_IN_GOVERNED_GDAL_BUILD",
+        "squareMiles": 3.6702158826518856e-9,
+        "status": "INVALID",
+        "valid": false,
+        "validityReason": "Ring Self-intersection[-98.6818606214905 29.5472553269509]",
+        "vertexCount": null,
+        "wkb": null
+      },
+      "sourceSquareMiles": 39.40309223
+    }
+  ],
+  "sourceIdentity": {
+    "bytes": 1864489,
+    "sha256": "bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d"
+  },
+  "status": "COMPLETE",
+  "workingCrs": "EPSG:3083"
+}

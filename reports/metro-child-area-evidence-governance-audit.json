@@ -1,0 +1,4615 @@
+{
+  "schemaVersion": "gridly.metro-child-area-evidence-governance-audit.v1",
+  "governance": {
+    "auditOnly": true,
+    "productionChangeAuthorized": false,
+    "regionalizationImplementationAuthorized": false,
+    "childRegionCreationAuthorized": false
+  },
+  "houstonReferenceControl": {
+    "evidenceCategory": "GOVERNED_RUNTIME",
+    "parentPlace": {
+      "name": "Houston",
+      "placeGeoid": "4835000",
+      "canonicalIdentityType": "INCORPORATED_PLACE",
+      "directlySelectable": true
+    },
+    "children": [
+      {
+        "id": "houston-downtown-midtown",
+        "label": "Downtown / Midtown",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7532,
+          "lng": -95.367
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-downtown-midtown",
+          "storageValue": "Houston — Downtown / Midtown",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-downtown-midtown",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-heights-near-northside",
+        "label": "Heights / Near Northside",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7989,
+          "lng": -95.398
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-heights-near-northside",
+          "storageValue": "Houston — Heights / Near Northside",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-heights-near-northside",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-montrose-museum",
+        "label": "Montrose / Museum District",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7372,
+          "lng": -95.397
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-montrose-museum",
+          "storageValue": "Houston — Montrose / Museum District",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-montrose-museum",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-med-center-rice",
+        "label": "Medical Center / Rice",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7079,
+          "lng": -95.401
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-med-center-rice",
+          "storageValue": "Houston — Medical Center / Rice",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-med-center-rice",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-uptown-galleria",
+        "label": "Uptown / Galleria",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.739,
+          "lng": -95.4636
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-uptown-galleria",
+          "storageValue": "Houston — Uptown / Galleria",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-uptown-galleria",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-memorial",
+        "label": "Memorial",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.77,
+          "lng": -95.545
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-memorial",
+          "storageValue": "Houston — Memorial",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-memorial",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-spring-branch",
+        "label": "Spring Branch",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.8044,
+          "lng": -95.52
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-spring-branch",
+          "storageValue": "Houston — Spring Branch",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-spring-branch",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-energy-corridor",
+        "label": "Energy Corridor",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7845,
+          "lng": -95.6471
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-energy-corridor",
+          "storageValue": "Houston — Energy Corridor",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-energy-corridor",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-westchase-west-houston",
+        "label": "Westchase / West Houston",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.728,
+          "lng": -95.556
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-westchase-west-houston",
+          "storageValue": "Houston — Westchase / West Houston",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-westchase-west-houston",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-northwest",
+        "label": "Northwest Houston",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.873,
+          "lng": -95.514
+        },
+        "startupZoom": 13,
+        "awarenessArea": {
+          "key": "houston-northwest",
+          "storageValue": "Houston — Northwest Houston",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-northwest",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-north",
+        "label": "North Houston / Greenspoint",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.9445,
+          "lng": -95.408
+        },
+        "startupZoom": 13,
+        "awarenessArea": {
+          "key": "houston-north",
+          "storageValue": "Houston — North Houston / Greenspoint",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-north",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-northeast",
+        "label": "Northeast Houston",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.829,
+          "lng": -95.272
+        },
+        "startupZoom": 13,
+        "awarenessArea": {
+          "key": "houston-northeast",
+          "storageValue": "Houston — Northeast Houston",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-northeast",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-east-end",
+        "label": "East End",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.7355,
+          "lng": -95.312
+        },
+        "startupZoom": 14,
+        "awarenessArea": {
+          "key": "houston-east-end",
+          "storageValue": "Houston — East End",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-east-end",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-southeast-hobby",
+        "label": "Southeast Houston / Hobby",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.6454,
+          "lng": -95.2789
+        },
+        "startupZoom": 13,
+        "awarenessArea": {
+          "key": "houston-southeast-hobby",
+          "storageValue": "Houston — Southeast Houston / Hobby",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-southeast-hobby",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      },
+      {
+        "id": "houston-southwest",
+        "label": "Southwest Houston",
+        "parentCity": "Houston",
+        "countyId": "harris-tx",
+        "semanticCenter": {
+          "lat": 29.676,
+          "lng": -95.517
+        },
+        "startupZoom": 13,
+        "awarenessArea": {
+          "key": "houston-southwest",
+          "storageValue": "Houston — Southwest Houston",
+          "parentCommunity": "Houston",
+          "awarenessRegionId": "houston-southwest",
+          "radiusMiles": 5,
+          "houstonRegion": true
+        }
+      }
+    ],
+    "searchSelectorRepresentation": "Houston / <child label>; exact governed aliases resolve to canonical child IDs",
+    "canonicalIdentityBehavior": "Parent PLACE remains canonical and directly selectable; child awareness identities are canonical by houston-* ID.",
+    "parentChildPrecedence": "Explicit child selection selects the child; Houston-wide storage remains parent mode; independently owned Harris communities are excluded and retain precedence.",
+    "separatelyGovernedHarrisCommunities": [
+      {
+        "name": "Pasadena",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Baytown",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Humble",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Katy",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Cypress",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Spring",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Tomball",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Channelview",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Deer Park",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "La Porte",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Crosby",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Atascocita",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Kingwood",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Sheldon",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Aldine",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "North Houston",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Jersey Village",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Bellaire",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "South Houston",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Jacinto City",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Galena Park",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Webster",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Seabrook",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "Clear Lake",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      },
+      {
+        "name": "West University Place",
+        "precedence": "INDEPENDENT_COMMUNITY_PRECEDES_HOUSTON_CHILD"
+      }
+    ],
+    "tests": [
+      "tests/lp035-1-houston-regionalization-implementation.test.js",
+      "tests/lp036-1-passive-location-resolution.test.js",
+      "tests/lp038-regional-weather-authority-certification.test.js"
+    ],
+    "provenanceAssessment": {
+      "currentlyGovernedRuntime": "js/app.js GRIDLY_LP035_HOUSTON_REGION_MODEL, awareness conversion, aliases, selector projection, and separate-community list",
+      "historicalDesignEvidence": "LP035/LP035.1 strings embedded in runtime records and governing tests; no stronger original source artifact was found in scoped search",
+      "ownerApprovedNonGoverned": "No separate owner-approval artifact was located.",
+      "inferred": "Architecture reuse outside Houston is an audit assessment, not current runtime governance."
+    }
+  },
+  "sourcesInspected": [
+    {
+      "path": "js/app.js",
+      "status": "AVAILABLE",
+      "purpose": "Houston runtime model, awareness conversion, selector/search aliases, precedence and camera consumption"
+    },
+    {
+      "path": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+      "status": "AVAILABLE",
+      "purpose": "Canonical PLACE identities and county memberships"
+    },
+    {
+      "path": "reports/texas-metro-regionalization-candidate-audit.json",
+      "status": "AVAILABLE",
+      "purpose": "Prior audit artifact; mission-supplied completed classifications control where checkout artifact is blocked/stale"
+    },
+    {
+      "path": "reports/texas-metro-regionalization-candidate-audit.md",
+      "status": "AVAILABLE",
+      "purpose": "Prior audit narrative"
+    },
+    {
+      "path": "reports/statewide-place-presentation-geometry-audit.json",
+      "status": "UNAVAILABLE",
+      "purpose": "Authoritative optional presentation geometry evidence"
+    },
+    {
+      "path": "reports/statewide-place-presentation-geometry-audit.md",
+      "status": "UNAVAILABLE",
+      "purpose": "Authoritative optional presentation geometry narrative"
+    },
+    {
+      "path": "tests/lp035-1-houston-regionalization-implementation.test.js",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    },
+    {
+      "path": "tests/lp036-1-passive-location-resolution.test.js",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    },
+    {
+      "path": "tests/lp038-regional-weather-authority-certification.test.js",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    },
+    {
+      "path": "tests/statewide-consumer-zip-resolver.test.mjs",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    },
+    {
+      "path": "tests/statewide-home-area-map-focus.test.mjs",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    },
+    {
+      "path": "tests/semantic-place-countywide-camera-contract.test.mjs",
+      "status": "AVAILABLE",
+      "purpose": "Identity, selection, camera, ZIP, or Houston governance validation"
+    }
+  ],
+  "evidenceClassificationPolicy": {
+    "GOVERNED_RUNTIME": "Active production registry or behavior with governing validation.",
+    "GOVERNED_GENERATED": "Deterministic generated artifact with established canonical provenance.",
+    "GOVERNED_AUDIT_EVIDENCE": "Controlled audit result; evidence, not runtime authority.",
+    "HISTORICAL_REPOSITORY_EVIDENCE": "Superseded or removed repository-controlled design evidence.",
+    "OWNER_APPROVED_NON_RUNTIME": "Explicit owner approval not promoted to runtime governance.",
+    "UNVERIFIED_LEGACY": "Legacy identity-bearing material without recoverable authority."
+  },
+  "candidateDeduplication": {
+    "key": "metroParent + candidateId (when present) + candidateName",
+    "ordering": "metro scope order, then candidate ID/name; independent communities by name then PLACE GEOID"
+  },
+  "metros": [
+    {
+      "name": "San Antonio",
+      "geoid": "4865000",
+      "countyFips": "48029",
+      "previous": "REGIONALIZE_LIKE_HOUSTON",
+      "readiness": "GOVERNED_CHILD_DEFINITION_REQUIRED",
+      "existingCandidateChildIdentityCount": 0,
+      "governedCandidateCount": 0,
+      "historicalCandidateCount": 0,
+      "namingAuthorityStatus": "CHILD_REGION_NAMES_REQUIRE_GOVERNED_SOURCE",
+      "centerAuthorityStatus": "CHILD_REGION_CENTERS_REQUIRE_GOVERNED_SOURCE",
+      "boundaryAuthorityStatus": "CHILD_REGION_BOUNDARIES_REQUIRE_GOVERNED_SOURCE",
+      "architectureCompatibility": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "naturalChildAreaStructure": "NOT_ESTABLISHED_BY_REPOSITORY_EVIDENCE",
+      "candidateChildAreas": [],
+      "independentlyGovernedCommunities": [
+        {
+          "name": "Alamo Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801600",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Balcones Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805384",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805384]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Castle Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813276",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813276]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "China Grove",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4814716",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4814716]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cibolo",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4814920",
+          "countyMemberships": [
+            "48029",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4814920]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Converse",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816468",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816468]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cross Mountain",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4817811",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817811]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Elmendorf",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4823272",
+          "countyMemberships": [
+            "48029",
+            "48493"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4823272]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Fair Oaks Ranch",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825168",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48259"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825168]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grey Forest",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4831100",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4831100]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Helotes",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833146",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833146]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hill Country Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833968",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833968]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hollywood Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4834628",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4834628]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Kirby",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4839448",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4839448]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lackland AFB",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4840036",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840036]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Leon Valley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842388",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842388]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Live Oak",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4843096",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4843096]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lytle",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4845288",
+          "countyMemberships": [
+            "48013",
+            "48029",
+            "48325"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4845288]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Macdona",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4845576",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4845576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Olmos Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4853988",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4853988]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Randolph AFB",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4860608",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4860608]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sandy Oaks",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865344",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865344]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Scenic Oaks",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4866089",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866089]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Schertz",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866128",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866128]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Selma",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866704",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866704]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Shavano Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4867268",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4867268]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Somerset",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4868708",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4868708]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "St. Hedwig",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864172",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864172]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Terrell Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4872296",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872296]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Timberwood Park",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4873057",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4873057]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Universal City",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4874408",
+          "countyMemberships": [
+            "48029",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4874408]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Von Ormy",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4875764",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4875764]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Windcrest",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4879672",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4879672]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ],
+      "governanceGaps": [
+        "child-region naming authority",
+        "region boundaries or an explicit governed no-boundary/radius model",
+        "representative semantic centers",
+        "parent-child identity and canonical-ID policy",
+        "overlap/precedence policy for incorporated places and CDPs",
+        "ZIP-to-region mapping or an explicit decision not to use ZIP mapping",
+        "awareness radius",
+        "startup zoom",
+        "owner approval"
+      ],
+      "readinessRationale": "Prior scale/presentation classification supports a future regionalization inquiry, but it supplies no governed child identities."
+    },
+    {
+      "name": "Corpus Christi",
+      "geoid": "4817000",
+      "countyFips": "48355",
+      "previous": "REGIONALIZE_LIKE_HOUSTON",
+      "readiness": "GOVERNED_CHILD_DEFINITION_REQUIRED",
+      "existingCandidateChildIdentityCount": 0,
+      "governedCandidateCount": 0,
+      "historicalCandidateCount": 0,
+      "namingAuthorityStatus": "CHILD_REGION_NAMES_REQUIRE_GOVERNED_SOURCE",
+      "centerAuthorityStatus": "CHILD_REGION_CENTERS_REQUIRE_GOVERNED_SOURCE",
+      "boundaryAuthorityStatus": "CHILD_REGION_BOUNDARIES_REQUIRE_GOVERNED_SOURCE",
+      "architectureCompatibility": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "naturalChildAreaStructure": "NOT_ESTABLISHED_BY_REPOSITORY_EVIDENCE",
+      "candidateChildAreas": [],
+      "independentlyGovernedCommunities": [
+        {
+          "name": "Agua Dulce",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801396",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801396]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Aransas Pass",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4803600",
+          "countyMemberships": [
+            "48007",
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4803600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Banquete",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4805576",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bishop",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4808392",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4808392]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Driscoll",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4821436",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4821436]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ingleside",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4836008",
+          "countyMemberships": [
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4836008]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "La Paloma-Lost Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4841422",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841422]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "North San Pedro",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4852404",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4852404]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Petronila",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4857056",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4857056]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Port Aransas",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858808",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858808]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Portland",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858904",
+          "countyMemberships": [
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858904]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rancho Banquete",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4860529",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4860529]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Robstown",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862600",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sandy Hollow-Escondidas",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4865342",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865342]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Spring Gardens",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4869708",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4869708]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Tierra Grande",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4872952",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872952]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Tierra Verde",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4872954",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872954]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ],
+      "governanceGaps": [
+        "child-region naming authority",
+        "region boundaries or an explicit governed no-boundary/radius model",
+        "representative semantic centers",
+        "parent-child identity and canonical-ID policy",
+        "overlap/precedence policy for incorporated places and CDPs",
+        "ZIP-to-region mapping or an explicit decision not to use ZIP mapping",
+        "awareness radius",
+        "startup zoom",
+        "owner approval"
+      ],
+      "readinessRationale": "Prior scale/presentation classification supports a future regionalization inquiry, but it supplies no governed child identities."
+    },
+    {
+      "name": "Austin",
+      "geoid": "4805000",
+      "countyFips": "48453",
+      "previous": "REVIEW",
+      "readiness": "INSUFFICIENT_EVIDENCE_FOR_REGIONALIZATION",
+      "existingCandidateChildIdentityCount": 0,
+      "governedCandidateCount": 0,
+      "historicalCandidateCount": 0,
+      "namingAuthorityStatus": "CHILD_REGION_NAMES_REQUIRE_GOVERNED_SOURCE",
+      "centerAuthorityStatus": "CHILD_REGION_CENTERS_REQUIRE_GOVERNED_SOURCE",
+      "boundaryAuthorityStatus": "CHILD_REGION_BOUNDARIES_REQUIRE_GOVERNED_SOURCE",
+      "architectureCompatibility": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "naturalChildAreaStructure": "NOT_ESTABLISHED_BY_REPOSITORY_EVIDENCE",
+      "candidateChildAreas": [],
+      "independentlyGovernedCommunities": [
+        {
+          "name": "Barton Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4805750",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805750]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bee Cave",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807156",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807156]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Briarcliff",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4810197",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4810197]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cedar Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813552",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Creedmoor",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4817612",
+          "countyMemberships": [
+            "48209",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Elgin",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4823044",
+          "countyMemberships": [
+            "48021",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4823044]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Garfield",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4828320",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4828320]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hornsby Bend",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4834856",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4834856]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hudson Bend",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4835253",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835253]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Jonestown",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838020",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838020]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lago Vista",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840264",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840264]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lakeway",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840984",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840984]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Leander",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842016",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842016]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lost Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4844162",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4844162]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Manchaca",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4846308",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846308]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Manor",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4846440",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846440]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mustang Ridge",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4850200",
+          "countyMemberships": [
+            "48021",
+            "48055",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4850200]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pflugerville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4857176",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4857176]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Point Venture",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858586",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858586]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rollingwood",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863008",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863008]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Round Rock",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863500",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863500]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "San Leanna",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865552",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Shady Hollow",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4867082",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4867082]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Steiner Ranch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4870154",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4870154]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sunset Valley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4871324",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4871324]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "The Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4872578",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872578]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Volente",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4875752",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4875752]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Webberville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4876924",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4876924]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wells Branch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4877196",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877196]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "West Lake Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877632",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877632]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ],
+      "governanceGaps": [
+        "child-region naming authority",
+        "region boundaries or an explicit governed no-boundary/radius model",
+        "representative semantic centers",
+        "parent-child identity and canonical-ID policy",
+        "overlap/precedence policy for incorporated places and CDPs",
+        "ZIP-to-region mapping or an explicit decision not to use ZIP mapping",
+        "awareness radius",
+        "startup zoom",
+        "owner approval"
+      ],
+      "readinessRationale": "The REVIEW classification is not child-area evidence; no governed or historical child identities were found."
+    },
+    {
+      "name": "Dallas",
+      "geoid": "4819000",
+      "countyFips": "48113",
+      "previous": "REVIEW",
+      "readiness": "INSUFFICIENT_EVIDENCE_FOR_REGIONALIZATION",
+      "existingCandidateChildIdentityCount": 0,
+      "governedCandidateCount": 0,
+      "historicalCandidateCount": 0,
+      "namingAuthorityStatus": "CHILD_REGION_NAMES_REQUIRE_GOVERNED_SOURCE",
+      "centerAuthorityStatus": "CHILD_REGION_CENTERS_REQUIRE_GOVERNED_SOURCE",
+      "boundaryAuthorityStatus": "CHILD_REGION_BOUNDARIES_REQUIRE_GOVERNED_SOURCE",
+      "architectureCompatibility": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "naturalChildAreaStructure": "NOT_ESTABLISHED_BY_REPOSITORY_EVIDENCE",
+      "candidateChildAreas": [],
+      "independentlyGovernedCommunities": [
+        {
+          "name": "Addison",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801240",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801240]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Balch Springs",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805372",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805372]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bear Creek Ranch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4806244",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4806244]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Carrollton",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813024",
+          "countyMemberships": [
+            "48085",
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813024]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cedar Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813492",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813492]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cockrell Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4815796",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4815796]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Combine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816216",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816216]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Coppell",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816612",
+          "countyMemberships": [
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "DeSoto",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4820092",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4820092]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Duncanville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4821628",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4821628]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Farmers Branch",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825452",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825452]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ferris",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825752",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825752]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Garland",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4829000",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4829000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Glenn Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4829840",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4829840]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grand Prairie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830464",
+          "countyMemberships": [
+            "48113",
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830464]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grapevine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830644",
+          "countyMemberships": [
+            "48113",
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830644]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Highland Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833824",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833824]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hutchins",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4835612",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Irving",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4837000",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4837000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lancaster",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4841212",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841212]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lewisville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842508",
+          "countyMemberships": [
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842508]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mesquite",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4847892",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4847892]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ovilla",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4854444",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4854444]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Richardson",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861796",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861796]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rowlett",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863572",
+          "countyMemberships": [
+            "48113",
+            "48397"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863572]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sachse",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864064",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864064]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Seagoville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866428",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866428]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sunnyvale",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4871156",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4871156]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "University Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4874492",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4874492]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wilmer",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4879576",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4879576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wylie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4880356",
+          "countyMemberships": [
+            "48085",
+            "48113",
+            "48397"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4880356]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ],
+      "governanceGaps": [
+        "child-region naming authority",
+        "region boundaries or an explicit governed no-boundary/radius model",
+        "representative semantic centers",
+        "parent-child identity and canonical-ID policy",
+        "overlap/precedence policy for incorporated places and CDPs",
+        "ZIP-to-region mapping or an explicit decision not to use ZIP mapping",
+        "awareness radius",
+        "startup zoom",
+        "owner approval"
+      ],
+      "readinessRationale": "The REVIEW classification is not child-area evidence; no governed or historical child identities were found."
+    },
+    {
+      "name": "Fort Worth",
+      "geoid": "4827000",
+      "countyFips": "48439",
+      "previous": "REVIEW",
+      "readiness": "INSUFFICIENT_EVIDENCE_FOR_REGIONALIZATION",
+      "existingCandidateChildIdentityCount": 0,
+      "governedCandidateCount": 0,
+      "historicalCandidateCount": 0,
+      "namingAuthorityStatus": "CHILD_REGION_NAMES_REQUIRE_GOVERNED_SOURCE",
+      "centerAuthorityStatus": "CHILD_REGION_CENTERS_REQUIRE_GOVERNED_SOURCE",
+      "boundaryAuthorityStatus": "CHILD_REGION_BOUNDARIES_REQUIRE_GOVERNED_SOURCE",
+      "architectureCompatibility": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "naturalChildAreaStructure": "NOT_ESTABLISHED_BY_REPOSITORY_EVIDENCE",
+      "candidateChildAreas": [],
+      "independentlyGovernedCommunities": [
+        {
+          "name": "Arlington",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4804000",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4804000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Azle",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805168",
+          "countyMemberships": [
+            "48367",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805168]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bedford",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807132",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807132]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Benbrook",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807552",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Blue Mound",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4808860",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4808860]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Briar",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4810192",
+          "countyMemberships": [
+            "48367",
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4810192]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Burleson",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4811428",
+          "countyMemberships": [
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4811428]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Colleyville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4815988",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4815988]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Crowley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4817960",
+          "countyMemberships": [
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817960]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Dalworthington Gardens",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4819084",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4819084]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Edgecliff Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4822588",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4822588]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Euless",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4824768",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4824768]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Everman",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4824912",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4824912]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Flower Mound",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4826232",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4826232]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Forest Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4826544",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4826544]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grand Prairie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830464",
+          "countyMemberships": [
+            "48113",
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830464]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grapevine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830644",
+          "countyMemberships": [
+            "48113",
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830644]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Haltom City",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4831928",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4831928]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Haslet",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4832720",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4832720]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hurst",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4835576",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Keller",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838632",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838632]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Kennedale",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838896",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838896]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lake Worth",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4841056",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841056]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lakeside",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840744",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840744]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mansfield",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4846452",
+          "countyMemberships": [
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846452]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Newark",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4850772",
+          "countyMemberships": [
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4850772]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "North Richland Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4852356",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4852356]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pantego",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4855020",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4855020]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pecan Acres",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4856462",
+          "countyMemberships": [
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4856462]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pelican Bay",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4856640",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4856640]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rendon",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4861568",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861568]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Reno",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861604",
+          "countyMemberships": [
+            "48367",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861604]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Richland Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861844",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861844]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "River Oaks",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862384",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862384]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Roanoke",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862504",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862504]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Saginaw",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864112",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864112]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sansom Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865660",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865660]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Southlake",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4869032",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4869032]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Trophy Club",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4873710",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4873710]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Watauga",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4876672",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4876672]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westlake",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877620",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877620]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westover Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877788",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877788]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westworth Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4878076",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4878076]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "White Settlement",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4878544",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4878544]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ],
+      "governanceGaps": [
+        "child-region naming authority",
+        "region boundaries or an explicit governed no-boundary/radius model",
+        "representative semantic centers",
+        "parent-child identity and canonical-ID policy",
+        "overlap/precedence policy for incorporated places and CDPs",
+        "ZIP-to-region mapping or an explicit decision not to use ZIP mapping",
+        "awareness radius",
+        "startup zoom",
+        "owner approval"
+      ],
+      "readinessRationale": "The REVIEW classification is not child-area evidence; no governed or historical child identities were found."
+    }
+  ],
+  "collisionPrecedenceAnalysis": [
+    {
+      "metro": "San Antonio",
+      "centralCountyFips": "48029",
+      "rule": "Every listed Census PLACE remains independently canonical and must precede any future metro child overlap.",
+      "communities": [
+        {
+          "name": "Alamo Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801600",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Balcones Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805384",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805384]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Castle Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813276",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813276]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "China Grove",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4814716",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4814716]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cibolo",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4814920",
+          "countyMemberships": [
+            "48029",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4814920]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Converse",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816468",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816468]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cross Mountain",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4817811",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817811]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Elmendorf",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4823272",
+          "countyMemberships": [
+            "48029",
+            "48493"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4823272]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Fair Oaks Ranch",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825168",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48259"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825168]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grey Forest",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4831100",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4831100]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Helotes",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833146",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833146]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hill Country Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833968",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833968]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hollywood Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4834628",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4834628]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Kirby",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4839448",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4839448]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lackland AFB",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4840036",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840036]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Leon Valley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842388",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842388]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Live Oak",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4843096",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4843096]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lytle",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4845288",
+          "countyMemberships": [
+            "48013",
+            "48029",
+            "48325"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4845288]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Macdona",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4845576",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4845576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Olmos Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4853988",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4853988]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Randolph AFB",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4860608",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4860608]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sandy Oaks",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865344",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865344]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Scenic Oaks",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4866089",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866089]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Schertz",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866128",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866128]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Selma",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866704",
+          "countyMemberships": [
+            "48029",
+            "48091",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866704]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Shavano Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4867268",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4867268]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Somerset",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4868708",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4868708]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "St. Hedwig",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864172",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864172]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Terrell Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4872296",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872296]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Timberwood Park",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4873057",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4873057]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Universal City",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4874408",
+          "countyMemberships": [
+            "48029",
+            "48187"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4874408]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Von Ormy",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4875764",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4875764]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Windcrest",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4879672",
+          "countyMemberships": [
+            "48029"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4879672]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ]
+    },
+    {
+      "metro": "Corpus Christi",
+      "centralCountyFips": "48355",
+      "rule": "Every listed Census PLACE remains independently canonical and must precede any future metro child overlap.",
+      "communities": [
+        {
+          "name": "Agua Dulce",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801396",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801396]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Aransas Pass",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4803600",
+          "countyMemberships": [
+            "48007",
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4803600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Banquete",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4805576",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bishop",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4808392",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4808392]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Driscoll",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4821436",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4821436]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ingleside",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4836008",
+          "countyMemberships": [
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4836008]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "La Paloma-Lost Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4841422",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841422]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "North San Pedro",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4852404",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4852404]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Petronila",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4857056",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4857056]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Port Aransas",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858808",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858808]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Portland",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858904",
+          "countyMemberships": [
+            "48355",
+            "48409"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858904]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rancho Banquete",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4860529",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4860529]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Robstown",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862600",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862600]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sandy Hollow-Escondidas",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4865342",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865342]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Spring Gardens",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4869708",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4869708]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Tierra Grande",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4872952",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872952]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Tierra Verde",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4872954",
+          "countyMemberships": [
+            "48355"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872954]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ]
+    },
+    {
+      "metro": "Austin",
+      "centralCountyFips": "48453",
+      "rule": "Every listed Census PLACE remains independently canonical and must precede any future metro child overlap.",
+      "communities": [
+        {
+          "name": "Barton Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4805750",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805750]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bee Cave",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807156",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807156]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Briarcliff",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4810197",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4810197]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cedar Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813552",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Creedmoor",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4817612",
+          "countyMemberships": [
+            "48209",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Elgin",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4823044",
+          "countyMemberships": [
+            "48021",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4823044]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Garfield",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4828320",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4828320]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hornsby Bend",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4834856",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4834856]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hudson Bend",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4835253",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835253]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Jonestown",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838020",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838020]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lago Vista",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840264",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840264]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lakeway",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840984",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840984]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Leander",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842016",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842016]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lost Creek",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4844162",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4844162]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Manchaca",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4846308",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846308]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Manor",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4846440",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846440]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mustang Ridge",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4850200",
+          "countyMemberships": [
+            "48021",
+            "48055",
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4850200]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pflugerville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4857176",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4857176]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Point Venture",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4858586",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4858586]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rollingwood",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863008",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863008]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Round Rock",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863500",
+          "countyMemberships": [
+            "48453",
+            "48491"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863500]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "San Leanna",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865552",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Shady Hollow",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4867082",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4867082]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Steiner Ranch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4870154",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4870154]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sunset Valley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4871324",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4871324]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "The Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4872578",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4872578]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Volente",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4875752",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4875752]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Webberville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4876924",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4876924]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wells Branch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4877196",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877196]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "West Lake Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877632",
+          "countyMemberships": [
+            "48453"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877632]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ]
+    },
+    {
+      "metro": "Dallas",
+      "centralCountyFips": "48113",
+      "rule": "Every listed Census PLACE remains independently canonical and must precede any future metro child overlap.",
+      "communities": [
+        {
+          "name": "Addison",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4801240",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4801240]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Balch Springs",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805372",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805372]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bear Creek Ranch",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4806244",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4806244]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Carrollton",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813024",
+          "countyMemberships": [
+            "48085",
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813024]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cedar Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4813492",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4813492]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Cockrell Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4815796",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4815796]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Combine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816216",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816216]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Coppell",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4816612",
+          "countyMemberships": [
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4816612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "DeSoto",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4820092",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4820092]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Duncanville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4821628",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4821628]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Farmers Branch",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825452",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825452]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ferris",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4825752",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4825752]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Garland",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4829000",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4829000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Glenn Heights",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4829840",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4829840]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grand Prairie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830464",
+          "countyMemberships": [
+            "48113",
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830464]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grapevine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830644",
+          "countyMemberships": [
+            "48113",
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830644]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Highland Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4833824",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4833824]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hutchins",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4835612",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835612]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Irving",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4837000",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4837000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lancaster",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4841212",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841212]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lewisville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4842508",
+          "countyMemberships": [
+            "48113",
+            "48121"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4842508]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mesquite",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4847892",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4847892]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Ovilla",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4854444",
+          "countyMemberships": [
+            "48113",
+            "48139"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4854444]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Richardson",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861796",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861796]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rowlett",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4863572",
+          "countyMemberships": [
+            "48113",
+            "48397"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4863572]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sachse",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864064",
+          "countyMemberships": [
+            "48085",
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864064]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Seagoville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4866428",
+          "countyMemberships": [
+            "48113",
+            "48257"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4866428]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sunnyvale",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4871156",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4871156]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "University Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4874492",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4874492]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wilmer",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4879576",
+          "countyMemberships": [
+            "48113"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4879576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Wylie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4880356",
+          "countyMemberships": [
+            "48085",
+            "48113",
+            "48397"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4880356]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ]
+    },
+    {
+      "metro": "Fort Worth",
+      "centralCountyFips": "48439",
+      "rule": "Every listed Census PLACE remains independently canonical and must precede any future metro child overlap.",
+      "communities": [
+        {
+          "name": "Arlington",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4804000",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4804000]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Azle",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4805168",
+          "countyMemberships": [
+            "48367",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4805168]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Bedford",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807132",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807132]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Benbrook",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4807552",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4807552]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Blue Mound",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4808860",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4808860]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Briar",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4810192",
+          "countyMemberships": [
+            "48367",
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4810192]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Burleson",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4811428",
+          "countyMemberships": [
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4811428]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Colleyville",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4815988",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4815988]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Crowley",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4817960",
+          "countyMemberships": [
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4817960]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Dalworthington Gardens",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4819084",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4819084]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Edgecliff Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4822588",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4822588]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Euless",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4824768",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4824768]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Everman",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4824912",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4824912]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Flower Mound",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4826232",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4826232]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Forest Hill",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4826544",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4826544]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grand Prairie",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830464",
+          "countyMemberships": [
+            "48113",
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830464]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Grapevine",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4830644",
+          "countyMemberships": [
+            "48113",
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4830644]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Haltom City",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4831928",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4831928]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Haslet",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4832720",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4832720]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Hurst",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4835576",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4835576]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Keller",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838632",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838632]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Kennedale",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4838896",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4838896]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lake Worth",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4841056",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4841056]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Lakeside",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4840744",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4840744]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Mansfield",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4846452",
+          "countyMemberships": [
+            "48139",
+            "48251",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4846452]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Newark",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4850772",
+          "countyMemberships": [
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4850772]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "North Richland Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4852356",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4852356]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pantego",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4855020",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4855020]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pecan Acres",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4856462",
+          "countyMemberships": [
+            "48439",
+            "48497"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4856462]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Pelican Bay",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4856640",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4856640]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Rendon",
+          "canonicalIdentityType": "CENSUS_DESIGNATED_PLACE",
+          "placeGeoid": "4861568",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861568]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Reno",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861604",
+          "countyMemberships": [
+            "48367",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861604]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Richland Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4861844",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4861844]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "River Oaks",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862384",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862384]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Roanoke",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4862504",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4862504]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Saginaw",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4864112",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4864112]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Sansom Park",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4865660",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4865660]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Southlake",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4869032",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4869032]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Trophy Club",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4873710",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4873710]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Watauga",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4876672",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4876672]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westlake",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877620",
+          "countyMemberships": [
+            "48121",
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877620]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westover Hills",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4877788",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4877788]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "Westworth Village",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4878076",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4878076]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        },
+        {
+          "name": "White Settlement",
+          "canonicalIdentityType": "INCORPORATED_PLACE",
+          "placeGeoid": "4878544",
+          "countyMemberships": [
+            "48439"
+          ],
+          "evidenceClassification": "GOVERNED_GENERATED",
+          "sourceFile": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+          "sourcePath": "communities[placeGeoid=4878544]",
+          "precedenceRequirement": "PRESERVE_INDEPENDENT_CANONICAL_IDENTITY"
+        }
+      ]
+    }
+  ],
+  "architectureReuseAssessment": [
+    {
+      "metro": "San Antonio",
+      "result": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "parentDirectlySelectable": true,
+      "collisionFreeChildIdsPossible": true,
+      "communityPrecedencePreservable": true,
+      "awarenessParticipationRequiresGeneralization": true,
+      "parentChildSearchLabelsRequireGeneralization": true,
+      "semanticCameraCanConsumeCenters": true,
+      "dynamicFittingCanCoexist": true,
+      "statewidePlaceGovernancePreservable": true
+    },
+    {
+      "metro": "Corpus Christi",
+      "result": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "parentDirectlySelectable": true,
+      "collisionFreeChildIdsPossible": true,
+      "communityPrecedencePreservable": true,
+      "awarenessParticipationRequiresGeneralization": true,
+      "parentChildSearchLabelsRequireGeneralization": true,
+      "semanticCameraCanConsumeCenters": true,
+      "dynamicFittingCanCoexist": true,
+      "statewidePlaceGovernancePreservable": true
+    },
+    {
+      "metro": "Austin",
+      "result": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "parentDirectlySelectable": true,
+      "collisionFreeChildIdsPossible": true,
+      "communityPrecedencePreservable": true,
+      "awarenessParticipationRequiresGeneralization": true,
+      "parentChildSearchLabelsRequireGeneralization": true,
+      "semanticCameraCanConsumeCenters": true,
+      "dynamicFittingCanCoexist": true,
+      "statewidePlaceGovernancePreservable": true
+    },
+    {
+      "metro": "Dallas",
+      "result": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "parentDirectlySelectable": true,
+      "collisionFreeChildIdsPossible": true,
+      "communityPrecedencePreservable": true,
+      "awarenessParticipationRequiresGeneralization": true,
+      "parentChildSearchLabelsRequireGeneralization": true,
+      "semanticCameraCanConsumeCenters": true,
+      "dynamicFittingCanCoexist": true,
+      "statewidePlaceGovernancePreservable": true
+    },
+    {
+      "metro": "Fort Worth",
+      "result": "HOUSTON_ARCHITECTURE_REUSABLE_WITH_GENERALIZATION",
+      "parentDirectlySelectable": true,
+      "collisionFreeChildIdsPossible": true,
+      "communityPrecedencePreservable": true,
+      "awarenessParticipationRequiresGeneralization": true,
+      "parentChildSearchLabelsRequireGeneralization": true,
+      "semanticCameraCanConsumeCenters": true,
+      "dynamicFittingCanCoexist": true,
+      "statewidePlaceGovernancePreservable": true
+    }
+  ],
+  "recommendedNextStageSequencing": [
+    "Obtain a governed naming and identity source for San Antonio and Corpus Christi before design work.",
+    "Govern overlap/precedence policy against the enumerated Bexar and Nueces County PLACE identities.",
+    "Only after names are governed, govern centers, boundaries/radius strategy, startup zoom, ZIP policy, and owner approval.",
+    "Keep Austin, Dallas, and Fort Worth in evidence research/review; do not begin child design from current repository evidence.",
+    "Authorize and design a metro-neutral generalization of Houston only in a separate implementation milestone."
+  ],
+  "explicitLimitations": [
+    "No child-area candidate is reported from general geographic knowledge.",
+    "County-membership PLACE records are collision/precedence evidence, not proposed metro children.",
+    "The optional statewide presentation geometry reports are absent in this checkout; no geometry conclusion is fabricated.",
+    "The checked-in prior audit is blocked/stale relative to the completed classifications supplied in the audit mission; the mission classifications are recorded without treating them as child evidence.",
+    "Houston geometryStrategy text describes intended seed/source strategies, but no governed child polygons were found; centers and five-mile awareness radii drive current selection behavior.",
+    "Scoped repository text and targeted history checks found no governed or historical child definitions for the five metros."
+  ],
+  "ownerExecutionRequired": false,
+  "ownerPowerShellCommand": null
+}

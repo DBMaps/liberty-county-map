@@ -1,0 +1,12 @@
+{
+  "consolidationPerformed": false,
+  "deterministic": true,
+  "gridlyChildRegionsCreated": false,
+  "identityCount": 33,
+  "reason": "Exact governed PLACE/CDP geometry was not supplied to this offline milestone; no relationship was fabricated.",
+  "runtimeMutationPerformed": false,
+  "schemaVersion": "gridly.san-antonio-sa-tomorrow-geometry.v2",
+  "sourceCertificationUnaffected": true,
+  "status": "PLACE_CDP_OVERLAY_PENDING_GOVERNED_GEOMETRY",
+  "workingCrs": "EPSG:3083"
+}

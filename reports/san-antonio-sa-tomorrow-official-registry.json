@@ -1,0 +1,1372 @@
+{
+  "schemaVersion": "gridly.san-antonio-sa-tomorrow-official-registry.v1",
+  "certificationStatus": "CERTIFIED_IDENTITY_AND_PROVENANCE_ONLY",
+  "framework": {
+    "regionalCenterCount": 13,
+    "communityAreaCount": 17,
+    "totalOfficialSubAreaCount": 30,
+    "countStatus": "RECONCILED",
+    "authority": {
+      "classification": "CITY_PRIMARY_CURRENT",
+      "title": "SA Tomorrow Area Planning",
+      "department": "City of San Antonio Planning Department",
+      "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+      "currentOrHistorical": "CURRENT"
+    },
+    "supportingAuthority": {
+      "classification": "CITY_OFFICIAL_PDF",
+      "title": "SA Tomorrow Comprehensive Plan",
+      "department": "City of San Antonio Planning Department",
+      "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+      "publicationOrAdoptionDate": "2016-08-11",
+      "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+    },
+    "officialLanguage": "The City area-planning framework identifies 13 Regional Centers and 17 Community Areas; together these are the 30 SA Tomorrow sub-areas. Community Areas address portions outside Regional Centers."
+  },
+  "governance": {
+    "auditOnly": true,
+    "runtimeMutationAuthorized": false,
+    "productionMutationPerformed": false,
+    "relationshipRule": "OFFICIAL_ATOMIC_SUBAREA != GRIDLY_CONSUMER_CHILD",
+    "consolidationPerformed": false,
+    "gridlyChildRegionsCreated": false,
+    "independentPlaceCdpPrecedence": {
+      "rule": "INDEPENDENT_GOVERNED_PLACE_WINS",
+      "governedIdentityCount": 33,
+      "sourceReport": "reports/san-antonio-official-source-regionalization-design-audit.json",
+      "relationship": "SEPARATE_IDENTITY_SYSTEM_NOT_ABSORBED"
+    }
+  },
+  "statusVocabulary": [
+    "ADOPTED",
+    "IN_PROGRESS",
+    "PLANNED",
+    "FUTURE_PHASE",
+    "OFFICIAL_AREA_STATUS_UNRESOLVED"
+  ],
+  "sourceAuthorityVocabulary": [
+    "CITY_PRIMARY_CURRENT",
+    "CITY_PRIMARY_HISTORICAL",
+    "CITY_ADOPTED_PLAN",
+    "CITY_PLANNING_PAGE",
+    "CITY_OFFICIAL_PDF",
+    "CITY_OFFICIAL_WORK_SESSION",
+    "REFERENCE_ONLY_NON_AUTHORITY"
+  ],
+  "reconciliation": {
+    "status": "RECONCILED",
+    "sourceConflictCount": 0,
+    "conflicts": [],
+    "officialAliasesOrRenames": [],
+    "note": "No material current-source conflict or City-proven alias was established; punctuation and names are retained as published."
+  },
+  "summary": {
+    "frameworkCount": 30,
+    "regionalCenterCount": 13,
+    "communityAreaCount": 17,
+    "adoptedCount": 0,
+    "inProgressCount": 0,
+    "futureOrPlannedCount": 0,
+    "unresolvedStatusCount": 30,
+    "sourceConflictCount": 0,
+    "recordsLackingDedicatedOfficialPage": 30,
+    "recordsLackingGeometryLead": 0
+  },
+  "records": [
+    {
+      "officialName": "Eastside",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Far East",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Far North",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Far South",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Far Southwest",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Far West",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Near North",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Near North Central",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Near West",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "North Central",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Northeast",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Northwest",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "South",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Southeast",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Southwest",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "West Northwest",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Westside",
+      "type": "COMMUNITY_AREA",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Brooks",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Downtown",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Fort Sam Houston",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Greater Airport Area",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Highway 151 and Loop 1604",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Medical Center",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Midtown",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Northeast I-35 and Loop 410",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Port San Antonio",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Rolling Oaks",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Stone Oak",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "Texas A&M-San Antonio",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    },
+    {
+      "officialName": "UTSA",
+      "type": "REGIONAL_CENTER",
+      "officialIdentifier": null,
+      "normalizedStatus": "OFFICIAL_AREA_STATUS_UNRESOLVED",
+      "officialStatusText": "The City source certifies the planning-area identity and type; a current area-specific plan phase or adoption status was not established by the certified sources.",
+      "adoptionDate": null,
+      "dedicatedOfficialPageUrl": null,
+      "currentOrHistoricalStatus": "CURRENT_OFFICIAL_FRAMEWORK",
+      "primaryAuthority": {
+        "classification": "CITY_PRIMARY_CURRENT",
+        "title": "SA Tomorrow Area Planning",
+        "department": "City of San Antonio Planning Department",
+        "url": "https://www.sanantonio.gov/Planning/PlanningUrbanDesign/ComprehensivePlanning/SA-Tomorrow-Area-Planning",
+        "currentOrHistorical": "CURRENT"
+      },
+      "supportingAuthorities": [
+        {
+          "classification": "CITY_OFFICIAL_PDF",
+          "title": "SA Tomorrow Comprehensive Plan",
+          "department": "City of San Antonio Planning Department",
+          "url": "https://satomorrow.com/wp-content/uploads/2016/08/SA-Tomorrow-Comprehensive-Plan.pdf",
+          "publicationOrAdoptionDate": "2016-08-11",
+          "currentOrHistorical": "HISTORICAL_ADOPTED_FRAMEWORK"
+        }
+      ],
+      "officialAliases": [],
+      "geometryStatus": "NOT_YET_CERTIFIED",
+      "geometryLeads": [
+        {
+          "leadType": "OFFICIAL_GIS_PORTAL",
+          "authority": {
+            "classification": "CITY_PRIMARY_CURRENT",
+            "title": "City of San Antonio GIS",
+            "department": "City of San Antonio Information Technology Services Department",
+            "url": "https://gis.sanantonio.gov/",
+            "currentOrHistorical": "CURRENT"
+          },
+          "note": "Discovery lead only; no item, layer, service, coordinates, or geometry were acquired or certified."
+        }
+      ],
+      "governedForFutureConsolidation": true
+    }
+  ],
+  "geometryMilestone": {
+    "status": "NOT_EXECUTED",
+    "allGeometryStatus": "NOT_YET_CERTIFIED",
+    "nextMilestone": "Acquire and certify City-controlled geometry for each of the 30 atomic sub-areas, pin official item/service/layer and source bytes, validate topology and provenance, and perform no consolidation."
+  }
+}
