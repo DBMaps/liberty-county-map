@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp199": "node tools/lp199/build-statewide-place-presentation-camera-derivation.mjs --write",
+    "verify:lp199": "node tools/lp199/build-statewide-place-presentation-camera-derivation.mjs --verify",
+    "test:lp199": "node --test tests/lp199-statewide-place-presentation-camera-derivation.test.mjs",
     "build:lp198": "node tools/lp198/build-statewide-consumer-geography-smoke-audit.mjs --write",
     "verify:lp198": "node tools/lp198/build-statewide-consumer-geography-smoke-audit.mjs --verify",
     "test:lp198": "node --test tests/lp198-statewide-consumer-geography-smoke-audit.test.mjs",
