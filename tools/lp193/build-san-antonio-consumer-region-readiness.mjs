@@ -35,6 +35,32 @@ const canonical=o=>JSON.stringify(o,null,2)+'\n';
 
 function executable(bin,name){return path.join(bin,process.platform==='win32'?`${name}.exe`:name);}
 function command(file,args){const r=spawnSync(file,args,{encoding:'utf8',windowsHide:true,maxBuffer:20*1024*1024});if(r.error)throw Error(`LP193_GDAL_UNAVAILABLE:${file}:${r.error.message}`);if(r.status!==0)throw Error(`LP193_GDAL_FAILED:${path.basename(file)}:${(r.stderr||r.stdout).trim()}`);return r.stdout;}
+export function quoteSqlIdentifier(identifier){
+ if(typeof identifier!=='string'||identifier.trim()===''||identifier.includes('\0'))throw Error('LP193_SQL_IDENTIFIER_INVALID');
+ return `"${identifier.replaceAll('"','""')}"`;
+}
+export function discoverGeometryField(dataset,layer,ogrinfo,run=command){
+ let schema;
+ try{schema=JSON.parse(run(ogrinfo,['-ro','-so','-json',dataset,layer]));}catch(error){throw Error(`LP193_GEOMETRY_SCHEMA_DISCOVERY_FAILED:${error.message}`);}
+ const described=schema?.layers?.find(candidate=>candidate?.name===layer)??(schema?.layers?.length===1?schema.layers[0]:null);
+ const fields=described?.geometryFields;
+ if(!Array.isArray(fields)||fields.length!==1)throw Error(`LP193_GEOMETRY_FIELD_COUNT_GATE_FAILED:${Array.isArray(fields)?fields.length:0}`);
+ const [{name,type}]=fields;
+ if(typeof name!=='string'||name.trim()==='')throw Error('LP193_GEOMETRY_FIELD_NAME_GATE_FAILED');
+ const spatialType=/^(?:Point|Line String|Polygon|Multi Point|Multi Line String|Multi Polygon|Geometry Collection|Circular String|Compound Curve|Curve Polygon|Multi Curve|Multi Surface|Polyhedral Surface|TIN|Triangle)(?: ZM?| M)?$/i;
+ if(typeof type!=='string'||!spatialType.test(type.trim()))throw Error(`LP193_GEOMETRY_FIELD_TYPE_GATE_FAILED:${type??''}`);
+ // Quoting is the contract for every discovered identifier; validate it before use.
+ quoteSqlIdentifier(name);
+ return name;
+}
+export function regionCertificationSql(geometryField){
+ const g=quoteSqlIdentifier(geometryField);
+ return `SELECT regionId, ST_IsValid(${g}) valid, ST_IsEmpty(${g}) empty, ST_X(ST_Transform(ST_Centroid(${g}),4326)) centroidLon, ST_Y(ST_Transform(ST_Centroid(${g}),4326)) centroidLat, ST_X(ST_Transform(ST_PointOnSurface(${g}),4326)) surfaceLon, ST_Y(ST_Transform(ST_PointOnSurface(${g}),4326)) surfaceLat, ST_Covers(${g},ST_PointOnSurface(${g})) centerCovered, ST_MinX(ST_Transform(${g},4326)) minLon, ST_MinY(ST_Transform(${g},4326)) minLat, ST_MaxX(ST_Transform(${g},4326)) maxLon, ST_MaxY(ST_Transform(${g},4326)) maxLat FROM regions`;
+}
+export function regionCoverageSql(geometryField,clauses){
+ const g=quoteSqlIdentifier(geometryField),a=`a.${g}`,b=`b.${g}`;
+ return `SELECT (SELECT COUNT(*) FROM atomics) atomicCount, (SELECT COUNT(DISTINCT GlobalID) FROM atomics) uniqueAtomicIdentityCount, (SELECT COUNT(DISTINCT Name) FROM atomics) uniqueAtomicCount, (SELECT COUNT(*) FROM atomics WHERE GlobalID = ${q(WEST_GLOBAL_ID)} AND Name = 'West Northwest') westNorthwestIdentityCount, (SELECT COUNT(*) FROM atomics WHERE Name = 'Far Southwest') farSouthwestCount, (SELECT COUNT(*) FROM atomics WHERE CASE ${clauses} END IS NULL) unassignedCount, (SELECT COUNT(*) FROM regions) regionCount, (SELECT COUNT(*) FROM regions a JOIN regions b ON a.regionId<b.regionId AND ST_Area(ST_Intersection(${a},${b}))>0) overlapCount, ST_Area(ST_SymDifference((SELECT ST_Union(geom) FROM atomics),(SELECT ST_Union(${g}) FROM regions))) coverageDelta FROM atomics LIMIT 1`;
+}
 export function westNorthwestAppendArgs(db,westArtifact=WEST_PATH){
  const sourceFields=['GlobalID','Name'];
  if(sourceFields.length!==ATOMIC_FIELDS.length||sourceFields.some((field,index)=>field!==ATOMIC_FIELDS[index]))throw Error('LP193_WEST_NORTHWEST_APPEND_SCHEMA_MAPPING_UNSAFE');
@@ -79,11 +105,12 @@ export function certifyOwnerGeometry(owner,{run=command}={}){
   const clauses=REGIONS.map(([id,,atoms])=>`WHEN Name IN (${atoms.map(q).join(',')}) THEN ${q(id)}`).join(' ');
   const unionSql=`SELECT CASE ${clauses} END AS regionId, ST_Union(geom) AS geometry FROM atomics GROUP BY regionId`;
   run(owner.ogr2ogr,['-f','GPKG','-update',db,db,'-nln','regions','-dialect','SQLite','-sql',unionSql]);
-  const metricSql=`SELECT regionId, ST_IsValid(geom) valid, ST_IsEmpty(geom) empty, ST_X(ST_Transform(ST_Centroid(geom),4326)) centroidLon, ST_Y(ST_Transform(ST_Centroid(geom),4326)) centroidLat, ST_X(ST_Transform(ST_PointOnSurface(geom),4326)) surfaceLon, ST_Y(ST_Transform(ST_PointOnSurface(geom),4326)) surfaceLat, ST_Covers(geom,ST_PointOnSurface(geom)) centerCovered, ST_MinX(ST_Transform(geom,4326)) minLon, ST_MinY(ST_Transform(geom,4326)) minLat, ST_MaxX(ST_Transform(geom,4326)) maxLon, ST_MaxY(ST_Transform(geom,4326)) maxLat FROM regions`;
+  const geometryField=discoverGeometryField(db,'regions',owner.ogrinfo,run);
+  const metricSql=regionCertificationSql(geometryField);
   run(owner.ogr2ogr,['-f','GeoJSON',metricsFile,db,'-dialect','SQLite','-sql',metricSql]);
   const metrics=JSON.parse(fs.readFileSync(metricsFile)).features.map(f=>f.properties);
   for(const m of metrics)if(Number(m.valid)!==1||Number(m.empty)!==0)throw Error(`LP193_INVALID_REGION_UNION:${m.regionId}`);
-  const gateSql=`SELECT (SELECT COUNT(*) FROM atomics) atomicCount, (SELECT COUNT(DISTINCT GlobalID) FROM atomics) uniqueAtomicIdentityCount, (SELECT COUNT(DISTINCT Name) FROM atomics) uniqueAtomicCount, (SELECT COUNT(*) FROM atomics WHERE GlobalID = ${q(WEST_GLOBAL_ID)} AND Name = 'West Northwest') westNorthwestIdentityCount, (SELECT COUNT(*) FROM atomics WHERE Name = 'Far Southwest') farSouthwestCount, (SELECT COUNT(*) FROM atomics WHERE CASE ${clauses} END IS NULL) unassignedCount, (SELECT COUNT(*) FROM regions) regionCount, (SELECT COUNT(*) FROM regions a JOIN regions b ON a.regionId<b.regionId AND ST_Area(ST_Intersection(a.geom,b.geom))>0) overlapCount, ST_Area(ST_SymDifference((SELECT ST_Union(geom) FROM atomics),(SELECT ST_Union(geom) FROM regions))) coverageDelta FROM atomics LIMIT 1`;
+  const gateSql=regionCoverageSql(geometryField,clauses);
   run(owner.ogr2ogr,['-f','GeoJSON',rawFile,db,'-dialect','SQLite','-sql',gateSql]);
   const gate=JSON.parse(fs.readFileSync(rawFile)).features[0]?.properties;
   if(!gate||Number(gate.atomicCount)!==29||Number(gate.uniqueAtomicIdentityCount)!==29||Number(gate.uniqueAtomicCount)!==29||Number(gate.westNorthwestIdentityCount)!==1||Number(gate.farSouthwestCount)!==0||Number(gate.unassignedCount)!==0||Number(gate.regionCount)!==9||Number(gate.overlapCount)!==0||Number(gate.coverageDelta)!==0)throw Error(`LP193_COVERAGE_GATE_FAILED:${JSON.stringify(gate)}`);
