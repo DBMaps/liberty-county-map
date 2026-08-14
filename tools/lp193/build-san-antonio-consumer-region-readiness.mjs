@@ -12,6 +12,8 @@ export const GEOMETRY_PATH='evidence/lp193/san-antonio-consumer-region-design-ge
 export const SOURCE_IDENTITY=Object.freeze({bytes:1864489,sha256:'bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d'});
 export const WEST_IDENTITY=Object.freeze({bytes:427909,sha256:'1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181'});
 export const WEST_PATH=path.join(ROOT,'evidence/san-antonio-sa-tomorrow-derived-repairs/west-northwest/repaired.geojson');
+export const WEST_GLOBAL_ID='4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e';
+export const ATOMIC_FIELDS=Object.freeze(['GlobalID','Name']);
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const identity=p=>{const b=fs.readFileSync(p);return {bytes:b.length,sha256:sha(b)};};
@@ -33,6 +35,13 @@ const canonical=o=>JSON.stringify(o,null,2)+'\n';
 
 function executable(bin,name){return path.join(bin,process.platform==='win32'?`${name}.exe`:name);}
 function command(file,args){const r=spawnSync(file,args,{encoding:'utf8',windowsHide:true,maxBuffer:20*1024*1024});if(r.error)throw Error(`LP193_GDAL_UNAVAILABLE:${file}:${r.error.message}`);if(r.status!==0)throw Error(`LP193_GDAL_FAILED:${path.basename(file)}:${(r.stderr||r.stdout).trim()}`);return r.stdout;}
+export function westNorthwestAppendArgs(db,westArtifact=WEST_PATH){
+ const sourceFields=['GlobalID','Name'];
+ if(sourceFields.length!==ATOMIC_FIELDS.length||sourceFields.some((field,index)=>field!==ATOMIC_FIELDS[index]))throw Error('LP193_WEST_NORTHWEST_APPEND_SCHEMA_MAPPING_UNSAFE');
+ const fieldMap=sourceFields.map(field=>ATOMIC_FIELDS.indexOf(field));
+ if(fieldMap.some(index=>index<0)||new Set(fieldMap).size!==fieldMap.length)throw Error('LP193_WEST_NORTHWEST_APPEND_SCHEMA_MAPPING_UNSAFE');
+ return ['-f','GPKG','-update','-append',db,westArtifact,'-nln','atomics','-t_srs','EPSG:3083','-nlt','PROMOTE_TO_MULTI','-fieldmap',fieldMap.join(',')];
+}
 export function detectOwnerInputs(env=process.env,run=command){
  const source=env.GRIDLY_SA_TOMORROW_GEOJSON,bin=env.GRIDLY_GDAL_BIN;
  if(!source||!bin||!fs.existsSync(source)||!fs.existsSync(WEST_PATH))return {available:false,reason:'OWNER_INPUT_PATH_MISSING'};
@@ -65,8 +74,8 @@ export function certifyOwnerGeometry(owner,{run=command}={}){
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'gridly-lp193-'));
  try{
   const db=path.join(tmp,'working.gpkg'),rawFile=path.join(tmp,'regions.geojson'),metricsFile=path.join(tmp,'metrics.geojson');
-  run(owner.ogr2ogr,['-f','GPKG',db,owner.source,'-nln','atomics','-t_srs','EPSG:3083','-nlt','PROMOTE_TO_MULTI','-where',`Name NOT IN ('Far Southwest','West Northwest')`,'-select','Name']);
-  run(owner.ogr2ogr,['-f','GPKG','-update','-append',db,WEST_PATH,'-nln','atomics','-t_srs','EPSG:3083','-nlt','PROMOTE_TO_MULTI','-select','Name']);
+  run(owner.ogr2ogr,['-f','GPKG',db,owner.source,'-nln','atomics','-t_srs','EPSG:3083','-nlt','PROMOTE_TO_MULTI','-where',`Name NOT IN ('Far Southwest','West Northwest')`,'-select',ATOMIC_FIELDS.join(',')]);
+  run(owner.ogr2ogr,westNorthwestAppendArgs(db),'append certified West Northwest geometry');
   const clauses=REGIONS.map(([id,,atoms])=>`WHEN Name IN (${atoms.map(q).join(',')}) THEN ${q(id)}`).join(' ');
   const unionSql=`SELECT CASE ${clauses} END AS regionId, ST_Union(geom) AS geometry FROM atomics GROUP BY regionId`;
   run(owner.ogr2ogr,['-f','GPKG','-update',db,db,'-nln','regions','-dialect','SQLite','-sql',unionSql]);
@@ -74,10 +83,10 @@ export function certifyOwnerGeometry(owner,{run=command}={}){
   run(owner.ogr2ogr,['-f','GeoJSON',metricsFile,db,'-dialect','SQLite','-sql',metricSql]);
   const metrics=JSON.parse(fs.readFileSync(metricsFile)).features.map(f=>f.properties);
   for(const m of metrics)if(Number(m.valid)!==1||Number(m.empty)!==0)throw Error(`LP193_INVALID_REGION_UNION:${m.regionId}`);
-  const gateSql=`SELECT (SELECT COUNT(*) FROM atomics) atomicCount, (SELECT COUNT(DISTINCT Name) FROM atomics) uniqueAtomicCount, (SELECT COUNT(*) FROM atomics WHERE CASE ${clauses} END IS NULL) unassignedCount, (SELECT COUNT(*) FROM regions) regionCount, (SELECT COUNT(*) FROM regions a JOIN regions b ON a.regionId<b.regionId AND ST_Area(ST_Intersection(a.geom,b.geom))>0) overlapCount, ST_Area(ST_SymDifference((SELECT ST_Union(geom) FROM atomics),(SELECT ST_Union(geom) FROM regions))) coverageDelta FROM atomics LIMIT 1`;
+  const gateSql=`SELECT (SELECT COUNT(*) FROM atomics) atomicCount, (SELECT COUNT(DISTINCT GlobalID) FROM atomics) uniqueAtomicIdentityCount, (SELECT COUNT(DISTINCT Name) FROM atomics) uniqueAtomicCount, (SELECT COUNT(*) FROM atomics WHERE GlobalID = ${q(WEST_GLOBAL_ID)} AND Name = 'West Northwest') westNorthwestIdentityCount, (SELECT COUNT(*) FROM atomics WHERE Name = 'Far Southwest') farSouthwestCount, (SELECT COUNT(*) FROM atomics WHERE CASE ${clauses} END IS NULL) unassignedCount, (SELECT COUNT(*) FROM regions) regionCount, (SELECT COUNT(*) FROM regions a JOIN regions b ON a.regionId<b.regionId AND ST_Area(ST_Intersection(a.geom,b.geom))>0) overlapCount, ST_Area(ST_SymDifference((SELECT ST_Union(geom) FROM atomics),(SELECT ST_Union(geom) FROM regions))) coverageDelta FROM atomics LIMIT 1`;
   run(owner.ogr2ogr,['-f','GeoJSON',rawFile,db,'-dialect','SQLite','-sql',gateSql]);
   const gate=JSON.parse(fs.readFileSync(rawFile)).features[0]?.properties;
-  if(!gate||Number(gate.atomicCount)!==29||Number(gate.uniqueAtomicCount)!==29||Number(gate.unassignedCount)!==0||Number(gate.regionCount)!==9||Number(gate.overlapCount)!==0||Number(gate.coverageDelta)!==0)throw Error(`LP193_COVERAGE_GATE_FAILED:${JSON.stringify(gate)}`);
+  if(!gate||Number(gate.atomicCount)!==29||Number(gate.uniqueAtomicIdentityCount)!==29||Number(gate.uniqueAtomicCount)!==29||Number(gate.westNorthwestIdentityCount)!==1||Number(gate.farSouthwestCount)!==0||Number(gate.unassignedCount)!==0||Number(gate.regionCount)!==9||Number(gate.overlapCount)!==0||Number(gate.coverageDelta)!==0)throw Error(`LP193_COVERAGE_GATE_FAILED:${JSON.stringify(gate)}`);
   fs.rmSync(rawFile,{force:true});
   run(owner.ogr2ogr,['-f','GeoJSON',rawFile,db,'regions','-t_srs','EPSG:4326','-lco','RFC7946=YES','-lco','COORDINATE_PRECISION=10']);
   const geometryById=new Map(JSON.parse(fs.readFileSync(rawFile)).features.map(f=>[f.properties.regionId,f.geometry]));
