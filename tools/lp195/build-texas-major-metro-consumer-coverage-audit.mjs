@@ -1,14 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const OUT_JSON='reports/lp195/texas-major-metro-consumer-coverage-audit.json';
 const OUT_MD='reports/lp195/texas-major-metro-consumer-coverage-audit.md';
 const SOURCES={communities:'data/generated/gridly-statewide-consumer-community-projection-v1.json',zips:'data/generated/gridly-statewide-consumer-zip-index-v1.json',presentation:'data/generated/gridly-statewide-place-presentation-v1.json',runtime:'js/app.js'};
+const LP195_BASELINE_COMMIT='d3b11e6';
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p),'utf8'));
-const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex');
+const sha=p=>crypto.createHash('sha256').update(p===SOURCES.runtime?execFileSync('git',['show',`${LP195_BASELINE_COMMIT}:${p}`],{cwd:ROOT,maxBuffer:16*1024*1024}):fs.readFileSync(path.join(ROOT,p))).digest('hex');
 const communityDoc=read(SOURCES.communities), zipDoc=read(SOURCES.zips), presentation=read(SOURCES.presentation).places;
 const byName=new Map(communityDoc.communities.map(x=>[x.displayName,x]));
 const classifications=['ADEQUATE_EXISTING_CONSUMER_GEOGRAPHY','ZIP_COMMUNITY_REGIONALIZATION_RECOMMENDED','MULTI_CITY_METRO_MODEL_REQUIRED','GEOMETRY_GOVERNANCE_REQUIRED','NO_REGIONALIZATION_NEEDED','OWNER_REVIEW_REQUIRED'];
