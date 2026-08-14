@@ -1,6 +1,6 @@
 # West Northwest derived repair certification
 
-**Status:** `OWNER_EXECUTION_REQUIRED`
+**Status:** `CERTIFIED`
 
 `GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL`
 
@@ -8,8 +8,33 @@ No consolidation, consumer regionalization, consumer naming, or runtime mutation
 
 ```json
 {
-  "classification": "CERTIFICATION_PENDING_GOVERNED_GDAL_EXECUTION",
+  "areaAfterSquareMiles": 39.4338520338304,
+  "areaBeforeSquareMiles": 39.43385203383007,
+  "artifact": {
+    "bytes": 427909,
+    "path": "evidence/san-antonio-sa-tomorrow-derived-repairs/west-northwest/repaired.geojson",
+    "sha256": "1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181"
+  },
+  "classification": "DERIVED_REPAIR_CERTIFIED_FOR_FUTURE_ANALYSIS",
+  "componentCountAfter": 1,
+  "componentCountBefore": 1,
   "exportCrs": "EPSG:4326",
+  "gates": {
+    "areaThreshold": true,
+    "beganInvalid": true,
+    "deterministicByteIdentity": true,
+    "exactReason": true,
+    "identity": true,
+    "noDuplicateCoverage": true,
+    "noOtherUnitChanged": true,
+    "noOverlap": true,
+    "partitionPreserved": true,
+    "sourcePreserved": true,
+    "validNonEmptyPolygonalResult": true
+  },
+  "generation": "GDAL 3.13 SQLite ST_MakeValid; no simplify, snap, buffer, hand edit, or unrelated union",
+  "geometryTypeAfter": "POLYGON",
+  "geometryTypeBefore": "MULTIPOLYGON",
   "identity": {
     "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
     "name": "West Northwest",
@@ -17,12 +42,17 @@ No consolidation, consumer regionalization, consumer naming, or runtime mutation
   },
   "maxRepairAreaDeltaPercent": 0.000001,
   "milestone": "SAN_ANTONIO_WEST_NORTHWEST_DERIVED_REPAIR_CERTIFICATION",
-  "ownerLocalSourceRequired": true,
+  "percentAreaDelta": 8.288555177648982e-13,
+  "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
   "sourceIdentity": {
     "bytes": 1864489,
     "sha256": "bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d"
   },
-  "status": "OWNER_EXECUTION_REQUIRED",
-  "workingCrs": "EPSG:3083"
+  "status": "CERTIFIED",
+  "validityAfter": "VALID",
+  "validityBefore": "INVALID",
+  "validityReasonBefore": "Ring Self-intersection[1627540.43352733 7270466.3643979]",
+  "workingCrs": "EPSG:3083",
+  "workingGeometryAuthority": "CERTIFIED_DERIVED_MAKEVALID"
 }
 ```

@@ -1,6 +1,6 @@
 # San Antonio SA Tomorrow working geometry governance
 
-**Status:** `OWNER_EXECUTION_REQUIRED_BEFORE_ANALYSIS_READINESS`
+**Status:** `ANALYSIS_READY_WITH_ONE_HELD_ATOMIC_UNIT`
 
 `GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL`
 
@@ -215,8 +215,8 @@ No consolidation, consumer regionalization, consumer naming, or runtime mutation
       "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
       "name": "West Northwest",
       "sourceGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL",
-      "workingGeometryAuthority": null,
-      "workingGeometryStatus": "DERIVED_REPAIR_CERTIFICATION_PENDING_OWNER_EXECUTION"
+      "workingGeometryAuthority": "CERTIFIED_DERIVED_MAKEVALID",
+      "workingGeometryStatus": "CERTIFIED_DERIVED_MAKEVALID"
     },
     {
       "globalId": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
@@ -227,14 +227,14 @@ No consolidation, consumer regionalization, consumer naming, or runtime mutation
     }
   ],
   "runtimeMutationPerformed": false,
-  "status": "OWNER_EXECUTION_REQUIRED_BEFORE_ANALYSIS_READINESS",
+  "status": "ANALYSIS_READY_WITH_ONE_HELD_ATOMIC_UNIT",
   "summary": {
-    "derivedRepair": 0,
-    "derivedRepairPending": 1,
+    "derivedRepair": 1,
+    "derivedRepairPending": 0,
     "hold": 1,
     "originalValid": 28,
     "total": 30,
-    "usableGovernedWorkingGeometry": 28
+    "usableGovernedWorkingGeometry": 29
   }
 }
 ```
