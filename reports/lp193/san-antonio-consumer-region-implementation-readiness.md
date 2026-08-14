@@ -1,6 +1,7 @@
 # LP193 — San Antonio consumer-region implementation readiness
 
-**Status:** `SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READINESS_OWNER_GDAL_HOLD`  
+**Status:** `SAN_ANTONIO_CONSUMER_REGION_IMPLEMENTATION_READINESS_OWNER_GDAL_HOLD`
+
 **Recommendation:** `NOT_READY`
 
 LP193 defines future contracts only; runtime behavior is untouched. Owner inputs select the fail-closed GDAL 3.13 certification path.
