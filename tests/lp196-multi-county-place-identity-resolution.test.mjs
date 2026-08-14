@@ -7,6 +7,7 @@ import { countyRegistryRange } from '../scripts/lp189-statewide-runtime-activati
 const source = fs.readFileSync('js/app.js', 'utf8');
 const resolverSource = source.match(/function resolveGridlyAwarenessAreaQuery\([\s\S]*?\n\}/)?.[0];
 const manualSearchSource = source.match(/function resolveGridlyManualAwarenessAreaSearch\([\s\S]*?\n\}/)?.[0];
+const canonicalSaveSource = source.match(/function gridlySaveCanonicalMultiCountyPlaceHome\([\s\S]*?\n\}/)?.[0];
 
 function fixture(overrides = {}) {
   const definitions = [
@@ -144,4 +145,40 @@ test('canonical manual apply routes persistence without an invented county', () 
   assert.match(source, /gridlySaveCanonicalMultiCountyPlaceHome\(canonicalResolution/);
   assert.match(source, /countyId: null, countyName: null, countyMemberships:/);
   assert.match(source, /identityType: "PLACE_GEOID"/);
+});
+
+test('confirmed canonical PLACE apply persists, refreshes visible context, and dispatches its semantic camera', () => {
+  for (const [community, placeGeoid, countyMemberships] of [
+    ['Dallas', '4819000', ['48085', '48113', '48121', '48231', '48257']],
+    ['Fort Worth', '4827000', ['48121', '48251', '48367', '48439', '48497']],
+    ['Austin', '4805000', ['48021', '48055', '48209', '48453']]
+  ]) {
+    const writes = new Map(); const calls = [];
+    const area = { label: community, placeGeoid, canonicalMultiCountyPlace: true, countyId: null };
+    const context = {
+      GRIDLY_LP0517_HOME_PERSONALIZATION_STORAGE_KEY: 'home', GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION: '1', activeGeoFilter: 'county',
+      localStorage: { setItem: (key, value) => writes.set(key, value) }, gridlySafeLocalStorageSet: (key, value) => writes.set(key, value),
+      gridlyLp0517ValidateHomeRecord: record => ({ valid: record.countyId === null && record.communityKey === placeGeoid && record.countyMemberships.join('|') === countyMemberships.join('|'), area }),
+      invalidateGridlySelectedAwarenessAreaResolutionCache: reason => calls.push(['invalidate', reason]),
+      gridlyDispatchSemanticCamera: (selectedArea, countyId, options) => { calls.push(['camera', selectedArea, countyId, options]); return true; },
+      syncGridlyAwarenessAreaSurfacesImmediately: (reason, options) => calls.push(['sync', reason, options]), renderGridlySettingsPanel: () => calls.push(['settings'])
+    };
+    vm.runInNewContext(`${canonicalSaveSource};this.save=gridlySaveCanonicalMultiCountyPlaceHome`, context);
+    assert.equal(context.save({ status: 'RESOLVED_CANONICAL_MULTI_COUNTY_PLACE', canonicalIdentity: 'PLACE_GEOID', community, placeGeoid, countyMemberships }, 'confirmed_test'), true);
+    const record = JSON.parse(writes.get('home'));
+    assert.equal(record.consumerLabel, community);
+    assert.equal(record.countyId, null);
+    assert.deepEqual(record.countyMemberships, countyMemberships);
+    assert.deepEqual(calls.find(call => call[0] === 'camera').slice(1, 3), [area, null]);
+    assert.equal(calls.find(call => call[0] === 'sync')[2].summaryOptions.awarenessArea.label, community);
+    assert.ok(calls.some(call => call[0] === 'settings'));
+  }
+});
+
+test('confirmation and reload contracts accept canonical PLACE countyId null without stale county fallback', () => {
+  assert.match(source, /consumerLabel: canonicalResolution\.community/);
+  assert.match(source, /persistedHome\?\.identityType === "PLACE_GEOID" && !persistedHome\.countyId/);
+  assert.match(source, /context\.area\.canonicalMultiCountyPlace !== true/);
+  assert.match(source, /gridlyStartupSemanticContext\?\.countyId \|\| startupAnchor\.countyId/);
+  assert.match(source, /meta: area\.canonicalMultiCountyPlace === true\s*\? "Multi-county community"/);
 });
