@@ -1,0 +1,45 @@
+{
+  "consolidationPerformed": false,
+  "consumerNamesCreated": false,
+  "consumerRegionsCreated": false,
+  "designNote": "GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL",
+  "deterministic": true,
+  "governedGeometryMutationPerformed": false,
+  "milestone": "SAN_ANTONIO_TWO_POLYGON_GEOMETRY_DEFECT_AUDIT",
+  "ownerExecutionCommand": "$env:GRIDLY_GDAL_BIN = 'C:\\Program Files\\QGIS 3.44.11\\bin'\nnpm run audit:san-antonio-two-polygon-defects -- --source 'C:\\GitHub\\Gridly-Source-Data\\SanAntonio\\SATomorrow\\SATomorrowSubAreaPlans-CoSAGIS-Opendata.geojson' --current-url '<EXPLICIT_CURRENT_LAYER_0_QUERY_GEOJSON_URL>' --second-url '<EXPLICIT_UPDATED_LAYER_11_QUERY_GEOJSON_URL>'",
+  "records": [
+    {
+      "calculatedOriginalSquareMiles": 28.432135320718697,
+      "currentCityName": "Far Southwest",
+      "defectClassification": "OWNER_REVIEW_REQUIRED",
+      "globalId": null,
+      "makeValidPercentDelta": null,
+      "makeValidSquareMiles": null,
+      "projectedGeometryStatus": "INVALID",
+      "recommendedFutureGovernancePath": "REQUIRE_CITY_SOURCE_CLARIFICATION",
+      "secondCityServiceComparison": {"status": "OWNER_EXECUTION_REQUIRED"},
+      "sourceGeometryStatus": "OWNER_EXECUTION_REQUIRED_FOR_EXACT_REASON",
+      "sourceSquareMiles": 23.12700182,
+      "validityReason": null
+    },
+    {
+      "calculatedOriginalSquareMiles": 39.43385203383007,
+      "centroidContained": false,
+      "currentCityName": "West Northwest",
+      "defectClassification": "SOURCE_GEOMETRY_INVALID_BUT_STABLE",
+      "globalId": null,
+      "makeValidPercentDelta": null,
+      "makeValidSquareMiles": null,
+      "projectedGeometryStatus": "INVALID",
+      "recommendedFutureGovernancePath": "KEEP_ORIGINAL_WITH_DOCUMENTED_EXCEPTION",
+      "secondCityServiceComparison": {"status": "OWNER_EXECUTION_REQUIRED"},
+      "sourceGeometryStatus": "OWNER_EXECUTION_REQUIRED_FOR_EXACT_REASON",
+      "sourceSquareMiles": 39.40309223,
+      "validityReason": null
+    }
+  ],
+  "scope": ["Far Southwest", "West Northwest"],
+  "status": "OWNER_EXECUTION_REQUIRED",
+  "statusReason": "Certified owner source and GDAL 3.13.0 are not present, and both City services are unreachable from this environment.",
+  "workingCrs": "EPSG:3083"
+}
