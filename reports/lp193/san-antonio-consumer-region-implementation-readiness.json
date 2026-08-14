@@ -22,6 +22,14 @@
     "coveredExactlyOnce": 29,
     "heldAtomic": "Far Southwest",
     "westNorthwestAuthority": "CERTIFIED_DERIVED_MAKEVALID",
+    "sourceIdentity": {
+      "bytes": 1864489,
+      "sha256": "bf15d7d257d60970c894e590cacb996a15a8796d789e09335860fdb2a6a6e13d"
+    },
+    "westNorthwestIdentity": {
+      "bytes": 427909,
+      "sha256": "1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181"
+    },
     "requiredValidation": [
       "NON_EMPTY",
       "VALID",
@@ -72,6 +80,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -123,6 +132,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -181,6 +191,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -252,6 +263,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -310,6 +322,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -367,6 +380,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [],
@@ -390,6 +404,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -471,6 +486,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "NO_CERTIFIED_FAR_SOUTHWEST_MEMBERSHIP",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
@@ -500,6 +516,7 @@
       ],
       "geometryStatus": "OWNER_GDAL_EXECUTION_REQUIRED",
       "farSouthwestImplication": "CERTIFIED_GEOMETRY_EXCLUDES_HELD_FAR_SOUTHWEST; FUTURE_BOUNDARY_EXTENSION_PENDING_CITY_CLARIFICATION",
+      "centroid": null,
       "semanticCenter": null,
       "startupZoom": null,
       "contextualNearbyOrIntersectingPlaces": [
