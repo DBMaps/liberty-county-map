@@ -14,6 +14,8 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "certify:san-antonio-working-geometry-governance": "node tools/certify-san-antonio-working-geometry-governance.mjs",
+    "test:san-antonio-working-geometry-governance": "node --test tests/san-antonio-working-geometry-governance.test.mjs",
     "audit:san-antonio-two-polygon-defects": "node tools/audit-san-antonio-two-polygon-defects.mjs",
     "test:san-antonio-two-polygon-defect-audit": "node --test tests/san-antonio-two-polygon-defect-audit.test.mjs",
     "build:san-antonio-official-registry": "node tools/build-san-antonio-sa-tomorrow-official-registry.mjs",
