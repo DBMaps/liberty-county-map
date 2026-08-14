@@ -1,0 +1,1486 @@
+{
+  "schemaVersion": "gridly.lp192.san-antonio-consumer-region-consolidation-design.v1",
+  "milestone": "LP192_SAN_ANTONIO_CONSUMER_REGION_CONSOLIDATION_DESIGN",
+  "baseline": {
+    "commit": "f7954cf621ace8d996f391587ad7791df1a38735",
+    "subject": "Merge LP191 Bexar PLACE CDP overlay certification"
+  },
+  "governingSourceReferences": [
+    "reports/lp191/bexar-place-cdp-overlay.json",
+    "reports/lp191/bexar-place-cdp-overlay.md",
+    "reports/san-antonio-sa-tomorrow-official-registry.json",
+    "reports/san-antonio-sa-tomorrow-topology-analysis.json",
+    "reports/san-antonio-sa-tomorrow-working-geometry-governance.json",
+    "reports/san-antonio-west-northwest-derived-repair-certification.json",
+    "reports/san-antonio-far-southwest-governance-hold.json",
+    "docs/LP035-HOUSTON-AWARENESS-REGIONALIZATION.md"
+  ],
+  "houstonPatternEvidence": {
+    "principle": "Recognizable activity/district anchors, explicit separately owned community exclusions, and a design milestone separated from activation.",
+    "examples": [
+      "Downtown / Midtown",
+      "Medical Center / Rice",
+      "Uptown / Galleria",
+      "Energy Corridor"
+    ],
+    "limitations": "Product-language comparison only; no Houston artifact is mutated or copied as San Antonio authority."
+  },
+  "designPrinciples": [
+    "GOVERNED_ATOMIC_GEOGRAPHY != CONSUMER_REGION_LABEL",
+    "INDEPENDENT_GOVERNED_PLACE_WINS",
+    "TRACE_AND_MINOR_DO_NOT_CREATE_CONSUMER_MEMBERSHIP",
+    "DESIGN_ONLY_NOT_RUNTIME",
+    "NO_FAR_SOUTHWEST_TOPOLOGY_USE"
+  ],
+  "frameworkCounts": {
+    "officialAtomicUnits": 30,
+    "regionalCenters": 13,
+    "communityAreas": 17,
+    "usableGovernedWorkingGeometries": 29
+  },
+  "atomicUnitInventory": [
+    {
+      "globalId": "035ef4a5-58c0-4db4-8c9d-b604993e21d7",
+      "name": "Highway 151 and Loop 1604",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "048dc604-6c48-429b-9cfe-4c218b0f56e9",
+      "name": "Texas AM - San Antonio",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+      "name": "Far Southwest",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "GOVERNANCE_HOLD_NO_CERTIFIED_WORKING_GEOMETRY",
+      "workingGeometryAuthority": null
+    },
+    {
+      "globalId": "0a75ddb9-509c-4437-9517-77864b9dc60c",
+      "name": "Near Northeast",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "0afb1a8e-233c-46b0-a089-be12db27ef14",
+      "name": "Far East",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "1a072479-c744-475d-abe6-9e0ff7a2bd3b",
+      "name": "NE I-35 and Loop 410",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "229d6a6d-7b0b-408c-b533-809bc5f61519",
+      "name": "UTSA",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "27a862da-469c-4c78-a61e-9791748ade78",
+      "name": "Far West",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "3d224b72-b032-4065-a7ca-728edcd5d53a",
+      "name": "Medical Center",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "3d2409d8-81a8-4543-a591-827b08d784c1",
+      "name": "Near Northwest",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "4b72967d-d1fb-4e68-8003-a9fc33cff4fe",
+      "name": "Rolling Oaks",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "4c5f3a02-22b0-4af8-8d74-b1bc35a8e03e",
+      "name": "West Northwest",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "CERTIFIED_DERIVED_MAKEVALID",
+      "workingGeometryAuthority": "CERTIFIED_DERIVED_MAKEVALID"
+    },
+    {
+      "globalId": "4d5ea94b-569d-41cc-9d1b-0507c2e55ca7",
+      "name": "Far North",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "59bb2a5d-6a40-4dfb-95af-06d899177c28",
+      "name": "Fort Sam Houston",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "5b946d3e-cd2c-4a26-b5ac-e27169ce6d44",
+      "name": "North Central",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "669b79f6-c9dc-46db-bb12-648f99fbce43",
+      "name": "Midtown",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "6f6ddacb-2b92-44f6-9568-347ca55b7899",
+      "name": "Stone Oak",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "77b18a27-79b7-46e1-bb32-4cd1e05989d9",
+      "name": "Brooks",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "97624610-ecad-4399-80f7-5fe6ccc6fbc5",
+      "name": "Near North",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "9a5879f6-79a0-4308-97bc-b3da98f9cbb5",
+      "name": "Downtown",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "9df7dbd2-f1cd-4e80-a549-5ee2b0df1891",
+      "name": "Far South",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "a9a1b851-1e17-4d3d-80b3-471099a6fa52",
+      "name": "Northwest",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "acd1e5de-56a1-4120-a323-2cac36172053",
+      "name": "Greater Airport Area",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "bd3cbd35-6ebf-43fd-b8ca-4f0186f075d4",
+      "name": "Eastside",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "bfa7eeae-cb6d-4fe8-92ca-31748936f882",
+      "name": "Westside",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "ecd7df4d-e5ee-42b3-a114-87c16af5cd00",
+      "name": "Northeast",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "eddd05bd-747d-4f27-8402-4fd47215eeb2",
+      "name": "Southeast",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "f46e20a0-a0bc-4126-95c6-98165cf41009",
+      "name": "South",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "fd1c2919-e760-491c-a737-b11533605636",
+      "name": "Port San Antonio",
+      "type": "REGIONAL_CENTER",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    },
+    {
+      "globalId": "fe9d2497-dc0d-4134-9001-5da718f3e815",
+      "name": "Southwest",
+      "type": "COMMUNITY_AREA",
+      "workingGeometryStatus": "ORIGINAL_CITY_GEOMETRY_VALID",
+      "workingGeometryAuthority": "CITY_OPEN_DATA_ORIGINAL"
+    }
+  ],
+  "atomicAdjacencyMethod": {
+    "status": "DESIGN_EVIDENCE_FROM_GOVERNED_WORKING_GEOGRAPHY",
+    "farSouthwestExcluded": true,
+    "rule": "Candidate continuity was evaluated against the 29 governed working geometries; invalid Far Southwest topology was not used.",
+    "certifiedGeometryClaimsLimitedToUsableUnits": true
+  },
+  "placeCdpPrecedencePolicy": {
+    "rule": "INDEPENDENT_GOVERNED_PLACE_WINS",
+    "count": 33,
+    "places": [
+      {
+        "geoid": "4801600",
+        "name": "Alamo Heights",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 3,
+          "trace": 1
+        },
+        "positiveAreaAtomicUnits": [
+          "Greater Airport Area",
+          "Midtown",
+          "Near Northeast",
+          "North Central"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4805384",
+        "name": "Balcones Heights",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 3,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Near North",
+          "Near Northwest",
+          "North Central"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4813276",
+        "name": "Castle Hills",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 3,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far North",
+          "Greater Airport Area",
+          "North Central"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4814716",
+        "name": "China Grove",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far East",
+          "Southeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4814920",
+        "name": "Cibolo",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4816468",
+        "name": "Converse",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far East",
+          "Near Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4817811",
+        "name": "Cross Mountain",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Northwest"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4823272",
+        "name": "Elmendorf",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4825168",
+        "name": "Fair Oaks Ranch",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4831100",
+        "name": "Grey Forest",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4833146",
+        "name": "Helotes",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Northwest",
+          "West Northwest"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4833968",
+        "name": "Hill Country Village",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 1,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far North",
+          "Greater Airport Area",
+          "Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4834628",
+        "name": "Hollywood Park",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 1,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Northeast",
+          "Stone Oak"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4839448",
+        "name": "Kirby",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Fort Sam Houston",
+          "Near Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4840036",
+        "name": "Lackland AFB",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Port San Antonio"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4842388",
+        "name": "Leon Valley",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 4,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Medical Center",
+          "Near Northwest",
+          "Northwest",
+          "West Northwest"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4843096",
+        "name": "Live Oak",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4845288",
+        "name": "Lytle",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4845576",
+        "name": "Macdona",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4853988",
+        "name": "Olmos Park",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Near North",
+          "North Central"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4860608",
+        "name": "Randolph AFB",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4864172",
+        "name": "St. Hedwig",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4865344",
+        "name": "Sandy Oaks",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4866089",
+        "name": "Scenic Oaks",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Northwest"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4866128",
+        "name": "Schertz",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far East"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4866704",
+        "name": "Selma",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Rolling Oaks"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4867268",
+        "name": "Shavano Park",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 2,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Far North",
+          "UTSA"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4868708",
+        "name": "Somerset",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "INDETERMINATE_FAR_SOUTHWEST_GOVERNANCE_HOLD",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "POTENTIALLY_RELEVANT_GOVERNANCE_HOLD"
+      },
+      {
+        "geoid": "4872296",
+        "name": "Terrell Hills",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 3,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Fort Sam Houston",
+          "Midtown",
+          "Near Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4873057",
+        "name": "Timberwood Park",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "SINGLE_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [
+          "Stone Oak"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4874408",
+        "name": "Universal City",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "OUTSIDE_USABLE_SA_TOMORROW_GEOGRAPHY",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      },
+      {
+        "geoid": "4875764",
+        "name": "Von Ormy",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "INDETERMINATE_FAR_SOUTHWEST_GOVERNANCE_HOLD",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 0,
+          "trace": 0
+        },
+        "positiveAreaAtomicUnits": [],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "POTENTIALLY_RELEVANT_GOVERNANCE_HOLD"
+      },
+      {
+        "geoid": "4879672",
+        "name": "Windcrest",
+        "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+        "aggregateClassification": "MULTI_ATOMIC_POSITIVE_AREA_OVERLAP",
+        "significanceSummary": {
+          "material": 0,
+          "minor": 1,
+          "trace": 1
+        },
+        "positiveAreaAtomicUnits": [
+          "NE I-35 and Loop 410",
+          "Near Northeast"
+        ],
+        "consumerRegionMember": false,
+        "farSouthwestRelevance": "CERTIFIED_IRRELEVANT_BY_ENVELOPE_DISJOINT"
+      }
+    ],
+    "rawVsSignificance": {
+      "pairCount": 957,
+      "rawClassificationCounts": {
+        "DISJOINT": 914,
+        "PARTIAL_AREA_OVERLAP": 43
+      },
+      "significanceCounts": {
+        "MATERIAL_POSITIVE_AREA_OVERLAP": 2,
+        "MINOR_POSITIVE_AREA_OVERLAP": 39,
+        "TRACE_POSITIVE_AREA_OVERLAP": 2
+      },
+      "interpretation": "Raw positive area is not consumer membership. TRACE and MINOR do not drive grouping; MATERIAL is stronger spatial context but cannot override PLACE governance."
+    }
+  },
+  "farSouthwestHold": {
+    "globalId": "0a54b85a-6d66-4887-8a12-19dff06070c8",
+    "name": "Far Southwest",
+    "status": "CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION",
+    "workingAuthorityGranted": false,
+    "certifiedGeometricMembership": false,
+    "provisionalDesignIntent": "Southwest-side owner review context only.",
+    "selectivePlaceHolds": [
+      {
+        "geoid": "4868708",
+        "name": "Somerset"
+      },
+      {
+        "geoid": "4875764",
+        "name": "Von Ormy"
+      }
+    ]
+  },
+  "options": {
+    "A": {
+      "optionId": "A",
+      "name": "Recommended balanced consolidation",
+      "consumerRegionCount": 9,
+      "heldAtomicUnits": [
+        "Far Southwest"
+      ],
+      "coveragePolicy": "ALL_29_USABLE_ATOMIC_UNITS_EXACTLY_ONCE; FAR_SOUTHWEST_HELD_OUTSIDE_CERTIFIED_MEMBERSHIP",
+      "regions": [
+        {
+          "designKey": "LP192-A-01",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Downtown / Central San Antonio",
+          "labelStatus": "RECOMMENDED",
+          "atomicUnits": [
+            "Downtown",
+            "Eastside",
+            "Midtown",
+            "Near North",
+            "Westside"
+          ],
+          "rationale": "Downtown civic, event, and inner-city activity core.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Downtown civic, event, and inner-city activity core.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-02",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Medical Region",
+          "labelStatus": "RECOMMENDED",
+          "atomicUnits": [
+            "Medical Center",
+            "Near Northwest",
+            "North Central"
+          ],
+          "rationale": "Medical Center is the recognizable trip and employment anchor.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Medical Center is the recognizable trip and employment anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-03",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Airport / Fort Sam",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Fort Sam Houston",
+            "Greater Airport Area",
+            "Near Northeast"
+          ],
+          "rationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-04",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Stone Oak / Far North",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far North",
+            "Stone Oak"
+          ],
+          "rationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-05",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "UTSA / Northwest",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Northwest",
+            "UTSA",
+            "West Northwest"
+          ],
+          "rationale": "UTSA anchors the northwest activity and travel cluster.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-06",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Highway 151 / Far West",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far West",
+            "Highway 151 and Loop 1604"
+          ],
+          "rationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-07",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "NE I-35 / Rolling Oaks",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far East",
+            "NE I-35 and Loop 410",
+            "Northeast",
+            "Rolling Oaks"
+          ],
+          "rationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-08",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Brooks / Southside",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Brooks",
+            "Far South",
+            "South",
+            "Southeast",
+            "Texas AM - San Antonio"
+          ],
+          "rationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-A-09",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Port San Antonio / Southwest",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Port San Antonio",
+            "Southwest"
+          ],
+          "rationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "PROVISIONAL_DESIGN_INTENT places Far Southwest in southwest-side naming review context only; certified membership is forbidden.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        }
+      ],
+      "advantages": [
+        "Nine regions retain distinct, recognizable anchors without exposing 30 planning labels.",
+        "Central, medical, airport, UTSA, Stone Oak, Port, Brooks, and major-corridor concepts remain distinguishable."
+      ],
+      "disadvantages": [
+        "Seven labels require local-owner naming review.",
+        "Enclave PLACE/CDP interactions remain visible but never become membership."
+      ],
+      "namingConfidence": "TWO_RECOMMENDED_LABELS; SEVEN_OWNER_NAMING_REVIEW_REQUIRED",
+      "likelyConsumerUsability": "HIGH_DESIGN_CONFIDENCE_PENDING_OWNER_NAMING_REVIEW",
+      "governanceComplexity": "MODERATE",
+      "placeCdpInteractionComplexity": "MODERATE",
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+    },
+    "B": {
+      "optionId": "B",
+      "name": "More consolidated",
+      "consumerRegionCount": 6,
+      "heldAtomicUnits": [
+        "Far Southwest"
+      ],
+      "coveragePolicy": "ALL_29_USABLE_ATOMIC_UNITS_EXACTLY_ONCE; FAR_SOUTHWEST_HELD_OUTSIDE_CERTIFIED_MEMBERSHIP",
+      "regions": [
+        {
+          "designKey": "LP192-B-01",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Central / Medical",
+          "labelStatus": "RECOMMENDED",
+          "atomicUnits": [
+            "Downtown",
+            "Eastside",
+            "Medical Center",
+            "Midtown",
+            "Near North",
+            "Near Northwest",
+            "North Central",
+            "Westside"
+          ],
+          "rationale": "Combines the inner core and medical trip market for a six-region model.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Downtown civic, event, and inner-city activity core. Medical Center is the recognizable trip and employment anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-B-02",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Airport / North Central",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far North",
+            "Fort Sam Houston",
+            "Greater Airport Area",
+            "Near Northeast",
+            "Stone Oak"
+          ],
+          "rationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market. Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-B-03",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "UTSA / West",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far West",
+            "Highway 151 and Loop 1604",
+            "Northwest",
+            "UTSA",
+            "West Northwest"
+          ],
+          "rationale": "UTSA anchors the northwest activity and travel cluster. Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster. Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-B-04",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "NE I-35 / Far East",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far East",
+            "NE I-35 and Loop 410",
+            "Northeast",
+            "Rolling Oaks"
+          ],
+          "rationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-B-05",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Brooks / Southside",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Brooks",
+            "Far South",
+            "South",
+            "Southeast",
+            "Texas AM - San Antonio"
+          ],
+          "rationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-B-06",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Port San Antonio / Southwest",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Port San Antonio",
+            "Southwest"
+          ],
+          "rationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "Far Southwest is provisional southwest-side context only and has no certified membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        }
+      ],
+      "advantages": [
+        "Six choices minimize selection burden and future implementation complexity."
+      ],
+      "disadvantages": [
+        "Broad bundles dilute Medical, Stone Oak, Airport, and far-west meaning.",
+        "Some labels revert toward compass language and require substantial owner review."
+      ],
+      "namingConfidence": "LOW_TO_MODERATE_OWNER_REVIEW_REQUIRED",
+      "likelyConsumerUsability": "MODERATE; SIMPLE BUT OVERBROAD",
+      "governanceComplexity": "LOW",
+      "placeCdpInteractionComplexity": "HIGH_PER_REGION_BECAUSE_MORE_PLACE_INTERACTIONS_ARE_BUNDLED",
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+    },
+    "C": {
+      "optionId": "C",
+      "name": "More granular",
+      "consumerRegionCount": 10,
+      "heldAtomicUnits": [
+        "Far Southwest"
+      ],
+      "coveragePolicy": "ALL_29_USABLE_ATOMIC_UNITS_EXACTLY_ONCE; FAR_SOUTHWEST_HELD_OUTSIDE_CERTIFIED_MEMBERSHIP",
+      "regions": [
+        {
+          "designKey": "LP192-C-01",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Downtown Core",
+          "labelStatus": "RECOMMENDED",
+          "atomicUnits": [
+            "Downtown",
+            "Midtown"
+          ],
+          "rationale": "Downtown and Midtown form the central civic and event core.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Downtown and Midtown form the central civic and event core.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-02",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Inner San Antonio",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Eastside",
+            "Near North",
+            "Westside"
+          ],
+          "rationale": "The three inner community areas frame the Downtown / Midtown core.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "The three inner community areas frame the Downtown / Midtown core.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-03",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Medical Region",
+          "labelStatus": "RECOMMENDED",
+          "atomicUnits": [
+            "Medical Center",
+            "Near Northwest",
+            "North Central"
+          ],
+          "rationale": "Medical Center is the recognizable trip and employment anchor.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Medical Center is the recognizable trip and employment anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-04",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Airport / Fort Sam",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Fort Sam Houston",
+            "Greater Airport Area",
+            "Near Northeast"
+          ],
+          "rationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Airport and Fort Sam Houston anchor the central-northeast travel market.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-05",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Stone Oak / Far North",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far North",
+            "Stone Oak"
+          ],
+          "rationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Stone Oak is the certified regional-center anchor; owner review must confirm that it represents the broader unit.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-06",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "UTSA / Northwest",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Northwest",
+            "UTSA",
+            "West Northwest"
+          ],
+          "rationale": "UTSA anchors the northwest activity and travel cluster.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "UTSA anchors the northwest activity and travel cluster.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-07",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Highway 151 / Far West",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far West",
+            "Highway 151 and Loop 1604"
+          ],
+          "rationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Highway 151 and Loop 1604 is the official corridor/activity anchor.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-08",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "NE I-35 / Rolling Oaks",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Far East",
+            "NE I-35 and Loop 410",
+            "Northeast",
+            "Rolling Oaks"
+          ],
+          "rationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "The I-35/Loop 410 corridor and Rolling Oaks provide repository-supported anchors.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-09",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Brooks / Southside",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Brooks",
+            "Far South",
+            "South",
+            "Southeast",
+            "Texas AM - San Antonio"
+          ],
+          "rationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Brooks and Texas AM - San Antonio are official activity anchors across the south geography.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "No certified Far Southwest geometric membership.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        },
+        {
+          "designKey": "LP192-C-10",
+          "identifierClassification": "NON_RUNTIME_DESIGN_IDENTIFIER",
+          "candidateConsumerLabel": "Port San Antonio / Southwest",
+          "labelStatus": "OWNER_NAMING_REVIEW_REQUIRED",
+          "atomicUnits": [
+            "Port San Antonio",
+            "Southwest"
+          ],
+          "rationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "geographicContinuityEvidence": "Governed usable units form a touching or locally coherent cluster in the certified working-geography evidence; Far Southwest topology was excluded.",
+          "majorAnchorActivityRationale": "Port San Antonio is the official regional-center anchor for the southwest-side pair.",
+          "placeCdpInteractionNotes": "LP191 positive-area interactions are context evidence only. Every PLACE/CDP is excluded from membership and INDEPENDENT_GOVERNED_PLACE_WINS.",
+          "farSouthwestImplications": "PROVISIONAL_DESIGN_INTENT places Far Southwest in southwest-side naming review context only; certified membership is forbidden.",
+          "unresolvedDesignQuestions": [
+            "Owner validation of market language and boundary comprehension remains required."
+          ]
+        }
+      ],
+      "advantages": [
+        "Ten regions preserve a separate Downtown core and surrounding inner-community concept."
+      ],
+      "disadvantages": [
+        "Splitting the central core from its surrounding inner communities adds a choice whose product distinction requires owner validation.",
+        "Greater choice and naming burden approach the granularity problem LP192 is intended to solve."
+      ],
+      "namingConfidence": "MODERATE_OWNER_REVIEW_REQUIRED",
+      "likelyConsumerUsability": "MODERATE; PRECISE BUT BUSIER",
+      "governanceComplexity": "HIGH",
+      "placeCdpInteractionComplexity": "MODERATE",
+      "farSouthwestImplications": "Far Southwest remains CONSOLIDATION_BOUNDARY_UNRESOLVED_PENDING_CITY_GEOMETRY_CLARIFICATION; only PROVISIONAL_DESIGN_INTENT is recorded."
+    }
+  },
+  "candidateCountAssessment": [
+    {
+      "count": 6,
+      "evaluation": "Simple but over-consolidated; meaningful anchors are diluted."
+    },
+    {
+      "count": 7,
+      "evaluation": "Possible, but still forces an awkward merge of distinct north/west or central anchors."
+    },
+    {
+      "count": 8,
+      "evaluation": "Usable, but one additional merger loses either Stone Oak, Airport, Medical, or Port clarity."
+    },
+    {
+      "count": 9,
+      "evaluation": "Recommended natural balance across the 29 usable units."
+    },
+    {
+      "count": 10,
+      "evaluation": "More granular central-area choice, but busier; Far Southwest still remains a separate governance hold rather than membership."
+    }
+  ],
+  "comparisonScoring": {
+    "scale": "1_POOR_TO_5_STRONG",
+    "criteria": [
+      "geographicCoherence",
+      "recognizability",
+      "consumerUsefulness",
+      "atomicPreservation",
+      "placePrecedenceSafety",
+      "farSouthwestGovernanceSafety",
+      "namingClarity",
+      "futureSemanticCameraSuitability",
+      "futureAwarenessAreaSuitability",
+      "futureSearchResolutionClarity",
+      "implementationSimplicity"
+    ],
+    "scores": {
+      "A": [
+        5,
+        4,
+        5,
+        5,
+        5,
+        5,
+        4,
+        5,
+        5,
+        5,
+        4
+      ],
+      "B": [
+        3,
+        3,
+        3,
+        5,
+        5,
+        5,
+        2,
+        3,
+        3,
+        3,
+        5
+      ],
+      "C": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        3,
+        4,
+        4,
+        4,
+        2
+      ]
+    },
+    "totals": {
+      "A": 52,
+      "B": 40,
+      "C": 43
+    }
+  },
+  "recommendedOption": "A",
+  "recommendedConsumerRegionCount": 9,
+  "unresolvedOwnerDecisions": [
+    "Approve or revise the seven Option A labels marked OWNER_NAMING_REVIEW_REQUIRED after local-market review.",
+    "Confirm whether Airport / Fort Sam is one consumer concept or should be separated in a later design revision.",
+    "Confirm whether Stone Oak appropriately represents Far North context.",
+    "Resolve City Far Southwest geometry before any certified boundary or membership decision.",
+    "Decide final runtime identities, geometry union rules, centers, zooms, awareness, ZIP, search, and presentation only in a later implementation milestone."
+  ],
+  "prohibitedRuntimeClaims": [
+    "NO_RUNTIME_IDS",
+    "NO_PRODUCTION_ACTIVATION",
+    "NO_AWARENESS_AREA_KEYS",
+    "NO_SEARCH_ALIASES",
+    "NO_ZIP_MAPPINGS",
+    "NO_SEMANTIC_CENTERS",
+    "NO_STARTUP_ZOOMS",
+    "NO_UI_LABEL_ACTIVATION"
+  ],
+  "overallStatus": "DESIGN_READY_OWNER_NAMING_REVIEW_REQUIRED_WITH_FAR_SOUTHWEST_HOLD",
+  "recommendation": "READY_FOR_OWNER_LP192_DESIGN_REVIEW"
+}
