@@ -1,0 +1,22 @@
+{
+  "milestone": "LP191",
+  "status": "NOT_CERTIFIED_AUTHORITATIVE_GEOMETRY_INPUTS_UNAVAILABLE",
+  "baseline": "9727c8abace82f016464bab43f6222b4241e092a",
+  "governedPlaceIdentityCount": 33,
+  "officialAtomicUnitCount": 30,
+  "usableAtomicUnitCount": 29,
+  "requiredPairEvaluationCount": 957,
+  "pairEvaluationsCompleted": 0,
+  "missingExecutionInputs": [
+    "Owner-certified 2025 TIGER/Line Texas PLACE source geometry bytes",
+    "Owner-certified SA Tomorrow source geometry bytes",
+    "GDAL 3.13.0 execution environment"
+  ],
+  "inputIdentityDefects": [
+    "West Northwest checked-in artifact is 6735560 bytes with SHA-256 d46219d2f61d26d40111bb375651ec91a6ba286b2331e421d19d35f17d881c16; its governed manifest requires 427909 bytes and SHA-256 1eed04031d6a0ccb13c5749fbcc7af3c829e2bc959db065a2dd7b78c324ec181"
+  ],
+  "farSouthwestTreatment": "INDETERMINATE_FAR_SOUTHWEST_GOVERNANCE_HOLD",
+  "precedence": "INDEPENDENT_GOVERNED_PLACE_WINS",
+  "runtimeMutationPerformed": false,
+  "recommendation": "NOT_READY_TO_COMMIT_AS_LP191_CERTIFICATION"
+}
