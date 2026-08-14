@@ -16941,6 +16941,24 @@ GRIDLY_LP035_HOUSTON_REGION_MODEL.forEach((region) => {
   }
 });
 
+// LP194_SAN_ANTONIO_RUNTIME_START
+const GRIDLY_LP194_SAN_ANTONIO_REGION_MODEL = Object.freeze([
+  Object.freeze({"id":"central-san-antonio","label":"Central San Antonio","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.43715940524094,"lng":-98.52110359096712,"startupZoom":11.16,"includedAreas":["Downtown","Eastside","Midtown","Near North","Westside"],"geometryFeatureId":"central-san-antonio","limitation":null}),
+  Object.freeze({"id":"medical-region","label":"Medical Region","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.495636300789577,"lng":-98.51516602675414,"startupZoom":11.36,"includedAreas":["Medical Center","Near Northwest","North Central"],"geometryFeatureId":"medical-region","limitation":null}),
+  Object.freeze({"id":"airport-fort-sam","label":"Airport / Fort Sam","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.502531081732176,"lng":-98.44027413969336,"startupZoom":11.03,"includedAreas":["Fort Sam Houston","Greater Airport Area","Near Northeast"],"geometryFeatureId":"airport-fort-sam","limitation":null}),
+  Object.freeze({"id":"stone-oak-far-north","label":"Stone Oak / Far North","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.610029480200975,"lng":-98.49512037206648,"startupZoom":11.22,"includedAreas":["Far North","Stone Oak"],"geometryFeatureId":"stone-oak-far-north","limitation":null}),
+  Object.freeze({"id":"utsa-northwest","label":"UTSA / Northwest","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.591886635851893,"lng":-98.61471921652927,"startupZoom":10.69,"includedAreas":["Northwest","UTSA","West Northwest"],"geometryFeatureId":"utsa-northwest","limitation":null}),
+  Object.freeze({"id":"far-west-alamo-ranch","label":"Far West / Alamo Ranch","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.435772836272815,"lng":-98.65764791813613,"startupZoom":11.66,"includedAreas":["Far West","Highway 151 and Loop 1604"],"geometryFeatureId":"far-west-alamo-ranch","limitation":null}),
+  Object.freeze({"id":"northeast-san-antonio","label":"Northeast San Antonio","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.581475901424064,"lng":-98.40784840163508,"startupZoom":10.67,"includedAreas":["Far East","NE I-35 and Loop 410","Northeast","Rolling Oaks"],"geometryFeatureId":"northeast-san-antonio","limitation":null}),
+  Object.freeze({"id":"southside-brooks","label":"Southside / Brooks","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.295473924732278,"lng":-98.50839898231199,"startupZoom":10.77,"includedAreas":["Brooks","Far South","South","Southeast","Texas AM - San Antonio"],"geometryFeatureId":"southside-brooks","limitation":null}),
+  Object.freeze({"id":"southwest-port-san-antonio","label":"Southwest / Port San Antonio","parentCity":"San Antonio","countyId":"bexar-tx","lat":29.36192203964279,"lng":-98.57515605724419,"startupZoom":11.27,"includedAreas":["Port San Antonio","Southwest"],"geometryFeatureId":"southwest-port-san-antonio","limitation":"PARTIAL_CERTIFIED_REGION_PENDING_FAR_SOUTHWEST_CLARIFICATION"})
+]);
+const GRIDLY_LP194_SAN_ANTONIO_REGION_LOOKUP = Object.freeze(Object.fromEntries(GRIDLY_LP194_SAN_ANTONIO_REGION_MODEL.map((region) => [region.id, region])));
+function gridlyLp194SanAntonioRegionAwarenessArea(region) { return Object.freeze({ key: region.id, label: region.label, storageValue: `San Antonio — ${region.label}`, countyId: region.countyId, parentCommunity: 'San Antonio', awarenessRegionId: region.id, awarenessRegionLabel: region.label, lat: region.lat, lng: region.lng, radiusMiles: null, startupZoom: region.startupZoom, sanAntonioRegion: true, geometryAsset: 'data/runtime/san-antonio-consumer-regions.geojson', geometryFeatureId: region.geometryFeatureId, source: 'LP194 certified LP193 geometry activation' }); }
+function gridlyLp194FindSanAntonioRegion(value = '') { const normalized=normalizeGridlyAwarenessAreaLookupText(value); return GRIDLY_LP194_SAN_ANTONIO_REGION_MODEL.find(region => [region.id,region.label,`San Antonio ${region.label}`,`San Antonio — ${region.label}`].some(label => normalizeGridlyAwarenessAreaLookupText(label)===normalized)) || null; }
+GRIDLY_LP194_SAN_ANTONIO_REGION_MODEL.forEach(region => { if (!GRIDLY_AWARENESS_AREA_DEFINITIONS.some(area => area.key===region.id)) GRIDLY_AWARENESS_AREA_DEFINITIONS.push(gridlyLp194SanAntonioRegionAwarenessArea(region)); });
+// LP194_SAN_ANTONIO_RUNTIME_END
+
 
 const GRIDLY_V905_COMMUNITY_INCLUSION_STANDARD = Object.freeze({
   version: "V905",
