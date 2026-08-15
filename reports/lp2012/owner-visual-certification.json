@@ -1,0 +1,480 @@
+{
+  "schemaVersion": "gridly.lp2012.owner-visual-certification.v1",
+  "runtimeActivation": false,
+  "certificationStatus": "LP201.2 CERTIFIED — READY FOR SEPARATE GUARDED RUNTIME-PROMOTION MILESTONE",
+  "promotionDesignCertified": true,
+  "statewideWhatIfIdentity": {
+    "schemaVersion": "gridly.lp2012.promotion-whatif.v1",
+    "canonicalTotal": 1859,
+    "bucketA": 1253,
+    "bucketC": 306,
+    "potentialAC": 1559,
+    "unexpectedEligibilityFailures": 0,
+    "artifacts": [
+      {
+        "path": "reports/lp2012/promotion-whatif.json",
+        "sha256": "555987c9f2ad6ed5d2b9c3e43b4101af1fff8236cda331c2a4f9fbfbd5eb1aa4"
+      },
+      {
+        "path": "reports/lp2012/promotion-whatif-summary.json",
+        "sha256": "8c90981aac56d7a6e9a2ef44cce7c5117bcd24f3fc92f0da62732059a2610e5f"
+      },
+      {
+        "path": "reports/lp2012/promotion-whatif-review.json",
+        "sha256": "efb87f692350917d72c81162808466abf0e34f47c89779edfcf85ebc4918a656"
+      }
+    ]
+  },
+  "reviewMethod": {
+    "harness": "LP201.2 Phase 3 audit-only owner visual review harness",
+    "comparison": "CURRENT versus LP201.2 PROPOSED on the actual Gridly map",
+    "decisionStore": "audit-only in-memory decision store",
+    "export": "gridlyLp2012ExportDecisions()",
+    "persistedToRuntimeStorage": false,
+    "additionalRandomSamplingPerformed": false
+  },
+  "reviewedRecords": [
+    {
+      "canonicalGeoid": "4817000",
+      "canonicalName": "Corpus Christi",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 27.7542524,
+        "longitude": -97.1733853,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 27.7635302,
+        "longitude": -97.4033191,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 22648.585,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor corrects the offshore/current geographic-center presentation and centers the developed Corpus Christi urban core.",
+      "riskClass": "extreme-distance/coastal"
+    },
+    {
+      "canonicalGeoid": "4869980",
+      "canonicalName": "Stamford",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 33.0461933,
+        "longitude": -99.5970209,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 32.944882,
+        "longitude": -99.802453,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 22225.321,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor corrects the Lake Stamford presentation and centers the actual Stamford community.",
+      "riskClass": "extreme-distance/inland"
+    },
+    {
+      "canonicalGeoid": "4828068",
+      "canonicalName": "Galveston",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "currentCamera": {
+        "latitude": 29.1863276,
+        "longitude": -94.9657583,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 29.3056996,
+        "longitude": -94.7933252,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 21355.76,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor replaces western-island geographic framing with the developed Galveston urban core.",
+      "riskClass": "island/irregular municipal geography"
+    },
+    {
+      "canonicalGeoid": "4848936",
+      "canonicalName": "Monahans",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 31.6557209,
+        "longitude": -103.0836944,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.5890519,
+        "longitude": -102.8861902,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 20116.473,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor corrects the displaced current camera and centers Monahans itself.",
+      "riskClass": "extreme-distance/inland"
+    },
+    {
+      "canonicalGeoid": "4819432",
+      "canonicalName": "Dayton",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 30.0131768,
+        "longitude": -94.9360035,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 30.0473202,
+        "longitude": -94.8873913,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 6026.168,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor centers Dayton's developed core and matches the expected semantic Dayton presentation.",
+      "riskClass": "known lifecycle/semantic-center control"
+    },
+    {
+      "canonicalGeoid": "4874144",
+      "canonicalName": "Tyler",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "currentCamera": {
+        "latitude": 32.3173339,
+        "longitude": -95.3063994,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 32.3512601,
+        "longitude": -95.3010624,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 3805.605,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Both cameras are usable, but the named-place anchor provides better semantic centering of Tyler's urban core.",
+      "riskClass": "duplicate-name geographically disambiguated"
+    },
+    {
+      "canonicalGeoid": "4876000",
+      "canonicalName": "Waco",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 31.5579941,
+        "longitude": -97.1897498,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.5491899,
+        "longitude": -97.1474628,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 4124.766,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor corrects the Lake Waco/western bias and centers the developed Waco urban core.",
+      "riskClass": "major-city A"
+    },
+    {
+      "canonicalGeoid": "4842568",
+      "canonicalName": "Liberty",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "currentCamera": {
+        "latitude": 30.0388343,
+        "longitude": -94.7888034,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 30.0609147,
+        "longitude": -94.7971809,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 2584.246,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Both cameras are usable; the named-place anchor provides slightly better centering of Liberty's developed core.",
+      "riskClass": "duplicate-name geographically disambiguated"
+    },
+    {
+      "canonicalGeoid": "4800100",
+      "canonicalName": "Abbott",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 31.8851395,
+        "longitude": -97.0741059,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.8848809,
+        "longitude": -97.0733361,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 78.164,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Current and proposed cameras are nearly equivalent; named-place anchor preserves appropriate rural-town framing with no visual regression.",
+      "riskClass": "rural incorporated place"
+    },
+    {
+      "canonicalGeoid": "4801084",
+      "canonicalName": "Acala",
+      "governedType": "CENSUS_DESIGNATED_PLACE",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "currentCamera": {
+        "latitude": 31.3344062,
+        "longitude": -105.902786,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.334013,
+        "longitude": -105.9144137,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 1105.23,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor provides slightly better settlement-centered framing with no CDP-specific regression.",
+      "riskClass": "CDP"
+    },
+    {
+      "canonicalGeoid": "4835000",
+      "canonicalName": "Houston",
+      "governedType": "INCORPORATED_PLACE",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "currentCamera": {
+        "latitude": 29.7857435,
+        "longitude": -95.3888059,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 29.7589382,
+        "longitude": -95.3676974,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 3610.383,
+      "ownerDecision": "PASS_PROPOSED",
+      "ownerReason": "Named-place anchor provides better semantic presentation of the Houston parent PLACE while preserving separate regional-camera governance.",
+      "riskClass": "major metro parent PLACE / region separation"
+    }
+  ],
+  "higherAuthorityControls": [
+    {
+      "canonicalGeoid": "4805000",
+      "canonicalName": "Austin",
+      "currentAuthority": "LP197 owner-approved",
+      "automaticPromotion": false,
+      "comparisonOnly": true,
+      "ownerCameraRetained": true,
+      "observedHarnessResult": "COMPARISON ONLY — OWNER CAMERA REMAINS AUTHORITATIVE"
+    },
+    {
+      "canonicalGeoid": "4819000",
+      "canonicalName": "Dallas",
+      "currentAuthority": "LP197 owner-approved",
+      "automaticPromotion": false,
+      "comparisonOnly": true,
+      "ownerCameraRetained": true,
+      "observedHarnessResult": "COMPARISON ONLY — OWNER CAMERA REMAINS AUTHORITATIVE"
+    },
+    {
+      "canonicalGeoid": "4824000",
+      "canonicalName": "El Paso",
+      "currentAuthority": "LP197 owner-approved",
+      "automaticPromotion": false,
+      "comparisonOnly": true,
+      "ownerCameraRetained": true,
+      "observedHarnessResult": "COMPARISON ONLY — OWNER CAMERA REMAINS AUTHORITATIVE"
+    },
+    {
+      "canonicalGeoid": "4827000",
+      "canonicalName": "Fort Worth",
+      "currentAuthority": "LP197 owner-approved",
+      "automaticPromotion": false,
+      "comparisonOnly": true,
+      "ownerCameraRetained": true,
+      "observedHarnessResult": "COMPARISON ONLY — OWNER CAMERA REMAINS AUTHORITATIVE"
+    }
+  ],
+  "unresolvedControls": [
+    {
+      "canonicalGeoid": "4839952",
+      "canonicalName": "Kyle",
+      "lp2011Bucket": "B_MULTIPLE_OSM_CANDIDATES",
+      "automaticProposal": false,
+      "currentCameraRemainsAvailable": true,
+      "showProposedFailsClosed": true,
+      "observedError": "Kyle: NO AUTOMATIC PROPOSAL"
+    }
+  ],
+  "visualFindings": {
+    "reviewedCount": 11,
+    "allDecisions": "PASS_PROPOSED",
+    "observedVisualRegressions": 0,
+    "riskCoverage": {
+      "extreme-distance/coastal": [
+        "Corpus Christi"
+      ],
+      "extreme-distance/inland": [
+        "Stamford",
+        "Monahans"
+      ],
+      "island/irregular municipal geography": [
+        "Galveston"
+      ],
+      "known lifecycle/semantic-center control": [
+        "Dayton"
+      ],
+      "duplicate-name geographically disambiguated": [
+        "Tyler",
+        "Liberty"
+      ],
+      "major-city A": [
+        "Waco"
+      ],
+      "rural incorporated place": [
+        "Abbott"
+      ],
+      "CDP": [
+        "Acala"
+      ],
+      "major metro parent PLACE / region separation": [
+        "Houston"
+      ]
+    },
+    "distanceFinding": {
+      "conclusion": "DISTANCE IS REVIEW EVIDENCE, NOT A PROMOTION REJECTION THRESHOLD.",
+      "maximumDistanceRuleCreated": false,
+      "examples": [
+        {
+          "canonicalName": "Corpus Christi",
+          "distanceMeters": 22648.585,
+          "ownerDecision": "PASS_PROPOSED"
+        },
+        {
+          "canonicalName": "Stamford",
+          "distanceMeters": 22225.321,
+          "ownerDecision": "PASS_PROPOSED"
+        },
+        {
+          "canonicalName": "Galveston",
+          "distanceMeters": 21355.76,
+          "ownerDecision": "PASS_PROPOSED"
+        },
+        {
+          "canonicalName": "Monahans",
+          "distanceMeters": 20116.473,
+          "ownerDecision": "PASS_PROPOSED"
+        }
+      ]
+    },
+    "scopeFinding": "The representative sample supports the governed promotion model and exposed no systemic presentation failure; it does not prove every individual PLACE is visually perfect."
+  },
+  "certificationConclusions": {
+    "statewideWhatIfInternallyCertified": true,
+    "representativeReviewSupportsNamedPlaceAnchorModel": true,
+    "largeDisplacementIsNotARejectionCondition": true,
+    "multiplePlaceTypesAndRiskClassesPassed": true,
+    "lp197Protected": true,
+    "unresolvedBehaviorFailsClosed": true,
+    "zoomGovernanceUnchanged": true,
+    "houstonAndSanAntonioRegionIdentitiesProtected": true,
+    "nextMilestone": "LP201.3 — Guarded Named-Place Camera Runtime Promotion"
+  },
+  "promotionCohort": {
+    "proposed": {
+      "count": 1555,
+      "status": "CERTIFIED_FOR_FUTURE_GUARDED_PROMOTION_DESIGN"
+    },
+    "higherAuthority": {
+      "count": 4,
+      "status": "RETAIN_HIGHER_AUTHORITY_CAMERA"
+    },
+    "unresolvedOrIneligible": {
+      "count": 300,
+      "status": "RETAIN_CURRENT_CAMERA"
+    },
+    "excludedBucketsWithNoProposal": [
+      "B",
+      "D",
+      "E",
+      "G",
+      "H"
+    ]
+  },
+  "certificationLimits": [
+    "LP201.2 certifies the governed promotion model and cohort.",
+    "LP201.2 does NOT certify that every one of the 1,555 cameras has been manually viewed.",
+    "LP201.2 does NOT activate the cameras.",
+    "LP201.2 does NOT supersede LP197 owner cameras.",
+    "LP201.2 does NOT resolve B/D/E/G/H records.",
+    "LP201.2 does NOT alter dedicated Houston/San Antonio region identities.",
+    "LP201.2 does NOT modify zoom governance."
+  ],
+  "protectedRuntimeResult": {
+    "result": "NO PRODUCTION RUNTIME CHANGES",
+    "runtimeActivation": false,
+    "applyModeAdded": false,
+    "productionCameraAuthorityModified": false,
+    "protectedSurfaces": [
+      "js/app.js",
+      "js/gridlyPackageRegistry.js",
+      "assets/package-registry/runtime-package-registry.json",
+      "assets/location-resolution/",
+      "data/generated/",
+      "data/runtime/"
+    ]
+  }
+}
