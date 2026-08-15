@@ -1,0 +1,98 @@
+[
+  {
+    "bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+    "evidenceOnly": true,
+    "label": "Austin",
+    "lp199": {
+      "lat": 30.29851874772592,
+      "lon": -97.75371509726418
+    },
+    "lp199ToReferenceMeters": 2778.666,
+    "lp200": null,
+    "lp200ToReferenceMeters": null,
+    "osm": {
+      "lat": 30.2711286,
+      "lon": -97.7436995,
+      "osmId": "1801308037",
+      "place": "city"
+    },
+    "osmToReferenceMeters": 425.132,
+    "placeGeoid": "4805000",
+    "reference": {
+      "lat": 30.274931186653326,
+      "lon": -97.74415969848634
+    }
+  },
+  {
+    "bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+    "evidenceOnly": true,
+    "label": "Dallas",
+    "lp199": {
+      "lat": 32.793546539284236,
+      "lon": -96.76668908575596
+    },
+    "lp199ToReferenceMeters": 2930.264,
+    "lp200": null,
+    "lp200ToReferenceMeters": null,
+    "osm": {
+      "lat": 32.7762719,
+      "lon": -96.7968559,
+      "osmId": "26506087",
+      "place": "city"
+    },
+    "osmToReferenceMeters": 754.614,
+    "placeGeoid": "4819000",
+    "reference": {
+      "lat": 32.78294501748632,
+      "lon": -96.79538726806642
+    }
+  },
+  {
+    "bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+    "evidenceOnly": true,
+    "label": "El Paso",
+    "lp199": {
+      "lat": 31.847540818200667,
+      "lon": -106.42982566521441
+    },
+    "lp199ToReferenceMeters": 10601.011,
+    "lp200": null,
+    "lp200ToReferenceMeters": null,
+    "osm": {
+      "lat": 31.7601001,
+      "lon": -106.4870476,
+      "osmId": "50688894",
+      "place": "city"
+    },
+    "osmToReferenceMeters": 604.602,
+    "placeGeoid": "4824000",
+    "reference": {
+      "lat": 31.765537409484374,
+      "lon": -106.48704528808595
+    }
+  },
+  {
+    "bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+    "evidenceOnly": true,
+    "label": "Fort Worth",
+    "lp199": {
+      "lat": 32.78161529477223,
+      "lon": -97.34849985305613
+    },
+    "lp199ToReferenceMeters": 3083.81,
+    "lp200": null,
+    "lp200ToReferenceMeters": null,
+    "osm": {
+      "lat": 32.753177,
+      "lon": -97.3327459,
+      "osmId": "27286467",
+      "place": "city"
+    },
+    "osmToReferenceMeters": 508.585,
+    "placeGeoid": "4827000",
+    "reference": {
+      "lat": 32.757685346479455,
+      "lon": -97.33182907104494
+    }
+  }
+]

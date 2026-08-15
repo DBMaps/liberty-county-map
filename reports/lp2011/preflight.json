@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "gdalValidatedByOwnerWrapper": true,
+    "identity": true,
+    "pointsLayer": true,
+    "requiredFields": [
+      "name",
+      "place"
+    ]
+  },
+  "schemaVersion": "gridly.lp2011.preflight.v1",
+  "source": {
+    "bytes": 707715853,
+    "candidatesSha256": "e081acc769c9a4a28a1f913ba6e3d292a0f4ede39de72335e5e8f0cb71b8fc0c",
+    "canonicalSha256": "efd00ce804531213346cbcd85977bdd1a973fb9e7fa52311a1ab74a5196066f8",
+    "path": "C:\\GitHub\\Gridly-Source-Data\\OpenStreetMap\\Regional\\texas-260625.osm.pbf",
+    "projectionSha256": "b679632faa34b8ea56228c715db295b5020deb5a7e565662ac846d284d9f8778",
+    "sha256": "1d80efe1b19b075d036363d722366870df3efb7fbd4a45dc9f16797868ff4413"
+  }
+}
