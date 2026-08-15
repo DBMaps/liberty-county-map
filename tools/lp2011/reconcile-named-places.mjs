@@ -24,26 +24,31 @@ const candidateRecord = (c, place, statewideCount) => { const inside=contains(pl
 export function reconcile({places,candidates,source={}}){
   const cleanCandidates=[...candidates].map(c=>({...c,osmId:String(c.osmId)})).sort((a,b)=>a.osmId.localeCompare(b.osmId));
   const nameCounts=new Map(); for(const c of cleanCandidates){const n=normalizeName(c.name);nameCounts.set(n,(nameCounts.get(n)||0)+1);}
-  const assigned=new Set(); const records=[];
+  const associated=new Set(); const records=[];
   for(const place of [...places].sort((a,b)=>a.placeGeoid.localeCompare(b.placeGeoid))){
     const exact=cleanCandidates.filter(c=>normalizeName(c.name)===normalizeName(place.name));
     const insideAll=cleanCandidates.filter(c=>contains(place.geometry,Number(c.lon),Number(c.lat)));
     const plausible=exact.filter(c=>contains(place.geometry,Number(c.lon),Number(c.lat)));
-    const evidence=(plausible.length?plausible:insideAll).map(c=>candidateRecord(c,place,nameCounts.get(normalizeName(c.name))||0));
     let bucket,reasons,selected=null;
     if(!place.geometry){bucket=BUCKET.HARD_CONFLICT;reasons=['CANONICAL_GEOMETRY_MISSING'];}
     else if(plausible.length>1){bucket=BUCKET.MULTIPLE;reasons=['MULTIPLE_EXACT_NAME_IN_POLYGON'];}
     else if(plausible.length===1&&!SAFE.has(String(plausible[0].place).toLowerCase())){bucket=BUCKET.CLASSIFICATION;reasons=['OSM_CLASS_NOT_AUTOMATICALLY_ELIGIBLE'];}
-    else if(plausible.length===1){selected=String(plausible[0].osmId);assigned.add(selected);if((nameCounts.get(normalizeName(place.name))||0)>1){bucket=BUCKET.DUPLICATE;reasons=['STATEWIDE_DUPLICATE_NAME_RESOLVED_BY_POLYGON'];}else{bucket=BUCKET.HIGH;reasons=['EXACT_NORMALIZED_NAME','UNIQUE_IN_CANONICAL_POLYGON','ELIGIBLE_OSM_CLASS'];}}
+    else if(plausible.length===1){selected=String(plausible[0].osmId);if((nameCounts.get(normalizeName(place.name))||0)>1){bucket=BUCKET.DUPLICATE;reasons=['STATEWIDE_DUPLICATE_NAME_RESOLVED_BY_POLYGON'];}else{bucket=BUCKET.HIGH;reasons=['EXACT_NORMALIZED_NAME','UNIQUE_IN_CANONICAL_POLYGON','ELIGIBLE_OSM_CLASS'];}}
     else if(insideAll.length){bucket=BUCKET.NAME_MISMATCH;reasons=['IN_POLYGON_NAME_MISMATCH'];}
     else if(exact.length){bucket=BUCKET.HARD_CONFLICT;reasons=['EXACT_NAME_OUTSIDE_CANONICAL_GEOMETRY'];}
     else {bucket=BUCKET.NO_CANDIDATE;reasons=['NO_NAMED_PLACE_IN_CANONICAL_GEOMETRY'];}
+    // In-polygon evidence meaningfully participates in A/B/C/D/G. Exact-name
+    // out-of-polygon evidence participates in H and must remain reviewable too.
+    const participating=plausible.length?plausible:insideAll.length?insideAll:exact;
+    const evidence=participating.map(c=>candidateRecord(c,place,nameCounts.get(normalizeName(c.name))||0));
+    for(const candidate of evidence)associated.add(candidate.osmId);
     records.push({canonical:{placeGeoid:place.placeGeoid,name:place.name,governedType:place.governedType,countyMemberships:[...place.countyMemberships].sort()},bucket,reasons,selectedOsmId:selected,candidates:evidence});
   }
-  const unmatched=cleanCandidates.filter(c=>!assigned.has(c.osmId)).map(c=>({bucket:BUCKET.UNMATCHED,osmId:c.osmId,name:c.name,place:c.place,lat:Number(c.lat),lon:Number(c.lon),reason:'NOT_SELECTED_BY_ANY_CANONICAL_PLACE'}));
+  const unmatched=cleanCandidates.filter(c=>!associated.has(c.osmId)).map(c=>({bucket:BUCKET.UNMATCHED,osmId:c.osmId,name:c.name,place:c.place,lat:Number(c.lat),lon:Number(c.lon),reason:'NOT_ASSOCIATED_WITH_ANY_CANONICAL_PLACE'}));
   const counts=Object.fromEntries(Object.values(BUCKET).map(b=>[b,records.filter(r=>r.bucket===b).length+(b===BUCKET.UNMATCHED?unmatched.length:0)]));
-  const unresolved=records.filter(r=>![BUCKET.HIGH,BUCKET.DUPLICATE].includes(r.bucket)).length+unmatched.length;
-  return {schemaVersion:'gridly.lp2011.osm-place-reconciliation.v1',scope:{evidenceOnly:true,runtimeActivation:false},source,counts:{canonicalPlaces:records.length,osmCandidates:cleanCandidates.length,...counts,unresolved},records,unmatched};
+  const canonicalResolved=records.filter(r=>[BUCKET.HIGH,BUCKET.DUPLICATE].includes(r.bucket)).length;
+  const canonicalUnresolved=records.length-canonicalResolved;
+  return {schemaVersion:'gridly.lp2011.osm-place-reconciliation.v1',scope:{evidenceOnly:true,runtimeActivation:false},source,counts:{canonicalPlaces:records.length,canonicalResolved,canonicalUnresolved,osmCandidates:cleanCandidates.length,osmMatchedOrAssociated:associated.size,osmUnmatched:unmatched.length,...counts,unresolved:canonicalUnresolved},records,unmatched};
 }
 
 export function buildLp197Comparison(reconciliation, references){
