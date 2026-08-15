@@ -9,7 +9,8 @@ export const BUCKET = Object.freeze({
   UNMATCHED: 'F_OSM_CANDIDATE_UNRECONCILED', CLASSIFICATION: 'G_CLASSIFICATION_CONCERN',
   HARD_CONFLICT: 'H_HARD_CONFLICT_INVALID'
 });
-const SAFE = new Set(['city', 'town', 'village', 'hamlet']);
+export const SELECTION_ELIGIBLE_PLACE_CLASSES = Object.freeze(['city', 'town', 'village', 'hamlet']);
+const SAFE = new Set(SELECTION_ELIGIBLE_PLACE_CLASSES);
 export const normalizeName = value => String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('en-US').replace(/[^a-z0-9]+/g, ' ').trim();
 const stable = value => value && typeof value === 'object' ? Array.isArray(value) ? value.map(stable) : Object.fromEntries(Object.keys(value).sort().map(k => [k, stable(value[k])])) : value;
 export const stableJson = value => `${JSON.stringify(stable(value), null, 2)}\n`;
@@ -29,11 +30,12 @@ export function reconcile({places,candidates,source={}}){
     const exact=cleanCandidates.filter(c=>normalizeName(c.name)===normalizeName(place.name));
     const insideAll=cleanCandidates.filter(c=>contains(place.geometry,Number(c.lon),Number(c.lat)));
     const plausible=exact.filter(c=>contains(place.geometry,Number(c.lon),Number(c.lat)));
+    const selectionEligible=plausible.filter(c=>SAFE.has(String(c.place).toLowerCase()));
     let bucket,reasons,selected=null;
     if(!place.geometry){bucket=BUCKET.HARD_CONFLICT;reasons=['CANONICAL_GEOMETRY_MISSING'];}
-    else if(plausible.length>1){bucket=BUCKET.MULTIPLE;reasons=['MULTIPLE_EXACT_NAME_IN_POLYGON'];}
-    else if(plausible.length===1&&!SAFE.has(String(plausible[0].place).toLowerCase())){bucket=BUCKET.CLASSIFICATION;reasons=['OSM_CLASS_NOT_AUTOMATICALLY_ELIGIBLE'];}
-    else if(plausible.length===1){selected=String(plausible[0].osmId);if((nameCounts.get(normalizeName(place.name))||0)>1){bucket=BUCKET.DUPLICATE;reasons=['STATEWIDE_DUPLICATE_NAME_RESOLVED_BY_POLYGON'];}else{bucket=BUCKET.HIGH;reasons=['EXACT_NORMALIZED_NAME','UNIQUE_IN_CANONICAL_POLYGON','ELIGIBLE_OSM_CLASS'];}}
+    else if(selectionEligible.length>1){bucket=BUCKET.MULTIPLE;reasons=['MULTIPLE_SELECTION_ELIGIBLE_EXACT_NAME_IN_POLYGON'];}
+    else if(plausible.length>0&&selectionEligible.length===0){bucket=BUCKET.CLASSIFICATION;reasons=['OSM_CLASS_NOT_AUTOMATICALLY_ELIGIBLE'];}
+    else if(selectionEligible.length===1){selected=String(selectionEligible[0].osmId);if((nameCounts.get(normalizeName(place.name))||0)>1){bucket=BUCKET.DUPLICATE;reasons=['STATEWIDE_DUPLICATE_NAME_RESOLVED_BY_POLYGON'];}else{bucket=BUCKET.HIGH;reasons=['EXACT_NORMALIZED_NAME','UNIQUE_SELECTION_ELIGIBLE_IN_CANONICAL_POLYGON','ELIGIBLE_OSM_CLASS'];}}
     else if(insideAll.length){bucket=BUCKET.NAME_MISMATCH;reasons=['IN_POLYGON_NAME_MISMATCH'];}
     else if(exact.length){bucket=BUCKET.HARD_CONFLICT;reasons=['EXACT_NAME_OUTSIDE_CANONICAL_GEOMETRY'];}
     else {bucket=BUCKET.NO_CANDIDATE;reasons=['NO_NAMED_PLACE_IN_CANONICAL_GEOMETRY'];}
@@ -42,7 +44,8 @@ export function reconcile({places,candidates,source={}}){
     const participating=plausible.length?plausible:insideAll.length?insideAll:exact;
     const evidence=participating.map(c=>candidateRecord(c,place,nameCounts.get(normalizeName(c.name))||0));
     for(const candidate of evidence)associated.add(candidate.osmId);
-    records.push({canonical:{placeGeoid:place.placeGeoid,name:place.name,governedType:place.governedType,countyMemberships:[...place.countyMemberships].sort()},bucket,reasons,selectedOsmId:selected,candidates:evidence});
+    const candidateEligibility={retainedEvidenceCount:evidence.length,selectionEligibleCount:selectionEligible.length,nonSelectionEligibleClasses:[...new Set(plausible.filter(c=>!SAFE.has(String(c.place).toLowerCase())).map(c=>String(c.place).toLowerCase()))].sort()};
+    records.push({canonical:{placeGeoid:place.placeGeoid,name:place.name,governedType:place.governedType,countyMemberships:[...place.countyMemberships].sort()},bucket,reasons,selectedOsmId:selected,candidateEligibility,candidates:evidence});
   }
   const unmatched=cleanCandidates.filter(c=>!associated.has(c.osmId)).map(c=>({bucket:BUCKET.UNMATCHED,osmId:c.osmId,name:c.name,place:c.place,lat:Number(c.lat),lon:Number(c.lon),reason:'NOT_ASSOCIATED_WITH_ANY_CANONICAL_PLACE'}));
   const counts=Object.fromEntries(Object.values(BUCKET).map(b=>[b,records.filter(r=>r.bucket===b).length+(b===BUCKET.UNMATCHED?unmatched.length:0)]));
