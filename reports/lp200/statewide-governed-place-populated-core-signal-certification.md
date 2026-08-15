@@ -30,6 +30,14 @@ Polygon preflight: **NOT_RUN_BYTES_UNAVAILABLE**. Full statewide address coverag
 
 All 1,859 PLACE rows remain `ADDRESS_SIGNAL_UNAVAILABLE` because package coverage, raw polygon availability, and authorization are evaluated separately and the required gates do not currently coexist.
 
+## Governed derivation contract
+
+Address packages are consumed in manifest order after byte/SHA-256 validation. The governed compact JSONL schema uses `i` as record identity, `a` as full address, `f` as county FIPS, and numeric `x`/`y` as EPSG:4326 longitude/latitude. Malformed and non-finite coordinates are rejected. Records are globally deduplicated by `i`; when it is absent, the fallback key is longitude/latitude rounded to seven decimals plus normalized `a`. First occurrence wins.
+
+Both points and raw PLACE polygons are evaluated in EPSG:3083. Polygon area, density, fixed grids (250/500/1000/2000 m), adaptive grid selection, occupied-cell weighting, and connected clusters therefore never use angular EPSG:4269 units. Association is restricted by governed county membership but accumulated only under canonical PLACE GEOID, so a multi-county PLACE is not assigned a primary county.
+
+The six methods are projected mean, iterative geometric median, highest-density 500 m grid, adaptive bounded density grid, weighted occupied-cell centroid, and densest connected occupied-cell cluster centroid. An outside result is replaced by the nearest observed contained address and marked as such; zero-signal methods remain null. Owner mode emits exactly one row for each canonical PLACE, including deterministic insufficient-signal rows.
+
 ## Safe owner procedure (PowerShell)
 
 Never restore a historical evidence, report, or generated-input directory over HEAD. Historical recovery, if later proven necessary, must be additive, file-specific, identity-verified, and non-destructive.
