@@ -4,6 +4,8 @@
 
 **NOT_READY_OWNER_INPUT_REQUIRED**
 
+Execution mode: **BASELINE_FAIL_CLOSED**.
+
 No populated-core candidate was emitted or activated. Runtime, LP197, identities, memberships, ZIPs, and cameras are unchanged.
 
 ## Address package reconciliation
@@ -20,11 +22,11 @@ Prior certification references are recorded in the JSON. The source is not repla
 
 ## Authorization gate (separate decisions)
 
-A. Internal certification-only computation is **not known to be prohibited**, but owner governance classification is required before execution. B. Committing derived populated-core coordinates is **not authorized while derivative classification remains unresolved**; this is not stated as a known prohibition. C. Raw address redistribution is **not authorized**. D. The present derivative gate is an **unresolved governance classification, not a known blanket prohibition**. Storage remains governed and permitted. These decisions are not conflated.
+A. Internal certification-only computation: **INTERNAL_CERTIFICATION_ONLY_DERIVATION_NOT_AUTHORIZED** (explicit opt-in: `GRIDLY_LP200_INTERNAL_DERIVATION_APPROVED=1`). B. Committing production populated-core coordinates remains **not authorized**. C. Raw address redistribution and public exposure remain **not authorized**. D. Runtime activation and deployment remain outside this authorization. Storage remains governed and permitted. These decisions are not conflated.
 
 ## Execution readiness
 
-Polygon preflight: **NOT_RUN_BYTES_UNAVAILABLE**. Full statewide address coverage: **false**. Calibration controls ready: Port Arthur; blocked: Amarillo, Austin, Corpus Christi, Dallas, El Paso, Fort Worth, McAllen, Tyler, Waco. Real processing therefore cannot run now. No missing county is fabricated and no null candidate artifact is emitted.
+Polygon preflight: **NOT_RUN_BYTES_UNAVAILABLE**. Full statewide address coverage: **false**. Calibration controls ready: Port Arthur; blocked: Amarillo, Austin, Corpus Christi, Dallas, El Paso, Fort Worth, McAllen, Tyler, Waco. Real-processing gate: **false**. No missing county is fabricated and no null candidate artifact is emitted.
 
 All 1,859 PLACE rows remain `ADDRESS_SIGNAL_UNAVAILABLE` because package coverage, raw polygon availability, and authorization are evaluated separately and the required gates do not currently coexist.
 
@@ -35,6 +37,7 @@ Never restore a historical evidence, report, or generated-input directory over H
 ```powershell
 Set-Location C:\GitHub\liberty-county-map
 $env:GRIDLY_TEXAS_PLACE_ZIP = 'C:\GitHub\Gridly-Source-Data\Census\TIGER2025\PLACE\original\tl_2025_48_place.zip'
+$env:GRIDLY_LP200_INTERNAL_DERIVATION_APPROVED = '1'
 npm run build:lp200
 npm run verify:lp200
 npm run test:lp200
