@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "lp2012:whatif": "node tools/lp2012/build-promotion-whatif.mjs --whatif",
+    "verify:lp2012": "node tools/lp2012/build-promotion-whatif.mjs --verify",
+    "test:lp2012": "node --test tests/lp2012-governed-promotion-whatif.test.mjs",
     "lp2011:whatif": "node tools/lp2011/manufacture-osm-place-evidence.mjs --whatif",
     "lp2011:apply": "node tools/lp2011/manufacture-osm-place-evidence.mjs --apply",
     "verify:lp2011": "node tools/lp2011/manufacture-osm-place-evidence.mjs --verify",
