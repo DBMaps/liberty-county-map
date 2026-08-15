@@ -1,0 +1,551 @@
+{
+  "schemaVersion": "gridly.lp2012.owner-visual-review-template.v1",
+  "runtimeActivation": false,
+  "visualCertificationRequired": true,
+  "source": "reports/lp2012/promotion-whatif.json",
+  "instructions": "Owner decisions are initially PENDING and remain audit-only until separately governed.",
+  "requiredCohort": [
+    {
+      "geoid": "4819432",
+      "name": "Dayton",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 30.0131768,
+        "longitude": -94.9360035,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 30.0473202,
+        "longitude": -94.8873913,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 6026.168,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4874144",
+      "name": "Tyler",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 32.3173339,
+        "longitude": -95.3063994,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 32.3512601,
+        "longitude": -95.3010624,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 3805.605,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4876000",
+      "name": "Waco",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 31.5579941,
+        "longitude": -97.1897498,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.5491899,
+        "longitude": -97.1474628,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 4124.766,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4817000",
+      "name": "Corpus Christi",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 27.7542524,
+        "longitude": -97.1733853,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 27.7635302,
+        "longitude": -97.4033191,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 22648.585,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4805000",
+      "name": "Austin",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 30.274931186653326,
+        "longitude": -97.74415969848634,
+        "zoom": 13,
+        "authority": "LP197_OWNER_APPROVED",
+        "provenance": "reports/lp197/governed-place-consumer-presentation-cameras.json"
+      },
+      "proposedCamera": null,
+      "distanceMeters": 425.132,
+      "currentAuthority": "LP197_OWNER_APPROVED",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4819000",
+      "name": "Dallas",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 32.78294501748632,
+        "longitude": -96.79538726806642,
+        "zoom": 13,
+        "authority": "LP197_OWNER_APPROVED",
+        "provenance": "reports/lp197/governed-place-consumer-presentation-cameras.json"
+      },
+      "proposedCamera": null,
+      "distanceMeters": 754.614,
+      "currentAuthority": "LP197_OWNER_APPROVED",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4824000",
+      "name": "El Paso",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 31.765537409484374,
+        "longitude": -106.48704528808595,
+        "zoom": 13,
+        "authority": "LP197_OWNER_APPROVED",
+        "provenance": "reports/lp197/governed-place-consumer-presentation-cameras.json"
+      },
+      "proposedCamera": null,
+      "distanceMeters": 604.602,
+      "currentAuthority": "LP197_OWNER_APPROVED",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4827000",
+      "name": "Fort Worth",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 32.757685346479455,
+        "longitude": -97.33182907104494,
+        "zoom": 13,
+        "authority": "LP197_OWNER_APPROVED",
+        "provenance": "reports/lp197/governed-place-consumer-presentation-cameras.json"
+      },
+      "proposedCamera": null,
+      "distanceMeters": 508.585,
+      "currentAuthority": "LP197_OWNER_APPROVED",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4842568",
+      "name": "Liberty",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 30.0388343,
+        "longitude": -94.7888034,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 30.0609147,
+        "longitude": -94.7971809,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 2584.246,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4800100",
+      "name": "Abbott",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 31.8851395,
+        "longitude": -97.0741059,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.8848809,
+        "longitude": -97.0733361,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 78.164,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4801084",
+      "name": "Acala",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 31.3344062,
+        "longitude": -105.902786,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.334013,
+        "longitude": -105.9144137,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 1105.23,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4835000",
+      "name": "Houston",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 29.7857435,
+        "longitude": -95.3888059,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 29.7589382,
+        "longitude": -95.3676974,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 3610.383,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4839952",
+      "name": "Kyle",
+      "reviewClass": "REQUIRED_COHORT",
+      "currentCamera": {
+        "latitude": 29.9941176,
+        "longitude": -97.8833223,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": null,
+      "distanceMeters": null,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "B_MULTIPLE_OSM_CANDIDATES",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    }
+  ],
+  "priorityOutliers": [
+    {
+      "geoid": "4817000",
+      "name": "Corpus Christi",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 27.7542524,
+        "longitude": -97.1733853,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 27.7635302,
+        "longitude": -97.4033191,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 22648.585,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4869980",
+      "name": "Stamford",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 33.0461933,
+        "longitude": -99.5970209,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 32.944882,
+        "longitude": -99.802453,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 22225.321,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4828068",
+      "name": "Galveston",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 29.1863276,
+        "longitude": -94.9657583,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 29.3056996,
+        "longitude": -94.7933252,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 21355.76,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4848936",
+      "name": "Monahans",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 31.6557209,
+        "longitude": -103.0836944,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 31.5890519,
+        "longitude": -102.8861902,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 20116.473,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4858892",
+      "name": "Port Isabel",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 26.0658265,
+        "longitude": -97.309953,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 26.0734119,
+        "longitude": -97.2085844,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 10159.987,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4810768",
+      "name": "Brownsville",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 25.9894042,
+        "longitude": -97.4806255,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 25.9024289,
+        "longitude": -97.4981698,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 9829.031,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4810984",
+      "name": "Buchanan Dam",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 30.8156742,
+        "longitude": -98.4526874,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 30.7399037,
+        "longitude": -98.4311413,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 8673.106,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4831616",
+      "name": "Gunter",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 33.4163086,
+        "longitude": -96.8207992,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 33.4498987,
+        "longitude": -96.7446323,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 7994.159,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4830464",
+      "name": "Grand Prairie",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 32.6789304,
+        "longitude": -97.0207429,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 32.7459645,
+        "longitude": -96.9977846,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 7757.174,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    },
+    {
+      "geoid": "4834220",
+      "name": "Hitchcock",
+      "reviewClass": "TOP_10_DISTANCE_PROPOSED",
+      "currentCamera": {
+        "latitude": 29.2826196,
+        "longitude": -95.0076307,
+        "zoom": 13,
+        "authority": "STATEWIDE_CENSUS_PRESENTATION",
+        "provenance": "data/generated/gridly-statewide-place-presentation-v1.json"
+      },
+      "proposedCamera": {
+        "latitude": 29.3482905,
+        "longitude": -95.0160368,
+        "zoom": 13,
+        "authority": "LP2012_NAMED_PLACE_ANCHOR_PROPOSED",
+        "provenance": "reports/lp2011/reconciliation.json",
+        "runtimeActivation": false
+      },
+      "distanceMeters": 7347.622,
+      "currentAuthority": "STATEWIDE_CENSUS_PRESENTATION",
+      "lp2011Bucket": "A_HIGH_CONFIDENCE_UNIQUE",
+      "ownerDecision": "PENDING",
+      "ownerNote": ""
+    }
+  ]
+}
