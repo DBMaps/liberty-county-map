@@ -4,59 +4,66 @@
 
 **OWNER_INPUT_REQUIRED**
 
-No runtime camera, identity, membership, ZIP, Houston/San Antonio, or other protected surface was activated or mutated.
+This is an audit only. No runtime camera or protected identity surface was activated.
 
-## Product-center definition
+## Product definition and preserved evidence
 
 The cartographically recognizable anchor for a named PLACE: the point around which a map user expects the settlement name/core to appear near the usable visual center. It is not presumed to equal a polygon, population, address-density, civic, administrative, or geographic center.
 
-## Preserved findings
+LP199 remains **GEOMETRY_ONLY_DERIVATION_INSUFFICIENT** (4855.401 m mean). LP200 remains **ADDRESS_DERIVED_POPULATED_CORE_NOT_SUFFICIENT_FOR_CONSUMER_PRESENTATION_CAMERA** (12,130,953 records; 3532.755 m best mean; 27.241% improvement). The Dayton lifecycle repair is distinct from center quality.
 
-LP199: **GEOMETRY_ONLY_DERIVATION_INSUFFICIENT**, mean 4855.401 m. LP200: **ADDRESS_DERIVED_POPULATED_CORE_NOT_SUFFICIENT_FOR_CONSUMER_PRESENTATION_CAMERA**, best DENSEST_CONNECTED_CLUSTER_CENTROID, mean 3532.755 m, 27.241% improvement, below the 30% threshold.
+## OSM source, provenance, license, and architecture
 
-## Existing governed source inventory
+The reproducible discovery target is Geofabrik's Texas planet-derived extract: [Texas metadata](https://download.geofabrik.de/north-america/us/texas.html) and [PBF download](https://download.geofabrik.de/north-america/us/texas-latest.osm.pbf). It is expected as `texas-latest.osm.pbf`, PBF, normally refreshed daily. Exact retrieval date, bytes, and SHA-256 are deliberately unreported until owner bytes exist. OSM data is ODbL 1.0: attribute OpenStreetMap contributors, preserve provenance, and review derived-database share-alike duties.
 
-- **GOVERNED_EXISTING — Gridly canonical PLACE presentation points:** Census PLACE reference/presentation signal evaluated and rejected by LP199; it is not a cartographic label anchor.
-- **GOVERNED_EXISTING — LP197 owner-approved cameras:** High-quality governed exceptions, not a systemic statewide source.
-- **OWNER_LOCAL_GOVERNED_INPUT — LP200 owner address-derived candidates:** Preserved owner result was rejected as ADDRESS_DERIVED_POPULATED_CORE_NOT_SUFFICIENT_FOR_CONSUMER_PRESENTATION_CAMERA.
-- **NOT_APPLICABLE — Repository destination, ZIP, crossing, roadway, and geocoder evidence:** No governed statewide named-place/cartographic-label point dataset was found.
-- **IDENTITY_KNOWN_BYTES_UNAVAILABLE — 2025 TIGER/Line Texas PLACE polygons:** Polygon identity support only; geometry derivation is prohibited and LP199 found it insufficient.
+- **OSM_LABEL_ANCHOR / CARTOGRAPHIC_LABEL_ANCHOR:** boundary-relation node member `role=label`; closest semantic hypothesis to the requested label/logical/cultural center.
+- **OSM_ADMIN_CENTRE / ADMINISTRATIVE_CENTRE:** relation member `role=admin_centre`; administrative seat, not presumed best label point.
+- **OSM_PLACE_NODE / NAMED_PLACE_ANCHOR:** a `place=city|town|village|hamlet|municipality|*` node. A node satisfying several roles remains one identity with every role recorded.
 
-## Current basemap and labels
+Raster tiles were not scraped and screenshots supply no coordinates.
 
-Gridly uses Leaflet raster tiles: OpenStreetMap standard, CARTO dark, Esri World Imagery, and a CARTO raster label overlay. Settlement layers and label-anchor coordinates are not exposed by the configured raster endpoints. Tiles were not scraped. **OWNER_VISUAL_CERTIFICATION_REQUIRED**.
+## GNIS source and semantics
 
-## Authoritative candidates, semantics, and coverage
+The official discovery endpoint is [USGS GNIS downloads](https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data). Acquire the Texas **FullModel** state download, preserve the exact official filename, GIS format, metadata/vintage, feature classes, CRS, bytes, and SHA-256. Populated Place is a named-feature point; Civil and Census are distinct feature semantics and are not silently treated as Census PLACE identities.
 
-| Rank | Source | Authority | Semantics | Reconciled coverage | Status |
-|---:|---|---|---|---:|---|
-| 1 | USGS_GNIS_DOMESTIC_NAMES | FEDERAL_GOVERNMENT | POPULATED_PLACE_POINT | 0/1859 (0%) | NOT_MEASURED_BYTES_UNAVAILABLE |
-| 2 | CENSUS_GAZETTEER_PLACE | FEDERAL_GOVERNMENT | ADMINISTRATIVE_REFERENCE_POINT | 1859/1859 (100%) | RECONCILED_DIRECT_GEOID |
-| 3 | TXDOT_COMMUNITY_POINTS | STATE_GOVERNMENT | UNKNOWN_SEMANTICS | 0/1859 (0%) | NO_VALIDATED_DATASET |
-| 4 | TEXAS_STATE_GIS_COMMUNITY_POINTS | STATE_GOVERNMENT | UNKNOWN_SEMANTICS | 0/1859 (0%) | NO_VALIDATED_DATASET |
-| 5 | OFFICIAL_MUNICIPAL_CIVIC_CENTERS | STATE_GOVERNMENT | UNKNOWN_SEMANTICS | 0/1859 (0%) | NOT_STATEWIDE |
+## Input identities and reconciliation
 
-Ranking is criterion-by-criterion, not a composite score: AUTHORITY, STATEWIDE_COVERAGE, CANONICAL_IDENTITY_RECONCILIATION, SEMANTIC_FIT_FOR_CARTOGRAPHIC_CENTER, CALIBRATION_ERROR, SMALL_PLACE_SUPPORT, CDP_SUPPORT, MULTI_COUNTY_SAFETY, REPRODUCIBILITY, LICENSING/GOVERNANCE, OWNER_VISUAL_REVIEW_POTENTIAL. GNIS ranks first for semantic investigation, not certification; its bytes, crosswalk, coverage, calibration, and visual behavior remain unvalidated.
+The governed target is exactly **1,859 PLACE GEOIDs / 2,058 county memberships**. OSM retains element type/ID, relation ID, role, name, place class, coordinates, Wikidata, Wikipedia, population, and admin level. GNIS retains feature ID, federal/Census codes when present, class, state/county, coordinates, and source metadata. Direct identifiers/crosswalks precede relation evidence, polygon containment, county compatibility, governed normalized name, and unique selection. Statewide name-only matching is forbidden; duplicates, aliases, history, multi-county cases, and multiple points fail closed when unresolved.
 
-## Identity reconciliation
+## Coverage and calibration
 
-Direct GEOID preferred. Otherwise require governed feature ID plus class, polygon containment, county compatibility, and unique deterministic selection. Never reconcile statewide solely by label. Duplicate, multiple-feature, alias, renamed, and historical cases fail closed unless governed evidence makes the selection unique. Census Gazetteer has 1,859 direct-GEOID matches. All unacquired candidates report zero matches rather than invented results.
+| Study order | Source | Semantics | Reconciled | Status |
+|---:|---|---|---:|---|
+| 1 | OSM_TEXAS_PLACE_ANCHORS | CARTOGRAPHIC_LABEL_ANCHOR | 0/1859 (0%) | NOT_MEASURED_BYTES_UNAVAILABLE |
+| 2 | USGS_GNIS_FULLMODEL_TEXAS | POPULATED_PLACE_POINT | 0/1859 (0%) | NOT_MEASURED_BYTES_UNAVAILABLE |
+| 3 | CENSUS_GAZETTEER_PLACE | ADMINISTRATIVE_REFERENCE_POINT | 1859/1859 (100%) | RECONCILED_DIRECT_GEOID |
+| 4 | TXDOT_COMMUNITY_POINTS | UNKNOWN_SEMANTICS | 0/1859 (0%) | NO_VALIDATED_DATASET |
+| 5 | TEXAS_STATE_GIS_COMMUNITY_POINTS | UNKNOWN_SEMANTICS | 0/1859 (0%) | NO_VALIDATED_DATASET |
+| 6 | OFFICIAL_MUNICIPAL_CIVIC_CENTERS | UNKNOWN_SEMANTICS | 0/1859 (0%) | NOT_STATEWIDE |
 
-## Calibration
+OSM label/admin-centre/place and GNIS each measure **0 matched, 0 ambiguous, 1,859 unmatched (0%)** because their bytes are absent—not because empirical coverage is known to be zero. Incorporated, CDP, multi-county, and small/rural breakdowns are **NOT_MEASURED**. Census has 1,859 direct-GEOID baseline matches.
 
-The exact four LP197 cameras remain truth. Census/LP199 mean: 4855.401 m. LP200 best mean: 3532.755 m. No new candidate had validated coordinates, so Dallas, Fort Worth, Austin, El Paso, mean, median, total, and maximum are explicitly null rather than fabricated.
+The four exact LP197 truth cameras (Dallas, Fort Worth, Austin, El Paso; zoom 13) remain unchanged. LP199 mean is 4855.401 m and LP200 best mean is 3532.755 m. New per-city, mean, median, total, and maximum metrics are null rather than fabricated.
 
-## Controls and small-place/CDP behavior
+## Dayton, known-bad, small-place, and CDP controls
 
-Owner failure controls: Corpus Christi, McAllen, Port Arthur, Tyler, Waco. Acceptable generic control: Amarillo. Representative cohort: Corpus Christi, McAllen, Port Arthur, Tyler, Waco, Amarillo, Lubbock, Laredo, Brownsville, Galveston, Denton, Temple, Nacogdoches, Alpine, Marfa, Palestine, Liberty. Every row is **OWNER_VISUAL_CERTIFICATION_REQUIRED**. The cohort includes incorporated small places and CDPs through the full 1,859-PLACE audit contract. GNIS may support rural named communities but its relationship to Census CDPs is not assumed and must be measured.
+Dayton's approved anchor is **30.0466, -94.8852, zoom 13** (reload 30.046658937805077, -94.88513946533205). OSM label/admin-centre/place and GNIS comparisons are unmeasured. Failure controls are Tyler, Waco, McAllen, Port Arthur, and Corpus Christi; Amarillo is the acceptable generic control. The statewide cohort also includes Liberty, Palestine, Lubbock, Laredo, Brownsville, Galveston, Denton, Temple, Nacogdoches, Alpine, Marfa, and CDPs Abram and Aldine. Corpus Christi's LP200 13-address anomaly remains separate.
 
-## Corpus Christi diagnostic
+## Label versus admin centre and source ranking
 
-**EXACT_CAUSE_NOT_DETERMINABLE_FROM_COMMITTED_EVIDENCE.** Corpus Christi spans four governed county memberships and has water-heavy/offshore geometry, but neither fact proves why only 13 addresses intersected. The preserved owner candidate artifact/raw GDAL diagnostics are unavailable here, so address coverage, schema, containment, filtering, topology, and actual source limitation cannot be distinguished. This does not invalidate the statewide LP200 engine and is separate from source selection.
+The semantic hypothesis is label anchor first, place node second, administrative centre third, GNIS populated-place point fourth, and Census administrative reference point last **for semantic fit only**. No empirical winner is declared. Authority, licensing/governance, statewide coverage, identity reconciliation, semantic fit, LP197 calibration, Dayton, known-bad potential, CDP support, small-place support, multi-county safety, and reproducibility are reported independently; missing bytes prevent measured ranking on most axes.
 
-## Selected source and next owner action
+No systemic source or tiered model is selected. A tiered contract is not invented merely to increase coverage.
 
-No source is selected or certified. Download the official USGS GNIS Domestic Names source from https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data; freeze it as `GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip` at `C:\GitHub\Gridly-Source-Data\USGS\GNIS\original\GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip`; record retrieval metadata, bytes, SHA-256, schema and license; set `GRIDLY_LP201_GNIS_TX_ZIP`; then execute the seven validation steps in the JSON audit. Do not activate cameras.
+## Exact owner action
+
+1. Download Geofabrik Texas PBF to `C:\GitHub\Gridly-Source-Data\OpenStreetMap\Geofabrik\original\texas-latest.osm.pbf` and freeze its retrieval timestamp, URL, byte count, SHA-256, metadata, and ODbL notice.
+2. Download official USGS GNIS Texas FullModel to `C:\GitHub\Gridly-Source-Data\USGS\GNIS\original\<official-filename>`, preserving the official filename; freeze the same provenance plus schema, vintage, feature classes, and CRS.
+3. Set `GRIDLY_LP201_OSM_SOURCE` and `GRIDLY_LP201_GNIS_SOURCE` to those files and run `npm run build:lp201`. Do not activate cameras.
+
+## Protected surfaces
+
+The audit records and verifies hashes for js/app.js, reports/lp197/governed-place-consumer-presentation-cameras.json, data/generated/gridly-statewide-consumer-community-projection-v1.json, data/generated/gridly-statewide-consumer-zip-index-v1.json. Houston, San Antonio, Route Watch, Supabase, deployment, and hazard lifecycle were not touched.
 
 ## Decision
 
