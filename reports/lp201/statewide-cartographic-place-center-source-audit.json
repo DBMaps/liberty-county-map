@@ -141,18 +141,89 @@
     "BASEMAP_PROVIDER"
   ],
   "semanticVocabulary": [
+    "CARTOGRAPHIC_LABEL_ANCHOR",
+    "NAMED_PLACE_ANCHOR",
+    "ADMINISTRATIVE_CENTRE",
     "POPULATED_PLACE_POINT",
     "ADMINISTRATIVE_REFERENCE_POINT",
-    "CARTOGRAPHIC_LABEL_ANCHOR",
     "UNKNOWN_SEMANTICS"
   ],
   "candidates": [
     {
       "rank": 1,
-      "id": "USGS_GNIS_DOMESTIC_NAMES",
+      "id": "OSM_TEXAS_PLACE_ANCHORS",
+      "authority": "BASEMAP_PROVIDER",
+      "agency": "OpenStreetMap contributors; extract distributed by Geofabrik GmbH",
+      "dataset": "Texas OpenStreetMap extract",
+      "vintage": "CURRENT_AT_OWNER_RETRIEVAL",
+      "classification": "EXTERNAL_CANDIDATE_NOT_YET_GOVERNED",
+      "semanticType": "CARTOGRAPHIC_LABEL_ANCHOR",
+      "geometry": "place=* nodes plus boundary relation label and admin_centre node members, retained separately",
+      "identifiers": [
+        "osm_element_type",
+        "osm_id",
+        "relation_id",
+        "name",
+        "place",
+        "role",
+        "wikidata",
+        "wikipedia",
+        "population",
+        "admin_level"
+      ],
+      "placeGeoidAvailable": false,
+      "matchPolicy": "Never name-only. Prefer governed Wikidata crosswalk; then relation/member association, canonical PLACE polygon containment, county compatibility, normalized governed name, and exactly one deterministic candidate. Ambiguity fails closed.",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0,
+        "status": "NOT_MEASURED_BYTES_UNAVAILABLE"
+      },
+      "coverageBySemantic": {
+        "OSM_LABEL_ANCHOR": {
+          "matched": 0,
+          "ambiguous": 0,
+          "unmatched": 1859,
+          "percent": 0
+        },
+        "OSM_ADMIN_CENTRE": {
+          "matched": 0,
+          "ambiguous": 0,
+          "unmatched": 1859,
+          "percent": 0
+        },
+        "OSM_PLACE_NODE": {
+          "matched": 0,
+          "ambiguous": 0,
+          "unmatched": 1859,
+          "percent": 0
+        }
+      },
+      "calibration": null,
+      "licensing": "Open Database License (ODbL) 1.0. Attribute OpenStreetMap contributors; preserve source and extract provenance, and evaluate share-alike obligations for any derived database before distribution.",
+      "cadence": "Geofabrik regional extracts are normally regenerated daily.",
+      "format": "Protocolbuffer Binary Format (.osm.pbf)",
+      "url": "https://download.geofabrik.de/north-america/us/texas-latest.osm.pbf",
+      "metadataUrl": "https://download.geofabrik.de/north-america/us/texas.html",
+      "strengths": [
+        "label member has the closest investigated cartographic-label semantics",
+        "place nodes represent named settlements",
+        "same upstream data family as OSM/CARTO label rendering"
+      ],
+      "weaknesses": [
+        "Community-maintained, incomplete/inconsistent roles",
+        "No Census PLACE GEOID",
+        "CDPs and administrative relations do not align automatically",
+        "Coverage, calibration, and controls unmeasured without frozen bytes"
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "USGS_GNIS_FULLMODEL_TEXAS",
       "authority": "FEDERAL_GOVERNMENT",
       "agency": "U.S. Geological Survey / U.S. Board on Geographic Names",
-      "dataset": "Geographic Names Information System — Domestic Names",
+      "dataset": "Geographic Names Information System — Texas FullModel",
       "vintage": "CURRENT_AT_OWNER_RETRIEVAL",
       "classification": "EXTERNAL_CANDIDATE_NOT_YET_GOVERNED",
       "semanticType": "POPULATED_PLACE_POINT",
@@ -177,7 +248,7 @@
       "calibration": null,
       "licensing": "U.S. federal public data; owner must retain USGS provenance and validate current download terms/metadata.",
       "cadence": "Continuously maintained; download vintage must be frozen.",
-      "format": "GNIS downloadable delimited text/ZIP",
+      "format": "Official state FullModel GIS download (owner must preserve exact delivered filename and format)",
       "url": "https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data",
       "strengths": [
         "Best investigated semantic fit: officially named populated-place point",
@@ -192,7 +263,7 @@
       ]
     },
     {
-      "rank": 2,
+      "rank": 3,
       "id": "CENSUS_GAZETTEER_PLACE",
       "authority": "FEDERAL_GOVERNMENT",
       "agency": "U.S. Census Bureau",
@@ -236,7 +307,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 4,
       "id": "TXDOT_COMMUNITY_POINTS",
       "authority": "STATE_GOVERNMENT",
       "agency": "Texas Department of Transportation",
@@ -269,7 +340,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
       "id": "TEXAS_STATE_GIS_COMMUNITY_POINTS",
       "authority": "STATE_GOVERNMENT",
       "agency": "Texas Geographic Information Office (TxGIO; TNRIS successor functions)",
@@ -301,7 +372,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 6,
       "id": "OFFICIAL_MUNICIPAL_CIVIC_CENTERS",
       "authority": "STATE_GOVERNMENT",
       "agency": "Individual Texas municipalities",
@@ -336,27 +407,43 @@
     }
   ],
   "ranking": {
-    "method": "Deterministic ordinal evidence table; no composite score hides weaknesses.",
+    "method": "Independent qualitative evidence dimensions; no composite score or overall winner hides weaknesses.",
     "criteria": [
       "AUTHORITY",
-      "STATEWIDE_COVERAGE",
-      "CANONICAL_IDENTITY_RECONCILIATION",
-      "SEMANTIC_FIT_FOR_CARTOGRAPHIC_CENTER",
-      "CALIBRATION_ERROR",
-      "SMALL_PLACE_SUPPORT",
-      "CDP_SUPPORT",
-      "MULTI_COUNTY_SAFETY",
-      "REPRODUCIBILITY",
       "LICENSING/GOVERNANCE",
-      "OWNER_VISUAL_REVIEW_POTENTIAL"
+      "STATEWIDE_COVERAGE",
+      "IDENTITY_RECONCILIATION",
+      "SEMANTIC_FIT",
+      "LP197_CALIBRATION",
+      "DAYTON_CONTROL",
+      "KNOWN_BAD_CONTROL_POTENTIAL",
+      "CDP_SUPPORT",
+      "SMALL_PLACE_SUPPORT",
+      "MULTI_COUNTY_SAFETY",
+      "REPRODUCIBILITY"
     ],
     "order": [
-      "USGS_GNIS_DOMESTIC_NAMES",
+      "OSM_TEXAS_PLACE_ANCHORS",
+      "USGS_GNIS_FULLMODEL_TEXAS",
       "CENSUS_GAZETTEER_PLACE",
       "TXDOT_COMMUNITY_POINTS",
       "TEXAS_STATE_GIS_COMMUNITY_POINTS",
       "OFFICIAL_MUNICIPAL_CIVIC_CENTERS"
-    ]
+    ],
+    "dimensions": {
+      "AUTHORITY": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "LICENSING/GOVERNANCE": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "STATEWIDE_COVERAGE": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "IDENTITY_RECONCILIATION": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "SEMANTIC_FIT": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "LP197_CALIBRATION": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "DAYTON_CONTROL": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "KNOWN_BAD_CONTROL_POTENTIAL": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "CDP_SUPPORT": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "SMALL_PLACE_SUPPORT": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "MULTI_COUNTY_SAFETY": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically.",
+      "REPRODUCIBILITY": "See per-source strengths, weaknesses, measured coverage, calibration, and semantic type; unmeasured inputs remain NOT_MEASURED rather than ranked numerically."
+    }
   },
   "identityReconciliation": {
     "rule": "Direct GEOID preferred. Otherwise require governed feature ID plus class, polygon containment, county compatibility, and unique deterministic selection. Never reconcile statewide solely by label.",
@@ -365,7 +452,16 @@
     "renamesAliasesHistorical": "Exclude or crosswalk only with governed identifiers/status evidence.",
     "results": [
       {
-        "source": "USGS_GNIS_DOMESTIC_NAMES",
+        "source": "OSM_TEXAS_PLACE_ANCHORS",
+        "exactGeoidMatches": 0,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 1859,
+        "extraSourcePoints": null,
+        "status": "NOT_MEASURED_BYTES_UNAVAILABLE"
+      },
+      {
+        "source": "USGS_GNIS_FULLMODEL_TEXAS",
         "exactGeoidMatches": 0,
         "deterministicCrosswalkMatches": 0,
         "ambiguous": 0,
@@ -454,7 +550,21 @@
     "lp200BestMeanErrorMeters": 3532.755,
     "candidates": [
       {
-        "source": "USGS_GNIS_DOMESTIC_NAMES",
+        "source": "OSM_TEXAS_PLACE_ANCHORS",
+        "metrics": {
+          "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
+          "dallas": null,
+          "fortWorth": null,
+          "austin": null,
+          "elPaso": null,
+          "mean": null,
+          "median": null,
+          "total": null,
+          "maximum": null
+        }
+      },
+      {
+        "source": "USGS_GNIS_FULLMODEL_TEXAS",
         "metrics": {
           "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
           "dallas": null,
@@ -522,7 +632,108 @@
     ],
     "decision": "No new coordinate-bearing candidate bytes were available; no calibration values were fabricated."
   },
+  "daytonControl": {
+    "placeGeoid": "4819240",
+    "currentLocalAnchor": {
+      "lat": 30.0466,
+      "lng": -94.8852,
+      "zoom": 13
+    },
+    "reload": {
+      "lat": 30.046658937805077,
+      "lng": -94.88513946533205,
+      "zoom": 13
+    },
+    "osmLabel": null,
+    "osmAdminCentre": null,
+    "osmPlaceNode": null,
+    "gnis": null,
+    "status": "NOT_MEASURED_BYTES_UNAVAILABLE"
+  },
+  "osmSemanticStudy": {
+    "OSM_LABEL_ANCHOR": {
+      "semanticType": "CARTOGRAPHIC_LABEL_ANCHOR",
+      "definition": "boundary relation node member with role=label; intended label/logical or cultural center"
+    },
+    "OSM_ADMIN_CENTRE": {
+      "semanticType": "ADMINISTRATIVE_CENTRE",
+      "definition": "boundary relation member with role=admin_centre; seat of administration, not presumed label position"
+    },
+    "OSM_PLACE_NODE": {
+      "semanticType": "NAMED_PLACE_ANCHOR",
+      "definition": "node tagged place=* for a named settlement; may independently also be a relation member"
+    },
+    "sameNodeRolesPreserved": true,
+    "result": "NOT_MEASURED_BYTES_UNAVAILABLE"
+  },
+  "coverageBreakdowns": {
+    "incorporated": "NOT_MEASURED",
+    "cdp": "NOT_MEASURED",
+    "multiCounty": "NOT_MEASURED",
+    "smallRural": "NOT_MEASURED"
+  },
   "ownerVisualReviewMatrix": [
+    {
+      "label": "Dallas",
+      "placeGeoid": "4819000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48085",
+        "48113",
+        "48121",
+        "48257",
+        "48397"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Fort Worth",
+      "placeGeoid": "4827000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48121",
+        "48251",
+        "48367",
+        "48439",
+        "48497"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Austin",
+      "placeGeoid": "4805000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48021",
+        "48209",
+        "48453",
+        "48491"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "El Paso",
+      "placeGeoid": "4824000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48141"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Dayton",
+      "placeGeoid": "4819432",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48291"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
     {
       "label": "Corpus Christi",
       "placeGeoid": "4817000",
@@ -697,6 +908,26 @@
       ],
       "role": "REPRESENTATIVE_CONTROL",
       "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Abram",
+      "placeGeoid": "4801060",
+      "governedType": "CENSUS_DESIGNATED_PLACE",
+      "countyMemberships": [
+        "48215"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Aldine",
+      "placeGeoid": "4801696",
+      "governedType": "CENSUS_DESIGNATED_PLACE",
+      "countyMemberships": [
+        "48201"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
     }
   ],
   "smallPlaceAndCdpFinding": "The cohort includes incorporated small places and CDPs through the full 1,859-PLACE audit contract. GNIS may support rural named communities but its relationship to Census CDPs is not assumed and must be measured.",
@@ -714,12 +945,21 @@
   "selectedSource": null,
   "ownerInput": {
     "required": true,
-    "preferredCandidate": "USGS_GNIS_DOMESTIC_NAMES",
-    "sourceUrl": "https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data",
-    "expectedFilename": "GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip",
-    "storagePath": "C:\\GitHub\\Gridly-Source-Data\\USGS\\GNIS\\original\\GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip",
-    "environmentVariable": "GRIDLY_LP201_GNIS_TX_ZIP",
-    "governance": "Freeze the official USGS download with retrieval timestamp, source URL, metadata/license, byte length, and SHA-256; treat as owner-local governed input and do not redistribute until reviewed.",
+    "preferredCandidate": "OSM_TEXAS_PLACE_ANCHORS",
+    "osm": {
+      "sourceUrl": "https://download.geofabrik.de/north-america/us/texas-latest.osm.pbf",
+      "metadataUrl": "https://download.geofabrik.de/north-america/us/texas.html",
+      "expectedFilename": "texas-latest.osm.pbf",
+      "storagePath": "C:\\GitHub\\Gridly-Source-Data\\OpenStreetMap\\Geofabrik\\original\\texas-latest.osm.pbf",
+      "environmentVariable": "GRIDLY_LP201_OSM_SOURCE"
+    },
+    "gnis": {
+      "sourceUrl": "https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data",
+      "expectedFilename": "preserve the exact official FullModel filename",
+      "storagePath": "C:\\GitHub\\Gridly-Source-Data\\USGS\\GNIS\\original\\<official-filename>",
+      "environmentVariable": "GRIDLY_LP201_GNIS_SOURCE"
+    },
+    "governance": "Freeze each official/provider download with retrieval timestamp, source URL, metadata/license, byte length, and SHA-256; treat as owner-local governed input and do not redistribute until reviewed.",
     "validation": [
       "Confirm archive is readable and inventory every member",
       "Record byte length and SHA-256 before parsing",
@@ -729,13 +969,13 @@
       "Report exact, deterministic, ambiguous, unmatched, and extra counts across all 1,859 PLACEs",
       "Calculate all four LP197 errors and conduct the full owner visual cohort"
     ],
-    "command": "$env:GRIDLY_LP201_GNIS_TX_ZIP = 'C:\\GitHub\\Gridly-Source-Data\\USGS\\GNIS\\original\\GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip'; npm run build:lp201"
+    "command": "Set GRIDLY_LP201_OSM_SOURCE and GRIDLY_LP201_GNIS_SOURCE to the frozen owner files, then run npm run build:lp201"
   },
-  "finalRecommendation": "Acquire and govern the official GNIS Domestic Names data, then measure deterministic PLACE reconciliation, statewide/CDP coverage, calibration, and owner visual quality. Do not activate any candidate. Census reference points remain the complete fallback signal but are not certified for this product.",
+  "finalRecommendation": "Acquire and govern the Geofabrik Texas OSM extract and official GNIS Texas FullModel data, then measure deterministic PLACE reconciliation, statewide/CDP coverage, calibration, and owner visual quality. Do not activate any candidate. Census reference points remain the complete fallback signal but are not certified for this product.",
   "protectedSurfaces": [
     {
       "path": "js/app.js",
-      "sha256": "acca15d779f256121ea2a20e00730d9e8e4698961f7846e9c06e83babf56f0a0",
+      "sha256": "938f2de46eb8b01293b07fc750f38970331be31f57c590264df2b9b5830b9f07",
       "unchangedByLp201": true
     },
     {
