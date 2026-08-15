@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp201": "node tools/lp201/build-statewide-cartographic-place-center-source-audit.mjs --write",
+    "verify:lp201": "node tools/lp201/build-statewide-cartographic-place-center-source-audit.mjs --verify",
+    "test:lp201": "node --test tests/lp201-statewide-cartographic-place-center-source-audit.test.mjs",
     "build:lp200": "node tools/lp200/build-statewide-place-populated-core-certification.mjs --write",
     "verify:lp200": "node tools/lp200/build-statewide-place-populated-core-certification.mjs --verify",
     "verify:lp200:owner-artifact": "node tools/lp200/verify-owner-artifact.mjs --verify-owner-artifact",

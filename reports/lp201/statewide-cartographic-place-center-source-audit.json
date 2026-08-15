@@ -1,0 +1,757 @@
+{
+  "schemaVersion": "gridly.lp201.statewide-cartographic-place-center-source-audit.v1",
+  "milestone": "LP201",
+  "retrievalDate": "2026-08-15",
+  "classification": "OWNER_INPUT_REQUIRED",
+  "productCenterDefinition": "The cartographically recognizable anchor for a named PLACE: the point around which a map user expects the settlement name/core to appear near the usable visual center. It is not presumed to equal a polygon, population, address-density, civic, administrative, or geographic center.",
+  "scope": {
+    "auditOnly": true,
+    "runtimeActivation": false,
+    "newGeometryAlgorithm": false,
+    "newAddressAlgorithm": false,
+    "manualOverrideExpansion": false
+  },
+  "governedInventory": {
+    "places": 1859,
+    "memberships": 2058
+  },
+  "priorFindings": {
+    "lp199": {
+      "finding": "GEOMETRY_ONLY_DERIVATION_INSUFFICIENT",
+      "methods": [
+        "CENSUS_INTPT",
+        "EQUAL_AREA_CENTROID",
+        "POINT_ON_SURFACE",
+        "BOUNDING_BOX_CENTER",
+        "CONTAINED_CENTROID_HYBRID"
+      ],
+      "meanErrorMeters": 4855.401
+    },
+    "lp200": {
+      "finding": "ADDRESS_DERIVED_POPULATED_CORE_NOT_SUFFICIENT_FOR_CONSUMER_PRESENTATION_CAMERA",
+      "records": 12130953,
+      "counties": 254,
+      "places": 1859,
+      "memberships": 2058,
+      "crs": "EPSG:3083",
+      "bestMethod": "DENSEST_CONNECTED_CLUSTER_CENTROID",
+      "meanErrorMeters": 3532.755,
+      "improvementPercent": 27.241,
+      "thresholdPercent": 30,
+      "ownerRejected": [
+        "McAllen",
+        "Port Arthur",
+        "Tyler",
+        "Waco"
+      ],
+      "corpusChristiIntersectingAddresses": 13
+    }
+  },
+  "sourceInventory": [
+    {
+      "source": "Gridly canonical PLACE presentation points",
+      "classification": "GOVERNED_EXISTING",
+      "path": "data/generated/gridly-statewide-place-presentation-v1.json",
+      "semanticType": "ADMINISTRATIVE_REFERENCE_POINT",
+      "coverage": {
+        "matched": 1859,
+        "unmatched": 0,
+        "ambiguous": 0,
+        "percent": 100
+      },
+      "finding": "Census PLACE reference/presentation signal evaluated and rejected by LP199; it is not a cartographic label anchor."
+    },
+    {
+      "source": "LP197 owner-approved cameras",
+      "classification": "GOVERNED_EXISTING",
+      "path": "reports/lp197/governed-place-consumer-presentation-cameras.json",
+      "semanticType": "CARTOGRAPHIC_LABEL_ANCHOR",
+      "coverage": {
+        "matched": 4,
+        "unmatched": 1855,
+        "ambiguous": 0,
+        "percent": 0.215
+      },
+      "finding": "High-quality governed exceptions, not a systemic statewide source."
+    },
+    {
+      "source": "LP200 owner address-derived candidates",
+      "classification": "OWNER_LOCAL_GOVERNED_INPUT",
+      "path": "owner artifact named by GRIDLY_LP200_OWNER_CANDIDATE_ARTIFACT",
+      "semanticType": "POPULATED_PLACE_POINT",
+      "coverage": {
+        "matched": 1859,
+        "unmatched": 0,
+        "ambiguous": 0,
+        "percent": 100
+      },
+      "finding": "Preserved owner result was rejected as ADDRESS_DERIVED_POPULATED_CORE_NOT_SUFFICIENT_FOR_CONSUMER_PRESENTATION_CAMERA."
+    },
+    {
+      "source": "Repository destination, ZIP, crossing, roadway, and geocoder evidence",
+      "classification": "NOT_APPLICABLE",
+      "semanticType": "UNKNOWN_SEMANTICS",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0
+      },
+      "finding": "No governed statewide named-place/cartographic-label point dataset was found."
+    },
+    {
+      "source": "2025 TIGER/Line Texas PLACE polygons",
+      "classification": "IDENTITY_KNOWN_BYTES_UNAVAILABLE",
+      "semanticType": "ADMINISTRATIVE_REFERENCE_POINT",
+      "coverage": {
+        "matched": 1859,
+        "unmatched": 0,
+        "ambiguous": 0,
+        "percent": 100
+      },
+      "finding": "Polygon identity support only; geometry derivation is prohibited and LP199 found it insufficient."
+    }
+  ],
+  "basemap": {
+    "library": "Leaflet raster tile layers",
+    "standard": {
+      "provider": "OpenStreetMap standard tile service",
+      "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "OpenStreetMap contributors"
+    },
+    "dark": {
+      "provider": "CARTO",
+      "url": "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      "attribution": "OpenStreetMap contributors; CARTO"
+    },
+    "satellite": {
+      "provider": "Esri World Imagery plus CARTO labels",
+      "imageryUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      "labelsUrl": "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png"
+    },
+    "labels": "RASTER_RENDERED_IN_TILES",
+    "settlementLayersAccessible": false,
+    "labelAnchorCoordinatesExposed": false,
+    "decision": "Current basemap label anchors cannot be programmatically obtained or governed through the configured raster endpoints. Tiles were not scraped; OWNER_VISUAL_CERTIFICATION_REQUIRED."
+  },
+  "authorityVocabulary": [
+    "FEDERAL_GOVERNMENT",
+    "STATE_GOVERNMENT",
+    "GOVERNED_OWNER",
+    "BASEMAP_PROVIDER"
+  ],
+  "semanticVocabulary": [
+    "POPULATED_PLACE_POINT",
+    "ADMINISTRATIVE_REFERENCE_POINT",
+    "CARTOGRAPHIC_LABEL_ANCHOR",
+    "UNKNOWN_SEMANTICS"
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "id": "USGS_GNIS_DOMESTIC_NAMES",
+      "authority": "FEDERAL_GOVERNMENT",
+      "agency": "U.S. Geological Survey / U.S. Board on Geographic Names",
+      "dataset": "Geographic Names Information System — Domestic Names",
+      "vintage": "CURRENT_AT_OWNER_RETRIEVAL",
+      "classification": "EXTERNAL_CANDIDATE_NOT_YET_GOVERNED",
+      "semanticType": "POPULATED_PLACE_POINT",
+      "geometry": "Point coordinates for named features",
+      "identifiers": [
+        "feature_id",
+        "feature_name",
+        "feature_class",
+        "state_alpha",
+        "county_name",
+        "county_numeric"
+      ],
+      "placeGeoidAvailable": false,
+      "matchPolicy": "No label-only match. Require Populated Place class, containment in governed PLACE polygon, county compatibility, and exactly one canonical feature; otherwise ambiguous and fail closed.",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0,
+        "status": "NOT_MEASURED_BYTES_UNAVAILABLE"
+      },
+      "calibration": null,
+      "licensing": "U.S. federal public data; owner must retain USGS provenance and validate current download terms/metadata.",
+      "cadence": "Continuously maintained; download vintage must be frozen.",
+      "format": "GNIS downloadable delimited text/ZIP",
+      "url": "https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data",
+      "strengths": [
+        "Best investigated semantic fit: officially named populated-place point",
+        "Stable GNIS feature identifier",
+        "Includes small and rural named communities"
+      ],
+      "weaknesses": [
+        "No Census PLACE GEOID",
+        "May have multiple populated-place features per PLACE",
+        "CDPs and incorporated PLACE boundaries are not the GNIS identity model",
+        "Statewide coverage and calibration unmeasured"
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "CENSUS_GAZETTEER_PLACE",
+      "authority": "FEDERAL_GOVERNMENT",
+      "agency": "U.S. Census Bureau",
+      "dataset": "Gazetteer Files — Places",
+      "vintage": "2025/reference product current at retrieval",
+      "classification": "GOVERNED_EXISTING",
+      "semanticType": "ADMINISTRATIVE_REFERENCE_POINT",
+      "geometry": "Tabular internal-point latitude/longitude",
+      "identifiers": [
+        "GEOID",
+        "NAME",
+        "LSAD"
+      ],
+      "placeGeoidAvailable": true,
+      "matchPolicy": "Direct PLACE GEOID.",
+      "coverage": {
+        "matched": 1859,
+        "unmatched": 0,
+        "ambiguous": 0,
+        "percent": 100,
+        "status": "RECONCILED_DIRECT_GEOID"
+      },
+      "calibration": {
+        "status": "PRESERVED_LP199_RESULT",
+        "meanErrorMeters": 4855.401,
+        "totalErrorMeters": 19421.605,
+        "maximumErrorMeters": 10562.89,
+        "perCityErrors": "See LP199 governed report; candidate is already rejected."
+      },
+      "licensing": "U.S. Census Bureau public data.",
+      "cadence": "Annual",
+      "format": "Delimited text",
+      "url": "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html",
+      "strengths": [
+        "Direct canonical GEOID",
+        "Complete CDP/incorporated-place coverage"
+      ],
+      "weaknesses": [
+        "Administrative/internal-point semantics, not label anchor",
+        "Already evaluated and rejected by LP199"
+      ]
+    },
+    {
+      "rank": 3,
+      "id": "TXDOT_COMMUNITY_POINTS",
+      "authority": "STATE_GOVERNMENT",
+      "agency": "Texas Department of Transportation",
+      "dataset": "Statewide city/town/community point source (discovery target)",
+      "vintage": "UNRESOLVED",
+      "classification": "EXTERNAL_CANDIDATE_NOT_YET_GOVERNED",
+      "semanticType": "UNKNOWN_SEMANTICS",
+      "geometry": "Potential point dataset; no official statewide downloadable artifact validated",
+      "identifiers": [],
+      "placeGeoidAvailable": false,
+      "matchPolicy": "Not eligible until official metadata and bytes establish identifiers and deterministic GEOID crosswalk.",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0,
+        "status": "NO_VALIDATED_DATASET"
+      },
+      "calibration": null,
+      "licensing": "Unresolved pending official dataset metadata.",
+      "cadence": "Unresolved",
+      "format": "Unresolved",
+      "url": "https://gis-txdot.opendata.arcgis.com/",
+      "strengths": [
+        "State transportation authority"
+      ],
+      "weaknesses": [
+        "No validated statewide PLACE-compatible point product found",
+        "Semantics, license, identifiers, coverage, and vintage unresolved"
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "TEXAS_STATE_GIS_COMMUNITY_POINTS",
+      "authority": "STATE_GOVERNMENT",
+      "agency": "Texas Geographic Information Office (TxGIO; TNRIS successor functions)",
+      "dataset": "Geographic-name/community point source (discovery target)",
+      "vintage": "UNRESOLVED",
+      "classification": "EXTERNAL_CANDIDATE_NOT_YET_GOVERNED",
+      "semanticType": "UNKNOWN_SEMANTICS",
+      "geometry": "No official statewide artifact validated",
+      "identifiers": [],
+      "placeGeoidAvailable": false,
+      "matchPolicy": "Not eligible until official metadata and governed bytes support a deterministic GEOID crosswalk.",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0,
+        "status": "NO_VALIDATED_DATASET"
+      },
+      "calibration": null,
+      "licensing": "Unresolved pending official dataset metadata.",
+      "cadence": "Unresolved",
+      "format": "Unresolved",
+      "url": "https://geographic.texas.gov/",
+      "strengths": [
+        "State GIS authority"
+      ],
+      "weaknesses": [
+        "No validated systemic PLACE-center dataset found"
+      ]
+    },
+    {
+      "rank": 5,
+      "id": "OFFICIAL_MUNICIPAL_CIVIC_CENTERS",
+      "authority": "STATE_GOVERNMENT",
+      "agency": "Individual Texas municipalities",
+      "dataset": "Municipal hall/civic-center points",
+      "vintage": "VARIES",
+      "classification": "NOT_APPLICABLE",
+      "semanticType": "UNKNOWN_SEMANTICS",
+      "geometry": "Heterogeneous points",
+      "identifiers": [],
+      "placeGeoidAvailable": false,
+      "matchPolicy": "No statewide governed schema/crosswalk; do not assemble manual overrides.",
+      "coverage": {
+        "matched": 0,
+        "unmatched": 1859,
+        "ambiguous": 0,
+        "percent": 0,
+        "status": "NOT_STATEWIDE"
+      },
+      "calibration": null,
+      "licensing": "Varies by municipality.",
+      "cadence": "Varies",
+      "format": "Varies",
+      "url": null,
+      "strengths": [
+        "May represent a civic center locally"
+      ],
+      "weaknesses": [
+        "Not statewide or consistent",
+        "Civic center is not necessarily a cartographic anchor",
+        "Would violate no-manual-expansion requirement"
+      ]
+    }
+  ],
+  "ranking": {
+    "method": "Deterministic ordinal evidence table; no composite score hides weaknesses.",
+    "criteria": [
+      "AUTHORITY",
+      "STATEWIDE_COVERAGE",
+      "CANONICAL_IDENTITY_RECONCILIATION",
+      "SEMANTIC_FIT_FOR_CARTOGRAPHIC_CENTER",
+      "CALIBRATION_ERROR",
+      "SMALL_PLACE_SUPPORT",
+      "CDP_SUPPORT",
+      "MULTI_COUNTY_SAFETY",
+      "REPRODUCIBILITY",
+      "LICENSING/GOVERNANCE",
+      "OWNER_VISUAL_REVIEW_POTENTIAL"
+    ],
+    "order": [
+      "USGS_GNIS_DOMESTIC_NAMES",
+      "CENSUS_GAZETTEER_PLACE",
+      "TXDOT_COMMUNITY_POINTS",
+      "TEXAS_STATE_GIS_COMMUNITY_POINTS",
+      "OFFICIAL_MUNICIPAL_CIVIC_CENTERS"
+    ]
+  },
+  "identityReconciliation": {
+    "rule": "Direct GEOID preferred. Otherwise require governed feature ID plus class, polygon containment, county compatibility, and unique deterministic selection. Never reconcile statewide solely by label.",
+    "duplicateNames": "Fail closed without deterministic evidence.",
+    "multiplePointsPerPlace": "Accept only one clearly canonical feature; otherwise ambiguous.",
+    "renamesAliasesHistorical": "Exclude or crosswalk only with governed identifiers/status evidence.",
+    "results": [
+      {
+        "source": "USGS_GNIS_DOMESTIC_NAMES",
+        "exactGeoidMatches": 0,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 1859,
+        "extraSourcePoints": null,
+        "status": "NOT_MEASURED_BYTES_UNAVAILABLE"
+      },
+      {
+        "source": "CENSUS_GAZETTEER_PLACE",
+        "exactGeoidMatches": 1859,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 0,
+        "extraSourcePoints": null,
+        "status": "RECONCILED_DIRECT_GEOID"
+      },
+      {
+        "source": "TXDOT_COMMUNITY_POINTS",
+        "exactGeoidMatches": 0,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 1859,
+        "extraSourcePoints": null,
+        "status": "NO_VALIDATED_DATASET"
+      },
+      {
+        "source": "TEXAS_STATE_GIS_COMMUNITY_POINTS",
+        "exactGeoidMatches": 0,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 1859,
+        "extraSourcePoints": null,
+        "status": "NO_VALIDATED_DATASET"
+      },
+      {
+        "source": "OFFICIAL_MUNICIPAL_CIVIC_CENTERS",
+        "exactGeoidMatches": 0,
+        "deterministicCrosswalkMatches": 0,
+        "ambiguous": 0,
+        "unmatched": 1859,
+        "extraSourcePoints": null,
+        "status": "NOT_STATEWIDE"
+      }
+    ]
+  },
+  "calibration": {
+    "truth": [
+      {
+        "placeGeoid": "4805000",
+        "label": "Austin",
+        "lat": 30.274931186653326,
+        "lng": -97.74415969848634,
+        "zoom": 13,
+        "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA",
+        "ownerApproved": true
+      },
+      {
+        "placeGeoid": "4819000",
+        "label": "Dallas",
+        "lat": 32.78294501748632,
+        "lng": -96.79538726806642,
+        "zoom": 13,
+        "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA",
+        "ownerApproved": true
+      },
+      {
+        "placeGeoid": "4824000",
+        "label": "El Paso",
+        "lat": 31.765537409484374,
+        "lng": -106.48704528808595,
+        "zoom": 13,
+        "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA",
+        "ownerApproved": true
+      },
+      {
+        "placeGeoid": "4827000",
+        "label": "Fort Worth",
+        "lat": 32.757685346479455,
+        "lng": -97.33182907104494,
+        "zoom": 13,
+        "source": "OWNER_APPROVED_PLACE_PRESENTATION_CAMERA",
+        "ownerApproved": true
+      }
+    ],
+    "lp199MeanErrorMeters": 4855.401,
+    "lp200BestMeanErrorMeters": 3532.755,
+    "candidates": [
+      {
+        "source": "USGS_GNIS_DOMESTIC_NAMES",
+        "metrics": {
+          "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
+          "dallas": null,
+          "fortWorth": null,
+          "austin": null,
+          "elPaso": null,
+          "mean": null,
+          "median": null,
+          "total": null,
+          "maximum": null
+        }
+      },
+      {
+        "source": "CENSUS_GAZETTEER_PLACE",
+        "metrics": {
+          "status": "PRESERVED_LP199_RESULT",
+          "meanErrorMeters": 4855.401,
+          "totalErrorMeters": 19421.605,
+          "maximumErrorMeters": 10562.89,
+          "perCityErrors": "See LP199 governed report; candidate is already rejected."
+        }
+      },
+      {
+        "source": "TXDOT_COMMUNITY_POINTS",
+        "metrics": {
+          "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
+          "dallas": null,
+          "fortWorth": null,
+          "austin": null,
+          "elPaso": null,
+          "mean": null,
+          "median": null,
+          "total": null,
+          "maximum": null
+        }
+      },
+      {
+        "source": "TEXAS_STATE_GIS_COMMUNITY_POINTS",
+        "metrics": {
+          "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
+          "dallas": null,
+          "fortWorth": null,
+          "austin": null,
+          "elPaso": null,
+          "mean": null,
+          "median": null,
+          "total": null,
+          "maximum": null
+        }
+      },
+      {
+        "source": "OFFICIAL_MUNICIPAL_CIVIC_CENTERS",
+        "metrics": {
+          "status": "NOT_CALCULATED_NO_VALIDATED_COORDINATES",
+          "dallas": null,
+          "fortWorth": null,
+          "austin": null,
+          "elPaso": null,
+          "mean": null,
+          "median": null,
+          "total": null,
+          "maximum": null
+        }
+      }
+    ],
+    "decision": "No new coordinate-bearing candidate bytes were available; no calibration values were fabricated."
+  },
+  "ownerVisualReviewMatrix": [
+    {
+      "label": "Corpus Christi",
+      "placeGeoid": "4817000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48007",
+        "48273",
+        "48355",
+        "48409"
+      ],
+      "role": "OWNER_VISUAL_FAILURE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "McAllen",
+      "placeGeoid": "4845384",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48215"
+      ],
+      "role": "OWNER_VISUAL_FAILURE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Port Arthur",
+      "placeGeoid": "4858820",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48245",
+        "48361"
+      ],
+      "role": "OWNER_VISUAL_FAILURE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Tyler",
+      "placeGeoid": "4874144",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48423"
+      ],
+      "role": "OWNER_VISUAL_FAILURE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Waco",
+      "placeGeoid": "4876000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48309"
+      ],
+      "role": "OWNER_VISUAL_FAILURE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Amarillo",
+      "placeGeoid": "4803000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48375",
+        "48381"
+      ],
+      "role": "OWNER_ACCEPTABLE_GENERIC_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Lubbock",
+      "placeGeoid": "4845000",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48303"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Laredo",
+      "placeGeoid": "4841464",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48479"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Brownsville",
+      "placeGeoid": "4810768",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48061"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Galveston",
+      "placeGeoid": "4828068",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48167"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Denton",
+      "placeGeoid": "4819972",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48121"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Temple",
+      "placeGeoid": "4872176",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48027"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Nacogdoches",
+      "placeGeoid": "4850256",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48347"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Alpine",
+      "placeGeoid": "4802104",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48043"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Marfa",
+      "placeGeoid": "4846620",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48377"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Palestine",
+      "placeGeoid": "4854708",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48001"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    },
+    {
+      "label": "Liberty",
+      "placeGeoid": "4842568",
+      "governedType": "INCORPORATED_PLACE",
+      "countyMemberships": [
+        "48291"
+      ],
+      "role": "REPRESENTATIVE_CONTROL",
+      "status": "OWNER_VISUAL_CERTIFICATION_REQUIRED"
+    }
+  ],
+  "smallPlaceAndCdpFinding": "The cohort includes incorporated small places and CDPs through the full 1,859-PLACE audit contract. GNIS may support rural named communities but its relationship to Census CDPs is not assumed and must be measured.",
+  "corpusChristiDiagnostic": {
+    "placeGeoid": "4817000",
+    "finding": "EXACT_CAUSE_NOT_DETERMINABLE_FROM_COMMITTED_EVIDENCE",
+    "observed": 13,
+    "analysis": "Corpus Christi spans four governed county memberships and has water-heavy/offshore geometry, but neither fact proves why only 13 addresses intersected. The preserved owner candidate artifact/raw GDAL diagnostics are unavailable here, so address coverage, schema, containment, filtering, topology, and actual source limitation cannot be distinguished. This does not invalidate the statewide LP200 engine and is separate from source selection.",
+    "nextDiagnostic": "Using the preserved LP200 owner artifact only, compare per-county records before/after schema validation, deduplication, EPSG:3083 transform, polygon-envelope filter, and final containment; report counts without rerunning statewide derivation."
+  },
+  "housekeeping": {
+    "lp200MarkdownTrailingWhitespace": "RECORDED_NOT_CHANGED",
+    "movementDistanceBlankNull": "RECORDED_NOT_CHANGED; preserved owner artifact is required for isolated repair"
+  },
+  "selectedSource": null,
+  "ownerInput": {
+    "required": true,
+    "preferredCandidate": "USGS_GNIS_DOMESTIC_NAMES",
+    "sourceUrl": "https://www.usgs.gov/us-board-on-geographic-names/download-gnis-data",
+    "expectedFilename": "GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip",
+    "storagePath": "C:\\GitHub\\Gridly-Source-Data\\USGS\\GNIS\\original\\GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip",
+    "environmentVariable": "GRIDLY_LP201_GNIS_TX_ZIP",
+    "governance": "Freeze the official USGS download with retrieval timestamp, source URL, metadata/license, byte length, and SHA-256; treat as owner-local governed input and do not redistribute until reviewed.",
+    "validation": [
+      "Confirm archive is readable and inventory every member",
+      "Record byte length and SHA-256 before parsing",
+      "Require official GNIS schema including stable feature ID, name, feature class, state, county, latitude, and longitude",
+      "Filter Texas and Populated Place explicitly",
+      "Reconcile without label-only matching using governed PLACE polygons/counties and canonical GEOIDs",
+      "Report exact, deterministic, ambiguous, unmatched, and extra counts across all 1,859 PLACEs",
+      "Calculate all four LP197 errors and conduct the full owner visual cohort"
+    ],
+    "command": "$env:GRIDLY_LP201_GNIS_TX_ZIP = 'C:\\GitHub\\Gridly-Source-Data\\USGS\\GNIS\\original\\GNIS_TX_DOMESTIC_NAMES_OWNER_DOWNLOAD.zip'; npm run build:lp201"
+  },
+  "finalRecommendation": "Acquire and govern the official GNIS Domestic Names data, then measure deterministic PLACE reconciliation, statewide/CDP coverage, calibration, and owner visual quality. Do not activate any candidate. Census reference points remain the complete fallback signal but are not certified for this product.",
+  "protectedSurfaces": [
+    {
+      "path": "js/app.js",
+      "sha256": "acca15d779f256121ea2a20e00730d9e8e4698961f7846e9c06e83babf56f0a0",
+      "unchangedByLp201": true
+    },
+    {
+      "path": "reports/lp197/governed-place-consumer-presentation-cameras.json",
+      "sha256": "13077d6ff21c6b395e1ba6e1405e3b5923b9d96d52a6ece7fae208a9edc8c1ac",
+      "unchangedByLp201": true
+    },
+    {
+      "path": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+      "sha256": "b679632faa34b8ea56228c715db295b5020deb5a7e565662ac846d284d9f8778",
+      "unchangedByLp201": true
+    },
+    {
+      "path": "data/generated/gridly-statewide-consumer-zip-index-v1.json",
+      "sha256": "b86fb8a65f5e6d835c57ab00eb45b45bd23ad535718ea7f91c54ca766048f9fc",
+      "unchangedByLp201": true
+    }
+  ]
+}
