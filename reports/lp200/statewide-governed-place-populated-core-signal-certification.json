@@ -2,6 +2,7 @@
   "schemaVersion": "gridly.lp200.statewide-governed-place-populated-core-signal-certification.v1",
   "milestone": "LP200",
   "classification": "NOT_READY_OWNER_INPUT_REQUIRED",
+  "executionMode": "BASELINE_FAIL_CLOSED",
   "scope": {
     "certificationOnly": true,
     "runtimeActivation": false,
@@ -776,14 +777,17 @@
     "explanation": "The initial 59 was an identity-valid package-file count, not a package-tree file count. The 149 tree entries include package sidecars, runtime certificates, and the manifest. Safe owner comparison found no additive historical package-tree files; current counts are recomputed only from physical files and manifest byte/hash validation."
   },
   "authorizationGate": {
-    "classification": "UNRESOLVED_GOVERNANCE_CLASSIFICATION_NOT_A_KNOWN_PROHIBITION",
+    "classification": "INTERNAL_CERTIFICATION_ONLY_DERIVATION_NOT_AUTHORIZED",
+    "environmentVariable": "GRIDLY_LP200_INTERNAL_DERIVATION_APPROVED",
     "internalCertificationOnlyComputation": {
       "knownProhibited": false,
-      "status": "OWNER_GOVERNANCE_CLASSIFICATION_REQUIRED_BEFORE_EXECUTION"
+      "approved": false,
+      "status": "INTERNAL_CERTIFICATION_ONLY_DERIVATION_NOT_AUTHORIZED"
     },
     "commitDerivedPopulatedCoreCoordinates": {
       "knownProhibited": false,
-      "status": "DERIVATIVE_AUTHORIZATION_UNRESOLVED_DO_NOT_COMMIT_PENDING_CLASSIFICATION"
+      "permitted": false,
+      "status": "CERTIFICATION_EVIDENCE_ONLY_DO_NOT_PROMOTE_TO_RUNTIME"
     },
     "redistributeRawAddressRecords": {
       "permitted": false,
@@ -793,9 +797,10 @@
       "permitted": true,
       "status": "GOVERNED_EXISTING"
     },
-    "finding": "Raw redistribution, internal computation, and committing derived coordinates are separate decisions; LP200 does not convert an unresolved derivative classification into a claim that technical derivation is impossible."
+    "finding": "Authorization permits only internal certification computation. It never permits raw redistribution, public exposure, runtime activation, production coordinates, or deployment."
   },
   "executionReadiness": {
+    "executionMode": "BASELINE_FAIL_CLOSED",
     "technicalInputsReady": false,
     "fullStatewideAddressCoverageReady": false,
     "calibrationCoverage": [
@@ -928,9 +933,9 @@
       "Waco"
     ],
     "polygonReady": false,
-    "authorizationForInternalComputation": "UNRESOLVED_OWNER_CLASSIFICATION_REQUIRED",
+    "authorizationForInternalComputation": "INTERNAL_CERTIFICATION_ONLY_DERIVATION_NOT_AUTHORIZED",
     "realProcessingCanRun": false,
-    "reason": "Current checkout lacks complete calibration address coverage and the governed polygon bytes; internal-use governance classification also remains required."
+    "reason": "The complete identity-valid address cohort and exact preflighted PLACE source do not coexist."
   },
   "thresholds": {
     "complete": "all member county packages identity-valid AND >=50 unique contained points",
@@ -1539,6 +1544,7 @@
     "safety": "ADDITIVE_FILE_SPECIFIC_IDENTITY_VERIFIED_NON_DESTRUCTIVE; never restore historical directories over current HEAD",
     "expectedSource": "C:\\GitHub\\Gridly-Source-Data\\Texas-Address-Points\\Raw\\Texas-2026.gdb",
     "placeEnvironmentVariable": "GRIDLY_TEXAS_PLACE_ZIP",
+    "internalDerivationEnvironmentVariable": "GRIDLY_LP200_INTERNAL_DERIVATION_APPROVED",
     "knownPlaceSourcePath": "C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\PLACE\\original\\tl_2025_48_place.zip",
     "manifestPath": "data/generated/lp104/txgio-addresses/manifest.json",
     "manifestSha256": "3d19b17c97550be08609b36b3954f7e19e09784516768553e19c3a3253d50f2a",
@@ -1547,12 +1553,13 @@
     "commands": [
       "Set-Location C:\\GitHub\\liberty-county-map",
       "$env:GRIDLY_TEXAS_PLACE_ZIP = 'C:\\GitHub\\Gridly-Source-Data\\Census\\TIGER2025\\PLACE\\original\\tl_2025_48_place.zip'",
+      "$env:GRIDLY_LP200_INTERNAL_DERIVATION_APPROVED = '1'",
       "npm run build:lp200",
       "npm run verify:lp200",
       "npm run test:lp200"
     ]
   },
-  "runtimeRecommendation": "DO_NOT_ACTIVATE; provide and preflight the governed polygon archive, resolve internal-derivation governance, and use only identity-valid current packages. Never overlay historical directories.",
+  "runtimeRecommendation": "DO_NOT_ACTIVATE; use only exact, preflighted governed inputs and explicit internal-certification authorization. Never overlay historical directories or promote certification evidence to runtime.",
   "inventory": [
     {
       "placeGeoid": "4800100",
