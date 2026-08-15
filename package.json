@@ -14,6 +14,9 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "build:lp200": "node tools/lp200/build-statewide-place-populated-core-certification.mjs --write",
+    "verify:lp200": "node tools/lp200/build-statewide-place-populated-core-certification.mjs --verify",
+    "test:lp200": "node --test tests/lp200-statewide-place-populated-core-certification.test.mjs",
     "build:lp199": "node tools/lp199/build-statewide-place-presentation-camera-derivation.mjs --write",
     "verify:lp199": "node tools/lp199/build-statewide-place-presentation-camera-derivation.mjs --verify",
     "test:lp199": "node --test tests/lp199-statewide-place-presentation-camera-derivation.test.mjs",
