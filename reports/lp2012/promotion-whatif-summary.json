@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "gridly.lp2012.promotion-whatif-summary.v1",
+  "runtimeActivation": false,
+  "inputIdentities": {
+    "summary": {
+      "path": "reports/lp2011/summary.json",
+      "sha256": "398f9660ef51991c2ea3cffdeb7dd48ff4f3f1863cf82bff0725a544fb286002"
+    },
+    "reconciliation": {
+      "path": "reports/lp2011/reconciliation.json",
+      "sha256": "e1dcc1cb0c639ba4f7cb71fe40c7d95b98f11902adfb436eccc8cbeb9b51c8e0"
+    },
+    "presentation": {
+      "path": "data/generated/gridly-statewide-place-presentation-v1.json",
+      "sha256": "b4077f9a6532619c92c193a7849545dcc9f59abd5fbd717c0714442a1b86d18e"
+    },
+    "projection": {
+      "path": "data/generated/gridly-statewide-consumer-community-projection-v1.json",
+      "sha256": "b679632faa34b8ea56228c715db295b5020deb5a7e565662ac846d284d9f8778"
+    },
+    "owners": {
+      "path": "reports/lp197/governed-place-consumer-presentation-cameras.json",
+      "sha256": "13077d6ff21c6b395e1ba6e1405e3b5923b9d96d52a6ece7fae208a9edc8c1ac"
+    },
+    "frozenOsmPbf": {
+      "path": "C:\\GitHub\\Gridly-Source-Data\\OpenStreetMap\\Regional\\texas-260625.osm.pbf",
+      "bytes": 707715853,
+      "sha256": "1d80efe1b19b075d036363d722366870df3efb7fbd4a45dc9f16797868ff4413",
+      "readDuringLp2012": false
+    }
+  },
+  "totalCanonicalCount": 1859,
+  "bucketCounts": {
+    "A_HIGH_CONFIDENCE_UNIQUE": 1253,
+    "C_DUPLICATE_NAME_GEOGRAPHICALLY_DISAMBIGUATED": 306,
+    "D_NAME_MISMATCH_GEOGRAPHICALLY_PLAUSIBLE": 169,
+    "E_NO_OSM_CANDIDATE": 82,
+    "H_HARD_CONFLICT_INVALID": 32,
+    "G_CLASSIFICATION_CONCERN": 13,
+    "B_MULTIPLE_OSM_CANDIDATES": 4
+  },
+  "potentialACCount": 1559,
+  "proposedCount": 1555,
+  "retainedCount": 304,
+  "higherAuthorityRetainedCount": 4,
+  "unresolvedRetainedCount": 300,
+  "otherEligibilityGuardRetainedCount": 0,
+  "typeCounts": {
+    "incorporatedPlace": {
+      "proposed": 1190,
+      "retained": 34
+    },
+    "cdp": {
+      "proposed": 365,
+      "retained": 270
+    },
+    "multiCounty": {
+      "proposed": 154,
+      "retained": 9
+    }
+  },
+  "distanceDistributionMeters": {
+    "count": 1559,
+    "minimum": 9.794,
+    "median": 530.358,
+    "mean": 971.446,
+    "percentile95": 3087.18,
+    "maximum": 22648.585
+  },
+  "decisionTaxonomyCounts": {
+    "PROPOSE_NAMED_PLACE_ANCHOR": 1555,
+    "RETAIN_CURRENT_FALLBACK_UNRESOLVED_BUCKET": 300,
+    "RETAIN_HIGHER_AUTHORITY_CAMERA": 4
+  },
+  "protectedRuntimeSurfaces": {
+    "result": "PASS_NO_WRITES",
+    "paths": [
+      "js/app.js",
+      "js/gridlyPackageRegistry.js",
+      "assets/package-registry/runtime-package-registry.json",
+      "assets/location-resolution/",
+      "data/generated/",
+      "data/runtime/"
+    ]
+  },
+  "zoomPolicy": {
+    "result": "PASS_PRESERVED",
+    "source": "current governed camera; never OSM"
+  },
+  "regionSeparation": {
+    "result": "PASS",
+    "policy": "Dedicated Houston and San Antonio region identities are outside this canonical PLACE-only evidence tool."
+  }
+}
