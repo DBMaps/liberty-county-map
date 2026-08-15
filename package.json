@@ -14,6 +14,10 @@
     "fflate": "0.8.3"
   },
   "scripts": {
+    "lp2011:whatif": "node tools/lp2011/manufacture-osm-place-evidence.mjs --whatif",
+    "lp2011:apply": "node tools/lp2011/manufacture-osm-place-evidence.mjs --apply",
+    "verify:lp2011": "node tools/lp2011/manufacture-osm-place-evidence.mjs --verify",
+    "test:lp2011": "node --test tests/lp2011-osm-named-place-reconciliation.test.mjs",
     "build:lp201": "node tools/lp201/build-statewide-cartographic-place-center-source-audit.mjs --write",
     "verify:lp201": "node tools/lp201/build-statewide-cartographic-place-center-source-audit.mjs --verify",
     "test:lp201": "node --test tests/lp201-statewide-cartographic-place-center-source-audit.test.mjs",
