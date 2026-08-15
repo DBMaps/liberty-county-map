@@ -33,6 +33,7 @@ export function preflightOwnerArtifact(artifactPath,{legacyIdentity=FIRST_OWNER_
  const projection=read(PROJECTION),manifest=read(MANIFEST),manifestIdentity=fileDigest(path.join(ROOT,MANIFEST));
  if(projection.counts.uniquePlaceCount!==1859||projection.counts.membershipCount!==2058)fail('GOVERNED_INVENTORY_MISMATCH');
  if(artifact.schemaVersion!=='gridly.lp200.statewide-place-populated-core-candidates.v1'||artifact.certificationOnly!==true||artifact.rowCount!==1859||!artifact.places||Array.isArray(artifact.places))fail('SCHEMA_MISMATCH');
+ assertNoVolatile(artifact);
  const topLevelKeys=Object.keys(artifact),allowedTopLevel=['schemaVersion','certificationOnly','rowCount','deduplicationRule','places','inputBinding'];
  if(topLevelKeys.some(k=>!allowedTopLevel.includes(k)))fail('UNEXPECTED_TOP_LEVEL_FIELD');
  const expected=new Map(projection.communities.map(c=>[c.placeGeoid,c])),geoids=Object.keys(artifact.places);
@@ -50,7 +51,7 @@ export function preflightOwnerArtifact(artifactPath,{legacyIdentity=FIRST_OWNER_
   if(row.selectedMethod!==null&&!METHODS.includes(row.selectedMethod))fail(`SELECTED_METHOD_INVALID:${geoid}`);
   for(const [method,c] of Object.entries(row.candidates)){if(c===null){if(row.uniqueAddressCount!==0)fail(`NULL_CANDIDATE:${geoid}`);continue;}if(c.method!==method||c.containment!=='PASS'||![c.lat,c.lng,c.projectedX,c.projectedY,c.addressSupport].every(Number.isFinite)||typeof c.containedAddressFallbackApplied!=='boolean')fail(`CANDIDATE_CONTRACT_MISMATCH:${geoid}/${method}`);}
  }
- if(memberships!==2058)fail('MEMBERSHIP_COUNT_MISMATCH');assertNoVolatile(artifact);
+ if(memberships!==2058)fail('MEMBERSHIP_COUNT_MISMATCH');
  const acceptedAddressRecords=manifest.packages.reduce((n,p)=>n+p.acceptedRecords,0),binding={manifestSha256:manifestIdentity.sha256,acceptedAddressRecords,packageCount:manifest.packages.length,packageIdentities:manifest.packages.map(p=>({fips:p.fips,bytes:p.outputBytes,sha256:p.packageHash})),placeSource:{filename:PLACE_SOURCE.filename,bytes:PLACE_SOURCE.bytes,sha256:PLACE_SOURCE.sha256,vintage:PLACE_SOURCE.vintage},canonicalPlaceCount:1859,membershipCount:2058};
  const legacy=identity.bytes===legacyIdentity.bytes&&identity.sha256===legacyIdentity.sha256;
  if(legacy){if(binding.manifestSha256!==legacyIdentity.manifestSha256||binding.acceptedAddressRecords!==legacyIdentity.acceptedAddressRecords)fail('LEGACY_INPUT_IDENTITY_MISMATCH');}
